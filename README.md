@@ -21,7 +21,9 @@
 
 ## Table of Contents
 
-- [Features](#quick-start)
+- [Features](#features)
+- [Applications](#applications)
+- [Initiatives](#initiatives)
 - [Status](#status)
 - [Copyright and license](#copyright-and-license)
 
@@ -44,6 +46,30 @@
 - **Department Linking** Create powerful department links to allow for multiple independent organizations (i.e. mutual aid agreements or centralized dispatch center) to cooperate
 - **Mobile Apps** Apps available on Google Play and Apple App Store that can work with any standard installation. For Personnel, Units, Stations and Commanders.
 - **API** Included API with information about calls allow for easy extension and interaction without having to change code in the Resgrid Core codebase
+
+## Applications
+
+Below are the repositories for the applications built utilizing the [Resgrid API](https://api.resgrid.com).
+
+######[BigBoard](https://github.com/Resgrid/BigBoard)** 
+The Resgrid BigBoard is a dashboard system intended to be used in stations or centralized locations to allow for personnel to see the status of the system at a glance. The BigBoard can display Personnel Statuses, Staffing and ETAs, Unit Statuses, Call and Call Information, a map of all activity, and current weather.
+
+![BigBoard](https://raw.githubusercontent.com/resgrid/core/master/misc/images/BigBoard.png)
+
+######[Relay](https://github.com/Resgrid/Relay)** 
+The Resgrid Relay is a console based application to monitor an audio input, for example from a Scanner, to listen for Tone Frequencies and capture audio for a selected amount of time. Once complete Resgrid Relay will create a call in the Resgrid system and dispatch the groups, or department, associated with the tones. This allows for standing up Resgrid in environments where you cannot modify a dispatch system or a shared dispatch center.
+
+![Relay](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Relay.png)
+
+## Initiatives
+
+Major initiatives for the Resgrid project in 2019!
+
+* **Open Source**: Get the Resgrid Core system open sourced.
+* **Setup Documentation**: Tied to Docker, as that should be the preferred way to stand up Resgrid in a very consistent manner and get it working out of the box regardless of environment or configuration. 
+* **Dapper**: We are migrating away from Entity Framework to Dapper, with corresponding Sync and Async calls. The meta-data overheard for Entity Framework has caused some issues along with query design. When we are in a system, for example Calls, and we have to modify the underlying repository calls at that point we start migrating them to Dapper. The first phase goal is to only have EF calls for Adding\Updating objects. Final phase would be utilizing Dapper for all CRUD operations.
+* **.Net Core**: The main web application Resgrid.WebCore was migrated to .Net Core 1.1 but the rest of the stack has lagged. The goal would be to migrate the API project (Resgrid.Services) to the latest .Net Core and update the Web application to the latest as well, then move down the stack migrating all assembly projects to the latest .Net Core version as well. The intention here to to allow for deployment of Resgrid on any environment type (Windows, Linux, Unix) instead of just Windows.
+* **Docker*: Utilization of containers to setup all the discrete parts of the Resgrid system is vital. This would allow for easy deployments to dev, test and production environments while also making the initial deployment story on on-premises or custom deployments easier. 
 
 ## Status
 

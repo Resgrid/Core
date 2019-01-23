@@ -1,0 +1,167 @@
+#OS junk files
+[Tt]humbs.db
+*.DS_Store
+
+#Visual Studio files
+*.[Oo]bj
+*.exe
+*.xap
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.[Cc]ache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+ipch/
+obj/
+[Bb]in
+[Dd]ebug*/
+[Rr]elease*/
+Ankh.NoLoad
+UpgradeLog*
+_UpgradeReport_Files/
+csx/
+rcf/
+.vs/
+
+#Tooling
+_ReSharper*/
+*.resharper
+[Tt]est[Rr]esult*
+*.Tests.VisualState.xml
+*.vs10x
+
+#Project and build files
+[Bb]uild/Packages/
+Temp/
+Build/WebsiteRelease/
+Build/build
+Challenges/Build/build
+
+#Subversion files
+.svn
+
+# Office Temp Files
+~$*
+
+# WCF diagnostic files
+*.svclog
+
+# DB Professional files
+*.dbmdl
+
+# Include the DebugReleaseImplementations folder which would be ignored by the above
+!*DebugReleaseImplementations/
+
+# Files added by the Visual Studio Productivity Power Tools extension
+*.docstates
+
+# Files created by the git mergetool
+*.orig
+
+# Publish Profiles
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.pubxml.user
+*.publishproj
+
+# Project Ignores
+Website.zip
+stage/
+Build/sites
+*.zip
+Tests/Resgrid.Intergration.Tests/Website
+Web/Resgrid.Web/App_Data/Log.txt
+Azure/ResgridAzure/csx
+Azure/ResgridApiAzure/csx
+Azure/ResgridWorkersAzure/csx
+Azure/BizSpark/ResgridApi/csx
+Azure/BizSpark/ResgridWebsite/csx
+Azure/BizSpark/ResgridWorkers/csx
+Azure/BizSpark/ResgridBackend/csx
+InstallAware/Release
+_NCrunch_Resgrid
+nCrunchTemp*
+*.ps1
+*.psm1
+
+# vim backup files
+*~
+*.swp
+
+
+*.received.txt
+
+# xml documentation (generated one each build)
+Web/Resgrid.Services/App_Data/Resgrid.Web.Services.XML
+
+/packages/
+!packages/repositories.config
+
+#Web/Resgrid.Web/Configs/connectionStrings.config
+#Web/Resgrid.Services/Configs/connectionStrings.config
+#Common/Configs/connectionStrings.config
+#Common/AssemblyInfo.cs
+/node_modules
+.vs/
+node_modules
+
+# OSS Project Ignores
+.deployment
+create.azure.deploy.package.bat
+create.deploy.package.bat
+default.ps1
+deploy.cmd
+Packages.dgml
+OffRuleSet.ruleset
+Build/*
+Resgrid.sln
+Resgrid.xml
+Resgrid-NoCore.sln
+Tests/Resgrid.TestHarness/*
+Tests/Resgrid.TestHarnessCore/*
+Web/Resgrid.WebCore/Areas/User/Controllers/SubscriptionController.cs
+Web/Resgrid.WebCore/Areas/User/Models/Subscription/*
+Web/Resgrid.WebCore/Areas/User/Views/Subscription/*
+Web/Resgrid.WebCore/Controllers/AffiliateController.cs
+Web/Resgrid.WebCore/Controllers/DeveloperController.cs
+Web/Resgrid.WebCore/Controllers/ForController.cs
+Web/Resgrid.WebCore/Controllers/JobsController.cs
+Web/Resgrid.WebCore/Controllers/ManageController.cs
+Web/Resgrid.WebCore/Controllers/PublicController.cs
+Web/Resgrid.WebCore/Views/Affiliate/*
+Web/Resgrid.WebCore/Views/Developer/*
+Web/Resgrid.WebCore/Views/For/*
+Web/Resgrid.WebCore/Views/Home/*
+Web/Resgrid.WebCore/Views/Jobs/*
+Web/Resgrid.WebCore/Views/Manage/*
+Web/Resgrid.WebCore/Views/Public/*
+Web/Resgrid.WebCore/wwwroot/css/landing/*
+Web/Resgrid.WebCore/wwwroot/css/lead/*
+Web/Resgrid.WebCore/wwwroot/css/patterns/*
+Web/Resgrid.WebCore/wwwroot/css/pricing/*
+Web/Resgrid.WebCore/wwwroot/documents/*
+Web/Resgrid.WebCore/wwwroot/images/*.jpg
+Web/Resgrid.WebCore/wwwroot/images/*.svg
+Web/Resgrid.WebCore/wwwroot/images/apps/*
+Web/Resgrid.WebCore/wwwroot/images/landing/*
+Web/Resgrid.WebCore/wwwroot/images/Mobile/*
+Web/Resgrid.WebCore/wwwroot/images/Personnel/*
+Web/Resgrid.WebCore/wwwroot/images/Screenshots/*
+Web/Resgrid.WebCore/wwwroot/images/Store/*
+Web/Resgrid.WebCore/wwwroot/js/app/admin/*
+Web/Resgrid.WebCore/wwwroot/videos/*

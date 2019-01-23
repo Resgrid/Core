@@ -51,12 +51,12 @@
 
 Below are the repositories for the applications built utilizing the [Resgrid API](https://api.resgrid.com).
 
-######[BigBoard](https://github.com/Resgrid/BigBoard)** 
+###### [BigBoard](https://github.com/Resgrid/BigBoard)
 The Resgrid BigBoard is a dashboard system intended to be used in stations or centralized locations to allow for personnel to see the status of the system at a glance. The BigBoard can display Personnel Statuses, Staffing and ETAs, Unit Statuses, Call and Call Information, a map of all activity, and current weather.
 
 ![BigBoard](https://raw.githubusercontent.com/resgrid/core/master/misc/images/BigBoard.png)
 
-######[Relay](https://github.com/Resgrid/Relay)** 
+###### [Relay](https://github.com/Resgrid/Relay)
 The Resgrid Relay is a console based application to monitor an audio input, for example from a Scanner, to listen for Tone Frequencies and capture audio for a selected amount of time. Once complete Resgrid Relay will create a call in the Resgrid system and dispatch the groups, or department, associated with the tones. This allows for standing up Resgrid in environments where you cannot modify a dispatch system or a shared dispatch center.
 
 ![Relay](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Relay.png)

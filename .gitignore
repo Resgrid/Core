@@ -134,6 +134,7 @@ Resgrid.xml
 Resgrid-NoCore.sln
 Tests/Resgrid.TestHarness/*
 Tests/Resgrid.TestHarnessCore/*
+Tests/Resgrid.SmokeTests/*
 Web/Resgrid.WebCore/Areas/User/Controllers/SubscriptionController.cs
 Web/Resgrid.WebCore/Areas/User/Models/Subscription/*
 Web/Resgrid.WebCore/Areas/User/Views/Subscription/*

@@ -165,3 +165,6 @@ Web/Resgrid.WebCore/wwwroot/images/Screenshots/*
 Web/Resgrid.WebCore/wwwroot/images/Store/*
 Web/Resgrid.WebCore/wwwroot/js/app/admin/*
 Web/Resgrid.WebCore/wwwroot/videos/*
+Workers/Resgrid.Workers.BackendWorkers/*
+Workers/Resgrid.Workers.BroadcastWorker/*
+Workers/WebJobs/*

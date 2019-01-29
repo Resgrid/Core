@@ -98,6 +98,8 @@ _NCrunch_Resgrid
 nCrunchTemp*
 *.ps1
 *.psm1
+*.user
+*.ncrunchproject
 
 # vim backup files
 *~

@@ -9,12 +9,12 @@ namespace Resgrid.Config
 	public static class SystemBehaviorConfig
 	{
 		/// <summary>
-		/// 
+		/// The base url to where the Resgrid web application lives
 		/// </summary>
 		public static string ResgridBaseUrl = "https://resgrid.local";
 
 		/// <summary>
-		/// 
+		/// The base url to where the Resgrid web api lives
 		/// </summary>
 		public static string ResgridApiBaseUrl = "https://resgridapi.local";
 
@@ -26,7 +26,7 @@ namespace Resgrid.Config
 		public static bool DoNotBroadcast = true;
 
 		/// <summary>
-		/// This will instally redirect default route landing at Home\Index to the Account\Login
+		/// This will initially redirect default route landing at Home\Index to the Account\Login
 		/// view to facilitate quick logins to the system. This is the default behavior for
 		/// on-prem installs as there is no public part of the website that users need to access.
 		/// </summary>
@@ -39,9 +39,19 @@ namespace Resgrid.Config
 		public static bool CacheEnabled = true;
 
 		/// <summary>
-		/// 
+		/// Used to encrypt the publicly accessible url key values
 		/// </summary>
 		public static string ExternalLinkUrlParamPassphrase = "NvM28Q8EJejQSdxS";
+		
+		/// <summary>
+		/// Used to encrypt payloads for the API auth token
+		/// </summary>
+		public static string ApiTokenEncryptionPassphrase = "exj\3TB)&3ky`sWUH}y!r$x#6jsEX'H-UDQn6(v=w:#*#Pr";
+		
+		/// <summary>
+		/// The length the API token will be valid for once a user logs into the app
+		/// </summary>
+		public static int APITokenMonthsTTL = 1;
 
 		/// <summary>
 		/// These are specific departments that will be forced to go through the om-prem SMS gateway no matter the send status, i.e. Direct or Gateway

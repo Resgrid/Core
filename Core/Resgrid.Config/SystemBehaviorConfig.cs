@@ -44,6 +44,11 @@ namespace Resgrid.Config
 		public static string ExternalLinkUrlParamPassphrase = "NvM28Q8EJejQSdxS";
 		
 		/// <summary>
+		/// Used to encrypt the url parameters for the external audio links
+		/// </summary>
+		public static string ExternalAudioUrlParamPasshprase = "5a4tALka7bz6h4CY";
+		
+		/// <summary>
 		/// Used to encrypt payloads for the API auth token
 		/// </summary>
 		public static string ApiTokenEncryptionPassphrase = "exj\3TB)&3ky`sWUH}y!r$x#6jsEX'H-UDQn6(v=w:#*#Pr";

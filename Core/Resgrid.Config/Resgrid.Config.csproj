@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheConfig.cs" />
+    <Compile Include="ChatConfig.cs" />
     <Compile Include="DataConfig.cs" />
     <Compile Include="ExternalErrorConfig.cs" />
     <Compile Include="FirebaseConfig.cs" />

@@ -31,12 +31,22 @@ namespace Resgrid.Config
 		/// on-prem installs as there is no public part of the website that users need to access.
 		/// </summary>
 		public static bool RedirectHomeToLogin = true;
+		
+		/// <summary>
+		/// Tells the system if it's running on Microsoft's Azure environment
+		/// </summary>
+		public static bool IsAzure = false;
 
 		/// <summary>
 		/// Should the system use the cache provider or not. If this is disabled no caching
 		/// will occur and calls will bypass getting items from cache.
 		/// </summary>
 		public static bool CacheEnabled = true;
+		
+		/// <summary>
+		/// Forces the use of the in memory cache provider instead of Redis
+		/// </summary>
+		public static bool UseInternalCache = false;
 
 		/// <summary>
 		/// Used to encrypt the publicly accessible url key values
@@ -57,6 +67,11 @@ namespace Resgrid.Config
 		/// The length the API token will be valid for once a user logs into the app
 		/// </summary>
 		public static int APITokenMonthsTTL = 1;
+		
+		/// <summary>
+		/// Sets the type of Service bus to use for the system, options are Azure or NATS
+		/// </summary>
+		public static ServiceBusTypes ServiceBusType = ServiceBusTypes.Nats;
 
 		/// <summary>
 		/// These are specific departments that will be forced to go through the om-prem SMS gateway no matter the send status, i.e. Direct or Gateway

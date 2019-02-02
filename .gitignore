@@ -157,6 +157,7 @@ Web/Resgrid.WebCore/Views/Home/*
 Web/Resgrid.WebCore/Views/Jobs/*
 Web/Resgrid.WebCore/Views/Manage/*
 Web/Resgrid.WebCore/Views/Public/*
+Web/Resgrid.WebCore/wwwroot/lib/*
 Web/Resgrid.WebCore/wwwroot/css/landing/*
 Web/Resgrid.WebCore/wwwroot/css/lead/*
 Web/Resgrid.WebCore/wwwroot/css/patterns/*

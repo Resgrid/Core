@@ -1,7 +1,11 @@
 ﻿namespace Resgrid.Config
 {
+	/// <summary>
+	/// Service Bus specific values for both Azure and NATS
+	/// </summary>
 	public static class ServiceBusConfig
 	{
+		#region Azure Service Bus Values
 		public static string SignalRServiceBusConnectionString = "";
 		public static string SignalRTopicName = "";
 
@@ -15,6 +19,10 @@
 		public static string AzureNotificationHub_PushUrl = "";
 
 		public static string AzureServiceBusConnectionString = "";
+		public static string AzureServiceBusOwnerName = "";
+		public static string AzureServiceBusOwnerSecret = "";
+		public static string AzureServiceBusRootName = "";
+		public static string AzureQueueOwnerSecret = "";
 
 		public static string AzureServiceBusWorkerConnectionString = "";
 
@@ -35,5 +43,12 @@
 
 		public static string AzureUnitNotificationHub_FullConnectionString = "";
 		public static string AzureUnitNotificationHub_PushUrl = "";
+		#endregion Azure Service Bus Values
+	}
+	
+	public enum ServiceBusTypes
+	{
+		Azure,
+		Nats
 	}
 }

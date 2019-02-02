@@ -14,5 +14,16 @@
 
 		public static string AwsAccessKey = "";
 		public static string AwsSecretKey = "";
+		
+		public static long PostmarkCallEmailTemplateId = 0;
+		public static long PostmarkTroubleAlertTemplateId = 0;
+		public static long PostmarkCancelRecieptTemplateId = 0;
+		public static long PostmarkChargeFailedTemplateId = 0;
+		public static long PostmarkInviteTemplateId = 0;
+		public static long PostmarkMessageTemplateId = 0;
+		public static long PostmarkResetPasswordTemplateId = 0;
+		public static long PostmarkRecieptTemplateId = 0;
+		public static long PostmarkWelcomeTemplateId = 0;
+		public static long PostmarkNewDepLinkTemplateId = 0;
 	}
 }

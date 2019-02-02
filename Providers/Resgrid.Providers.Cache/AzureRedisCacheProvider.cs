@@ -1,0 +1,211 @@
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Resgrid.Framework;
+using Resgrid.Model.Providers;
+using StackExchange.Redis;
+
+namespace Resgrid.Providers.Cache
+{
+	public class AzureRedisCacheProvider : ICacheProvider
+	{
+		private static ConnectionMultiplexer _connection = null;
+		public AzureRedisCacheProvider()
+		{
+			if (Config.SystemBehaviorConfig.CacheEnabled)
+				EstablishRedisConnection();
+		}
+
+		public T Retrieve<T>(string cacheKey, Func<T> fallbackFunction, TimeSpan expiration)
+			where T : class
+		{
+			T data = null;
+			IDatabase cache = null;
+
+			try
+			{
+				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+				{
+					cache = _connection.GetDatabase();
+
+					var cacheValue = cache.StringGet(cacheKey);
+
+					try
+					{
+						if (cacheValue.HasValue)
+							data = ObjectSerialization.Deserialize<T>(cacheValue);
+					}
+					catch
+					{
+						Remove(cacheKey);
+						throw;
+					}
+
+					if (data != null)
+						return data;
+				}
+			}
+			catch (TimeoutException)
+			{ }
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			data = fallbackFunction();
+
+			if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+			{
+				if (data != null && cache != null)
+				{
+					try
+					{
+						cache.StringSet(cacheKey, ObjectSerialization.Serialize(data), expiration);
+					}
+					catch (TimeoutException)
+					{ }
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+
+			return data;
+		}
+
+		public void Remove(string cacheKey)
+		{
+			try
+			{
+				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+				{
+					IDatabase cache = _connection.GetDatabase();
+					cache.KeyDelete(cacheKey);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+		}
+
+
+		public async Task<T> RetrieveAsync<T>(string cacheKey, Func<Task<T>> fallbackFunction, TimeSpan expiration)
+			where T : class
+		{
+			T data = null;
+			IDatabase cache = null;
+
+			try
+			{
+				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+				{
+					cache = _connection.GetDatabase();
+
+					var cacheValue = await cache.StringGetAsync(cacheKey);
+
+					try
+					{
+						if (cacheValue.HasValue)
+							data = ObjectSerialization.Deserialize<T>(cacheValue);
+					}
+					catch
+					{
+						await RemoveAsync(cacheKey);
+						throw;
+					}
+
+					if (data != null)
+						return data;
+				}
+			}
+			catch (TimeoutException)
+			{ }
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			data = await fallbackFunction();
+
+			if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+			{
+				if (data != null && cache != null)
+				{
+					try
+					{
+						await cache.StringSetAsync(cacheKey, ObjectSerialization.Serialize(data), expiration);
+					}
+					catch (TimeoutException)
+					{ }
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+
+			return data;
+		}
+
+		public async Task<bool> RemoveAsync(string cacheKey)
+		{
+			try
+			{
+				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+				{
+					IDatabase cache = _connection.GetDatabase();
+					await cache.KeyDeleteAsync(cacheKey);
+
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return false;
+		}
+
+		public bool IsConnected()
+		{
+			EstablishRedisConnection();
+
+			return _connection.IsConnected;
+		}
+
+		private void EstablishRedisConnection()
+		{
+			int retry = 0;
+
+			try
+			{
+				if (_connection != null && _connection.IsConnected == false)
+				{
+					_connection.Close();
+					_connection = null;
+				}
+
+			}
+			catch { }
+
+			while (_connection == null && retry <= 3)
+			{
+				retry++;
+
+				try
+				{
+					_connection = ConnectionMultiplexer.Connect(Config.CacheConfig.RedisConnectionString);
+				}
+				catch (Exception ex)
+				{
+					_connection = null;
+					Logging.LogException(ex);
+					Thread.Sleep(150);
+				}
+			}
+		}
+	}
+}

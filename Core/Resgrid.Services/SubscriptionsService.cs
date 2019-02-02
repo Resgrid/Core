@@ -11,9 +11,18 @@ namespace Resgrid.Services
 {
 	public class SubscriptionsService : ISubscriptionsService
 	{
-		public SubscriptionsService()
-		{
+		private static string CacheKey = "CurrentPayment_{0}";
+		private static TimeSpan CacheLength = TimeSpan.FromDays(1);
 
+		private readonly IPlansRepository _plansRepository;
+		private readonly IPaymentRepository _paymentsRepository;
+		private readonly ICacheProvider _cacheProvider;
+
+		public SubscriptionsService(IPlansRepository plansRepository, IPaymentRepository paymentsRepository, ICacheProvider cacheProvider)
+		{
+			_plansRepository = plansRepository;
+			_paymentsRepository = paymentsRepository;
+			_cacheProvider = cacheProvider;
 		}
 
 		public Plan GetCurrentPlanForDepartment(int departmentId, bool byPassCache = true)

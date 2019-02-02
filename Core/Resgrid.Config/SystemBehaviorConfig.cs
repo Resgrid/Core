@@ -61,7 +61,7 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Used to encrypt payloads for the API auth token
 		/// </summary>
-		public static string ApiTokenEncryptionPassphrase = "exj\3TB)&3ky`sWUH}y!r$x#6jsEX'H-UDQn6(v=w:#*#Pr";
+		public static string ApiTokenEncryptionPassphrase = "exjk3TB)&3ky`sWUH}y!r$x#6jsEX'H-UDQn6(v=w:#*#Pr";
 		
 		/// <summary>
 		/// The length the API token will be valid for once a user logs into the app

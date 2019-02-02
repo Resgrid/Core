@@ -1,4 +1,6 @@
-﻿namespace Resgrid.Config
+﻿using System.Collections.Generic;
+
+namespace Resgrid.Config
 {
 	public static class NumberProviderConfig
 	{

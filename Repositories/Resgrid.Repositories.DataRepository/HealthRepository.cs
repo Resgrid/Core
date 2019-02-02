@@ -1,0 +1,38 @@
+﻿using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Model.Repositories;
+
+namespace Resgrid.Repositories.DataRepository
+{
+	public class HealthRepository : IHealthRepository
+	{
+		public string connectionString =
+			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
+				.FirstOrDefault(x => x.Name == "ResgridContext")
+				.ConnectionString;
+
+		public async Task<string> GetDatabaseCurrentTime()
+		{
+			var query = $@"SELECT GETDATE()";
+
+			try
+			{
+				using (IDbConnection db = new SqlConnection(connectionString))
+				{
+					var results = await db.QueryAsync<string>(query);
+
+					return results.FirstOrDefault();
+				}
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+	}
+}

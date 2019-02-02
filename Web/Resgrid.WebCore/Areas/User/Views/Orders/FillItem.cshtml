@@ -1,0 +1,89 @@
+﻿@using Resgrid.Model
+
+@model Resgrid.Web.Areas.User.Models.Orders.FillItemView
+@{
+  ViewBag.Title = "Resgrid | Fill Order Result";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Fill Order Result</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Fill Order Result</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+@if (Model.Error)
+{
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="wrapper wrapper-content">
+        <div class="ibox float-e-margins">
+          <div class="ibox-content">
+            <h2>
+              Fill Failed
+            </h2>
+            <p>
+              There was an error trying to fulfil your request. Please view the error below for more detail.
+            </p>
+            <div class="alert alert-error">
+              @Model.ErrorMessage
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+else if (Model.Fill.Accepted)
+{
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="wrapper wrapper-content">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<h2>
+						  Fill Added and Accepted
+						</h2>
+						<p>
+							Your fill was added into the system and has been accepted automatically. 
+						</p>
+						<div class="alert alert-warning">
+							You may want to reach out to the Point of Contact for the order to ensure if there are any other details that need to be worked out.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+else
+{
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <h2></h2>
+          <p>
+            Fill Proposed
+          </p>
+          <div class="alert alert-warning">
+            Your fill has been logged with the system and marked as pending. The creator of the resource request will need to manually review your fill request and approve it. You will receive a notification when that action occurs. 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}
+@section Scripts
+{
+
+}

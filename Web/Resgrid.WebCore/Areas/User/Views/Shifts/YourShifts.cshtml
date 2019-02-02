@@ -1,0 +1,205 @@
+﻿@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Shifts.YourShiftsView
+@{
+	ViewBag.Title = "Resgrid | Your Shifts";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Your Shifts</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+			</li>
+			<li class="active">
+				<strong>Your Shifts</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>Your Shifts</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										Shift
+									</th>
+									<th>
+										Group
+									</th>
+									<th>
+										Day
+									</th>
+									<th>
+										Approved
+									</th>
+									<th>
+										Status
+									</th>
+									<th>
+										Timestamp
+									</th>
+									<th class='span1'></th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var s in Model.Signups)
+								{
+									<tr>
+										<td>
+											@s.Shift.Name
+										</td>
+										<td>
+											@s.Group.Name
+										</td>
+										<td>
+											@s.ShiftDay.ToShortDateString()
+										</td>
+										<td>
+											@if (s.Denied)
+											{
+												<span>No</span>
+											}
+											else
+											{
+												<span>Yes</span>
+											}
+										</td>
+										<td>
+											@if (s.Trade != null && s.Trade.IsTradeComplete())
+											{
+												<span class='label label-success'>Trade Complete</span>
+											}
+											else if (s.Trade != null && !s.Trade.IsTradeComplete())
+											{
+												<span class='label label-warning'>Trade In Progress</span>
+											}
+											else
+											{
+												<span class="label label-primary">Normal</span>
+											}
+										</td>
+										<td>
+											@s.SignupTimestamp.TimeConverterToString(Model.Department)
+										</td>
+										<td>
+											@if (s.ShiftDay > DateTime.UtcNow.TimeConverter(Model.Department) && s.Trade == null)
+											{
+												<a type="button" href="@Url.Action("DeclineShiftDay", "Shifts", new {area = "User", shiftSignupId = s.ShiftSignupId})" data-confirm="WARNING: This will remove yourself from this shift. Are you sure you want to decline the shift @s.Shift.Name for @s.ShiftDay.ToShortDateString()?" rel="nofollow" class="btn btn-xs btn-danger"><i class='icon-trash'></i> Decline Shift Day</a>
+											}
+											@if (s.ShiftDay > DateTime.UtcNow.TimeConverter(Model.Department) && s.Trade == null)
+											{
+												<a type="button" href="@Url.Action("RequestTrade", "Shifts", new {area = "User", shiftSignupId = s.ShiftSignupId})" class="btn btn-xs btn-primary"><i class='icon-refresh'></i> Request Trade</a>
+											}
+											@if (s.Trade != null && !s.Trade.IsTradeComplete())
+											{
+												<a type="button" href="@Url.Action("FinishTrade", "Shifts", new { area = "User", shiftSignupTradeId = s.Trade.ShiftSignupTradeId })" class="btn btn-xs btn-info"><i class='icon-ok'></i> Finish Trade</a>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>Your Pending Trades</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										Shift
+									</th>
+									<th>
+										Group
+									</th>
+									<th>
+										Day
+									</th>
+									<th>
+										Time
+									</th>
+									<th class='span1'></th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var t in Model.Trades)
+								{
+									<tr>
+										<td>
+											@t.SourceShiftSignup.Shift.Name
+										</td>
+										<td>
+											@t.SourceShiftSignup.Group.Name
+										</td>
+										<td>
+											@t.SourceShiftSignup.ShiftDay.ToShortDateString()
+										</td>
+										<td>
+											@t.SourceShiftSignup.Shift.StartTime
+										</td>
+										<td>
+											@if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Open)
+											{
+												<a type="button" href="@Url.Action("ProcessTrade", "Shifts", new {area = "User", shiftSignupTradeId = t.ShiftSignupTradeId})" class="btn btn-xs btn-primary"><i class='icon-check'></i> Process Trade Request</a>
+											}
+											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Declined)
+											{
+												<span class="label label-danger">Declined</span>
+											}
+											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Accepted)
+											{
+												<span class="label label-success">Accepted</span>
+											}
+											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Filled)
+											{
+												<span class="label label-info">Filled</span>
+											}
+											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Proposed)
+											{
+												<span class="label label-info">Trade Offered</span>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

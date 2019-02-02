@@ -1,0 +1,18 @@
+/* Only demo */
+@media (max-width: 1000px) {
+  .welcome-message {
+    display: none;
+  }
+}
+
+.buttons-actions a {
+    color: white !important;
+}
+
+.unit-block {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #cccccc;
+    -webkit-box-shadow: 1px 1px 0 1px rgba(0,0,0,0.05);
+    box-shadow: 1px 1px 0 1px rgba(0,0,0,0.05);
+    padding: 10px;
+}

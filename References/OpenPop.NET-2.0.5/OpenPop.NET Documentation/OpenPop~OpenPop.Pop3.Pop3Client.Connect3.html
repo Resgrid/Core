@@ -1,0 +1,113 @@
+﻿<html dir="LTR" xmlns:ndoc="urn:ndoc-schema">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Pop3Client.Connect(String, Int32, Boolean, Int32, Int32, RemoteCertificateValidationCallback) Method</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Pop3Client.Connect(String, Int32, Boolean, Int32, Int32, RemoteCertificateValidationCallback) Method</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Connects to a remote POP3 server </p>
+      <div class="syntax">public <a href="">void</a> Connect(<br />   <a href="">string</a> <i>hostname</i>,<br />   <a href="">int</a> <i>port</i>,<br />   <a href="">bool</a> <i>useSsl</i>,<br />   <a href="">int</a> <i>receiveTimeout</i>,<br />   <a href="">int</a> <i>sendTimeout</i>,<br />   <a href="">RemoteCertificateValidationCallback</a> <i>certificateValidator</i><br />);</div>
+      <h4 class="dtH4">Parameters</h4>
+      <dl>
+        <dt>
+          <i>hostname</i>
+        </dt>
+        <dd>The <i>hostname</i> of the POP3 server</dd>
+        <dt>
+          <i>port</i>
+        </dt>
+        <dd>The port of the POP3 server</dd>
+        <dt>
+          <i>useSsl</i>
+        </dt>
+        <dd>
+          <b>true</b> if SSL should be used. <b>false</b> if plain TCP should be used.</dd>
+        <dt>
+          <i>receiveTimeout</i>
+        </dt>
+        <dd>Timeout in milliseconds before a socket should time out from reading. Set to 0 or -1 to specify infinite timeout.</dd>
+        <dt>
+          <i>sendTimeout</i>
+        </dt>
+        <dd>Timeout in milliseconds before a socket should time out from sending. Set to 0 or -1 to specify infinite timeout.</dd>
+        <dt>
+          <i>certificateValidator</i>
+        </dt>
+        <dd>If you want to validate the certificate in a SSL connection, pass a reference to your validator. Supply a null reference if default should be used.</dd>
+      </dl>
+      <h4 class="dtH4">Exceptions</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Exception Type</th>
+            <th width="50%">Condition</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopServerNotAvailableException.html">PopServerNotAvailableException</a>
+            </td>
+            <td width="50%">If the server did not send an OK message when a connection was established</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopServerNotFoundException.html">PopServerNotFoundException</a>
+            </td>
+            <td width="50%">If it was not possible to connect to the server</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="http://msdn.microsoft.com/en-us/library/System.ArgumentNullException(VS.80).aspx">ArgumentNullException</a>
+            </td>
+            <td width="50%">If <i>hostname</i> is a null reference</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="http://msdn.microsoft.com/en-us/library/System.ArgumentOutOfRangeException(VS.80).aspx">ArgumentOutOfRangeException</a>
+            </td>
+            <td width="50%">If port is not in the range [<a href="http://msdn.microsoft.com/en-us/library/System.Net.IPEndPoint.MinPort(VS.80).aspx">MinPort</a>, <a href="http://msdn.microsoft.com/en-us/library/System.Net.IPEndPoint.MaxPort(VS.80).aspx">MaxPort</a> or if any of the timeouts is less than -1.</td>
+          </tr>
+        </table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="OpenPop~OpenPop.Pop3.Pop3Client.html">Pop3Client Class</a> | <a href="~OpenPop.Pop3.html">OpenPop.Pop3 Namespace</a> | <a href="OpenPop~OpenPop.Pop3.Pop3Client.Connect~Overloads.html">Pop3Client.Connect Overload List</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="Connect method&#xD;&#xA;									">
+        </param>
+        <param name="Keyword" value="Connect method, Pop3Client class">
+        </param>
+        <param name="Keyword" value="Pop3Client.Connect method&#xD;&#xA;									">
+        </param>
+      </object>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20Pop3Client.Connect Method (String,%20Int32,%20Boolean,%20Int32,%20Int32,%20RemoteCertificateValidationCallback)">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>Generated from assembly OpenPop [2.0.4.369] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+      </div>
+    </div>
+  </body>
+</html>

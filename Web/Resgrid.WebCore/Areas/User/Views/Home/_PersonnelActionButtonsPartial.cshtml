@@ -1,0 +1,98 @@
+﻿@model Resgrid.Web.Areas.User.Models.Home.PersonnelActionButtonsPartialView
+
+
+@if (Model.StaffingLevels == null)
+{
+	<div class='btn-group'>
+		<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
+		<ul class='dropdown-menu dropdown-primary'>
+			<li role="presentation" class="dropdown-header">Set Staffing Level</li>
+			<li>
+				<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = user.UserId, stateType = 0 })">
+					<i class='icon-ok-sign'></i>&nbsp;Available
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = user.UserId, stateType = 1 })" rel="nofollow">
+					<i class='icon-plus-sign'></i>&nbsp;Delayed
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = user.UserId, stateType = 2 })" rel="nofollow">
+					<i class='fa fa-minus-sign'></i>&nbsp;Unavailable
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = user.UserId, stateType = 3 })" rel="nofollow">
+					<i class='icon-info-sign'></i>&nbsp;Committed
+				</a>
+			</li>
+		</ul>
+	</div>
+}
+else
+{
+	<div class='btn-group'>
+		<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
+		<ul class='dropdown-menu dropdown-primary'>
+			<li role="presentation" class="dropdown-header">Set Staffing Level</li>
+
+			@foreach (var state in Model.StaffingLevels.GetActiveDetails())
+			{
+				<li>
+					<a onclick="resgrid.home.dashboard.customStaffing(@Model.UserId, @state.CustomStateDetailId);">
+						@state.ButtonText
+					</a>
+				</li>
+			}
+		</ul>
+	</div>
+}
+
+@if (Model.States == null)
+{
+	<div class='btn-group'>
+		<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-flag'></i> <span class='caret'></span></a>
+		<ul class='dropdown-menu dropdown-primary'>
+			<li role="presentation" class="dropdown-header">Set Current Action</li>
+			<li>
+				<a href="@Url.Action("SetUserStandingBy", "Home", new { area = "User", userId = user.UserId })">
+					<i class='glyphicon glyphicon-play-circle'></i>&nbsp;Standing By
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("SetUserResponding", "Home", new { area = "User", userId = user.UserId })" rel="nofollow">
+					<i class='glyphicon glyphicon-ok-circle'></i>&nbsp;Responding
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("SetUserNotResponding", "Home", new { area = "User", userId = user.UserId })" rel="nofollow">
+					<i class='glyphicon glyphicon-ban-circle'></i>&nbsp;Not Responding
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("SetUserOnScene", "Home", new { area = "User", userId = user.UserId })" rel="nofollow">
+					<i class='glyphicon glyphicon-upload'></i>&nbsp;On Scene
+				</a>
+			</li>
+		</ul>
+	</div>
+}
+else
+{
+	<div class='btn-group'>
+		<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
+		<ul class='dropdown-menu dropdown-primary'>
+			<li role="presentation" class="dropdown-header">Set Staffing Level</li>
+
+			@foreach (var state in Model.States.GetActiveDetails())
+			{
+				<li>
+					<a onclick="resgrid.home.dashboard.customUserAction(@Model.UserId, @state.CustomStateDetailId);">
+						@state.ButtonText
+					</a>
+				</li>
+			}
+		</ul>
+	</div>
+}

@@ -1,0 +1,74 @@
+﻿<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>OpenPop.Mime.Decode</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">OpenPop.Mime.Decode Namespace</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>Contains utility classes to decode various encoded values.</p>
+      <p>
+        <a href="~OpenPop.Mime.Decode~Hierarchy.html">Namespace Hierarchy</a>
+      </p>
+      <h3 class="dtH3">Classes</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Class</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Mime.Decode.EncodingFinder.html">EncodingFinder</a>
+            </td>
+            <td width="50%"> Utility class used by OpenPop for mapping from a characterSet to an <a href="http://msdn.microsoft.com/en-us/library/System.Text.Encoding(VS.80).aspx">Encoding</a>.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /> The functionality of the class can be altered by adding mappings using <a href="OpenPop~OpenPop.Mime.Decode.EncodingFinder.AddMapping.html">AddMapping</a> and by adding a <a href="OpenPop~OpenPop.Mime.Decode.EncodingFinder.FallbackDecoder.html">FallbackDecoder</a>.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /> Given a characterSet, it will try to find the Encoding as follows: <ol xmlns:ndoc="urn:ndoc-schema"><li>If a mapping for the characterSet was added, use the specified Encoding from there. Mappings can be added using <b>AddMapping</b>.</li><li>Try to parse the characterSet and look it up using <a href="http://msdn.microsoft.com/en-us/library/System.Text.Encoding.GetEncoding(System.Int32)(VS.80).aspx">GetEncoding</a> for codepages or <a href="http://msdn.microsoft.com/en-us/library/System.Text.Encoding.GetEncoding(System.String)(VS.80).aspx">GetEncoding</a> for named encodings.</li><li>If an encoding is not found yet, use the <b>FallbackDecoder</b> if defined. The <b>FallbackDecoder</b> is user defined.</li></ol></td>
+          </tr>
+        </table>
+      </div>
+      <h3 class="dtH3">Delegates</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Delegate</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Mime.Decode.EncodingFinder.FallbackDecoderDelegate.html">EncodingFinder.FallbackDecoderDelegate</a>
+            </td>
+            <td width="50%"> Delegate that is used when the EncodingFinder is unable to find an encoding by using the <b>EncodingMap</b> or general code.<br xmlns:ndoc="urn:ndoc-schema" /> This is used as a last resort and can be used for setting a default encoding or for finding an encoding on runtime for some <i xmlns:ndoc="urn:ndoc-schema">characterSet</i>. </td>
+          </tr>
+        </table>
+      </div>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20OpenPop.Mime.Decode%20Namespace">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Home.ActivityStatsModel
+
+<ul class="mini-stats box-3">
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.SetupScore < 100)
+	{
+		<li style="padding: 8px 15px 0 10px;">
+			<a href="@Url.Action("SetupReport", "Help", new {User = "User"})" >
+				@if (Model.SetupScore >= 90)
+				{
+					<div class="progress progress-striped progress-sm">
+						<div style="width: @Model.SetupScore%;" class="progress-bar progress-bar-success"></div>
+					</div>
+				}
+				else if (Model.SetupScore > 50)
+				{
+					<div class="progress progress-striped progress-sm">
+						<div style="width: @Model.SetupScore%;" class="progress-bar progress-bar-warning"></div>
+					</div>
+				}
+				else
+				{
+					<div class="progress progress-striped progress-sm">
+						<div style="width: @Model.SetupScore%;" class="progress-bar progress-bar-danger"></div>
+					</div>
+				}
+				Department Setup is <strong>@Model.SetupScore</strong>% complete
+			</a>
+		</li>
+	}
+	<li>
+		<div class="left sparkline_bar_good"><span>@Model.ActivityNumbers</span>@Model.ActivityChange</div>
+		<div class="right" style="text-align: center;">
+			<strong>@Model.ActivityCount</strong>
+			Activity
+		</div>
+	</li>
+	<li>
+		<div class="left sparkline_bar_bad"><span>@Model.CallsNumbers</span>@Model.CallsChange</div>
+		<div class="right">
+			<strong>@Model.CallsCount</strong>
+			Calls
+		</div>
+	</li>
+</ul>

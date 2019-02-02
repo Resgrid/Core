@@ -1,0 +1,119 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Inventory.AdjustView
+@{
+	ViewBag.Title = "Resgrid | Adjust Inventory";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Adjust Inventory</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">Inventory</a>
+			</li>
+			<li class="active">
+				<strong>Adjust Inventory</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Inventory" asp-action="Adjust" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Type
+							</label>
+							<div class="col-sm-4">
+								@Html.DropDownListFor(m => m.Inventory.TypeId, new SelectList(Model.Types, "InventoryTypeId", "Type"), new { style = "width: 325px" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Station
+							</label>
+							<div class="col-sm-4">
+								@Html.DropDownListFor(m => m.Inventory.GroupId, new SelectList(Model.Stations, "DepartmentGroupId", "Name"), new { style = "width: 265px" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Unit
+							</label>
+							<div class="col-sm-4">
+								<select id="UnitId" name="UnitId" style="width: 265px;">
+									<option value="0">No Unit</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Note
+							</label>
+							<div class="col-sm-4">
+								@Html.TextAreaFor(m => m.Inventory.Note, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Batch\Serial Number
+							</label>
+							<div class="col-sm-2">
+								@Html.TextBoxFor(m => m.Inventory.Batch, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Location
+							</label>
+							<div class="col-sm-4">
+								@Html.TextBoxFor(m => m.Inventory.Location, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group" style="padding-bottom: 12px;">
+							<label class="col-sm-2 control-label required">
+								Amount
+							</label>
+							<div class="col-sm-2">
+								@Html.TextBoxFor(m => m.Inventory.Amount)
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Inventory" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Save</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/inventory/resgrid.inventory.adjust.js" type="text/javascript"></script>
+}

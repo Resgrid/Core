@@ -1,0 +1,51 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
+@{
+	ViewBag.Title = "Resgrid | Inventory History";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<style>
+	.k-grid-content {
+		padding-bottom: 150px;
+	}
+</style>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Inventory History</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">Inventory</a>
+			</li>
+			<li class="active">
+				<strong>Inventory History</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div id="inventoryList"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script id="inventorycommand-template" type="text/x-kendo-template">
+		<a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("ViewEntry", "Inventory", new {area = "User"})?inventoryId=#=InventoryId#">View</span></a>
+	</script>
+
+	<script src="~/js/app/internal/inventory/resgrid.inventory.history.js" type="text/javascript"></script>
+}

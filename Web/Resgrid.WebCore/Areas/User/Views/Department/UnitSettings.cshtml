@@ -1,0 +1,124 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Departments.UnitSettings.UnitSettingsView
+@{
+    ViewBag.Title = "Resgrid | Unit Settings";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@section Styles
+{
+
+}
+
+<div id="content-header">
+    <h1>Unit Settings</h1>
+</div>
+<div id="breadcrumb">
+    <a href="@Url.Action("Dashboard", "Home", new { Area = "User" })" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
+    <a href="#" class="current">Unit Settings</a>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-info"></i>
+                </span>
+                <h5>Edit Unit Settings</h5>
+            </div>
+            <div class="widget-content">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p>Below you can conifgure basic settings for your Department. Fields in <span class="required">blue italics</span> are required.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-gears"></i>
+                </span>
+                <h5>Unit Types</h5>
+                <div class="buttons-actions">
+                    <a title="Add a new unit type" class="btn btn-success" href="#newUnitTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Type</a>
+                </div>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-bordered table-striped table-hover data-table">
+                    <thead>
+                        <tr>
+                            <th>Type Name</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model.UnitTypes)
+                        {
+                            <tr>
+                                <td>
+                                    @c.Type
+                                </td>
+
+                                <td>
+                                    <a class="btn btn-xs btn-primary" href="@Url.Action("DeleteUnitType", "Department", new { area = "User", unitTypeId = c.UnitTypeId })" data-confirm="WARNING: This will permanently delete this unit type. Are you sure you want to delete the unit type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="newUnitTypeModal" class="modal fade @ViewBag.NewCallTypeModalCss" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="@ViewBag.NewCallTypeModalStyle">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Resgrid Unit Type</h4>
+            </div>
+            @using (Html.BeginForm("NewUnitType", "Department", FormMethod.Post, new { area = "User", id = "new_unitType", @class = "form-horizontal" }))
+            {
+                <div class="modal-body">
+                    @if (!String.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-success">
+                            @Model.Message
+                        </div>
+                    }
+                    <span class="alert-error">
+                        @Html.ValidationSummary(false)
+                        @Html.AntiForgeryToken()
+                    </span>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Unit Type Name
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.NewUnitType, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("UnitSettings", "Department", new { area = "User" })" class="btn">Close</a>
+                    <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Save Unit Type" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+}

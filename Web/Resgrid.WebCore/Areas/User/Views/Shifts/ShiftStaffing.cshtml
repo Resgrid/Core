@@ -1,0 +1,106 @@
+﻿@using Resgrid.Framework
+@model Resgrid.Web.Areas.User.Models.Shifts.ShiftStaffingView
+@{
+	ViewBag.Title = "Resgrid | Shift Staffing";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Shift Staffing</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+			</li>
+			<li class="active">
+				<strong>Shift Staffing</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="ShiftStaffing" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Shift</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.ShiftId, new SelectList(Model.Shifts, "ShiftId", "Name"), new { @class = "sl2", style="width:30%;" })
+								<span class="help-block m-b-none">Select the shift to process staffing for. You will only see shifts you have access to (are the Group Admin of, or Department Admin)</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Shift Day</label>
+							<div class="col-sm-10">
+								<input id="shiftDayPicker" name="shiftDayPicker" onkeydown="return false;">
+								<span class="help-block m-b-none">Select the day to process the staffing for.</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Note</label>
+							<div class="col-sm-10">
+								<textarea cols="30" rows="10" class="form-control" placeholder="Enter a freehand note for the shift (i.e. personnal staffing, switches mid-shift, etc)" asp-for="Note"></textarea>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Assignments</label>
+							<div class="col-sm-10">
+								<div id="groupStaffing">
+
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Set Shift Day Staffing</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+	@if (Model.IsDepartmentAdmin)
+	{
+		<script>
+			var groupId = 0;
+			var isAdmin = true;
+		</script>
+	}
+	else
+	{
+		<script>
+			var groupId = '@Model.GroupId';
+			var isAdmin = false;
+		</script>
+	}
+
+	<script src="~/js/app/internal/shifts/resgrid.shifts.shiftStaffing.js"></script>
+}

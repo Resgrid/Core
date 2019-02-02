@@ -1,0 +1,16 @@
+
+Map Markers
+--------------------------------------------
+https://mapicons.mapsmarker.com
+
+
+Entity Code First Migration Command
+---------------------------------------------------
+EntityFramework\Add-Migration -Name NAME -ProjectName Resgrid.Repositories.DataRepository -StartUpProjectName Resgrid.Repositories.DataRepository -ConfigurationTypeName Resgrid.Repositories.DataRepository.Migrations.Configuration
+
+
+Local Resgrid ToDo
+---------------------------------------------------
+Emails:	https://github.com/wildbit/mustachio https://github.com/wildbit/mailmason https://github.com/wildbit/postmark-templates
+Cache: Local Redis (need to have this configured via a config file)
+Service Bus queue and topic replacelement

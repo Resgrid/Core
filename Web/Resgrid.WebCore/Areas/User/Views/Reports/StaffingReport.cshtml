@@ -1,0 +1,248 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Reports.Personnel.StaffingReportView
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>Resgrid Staffing Report</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Resgrid Staffing Report">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+				crossorigin="anonymous"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<style>
+		.table th, .table td {
+			padding: 8px !important;
+			line-height: 20px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+	</style>
+
+	<!--[if lt IE 9]>
+	  <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+	<link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+	<link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+	<link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+	<link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-5 col-md-offset-1">
+				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-md-5" style="text-align: right;">
+				<h3 style="margin-top: 10px;">Resgrid Staffing Report</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-5 col-md-offset-1">
+
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Count</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var group in Model.GroupBreakdowns)
+						{
+							<tr>
+								<td colspan="2"><strong>@group.Name</strong></td>
+							</tr>
+
+							foreach (var data in group.CustomStaffingBreakdown)
+							{
+								<tr>
+									<td style="padding-left:10px;">@data.Item1</td>
+									<td>@data.Item2</td>
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+
+			</div>
+			<div class="col-md-5" style="text-align: right;">
+				<div id="staffingChart" class="graph" style="height: 250px; width: 100%;"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Group</th>
+							<th>Roles</th>
+							<th>Staffing</th>
+							<th>Staffing Timestamp</th>
+							<th>Next Change</th>
+							<th>Next Staffing</th>
+							<th>Note</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var row in Model.Rows)
+						{
+							<tr>
+								<td>@row.Name</td>
+								<td>@row.Group</td>
+								<td>@row.Roles</td>
+								<td>
+									@if (row.Staffing <= 25)
+									{
+										if (row.Staffing == 0)
+										{
+											<span class='label label-default'>Available</span>
+										}
+										else if (row.Staffing == 1)
+										{
+											<span class='label label-warning'>Delayed</span>
+										}
+										else if (row.Staffing == 2)
+										{
+											<span class='label label-danger'>Unavailable</span>
+										}
+										else if (row.Staffing == 3)
+										{
+											<span class='label label-info'>Committed</span>
+										}
+										else if (row.Staffing == 4)
+										{
+											<span class='label label-primary'>On Shift</span>
+										}
+									}
+									else
+									{
+										var customState = CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), row.Staffing);
+
+										if (customState != null)
+										{
+											<span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>
+										}
+										else
+										{
+											<span class='label label-default'>Unknown</span>
+										}
+									}
+								</td>
+								<td>@row.StaffingTimestamp</td>
+								<td>@row.NextStaffingTimestamp</td>
+								<td>
+									@if (row.NextStaffing <= 25)
+									{
+										if (row.NextStaffing == 0)
+										{
+											<span class='label label-default'>Available</span>
+										}
+										else if (row.NextStaffing == 1)
+										{
+											<span class='label label-warning'>Delayed</span>
+										}
+										else if (row.NextStaffing == 2)
+										{
+											<span class='label label-danger'>Unavailable</span>
+										}
+										else if (row.NextStaffing == 3)
+										{
+											<span class='label label-info'>Committed</span>
+										}
+										else if (row.NextStaffing == 4)
+										{
+											<span class='label label-primary'>On Shift</span>
+										}
+									}
+									else
+									{
+										var customState = CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), row.NextStaffing);
+
+										if (customState != null)
+										{
+											<span class='label label-default' style="color:@customState.TextColor;background-color: @customState.ButtonColor;">@customState.ButtonText</span>
+										}
+										else
+										{
+											<span class='label label-default'>Unknown</span>
+										}
+									}
+								</td>
+								<td>@row.StaffingNote</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1" style="text-align: right;">
+				@Model.RunOn.FormatForDepartment(Model.Department)
+			</div>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+	
+	<script src="~/clib/flot/jquery.flot.js"></script>
+	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
+	<script src="~/clib/flot/jquery.flot.resize.js"></script>
+	<script src="~/clib/flot/jquery.flot.pie.js"></script>
+	<script src="~/clib/flot/jquery.flot.time.js"></script>
+	<script src="~/clib/flot/jquery.flot.spline.js"></script>
+
+
+
+<script>
+	$(function() {
+		var data = [
+				@foreach (var bd in Model.CustomStaffingBreakdown)
+				{
+					@:{ label: '@bd.Item1', data: @bd.Item2 },
+				}
+			];
+			$.plot($("#staffingChart"), data,
+			{
+				series: {
+					pie: {
+						show: true,
+						radius: 1,
+						label: {
+							show: true,
+							radius: 1,
+							formatter: function(label, series) {
+								return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">' + label + '<br/>' + Math.round(series.percent) + '%</div>';
+							},
+							background: {
+								opacity: 0.8
+							}
+						}
+					}
+				},
+				legend: {
+					show: true
+				}
+			});
+		});
+	</script>
+</body>
+</html>

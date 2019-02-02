@@ -1,0 +1,225 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Shifts.ShiftsIndexModel
+@{
+	ViewBag.Title = "Resgrid | Shifts";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+@section Styles
+{
+	<style>
+		.nohover {
+			text-decoration: none !important;
+			color: black !important;
+		}
+
+			.nohover a a:hover {
+				text-decoration: none !important;
+				color: black !important;
+			}
+
+		small {
+			font-size: 70%;
+			color: #000 !important;
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Shifts</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Shifts</strong>
+			</li>
+		</ol>
+	</div>
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a id="yourShiftsButton" class="btn btn-primary top-button" title="Your Shifts" href="@Url.Action("YourShifts", "Shifts", new {area = "User"})">Your Shifts</a>
+				@if (Model.IsUserAdminOrGroupAdmin)
+				{
+					<a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Shift Staffing" href="@Url.Action("ShiftStaffing", "Shifts", new {area = "User"})">Shift Staffing</a>
+				}
+			</div>
+		</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>Shifts</h5>
+					<div class="ibox-tools">
+						@if (ClaimsAuthorizationHelper.CanCreateShift())
+						{
+							<div class="buttons-actions">
+								<a id="manageInvitesButton" title="Invite multiple people" class="btn btn-success" asp-controller="Shifts" asp-action="NewShift" asp-route-area="User">Add Shift</a>
+							</div>
+						}
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										Name
+									</th>
+									<th>
+										Type
+									</th>
+									<th>
+										Schedule
+									</th>
+									<th>
+										Groups
+									</th>
+									<th>
+										Personnel
+									</th>
+									<th class="span1">
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var g in Model.Shifts)
+								{
+									<tr>
+										<td>
+											@g.Name
+										</td>
+										<td>
+											@if (g.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
+											{
+												@Html.Raw("Assigned")
+											}
+											else
+											{
+												@Html.Raw("Signup")
+											}
+										</td>
+										<td>
+											@if (g.ScheduleType == (int)ShiftScheduleTypes.Manual)
+											{
+												@Html.Raw("Manual")
+											}
+											else if (g.ScheduleType == (int)ShiftScheduleTypes.Custom)
+											{
+												@Html.Raw("Custom")
+											}
+											else if (g.ScheduleType == (int)ShiftScheduleTypes.FortyEightNintySix)
+											{
+												@Html.Raw("48 on 96 off")
+											}
+											else if (g.ScheduleType == (int)ShiftScheduleTypes.TwentyFourFortyEight)
+											{
+												@Html.Raw("24 on 48 off")
+											}
+											else if (g.ScheduleType == (int)ShiftScheduleTypes.TwentyFourSeventyTwo)
+											{
+												@Html.Raw("24 on 72 off")
+											}
+										</td>
+										<td>
+											@if (g.Groups != null && g.Groups.Count > 0)
+											{
+												@Html.Raw(g.Groups.Count)
+											}
+											else
+											{
+												@Html.Raw("0")
+											}
+										</td>
+										<td>
+											@if (g.Personnel != null && g.Personnel.Count > 0)
+											{
+												@Html.Raw(g.Personnel.Count)
+											}
+											else
+											{
+												@Html.Raw("0")
+											}
+										</td>
+										<td>
+											<a asp-controller="Shifts" asp-action="ShiftCalendar" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-primary'>View Calendar</a>
+											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+											{
+												<a asp-controller="Shifts" asp-action="EditShiftDetails" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-primary'>Edit Details</a>
+												<a asp-controller="Shifts" asp-action="EditShiftDays" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-success'>Edit Calendar</a>
+												<a asp-controller="Shifts" asp-action="EditShiftGroups" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-info'>Edit Groups</a>
+												<a asp-controller="Shifts" asp-action="DeleteShift" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this shift. Are you sure you want to delete the shift @g.Name ?" rel="nofollow">Delete</a>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div id="shiftCalendar"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script id="shift-template" type="text/x-kendo-template">
+		#if (signupType === 0) {#
+		<a class="nohover" href='/User/Shifts/ViewShift?shiftDayId=#=calendarItemId#'>
+			<h4 style="margin-top:2px;margin-bottom:2px;"><small>#= title#</small></h4>
+			<dl style="margin-top:2px;">
+				# for (var i = 0; i < Users.length; i++) { #
+				#if (Users[i].IsYouOnShift === true) {#
+				<dt style="text-decoration: underline;"><small>#= Users[i].Name#</small></dt>
+				#}else{#
+				<dt><small>#= Users[i].Name#</small></dt>
+				# } #
+				# } #
+			</dl>
+		</a>
+		#}else{#
+		<a class="nohover" href='/User/Shifts/Signup?shiftDayId=#=calendarItemId#'>
+			<div>
+				<h4 style="margin-top:2px;margin-bottom:2px;"><small>#= title#</small></h4>
+				<dl style="margin-top:2px;">
+					# for (var i = 0; i < Groups.length; i++) { #
+					<dt><small>#= Groups[i].Name#</small></dt>
+
+					# for (var t = 0; t < Groups[i].Needs.length; t++) { #
+					<dd>
+						<small style="float:left;display: block !important;width:90%;">&nbsp;&nbsp;&nbsp;#= Groups[i].Needs[t].Name#</small>
+						<small style="float:right;display: block !important;width:10%;">#= Groups[i].Needs[t].Needed#</small>
+					</dd>
+					# } #
+					# } #
+				</dl>
+			</div>
+
+			#if (userSignedUp === true) {#
+			<em><small><b>You are signed up for this shift</b></small></em>
+			#}#
+		</a>
+		#}#
+	</script>
+
+	<script src="~/js/app/internal/shifts/resgrid.shifts.index.js"></script>
+}

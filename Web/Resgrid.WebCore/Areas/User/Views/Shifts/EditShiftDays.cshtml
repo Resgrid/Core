@@ -1,0 +1,129 @@
+﻿
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Shifts.EditShiftView
+@{
+	ViewBag.Title = "Resgrid | Edit Shift Calendar";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/jquery-ui.min.css" />
+<link rel="stylesheet" href="~/css/jquery-ui.theme.min.css"/>
+
+<style>
+	.ui-datepicker {
+		width: 100% !important;
+		}
+</style>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Edit Shift Calendar</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+			</li>
+			<li class="active">
+				<strong>Edit Shift Calendar</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="EditShiftDays" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								@Html.HiddenFor(m => m.Shift.ShiftId)
+								@Html.HiddenFor(m => m.Shift.AssignmentType)
+								@Html.HiddenFor(m => m.Shift.ScheduleType)
+								@Html.HiddenFor(m => m.Dates)
+								<div asp-validation-summary="All" class="text-danger"></div>
+
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-12"><div id="manualScheduleCalendar"></div></div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit" onclick="submitForm();">Update Shift Days</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/lib/jquery-ui.multidatespicker/jquery-ui.multidatespicker.js"></script>
+
+	<script>
+		$(document).ready(function() {
+			$.ajax({
+				url: '@Url.Action("GetShiftDays", "Shifts", new {Area = "User", shiftId = Model.Shift.ShiftId})',
+				contentType: 'application/json',
+				type: 'GET'
+			}).done(function(data) {
+				if (data) {
+					var unprocessedDays = [];
+					var processedDays = [];
+
+					for (var i = 0; i < data.length; i++) {
+						if (data[i].Processed === true) {
+							processedDays.push(data[i].Day);
+						} else {
+							unprocessedDays.push(data[i].Day);
+						}
+					}
+
+					if (unprocessedDays.length === 0 && processedDays.length === 0) {
+						$('#manualScheduleCalendar').multiDatesPicker({
+
+							numberOfMonths: [3, 4]
+						});
+					} else if (unprocessedDays.length > 0 && processedDays.length === 0) {
+						$('#manualScheduleCalendar').multiDatesPicker({
+							addDates: unprocessedDays,
+							numberOfMonths: [3, 4]
+						});
+					} else {
+						$('#manualScheduleCalendar').multiDatesPicker({
+							addDisabledDates: processedDays,
+							addDates: unprocessedDays,
+							numberOfMonths: [3, 4]
+						});
+					}
+
+					$('#manualScheduleCalendar').children().first().css('width', '100%');
+				}
+			});
+		});
+
+		function submitForm() {
+			var dates = $('#manualScheduleCalendar').multiDatesPicker('getDates');
+			$('#Dates').val(dates);
+			$("form")[0].submit();
+		}
+	</script>
+}

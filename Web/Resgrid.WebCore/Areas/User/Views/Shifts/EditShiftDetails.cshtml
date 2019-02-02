@@ -1,0 +1,119 @@
+﻿
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Shifts.EditShiftView
+@{
+	ViewBag.Title = "Resgrid | Edit Shift Details";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Edit Shift Details</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+			</li>
+			<li class="active">
+				<strong>Edit Shift Details</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="EditShiftDetails" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								@Html.HiddenFor(m => m.Shift.ShiftId)
+								@Html.HiddenFor(m => m.Shift.AssignmentType)
+								@Html.HiddenFor(m => m.Shift.ScheduleType)
+								<div asp-validation-summary="All" class="text-danger"></div>
+
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Name</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" placeholder="Name of the Shift" asp-for="Shift.Name">
+								<span class="help-block m-b-none">For example ("A Shift", "B Shift", "C Shift")</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Code</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" placeholder="Shift Code" asp-for="Shift.Code">
+								<span class="help-block m-b-none">Example ("A", "B", "C")</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Color</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control"  asp-for="Shift.Color" id="colorPicker">
+								<span class="help-block m-b-none">Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Start Time</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" asp-for="Shift.StartTime">
+								<span class="help-block m-b-none">When does the shift start for the first day (or only day)</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">End Time</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" asp-for="Shift.EndTime">
+								<span class="help-block m-b-none">When does the shift end for the last day (or only day)</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Non-Group Personnel</label>
+							<div class="col-sm-10">
+								<select id="shiftPersonnel" name="shiftPersonnel"></select>
+								<span class="help-block m-b-none">Personnel that are part of a shift but are not assigned to a group (i.e. floaters or roaming personnel)</span>
+							</div>
+						</div>
+						@foreach (var group in Model.Groups)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@group.Name</label>
+								<div class="col-sm-10">
+									<select id="groupPersonnel_@group.DepartmentGroupId" name="groupPersonnel_@group.DepartmentGroupId" class="groupPersonnelSelect"></select>
+								</div>
+							</div>
+						}
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Update Shift</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	<script src="~/js/app/internal/shifts/resgrid.shifts.editshiftdetails.js"></script>
+}

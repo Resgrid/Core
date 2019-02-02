@@ -1,0 +1,56 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
+@{
+	ViewBag.Title = "Resgrid | Inventory";
+}
+
+<style>
+	.k-grid-content {
+		padding-bottom: 150px;
+	}
+</style>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Inventory</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Inventory</strong>
+			</li>
+		</ol>
+	</div>
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				@if (ClaimsAuthorizationHelper.CanAdjustInventory())
+				{
+					<a title="Adjust inventory" class="btn btn-success" href="@Url.Action("Adjust", "Inventory", new {area = "User"})">Adjust Inventory</a>
+				}
+				<a title="View History" class="btn btn-primary" href="@Url.Action("History", "Inventory", new {area = "User"})">View History</a>
+				@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				{
+					<a title="Manage inventory types" class="btn btn-info" href="@Url.Action("ManageTypes", "Inventory", new {area = "User"})">Manage Types</a>
+				}
+			</div>
+		</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div id="inventoryIndexList"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/inventory/resgrid.inventory.index.js" type="text/javascript"></script>
+}

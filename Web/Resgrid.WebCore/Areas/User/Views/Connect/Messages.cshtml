@@ -1,0 +1,122 @@
+﻿
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Connect.MessagesView
+@{
+	ViewBag.Title = "Resgrid | Connect Messages";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div id="content-header">
+	<h1>Connect Messages</h1>
+</div>
+<div id="breadcrumb">
+	<a href="@Url.Action("Dashboard", "Home", new {Area = "User"})" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
+	<a href="@Url.Action("Index", "Connect", new { Area = "User" })" title="Go to Home" class="tip-bottom"><i class="icon-comment"></i>Connect</a>
+	<a href="#" class="current">Connect Messages</a>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box widget-messages">
+			<div class="widget-title">
+				<span class="icon">
+					<i class="icon-envelope-alt"></i>
+				</span>
+				<h5>Messages</h5>
+				<div class="buttons-actions">
+					<a id="addPersonButton" title="Add a single person" class="btn btn-success" href="@Url.Action("AddPost", "Connect", new {area = "User"})"><i class="icon-plus"></i> New Message</a>
+				</div>
+				<ul class="nav nav-tabs pull-right">
+					<li class="active"><a href="#inbox-tab" data-toggle="tab"><i class="icon-inbox"></i><span class="text"> Inbox</span></a></li>
+					@*<li><a href="#sent-tab" data-toggle="tab"><i class="icon-location-arrow"></i><span class="text"> Sent</span></a></li>
+					<li><a href="#settings" data-toggle="tab"><i class="icon-trash"></i><span class="text"> Trash</span></a></li>*@
+				</ul>
+			</div>
+			<div class="widget-content nopadding">
+				<div class="tab-content">
+					<div id="inbox-tab" class="tab-pane active checklist">
+						<ul class="messages-list">
+							@if (Model.Messages.Any())
+							{
+								foreach (var message in Model.Messages)
+								{
+									<li class="messages-item">
+										<span class="messages-item-star" title="Mark as starred"><i class="icon-star"></i></span>
+										<img class="messages-item-avatar" src="img/demo/av1.jpg" />
+										<span class="messages-item-from">John Doe</span>
+										<div class="messages-item-time">
+											<span class="text">10:23 PM</span>
+											<div class="messages-item-actions">
+												<a href="#" title="Reply" data-toggle="dropdown"><i class="icon-mail-reply"></i></a>
+												<div class="dropdown">
+													<a href="#" title="Move to folder" data-toggle="dropdown"><i class="icon-folder-open"></i></a>
+													<ul class="dropdown-menu pull-right">
+														<li><a href="#">Work</a></li>
+														<li><a href="#">Partners</a></li>
+														<li><a href="#">Family</a></li>
+													</ul>
+												</div>
+												<div class="dropdown">
+													<a href="#" title="Attach to tag" data-toggle="dropdown"><i class="icon-tag"></i></a>
+													<ul class="dropdown-menu pull-right">
+														<li><a href="#"><i class="tag-icon" style="background-color: green;"></i>Friends</a></li>
+														<li><a href="#"><i class="tag-icon" style="background-color: red;"></i>Important</a></li>
+														<li><a href="#"><i class="tag-icon" style="background-color: blue;"></i>Socials</a></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+										<span class="messages-item-subject">Astra anea en bumanso ...</span>
+										<span class="messages-item-preview">Lorem ipsum dolor sit amet, consec tetur adipisicing elit, sed do antera ...</span>
+
+									</li>
+								}
+							}
+							else
+							{
+								<span>No Messages</span>
+							}
+						</ul>
+						<div class="messages-content">
+							<div class="message-header">
+								<div class="message-from">John Doe &lt;john-doe@domain.com&gt;</div>
+								<div class="message-to">To: George Coockeny</div>
+								<div class="message-subject">Bootstrap 3.0 is finally here!</div>
+								<div class="message-time">8 Sep 2013, 08:46 PM</div>
+								<div class="message-actions">
+									<a href="#" title="Move to trash"><i class="icon-trash"></i></a>
+									<a href="#" title="Reply"><i class="icon-reply"></i></a>
+									<a href="#" title="Reply to all"><i class="icon-reply-all"></i></a>
+									<a href="#" title="Forward"><i class="icon-long-arrow-right"></i></a>
+								</div>
+							</div>
+							<div class="message-content">
+								<p>
+									Hi George!
+								</p>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ut blandit ligula. In accumsan mauris at augue feugiat consequat. Aenean consequat sem sed velit sagittis dignissim. Phasellus quis convallis est. Praesent porttitor mauris nec lectus mollis, eget sodales libero venenatis. Cras eget vestibulum turpis. In hac habitasse platea dictumst. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam turpis velit, tempor vitae libero ac, fermentum laoreet dolor.
+								</p>
+								<p>
+									Phasellus sodales metus at pulvinar facilisis. Aliquam et orci condimentum, ultrices erat in, ornare mi. Etiam vel nulla eu enim sagittis imperdiet. Donec justo arcu, iaculis eu ante ac, consequat vulputate nisl. Aenean sed consectetur tortor. Quisque tempus enim id velit ultricies, ac egestas leo vestibulum. Donec pulvinar viverra venenatis. Mauris eu dui enim. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus malesuada commodo odio, in hendrerit mi tincidunt nec.
+								</p>
+								<p>
+									Cras sed leo in neque iaculis iaculis vel vel sem. Praesent sed urna viverra odio molestie consectetur. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis quis consectetur arcu, quis tempus ipsum. Fusce eleifend arcu nunc, non porta ipsum imperdiet faucibus. Vivamus dictum, massa tincidunt blandit faucibus, tortor libero rhoncus nunc, id faucibus est leo non odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Quisque at elit sed quam pretium bibendum vel eget sem. Fusce sed ante nec eros placerat vulputate sed eget nulla. Sed in dictum justo, ut ullamcorper est. Proin semper tellus orci, eu accumsan neque ultrices at. Fusce a vulputate risus. Maecenas id hendrerit metus, ornare sodales dolor. Pellentesque tempus, justo quis faucibus commodo, magna mauris tempus velit, vitae egestas leo orci in sapien. Maecenas egestas erat augue, sit amet convallis lacus tristique eu. Donec gravida dui dictum libero eleifend dapibus.
+								</p>
+								<p>
+									Regards,<br />
+									John Doe
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	
+}

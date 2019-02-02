@@ -1,0 +1,108 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Mapping.MapIndexView
+@{
+	ViewBag.Title = "Resgrid | Mapping";
+}
+@section Styles
+{
+	<link rel="stylesheet" href="~/clib/mapMarkers/map-icons.min.css"/>
+
+	<style>
+		.labels {
+			color: red;
+			background-color: white;
+			font-family: "Lucida Grande", "Arial", sans-serif;
+			font-size: 10px;
+			font-weight: bold;
+			text-align: center;
+			width: 70px;
+			border: 2px solid black;
+			white-space: nowrap;
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Mapping</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Mapping</strong>
+			</li>
+		</ol>
+	</div>
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	{
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="Manage POIs" class="btn btn-success" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Manage POIs</a>
+			</div>
+		</div>
+	}
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div id="map" style="height: 750px; width: 100%;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="layersModal" tabindex="-1" role="dialog" aria-labelledby="layersModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="layersModalLabel">Map Options</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-3">Show Calls</div>
+					<div class="col-md-1"><input id="showCalls" type="checkbox"/>
+					</div>
+					<div class="col-md-3">Show Personnel</div>
+					<div class="col-md-1"><input id="showPersonnel" type="checkbox"/>
+					</div>
+					<div class="col-md-3">Show Units</div>
+					<div class="col-md-1"><input id="showUnits" type="checkbox"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">&nbsp;</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">Show Stations</div>
+					<div class="col-md-1"><input id="showStations" type="checkbox" /></div>
+					<div class="col-md-3">Show Geofences</div>
+					<div class="col-md-1"><input id="showDistricts" type="checkbox" /></div>
+					<div class="col-md-3">Show POIs</div>
+					<div class="col-md-1"><input id="showPOIs" type="checkbox" /></div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button id="saveMapOptionButtons" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+<script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
+<script src="~/clib/mapMarkers/map-icons.min.js"></script>
+	<script>
+		var centerLat = '@Model.Latitude';
+		var centerLon = '@Model.Longitude';
+	</script>
+	<script src="~/js/app/internal/mapping/resgrid.mapping.index.js" type="text/javascript"></script>
+}

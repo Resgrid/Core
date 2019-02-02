@@ -1,0 +1,190 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Dispatch.ChatView
+@{
+	ViewBag.Title = "Resgrid | Dispatch Chat";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@section Styles
+{
+
+}
+
+@Html.HiddenFor(m => m.DepartmentId)
+@Html.HiddenFor(m => m.UserId)
+@Html.HiddenFor(m => m.Name)
+<input id="myConId" type="hidden"/>
+
+<div id="content-header">
+	<h1>Dispatch</h1>
+</div>
+<div id="breadcrumb">
+	<a href="@Url.Action("Dashboard", "Home", new { Area = "User" })" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
+	<a href="@Url.Action("Dashboard", "Dispatch", new { Area = "User" })" title="Go to Dispach" class="tip-bottom"><i class="icon-bullhorn"></i>Dispatch</a>
+	<a href="#" class="current">Dispatch Chat</a>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box widget-chat">
+			<div class="widget-title">
+				<span class="icon">
+					<i class="fa fa-comment"></i>
+				</span>
+				<h5>Dispatch Chat</h5>
+				<div class="buttons">
+					<a class="btn go-full-screen"><i class="fa fa-resize-full"></i></a>
+				</div>
+			</div>
+			<div class="widget-content nopadding">
+				<div class="chat-content panel-left">
+					<div class="chat-messages" id="chat-messages">
+						<div id="chat-messages-inner" class="chat-messages-inner"></div>
+					</div>
+					<div class="chat-message well">
+						<span class="input-box input-group">
+							<input placeholder="Enter message here..." type="text" class="form-control input-small" name="msg-box" id="msg-box" />
+							<span class="input-group-btn">
+								<button class="btn btn-success btn-small" type="button" id="sendmessage" name="sendmessage">Send</button>
+							</span>
+						</span>
+					</div>
+				</div>
+				<div class="chat-users panel-right">
+					<div class="panel-title"><h5>Online Users</h5></div>
+					<div class="panel-content nopadding">
+						<ul id="userList" class="contact-list">
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="@Url.Content("~/Scripts/jquery.signalR-2.2.0.min.js")"></script>
+	<script src="https://api.resgrid.com/signalr/hubs"></script>
+	@*<script src="https://resgridapi.local/signalr/hubs"></script>*@
+	<script>
+		$(function () {
+			// Reference the auto-generated proxy for the hub.
+			var chatHub = $.connection.communicationHub;
+			
+			registerClientMethods(chatHub);
+
+			// Start Hub
+			//$.connection.hub.url = 'https://resgridapi.local/signalr';
+			$.connection.hub.url = 'https://api.resgrid.com/signalr';
+			$.connection.hub.start().done(function () {
+				registerEvents(chatHub);
+			});
+		});
+		// This optional function html-encodes messages for display in the page.
+		function htmlEncode(value) {
+			var encodedValue = $('<div />').text(value).html();
+			return encodedValue;
+		}
+
+		function registerEvents(chatHub) {
+			var userId = $('#UserId').val();
+			var name = $('#Name').val();
+			var departmentId = $('#DepartmentId').val();
+
+			chatHub.server.connect(userId, departmentId, 1, name, '');
+
+			$('#sendmessage').click(function () {
+				var msg = $("#msg-box").val();
+				if (msg.length > 0) {
+					var departmentId = $('#DepartmentId').val();
+					var name = $('#Name').val();
+
+					chatHub.server.sendAll(departmentId, name, msg);
+					$("#msg-box").val('');
+				}
+			});
+
+			$("#msg-box").keypress(function (e) {
+				if (e.which == 13) {
+					$('#sendmessage').click();
+				}
+			});
+
+
+		}
+
+		function registerClientMethods(chatHub) {
+			chatHub.client.onConnected = function (id, userName, allUsers, messages) {
+				$('#myConId').val(id);
+
+				// Add All Users
+				for (i = 0; i < allUsers.length; i++) {
+					AddUser(chatHub, allUsers[i].ConnectionId, allUsers[i].Identifier, allUsers[i].Name);
+				}
+
+				// Add Existing Messages
+				for (i = 0; i < messages.length; i++) {
+					AddMessage(messages[i].Name, messages[i].Body, messages[i].Timestamp);
+				}
+			}
+
+			// On New User Connected
+			chatHub.client.onNewUserConnected = function (id, userId, type, name) {
+				AddUser(chatHub, id, userId, name);
+			}
+
+
+			// On User Disconnected
+			chatHub.client.onUserDisconnected = function (id, userName) {
+				$('#' + id).remove();
+
+				var ctrId = 'private_' + id;
+				$('#' + ctrId).remove();
+				
+				var disc = $('<div class="disconnect">"' + userName + '" logged off.</div>');
+
+				$(disc).hide();
+				$('#divusers').prepend(disc);
+				$(disc).fadeIn(200).delay(2000).fadeOut(200);
+			}
+
+			chatHub.client.messageReceived = function (userName, message) {
+				AddMessage(userName, message);
+			}
+
+			chatHub.client.sendPrivateMessage = function (windowId, fromUserName, message) {
+				var ctrId = 'private_' + windowId;
+
+				if ($('#' + ctrId).length == 0) {
+					createPrivateChatWindow(chatHub, windowId, ctrId, fromUserName);
+				}
+
+				$('#' + ctrId).find('#divMessage').append('<div class="message"><span class="userName">' + fromUserName + '</span>: ' + message + '</div>');
+
+				// set scrollbar
+				var height = $('#' + ctrId).find('#divMessage')[0].scrollHeight;
+				$('#' + ctrId).find('#divMessage').scrollTop(height);
+			}
+		}
+
+		function AddUser(chatHub, id, userId, name) {
+			var myId = $('#myConId').val();
+			var code = $('<li id="' + id + '" class="online"><a href="#"><img src="https://api.resgrid.com/api/v3/Avatars/Get?id=' + userId + '" onerror="this.src=&quot;https://resgrid.com/Images/defaultProfile.png&quot;"> <span>' + name + '</span></a><span class="msg-count badge badge-info">0</span></li>');
+
+			$(code).dblclick(function () {
+				var id = $(this).attr('id');
+				if (id != myId)
+					OpenPrivateChatWindow(chatHub, id, name);
+			});
+			
+			$("#userList").append(code);
+		}
+
+		function AddMessage(name, message, timestamp) {
+			$('#chat-messages-inner').append('<p class="show" style="display: none;"><span class="msg-block"><strong>' + htmlEncode(name) + '</strong> <span class="time">' + timestamp + '</span><span class="msg">' + htmlEncode(message) + '</span></span></p>');
+
+			var height = $('#chat-messages-inner')[0].scrollHeight;
+			$('#chat-messages-inner').scrollTop(height);
+		}
+
+	</script>
+}

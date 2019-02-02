@@ -1,0 +1,75 @@
+﻿<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Pop3Client Methods</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Pop3Client Methods</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>The methods of the <b>Pop3Client</b> class are listed below. For a complete list of <b>Pop3Client</b> class members, see the <a href="OpenPop~OpenPop.Pop3.Pop3Client~Members.html">Pop3Client Members</a> topic.</p>
+      <h4 class="dtH4" xmlns:ndoc="urn:ndoc-schema">Public Instance Methods</h4>
+      <div class="tablediv" xmlns:ndoc="urn:ndoc-schema">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.Authenticate~Overloads.html">Authenticate</a></td><td width="50%">Overloaded.  Authenticates a user towards the POP server using <a href="OpenPop~OpenPop.Pop3.AuthenticationMethod.html">Auto</a>.<br /> If this authentication fails but you are sure that the username and password is correct, it might be that that the POP3 server is wrongly telling the client it supports <a href="OpenPop~OpenPop.Pop3.AuthenticationMethod.html">Apop</a>. You should try using <a href="OpenPop~OpenPop.Pop3.Pop3Client.Authenticate2.html">Authenticate</a> while passing <a href="OpenPop~OpenPop.Pop3.AuthenticationMethod.html">UsernameAndPassword</a> to the method. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.Capabilities.html">Capabilities</a></td><td width="50%"> Asks the server to return it's capability listing.<br /> This is an optional command, which a server is not enforced to accept. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.Connect~Overloads.html">Connect</a></td><td width="50%">Overloaded.  Connect to the server using user supplied stream </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.DeleteAllMessages.html">DeleteAllMessages</a></td><td width="50%"> Marks all messages as deleted.<br /><br /> The messages will not be deleted until a QUIT command is sent to the server.<br /> This is done when you call <a href="OpenPop~OpenPop.Pop3.Pop3Client.Disconnect.html">Disconnect</a> or when the Pop3Client is <a href="OpenPop~OpenPop.Pop3.Pop3Client.Dispose1.html">Disposed</a>.<br /> The method assumes that no prior message has been marked as deleted, and is not valid to call if this is wrong. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.DeleteMessage.html">DeleteMessage</a></td><td width="50%"> Marks the message with the given message number as deleted.<br /><br /> The message will not be deleted until a QUIT command is sent to the server.<br /> This is done when you call <a href="OpenPop~OpenPop.Pop3.Pop3Client.Disconnect.html">Disconnect</a> or when the Pop3Client is <a href="OpenPop~OpenPop.Pop3.Pop3Client.Dispose1.html">Disposed</a>. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.Disconnect.html">Disconnect</a></td><td width="50%"> Disconnects from POP3 server. Sends the QUIT command before closing the connection, which deletes all the messages that was marked as such. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Disposable.Dispose1.html">Dispose</a> (inherited from <b>Disposable</b>)</td><td width="50%">Overloaded.  Releases unmanaged and - optionally - managed resources </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessage.html">GetMessage</a></td><td width="50%"> Fetches a message from the server and parses it </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessageAsBytes.html">GetMessageAsBytes</a></td><td width="50%"> Fetches a message in raw form from the server </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessageCount.html">GetMessageCount</a></td><td width="50%"> Get the number of messages on the server using a STAT command </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessageHeaders.html">GetMessageHeaders</a></td><td width="50%"> Get all the headers for a message.<br /> The server will not need to send the body of the message. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessageSize.html">GetMessageSize</a></td><td width="50%"> Gets the size in bytes of a single message </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessageSizes.html">GetMessageSizes</a></td><td width="50%"> Get the sizes in bytes of all the messages.<br /> Messages marked as deleted are not listed. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessageUid.html">GetMessageUid</a></td><td width="50%"> Get a unique ID for a single message.<br /></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.GetMessageUids.html">GetMessageUids</a></td><td width="50%"> Gets a list of unique IDs for all messages.<br /> Messages marked as deleted are not listed. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.NoOperation.html">NoOperation</a></td><td width="50%"> Keep server active by sending a NOOP command.<br /> This might keep the server from closing the connection due to inactivity.<br /><br /> RFC:<br /> The POP3 server does nothing, it merely replies with a positive response. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.Reset.html">Reset</a></td><td width="50%"> Send a reset command to the server.<br /><br /> RFC:<br /> If any messages have been marked as deleted by the POP3 server, they are unmarked. The POP3 server then replies with a positive response. </td></tr></table>
+      </div>
+      <h4 class="dtH4" xmlns:ndoc="urn:ndoc-schema">Protected Instance Methods</h4>
+      <div class="tablediv" xmlns:ndoc="urn:ndoc-schema">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Disposable.AssertDisposed.html">AssertDisposed</a> (inherited from <b>Disposable</b>)</td><td width="50%"> Used to assert that the object has not been disposed </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Pop3Client.Dispose1.html">Dispose</a></td><td width="50%">Overloaded.  Disposes the <a href="OpenPop~OpenPop.Pop3.Pop3Client.html">Pop3Client</a>.<br /> This is the implementation of the <a href="http://msdn.microsoft.com/en-us/library/System.IDisposable(VS.80).aspx">IDisposable</a> interface.<br /> Sends the QUIT command to the server before closing the streams. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"></img><a href="OpenPop~OpenPop.Pop3.Disposable.Finalize.html">Finalize</a> (inherited from <b>Disposable</b>)</td><td width="50%"> Releases unmanaged resources and performs other cleanup operations before the <a href="OpenPop~OpenPop.Pop3.Disposable.html">Disposable</a> is reclaimed by garbage collection. </td></tr></table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="OpenPop~OpenPop.Pop3.Pop3Client.html">Pop3Client Class</a> | <a href="~OpenPop.Pop3.html">OpenPop.Pop3 Namespace</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="Pop3Client class, methods">
+        </param>
+      </object>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20Pop3Client Methods">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>Generated from assembly OpenPop [2.0.4.369] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+      </div>
+    </div>
+  </body>
+</html>

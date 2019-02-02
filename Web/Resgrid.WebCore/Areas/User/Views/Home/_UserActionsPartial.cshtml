@@ -1,0 +1,57 @@
+﻿@model Resgrid.Web.Areas.User.Models.Home.UserActionsPartialView
+
+
+@if (Model.States == null)
+{
+	<div>
+		<div class="widget-content" style="text-align: center;">
+			<div style="padding-bottom: 35px; text-align: center;">
+				<div class="btn-group" style="display: inherit;">
+					<a class="btn btn-large btn-block btn-success" style="width: 75%;" onclick=" resgrid.home.dashboard.actionResponding(); " href="#" style="color: #fff;">Responding</a>
+					<button class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+					<ul class="dropdown-menu">
+						<li><a onclick=" resgrid.home.dashboard.showStations(); " href="#"><i class='icon-home'></i>&nbsp;Respond to a Station </a></li>
+						<li><a onclick=" resgrid.home.dashboard.showCalls(); " href="#"><i class='icon-bullhorn'></i>&nbsp;Respond to a Call </a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div style="padding-top: 4px; text-align: center;">
+				<a class="btn btn-large btn-block btn-danger" style="width: 85%;" onclick=" resgrid.home.dashboard.actionNotResponding(); " href="#" style="color: #fff;">Not Responding</a>
+			</div>
+
+			<div style="padding-top: 4px; padding-bottom: 35px; text-align: center;">
+				<div class="btn-group" style="display: inherit;">
+					<a class="btn btn-large btn-block btn-info" style="width: 75%;" onclick=" resgrid.home.dashboard.actionAvailable(); " href="#" style="color: #fff;">Standing By</a>
+					<button class="btn btn-large btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+					<ul class="dropdown-menu">
+						<li><a onclick=" resgrid.home.dashboard.actionAvailableStation(); " href="#"><i class='fa fa-minus-circle'></i>&nbsp;Standing By at Station</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div style="padding-top: 4px; padding-bottom: 10px; text-align: center;">
+				<a class="btn btn-large btn-block btn-inverse" style="width: 85%;" onclick=" resgrid.home.dashboard.actionOnScene(); " href="#" style="color: #fff;">On Scene</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="respondToACallActionsWindow" id="respondToACallActionsWindow"></div>
+	<div class="respondToAStationActionsWindow" id="respondToAStationActionsWindow"></div>
+}
+else
+{
+	<div>
+		<div class="col-md-12" style="padding-bottom: 4px; padding-top: 4px;">
+			<textarea id="actionNote" style="width: 80%;" placeholder="Action Note (Optional)"></textarea>
+		</div>
+		<div class="widget-content" style="text-align: center;">
+			@foreach (var state in Model.States.GetActiveDetails())
+			{
+				<div style="padding-top: 4px; text-align: center;">
+					<a class="btn btn-large btn-block" style="width: 85%;color: @state.TextColor;background-color: @state.ButtonColor;" onclick="resgrid.home.dashboard.customAction(@state.CustomStateDetailId);" href="#">@state.ButtonText</a>
+				</div>
+			}
+		</div>
+	</div>
+}

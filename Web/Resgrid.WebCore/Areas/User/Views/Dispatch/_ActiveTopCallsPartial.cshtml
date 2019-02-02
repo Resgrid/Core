@@ -1,0 +1,17 @@
+﻿@model Resgrid.Web.Areas.User.Models.Dispatch.TopActiveCallsView
+
+@if (Model.Calls != null && Model.Calls.Count() > 0)
+{
+	foreach (var call in Model.Calls.Take(4))
+	{
+		<li>
+			<a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@call.CallId">
+				<div>
+					@call.Name
+					<span class="pull-right text-muted small">@call.LoggedOn.TimeConverterToString(Model.Department)</span>
+				</div>
+			</a>
+		</li>
+		<li class="divider"></li>
+	}
+}

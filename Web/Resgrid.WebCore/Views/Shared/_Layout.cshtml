@@ -1,0 +1,120 @@
+﻿@using Microsoft.ApplicationInsights.Extensibility
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Language" content="en">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Free cloud logsitics, communications and management for first responders">
+	<meta name="author" content="Resgrid">
+	<meta name="keywords" content="fire, department, volunteer, brigade, cert, search and rescue, sar, ems, emt, fire fighter, firefighter, logistics, personnel, apparatus, unit, security, disaster, response">
+	<link rel="shortcut icon" href="~/favicon.ico" />
+	<link rel="apple-touch-icon" href="~/images/apple-touch-icon-iphone.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="~/images/apple-touch-icon-ipad.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="~/images/apple-touch-icon-iphone4.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="~/images/apple-touch-icon-ipad3.png" />
+	<title>@ViewData["Title"]</title>
+	@Html.Partial("_StylePartial")
+
+	<!-- Add local styles, mostly for plugins css file -->
+	@if (IsSectionDefined("Styles"))
+	{
+		@RenderSection("Styles", required: false)
+	}
+
+	@Html.Raw(JavaScriptSnippet.FullScript)
+</head>
+<body id="page-top" class="landing-page">
+
+	@RenderBody()
+
+	<section id="contact" class="gray-section contact">
+		<div class="container">
+			<div class="row m-b-lg">
+				<div class="col-lg-12 text-center">
+					<div class="navy-line"></div>
+				</div>
+			</div>
+			<div class="row m-b-lg">
+				<div class="col-lg-2 col-lg-offset-2">
+					<address>
+						<strong><span class="navy">Resgrid, LLC.</span></strong><br />
+						3108 Silver Sage Dr.<br />
+						Carson City, NV 89701<br />
+					</address>
+				</div>
+				<div class="col-lg-4">
+					<p class="text-color text-center">
+						<ul class="list-group text-center" style="list-style: none;">
+							<li><a asp-controller="Affiliate" asp-action="Index">Affiliate Program</a></li>
+							<li><a asp-controller="Home" asp-action="Apps">Mobile Apps</a></li>
+							<li><a href="https://status.resgrid.com">Updates</a></li>
+							<li><a href="http://api.resgrid.com/help" target="_blank">Api</a></li>
+							<li><a asp-controller="Jobs" asp-action="Index">Jobs</a></li>
+						</ul>
+					</p>
+				</div>
+				<div class="col-lg-4">
+					<address>
+						<strong><span class="navy">Contact Us</span></strong><br/>
+						Phone: +1 888 570-4953<br/>
+						Email: <a href="mailto:team@resgrid.com">team@resgrid.com</a><br/>
+					</address>
+					<p>Subscribe to our newsletter</p>
+					<form onsubmit="return resgrid.public.mailer.addPublicSubscriber($('#newsletter_input').val())" id="newsletter" name="mc-embedded-subscribe-form" target="_blank" novalidate>
+						<div class="row">
+							<div class="col-sm-12">
+								<!-- start: Newsletter -->
+								<div class="input-group">
+									<label class="sr-only" for="newsletter_input">Email address</label>
+									<input type="email" id="newsletter_input" value="" name="EMAIL" class="form-control" placeholder="email address"/>
+									<span class="input-group-btn">
+										<input type="submit" id="newsletter_submit" class="btn btn-default" value="Subscribe">
+									</span>
+								</div>
+								<!-- end: Newsletter -->
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<p class="m-t-sm">
+						Or follow us on social platform
+					</p>
+					<ul class="list-inline social-icon">
+						<li>
+							<a href="https://twitter.com/Resgrid"><i class="fa fa-twitter"></i></a>
+						</li>
+						<li>
+							<a href="http://www.facebook.com/Resgrid"><i class="fa fa-facebook"></i></a>
+						</li>
+						<li>
+							<a href="https://github.com/orgs/Resgrid/"><i class="fa fa-github"></i></a>
+						</li>
+						<li>
+							<a href="http://www.linkedin.com/company/resgrid-llc"><i class="fa fa-linkedin"></i></a>
+						</li>
+						<li>
+							<a href="http://blog.resgrid.com/"><i class="fa fa-feed"></i></a>
+						</li>
+						<li>
+							<a href="https://plus.google.com/110468638860719461047"><i class="fa fa-google"></i></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
+					<p><strong>&copy; @DateTime.Now.Year Resgrid, LLC</strong><br/> <a asp-controller="Public" asp-action="Privacy">Privacy Policy</a> | <a asp-controller="Public" asp-action="Terms">Terms of Service</a></p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	@Html.Partial("_ScriptsPartial")
+	@RenderSection("Scripts", required: false)
+</body>
+</html>

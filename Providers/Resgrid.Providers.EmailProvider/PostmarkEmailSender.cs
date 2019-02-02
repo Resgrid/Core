@@ -1,0 +1,166 @@
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Net.Mail;
+using System.Net.Mime;
+using System.Text;
+using EmailModule;
+using PostmarkDotNet;
+using PostmarkDotNet.Exceptions;
+using PostmarkDotNet.Legacy;
+using Resgrid.Framework;
+using Resgrid.Model;
+using Resgrid.Model.Providers;
+
+namespace Resgrid.Providers.EmailProvider
+{
+	public class PostmarkEmailSender : IEmailSender
+	{
+		public void SendEmail(MailMessage email)
+		{
+			try
+			{
+				var to = new StringBuilder();
+				foreach (var t in email.To)
+				{
+					if (to.Length == 0)
+						to.Append(t.Address);
+					else
+						to.Append("," + t.Address);
+				}
+
+				var message = new PostmarkMessage(email.From.Address, to.ToString(), email.Subject, email.Body);
+
+				var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
+
+				message.From = null;
+
+				//var response = newClient.SendMessage(message);
+				var response = newClient.SendMessageAsync(email.From.Address, to.ToString(), email.Subject, email.Body).Result;
+
+				if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
+					!response.Message.Contains("You tried to send to a recipient that has been marked as inactive"))
+					Logging.LogError(string.Format("Error from PostmarkEmailSender->SendEmail: {3} {0} FromEmail:{1} ToEmail:{2}",
+						response.Message, email.From.Address, email.To.First().Address, response.ErrorCode));
+			}
+			catch (PostmarkValidationException) { }
+			catch// (Exception ex)
+			{
+				//if (!ex.ToString().Contains("You tried to send to a recipient that has been marked as inactive."))
+				//	Logging.LogException(ex);
+			}
+		}
+
+		public void Send(Email email)
+		{
+			var mail = CreateMailMessageFromEmail(email);
+
+			try
+			{
+				if (mail.From != null && mail.From.Address.Contains("resgrid.com") && mail.From.Address != "systemlist@resgrid.com" &&
+						mail.From.Address != "systemcheck@resgrid.com" && mail.From.Address != "systemcheck2@resgrid.com" &&
+						email.To.First() != "systemlist@resgrid.com" &&
+						email.To.First() != "systemcheck@resgrid.com" && email.To.First() != "systemcheck2@resgrid.com")
+				{
+					var to = new StringBuilder();
+					foreach (var t in email.To)
+					{
+						if (to.Length == 0)
+							to.Append(t);
+						else
+							to.Append("," + t);
+					}
+
+					//var message = new PostmarkMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
+					var message = new PostmarkMessage("", to.ToString(), email.Subject, email.HtmlBody);
+					var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
+
+					message.From = null;
+					//var response = newClient.SendMessage(message);
+
+					//var response = newClient.SendMessageAsync(email.From, to.ToString(), email.Subject, email.HtmlBody).Result;
+					var response = newClient.SendMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
+
+					if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
+							!response.Message.Contains("You tried to send to a recipient that has been marked as inactive"))
+						Logging.LogError(string.Format("Error from PostmarkEmailSender->Send: {3} {0} FromEmail:{1} ToEmail:{2}",
+							response.Message, mail.From.Address, mail.To.First().Address, response.ErrorCode));
+				}
+				else
+				{
+					try
+					{
+						using (var smtpClient = new SmtpClient
+						{
+							DeliveryMethod = SmtpDeliveryMethod.Network,
+							Host = Config.OutboundEmailServerConfig.Host
+						})
+						{
+							smtpClient.Credentials = new System.Net.NetworkCredential(Config.OutboundEmailServerConfig.UserName, Config.OutboundEmailServerConfig.Password);
+							smtpClient.Send(mail);
+						}
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+			catch (PostmarkValidationException) { }
+			catch (Exception)
+			{
+				try
+				{
+					using (var smtpClient = new SmtpClient
+					{
+						DeliveryMethod = SmtpDeliveryMethod.Network,
+						Host = Config.OutboundEmailServerConfig.Host
+					})
+					{
+						smtpClient.Credentials = new System.Net.NetworkCredential(Config.OutboundEmailServerConfig.UserName, Config.OutboundEmailServerConfig.Password);
+						smtpClient.Send(mail);
+					}
+				}
+				catch (Exception ex)
+				{
+					if (!ex.ToString().Contains("You tried to send to a recipient that has been marked as inactive."))
+						Logging.LogException(ex);
+				}
+			}
+		}
+
+		public MailMessage CreateMailMessageFromEmail(Email email)
+		{
+			var message = new MailMessage { From = new MailAddress(email.From), Subject = email.Subject };
+
+			if (!string.IsNullOrEmpty(email.Sender))
+			{
+				message.Sender = new MailAddress(email.Sender);
+			}
+
+			email.To.Each(to => message.To.Add(to));
+			email.ReplyTo.Each(to => message.ReplyToList.Add(to));
+			email.CC.Each(cc => message.CC.Add(cc));
+			email.Bcc.Each(bcc => message.Bcc.Add(bcc));
+			email.Headers.Each(pair => message.Headers[pair.Key] = pair.Value);
+
+			if (!string.IsNullOrEmpty(email.HtmlBody) && !string.IsNullOrEmpty(email.TextBody))
+			{
+				message.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(email.HtmlBody, new ContentType(ContentTypes.Html)));
+				//message.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(email.TextBody, new ContentType(ContentTypes.Text)));
+			}
+			else if (!string.IsNullOrEmpty(email.HtmlBody))
+			{
+				message.Body = email.HtmlBody;
+				message.IsBodyHtml = true;
+			}
+			else if (!string.IsNullOrEmpty(email.TextBody))
+			{
+				message.Body = email.TextBody;
+				message.IsBodyHtml = false;
+			}
+
+			return message;
+		}
+	}
+}

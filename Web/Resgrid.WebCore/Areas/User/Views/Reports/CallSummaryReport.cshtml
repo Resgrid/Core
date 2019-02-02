@@ -1,0 +1,347 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Reports.Calls.CallSummaryView
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>YTD Department Activity Report</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Department Activity Report">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+				crossorigin="anonymous"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
+
+	<style>
+		.table th, .table td {
+			padding: 8px !important;
+			line-height: 20px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+	</style>
+
+	<!--[if lt IE 9]>
+		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+	<link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+	<link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+	<link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+	<link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-1">
+				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-md-6" style="text-align: right;">
+				<h3 style="margin-top: 10px;">Call Summary Report</h3>
+				<span>@Model.Start.FormatForDepartment(Model.Department)</span><span>-</span><span>@Model.End.FormatForDepartment(Model.Department)</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>Call Types</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-5 col-md-offset-1">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>Type</th>
+							<th>Count</th>
+							<th>%</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var callType in Model.CallTypeCount.OrderBy(x => x.Item1))
+						{
+							if (callType.Item1 != "Total")
+							{
+								<tr>
+									<td style="padding-left: 10px;">@callType.Item1</td>
+									<td>@callType.Item2</td>
+									<td>
+										@{
+								float precent = (callType.Item2 * 100f) / Model.TotalCalls;
+										}
+										@Html.Raw(string.Format("{0}%", precent.ToString("F")))
+									</td>
+								</tr>
+							}
+						}
+
+						<tr>
+							<td style="padding-left: 10px;">@Model.CallTypeCount.Single(x => x.Item1 == "Total").Item1</td>
+							<td>@Model.CallTypeCount.Single(x => x.Item1 == "Total").Item2</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-5">
+				<div id="calls-types"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>Call States</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-5 col-md-offset-1">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>State</th>
+							<th>Count</th>
+							<th>%</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var callState in Model.CallCloseCount.OrderBy(x => x.Item1))
+						{
+							if (callState.Item1 != "Total")
+							{
+								<tr>
+									<td style="padding-left: 10px;">@callState.Item1</td>
+									<td>@callState.Item2</td>
+									<td>
+										@{
+								float precent = (callState.Item2 * 100f) / Model.TotalCalls;
+										}
+										@Html.Raw(string.Format("{0}%", precent.ToString("F")))
+									</td>
+								</tr>
+							}
+						}
+
+						<tr>
+							<td style="padding-left: 10px;">@Model.CallCloseCount.Single(x => x.Item1 == "Total").Item1</td>
+							<td>@Model.CallCloseCount.Single(x => x.Item1 == "Total").Item2</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-5">
+				<div id="calls-states"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>Calls</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>Number</th>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Logged On</th>
+							<th>Closed On</th>
+							<th>Call Length</th>
+							<th>OnScene Time</th>
+							<th>Units</th>
+							<th>Personnel</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var callState in Model.CallSummaries)
+						{
+							<tr>
+								<td style="padding-left: 10px;">@callState.Number</td>
+								<td>@callState.Name</td>
+								<td>@callState.Type</td>
+								<td>@callState.LoggedOn.FormatForDepartment(Model.Department)</td>
+								@if (callState.ClosedOn.HasValue)
+								{
+									<td>@callState.ClosedOn.Value.FormatForDepartment(Model.Department)</td>
+								}
+								else
+								{
+									<td>Open</td>
+								}
+								<td>@callState.GetCallLength()</td>
+								<td>@callState.GetOnSceneTime()</td>
+								<td>@callState.UnitsCount</td>
+								<td>@callState.PersonnelCount</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1" style="text-align: right;">
+				@Model.RunOn.FormatForDepartment(Model.Department)
+			</div>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+	<script src="~/clib/flot/jquery.flot.js"></script>
+	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
+	<script src="~/clib/flot/jquery.flot.resize.js"></script>
+	<script src="~/clib/flot/jquery.flot.pie.js"></script>
+	<script src="~/clib/flot/jquery.flot.time.js"></script>
+	<script src="~/clib/flot/jquery.flot.spline.js"></script>
+
+	<script src="~/clib/kendo/js/kendo.all.min.js"></script>
+	<script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+
+	<script>
+		$(document).ready(function () {
+			$("#calls-types").kendoChart({
+				dataSource: {
+					transport: {
+						read: {
+							url: "/User/Dispatch/CallsTypesInRange?startDate=@System.Net.WebUtility.UrlEncode(Model.Start.ToString())&endDate=@System.Net.WebUtility.UrlEncode(Model.End.ToString())",
+							dataType: "json"
+						}
+					},
+					sort: {
+						field: "Type",
+						dir: "asc"
+					}
+				},
+				title: { text: "Calls Types" },
+				transitions: false,
+				theme: "Bootstrap",
+				legend: {
+					position: "bottom"
+				},
+				chartArea: {
+					margin: {
+						top: 10,
+						right: 5,
+						bottom: 0,
+						left: 10
+					},
+					height: 240,
+					background: "transparent"
+				},
+				seriesDefaults: {
+					type: "verticalBullet",
+					style: "smooth",
+					stack: true,
+					//width: 2,
+					markers: {
+						//visible: false
+					}
+				},
+				series: [{
+					type: "column",
+					field: "Count"//,
+					//name: "Week #"
+				}],
+				categoryAxis: {
+					field: "Type",
+					labels: {
+						visible: true,
+						rotation: -45,
+						step: 1,
+						skip: 0
+					},
+					majorGridLines: {
+						visible: false
+					}
+				},
+				tooltip: {
+					visible: false//,
+					//template: "#= series.name # <br /> #= category #: #= value #"
+				}
+			});
+
+			$("#calls-states").kendoChart({
+				dataSource: {
+					transport: {
+						read: {
+							url: "/User/Dispatch/CallsStatesInRange?startDate=@System.Net.WebUtility.UrlEncode(Model.Start.ToString())&endDate=@System.Net.WebUtility.UrlEncode(Model.End.ToString())",
+							dataType: "json"
+						}
+					},
+					sort: {
+						field: "Type",
+						dir: "asc"
+					}
+				},
+				title: { text: "Calls States" },
+				transitions: false,
+				theme: "Bootstrap",
+				legend: {
+					position: "bottom"
+				},
+				chartArea: {
+					margin: {
+						top: 10,
+						right: 5,
+						bottom: 0,
+						left: 10
+					},
+					height: 240,
+					background: "transparent"
+				},
+				seriesDefaults: {
+					type: "verticalBullet",
+					style: "smooth",
+					stack: true,
+					//width: 2,
+					markers: {
+						//visible: false
+					}
+				},
+				series: [{
+					type: "column",
+					field: "Count"//,
+					//name: "Week #"
+				}],
+				categoryAxis: {
+					field: "Type",
+					labels: {
+						visible: true,
+						rotation: -45,
+						step: 1,
+						skip: 0
+					},
+					majorGridLines: {
+						visible: false
+					}
+				},
+				tooltip: {
+					visible: false//,
+					//template: "#= series.name # <br /> #= category #: #= value #"
+				}
+			});
+		});
+	</script>
+
+</body>
+</html>

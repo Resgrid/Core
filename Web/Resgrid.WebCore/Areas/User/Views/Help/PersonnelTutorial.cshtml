@@ -1,0 +1,65 @@
+﻿<div style="display: block;" id="help-button" class="help-button hidden-sm hidden-xs start-tour" data-demo></div>
+
+<script>
+	$(function() {
+		var $demo, duration, remaining, tour;
+		$demo = $("#help-button");
+		duration = 5000;
+		remaining = duration;
+		tour = new Tour({
+			onStart: function () {
+				resgrid.common.analytics.track('Tour - Personnel');
+				return $demo.addClass("disabled", true);
+			},
+			onEnd: function() {
+				return $demo.removeClass("disabled", true);
+			},
+			debug: true,
+			steps: [
+				{
+					//path: "/User/Home/Dashboard",
+					orphan: true,
+					//backdrop: true,
+					title: "Personnel Tutorial",
+					content: "Welcome to the walk through tutorial of the Personnel page. Following the steps will guide you through all the important elements of the page."
+				}, {
+					//path: "/",
+					//backdrop: true,
+					//reflex: true,
+					element: "#rolesButton",
+					placement: "left",
+					title: "Roles",
+					content: "A role is something that you can assign to your personnel to logically group them. Example roles are (Firefighter, EMT, Hazmat, Engineer, EMT-B, Paramedic, Chief, Support, etc). A person can be in many roles for example a Firefighter might be an EMT, Hazmat Tech and an Engineer. Roles are good for tagging capabilities or certification levels to your personnel. In this area you can add or remove roles for your department."
+				}, {
+					//path: "/",
+					element: "#personnelContainer",
+					placement: "top",
+					title: "Personnel List",
+					content: "This is the list of all your personnel and their state in the system. You can click on the blue name to directly edit that person’s profile, or click the blue button on each row for more options."
+				}, {
+					//path: "/api",
+					element: "#addPersonButton",
+					placement: "left",
+					title: "Add Person",
+					content: "This option allows you to add a single person into the Resgrid system by supplying all the information required to create that user. This works well if you have a small number of personnel to add, or want full control over creating those users."//,
+					//reflex: true
+				}, {
+					//path: "/api",
+					element: "#manageInvitesButton",
+					placement: "left",
+					title: "Invite People",
+					content: "Resgrid allows you to invite multiple personnel at one time by supplying all of their email addresses separated by commas. Personnel sent an invite will get an email with a link to complete their invitation. Those users will then supply their own username and password and then be able to fill out their own profile information. This option is very useful if you need to invite many people without a lot of work."//,
+					//duration: 5000
+				}
+			]
+		}).init();
+		$(document).on("click", "[data-demo]", function(e) {
+			e.preventDefault();
+			if ($(this).hasClass("disabled")) {
+				return;
+			}
+			tour.restart();
+			return $(".alert").alert("close");
+		});
+	});
+</script>

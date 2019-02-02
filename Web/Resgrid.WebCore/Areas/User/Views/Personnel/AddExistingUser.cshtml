@@ -1,0 +1,84 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Personnel.ViewPersonView
+@{
+	ViewBag.Title = "Resgrid | Add Existing User";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>View Person</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+      </li>
+      <li class="active">
+        <strong>Add Existing User</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <br />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox ">
+      <div class="ibox-title">
+        <h5>Existing User Added</h5>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-4 col-lg-4" align="center">
+            <p>
+              This user (@Model.Profile.FullName.AsFirstNameLastName), based on email address, already had a Resgrid account in another department. The user account has now been added <b>with their previous profile settings (name, phone numbers, preferences, etc)</b> to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).
+            </p>
+          </div>
+          <div class=" col-md-8 col-lg-8">
+            <table class="table table-user-information">
+              <tbody>
+                <tr>
+                  <td>User:</td>
+                  <td>@Model.Profile.FullName.AsFirstNameLastName</td>
+                </tr>
+                @if (ClaimsAuthorizationHelper.CanViewPII())
+									{
+                  <tr>
+                    <td>Email</td>
+                    <td><a href="mailto:@Model.User.Email">@Model.User.Email</a></td>
+                  </tr>
+                  <tr>
+                    <td>Phone Number(s)</td>
+                    <td>
+                      @if (!String.IsNullOrWhiteSpace(Model.Profile.HomeNumber))
+												{
+                        <span>@Model.Profile.HomeNumber (Home)</span>
+                        <br />
+												}
+                      @if (!String.IsNullOrWhiteSpace(Model.Profile.MobileNumber))
+												{
+                        <span>@Model.Profile.MobileNumber (Mobile)</span>
+												}
+                    </td>
+                  </tr>
+									}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+
+}

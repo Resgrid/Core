@@ -1,0 +1,34 @@
+﻿@using System.Web.Optimization
+@Scripts.Render("~/bundles/jqueryform")
+@Scripts.Render("~/bundles/jcrop")
+@Scripts.Render("~/bundles/avatar")
+@Styles.Render("~/Content/jcrop")
+@Styles.Render("~/Content/avatar")
+
+<section id="avatar-upload-box">
+	@using (Ajax.BeginForm("_Upload", "Profile", new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data", id = "avatar-upload-form" }))
+	{
+		@Html.AntiForgeryToken()
+		<input type="file" name="files" /><br>
+		<div class="upload-file-notice">Maximum Size: <span id="avatar-max-size"></span> MB</div>
+	}
+	<div class="upload-progress col-md-6 hidden">
+		<div class="upload-percent-value pull-left">0%</div>
+		<div class="upload-percent-bar pull-left"></div>
+	</div>
+	<div id="upload-status"></div>
+</section>
+<section id="avatar-crop-box" class="hidden">
+	<p>
+		<img src="" id="crop-avatar-target" alt="Uploaded image" />
+		<div id="preview-pane">
+			<div class="preview-container">
+				<img src="" class="jcrop-preview" alt="Preview" />
+			</div>
+		</div>
+	</p>
+	<p><button class="btn btn-default" onclick="saveAvatar() ">Save Avatar</button></p>
+</section>
+<div id="avatar-result" class="hidden">
+	<img src="" alt="Final Image" />
+</div>

@@ -1,0 +1,130 @@
+﻿<div style="display: block;" id="help-button" class="help-button hidden-sm hidden-xs start-tour" data-demo></div>
+
+<script>
+	$(function () {
+		var $demo, duration, remaining, tour;
+		$demo = $("#help-button");
+		duration = 5000;
+		remaining = duration;
+		tour = new Tour({
+			onStart: function () {
+				resgrid.common.analytics.track('Tour - Profile');
+				return $demo.addClass("disabled", true);
+			},
+			onEnd: function () {
+				return $demo.removeClass("disabled", true);
+			},
+			debug: true,
+			steps: [
+				{
+					//path: "/User/Home/Dashboard",
+					orphan: true,
+					//backdrop: true,
+					title: "Profile Tutorial",
+					content: "Welcome to the walk through tutorial of the Profile page. Following the steps will guide you through all the important elements of the page."
+				}, {
+					//path: "/",
+					//backdrop: true,
+					//reflex: true,
+					element: "#staffingScheduleButton",
+					placement: "bottom",
+					title: "Staffing Schedule",
+					content: "In this area you can setup automated staffing changes on a schedule. For example every M-F at 0800 set your staffing level to Unavailable and then at 1700 set it to Available."
+				}, {
+					//path: "/",
+					element: "#devicesButton",
+					placement: "bottom",
+					title: "Mobile Devices",
+					content: "In this area you can manage your devices that are paired with Resgrid for Push Notifications. If you are receiving duplicate notifications you may try and delete some items out of this list."
+				}, {
+					//path: "/api",
+					element: "#reportingButton",
+					placement: "bottom",
+					title: "Reporting",
+					content: "In this area you can schedule delivery of PDF reports to your email. For example if you wanted the Staffing Report run every at 1000 you can do that here."//,
+					//reflex: true
+				}, {
+					//path: "/api",
+					element: "#certificationsButton",
+					placement: "left",
+					title: "Certifications",
+					content: "Here is where you can track and manage you certifications. Certifications can be from organizations like NFPA or National Registry or tracking your department specific certs like OSHA."//,
+					//duration: 5000
+				}, {
+					//path: "/api",
+					element: "#profileContainer",
+					placement: "top",
+					title: "Profile Info",
+					content: "Supply your first and last name for the system. If you were assigned an ID (Identification Number) from your organization, you can supply it here to ensure your information will match up.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#gravatarSection",
+					placement: "left",
+					title: "Your Avatar/Picture",
+					content: "Resgrid uses Gravatar.com (a secure 3rd party service) to provide you with an avatar or profile photo. To setup a profile image you can click on this section and set up a Gravatar account with the email address you use for Resgrid.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#contactContainer",
+					placement: "top",
+					title: "Phone Information",
+					content: "Supply your mobile phone number if you want to receive text message notification from Resgrid or want to use the Text Command Interface (controlling Resgrid via text messages). Your home number can be used in the future to communicate automated voice dispatches.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#callOptionsSection",
+					placement: "top",
+					title: "Call Options",
+					content: "If you wish to receive communications and notifications about calls in the system select the options here that you want to receive communications over. If you have not selected any options you will not receive notifications about calls.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#messageOptionsSection",
+					placement: "top",
+					title: "Message Options",
+					content: "If you wish to receive communications and notifications about messages in the system select the options here that you want to receive communications over. If you have not selected any options you will not receive notifications about messages.",
+					//backdrop: true,
+					reflex: true
+				},{
+					//path: "/api",
+					element: "#physicalAddressContainer",
+					placement: "top",
+					title: "Physical Address",
+					content: "Enter your physical address to help keep your departments records compete. This is not required data and is optional.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#mailingAddressContainer",
+					placement: "top",
+					title: "Mailing Address",
+					content: "Enter your mailing address to help keep your departments records compete. This is not required data and is optional.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#accountInfoContainer",
+					placement: "top",
+					title: "Account Information",
+					content: "In this section, you can update your username or your password. You supply your current password if you want to update that information. Note if you change your username or password you will need to ensure all application using that information are also updated with your new info.",
+					//backdrop: true,
+					reflex: true
+				}
+
+			]
+		}).init();
+		$(document).on("click", "[data-demo]", function (e) {
+			e.preventDefault();
+			if ($(this).hasClass("disabled")) {
+				return;
+			}
+			tour.restart();
+			return $(".alert").alert("close");
+		});
+	});
+</script>

@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNet.SignalR.SqlServer</name>
+    </assembly>
+    <members>
+        <member name="M:Microsoft.AspNet.SignalR.AssemblyExtensions.StringResource(System.Reflection.Assembly,System.String)">
+            <summary>
+            Loads an embedded string resource from the assembly.
+            </summary>
+            <param name="assembly">The assembly containing the embedded resource.</param>
+            <param name="name">The resource name.</param>
+            <returns>The embedded resource string.</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.SqlServer.ObservableDbOperation">
+            <summary>
+            A DbOperation that continues to execute over and over as new results arrive.
+            Will attempt to use SQL Query Notifications, otherwise falls back to a polling receive loop.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.SqlServer.ObservableDbOperation.CurrentNotificationState">
+            <summary>
+            For use from tests only.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.SignalR.SqlServer.ObservableDbOperation.ExecuteReaderWithUpdates(System.Action{System.Data.IDataRecord,Microsoft.AspNet.SignalR.SqlServer.DbOperation})">
+            <summary>
+            Note this blocks the calling thread until a SQL Query Notification can be set up
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.SqlServer.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.SqlServer.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.SqlServer.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.SqlServer.Resources.Error_UnexpectedSqlNotificationType">
+            <summary>
+              Looks up a localized string similar to An unexpected SqlNotificationType was received. Details: Type={0}, Source={1}, Info={2}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.SqlServer.Resources.Error_UnsupportedSqlEdition">
+            <summary>
+              Looks up a localized string similar to The SQL Server edition of the target server is unsupported, e.g. SQL Azure..
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.SqlServer.SqlMessageBus">
+            <summary>
+            Uses SQL Server tables to scale-out SignalR applications in web farms.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.SignalR.SqlServer.SqlMessageBus.#ctor(Microsoft.AspNet.SignalR.IDependencyResolver,Microsoft.AspNet.SignalR.SqlScaleoutConfiguration)">
+            <summary>
+            Creates a new instance of the SqlMessageBus class.
+            </summary>
+            <param name="resolver">The resolver to use.</param>
+            <param name="configuration">The SQL scale-out configuration options.</param>
+        </member>
+        <member name="M:Microsoft.AspNet.SignalR.DependencyResolverExtensions.UseSqlServer(Microsoft.AspNet.SignalR.IDependencyResolver,System.String)">
+            <summary>
+            Use SQL Server as the messaging backplane for scaling out of ASP.NET SignalR applications in a web farm.
+            </summary>
+            <param name="resolver">The dependency resolver.</param>
+            <param name="connectionString">The SQL Server connection string.</param>
+            <returns>The dependency resolver.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.SignalR.DependencyResolverExtensions.UseSqlServer(Microsoft.AspNet.SignalR.IDependencyResolver,Microsoft.AspNet.SignalR.SqlScaleoutConfiguration)">
+            <summary>
+            Use SQL Server as the messaging backplane for scaling out of ASP.NET SignalR applications in a web farm.
+            </summary>
+            <param name="resolver">The dependency resolver.</param>
+            <param name="configuration">The SQL scale-out configuration options.</param>
+            <returns>The dependency resolver.</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.SqlScaleoutConfiguration">
+            <summary>
+            Settings for the SQL Server scale-out message bus implementation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.SqlScaleoutConfiguration.ConnectionString">
+            <summary>
+            The SQL Server connection string to use.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.SqlScaleoutConfiguration.TableCount">
+            <summary>
+            The number of tables to store messages in. Using more tables reduces lock contention and may increase throughput.
+            This must be consistent between all nodes in the web farm.
+            Defaults to 1.
+            </summary>
+        </member>
+    </members>
+</doc>

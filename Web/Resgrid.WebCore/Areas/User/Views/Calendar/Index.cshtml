@@ -1,0 +1,124 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Calendar.IndexView
+@{
+  ViewBag.Title = "Resgrid | Calendar";
+  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+@section Styles
+  {
+  <style>
+	.k-window {
+	top: 50px !important;
+	}
+  </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Calendar</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Calendar</strong>
+      </li>
+    </ol>
+  </div>
+  <div class="col-sm-8">
+    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+      <div class="buttons-actions">
+        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+		{
+          <a asp-controller="Calendar" asp-action="Types" asp-route-area="User" title="Manage Calendar Types" class="btn btn-primary"> Manage Types</a>
+		}
+        @if (ClaimsAuthorizationHelper.CanCreateCalendarEntry())
+		{
+          <a asp-controller="Calendar" asp-action="New" asp-route-area="User" title="Add a new calendar entry" class="btn btn-success">New Entry</a>
+		}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-9">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div id="calendar"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Upcoming</h5>
+        </div>
+        <div class="ibox-content">
+          <div id='external-events'>
+            @if (Model.UpcomingItems.Any())
+			{
+			  foreach (var item in Model.UpcomingItems)
+			  {
+
+				var itemType = Model.Types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
+
+				if (itemType != null)
+				{
+                  <div class='external-event' style="background-color: @itemType.Color;">
+                    <a asp-controller="Calendar" asp-action="View" asp-route-area="User" asp-route-calendarItemId="@item.CalendarItemId" style="color: white;">
+                      @item.Title
+                    </a>
+                  </div>
+				}
+				else
+				{
+                  <div class='external-event'>
+                    <a asp-controller="Calendar" asp-action="View" asp-route-area="User" asp-route-calendarItemId="@item.CalendarItemId">
+                      @item.Title
+                    </a>
+                  </div>
+				}
+			  }
+			}
+			else
+			{
+              <div class='external-event'>
+                No Upcoming Items
+              </div>
+			}
+          </div>
+        </div>
+      </div>
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Types</h5>
+        </div>
+        <div class="ibox-content">
+          <div id='external-events'>
+            @if (Model.Types.Any())
+			{
+			  foreach (var type in Model.Types)
+			  {
+                <div class='external-event' style="color: white; background-color: @type.Color;">@type.Name</div>
+			  }
+			}
+			else
+			{
+              <div class='external-event'>
+                No Custom Types
+              </div>
+			}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+@section Scripts
+  {
+  <script src="~/js/app/internal/calendar/resgrid.calendar.index.js" type="text/javascript"></script>
+}

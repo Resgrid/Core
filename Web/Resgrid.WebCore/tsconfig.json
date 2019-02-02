@@ -1,0 +1,18 @@
+﻿{
+  "compilerOptions": {
+    "allowJs": true,
+    "noEmit": true
+  },
+  "include": [
+    "wwwroot/js/app/**/*", "Areas/User/Models/Calendar/EditCalendarEntry.cs", "../../Tools/Resgrid.Console/Args/DbUpdateArgs.cs"
+  ]//,
+  //"exclude": [
+  //  "node_modules",
+  //  "wwwroot/clib",
+  //  "wwwroot/lib",
+  //  "obj",
+  //  "bin",
+  //  "lib",
+  //  "clib"
+  //]
+}

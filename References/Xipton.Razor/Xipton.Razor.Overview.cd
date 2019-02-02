@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Xipton.Razor.Config.RazorConfig">
+    <Position X="6.25" Y="6" Width="1.5" />
+    <Members>
+      <Method Name="CreateDefaultContentProviders" Hidden="true" />
+      <Method Name="CreateDefaultNamespaces" Hidden="true" />
+      <Method Name="CreateDefaultReferences" Hidden="true" />
+      <Method Name="CreateDefaultRootOperatorElement" Hidden="true" />
+      <Method Name="CreateDefaultTemplatesElement" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Field Name="RootElementName" Hidden="true" />
+      <Method Name="TryLoadConfiguration" Hidden="true" />
+      <Method Name="TryResolveWildcardReferences" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="Xipton.Razor.Config.RazorConfig.ConfigElement" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Config\RazorConfig.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Xipton.Razor.Config.RazorConfig.RootOperatorElement" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Config\RazorConfig.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Xipton.Razor.Config.RazorConfig.TemplatesElement" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Config\RazorConfig.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAQEgAAQAAiAEBAAAAAABQAAAAAQAAAAAiAAA=</HashCode>
+      <FileName>Config\RazorConfig.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Xipton.Razor.Core.TemplateFactory" BaseTypeListCollapsed="true">
+    <Position X="6" Y="8.5" Width="2" />
+    <Members>
+      <Field Name="_compiledTemplateTypeCache" Hidden="true" />
+      <Field Name="_razorContext" Hidden="true" />
+      <Field Name="_razorEngine" Hidden="true" />
+      <Method Name="CheckCompileResults" Hidden="true" />
+      <Method Name="CheckParseResults" Hidden="true" />
+      <Method Name="CreateAssembly" Hidden="true" />
+      <Method Name="CreateBucket" Hidden="true" />
+      <Method Name="CreateCodeProvider" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Method Name="GenerateSourceCode" Hidden="true" />
+      <Method Name="GetClassName" Hidden="true" />
+      <Method Name="OnContentModified" Hidden="true" />
+      <Method Name="OnSharedContentModified" Hidden="true" />
+      <Field Name="SourceFilenamePrefix" Hidden="true" />
+      <Method Name="TemplateFactory" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="Xipton.Razor.Core.TemplateFactory.CacheBucket" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Core\TemplateFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <AssociationLine Name="ContentManager" Type="Xipton.Razor.Core.ContentManager" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6" Y="9.766" />
+        <Point X="5.625" Y="9.766" />
+        <Point X="5.625" Y="9.875" />
+        <Point X="3.75" Y="9.875" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>CAABAAAAACAAAAAAAAAAiEAAgAAAIAhQAAAAAAMIAIA=</HashCode>
+      <FileName>Core\TemplateFactory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ContentManager" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Xipton.Razor.Core.ContentManager" BaseTypeListCollapsed="true">
+    <Position X="1.75" Y="9.5" Width="2" />
+    <Members>
+      <Field Name="_autoIncludeName" Hidden="true" />
+      <Field Name="_defaultExtension" Hidden="true" />
+      <Field Name="_nullNormalizedEntryCount" Hidden="true" />
+      <Field Name="_nullResourceEntryCount" Hidden="true" />
+      <Field Name="_pathBuilder" Hidden="true" />
+      <Field Name="_requestToResourceNameMap" Hidden="true" />
+      <Field Name="_requestToVirtualTargetMap" Hidden="true" />
+      <Field Name="_resourceNameToVirtualPathMap" Hidden="true" />
+      <Field Name="_virtualSearchPathList" Hidden="true" />
+      <Field Name="CacheMaxNullCount" Hidden="true" />
+      <Method Name="ClearAllContentProviders" Hidden="true" />
+      <Method Name="ContentManager" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Method Name="FindAutoIncludes" Hidden="true" />
+      <Method Name="GetContentProviders" Hidden="true" />
+      <Method Name="GetPathBuilderWithRootOperator" Hidden="true" />
+      <Method Name="OnContentModified" Hidden="true" />
+      <Method Name="RemoveContentProviders" Hidden="true" />
+    </Members>
+    <AssociationLine Name="_contentProvider" Type="Xipton.Razor.Core.ContentProvider.CompositeContentProvider" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.75" Y="10.188" />
+        <Point X="5.375" Y="10.188" />
+        <Point X="5.375" Y="11" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAASQEAAEKAYGAAAQAAQSwACGAAAAAAAIgAIBgAAEIA=</HashCode>
+      <FileName>Core\ContentManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_contentProvider" />
+      <Property Name="ContentProvider" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Xipton.Razor.Core.ContentProvider.CompositeContentProvider" BaseTypeListCollapsed="true">
+    <Position X="4.75" Y="11" Width="2.25" />
+    <Members>
+      <Method Name="ClearAllContentProviders" Hidden="true" />
+      <Event Name="ContentModified" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Method Name="GetContentProviders" Hidden="true" />
+      <Method Name="InitFromConfig" Hidden="true" />
+      <Method Name="OnContentModified" Hidden="true" />
+      <Method Name="RemoveContentProviders" Hidden="true" />
+      <Method Name="TryGetContent" Hidden="true" />
+      <Method Name="TryGetResourceName" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>BAAAQEAAECAACAAAAAAACQAAAAAAAgAAIAAKAAAAAIA=</HashCode>
+      <FileName>Core\ContentProvider\CompositeContentProvider.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="_contentProviders" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="1.074" />
+  </Class>
+  <Class Name="Xipton.Razor.Core.ContentProvider.EmbeddedResourceContentProvider" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="13.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAACAAAAAACAAAAAAAqAAABAAA=</HashCode>
+      <FileName>Core\ContentProvider\EmbeddedResourceContentProvider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Xipton.Razor.Core.ContentProvider.FileContentProvider" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.25" Y="12.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAWAAAAAAAAAACAAAAQAIAAAAAAAKAAAAAEQ=</HashCode>
+      <FileName>Core\ContentProvider\FileContentProvider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Xipton.Razor.Core.ContentProvider.MemoryContentProvider" BaseTypeListCollapsed="true">
+    <Position X="7.25" Y="11" Width="2" />
+    <Members>
+      <Field Name="_content" Hidden="true" />
+      <Event Name="ContentModified" Hidden="true" />
+      <Method Name="InitFromConfig" Hidden="true" />
+      <Method Name="TryGetContent" Hidden="true" />
+      <Method Name="TryGetResourceName" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAQABAAAACAAAAAAAAAAAAAAKAAAAAAA=</HashCode>
+      <FileName>Core\ContentProvider\MemoryContentProvider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Xipton.Razor.RazorContext" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4.5" Y="7.75" Width="1.5" />
+    <AssociationLine Name="Config" Type="Xipton.Razor.Config.RazorConfig" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.25" Y="7.75" />
+        <Point X="5.25" Y="6.375" />
+        <Point X="6.25" Y="6.375" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAiAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>RazorContext.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Config" />
+      <Property Name="TemplateFactory" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Xipton.Razor.RazorMachine" BaseTypeListCollapsed="true">
+    <Position X="1.75" Y="7.25" Width="1.75" />
+    <Members>
+      <Field Name="_templateContentToGeneratedVirtualPathMap" Hidden="true" />
+      <Field Name="ContentGeneratedUrlPrefix" Hidden="true" />
+      <Method Name="CreateRazorConfig" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Method Name="RazorMachine" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>BAAAAiAAAiAAAQQiAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>RazorMachine.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Context" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Xipton.Razor.TemplateBase" Collapsed="true">
+    <Position X="7" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAEEAKRBAIBCswEEgRgSAQAYASABEgJQIwAQAFBgAU=</HashCode>
+      <FileName>TemplateBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Xipton.Razor.TemplateBase&lt;TModel&gt;" Collapsed="true">
+    <Position X="7" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>TemplateBase`1.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Xipton.Razor.Core.IContentProvider">
+    <Position X="1.75" Y="13" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAKAAAAAAA=</HashCode>
+      <FileName>Core\IContentProvider.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Xipton.Razor.Core.ITemplateInternal">
+    <Position X="4" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgEACAIAEAQCAAAAAAAAAAAAAAAAAkAAEABAAAA=</HashCode>
+      <FileName>Core\ITemplateInternal.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Xipton.Razor.ITemplate">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABBAABCoQAEAAAQAQAAASAAEAIAAgAQAEAAAU=</HashCode>
+      <FileName>ITemplate.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Xipton.Razor.ITemplate&lt;TModel&gt;">
+    <Position X="4" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>ITemplate`1.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

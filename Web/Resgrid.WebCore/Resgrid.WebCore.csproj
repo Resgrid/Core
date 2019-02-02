@@ -1,0 +1,154 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <Description>Cloud system for First Responders</Description>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <Authors>Resgrid</Authors>
+    <TargetFramework>net462</TargetFramework>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <AssemblyName>Resgrid.WebCore</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>Resgrid.WebCore</PackageId>
+    <UserSecretsId>aspnet-Resgrid.WebCore-6372c5f2-c359-4243-b5a9-1fc7a5aaeb3b</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/bc1ffca7-bf1a-49f9-88f7-b99be887fe9d/resourcegroups/Default-Web-WestUS/providers/microsoft.insights/components/resgridweb</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/bc1ffca7-bf1a-49f9-88f7-b99be887fe9d/resourcegroups/Default-Web-WestUS/providers/microsoft.insights/components/resgridweb</ApplicationInsightsAnnotationResourceId>
+    <Configurations>Debug;Release;Azure</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Azure|AnyCPU'" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Staging|AnyCPU'" />
+
+  <ItemGroup>
+    <Content Remove="wwwroot\robots.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Views\**\*;Areas\**\Views;Areas\**\*.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.EmailProvider\Resgrid.Providers.EmailProvider.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.GeoLocationProvider\Resgrid.Providers.GeoProvider.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.PdfProvider\Resgrid.Providers.PdfProvider.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.TextProvider\Resgrid.Providers.NumberProvider.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.0" />
+    <PackageReference Include="Autofac" Version="4.6.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
+    <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="4.1.0" />
+    <PackageReference Include="BundlerMinifier.Core" Version="2.5.357" />
+    <PackageReference Include="EntityFramework" Version="6.1.3" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="1.1.2" />
+    <PackageReference Include="protobuf-net" Version="2.3.2" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="1.4.2" />
+    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework6" Version="3.0.21" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.SystemWeb" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.1">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="RestSharp" Version="105.2.3" />
+    <PackageReference Include="Stripe.net" Version="6.12.0" />
+    <PackageReference Include="Twilio" Version="5.5.0" />
+    <PackageReference Include="Twilio.Auth" Version="1.4.0" />
+    <PackageReference Include="Twilio.IpMessaging" Version="1.2.0" />
+    <PackageReference Include="JWT" Version="1.3.4" />
+    <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
+    <PackageReference Include="Vereyon.Web.HtmlSanitizer" Version="1.3.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System" />
+  </ItemGroup>
+
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+    <Exec Command="bower install" />
+    <Exec Command="dotnet bundle" />
+  </Target>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="dotnet-version" Version="1.1.0" />
+    <DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.2.301" />
+    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\robots.txt">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\lib\jquery-idletimer\jquery-idletimer.sln" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Device" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Service References" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Areas\User\Views\Calendar\Edit.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Areas\User\Views\Calendar\New.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Areas\User\Views\Command\Edit.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Areas\User\Views\Command\View.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
+</Project>

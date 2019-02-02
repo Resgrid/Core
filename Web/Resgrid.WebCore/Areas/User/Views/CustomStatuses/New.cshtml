@@ -1,0 +1,190 @@
+﻿
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.CustomStatuses.NewCustomStateView
+@{
+	ViewBag.Title = "Resgrid | New Custom Statuses";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Custom Statuses</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">Custom Statuses</a>
+			</li>
+			<li class="active">
+				<strong>New Custom Statuses</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" method="post">
+
+						@if (!String.IsNullOrEmpty(Model.Message))
+						{
+							<div class="alert alert-success">
+								@Model.Message
+							</div>
+						}
+						@Html.AntiForgeryToken()
+						@Html.HiddenFor(m => m.Type)
+						<div asp-validation-summary="All" class="text-danger"></div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Type</label>
+							<div class="col-sm-10">
+								@if (Model.Type == CustomStateTypes.Unit)
+								{
+									@Html.Raw("Unit Status");
+								}
+								else if (Model.Type == CustomStateTypes.Personnel)
+								{
+									@Html.Raw("Personnel Actions");
+								}
+								else if (Model.Type == CustomStateTypes.Staffing)
+								{
+									@Html.Raw("Personnel Staffing");
+								}
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Name</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Custom Statuses Set Name (i.e. 'My Custom Statuses')" asp-for="State.Name"/></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Description</label>
+							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the custom statuses." asp-for="State.Description"></textarea></div>
+						</div>
+						<div class="control-group">
+							<label class="col-sm-2 control-label">
+								Options
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-10">These are the buttons your users will see on mobile applications and the website.<br /></div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<table id="options" class="table table-striped table-bordered">
+											<thead>
+												<tr>
+													<th style="max-width: 20px; font-size: 14px;">Order</th>
+													<th style="max-width: 200px; font-size: 14px;">Button Text</th>
+													<th style="max-width: 350px; font-size: 14px;">Button Preview</th>
+													<th style="max-width: 90px; font-size: 16px;"><a id="addButton" class="btn btn-success btn-xs" data-original-title="Add Option" data-toggle="modal" data-target="#newStatusModal">Add Option (Button)</a></th>
+												</tr>
+											</thead>
+											<tbody></tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Add Custom Statuses</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="newStatusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="exampleModalLabel">New Option</h4>
+			</div>
+			<div class="modal-body">
+				<div id="addOptionErrors" style="display:none;" class="alert alert-danger"></div>
+				<form>
+					<div class="form-group">
+						<label for="buttonText" class="control-label">Button Text:</label>
+						<input type="text" class="form-control" id="buttonText">
+					</div>
+					<div class="form-group">
+						<label for="buttonColor" class="control-label">Button Color:</label>
+						<input class="form-control" id="buttonColor">
+					</div>
+					<div class="form-group">
+						<label for="textColor" class="control-label">Text Color:</label>
+						<input class="form-control" id="textColor" value="#FF5733">
+					</div>
+					@if (Model.Type == CustomStateTypes.Staffing)
+					{
+						<div class="form-group" style="display: none;">
+							<label class="control-label">Require GPS:</label>
+							<input id="requireGps" type="checkbox"/>
+						</div>
+
+						<div class="form-group" style="display: none;">
+							<label for="detailType" class="control-label">Detail Type:</label>
+							<select id="detailType">
+								<option value="0">No Detail</option>
+								<option value="1">Stations</option>
+								<option value="2">Calls</option>
+								<option value="3">Calls and Stations</option>
+							</select>
+						</div>
+					}
+					else
+					{
+						<div class="form-group">
+							<label class="control-label">Require GPS:</label>
+							<input id="requireGps" type="checkbox"/>
+						</div>
+
+						<div class="form-group">
+							<label for="detailType" class="control-label">Detail Type:</label>
+							<select id="detailType">
+								<option value="0">No Detail</option>
+								<option value="1">Stations</option>
+								<option value="2">Calls</option>
+								<option value="3">Calls and Stations</option>
+							</select>
+						</div>
+					}
+					<div class="form-group">
+						<label for="noteType" class="control-label">Note Types:</label>
+						<select id="noteType">
+							<option value="0">No Note</option>
+							<option value="1">Optional</option>
+							<option value="2">Required</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="noteType" class="control-label">Preview:</label>
+						<div style="text-align: center;">
+							<a id="previewButton" class="btn btn-default" role="button" style="color: #FF5733; background: #000000;">Preview Button</a>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onclick="resgrid.statuses.newstatus.addOption();">Add Option</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	<script src="~/js/app/internal/statuses/resgrid.statuses.newstatus.js"></script>
+}

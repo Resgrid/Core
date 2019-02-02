@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNet.SignalR.ServiceBus</name>
+    </assembly>
+    <members>
+        <member name="M:Microsoft.AspNet.SignalR.DependencyResolverExtensions.UseServiceBus(Microsoft.AspNet.SignalR.IDependencyResolver,System.String,System.String)">
+            <summary>
+            Use Windows Azure Service Bus as the messaging backplane for scaling out of ASP.NET SignalR applications in a web farm.
+            </summary>
+            <param name="resolver">The dependency resolver.</param>
+            <param name="connectionString">The Service Bus connection string to use.</param>
+            <param name="topicPrefix">The topic prefix to use. Typically represents the app name. This must be consistent between all nodes in the web farm.</param>
+            <returns>The dependency resolver</returns>
+            <remarks>Note: Only Windows Azure Service Bus is supported. Service Bus for Windows Server (on-premise) is not supported.</remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.SignalR.DependencyResolverExtensions.UseServiceBus(Microsoft.AspNet.SignalR.IDependencyResolver,Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration)">
+            <summary>
+            Use Windows Azure Service Bus as the messaging backplane for scaling out of ASP.NET SignalR applications in a web farm.
+            </summary>
+            <param name="resolver">The dependency resolver.</param>
+            <param name="configuration">The Service Bus scale-out configuration options.</param>
+            <returns>The dependency resolver</returns>
+            <remarks>Note: Only Windows Azure Service Bus is supported. Service Bus for Windows Server (on-premise) is not supported.</remarks>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.ServiceBus.ServiceBusMessageBus">
+            <summary>
+            Uses Windows Azure Service Bus topics to scale-out SignalR applications in web farms.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration">
+            <summary>
+            Settings for the Service Bus scale-out message bus implementation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.ConnectionString">
+            <summary>
+            The Service Bus connection string to use.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.TopicPrefix">
+            <summary>
+            The topic prefix to use. Typically represents the app name.
+            This must be consistent between all nodes in the web farm.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.TopicCount">
+            <summary>
+            The number of topics to send messages over. Using more topics reduces contention and may increase throughput.
+            This must be consistent between all nodes in the web farm.
+            Defaults to 5.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.TimeToLive">
+            <summary>
+            Gets or sets the message’s time to live value. This is the duration after
+            which the message expires, starting from when the message is sent to the
+            Service Bus. Messages older than their TimeToLive value will expire and no
+            longer be retained in the message store. Subscribers will be unable to receive
+            expired messages.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.IdleSubscriptionTimeout">
+            <summary>
+            Specifies the time duration after which an idle subscription is deleted
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.BackoffTime">
+            <summary>
+            Specifies the delay before we try again after an error
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.OperationTimeout">
+            <summary>
+            Gets or Sets the operation timeout for all Service Bus operations 
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.MaximumMessageSize">
+            <summary>
+            Gets or Sets the maximum message size (in bytes) that can be sent or received
+            Default value is set to 256KB which is the maximum recommended size for Service Bus operations
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.BuildConnectionString">
+            <summary>
+            Returns Service Bus connection string to use.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.ServiceBusScaleoutConfiguration.RetryPolicy">
+            <summary>
+            Gets or sets the retry policy for service bus
+            Default value is RetryExponential.Default
+            </summary>
+        </member>
+    </members>
+</doc>

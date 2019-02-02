@@ -1,0 +1,154 @@
+﻿
+@using Resgrid.Framework
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Logs.LogsIndexView
+@{
+	ViewBag.Title = "Resgrid | Reports";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Reporting</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Reporting</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Description</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<a href="@Url.Action("ActionLogs", "Reports", new { Area = "User" })">Department Action Logs</a>
+									</td>
+									<td>
+										View all the actions that have been performed in the department for every user. The department admin can also clear all the actions for the department.
+									</td>
+									<td>
+										<a href="@Url.Action("ActionLogs", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+								@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+								{
+									<tr>
+										<td>
+											<a href="@Url.Action("PersonnelReport", "Reports", new {Area = "User"})">Personnel Report</a>
+										</td>
+										<td>
+											View all the personnel in your department, their roles and basic contact information.
+										</td>
+										<td>
+											<a href="@Url.Action("PersonnelReport", "Reports", new {Area = "User"})" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+										</td>
+									</tr>
+								}
+								<tr>
+									<td>
+										<a href="@Url.Action("StaffingReport", "Reports", new { Area = "User" })">Staffing Report</a>
+									</td>
+									<td>
+										View all personnel and their current status, staffing level and next scheduled staffing level change.
+									</td>
+									<td>
+										<a href="@Url.Action("StaffingReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })">Certifications Report</a>
+									</td>
+									<td>
+										View all the certifications for each person in the department.
+									</td>
+									<td>
+										<a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="@Url.Action("UpcomingShiftReadinessReport", "Reports", new {Area = "User"})">Shift Readiness Report</a>
+									</td>
+									<td>
+										This report will show shift readiness for the next upcoming shift days for each shift.
+									</td>
+									<td>
+										<a href="@Url.Action("UpcomingShiftReadinessReport", "Reports", new {Area = "User"})" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="@Url.Action("DepartmentActivityReport", "Reports", new {Area = "User"})">Department YTD Activity Report</a>
+									</td>
+									<td>
+										This report will show the call, log, training and personnel activity for the department in year to date numbers.
+									</td>
+									<td>
+										<a href="@Url.Action("DepartmentActivityReport", "Reports", new {Area = "User"})" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="@Url.Action("PersonnelHoursReportParams", "Reports", new {Area = "User"})">Personnel Log Hours Report</a>
+									</td>
+									<td>
+										This report will show the number of hours department personnel worked, trained and responded to calls as recorded via log (after action reports) entries.
+									</td>
+									<td>
+										<a href="@Url.Action("PersonnelHoursReportParams", "Reports", new {Area = "User"})" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="@Url.Action("CallSummaryReportParams", "Reports", new {Area = "User"})">Call Summary Report</a>
+									</td>
+									<td>
+										This report will show details about all calls in a selected date range (i.e. call types, close states, etc)
+									</td>
+									<td>
+										<a href="@Url.Action("CallSummaryReportParams", "Reports", new {Area = "User"})" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="@Url.Action("PersonnelStaffingHistoryReportParams", "Reports", new { Area = "User" })">Personnel Staffing History Report</a>
+									</td>
+									<td>
+										This report will show all the staffing history supplied by the selected personnel
+									</td>
+									<td>
+										<a href="@Url.Action("PersonnelStaffingHistoryReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+
+}

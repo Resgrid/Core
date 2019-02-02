@@ -1,0 +1,132 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.InvitesView
+@{
+	ViewBag.Title = "Resgrid | Invites";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Manage Invites</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+			</li>
+			<li class="active">
+				<strong>Manage Invites</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-8">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins" id="personnelContainer">
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										Email Address
+									</th>
+									<th>
+										Sent On
+									</th>
+									<th>
+										Completed On
+									</th>
+									<th class="span1">
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var i in Model.Invites)
+								{
+									<tr>
+										<td>
+											@i.EmailAddress
+										</td>
+										<td>
+											@i.SentOn.TimeConverterToString(Model.Department)
+										</td>
+										<td>
+											@if (i.CompletedOn.HasValue)
+											{
+												@Html.Raw(TimeConverterHelper.TimeConverterToString(i.CompletedOn.Value, Model.Department))
+											}
+											else
+											{
+												@Html.Raw("Pending")
+											}
+										</td>
+										<td>
+											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+											{
+												@if (!i.CompletedOn.HasValue)
+												{
+													<a asp-controller="Department" asp-action="ResendInvite" asp-route-area="User" asp-route-inviteId="@i.InviteId" class="btn btn-info btn-xs" data-confirm="WARNING: This will resend this invite to the invite email address and reset the sent on date. Are you sure you want to resend this invite?" rel="nofollow">
+														Resend Invite
+													</a>
+												}
+												<a asp-controller="Department" asp-action="DeleteInvite" asp-route-area="User" asp-route-inviteId="@i.InviteId" class="btn btn-danger btn-xs" data-confirm="WARNING: This will permanently delete this invite and the link the user has in the email will result in an error. Are you sure you want to delete the invite?" rel="nofollow">
+													Delete Invite
+												</a>
+											}
+										</td>
+
+									</tr>
+								}
+							</tbody>
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-4">
+		<div class="wrapper wrapper-content animated fadeInUp">
+			<div class="ibox">
+				<div class="ibox-title">
+					<h5>Send Invites</h5>
+				</div>
+				<div class="ibox-content">
+					<form id="edit_user" class="form-horizontal" role="form" asp-controller="Department" asp-action="Invites" asp-route-area="User" method="post">
+
+						@Html.AntiForgeryToken()
+						<div asp-validation-summary="All" class="text-danger"></div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Email Addresses
+							</label>
+							<div class="col-sm-10">
+								@Html.TextAreaFor(m => m.EmailAddresses, new { @class = "input-xlarge", rows = "5" })
+								<span class="help-block">Enter the email addresses separated by comma's (i.e. "test1@test.com, test2@test.com")</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<button class="btn btn-primary" type="submit">Send Invites</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	<script>
+		resgrid.common.analytics.track('Invite Personnel');
+	</script>
+}

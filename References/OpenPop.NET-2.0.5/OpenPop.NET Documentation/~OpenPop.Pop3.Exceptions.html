@@ -1,0 +1,101 @@
+﻿<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>OpenPop.Pop3.Exceptions</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">OpenPop.Pop3.Exceptions Namespace</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>Contains the exceptions the Pop3Client might throw.</p>
+      <p>
+        <a href="~OpenPop.Pop3.Exceptions~Hierarchy.html">Namespace Hierarchy</a>
+      </p>
+      <h3 class="dtH3">Classes</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Class</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.InvalidLoginException.html">InvalidLoginException</a>
+            </td>
+            <td width="50%"> Thrown when the supplied username or password is not accepted by the POP3 server. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.InvalidUseException.html">InvalidUseException</a>
+            </td>
+            <td width="50%"> Thrown when the <a href="OpenPop~OpenPop.Pop3.Pop3Client.html">Pop3Client</a> is being used in an invalid way.<br xmlns:ndoc="urn:ndoc-schema" /> This could for example happen if a someone tries to fetch a message without authenticating. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.LoginDelayException.html">LoginDelayException</a>
+            </td>
+            <td width="50%"> This exception indicates that the user has logged in recently and will not be allowed to login again until the login delay period has expired. Check the parameter to the LOGIN-DELAY capability, that the server responds with when <a href="OpenPop~OpenPop.Pop3.Pop3Client.Capabilities.html">Capabilities</a> is called, to see what the delay is. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopClientException.html">PopClientException</a>
+            </td>
+            <td width="50%"> This is the base exception for all <a href="OpenPop~OpenPop.Pop3.Pop3Client.html">Pop3Client</a> exceptions. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopServerException.html">PopServerException</a>
+            </td>
+            <td width="50%"> Thrown when the server does not return "+" to a command.<br xmlns:ndoc="urn:ndoc-schema" /> The server response is then placed inside. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopServerLockedException.html">PopServerLockedException</a>
+            </td>
+            <td width="50%"> Thrown when the user mailbox is locked or in-use.<br xmlns:ndoc="urn:ndoc-schema" /></td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopServerNotAvailableException.html">PopServerNotAvailableException</a>
+            </td>
+            <td width="50%"> Thrown when the POP3 server sends an error "-ERR" during initial handshake "HELO". </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopServerNotFoundException.html">PopServerNotFoundException</a>
+            </td>
+            <td width="50%"> Thrown when the specified POP3 server can not be found or connected to. </td>
+          </tr>
+        </table>
+      </div>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20OpenPop.Pop3.Exceptions%20Namespace">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

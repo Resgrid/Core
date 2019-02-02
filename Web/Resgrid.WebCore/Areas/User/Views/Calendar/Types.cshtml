@@ -1,0 +1,81 @@
+﻿@model Resgrid.Web.Areas.User.Models.Calendar.TypesView
+@{
+		ViewBag.Title = "Resgrid | Calendar Item Types";
+}
+
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Calendar Item Types</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Calendar" asp-action="Index" asp-route-area="User">Calendar</a>
+			</li>
+			<li class="active">
+				<strong>Calendar Item Types</strong>
+			</li>
+		</ol>
+	</div>
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	{
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="Add a new type" class="btn btn-success" href="@Url.Action("NewType", "Calendar", new { area = "User" })"><i class="icon-plus"></i> New Calendar Type</a>
+			</div>
+		</div>
+	}
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Color</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								@foreach (var type in Model.Types)
+								{
+
+									<tr>
+										<td>
+											@type.Name
+										</td>
+										<td>
+											<span style="color:@type.Color;">@type.Color</span>
+										</td>
+										<td>
+											<a href="@Url.Action("DeleteType", "Calendar", new { area = "User" })?typeId=@type.CalendarItemTypeId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this type. Are you sure you want to delete the type @type.Name?" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
+										</td>
+									</tr>
+								}
+
+							</tbody>
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

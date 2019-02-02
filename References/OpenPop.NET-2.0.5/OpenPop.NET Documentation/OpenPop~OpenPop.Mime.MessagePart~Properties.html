@@ -1,0 +1,63 @@
+﻿<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>MessagePart Properties</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">MessagePart Properties</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>The properties of the <b>MessagePart</b> class are listed below. For a complete list of <b>MessagePart</b> class members, see the <a href="OpenPop~OpenPop.Mime.MessagePart~Members.html">MessagePart Members</a> topic.</p>
+      <h4 class="dtH4" xmlns:ndoc="urn:ndoc-schema">Public Instance Properties</h4>
+      <div class="tablediv" xmlns:ndoc="urn:ndoc-schema">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.Body.html">Body</a></td><td width="50%"> This is the parsed body of this <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a>.<br /> It is parsed in that way, if the body was ContentTransferEncoded, it has been decoded to the correct bytes.<br /><br /> It will be a null reference if this <b>MessagePart</b> is a MultiPart message.<br /> Use <a href="OpenPop~OpenPop.Mime.MessagePart.IsMultiPart.html">IsMultiPart</a> to check if this <b>MessagePart</b> is a MultiPart message. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.BodyEncoding.html">BodyEncoding</a></td><td width="50%"> This is the encoding used to parse the message body if the <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a><br /> is not a MultiPart message. It is derived from the <a href="OpenPop~OpenPop.Mime.MessagePart.ContentType.html">ContentType</a> character set property. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.ContentDescription.html">ContentDescription</a></td><td width="50%"> A human readable description of the body<br /><br />a null reference if no Content-Description header was present in the message.<br /></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.ContentDisposition.html">ContentDisposition</a></td><td width="50%"> Used to describe if a <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a> is to be displayed or to be though of as an attachment.<br /> Also contains information about filename if such was sent.<br /><br />a null reference if no Content-Disposition header field was present in the message </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.ContentId.html">ContentId</a></td><td width="50%"> ID of the content part (like an attached image). Used with MultiPart messages.<br /><br />a null reference if no Content-ID header field was present in the message. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.ContentTransferEncoding.html">ContentTransferEncoding</a></td><td width="50%"> This header describes the Content encoding during transfer.<br /><br /> If no Content-Transfer-Encoding header was present in the message, it is set to the default of <a href="OpenPop~OpenPop.Mime.Header.ContentTransferEncoding.html">SevenBit</a> in accordance to the RFC. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.ContentType.html">ContentType</a></td><td width="50%"> The Content-Type header field.<br /><br /> If not set, the ContentType is created by the default "text/plain; charset=us-ascii" which is defined in <a href="http://tools.ietf.org/html/rfc2045#section-5.2" xmlns="urn:ndoc-schema">RFC 2045 section 5.2</a>.<br /><br /> If set, the default is overridden. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.FileName.html">FileName</a></td><td width="50%"> This is a convenient-property for figuring out a FileName for this <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a>.<br /> If the <b>MessagePart</b> is a MultiPart message, then it makes no sense to try to find a FileName.<br /><br /> The FileName can be specified in the <a href="OpenPop~OpenPop.Mime.MessagePart.ContentDisposition.html">ContentDisposition</a> or in the <a href="OpenPop~OpenPop.Mime.MessagePart.ContentType.html">ContentType</a> properties.<br /> If none of these places two places tells about the FileName, a default "(no name)" is returned. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.IsAttachment.html">IsAttachment</a></td><td width="50%"> A <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a> is considered to be an attachment, if<br /> - it is not holding <a href="OpenPop~OpenPop.Mime.MessagePart.IsText.html">text</a> and is not a <a href="OpenPop~OpenPop.Mime.MessagePart.IsMultiPart.html">MultiPart</a> message<br /> or<br /> - it has a Content-Disposition header that says it is an attachment </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.IsMultiPart.html">IsMultiPart</a></td><td width="50%"> Describes if this <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a> is a MultiPart message<br /><br /> The <b>MessagePart</b> is a MultiPart message if the <a href="OpenPop~OpenPop.Mime.MessagePart.ContentType.html">ContentType</a> media type property starts with "multipart/" </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.IsText.html">IsText</a></td><td width="50%"> A <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a> is considered to be holding text in it's body if the MediaType starts either "text/" or is equal to "message/rfc822" </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.MessagePart.MessageParts.html">MessageParts</a></td><td width="50%"> If this <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a> is a MultiPart message, then this property has a list of each of the Multiple parts that the message consists of.<br /><br /> It is a null reference if it is not a MultiPart message.<br /> Use <a href="OpenPop~OpenPop.Mime.MessagePart.IsMultiPart.html">IsMultiPart</a> to check if this <b>MessagePart</b> is a MultiPart message. </td></tr></table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart Class</a> | <a href="~OpenPop.Mime.html">OpenPop.Mime Namespace</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="MessagePart class, properties">
+        </param>
+      </object>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20MessagePart Properties">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>Generated from assembly OpenPop [2.0.4.369] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+      </div>
+    </div>
+  </body>
+</html>

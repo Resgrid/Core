@@ -1,0 +1,327 @@
+﻿
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Dispatch.CallExportView
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>Resgrid Call Export</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Resgrid Log Report">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+				crossorigin="anonymous"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
+
+	<style>
+		.table th, .table td {
+			padding: 8px !important;
+			line-height: 20px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+	</style>
+
+	<!--[if lt IE 9]>
+		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+	<link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+	<link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+	<link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+	<link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+	<div id="runLog" class="container">
+		<div class="row">
+			<div class="col-xs-6 col-xs-offset-2">
+				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-xs-6" style="text-align: right;">
+				<h3 style="margin-top: 10px;">Call Export</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td>
+								<strong><small>Id</small></strong>
+								<span style="display: block;">@Model.Call.Id</span>
+							</td>
+							<td>
+								<strong><small>Number</small></strong>
+								<span style="display: block;">@Model.Call.Number</span>
+							</td>
+							<td>
+								<strong><small>Incident Id</small></strong>
+
+								@if (!String.IsNullOrWhiteSpace(Model.Call.IncidentNumber))
+								{
+									<span style="display: block;">@Model.Call.IncidentNumber</span>
+								}
+								else
+								{
+									<span style="display: block;">None</span>
+								}
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<strong><small>Call Name</small></strong>
+								<span style="display: block;">@Model.Call.Name</span>
+							</td>
+							<td>
+								<strong><small>Call Type</small></strong>
+								@if (!String.IsNullOrWhiteSpace(Model.Call.Type))
+								{
+									<span style="display: block;">@Model.Call.Type</span>
+								}
+								else
+								{
+									<span style="display: block;">No Type</span>
+								}
+							</td>
+							<td>
+								<strong><small>Priority</small></strong>
+								<span style="display: block;">@(((CallPriority)Model.Call.Priority).ToString())</span>
+							</td>
+
+						</tr>
+						<tr>
+							<td>
+								<strong><small>Logged On</small></strong>
+								<span style="display: block;">@Model.Call.LoggedOn.TimeConverterToString(Model.Department)</span>
+							</td>
+
+							<td>
+								<strong><small>Logged By</small></strong>
+								<span style="display: block;">@UserHelper.GetFullNameForUser(Model.Call.ReportingUser.UserId)</span>
+							</td>
+
+							<td>
+								<strong><small>State</small></strong>
+								@if (Model.Call.State == (int)CallStates.Active)
+								{
+									<span style="display: block; color: green;">Active</span>
+								}
+								else if (Model.Call.State == (int)CallStates.Cancelled)
+								{
+									<span style="display: block; color: gray;">Canceled</span>
+								}
+								else if (Model.Call.State == (int)CallStates.Closed)
+								{
+									<span style="display: block; color: black;">Closed</span>
+								}
+								else if (Model.Call.State == (int)CallStates.Unfounded)
+								{
+									<span style="display: block; color: blue;">Unfounded</span>
+								}
+							</td>
+						</tr>
+						<tr>
+							@if (Model.Call.ClosedOn.HasValue)
+							{
+								<td>
+									<strong><small>Closed On</small></strong>
+									<span style="display: block;">@Model.Call.ClosedOn.Value.TimeConverterToString(Model.Department)</span>
+								</td>
+								<td>
+									<strong><small>Closed By</small></strong>
+									<span style="display: block;">@UserHelper.GetFullNameForUser(Model.Call.ClosedByUser.UserId)</span>
+								</td>
+							}
+							else
+							{
+								<td>
+									<strong><small>Closed On</small></strong>
+									<span style="display: block;">Not Closed</span>
+								</td>
+								<td>
+									<strong><small>Closed On</small></strong>
+									<span style="display: block;">Not Closed</span>
+								</td>
+							}
+
+						</tr>
+						<tr>
+							@if (Model.Call != null)
+							{
+								<td colspan="2">
+									<strong><small>Call Address</small></strong>
+									<span style="display: block;">@Model.Call.Address</span>
+								</td>
+								<td colspan="1">
+									<strong><small>GPS</small></strong>
+									<span style="font-size: 10px; display: block;">@Model.Call.GeoLocationData</span>
+								</td>
+							}
+							else
+							{
+								<td colspan="2">
+									<strong><small>Call Address</small></strong>
+									<span style="display: block;">Not Supplied</span>
+								</td>
+								<td colspan="1">
+									<strong><small>GPS</small></strong>
+									<span style="display: block;">Not Supplied</span>
+								</td>
+							}
+
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<strong><small>Dispatched Personnel</small></strong>
+				<table class="table table-condensed table-bordered">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Station</th>
+							<th>Name</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var d in Model.Call.Dispatches)
+						{
+							//var group = Model.Group
+							<tr>
+								<td></td>
+								<td></td>
+								<td>@UserHelper.GetFullNameForUser(d.UserId)</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<strong><small>Nature</small></strong>
+				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.NatureOfCall)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<strong><small>Notes</small></strong>
+				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.Notes)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<strong><small>Completed Notes</small></strong>
+				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.CompletedNotes)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<strong><small>Unit Events</small></strong>
+				<table class="table table-condensed table-bordered">
+					<thead>
+						<tr>
+							<th>Unit</th>
+							<th>Event</th>
+							<th>Timestamp</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var us in Model.UnitStates)
+						{
+							var customState = CustomStatesHelper.GetCustomUnitState(us);
+							<tr>
+								<td>@us.Unit.Name</td>
+
+								@if (us.State <= 25)
+								{
+									<td><span class='label @customState.ButtonColor'>@customState.ButtonText</span></td>
+								}
+								else
+								{
+									<td><span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span></td>
+								}
+								<td>@us.Timestamp.FormatForDepartment(Model.Department)</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<strong><small>Personnel Events</small></strong>
+				<table class="table table-condensed table-bordered">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Event</th>
+							<th>Timestamp</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var al in Model.ActionLogs)
+						{
+							var customState = CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
+							<tr>
+								<td>@UserHelper.GetFullNameForUser(al.UserId)</td>
+
+								@if (al.ActionTypeId <= 25)
+								{
+									<td><span class='label @customState.ButtonColor'>@customState.ButtonText</span></td>
+								}
+								else
+								{
+									<td><span class='label label-default' style="color:@customState.TextColor;background-color:@customState.ButtonColor;">@customState.ButtonText</span></td>
+								}
+								<td>@al.Timestamp.FormatForDepartment(Model.Department)</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12" style="text-align: right;">
+				@DateTime.UtcNow.FormatForDepartment(Model.Department)
+			</div>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+	<script src="~/clib/flot/jquery.flot.js"></script>
+	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
+	<script src="~/clib/flot/jquery.flot.resize.js"></script>
+	<script src="~/clib/flot/jquery.flot.pie.js"></script>
+	<script src="~/clib/flot/jquery.flot.time.js"></script>
+	<script src="~/clib/flot/jquery.flot.spline.js"></script>
+
+	<script src="~/clib/kendo/js/kendo.all.min.js"></script>
+	<script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+
+</body>
+</html>

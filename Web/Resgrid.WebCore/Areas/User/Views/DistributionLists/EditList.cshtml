@@ -1,0 +1,113 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.DistributionLists.EditListView
+@{
+	ViewBag.Title = "Resgrid | Edit Distribution List";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Edit Distribution List</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="DistributionLists" asp-action="Index" asp-route-area="User">Distribution Lists</a>
+			</li>
+			<li class="active">
+				<strong>Edit @Model.List.Name List</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="DistributionLists" asp-action="EditList" asp-route-area="User" method="post">
+
+
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1 col-md-pull-1">
+								<p>Enter the information below to edit your existing distribution list. Distribution Lists allow your to create an email address at Resgrid that will send all email sent to it to the members you select. Fields in <span class="required">blue italics</span> are required.</p>
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+								@Html.HiddenFor(m => m.List.DistributionListId)
+							</div>
+						</div>
+
+						@if (Model.Type == DistributionListTypes.External)
+						{
+							<div class="alert alert-danger">
+								This list is picking email up from an external POP3 or IMAP mailbox. Resgrid is discontinuing email pickup (for calls and lists) from external mailboxes. Your list will work in the meantime, but you are unable to modify it's settings. Supply a custom Resgrid email address below and add a forwarder in your external email account to the new address below.
+							</div>
+						}
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Name</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the List" asp-for="List.Name"></div>
+						</div>
+						<div id="resgridEmail" class="form-group">
+							<label class="col-sm-2 control-label">
+								Email
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-md-5">
+										<div class="input-group input-group-sm">
+											<input type="text" class="form-control" asp-for="List.EmailAddress" required="Email Address (only the part left of the at sign) is required"/>
+											<span class="input-group-addon">&#64;@Resgrid.Config.InboundEmailConfig.ListsDomain</span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-5">
+										<div id="emailError" class="alert alert-danger" style="display: none;">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="col-sm-2 control-label required">
+								List Members
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-md-6" style="padding-left: 0;">
+										<select id="listMembers" name="listMembers"></select>
+										<br />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="DistributionLists" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Edit Distribution List</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		var currentType = '@Model.Type'
+	</script>
+	<script src="~/js/app/internal/dlist/resgrid.dlists.editlist.js" type="text/javascript"></script>
+}

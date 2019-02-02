@@ -1,0 +1,138 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Training.ViewTrainingModel
+@{
+	ViewBag.Title = "Resgrid | View Training";
+}
+@section Styles
+{
+	
+}
+
+@{
+	var currentUser = Model.Training.Users.FirstOrDefault(x => x.UserId == ClaimsAuthorizationHelper.GetUserId());
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>View Training</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">Trainings</a>
+			</li>
+			<li class="active">
+				<strong>View Training</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-9">
+		<div class="wrapper wrapper-content animated fadeInUp">
+			<div class="ibox">
+				<div class="ibox-content">
+					<div class="row">
+						<div class="col-lg-5">
+							<div class="m-b-md">
+								<h2>@Model.Training.Name</h2>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-5">
+							<dl class="dl-horizontal">
+								<dt>Status:</dt>
+								<dd><span class="label label-primary">Active</span></dd>
+							</dl>
+						</div>
+						<div class="col-lg-7">
+							<dl class="dl-horizontal">
+								<dt>Created By:</dt>
+								<dd>@Model.CreatorUserName</dd>
+							</dl>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-5">
+							<dl class="dl-horizontal">
+								<dt>Due By:</dt>
+								<dd>
+									@if (Model.Training.ToBeCompletedBy != null)
+									{
+										<span>@Model.Training.ToBeCompletedBy.Value.ToShortDateString()</span>
+									}
+									else
+									{
+										<span>No Due Date</span>
+									}
+								</dd>
+							</dl>
+						</div>
+						<div class="col-lg-7">
+							<dl class="dl-horizontal">
+								<dt>Created On:</dt>
+								<dd>@Model.Training.CreatedOn.ToShortDateString()</dd>
+							</dl>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<dl class="dl-horizontal">
+								<dt>Description:</dt>
+								<dd>
+									@Html.Raw(Model.Training.Description)
+								</dd>
+							</dl>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-10 col-lg-offset-1">
+							<p>
+								@Html.Raw(Model.Training.TrainingText)
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3">
+		<div class="wrapper wrapper-content project-manager">
+			<h4>Training Attachments</h4>
+			<p class="small">
+				Below are the files (attachments) for this training. Please download, open and review all of these attachments as well as the training text. Information in these attachments can be questions in the training quiz.
+			</p>
+			<h5>Training files</h5>
+			<ul class="list-unstyled project-files">
+				@if (Model.Training.Attachments != null && Model.Training.Attachments.Count > 0)
+				{
+					foreach (var attachment in Model.Training.Attachments)
+					{
+						<li><a asp-controller="Trainings" asp-action="GetTrainingAttachment" asp-route-area="User" asp-route-trainingAttachmentId="@attachment.TrainingAttachmentId" target="_blank"><i class="fa fa-file"></i> @attachment.FileName</a></li>
+					}
+				}
+			</ul>
+		</div>
+
+@if (Model.Training.Questions != null && Model.Training.Questions.Count > 0 && (currentUser != null && !currentUser.Complete))
+{
+		<div class="wrapper wrapper-content project-manager">
+			<h4>Training Quiz</h4>
+			<p class="small">
+				This training has a quiz. Please review all the of the training text and all attachments to the training before you take the quiz.
+			</p>
+			
+			<a class="btn btn-success btn-rounded btn-block" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">Take Quiz</a>
+		</div>
+}
+
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

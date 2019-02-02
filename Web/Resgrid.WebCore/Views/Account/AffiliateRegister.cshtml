@@ -1,0 +1,95 @@
+﻿@model Resgrid.Web.Models.AffiliateRegistrationModel
+@{
+	Layout = "";
+}
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+	<title>Resgrid | Affiliate Registration</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="@Url.Content("~/Content/newinternal/css/bootstrap.min.css")" />
+	<link rel="stylesheet" href="@Url.Content("~/Content/newinternal/css/font-awesome.css")" />
+	<link rel="stylesheet" href="@Url.Content("~/Content/newinternal/css/unicorn-login.css")" />
+	<link rel="stylesheet" href="@Url.Content("~/Content/newinternal/css/select2.css")" />
+</head>
+<body>
+	<div id="container">
+		<div id="logo">
+			<a href="@Url.Action("Index", "Home", new { area = "" })"><img src="@Url.Content("~/Images/Resgrid_JustText_White.png")" alt="" /></a>
+		</div>
+		<div id="errors" class="validation-summary-errors" style="display:none;">
+			<ul></ul>
+		</div>
+		@using (Html.BeginForm("AffiliateRegister", "Account", FormMethod.Post, new { id = "register-wizard" }))
+		{
+			<span class="alert alert-error">
+				@Html.ValidationSummary(false)
+				@Html.AntiForgeryToken()
+				@Html.HiddenFor(m => m.Affiliate.AffiliateId)
+			</span>
+
+						<div id="loginbox" style="height: 380px;">
+							<div id="register-wizard-1" class="step">
+								<h4>Create your affiliate account</h4>
+								<section>
+									<p>Fill out the fields below to create your affiliate account. If you already have an account for Resgrid (i.e. for your Department) you will need to use a different Username and Email address for your Affiliate Account.</p>
+									<div class="input-group">
+										<span class="input-group-addon"><i class="icon-info-sign"></i></span>@Html.TextBoxFor(m => m.FullName, new { id = "user_full_name", @class = "form-control", autofocus = "autofocus", placeholder = "Your Name (First & Last)" })
+									</div>
+									<div class="input-group">
+										<span class="input-group-addon"><i class="icon-user"></i></span>@Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Desired Username" })
+									</div>
+									<div class="form-group">
+										<div class="input-group">
+											<span class="input-group-addon"><i class="icon-envelope"></i></span>@Html.TextBoxFor(m => m.Email, new { type = "email", @class = "form-control", placeholder = "Email Address" })
+										</div>
+									</div>
+									<div class="form-actions clearfix">
+										<input type="submit" class="btn btn-block btn-success" value="Next &rarr;" />
+									</div>
+									<div class="footer-login">
+
+									</div>
+								</section>
+							</div>
+							<div id="register-wizard-2" class="step">
+								<h4>Create your affiliate account (Step 2 of 2)</h4>
+								<section>
+									<p>Affiliate Account Information.</p>
+									<div class="form-actions clearfix">
+										<p>Supply the password you wish to use to access your affiliate account.</p>
+										<div class="input-group">
+											<span class="input-group-addon"><i class="icon-lock"></i></span>@Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Choose Password" })
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"><i class="icon-lock"></i></span>@Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm Password" })
+										</div>
+										<div class='alert alert-info'>
+											By signing up, you accept Resgrid's <a href="@Url.Action("Terms", "Public", new { area = "" })" target="_blank">
+												terms of use
+											</a>, <a href="@Url.Action("Privacy", "Public", new { area = "" })" target="_blank">
+												privacy
+												policy
+											</a> and <a href="@Url.Action("Terms", "Affiliate", new { area = "" })" target="_blank">
+												affiliate terms
+											</a>.
+										</div>
+										<input type="submit" class="btn btn-block btn-success disabled" value="Request Access to Department" />
+									</div>
+								</section>
+							</div>
+						</div>
+		}
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script>	window.jQuery || document.write('<script src="@Url.Content("~/Scripts/libs/jquery-1.8.2.min.js")"><\/script>')</script>
+	<script src="@Url.Content("~/Scripts/newinternal/jquery-ui.custom.js")"></script>
+	<script src="@Url.Content("~/Scripts/newinternal/jquery.validate.js")"></script>
+	<script src="@Url.Content("~/Scripts/newinternal/select2.min.js")"></script>
+
+	<script src="@Url.Content("~/Scripts/newinternal/jquery.wizard.js")"></script>
+	<script src="@Url.Content("~/Scripts/app/register/resgrid.affiliate.register.js")"></script>
+</body>
+</html>

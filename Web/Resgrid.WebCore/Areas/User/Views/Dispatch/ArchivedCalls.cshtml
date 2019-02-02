@@ -1,0 +1,77 @@
+﻿
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.CallsDashboardModel
+@{
+	ViewBag.Title = "Resgrid | Archived Calls";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Archived Calls</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+			</li>
+			<li class="active">
+				<strong>Archived Calls</strong>
+			</li>
+		</ol>
+	</div>
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="Add a new unit" class="btn btn-info" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Active Calls</a>
+			</div>
+		</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>Archived Calls</h5>
+					<div class="ibox-tools">
+						@if (ClaimsAuthorizationHelper.CanCreateCall())
+						{
+							<div class="buttons-actions">
+								<a id="addOldCall" title="Add a old call" class="btn btn-primary" asp-controller="Dispatch" asp-action="AddArchivedCall" asp-route-area="User">Add Archived Call</a>
+							</div>
+						}
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div id="archiveCallsList"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script id="archiveCallPriority-template" type="text/x-kendo-template">
+	<p style="color: #=Color#;">#=Priority#</p>
+</script>
+
+<script id="archiveCallState-template" type="text/x-kendo-template">
+	<p style="color: #=StateColor#;">#=State#</p>
+</script>
+
+	<script id="archiveCallCommand-template" type="text/x-kendo-template">
+	<a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-eye-open"></i><span class="hidden-sm hidden-xs"> View</span></a>
+	<a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("CallExport", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-share"></i><span class="hidden-sm hidden-xs"> Export</span></a>
+
+	#if(CanDeleteCall){#
+	<a href="@Url.Action("DeleteCall", "Dispatch", new {area = "User"})?callId=#=CallId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this call. Are you sure you want to delete the call #=Name#?" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
+	#}#
+
+</script>
+
+	<script src="@Url.Content("~/js/app/internal/dispatch/resgrid.dispatch.archive.js")" type="text/javascript"></script>
+}

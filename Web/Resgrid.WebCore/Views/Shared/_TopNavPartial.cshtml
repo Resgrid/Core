@@ -1,0 +1,35 @@
+﻿<div class="navbar-wrapper">
+	<nav class="navbar navbar-default navbar-fixed-top navbar-scroll" role="navigation">
+		<div class="container">
+			<div class="navbar-header page-scroll">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" asp-controller="Home" asp-action="Index">
+					<img id="headerLogo" src="~/images/Resgrid_JustText_small.png" />
+				</a>
+			</div>
+
+			<div class="pull-right" style="margin-top: 20px; margin-left: 20px;">
+				<a class="btn btn-success" asp-controller="Account" asp-action="Register" title="Create a new Resgrid account">
+					Sign Up
+				</a>
+				<a class="btn btn-info" asp-controller="Account" asp-action="LogOn" title="Log in to Resgrid">
+					Log In
+				</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a class="page-scroll" asp-controller="Home" asp-action="Features">Features</a></li>
+					<li><a class="page-scroll" asp-controller="Home" asp-action="Pricing">Pricing</a></li>
+					<li><a class="page-scroll" asp-controller="Home" asp-action="Why">Why Resgrid?</a></li>
+					<li><a class="page-scroll" asp-controller="Home" asp-action="About">About</a></li>
+					<li><a class="page-scroll" asp-controller="Home" asp-action="Contact">Contact</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</div>

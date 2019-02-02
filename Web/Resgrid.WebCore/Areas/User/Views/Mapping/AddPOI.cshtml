@@ -1,0 +1,125 @@
+﻿@model Resgrid.Web.Areas.User.Models.Mapping.AddPOIView
+@{
+	ViewBag.Title = "Resgrid | Add POI";
+}
+
+@section Styles
+{
+	<style>
+		.icons .map-icon {
+			font-size: 24px;
+			line-height: 1;
+			vertical-align: middle;
+		}
+
+		.icons {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+			.icons li {
+				float: left;
+				margin: 10px 0;
+				padding: 0;
+				width: 10%;
+			}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Role</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+			</li>
+			<li class="active">
+				<strong>New Role</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Mapping" asp-action="AddPOI" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrWhiteSpace(Model.Message))
+								{
+								<div class="alert alert-success">
+									@Model.Message
+								</div>
+								}
+								@Html.HiddenFor(m => m.TypeId)
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Latitude
+							</label>
+							<div class="col-sm-6">
+								@Html.TextBoxFor(x => x.Poi.Latitude, new { @class = "form-control" })
+								<span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Longitude
+							</label>
+							<div class="col-sm-6">
+								@Html.TextBoxFor(x => x.Poi.Longitude, new { @class = "form-control" })
+								<span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Note
+							</label>
+							<div class="col-sm-6">
+								@Html.TextBoxFor(x => x.Poi.Note, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Add POI</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	<script>
+		$(document).ready(function () {
+			$('input[type=checkbox],input[type=radio]').iCheck({
+				checkboxClass: 'icheckbox_square-blue',
+				radioClass: 'iradio_square-blue'
+			});
+
+			$("#Type_Color").kendoColorPicker({
+				value: "#ffffff",
+				buttons: false
+			});
+		});
+	</script>
+
+}

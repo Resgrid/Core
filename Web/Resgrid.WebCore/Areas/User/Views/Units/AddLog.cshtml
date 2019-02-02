@@ -1,0 +1,81 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Units.AddLogView
+@{
+		ViewBag.Title = "Resgrid | Add Unit Log";
+}
+@section Styles
+{
+		<style>
+				.k-select {
+						line-height: 1.5em !important;
+				}
+		</style>
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Add Log</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
+			</li>
+			<li class="active">
+				<strong>Add Log</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Units" asp-action="AddLog" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.HiddenFor(m => m.Log.UnitId)
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Name</label>
+							<div class="col-sm-10">@Model.UnitName</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								TimeStamp
+							</label>
+							<div class="col-sm-10">
+								@Html.TextBoxFor(m => m.Log.Timestamp, new { style="width:250px;" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Log Body (Narrative)</label>
+							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the role" asp-for="Log.Narrative"></textarea></div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Units" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Add Log</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+		<script src="~/js/app/internal/units/resgrid.units.unitlog.js"></script>
+}

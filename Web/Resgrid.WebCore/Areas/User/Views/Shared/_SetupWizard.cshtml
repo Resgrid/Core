@@ -1,0 +1,717 @@
+﻿@model Resgrid.Web.Areas.User.Models.Home.SetupWizardView
+@{
+  Layout = "";
+}
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+
+<form id="settingsForm">
+  <div class="wizard" id="satellite-wizard" data-title="Setup Wizard">
+    <div class="wizard-card" data-cardname="welcome">
+      <h3 style="margin-bottom: 0;">Welcome</h3>
+      <div class="wizard-input-section">
+        <p>
+          Hello @ClaimsAuthorizationHelper.GetFullName() and welcome to Resgrid! This wizard will help you get the system up and running. You can exit out of this wizard at any time by clicking the X in the upper right hand corner of this dialog. If you wish to re-run this wizard again you can from the Help menu.
+        </p>
+        <p>
+          In this wizard you cannot remove existing stations/units, etc but you can reconfigure general settings (Department Address, Time Zone, etc) and modify your general call import settings. To manage your existing units <a href="@Url.Action("Index", "Units", new {Area = "User"})">click here</a>, and to manage your exisitng stations <a href="@Url.Action("Index", "Groups", new {Area = "User"})">click here</a>.
+        </p>
+        <p>
+          To get started press the Next button below.
+        </p>
+      </div>
+    </div>
+    <div class="wizard-card" data-cardname="department">
+      <h3 style="margin-bottom: 0;">Department</h3>
+      <p>
+        Set the default global setting for your department.
+      </p>
+      <div class="wizard-input-section">
+        <div class="col-md-8">
+          <span class="wizard-text">Time Zone</span>
+          @Html.DropDownListFor(m => m.Department.TimeZone, new SelectList(TimeZones.Zones, "Key", "Value"), new { style = "width: 320px" })
+        </div>
+        <div class="col-md-10" style="padding-top:4px;">
+          <span class="wizard-text">Disable Auto Set Available</span>
+          <div>
+            @Html.CheckBoxFor(m => m.DisableAutoAvailable)
+            <span class="help-inline">Disable automatically setting personnel's status to Available after an hour</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-card" data-cardname="address">
+      <h3 style="margin-bottom: 0;">Address</h3>
+      <p>
+        Below enter the address of your station, office or primary location. You will be able to add your specific stations and their locations in the next screen.
+      </p>
+      <div>
+        <div class="form-group">
+          <div class="col-sm-9">
+            <span>
+              Street
+            </span>
+            @Html.TextBoxFor(m => m.Department.Address.Address1, new { @class = "form-control" })
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <div class="col-sm-8">
+            <span>
+              City
+            </span>
+            @Html.TextBoxFor(m => m.Department.Address.City, new { @class = "form-control" })
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <div class="col-sm-5">
+            <span>
+              State/Province
+            </span>
+            @Html.TextBoxFor(m => m.Department.Address.State, new { @class = "form-control" })
+          </div>
+          <div class="col-sm-4">
+            <span>
+              Postal Code
+            </span>
+            @Html.TextBoxFor(m => m.Department.Address.PostalCode, new { @class = "form-control" })
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <div class="col-sm-8">
+            <span>
+              Country
+            </span>
+            @Html.DropDownListFor(m => m.Department.Address.Country, new SelectList(Countries.CountryNames), new { style = "width: 300px" })
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-card wizard-card-overlay" data-cardname="stations">
+      <div id="stationsListSection">
+        <h3 style="margin-bottom: 0;">Stations</h3>
+        <p>
+          Below enter your departments stations. This creates a group that you can assign users under and will appear as an option to respond to, staff or house units out of.
+        </p>
+        <div class="wizard-input-section">
+          <div class="col-md-8">
+            <table id="stations" class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Station</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var station in Model.Groups)
+				{
+				  Model.StationCount++;
+                  <tr>
+                    <td>
+                      <input id="exstation_@Model.StationCount" name="exstation_@Model.StationCount" style="width: 100%;" value="@station.Name" disabled="">
+                      <input id="exstationAddress1_@Model.StationCount" name="exstationAddress1_@Model.StationCount" style="width: 100%;" value="@station.Address.Address1" type="hidden">
+                      <input id="exstationCity_@Model.StationCount" name="exstationCity_@Model.StationCount" style="width: 100%;" value="@station.Address.City" type="hidden">
+                      <input id="exstationState_@Model.StationCount" name="exstationState_@Model.StationCount" style="width: 100%;" value="@station.Address.State" type="hidden">
+                      <input id="exstationPostalCode_@Model.StationCount" name="exstationPostalCode_@Model.StationCount" style="width: 100%;" value="@station.Address.PostalCode" type="hidden">
+                      <input id="exstationCountry_@Model.StationCount" name="exstationCountry_@Model.StationCount" style="width: 100%;" value="@station.Address.Country" type="hidden">
+                    </td>
+                    <td style="text-align: center;"></td>
+                  </tr>
+				}
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-2">
+            <a onclick="addStation();" class="btn btn-success">Add Station</a>
+          </div>
+        </div>
+      </div>
+      <div id="stationAddSection" class="wizard-input-section" style="display: none;">
+        <h3 style="margin-bottom: 0;">Add Station</h3>
+        <div id="stationError" class="alert alert-danger" style="display: none;">
+          One or more of the fields below are missing. All are required to add a station.
+        </div>
+        <div class="col-md-8">
+          <span class="wizard-text">Station Name</span>
+          @Html.TextBoxFor(m => m.Station.Name, new { @class = "form-control station-form" })
+        </div>
+        <div class="col-sm-9">
+          <span>
+            Street
+          </span>
+          @Html.TextBoxFor(m => m.Station.Address.Address1, new { @class = "form-control station-form" })
+        </div>
+        <div class="col-sm-8">
+          <span>
+            City
+          </span>
+          @Html.TextBoxFor(m => m.Station.Address.City, new { @class = "form-control station-form" })
+        </div>
+        <div class="col-sm-5">
+          <span>
+            State/Province
+          </span>
+          @Html.TextBoxFor(m => m.Station.Address.State, new { @class = "form-control station-form" })
+        </div>
+        <div class="col-sm-4">
+          <span>
+            Postal Code
+          </span>
+          @Html.TextBoxFor(m => m.Station.Address.PostalCode, new { @class = "form-control station-form" })
+        </div>
+        <div class="col-sm-8">
+          <span>
+            Country
+          </span>
+          @Html.DropDownListFor(m => m.Station.Address.Country, new SelectList(Countries.CountryNames), new { style = "width: 300px" })
+        </div>
+        <div class="col-md-8">
+          <a onclick="cancelAddStation();" class="btn btn-danger">Cancel</a>
+          <a onclick="saveNewStation();" class="btn btn-success">Add Station</a>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-card">
+      <h3 style="margin-bottom: 0;">Units</h3>
+      <div class="wizard-input-section">
+        <p>
+          Resgrid allows you to interact and manage your appratuses. We have a dedicated Mobile App the <a href="https://resgrid.com/Home/Apps?type=unitsApp" target="_blank">Resgrid Unit app</a>, to be used on tablets in the appratuses.
+        </p>
+      </div>
+      <div id="unitListSection" class="wizard-input-section">
+        <div class="col-md-8">
+          <table id="units" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Unit</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var unit in Model.Units)
+			  {
+				Model.UnitCount++;
+                <tr>
+                  <td><input id='exunit_@Model.UnitCount' name='exunit_@Model.UnitCount' style='width: 100%;' value="@unit.Name" disabled></td>
+                  <td style='text-align: center;'></td>
+                </tr>
+			  }
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-2">
+          <a onclick="addUnit();" class="btn btn-success">Add Unit</a>
+        </div>
+      </div>
+      <div id="unitAddSection" class="wizard-input-section" style="display: none;">
+        <div id="unitError" class="alert alert-danger" style="display: none;">
+          You need to provide a unit name.
+        </div>
+        <div class="col-md-8">
+          <span class="wizard-text">Unit Name</span>
+          @Html.TextBoxFor(m => m.UnitName, new { @class = "form-control" })
+        </div>
+        <div class="col-md-8">
+          <a onclick="cancelAddUnit();" class="btn btn-danger">Cancel</a>
+          <a onclick="saveNewUnit();" class="btn btn-success">Add Unit</a>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-card wizard-card-overlay">
+      <div id="callImportText" class="wizard-input-section">
+        <h3>Call Import</h3>
+        <p>
+          Does your existing dispatch send out Emails or Text messages? Resgrid can import them and automatically create calls. Select the import method you want to use (or not) here.
+        </p>
+        @Html.DropDownListFor(m => Model.CallImportOption, Model.CallImportOptions, new { id = "callImportType", name = "callImportType", style = "width:350px" })
+      </div>
+      <div id="emailCallImportSection" class="wizard-input-section" style="display: none;">
+        <h3>Email Call Import</h3>
+        <p>
+          Resgrid creates dedicated email addresses for your department (and all your department groups) that your dispatching entity can use to create and dispatch calls for you. Your department email address
+          which is an email address with the name of @@dispatch.resgrid.com will dispatch all personnel in your department. Your groups can be dispatched individually as well, those email address have a name of
+          @@groups.resgrid.com which will only dispatch personnel that are in that group.
+        </p>
+        <div class="col-md-12">
+          <span class="wizard-text">Your Department Wide Dispatch Email</span>
+          <h4>@Model.DepartmentEmailAddress@@dispatch.resgrid.com</h4>
+        </div>
+        <p>
+          After you finish this wizard you can view your group dispatch email address from your Department Menu->Station & Groups.
+        </p>
+      </div>
+      <div id="textCallImportSection" class="wizard-input-section" style="display: none;">
+        <h3>Text Message Call Import</h3>
+        <p>
+          Resgrid will create calls from text messages sent to the number below. You should also add in the telephone numbers in the text box below that dispatches will come from, to prevent calls being created from other telephone numbers.
+        </p>
+        @if (!Model.CanProvisionNumber)
+		{
+          <div class="alert alert-danger fade in">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <p>Your departments current plan doesn't support Text-To-Call. Upgrade your plan to Professional or higher to get this feature.</p>
+          </div>
+          <p>
+            <a onclick="textCallCancel();" class="btn btn-danger">Back</a>
+            <a href="@Url.Action("Index", "Subscription", new {Area = "User"})" class="btn btn-success">Upgrade Your Plan</a>
+          </p>
+		}
+		else
+		{
+          <div>
+            <div class="col-md-8">
+              <span class="wizard-text">Select Country for Text Number</span>
+              <select class="input-xlarge" id="country" name="country">
+                <option value="" selected="selected">Select Country</option>
+                <option value="US">United States</option>
+                <option value="CA">Canada</option>
+                <option value="GB">United Kingdom</option>
+                <option value="AU">Australia</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="col-md-8">
+              <span class="wizard-text">Your SMS/Text Number</span>
+              <ul class="site-stats">
+                @if (Model.CanProvisionNumber && String.IsNullOrWhiteSpace(Model.DepartmentTextToCallNumber))
+				{
+                  <li id="textCallNumberList"><a onclick="provisionTextNumber();" href="#"><div class="cc"><i class="icon-phone"></i><strong>No Phone Number</strong> <small>click to provision number.</small></div></a></li>
+				}
+				else if (!String.IsNullOrWhiteSpace(Model.DepartmentTextToCallNumber))
+				{
+                  <li><div class="cc"><i class="icon-phone"></i><strong>@Model.DepartmentTextToCallNumber</strong></div></li>
+				}
+				else
+				{
+                  <li><div class="cc"><i class="icon-phone"></i><strong>No Phone Number</strong></div></li>
+				}
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="col-md-11">
+              <span class="wizard-text">Phone Numbers that Text Dispatches will come from</span>
+              @Html.TextBoxFor(m => m.DepartmentTextToCallSourceNumbers, new { @class = "form-control" })
+              <span class="help-inline">Seperate multiple phone numbers by commas</span>
+            </div>
+          </div>
+          <div class="col-md-8" style="padding-top:4px;">
+            <a onclick="cancelTextImport();" class="btn btn-danger">Cancel</a>
+          </div>
+          <div id="textProvisionFailure" class="alert alert-danger" style="display: none;">
+            We could not provision your text to call number. Please try again.
+          </div>
+		}
+      </div>
+      <div id="directCallImportSection" class="wizard-input-section" style="display: none;">
+        <h3>API Key</h3>
+        <p>
+          Your Api Key is a password that other systems and software can use to access Resgrid. Resgrid uses a REST based web Api that can easily be integrated with a
+          wide variety of software platforms; from eDispatch systems, to automation software and even your own custom software platforms. Using the form below you can
+          provision your Api Key or change it. If you change your existing Api Key all software that uses your old key will need to be updated to use the new key.
+        </p>
+        @if (String.IsNullOrEmpty(Model.Department.ApiKey))
+		{
+          <p>
+            Your department does not have an Api Key provisioned. Visit the Api Settings department menu item to provision one. Only provision an Api Key when your department needs it.
+          </p>
+
+          <div class="col-md-8" style="padding-top:4px;">
+            <a onclick="cancelApiKey();" class="btn btn-danger">Cancel</a>
+          </div>
+          <div id="apiProvisionFailure" class="alert alert-danger" style="display: none;">
+            We could not provision your text to call number. Please try again.
+          </div>
+		}
+		else
+		{
+          <div class="col-md-6">
+            <span class="wizard-text">Your API Key is</span>
+            <h4>@Model.Department.ApiKey</h4>
+          </div>
+          <div class="col-md-8" style="padding-top:4px;">
+            <a onclick="cancelApiKey();" class="btn btn-danger">Cancel</a>
+          </div>
+		}
+      </div>
+
+      <div class="wizard-error">
+        <div class="alert alert-danger">
+          <strong>There was a problem</strong> with your submission.
+          Please correct the errors and re-submit.
+        </div>
+      </div>
+
+      <div class="wizard-failure">
+        <div class="alert alert-error">
+          <strong>There was a problem</strong> submitting the form.
+          Please try again in a minute.
+        </div>
+      </div>
+
+      <div class="wizard-success">
+        <div class="alert alert-success">
+          Wizard Completed <strong>Successfully.</strong>
+        </div>
+
+        <p>
+          You've completed the Setup Wizard. This is only a small subset of what you can configure with Resgrid. You can access our <a href="http://resgrid.uservoice.com/forums/166536-general" target="_blank">knowledge base</a> for more detailed information on specific features, settings or general information. Most of these settings are under your Department Menu (to the left of the Help menu in the top right hand corner of the screen).
+        </p>
+        <a href="@Url.Action("Invites", "Department", new {area = "User"})" class="btn btn-success im-done">Sending out Invite Emails</a>
+        <a href="@Url.Action("AddPerson", "Personnel", new {area = "User"})" class="btn btn-success im-done">Manually Add New User</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script type="text/javascript">
+  var unitCount = 0;
+  var stationCount = 0;
+  var settingsForm;
+
+  $(document).ready(function () {
+	resgrid.common.analytics.track('Setup Wizard');
+
+	$.fn.wizard.logging = true;
+	var wizard = $('#satellite-wizard').wizard({
+	  keyboard: false,
+	  contentHeight: 450,
+	  contentWidth: 700,
+	  backdrop: 'static'
+	});
+
+	//$('select').select2();
+
+	//$("#settingsForm").validate({
+	//	errorClass: "invalid",
+	//	rules: {
+	//		Station_Name: "required",
+	//		Station_Address_Address1: "required",
+	//		Station_Address_City: "required",
+	//		Station_Address_State: "required",
+	//		Station_Address_PostalCode: "required",
+	//		email: {
+	//			required: true,
+	//			email: true
+	//		}
+	//	},
+	//	messages: {
+	//		Station_Name: "Station name is required",
+	//		Station_Address_Address1: "Street address is required",
+	//		Station_Address_City: "Station city is required",
+	//		Station_Address_State: "Station state is required",
+	//		Station_Address_PostalCode: "Station Postal Code is required"
+	//	}
+	//});
+
+	//settingsForm = $("#settingsForm").validate({
+	//	debug: true
+	//});
+
+	$('#callImportType').on('change', function (e) {
+	  var valueSelected = $("#callImportType option:selected").text();
+
+	  if (valueSelected && valueSelected === 'Email Call Importing') {
+		$('#callImportText').hide();
+		$('#emailCallImportSection').show();
+	  } else if (valueSelected && valueSelected === 'Text Message Call Importing') {
+		$('#callImportText').hide();
+		$('#textCallImportSection').show();
+	  } else if (valueSelected && valueSelected === 'Direct Connection') {
+		$('#callImportText').hide();
+		$('#directCallImportSection').show();
+	  }
+	});
+
+	$('#EmailSettings_Hostname').keyup(function () {
+	  var $this = $(this);
+	  if (!expression.test($this.val())) {
+		console.log('Not Hostname');
+		$this.parents('.wizard-form-group').removeClass('has-error has-success').addClass('has-error');
+	  } else {
+		$this.parents('.wizard-form-group').removeClass('has-error').addClass('has-success');
+	  }
+	});
+
+	$('#EmailSettings_Port').keypress(function (evt) {
+	  var theEvent = evt || window.event;
+	  var key = theEvent.keyCode || theEvent.which;
+	  key = String.fromCharCode(key);
+	  var regex = /[0-9]/;
+	  if (!regex.test(key)) {
+		theEvent.returnValue = false;
+		if (theEvent.preventDefault) theEvent.preventDefault();
+	  }
+	});
+
+	wizard.on('closed', function () {
+	  wizard.reset();
+	});
+
+	wizard.on("reset", function () {
+	  wizard.modal.find(':input').val('').removeAttr('disabled');
+	  wizard.modal.find('.form-group').removeClass('has-error').removeClass('has-succes');
+	  wizard.modal.find('#fqdn').data('is-valid', 0).data('lookup', 0);
+	});
+
+	wizard.on("submit", function (wizard) {
+
+	  var formValues = $(':input');
+	  var obj = {};
+	  $.map(formValues, function (n, i) {
+		obj[n.name] = $(n).val();
+	  });
+	  obj["StationCount"] = stationCount;
+	  obj["UnitCount"] = unitCount;
+	  //console.log(JSON.stringify(obj));
+
+	  $.ajax({
+		url: resgrid.absoluteBaseUrl + '/User/Department/SubmitSetupWizard',
+		data: JSON.stringify({
+		  setupWizardForm: JSON.stringify(obj)
+		}),
+		dataType: 'json',
+		processData: false,
+		contentType: 'application/json',
+		type: 'POST'
+	  }).done(function (data) {
+		  wizard.trigger("success");
+		  //wizard.hideButtons();
+		  wizard._submitting = false;
+		  wizard.showSubmitCard("success");
+		  wizard.updateProgressBar(0);
+		  wizard.showButtons();
+		  $('.wizard-back').hide();
+		  $('.wizard-next').hide();
+	  });
+	});
+
+	wizard.el.find(".wizard-success .im-done").click(function () {
+	  wizard.hide();
+	  setTimeout(function () {
+		wizard.reset();
+	  }, 250);
+
+	});
+
+	//$('#open-wizard').click(function (e) {
+	//	e.preventDefault();
+	//	wizard.show();
+	//});
+
+	wizard.show();
+  });
+
+  function addUnit() {
+	$('#unitListSection').hide();
+	$('#unitAddSection').show();
+
+	return false;
+  };
+
+  function textCallCancel() {
+	$('#textCallImportSection').hide();
+	$('#callImportText').show();
+
+	return false;
+  };
+
+  function cancelAddUnit() {
+	$('#unitError').hide();
+	$('#unitAddSection').removeClass('has-error has-success');
+	$('#UnitName').val('');
+	$('#unitAddSection').hide();
+	$('#unitListSection').show();
+
+	return false;
+  };
+
+  function saveNewUnit() {
+	var unitName = $('#UnitName').val();
+
+	if (unitName) {
+	  unitCount++;
+	  $('#units tbody').append("<tr><td><input id='unit_" + unitCount + "' name='unit_" + unitCount + "' style='width:100%;' value='" + unitName + "' disabled></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='Remove this unit'><i class='fa fa-minus'></i></a></td></tr>");
+
+	  $('#UnitName').val('');
+	  $('#unitAddSection').hide();
+	  $('#unitListSection').show();
+	  $('#unitError').hide();
+	  $('#unitAddSection').removeClass('has-error has-success');
+	} else {
+	  $('#unitError').show();
+	  $('#unitAddSection').removeClass('has-error has-success').addClass('has-error');
+	}
+
+	return false;
+  };
+
+  function addStation() {
+	$('#stationsListSection').hide();
+	$('#stationAddSection').show();
+
+	return false;
+  };
+
+  function cancelAddStation() {
+	$('#Station_Name').val('');
+	$('#Station_Address_Address1').val('');
+	$('#Station_Address_City').val('');
+	$('#Station_Address_State').val('');
+	$('#Station_Address_PostalCode').val('');
+	$('#stationAddSection').hide();
+	$('#stationsListSection').show();
+	$("#s2id_Station_Address_Country").select2("val", "United States");
+	$('#stationError').hide();
+	$('#stationAddSection').removeClass('has-error has-success');
+
+	return false;
+  };
+
+  function saveNewStation() {
+
+	//if ($('.station-form').valid()){
+	//	$('#stationsListSection').hide();
+	//	$('#stationAddSection').show();
+	//}
+
+	//var stationName = settingsForm.element("#Station_Name");
+	//var stationName1 = $('#Station_Name').valid();
+
+	//if ($('#Station_Name').valid() &&
+	//	$('#Station_Address_Address1').valid() &&
+	//	$('#Station_Address_City').valid() &&
+	//	$('#Station_Address_State').valid() &&
+	//	$('#Station_Address_PostalCode').valid())
+	//{
+
+	//}
+
+	var name = $('#Station_Name').val();
+	var address1 = $('#Station_Address_Address1').val();
+	var city = $('#Station_Address_City').val();
+	var state = $('#Station_Address_State').val();
+	var postalCode = $('#Station_Address_PostalCode').val();
+	var country = $('#s2id_Station_Address_Country').select2('data').text;
+
+	if (name && address1 && city && state && postalCode) {
+	  stationCount++;
+	  $('#stations tbody').append("<tr><td><input id='station_" + stationCount + "' name='station_" + stationCount + "' style='width:100%;' value='" + name + "' disabled>" +
+		"<input id='stationAddress1_" + stationCount + "' name='stationAddress1_" + stationCount + "' style='width:100%;' value='" + address1 + "' type='hidden'>" +
+		"<input id='stationCity_" + stationCount + "' name='stationCity_" + stationCount + "' style='width:100%;' value='" + city + "' type='hidden'>" +
+		"<input id='stationState_" + stationCount + "' name='stationState_" + stationCount + "' style='width:100%;' value='" + state + "' type='hidden'>" +
+		"<input id='stationPostalCode_" + stationCount + "' name='stationPostalCode_" + stationCount + "' style='width:100%;' value='" + postalCode + "' type='hidden'>" +
+		"<input id='stationCountry_" + stationCount + "' name='stationCountry_" + stationCount + "' style='width:100%;' value='" + country + "' type='hidden'>" +
+		"</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='Remove this station'><i class='fa fa-minus'></i></a></td></tr>");
+
+	  $('#Station_Name').val('');
+	  $('#Station_Address_Address1').val('');
+	  $('#Station_Address_City').val('');
+	  $('#Station_Address_State').val('');
+	  $('#Station_Address_PostalCode').val('');
+	  $('#stationAddSection').hide();
+	  $('#stationsListSection').show();
+	  $('#stationError').hide();
+	  $('#stationAddSection').removeClass('has-error has-success');
+	} else {
+	  $('#stationError').show();
+	  $('#stationAddSection').removeClass('has-error has-success').addClass('has-error');
+	}
+
+	return false;
+  };
+
+  function testEmailImport() {
+	var hostname = $('#EmailSettings_Hostname').val();
+	var port = $('#EmailSettings_Port').val();
+	var username = $('#EmailSettings_Username').val();
+	var password = $('#EmailSettings_Password').val();
+	var useEncryption = $('#EmailSettings_UseSsl').val();
+
+	$.ajax({
+	  url: resgrid.absoluteBaseUrl + '/User/Department/TestEmailSettings',
+	  data: JSON.stringify({
+		hostname: hostname,
+		port: port,
+		username: username,
+		password: password,
+		useEncryption: useEncryption
+	  }),
+	  contentType: 'application/json',
+	  type: 'POST'
+	}).done(function (data) {
+	  if (data) {
+		$('#emailSuccess').hide();
+		$('#emailError').text(data);
+		$('#emailError').show();
+	  } else {
+		$('#emailError').hide();
+		$('#emailSuccess').show();
+	  }
+	});
+
+	return false;
+  };
+
+  function provisionTextNumber() {
+	$.ajax({
+	  url: resgrid.absoluteBaseUrl + '/User/Department/ProvisionDefaultNumberAsync?country=' + $('#country').val(),
+	  type: 'GET'
+	}).done(function (data) {
+	  if (data === "Could not provision number") {
+		$('#textProvisionFailure').show();
+	  } else {
+		$('#textCallNumberList').innerHTML = "<div class='cc'><i class='icon-phone'></i><strong>" + data + "</strong></div>";
+	  }
+	});
+
+	return false;
+  };
+
+  function provisionApiKey() {
+	$.ajax({
+	  url: resgrid.absoluteBaseUrl + '/User/Department/ProvisionApiKeyAsync',
+	  type: 'GET'
+	}).done(function (data) {
+	  if (data) {
+		$('#apiProvisionFailure').show();
+	  } else {
+		$('#provisionApiKeyButton').innerHTML = "<div class='cc'><strong>" + data + "</strong></div>";
+	  }
+	});
+
+	return false;
+  };
+
+  function cancelEmailImport() {
+	$("#callImportType").select2("val", "No Call Importing");
+	$('#emailCallImportSection').hide();
+	$('#callImportText').show();
+
+	return false;
+  };
+
+  function cancelTextImport() {
+	$("#callImportType").select2("val", "No Call Importing");
+	$('#textCallImportSection').hide();
+	$('#callImportText').show();
+
+	return false;
+  };
+
+  function cancelApiKey() {
+	$("#callImportType").select2("val", "No Call Importing");
+	$('#directCallImportSection').hide();
+	$('#callImportText').show();
+
+	return false;
+  };
+
+  var expression = /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$))|(^\s*((?=.{1,255}$)(?=.*[A-Za-z].*)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*)\s*$)/;
+</script>

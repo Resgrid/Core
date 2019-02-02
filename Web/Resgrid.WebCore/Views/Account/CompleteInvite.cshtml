@@ -1,0 +1,124 @@
+﻿@model Resgrid.Web.Models.CompleteInviteModel
+@{
+  ViewData["Title"] = "Resgrid | Complete Invite";
+  Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"]</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  @Html.Partial("_StylePartial")
+
+
+  @Html.Raw(JavaScriptSnippet.FullScript)
+</head>
+<body class="gray-bg">
+
+  <div class="loginColumns animated fadeInDown">
+    <div class="row">
+
+      <div class="col-md-6">
+        <div style="text-align: center;">
+          <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+        </div>
+        <p>
+          Supply the information to the side to create a NEW department entry in the Resgrid system.
+        </p>
+
+        <p>
+          If someone from your department has already signed up your department in Resgrid, contact them to have that user send you an invite to that existing department.
+        </p>
+
+        <p>
+          If your department has not yet signed up for Resgrid you can create a new account here then invite your other department members from inside the system. Only the first user in a department needs to create their account from this screen.
+        </p>
+
+        <div class='alert alert-info'>
+          By signing up, you accept Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">
+            terms of use
+          </a> and <a asp-controller="Public" asp-action="Privacy" target="_blank">
+            privacy
+            policy
+          </a>
+        </div>
+
+        <p>
+          <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
+        </p>
+      </div>
+      <div class="col-md-6">
+        <div class="ibox-content">
+          <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="First Name" asp-for="FirstName" required="">
+              <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Last Name" asp-for="LastName" required="">
+              <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              <input type="email" class="form-control" placeholder="Email Address" required="" value="@Model.Email" disabled>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Username" asp-for="UserName" required="">
+              <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              <input asp-for="Password" class="form-control" placeholder="Password" required="" />
+              <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required="" />
+              <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary block full-width m-b">Register</button>
+
+            @Html.HiddenFor(x => x.Email)
+            @Html.HiddenFor(x => x.Code)
+            <div asp-validation-summary="All" class="text-danger"></div>
+          </form>
+          <p class="m-t">
+
+          </p>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div class="col-md-6">
+        Resgrid, LLC.
+      </div>
+      <div class="col-md-6 text-right">
+        <small>© 2017</small>
+      </div>
+    </div>
+  </div>
+
+  <script>
+	$(function () {
+	  deleteAllCookies();
+	});
+
+	function deleteAllCookies() {
+	  var cookies = document.cookie.split(";");
+
+	  for (var i = 0; i < cookies.length; i++) {
+		var cookie = cookies[i];
+		var eqPos = cookie.indexOf("=");
+		var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+		document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+	  }
+	}
+  </script>
+  @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+</body>
+</html>

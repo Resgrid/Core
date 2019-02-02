@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  resgrid.servicescore:
+    image: ${DOCKER_REGISTRY}resgridservicescore
+    expose:
+      - "80"
+    ports:
+      - "5101:80"
+    build:
+      context: .
+      dockerfile: Web/Resgrid.ServicesCore/Resgrid.ServicesCore/Dockerfile
+  redis:
+    image: redis
+  nats:
+    image: 'nats'
+    entrypoint: "/gnatsd -DV"
+    expose:
+      - "4222"
+    ports:
+      - "8222:8222"
+    hostname: nats-server

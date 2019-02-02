@@ -1,0 +1,826 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0058)http://code.google.com/apis/maps/documentation/directions/ -->
+<HTML><HEAD><META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+
+<TITLE>The Google Directions API - Google Maps API Web Services - Google Code</TITLE>
+<SCRIPT type="text/javascript"><!--
+(function(){function a(){this.t={};this.tick=function(c){this.t[c]=(new Date).getTime()};this.tick("start")}var b=new a;window.jstiming={Timer:a,load:b};if(window.external&&window.external.pageT)window.jstiming.pt=window.external.pageT;})();
+
+var _tocPath_ = '/apis/maps/documentation/webservices/_toc.ezt';
+var codesite_token = '516d79ee8ead1ed26d05c193deb0c7ac';
+var logged_in_user_email = 'maxim.novak@gmail.com';
+//--></SCRIPT>
+<LINK href="./The Google Directions API - Google Maps API Web Services - Google Code_files/codesite.pack.04102009.css" type="text/css" rel="stylesheet">
+<SCRIPT src="./The Google Directions API - Google Maps API Web Services - Google Code_files/codesite_head.pack.04102009.js" type="text/javascript"></SCRIPT>
+<SCRIPT type="text/javascript">CODESITE_CSITimer['load'].tick('bhs');</SCRIPT>
+<LINK rel="search" type="application/opensearchdescription+xml" title="Google Code" href="http://code.google.com/osd.xml">
+
+<!--[if IE]><link rel="stylesheet" type="text/css" href="/css/iehacks.css"><![endif]-->
+
+  <SCRIPT type="text/javascript" src="./The Google Directions API - Google Maps API Web Services - Google Code_files/ga.js"></SCRIPT></HEAD><BODY class="gc-documentation">
+
+    <DIV id="gb">
+ <SPAN>
+  
+   
+    <B>maxim.novak@gmail.com</B>
+    |
+   
+   
+    <A href="http://code.google.com/u/maxim.novak/" id="projects-dropdown" onclick="return false;"><SPAN style="text-decoration:underline">My favorites</SPAN> <SPAN style="font-size:.75em;">▼</SPAN></A>
+    |
+   
+  
+    <A id="lang-dropdown" class="dropdown" href="http://code.google.com/" onclick="return false;"><IMG width="13" height="13" class="globeicon" src="./The Google Directions API - Google Maps API Web Services - Google Code_files/globe2_small.png"><SPAN style="text-decoration:underline">English</SPAN> <SPAN style="font-size:.75em;">▼</SPAN></A>
+  
+   
+    | <A href="http://www.google.com/accounts/Logout?continue=http%3A%2F%2Fcode.google.com%2Fapis%2Fmaps%2Fdocumentation%2Fdirections%2F" onclick="CODESITE_click(&#39;/gb/sc/signout&#39;);"><SPAN style="text-decoration:underline">Sign out</SPAN></A>
+   
+  
+ </SPAN>
+</DIV>
+
+<DIV class="gbh" style="left:0px;"></DIV>
+<DIV class="gbh" style="right:0px;"></DIV>
+
+<DIV id="gc-container">
+<A id="top"></A>
+<DIV id="skipto">
+  
+  
+</DIV>
+
+<DIV id="gc-header">
+  <DIV id="logo"><A href="http://code.google.com/">
+  
+  
+     <IMG src="./The Google Directions API - Google Maps API Web Services - Google Code_files/code_logo.png" height="40" width="161" alt="Google Code" style="border:0;margin:3px 0 0 0;">
+  
+  
+  </A></DIV>
+  <DIV id="search">
+    <DIV id="searchForm" class="searchForm">
+      <FORM id="cse" action="http://www.google.com/cse" accept-charset="utf-8" class="gsc-search-box" onsubmit="executeGSearch(document.getElementById(&#39;gsearchInput&#39;).value); return false;">
+      <NOSCRIPT></NOSCRIPT>
+      <DIV id="gsc-search-box">
+        <INPUT id="gsearchInput" type="text" name="q" maxlength="2048" class="gsc-input" autocomplete="off" title="Google Code Search" style="width:345px">
+        <DIV id="cs-searchresults" onclick="event.cancelBubble = true;"></DIV>
+        <INPUT title="Search" id="gsearchButton" class="gsc-search-button" name="sa" value="Search" type="submit">
+        <DIV class="greytext">e.g. "ajax apis" or "open source"</DIV>
+      </DIV>
+      </FORM>
+    </DIV> <!-- end searchForm -->
+  </DIV> <!-- end search -->
+
+
+
+<H2 id="googlecode-promo"><A href="http://code.google.com/events/io/2010/" onclick="_gaq.push([&#39;siteTracker._trackEvent&#39;,&#39;Promos&#39;,&#39;Header-GoogleIO2010Keynote&#39;,this.href]);">Watch the Google I/O 2010 keynotes</A></H2>
+
+</DIV> <!-- end gc-header -->
+
+
+<DIV id="codesiteContent">
+
+<A id="gc-topnav-anchor"></A>
+<DIV id="gc-topnav"><IMG src="./The Google Directions API - Google Maps API Web Services - Google Code_files/star_off.gif" width="15" height="15" id="gc-star">
+  <H1 class="default">Google Maps API Web Services</H1>
+  <UL id="docs" class="gc-topnav-tabs">
+
+    <LI id="home_link">
+      <A href="./The Google Directions API - Google Maps API Web Services - Google Code_files/The Google Directions API - Google Maps API Web Services - Google Code.htm" title="Google Maps API Web Services home page">Home</A>
+    </LI>
+  
+    <LI id="docs_link">
+      <A href="http://code.google.com/apis/maps/documentation/directions/index.html" class="selected" title="Official Google Maps API Web Services documentation">Docs</A>
+    </LI>
+  
+    <LI id="faq_link">
+      <A href="http://code.google.com/apis/maps/faq.html" title="Answers to frequently asked questions about Google Maps API Web Services">FAQ</A>
+    </LI>
+  
+    <LI>
+      <A href="http://googlegeodevelopers.blogspot.com/" title="Official Google Maps API Web Services blog">Blog</A>
+    </LI>
+  
+    <LI>
+      <A href="http://groups-beta.google.com/group/Google-Maps-API" title="Google Maps API Web Services developer forum">Forum</A>
+    </LI>
+  
+    <LI>
+      <A href="http://code.google.com/apis/maps/terms.html" title="Google Maps API Web Services terms of service">Terms</A>
+    </LI>
+  
+
+  </UL>
+</DIV> <!-- end gc-topnav -->
+
+    <DIV class="g-section g-tpl-170">
+
+      <A name="gc-toc-anchor"></A>  
+      <DIV class="g-unit g-first" id="gc-toc">
+        <UL class="treelist tlw-nested-only tlw-processed tlw-instance-0">
+  <LI><A href="http://code.google.com/apis/maps/">Maps API Family</A></LI>
+  <LI><A href="http://code.google.com/apis/kml/documentation/kmlSearch.html">Index Your Maps Content</A></LI>
+</UL>
+    <DIV class="line"></DIV>
+      <UL class="treelist tlw-nested-only tlw-processed tlw-instance-1">
+        <LI><H2 class="tlw-ignore"><A href="http://code.google.com/apis/maps/documentation/webservices/">Maps API Web Services</A></H2>
+         <UL>
+           <LI><A href="http://code.google.com/apis/maps/documentation/geocoding/">Geocoding API</A></LI>
+           <LI class="selected"><A href="./The Google Directions API - Google Maps API Web Services - Google Code_files/The Google Directions API - Google Maps API Web Services - Google Code.htm">Directions API</A></LI>
+           <LI><A href="http://code.google.com/apis/maps/documentation/elevation/">Elevation API</A></LI>
+           <LI><A href="http://code.google.com/apis/maps/documentation/places/">Places API</A></LI>
+         </UL>
+       </LI>
+      </UL>
+<DIV class="line"></DIV>
+<UL class="treelist tlw-nested-only tlw-processed tlw-instance-2">
+  <LI><H2 class="tlw-ignore">Maps JavaScript API V3</H2>
+    <UL>
+      <LI><A href="http://code.google.com/apis/maps/documentation/javascript/">Home Page</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/javascript/basics.html">Documentation</A></LI>
+    </UL>
+  </LI>
+</UL>
+      <UL class="treelist tlw-nested-only tlw-processed tlw-instance-3">
+        <LI><H2>Maps Javascript API V2</H2>
+         <P><SPAN style="color:grey">(Deprecated API)</SPAN></P>
+         <UL>
+           <LI><A href="http://code.google.com/apis/maps/documentation/javascript/v2/">Home Page</A></LI>
+           <LI><A href="http://code.google.com/apis/maps/documentation/javascript/v2/basics.html">Documentation</A></LI>
+         </UL>
+       </LI>
+      </UL>
+<DIV class="line"></DIV>
+<UL class="treelist tlw-nested-only tlw-processed tlw-instance-4">
+  <LI><H2 class="tlw-ignore">Maps API for Flash</H2>
+    <UL>
+      <LI><A href="http://code.google.com/apis/maps/documentation/flash/">Home Page</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/flash/intro.html">Documentation</A></LI>
+    </UL>
+  </LI>
+</UL>
+   <DIV class="line"></DIV>
+    <UL class="treelist tlw-nested-only tlw-processed tlw-instance-5">
+      <LI><H2 class="tlw-ignore">Maps Data API</H2>
+        <UL>
+          <LI><A href="http://code.google.com/apis/maps/documentation/mapsdata/">Home Page</A></LI>
+          <LI><A href="http://code.google.com/apis/maps/documentation/mapsdata/developers_guide_protocol.html">Documentation</A></LI>
+        </UL>
+      </LI>
+    </UL>
+       <DIV class="line"></DIV>
+        <UL class="treelist tlw-nested-only tlw-processed tlw-instance-6">
+          <LI><H2 class="tlw-ignore">Static Maps API</H2>
+            <UL>
+              <LI><A href="http://code.google.com/apis/maps/documentation/staticmaps/">Developer Guide</A></LI>
+            </UL>
+          </LI>
+        </UL>
+<DIV class="line"></DIV>
+        <UL class="treelist tlw-nested-only tlw-processed tlw-instance-7">
+          <LI><H2 class="tlw-ignore">Earth API</H2>
+            <UL>
+              <LI><A href="http://code.google.com/apis/earth/">Home Page</A></LI>
+              <LI><A href="http://code.google.com/apis/earth/documentation/">Documentation</A></LI>
+            </UL>
+          </LI>
+        </UL>
+   <DIV class="line"></DIV>
+<DIV class="promo">
+<P><A href="http://code.google.com/apis/maps/documentation/premier/">Google Maps API Premier</A></P>
+<P>Includes enterprise licensing and support</P>
+</DIV>
+
+      </DIV>
+      
+      <A name="gc-pagecontent-anchor"></A>   
+      <DIV class="g-unit" id="gc-pagecontent" style="position: relative; ">
+        <H1 class="page_title">The Google Directions API</H1>
+
+
+<DIV class="toc">
+  <OL>
+  <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Introduction">Introduction</A></LI>
+  <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Audience">Audience</A></LI>
+  <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Limits">Limits</A></LI>
+  <LI><A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsRequests">Directions Requests</A>
+    <OL>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#RequestParameters">Request Parameters</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#TravelModes">Travel Modes</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Waypoints">Using Waypoints in Routes</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Restrictions">Restrictions</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#RegionBiasing">Region Biasing</A></LI>
+    </OL>    
+  </LI>
+  <LI><A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsResponses">Directions Responses</A>
+    <OL>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#JSON">JSON Output</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#XML">XML Output</A></LI>
+      <LI><A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsResponseElements">Directions Response Elements</A>
+        <UL>
+           <LI><A href="http://code.google.com/apis/maps/documentation/directions/#StatusCodes">Status Codes</A></LI>
+           <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Routes">Routes</A></LI>
+           <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Legs">Legs</A></LI>
+           <LI><A href="http://code.google.com/apis/maps/documentation/directions/#Steps">Steps</A></LI>   
+        </UL>
+      </LI>
+    </OL>    
+  </LI>
+  </OL>
+</DIV>
+
+<DIV class="special">
+<P><SPAN style="color:red">Note:</SPAN> The Google Directions
+API does not requires a Maps API key!<BR>Google Maps
+API Premier customers must, however, <I>sign</I> their URLs
+using a new cryptographic key. See the
+<A href="http://code.google.com/apis/maps/documentation/premier/guide.html#URLSigning">
+Premier documentation</A> for more information.</P>
+</DIV>
+
+<H1 id="Introduction">Introduction</H1>
+
+<P>The Google Directions API is a service that calculates
+directions between locations using an HTTP request. Directions may
+specify origins, destinations and waypoints either as text strings
+(e.g. "Chicago, IL" or "Darwin, NSW, Australia") or as
+latitude/longitude coordinates. The Directions API can return
+multi-part directions using a series of waypoints.</P>
+
+<P>This service is generally designed for calculating directions
+for static (known in advance) addresses for placement of application
+content on a map; this service is <B>not</B> designed to respond in
+real time to user input, for example. For dynamic directions
+calculations (for example, within a user interface element), consult
+the documentation for the
+<A href="http://code.google.com/apis/maps/documentation/javascript/services.html#Directions">
+JavaScript API V3 Directions Service</A>.</P>
+
+<P>Calculating directions is a time and resource intensive task.
+Whenever possible, calculate known addresses ahead of time (using the
+service described here) and store your results in a temporary
+cache of your own design.</P>
+
+<H1 name="Audience" id="Audience">Audience</H1>
+
+<P>This document is intended for website and mobile developers who want to
+use compute direction data within maps provided by one of the Google
+Maps APIs. It provides an introduction to using the API and reference
+material on the available parameters.</P>
+
+<H1 name="Limits" id="Limits">Usage Limits</H1>
+
+<P>Use of the Google Directions API is subject to a query limit of
+2500 directions requests per day. Individual directions requests
+may contain up to 8 intermediate waypoints in the request.
+<A href="http://code.google.com/apis/maps/documentation/premier/">
+Google Maps Premier</A> customers may query up to 100,000 directions
+requests per day, with up to 23 waypoints allowed in
+each request.</P>
+
+<P><SPAN style="color:red">Note: </SPAN> the Directions API may only be
+used in conjunction with displaying results on a Google map; using
+Directions data without displaying a map for which directions data was
+requested is prohibited. Additionally, calculation of directions generates
+copyrights and warnings which must be displayed to the user in some fashion.
+For complete details on allowed usage, consult the 
+<A href="http://code.google.com/apis/maps/terms.html#section_10_12">Maps API Terms of Service
+License Restrictions</A>.</P>
+
+<H1 id="DirectionsRequests">Directions Requests</H1>
+
+<P>A Directions API request is an HTTP URL of the following
+form:</P>
+
+<PRE class="prettyprint"><SPAN class="pln">http</SPAN><SPAN class="pun">:</SPAN><SPAN class="com">//maps.google.com/maps/api/directions/</SPAN><I><SPAN class="com">output</SPAN></I><SPAN class="com">?</SPAN><I><SPAN class="com">parameters</SPAN></I></PRE>
+
+<P>where <CODE>output</CODE> may be either of the following values:</P>
+
+<UL>
+  <LI><CODE>json</CODE> (recommended) indicates output in JavaScript
+  Object Notation (JSON)</LI>
+  <LI><CODE>xml</CODE> indicates output as XML</LI>
+</UL>
+
+<H2 id="RequestParameters">Request Parameters</H2>
+
+<P>Certain parameters are required while others are optional. As is
+standard in URLs, all parameters are separated using the ampersand
+(<CODE>&amp;</CODE>) character. The list of parameters and their possible
+values are enumerated below.</P>
+
+<P>The Directions API defines a directions request using the following
+URL parameters:</P>
+
+<UL>
+  <LI><CODE>origin</CODE> (<I>required</I>) — The address or textual
+  latitude/longitude value from which you wish to calculate directions.
+  <SPAN style="color:red">*</SPAN></LI>
+  <LI><CODE>destination</CODE> (<I>required</I>) — The address or
+  textual latitude/longitude value from which you wish to calculate
+  directions.<SPAN style="color:red">*</SPAN></LI>
+  <LI><CODE>mode</CODE> (<I>optional</I>, defaults to <CODE>driving</CODE>)
+  — specifies what
+  mode of transport to use when calculating directions. Valid
+  values are specified in <A href="http://code.google.com/apis/maps/documentation/directions/#TravelModes">Travel Modes</A>.</LI>
+  <LI><P><CODE>waypoints</CODE> (<I>optional</I>) specifies
+  an array of waypoints. Waypoints alter a route by routing it
+  through the specified location(s). A waypoint is specified
+  as either a latitude/longitude coordinate or as an address
+  which will be geocoded. (For more information on waypoints,
+  see <A href="http://code.google.com/apis/maps/documentation/directions/#Waypoints">Using Waypoints in Routes</A> below.)</P>
+  </LI>
+  <LI><CODE>alternatives</CODE> (<I>optional</I>), if set to
+  <CODE>true</CODE>, specifies that the Directions service may
+  provide more than one route alternative in the response. Note that
+  providing route alternatives may increase the response time from
+  the server.</LI>
+  <LI><P><CODE>avoid</CODE> (<I>optional</I>) indicates that the
+  calculated route(s) should avoid the indicated features. Currently,
+  this parameter supports the following two arguments:</P>
+  <UL>
+    <LI><CODE>tolls</CODE> indicates that the calculated route should
+    avoid toll roads/bridges.</LI>
+    <LI><CODE>highways</CODE> indicates that the calculated route
+    should avoid highways.</LI>
+  </UL>
+  <P>(For more information see <A href="http://code.google.com/apis/maps/documentation/directions/#Restrictions">Route Restrictions</A>
+  below.)</P></LI>
+  <LI><CODE>language</CODE> (<I>optional</I>) — The language in
+  which to return results. See the
+  <A href="http://code.google.com/apis/maps/faq.html#languagesupport">supported list of domain
+  languages</A>. Note that we often update supported languages so this
+  list may not be exhaustive. If <CODE>language</CODE> is not supplied,
+  the Directions service will attempt to use the native language of
+  the browser wherever possible. You may also explicitly bias the
+  results by using localized domains of
+  <CODE>http://map.google.com</CODE>. See <A href="http://code.google.com/apis/maps/documentation/directions/#RegionBiasing">Region
+  Biasing</A> for more information.</LI>
+  <LI><CODE>sensor</CODE> (<I>required</I>) — Indicates whether
+  or not the directions request comes from a device with a location
+  sensor. This value must be either <CODE>true</CODE> or
+  <CODE>false</CODE>.</LI>
+</UL>
+
+<P><SPAN style="color:red">* Note: </SPAN> You may pass either an
+address or a latitude/longitude coordinate in several parameters. If you
+pass an address as a string, the Directions service will geocode
+the string and convert it to a latitude-longitude coordinate to
+calculate directions.</P>
+
+<H2 id="TravelModes">Travel Modes</H2>
+
+<P>When you calculate directions, you may specify
+which transportation <CODE>mode</CODE> to use. By default,
+directions are calculated as <CODE>driving</CODE> directions. The following
+travel modes are currently supported:</P>
+
+<UL>
+<LI><CODE>driving</CODE> (default) indicates standard driving directions
+using the road network.</LI>
+<LI><CODE>walking</CODE> requests walking directions via
+pedestrian paths &amp; sidewalks (where available).</LI>
+<LI><CODE>bicycling</CODE> requests bicycling directions via
+bicycle paths &amp; preferred streets (currently only available
+in the US).</LI>
+</UL>
+
+<P><SPAN style="color:red; ">Note:</SPAN> Both walking and
+bicycling directions may sometimes not include clear pedestrian or
+bicycling paths, so these directions will return <CODE>warnings</CODE>
+in the returned result which you must display to the user.</P>
+
+<H2 id="Waypoints">Using Waypoints in Routes</H2>
+
+<P>When calculating routes using the Directions API, you may
+also specify <I>waypoints</I>. Waypoints allow you to
+calculate routes through additional locations, in which
+case the returned route passes through the given waypoints.</P>
+
+<P>Waypoints are specified within the <CODE>waypoints</CODE>
+parameter and consist of one or more addresses or locations
+separated by the pipe (<CODE>|</CODE>) character.</P>
+
+<P>For example, the following URL initiates a Directions request
+for a route between Boston, MA and Concord, MA via Charlestown
+and Lexington, in that order:</P>
+
+<PRE>http://maps.google.com/maps/api/directions/json?origin=Boston,MA&amp;destination=Concord,MA&amp;waypoints=Charlestown,MA|Lexington,MA&amp;sensor=false
+</PRE>
+
+<P>By default, the Directions service calculates a route through
+the provided waypoints in their given order. Optionally, you
+may pass <CODE>optimize:true</CODE> as the first argument
+within the <CODE> waypoints</CODE> parameter to allow the Directions
+service to optimize the provided route by rearranging the waypoints in
+a more efficient order. (This optimization is an application of the
+<A href="http://en.wikipedia.org/wiki/Travelling_salesman_problem">
+Travelling Salesman Problem</A>.)</P>
+
+<P>If you instruct the Directions service to optimize the order of
+its waypoints, their order will be returned in the
+<CODE>waypoint_order</CODE> field within the
+<CODE>routes</CODE> object. The <CODE>waypoint_order</CODE> field
+returns values which are zero-based.</P>
+
+<P>The following example calculates a road trip route from Adelaide, South
+Australia to each of South Australia's main wine regions using route
+optimization. </P>
+
+
+<PRE class="prettyprint"><SPAN class="pln">http</SPAN><SPAN class="pun">:</SPAN><SPAN class="com">//maps.google.com/maps/api/directions/json?origin=Adelaide,SA&amp;destination=Adelaide,SA&amp;waypoints=optimize:true|Barossa+Valley,SA|Clare,SA|Connawarra,SA|McLaren+Vale,SA&amp;sensor=false</SPAN></PRE>
+
+
+<P>Inspection of the calculated route will indicate that the route is calculated using
+the following waypoint order:</P>
+
+<PRE class="prettyprint"><SPAN class="str">"waypoint_order"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">[</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">1</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">0</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">2</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">3</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">]</SPAN></PRE>
+
+<H2 id="Restrictions">Restrictions</H2>
+
+<P>Directions may be calculated that adhere to certain restrictions. Restrictions
+are indicated by use of the <CODE>avoid</CODE> parameter, and an argument to that
+parameter indicating the restriction to avoid. Currently two restrictions are
+supported:</P>
+
+<UL>
+  <LI><CODE>avoid=tolls</CODE></LI>
+  <LI><CODE>avoid=highways</CODE></LI>
+</UL>
+
+<P><SPAN style="color:red">Note:</SPAN> the addition of restrictions does not
+preclude routes that include the restricted feature; it simply biases the result
+to more favorable routes.</P>
+
+<H2 id="RegionBiasing">Region Biasing</H2>
+
+<P>You can also set the Directions service to return results biased to a 
+particular region by using an alternative domain other than the
+default <CODE>http://maps.google.com/</CODE> domain. You may utilize
+any domain in which the main Google Maps application has
+launched driving directions.</P>
+
+<P>For example, a directions request from "Toldeo" to "Madrid"
+returns a result when sent to <CODE>http://maps.google.es/</CODE>
+as "Toledo" is interpreted as the Spanish city:</P>
+
+
+<PRE><B>http://maps.google.es/maps/api/directions/json?origin=Toledo&amp;destination=Madrid&amp;sensor=false</B>
+
+{
+  "status": "OK",
+  "routes": [ {
+    "summary": "AP-41",
+    "legs": [ {
+        ...
+    } ],
+    "copyrights": "Map data ©2010 Europa Technologies, Tele Atlas",
+    "warnings": [ ],
+    "waypoint_order": [ ]
+  } ]
+}
+</PRE>
+
+
+<P>A directions for "Toledo" to "Madrid" sent to <CODE>http://maps.google.com</CODE>
+will not return any results, since "Toledo" is interpreted as the city in Ohio:</P>
+
+
+<PRE><B>http://maps.google.com/maps/api/directions/json?origin=Toledo&amp;destination=Madrid&amp;sensor=false</B>
+
+{
+  "status": "ZERO_RESULTS",
+  "routes": [ ]
+}
+</PRE>
+
+
+<H1 id="DirectionsResponses">Directions Responses</H1>
+
+<P>Directions responses are returned in the format indicated by the
+<CODE>output</CODE> flag within the URL request's path.</P>
+
+<H2 id="JSON">JSON Output</H2>
+
+<P>A sample HTTP request is shown below, calculating the route
+from Chicago, IL to Los Angeles, CA via two waypoints in Joplin, MO
+and Oklahoma City, OK:</P>
+
+<PRE class="prettyprint"><SPAN class="pln">http</SPAN><SPAN class="pun">:</SPAN><SPAN class="com">//maps.google.com/maps/api/directions/json?origin=Chicago,IL&amp;destination=Los+Angeles,CA&amp;waypoints=Joplin,MO|Oklahoma+City,OK&amp;sensor=false</SPAN></PRE>
+
+<P>The JSON result is shown below. Because directions results can be quite verbose,
+repeated elements within the response have been omitted for clarity.</P>
+
+
+<PRE class="prettyprint"><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; </SPAN><SPAN class="str">"status"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"OK"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; </SPAN><SPAN class="str">"routes"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">[</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="str">"summary"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"I-40 W"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="str">"legs"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">[</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"steps"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">[</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"travel_mode"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"DRIVING"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"start_location"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lat"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">41.8507300</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lng"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">-</SPAN><SPAN class="lit">87.6512600</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"end_location"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lat"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">41.8525800</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lng"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">-</SPAN><SPAN class="lit">87.6514100</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"polyline"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"points"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"a~l~Fjk~uOwHJy@P"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"levels"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"B?B"</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"duration"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"value"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">19</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"text"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"1 min"</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"html_instructions"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"Head \u003cb\u003enorth\u003c/b\u003e on \u003cb\u003eS Morgan St\u003c/b\u003e toward \u003cb\u003eW Cermak Rd\u003c/b\u003e"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"distance"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"value"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">207</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"text"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"0.1 mi"</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">}</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">...</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">...</SPAN><SPAN class="pln"> additional steps of </SPAN><SPAN class="kwd">this</SPAN><SPAN class="pln"> leg<BR>&nbsp; &nbsp; </SPAN><SPAN class="pun">...</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="pun">...</SPAN><SPAN class="pln"> additional legs of </SPAN><SPAN class="kwd">this</SPAN><SPAN class="pln"> route<BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"duration"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"value"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">74384</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"text"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"20 hours 40 mins"</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"distance"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"value"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">2137146</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"text"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"1,328 mi"</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"start_location"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lat"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">35.4675602</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lng"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">-</SPAN><SPAN class="lit">97.5164276</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"end_location"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lat"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">34.0522342</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"lng"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">-</SPAN><SPAN class="lit">118.2436849</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"start_address"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"Oklahoma City, OK, USA"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"end_address"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"Los Angeles, CA, USA"</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="pun">}</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">],</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="str">"copyrights"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"Map data ©2010 Google, Sanborn"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="str">"overview_polyline"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">{</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"points"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"a~l~Fjk~uOnzh@vlbBtc~@tsE`vnApw{A`dw@~w\\|tNtqf@l{Yd_Fblh@rxo@b}@xxSfytAblk@xxaBeJxlcBb~t@zbh@jc|Bx}C`rv@rw|@rlhA~dVzeo@vrSnc}Axf]fjz@xfFbw~@dz{A~d{A|zOxbrBbdUvpo@`cFp~xBc`Hk@nurDznmFfwMbwz@bbl@lq~@loPpxq@bw_@v|{CbtY~jGqeMb{iF|n\\~mbDzeVh_Wr|Efc\\x`Ij{kE}mAb~uF{cNd}xBjp]fulBiwJpgg@|kHntyArpb@bijCk_Kv~eGyqTj_|@`uV`k|DcsNdwxAott@r}q@_gc@nu`CnvHx`k@dse@j|p@zpiAp|gEicy@`omFvaErfo@igQxnlApqGze~AsyRzrjAb__@ftyB}pIlo_BflmA~yQftNboWzoAlzp@mz`@|}_@fda@jakEitAn{fB_a]lexClshBtmqAdmY_hLxiZd~XtaBndgC"</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; &nbsp; </SPAN><SPAN class="str">"levels"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="str">"BBBAAAAABAABAAAAAABBAAABBAAAABBAAABABAAABABBAABAABAAAABABABABBABAABB"</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="pun">},</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="str">"warnings"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">[</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">],</SPAN><SPAN class="pln"><BR>&nbsp; &nbsp; </SPAN><SPAN class="str">"waypoint_order"</SPAN><SPAN class="pun">:</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">[</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">0</SPAN><SPAN class="pun">,</SPAN><SPAN class="pln"> </SPAN><SPAN class="lit">1</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">]</SPAN><SPAN class="pln"><BR>&nbsp; </SPAN><SPAN class="pun">}</SPAN><SPAN class="pln"> </SPAN><SPAN class="pun">]</SPAN><SPAN class="pln"><BR></SPAN><SPAN class="pun">}</SPAN><SPAN class="pln"> &nbsp; &nbsp;</SPAN></PRE>
+
+
+<P>Generally, only one entry in the <CODE>"routes"</CODE> array is returned
+for directions lookups, though the Directions service may return several routes
+if you pass <CODE>alternatives=true</CODE>.</P>
+
+<P>Note that these results generally need to be <I>parsed</I> if you wish
+to extract values from the results. Parsing JSON is relatively easy. See
+<A href="http://code.google.com/apis/maps/documentation/webservices/index.html#ParsingJSON">Parsing
+JSON</A> for some recommended design patterns.</P>
+
+<H2 id="XML">XML Output</H2>
+
+<P>In this example, the Directions API requests an <CODE>xml</CODE> response for the
+identical query shown above for :</P>
+
+<PRE class="prettyprint"><SPAN class="pln">http</SPAN><SPAN class="pun">:</SPAN><SPAN class="com">//maps.google.com/maps/api/directions/xml?origin=Chicago,IL&amp;destination=Los+Angeles,CA&amp;waypoints=Joplin,MO|Oklahoma+City,OK&amp;sensor=false</SPAN></PRE>
+
+<P>The XML returned by this request is shown below.</P>
+
+<PRE class="prettyprint"><SPAN class="tag">&lt;DirectionsResponse&gt;</SPAN><SPAN class="pln"> <BR>&nbsp;</SPAN><SPAN class="tag">&lt;status&gt;</SPAN><SPAN class="pln">OK</SPAN><SPAN class="tag">&lt;/status&gt;</SPAN><SPAN class="pln"> <BR>&nbsp;</SPAN><SPAN class="tag">&lt;route&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; </SPAN><SPAN class="tag">&lt;summary&gt;</SPAN><SPAN class="pln">I-40 W</SPAN><SPAN class="tag">&lt;/summary&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; </SPAN><SPAN class="tag">&lt;leg&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;step&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;travel_mode&gt;</SPAN><SPAN class="pln">DRIVING</SPAN><SPAN class="tag">&lt;/travel_mode&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;start_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;lat&gt;</SPAN><SPAN class="pln">41.8507300</SPAN><SPAN class="tag">&lt;/lat&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;lng&gt;</SPAN><SPAN class="pln">-87.6512600</SPAN><SPAN class="tag">&lt;/lng&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;/start_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;end_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;lat&gt;</SPAN><SPAN class="pln">41.8525800</SPAN><SPAN class="tag">&lt;/lat&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;lng&gt;</SPAN><SPAN class="pln">-87.6514100</SPAN><SPAN class="tag">&lt;/lng&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;/end_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;polyline&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;points&gt;</SPAN><SPAN class="pln">a~l~Fjk~uOwHJy@P</SPAN><SPAN class="tag">&lt;/points&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;levels&gt;</SPAN><SPAN class="pln">B?B</SPAN><SPAN class="tag">&lt;/levels&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;/polyline&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;duration&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;value&gt;</SPAN><SPAN class="pln">19</SPAN><SPAN class="tag">&lt;/value&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;text&gt;</SPAN><SPAN class="pln">1 min</SPAN><SPAN class="tag">&lt;/text&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;/duration&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;html_instructions&gt;</SPAN><SPAN class="pln">Head </SPAN><SPAN class="tag">&lt;b&gt;</SPAN><SPAN class="pln">north</SPAN><SPAN class="tag">&lt;/b&gt;</SPAN><SPAN class="pln"> on </SPAN><SPAN class="tag">&lt;b&gt;</SPAN><SPAN class="pln">S Morgan St</SPAN><SPAN class="tag">&lt;/b&gt;</SPAN><SPAN class="pln"> toward </SPAN><SPAN class="tag">&lt;b&gt;</SPAN><SPAN class="pln">W Cermak Rd</SPAN><SPAN class="tag">&lt;/b&gt;&lt;/html_instructions&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;distance&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;value&gt;</SPAN><SPAN class="pln">207</SPAN><SPAN class="tag">&lt;/value&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;text&gt;</SPAN><SPAN class="pln">0.1 mi</SPAN><SPAN class="tag">&lt;/text&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;/distance&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;/step&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;...<BR>&nbsp; &nbsp;... additional steps of this leg<BR>&nbsp; ...<BR>&nbsp; ... additional legs of this route<BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;duration&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;value&gt;</SPAN><SPAN class="pln">74384</SPAN><SPAN class="tag">&lt;/value&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;text&gt;</SPAN><SPAN class="pln">20 hours 40 mins</SPAN><SPAN class="tag">&lt;/text&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;/duration&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;distance&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;value&gt;</SPAN><SPAN class="pln">2137146</SPAN><SPAN class="tag">&lt;/value&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;text&gt;</SPAN><SPAN class="pln">1,328 mi</SPAN><SPAN class="tag">&lt;/text&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;/distance&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;start_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;lat&gt;</SPAN><SPAN class="pln">35.4675602</SPAN><SPAN class="tag">&lt;/lat&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;lng&gt;</SPAN><SPAN class="pln">-97.5164276</SPAN><SPAN class="tag">&lt;/lng&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;/start_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;end_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;lat&gt;</SPAN><SPAN class="pln">34.0522342</SPAN><SPAN class="tag">&lt;/lat&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp; </SPAN><SPAN class="tag">&lt;lng&gt;</SPAN><SPAN class="pln">-118.2436849</SPAN><SPAN class="tag">&lt;/lng&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;/end_location&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;start_address&gt;</SPAN><SPAN class="pln">Oklahoma City, OK, USA</SPAN><SPAN class="tag">&lt;/start_address&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;end_address&gt;</SPAN><SPAN class="pln">Los Angeles, CA, USA</SPAN><SPAN class="tag">&lt;/end_address&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; </SPAN><SPAN class="tag">&lt;copyrights&gt;</SPAN><SPAN class="pln">Map data ©2010 Google, Sanborn</SPAN><SPAN class="tag">&lt;/copyrights&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; </SPAN><SPAN class="tag">&lt;overview_polyline&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;points&gt;</SPAN><SPAN class="pln">a~l~Fjk~uOnzh@vlbBtc~@tsE`vnApw{A`dw@~w\|tNtqf@l{Yd_Fblh@rxo@b}@xxSfytAblk@xxaBeJxlcBb~t@zbh@jc|Bx}C`rv@rw|@rlhA~dVzeo@vrSnc}Axf]fjz@xfFbw~@dz{A~d{A|zOxbrBbdUvpo@`cFp~xBc`Hk@nurDznmFfwMbwz@bbl@lq~@loPpxq@bw_@v|{CbtY~jGqeMb{iF|n\~mbDzeVh_Wr|Efc\x`Ij{kE}mAb~uF{cNd}xBjp]fulBiwJpgg@|kHntyArpb@bijCk_Kv~eGyqTj_|@`uV`k|DcsNdwxAott@r}q@_gc@nu`CnvHx`k@dse@j|p@zpiAp|gEicy@`omFvaErfo@igQxnlApqGze~AsyRzrjAb__@ftyB}pIlo_BflmA~yQftNboWzoAlzp@mz`@|}_@fda@jakEitAn{fB_a]lexClshBtmqAdmY_hLxiZd~XtaBndgC</SPAN><SPAN class="tag">&lt;/points&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; &nbsp;</SPAN><SPAN class="tag">&lt;levels&gt;</SPAN><SPAN class="pln">BBBAAAAABAABAAAAAABBAAABBAAAABBAAABABAAABABBAABAABAAAABABABABBABAABB</SPAN><SPAN class="tag">&lt;/levels&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; </SPAN><SPAN class="tag">&lt;/overview_polyline&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; </SPAN><SPAN class="tag">&lt;optimized_waypoint_index&gt;</SPAN><SPAN class="pln">0</SPAN><SPAN class="tag">&lt;/optimized_waypoint_index&gt;</SPAN><SPAN class="pln"> <BR>&nbsp; </SPAN><SPAN class="tag">&lt;optimized_waypoint_index&gt;</SPAN><SPAN class="pln">1</SPAN><SPAN class="tag">&lt;/optimized_waypoint_index&gt;</SPAN><SPAN class="pln"> <BR>&nbsp;</SPAN><SPAN class="tag">&lt;/route&gt;</SPAN><SPAN class="pln"> <BR></SPAN><SPAN class="tag">&lt;/DirectionsResponse&gt;</SPAN><SPAN class="pln"> &nbsp; &nbsp;</SPAN></PRE>
+
+<P>Note that the XML response consists of a single <CODE>&lt;DirectionsResponse&gt;</CODE>
+and two top-level elements:</P>
+<UL>
+<LI><CODE>&lt;status&gt;</CODE> contains metadata on the request. See
+<A href="http://code.google.com/apis/maps/documentation/directions/#StatusCodes">Status Codes</A> below.</LI>
+<LI>Zero of more <CODE>&lt;route&gt;</CODE> elements, each containing a single set of
+routing information between the origin and destination.</LI>
+</UL>
+
+<P>We recommend that you use <CODE>json</CODE> as the preferred output flag
+unless your service requires <CODE>xml</CODE> for some reason. Processing XML trees
+requires some care, so that you reference proper nodes and elements. See
+<A href="http://code.google.com/apis/maps/documentation/webservices/index.html#ParsinXML">Parsing XML
+with XPath</A> for some recommended design patterns for output processing.</P>
+
+<P class="note">The remainder of this documentation will use JSON syntax. In most
+cases, the output format does not matter for purposes of illustrating concepts or field
+names in the documentation. However, note the following subtle differences:</P>
+
+<UL>
+  <LI>XML results are wrapped in a root <CODE>&lt;DirectionsResponse&gt;</CODE> element.</LI>
+  <LI>JSON denotes entries with multiple elements by plural arrays (<CODE>steps</CODE>),
+  while XML denotes these using multiple singular elements (<CODE>&lt;step&gt;</CODE>).</LI>
+  <LI>Blank elements are indicated through empty arrays in JSON, but by the absense of any
+  such element in XML. A response that generates no results will return an empty
+  <CODE>routes</CODE> array in JSON, but no <CODE>&lt;route&gt;</CODE> elements in XML,
+  for example.</LI>
+</UL>
+
+<H2 id="DirectionsResponseElements">Directions Response Elements</H2>
+
+<P>Directions responses contain two root elements:</P>
+<UL>
+<LI><CODE>"status"</CODE> contains metadata on the request. See
+<A href="http://code.google.com/apis/maps/documentation/directions/#StatusCodes">Status Codes</A> below.</LI>
+<LI><CODE>"routes"</CODE> contains an array of routes from the origin to
+the destination. See <A href="http://code.google.com/apis/maps/documentation/directions/#Routes">Routes</A> below.</LI>
+</UL>
+
+<P>Routes consist of nested <A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsLegs">Legs</A> and
+<A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsSteps">Steps</A>.</P>
+
+<H3 id="StatusCodes">Status Codes</H3>
+
+<P>The <CODE>"status"</CODE> field within the Directions response object contains the status
+of the request, and may contain debugging information to help you track down why the
+Directions service failed. The <CODE>"status"</CODE> field may contain the following
+values:</P>
+
+<UL>
+  <LI><CODE>OK</CODE> indicates the response contains a
+  valid <CODE>result</CODE>.</LI>
+  <LI><CODE>NOT_FOUND</CODE> indicates at least one of the
+  locations specified in the requests's origin, destination, or
+  waypoints could not be geocoded.</LI>
+  <LI><CODE>ZERO_RESULTS</CODE> indicates no route could be found
+  between the origin and destination.</LI>
+  <LI><CODE>MAX_WAYPOINTS_EXCEEDED</CODE> indicates that too
+  many <CODE>waypoints</CODE>s were provided
+  in the request The maximum allowed
+  <CODE>waypoints</CODE> is 8, plus the origin, and destination. (
+  <A href="http://code.google.com/apis/maps/documentation/premier/">Google Maps Premier</A>
+  customers may contain requests with up to 23
+  waypoints.)</LI>
+  <LI><CODE>INVALID_REQUEST</CODE> indicates that the
+  provided request was invalid.</LI>
+  <LI><CODE>OVER_QUERY_LIMIT</CODE> indicates the service has
+  received too many requests from your application within the allowed
+  time period.</LI>
+  <LI><CODE>REQUEST_DENIED</CODE> indicates that the service denied
+  use of the directions service by your application.</LI>
+  <LI><CODE>UNKNOWN_ERROR</CODE> indicates a directions request
+  could not be processed due to a server error. The request may
+  succeed if you try again.</LI>
+</UL>
+
+<H3 id="Routes">Routes</H3>
+
+<P>When the Directions API returns results, it places them
+within a (JSON) <CODE>routes</CODE> array. Even if the service returns
+no results (such as if the origin and/or destination doesn't exist) it
+still returns an empty <CODE>routes</CODE> array. (XML responses consist
+of zero or more <CODE>&lt;route&gt;</CODE> elements.)</P>
+
+<P>Each element of the <CODE>routes</CODE> array contains a single result
+from the specified origin and destination. This route may consist of
+one or more <CODE>legs</CODE> depending on whether any waypoints
+were specified. As well, the route also contains copyright and warning
+information which must be displayed to the user in addition to the
+routing information.</P>
+
+<P>Each route within the <CODE>routes</CODE> field may contain
+the following fields:</P>
+
+<UL>
+  <LI><CODE>summary</CODE> contains a short textual description
+  for the route, suitable for naming and disambiguating the route
+  from alternatives.</LI>
+  <LI><CODE>legs[]</CODE> contains an array which contains
+  information about a leg of the route, between two locations
+  within the given route. A separate leg will be present for each
+  waypoint or destination specified. (A route with no waypoints will contain
+  exactly one leg within the <CODE>legs</CODE> array.) Each leg consists
+  of a series of <CODE>steps</CODE>. (See <A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsLegs">
+  Directions Legs</A> below.)</LI>
+  <LI><CODE>waypoint_order</CODE> contains an array
+  indicating the order of any waypoints in the calculated
+  route. This waypoints may be reordered if the
+  request was passed <CODE>optimize:true</CODE> within its
+  <CODE>waypoints</CODE> parameter.</LI>
+  <LI><CODE>overview_path</CODE> contains an object holding an
+  array of encoded <CODE>points</CODE> and <CODE>levels</CODE> that
+  represent an approximate (smoothed)
+  path of the resulting directions.</LI>
+  <LI><CODE>copyrights</CODE> contains the copyrights text to be
+  displayed for this route. You must handle and
+  display this information yourself.</LI>
+  <LI><CODE>warnings[]</CODE> contains an array of warnings
+  to be displayed when showing these directions. You must
+  handle and display these warnings yourself.</LI>
+</UL>
+
+<H3 id="Legs">Legs</H3>
+
+<P>Each element in the <CODE>legs</CODE> array specifies a single leg
+of the journey from the origin to the destination in the calculated
+route. For routes that contain no waypoints, the route will consist
+of a single "leg," but for routes that define one or more
+waypoints, the route will consist of one or more legs, corresponding
+to the specific legs of the journey.</P>
+
+<P>Each leg within the <CODE>legs</CODE> field(s) may contain
+the following fields:</P>
+
+<UL>
+  <LI><CODE>steps[]</CODE> contains an array of
+  steps denoting information about each separate step of
+  the leg of the journey. (See <A href="http://code.google.com/apis/maps/documentation/directions/DirectionsSteps">
+  Directions Steps</A> below.)</LI>
+  <LI><P><CODE>distance</CODE> indicates the total distance covered
+  by this leg, as a field with the following elements:</P>
+    <UL>
+      <LI><CODE>value</CODE> indicates the distance in meters</LI>
+      <LI><CODE>text</CODE> contains a human-readable representation
+      of the distance, displayed in units as
+      used at the origin, in the language specified in the request. 
+      (For example, miles and feet will be used for
+      any origin within the United States.) Note that regardless
+      of what unit system is displayed as text, the
+      <CODE>distance.value</CODE> field always contains a value
+      expressed in meters.</LI>
+    </UL>
+  <P>These fields may be absent if the distance is unknown.</P>
+  </LI>
+  <LI><P><CODE>duration</CODE> indicates the total duration of
+  this leg, as a field with the following elements:</P>
+    <UL>
+      <LI><CODE>value</CODE> indicates the duration in
+      seconds.</LI>
+      <LI><CODE>text</CODE> contains a human-readable representation
+      of the duration.</LI>
+    </UL>
+  <P>These fields may be absent if the duration is unknown.</P>
+  </LI>
+  <LI><CODE>start_location</CODE> contains the latitude/longitude
+  coordinates of the origin of this leg. Because the Directions
+  API calculates directions between locations by using
+  the nearest transportation option (usually a road) at the start 
+  and end points, <CODE>start_location</CODE> may be different
+  than the provided origin of this leg if, for example, a road
+  is not near the origin.</LI>
+  <LI><CODE>end_location</CODE> contains the latitude/longitude
+  coordinates of the given destination of this leg. Because the
+  Directions API calculates directions between locations
+  by using the nearest transportation option (usually a road) at
+  the start and end points, <CODE>end_location</CODE> may be
+  different than the provided destination of this leg if, for
+  example, a road is not near the destination.</LI>
+  <LI><CODE>start_address</CODE> contains the human-readable
+  address (typically a street address) reflecting the
+  <CODE>start_location</CODE> of this leg.</LI>
+  <LI><CODE>end_addresss</CODE> contains the human-readable
+  address (typically a street address) reflecting the
+  <CODE>end_location</CODE> of this leg.</LI>
+</UL>
+
+<H3 id="Steps">Steps</H3>
+
+<P>Each element in the <CODE>steps</CODE> array defines a single step
+of the calculated directions. A step is the most atomic unit of a
+direction's route, containing a single step describing a specific, single
+instruction on the journey. E.g. "Turn left at W. 4th St." The step not
+only describes the instruction but also contains distance and duration
+information relating to how this step relates to the following step.
+For example, a step denoted as "Merge onto I-80 West" may contain a
+duration of "37 miles" and "40 minutes," indicating that the next step
+is 37 miles/40 minutes from this step.</P>
+
+<P>Each step within the <CODE>steps</CODE> field(s) may contain
+the following fields:</P>
+
+<UL>
+<LI><CODE>html_instructions</CODE> contains formatted instructions
+for this step, presented as an HTML text string.</LI>
+<LI><CODE>distance</CODE> contains the distance covered by this
+step until the next step. (See the discussion of this field
+in <A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsLegs">Directions Legs</A> above.) This field
+may be undefined if the distance is unknown.</LI>
+<LI><CODE>duration</CODE> contains the typical time required to
+perform the step, until the next step (See the description in
+<A href="http://code.google.com/apis/maps/documentation/directions/#DirectionsLegs">Directions Legs</A> above.) This field
+may be undefined if the duration is unknown.</LI>
+<LI><CODE>start_location</CODE> contains the location of
+the starting point of this step, as a single set of
+<CODE>lat</CODE> and <CODE>lng</CODE> fields.</LI>
+<LI><CODE>end_location</CODE> contains the location of
+the starting point of this step, as a single set of
+<CODE>lat</CODE> and <CODE>lng</CODE> fields.</LI>
+</UL>
+        <!-- end body text -->
+
+   
+      <DIV id="gc-collapsible" style="height: 7326px; "></DIV></DIV><!-- end gc-pagecontent -->
+   </DIV><!-- end gooey wrapper -->
+
+    </DIV> <!-- end codesite content -->
+
+
+<DIV id="gc-footer" dir="ltr">
+  <DIV class="text">
+    
+    ©2010 Google -
+    <A href="http://code.google.com/">Code Home</A> -
+    <A href="http://code.google.com/terms.html">Terms of Service</A> -
+    <A href="http://code.google.com/privacy.html">Privacy Policy</A> -
+    <A href="http://code.google.com/more/">Site Directory</A>
+    <BR> <BR>
+    Google Code offered in:
+    <A href="http://code.google.com/intl/en/">English</A> -
+    <A href="http://code.google.com/intl/es/">Español</A> -
+    <A href="http://code.google.com/intl/ja/">日本語</A> -
+    <A href="http://code.google.com/intl/ko/">한국어</A> -
+    <A href="http://code.google.com/intl/pt-BR/">Português</A> -
+    <A href="http://code.google.com/intl/ru/">Pусский</A> -
+    <A href="http://code.google.com/intl/zh-CN/">中文(简体)</A> -
+    <A href="http://code.google.com/intl/zh-TW/">中文(繁體)</A>
+  </DIV>
+</DIV><!-- end gc-footer -->
+
+</DIV><!-- end gc-container -->
+
+<SCRIPT type="text/javascript">CODESITE_CSITimer['load'].tick('ats');</SCRIPT>
+<SCRIPT src="./The Google Directions API - Google Maps API Web Services - Google Code_files/codesite_tail.pack.04102009.js" type="text/javascript"></SCRIPT>
+
+
+
+
+<SCRIPT type="text/javascript">
+var _gaq = _gaq || [];
+
+_gaq.push(
+
+
+    ['siteTracker._setAccount', 'UA-18071-1'],
+    ['siteTracker._setDomainName', 'code.google.com'],
+    ['siteTracker._setCookiePath', window.location.pathname.substring(0,
+        window.location.pathname.lastIndexOf('/') + 1)],
+    ['siteTracker._trackPageview']
+);
+(function() {
+  var ga = document.createElement('script');
+
+  ga.type = 'text/javascript';
+  ga.async = true;
+  ga.src = 'http://www.google-analytics.com/ga.js';
+  (document.getElementsByTagName('head')[0] ||
+   document.getElementsByTagName('body')[0]).appendChild(ga);
+ })();
+</SCRIPT>
+
+
+
+
+  
+
+
+<DIV class="menuDiv instance0" id="menuDiv-lang-dropdown" style="position: absolute; display: none; top: 22px; left: 1285px; width: 175px; "><DIV class="menuCategory default first"><A class="menuItem" style="display: block; " href="http://code.google.com/intl/en/apis/maps/documentation/directions/">English</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/es/apis/maps/documentation/directions/">Español</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/de/apis/maps/documentation/directions/">Deutsch</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/ja/apis/maps/documentation/directions/">日本語</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/ko/apis/maps/documentation/directions/">한국어</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/pt-BR/apis/maps/documentation/directions/">Português (Brasil)</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/ru/apis/maps/documentation/directions/">Pусский</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/zh-CN/apis/maps/documentation/directions/">中文 (简体)</A><A class="menuItem" style="display: block; " href="http://code.google.com/intl/zh-TW/apis/maps/documentation/directions/">中文 (繁體)</A></DIV></DIV><DIV id="gc-collapsible-arrow"></DIV><DIV id="cs-searchresults" style="left: 181px; top: 76px; width: 345px; "><DIV id="cs-recommended">Suggestions</DIV><DIV id="searchResult1"></DIV><DIV id="searchResult2"></DIV><DIV id="searchResult3"></DIV><DIV id="searchResult4"></DIV><DIV id="searchResult5"></DIV><DIV id="searchResult6"></DIV><DIV id="searchResult7"></DIV></DIV><DIV class="menuDiv instance1" id="menuDiv-projects-dropdown" style="position: absolute; display: none; top: 22px; left: 1191px; "><B class="categoryTitle projects" style="display: block; ">Projects</B><DIV class="menuCategory projects first"><A class="menuItem" style="display: block; " href="http://code.google.com/p/opim311/">opim311</A></DIV><DIV class="menuCategory controls"><HR class="menuSeparator"><A class="menuItem" style="display: block; " href="http://code.google.com/more/">Find developer products...</A><A class="menuItem" style="display: block; " href="http://code.google.com/hosting/">Find open source projects...</A></DIV></DIV></BODY></HTML>

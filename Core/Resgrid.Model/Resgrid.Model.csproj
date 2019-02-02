@@ -1,0 +1,636 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8B7997EC-67A2-42AB-9FBD-F8ED2C2997C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Resgrid.Model</RootNamespace>
+    <AssemblyName>Resgrid.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Cloud|AnyCPU'">
+    <OutputPath>bin\Cloud\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Azure|AnyCPU'">
+    <OutputPath>bin\Azure\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\Staging\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework6, Version=3.0.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Identity.EntityFramework6.3.0.21\lib\Microsoft.AspNet.Identity.EntityFramework6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MimeKit, Version=1.18.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MimeKit.1.18.1\lib\net451\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenPop, Version=2.0.4.369, Culture=neutral, PublicKeyToken=6bdb97f144b7efc8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\References\OpenPop.NET-2.0.5\binaries\OpenPop.dll</HintPath>
+    </Reference>
+    <Reference Include="Postmark, Version=2.0.127.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Postmark.2.1.5\lib\net45\Postmark.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Postmark.Convenience, Version=2.0.127.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Postmark.2.1.5\lib\net45\Postmark.Convenience.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.3.2.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\protobuf-net.2.3.2\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Remotion.Linq.2.1.2\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Stripe.net, Version=6.12.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Stripe.net.6.12.0\lib\net45\Stripe.net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Buffers.4.3.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Device" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.4.3.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Interactive.Async, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Interactive.Async.3.1.1\lib\net46\System.Interactive.Async.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Text.Encodings.Web.4.3.1\lib\netstandard1.0\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ActionLog.cs" />
+    <Compile Include="ActionTypes.cs" />
+    <Compile Include="ActiveDepartment.cs" />
+    <Compile Include="Address.cs" />
+    <Compile Include="Affiliate.cs" />
+    <Compile Include="ApplicationRole.cs" />
+    <Compile Include="ApplicationRoleClaim.cs" />
+    <Compile Include="ApplicationUser.cs" />
+    <Compile Include="ApplicationUserClaim.cs" />
+    <Compile Include="ApplicationUserExt.cs" />
+    <Compile Include="ApplicationUserLogin.cs" />
+    <Compile Include="ApplicationUserRole.cs" />
+    <Compile Include="ApplicationUserToken.cs" />
+    <Compile Include="AuditLog.cs" />
+    <Compile Include="AuditLogTypes.cs" />
+    <Compile Include="AzureTransactionScope.cs" />
+    <Compile Include="Cache\CustomStatesCacheContainer.cs" />
+    <Compile Include="CalendarItemAttendee.cs" />
+    <Compile Include="CalendarItemAttendeeType.cs" />
+    <Compile Include="CalendarItemReminderTypes.cs" />
+    <Compile Include="CalendarItemSignupTypes.cs" />
+    <Compile Include="Call.cs" />
+    <Compile Include="CallDispatchRole.cs" />
+    <Compile Include="CallDispatchUnit.cs" />
+    <Compile Include="CustomAudioTypes.cs" />
+    <Compile Include="Dapper\SimpleCRUD.cs" />
+    <Compile Include="Dapper\SimpleCRUDAsync.cs" />
+    <Compile Include="DepartmentCallPriority.cs" />
+    <Compile Include="DepartmentLink.cs" />
+    <Compile Include="DepartmentProfile.cs" />
+    <Compile Include="DepartmentProfileInvite.cs" />
+    <Compile Include="DepartmentProfileArticle.cs" />
+    <Compile Include="DepartmentProfileMessage.cs" />
+    <Compile Include="DepartmentProfileUser.cs" />
+    <Compile Include="DepartmentProfileUserFollow.cs" />
+    <Compile Include="EventingTypes.cs" />
+    <Compile Include="Events\NewChatNotificationEvent.cs" />
+    <Compile Include="Events\PushRegisterionEvent.cs" />
+    <Compile Include="Events\ResourceOrderAddedEvent.cs" />
+    <Compile Include="Events\ShiftDaysAddedEvent.cs" />
+    <Compile Include="Events\ShiftUpdatedEvent.cs" />
+    <Compile Include="Events\ShiftCreatedEvent.cs" />
+    <Compile Include="Events\CalendarEventUpdatedEvent.cs" />
+    <Compile Include="Events\CalendarEventAddedEvent.cs" />
+    <Compile Include="Events\CallAddedEvent.cs" />
+    <Compile Include="Events\TroubleAlertEvent.cs" />
+    <Compile Include="File.cs" />
+    <Compile Include="Incident.cs" />
+    <Compile Include="IncidentLog.cs" />
+    <Compile Include="Inventory.cs" />
+    <Compile Include="LogAttachment.cs" />
+    <Compile Include="CallAttachment.cs" />
+    <Compile Include="CallAttachmentTypes.cs" />
+    <Compile Include="CallDispatchGroup.cs" />
+    <Compile Include="CallEmail.cs" />
+    <Compile Include="CallEmailTypes.cs" />
+    <Compile Include="CallLog.cs" />
+    <Compile Include="CallNote.cs" />
+    <Compile Include="CallNoteSources.cs" />
+    <Compile Include="CallPriority.cs" />
+    <Compile Include="CallSources.cs" />
+    <Compile Include="CallStates.cs" />
+    <Compile Include="CallDispatch.cs" />
+    <Compile Include="CallTextTypes.cs" />
+    <Compile Include="CallType.cs" />
+    <Compile Include="CallUnit.cs" />
+    <Compile Include="CommandDefinition.cs" />
+    <Compile Include="CommandDefinitionRole.cs" />
+    <Compile Include="CommandDefinitionRoleCert.cs" />
+    <Compile Include="CommandDefinitionRolePersonnelRole.cs" />
+    <Compile Include="CommandDefinitionRoleUnitType.cs" />
+    <Compile Include="Coordinates.cs" />
+    <Compile Include="CqrsEventTypes.cs" />
+    <Compile Include="CustomState.cs" />
+    <Compile Include="CustomStateDetail.cs" />
+    <Compile Include="CustomStateDetailTypes.cs" />
+    <Compile Include="CustomStateNoteTypes.cs" />
+    <Compile Include="CustomStateTypes.cs" />
+    <Compile Include="Custom\ValidateUserForDepartmentResult.cs" />
+    <Compile Include="DepartmentCertificationType.cs" />
+    <Compile Include="DepartmentFile.cs" />
+    <Compile Include="DepartmentNotification.cs" />
+    <Compile Include="DepartmentPlanCount.cs" />
+    <Compile Include="DepartmentReport.cs" />
+    <Compile Include="DistributionList.cs" />
+    <Compile Include="DistributionListMember.cs" />
+    <Compile Include="DistributionListTypes.cs" />
+    <Compile Include="Document.cs" />
+    <Compile Include="Email.cs" />
+    <Compile Include="CqrsEvent.cs" />
+    <Compile Include="Events\AuditEvent.cs" />
+    <Compile Include="Events\CalendarEventUpcomingEvent.cs" />
+    <Compile Include="Events\DepartmentSettingsChangedEvent.cs" />
+    <Compile Include="Events\DepartmentSettingsUpdateEvent.cs" />
+    <Compile Include="Events\DocumentAddedEvent.cs" />
+    <Compile Include="Events\EventTypes.cs" />
+    <Compile Include="Events\LogAddedEvent.cs" />
+    <Compile Include="Events\NoteAddedEvent.cs" />
+    <Compile Include="Events\ShiftEventTypes.cs" />
+    <Compile Include="Events\ShiftTradeFilledEvent.cs" />
+    <Compile Include="Events\ShiftTradeProposedEvent.cs" />
+    <Compile Include="Events\ShiftTradeRejectedEvent.cs" />
+    <Compile Include="Events\ShiftTradeRequestedEvent.cs" />
+    <Compile Include="Events\StaffingJobEvent.cs" />
+    <Compile Include="Events\UnitAddedEvent.cs" />
+    <Compile Include="Events\UnitStatusEvent.cs" />
+    <Compile Include="Events\UserAssignedToGroupEvent.cs" />
+    <Compile Include="Events\UserCreatedEvent.cs" />
+    <Compile Include="Events\UserStaffingEvent.cs" />
+    <Compile Include="Events\UserStatusEvent.cs" />
+    <Compile Include="Events\DistributionListCheckEvent.cs" />
+    <Compile Include="Events\WorkerHeartbeatEvent.cs" />
+    <Compile Include="Facades\Stripe\IStripeChargeServiceFacade.cs" />
+    <Compile Include="Facades\Stripe\IStripeInvoiceServiceFacade.cs" />
+    <Compile Include="Facades\Stripe\IStripeSubscriptionServiceFacade.cs" />
+    <Compile Include="HeartbeatTypes.cs" />
+    <Compile Include="Helpers\SerializerHelper.cs" />
+    <Compile Include="ImageTypes.cs" />
+    <Compile Include="InboundMessageEvent.cs" />
+    <Compile Include="InventoryType.cs" />
+    <Compile Include="LogUser.cs" />
+    <Compile Include="LogTypes.cs" />
+    <Compile Include="LogUnit.cs" />
+    <Compile Include="MessageRecipient.cs" />
+    <Compile Include="MessageTypes.cs" />
+    <Compile Include="Note.cs" />
+    <Compile Include="NotificationAlert.cs" />
+    <Compile Include="PaymentProviderEvent.cs" />
+    <Compile Include="PaypalEvent.cs" />
+    <Compile Include="Permission.cs" />
+    <Compile Include="PermissionActions.cs" />
+    <Compile Include="PermissionTypes.cs" />
+    <Compile Include="PersonName.cs" />
+    <Compile Include="PersonnelCertification.cs" />
+    <Compile Include="PhoneNumberResult.cs" />
+    <Compile Include="Plans.cs" />
+    <Compile Include="Poi.cs" />
+    <Compile Include="PoiType.cs" />
+    <Compile Include="ProcessedNotification.cs" />
+    <Compile Include="ProcessLog.cs" />
+    <Compile Include="ProcessLogTypes.cs" />
+    <Compile Include="Providers\AddressVerificationResult.cs" />
+    <Compile Include="Providers\IAddressVerificationProvider.cs" />
+    <Compile Include="Providers\IAmazonEmailSender.cs" />
+    <Compile Include="Providers\IAudioValidatorProvider.cs" />
+    <Compile Include="Providers\ICacheProvider.cs" />
+    <Compile Include="Providers\ICqrsProvider.cs" />
+    <Compile Include="Providers\IEmailMarketingProvider.cs" />
+    <Compile Include="Providers\IEmailSender.cs" />
+    <Compile Include="Providers\IFirebaseAuthProvider.cs" />
+    <Compile Include="Providers\IInboundEventProvider.cs" />
+    <Compile Include="Providers\IKanbanProvider.cs" />
+    <Compile Include="Providers\IKmlProvider.cs" />
+    <Compile Include="Providers\IShortenUrlProvider.cs" />
+    <Compile Include="Providers\ISignalrProvider.cs" />
+    <Compile Include="Providers\IUnitNotificationProvider.cs" />
+    <Compile Include="Providers\IOutboundQueueProvider.cs" />
+    <Compile Include="Providers\IOutboundVoiceProvider.cs" />
+    <Compile Include="Providers\IPdfProvider.cs" />
+    <Compile Include="Providers\IPhoneNumberProcesserProvider.cs" />
+    <Compile Include="Providers\ITextMessageProvider.cs" />
+    <Compile Include="PushSoundTypes.cs" />
+    <Compile Include="Queue\CallQueueItem.cs" />
+    <Compile Include="Queue\DistributionListQueueItem.cs" />
+    <Compile Include="Queue\MessageQueueItem.cs" />
+    <Compile Include="Queue\NotificationItem.cs" />
+    <Compile Include="Queue\ShiftQueueItem.cs" />
+    <Compile Include="Queue\SystemQueueItem.cs" />
+    <Compile Include="Rank.cs" />
+    <Compile Include="RecurrenceTypes.cs" />
+    <Compile Include="RepeatOnMonthTypes.cs" />
+    <Compile Include="ReportTypes.cs" />
+    <Compile Include="Repositories\IDepartmentGroupMembersRepository.cs" />
+    <Compile Include="Repositories\IHealthRepository.cs" />
+    <Compile Include="Repositories\ICallTypesRepository.cs" />
+    <Compile Include="Repositories\IDepartmentGroupsRepository.cs" />
+    <Compile Include="Repositories\IAddressRepository.cs" />
+    <Compile Include="Repositories\IPlansRepository.cs" />
+    <Compile Include="Repositories\IPushUriRepository.cs" />
+    <Compile Include="Repositories\IActionLogsRepository.cs" />
+    <Compile Include="Repositories\ICalendarItemsRepository.cs" />
+    <Compile Include="Repositories\IDepartmentCallEmailsRepository.cs" />
+    <Compile Include="Repositories\IIdentityRepository.cs" />
+    <Compile Include="Repositories\IMessageRepository.cs" />
+    <Compile Include="Repositories\IPaymentRepository.cs" />
+    <Compile Include="Repositories\IDepartmentSettingsRepository.cs" />
+    <Compile Include="Repositories\IDepartmentMembersRepository.cs" />
+    <Compile Include="Repositories\IDepartmentsRepository.cs" />
+    <Compile Include="Repositories\IResourceOrdersRepository.cs" />
+    <Compile Include="Repositories\IScheduledTaskLogsRepository.cs" />
+    <Compile Include="Repositories\IScheduledTasksRepository.cs" />
+    <Compile Include="Repositories\ITrainingRepository.cs" />
+    <Compile Include="Repositories\IUnitLocationRepository.cs" />
+    <Compile Include="Repositories\IUnitStatesRepository.cs" />
+    <Compile Include="Repositories\IUserProfilesRepository.cs" />
+    <Compile Include="Repositories\ICallsRepository.cs" />
+    <Compile Include="Repositories\IDepartmentNotificationRepository.cs" />
+    <Compile Include="ResourceOrder.cs" />
+    <Compile Include="ResourceOrderFill.cs" />
+    <Compile Include="ResourceOrderFillUnit.cs" />
+    <Compile Include="ResourceOrderItem.cs" />
+    <Compile Include="ResourceOrderSetting.cs" />
+    <Compile Include="Results\ValidateLogInResult.cs" />
+    <Compile Include="RouteInformation.cs" />
+    <Compile Include="Services\IAuditService.cs" />
+    <Compile Include="Services\ICommandsService.cs" />
+    <Compile Include="Services\ICoreEventService.cs" />
+    <Compile Include="Services\ICustomStateService.cs" />
+    <Compile Include="Services\IDepartmentLinksService.cs" />
+    <Compile Include="Services\IDepartmentProfileService.cs" />
+    <Compile Include="Services\IFileService.cs" />
+    <Compile Include="Services\IFirebaseService.cs" />
+    <Compile Include="Services\IGeoService.cs" />
+    <Compile Include="Services\IHealthService.cs" />
+    <Compile Include="Services\IImageService.cs" />
+    <Compile Include="Services\IIncidentService.cs" />
+    <Compile Include="Services\IInventoryService.cs" />
+    <Compile Include="Services\IMappingService.cs" />
+    <Compile Include="Services\INotificationService.cs" />
+    <Compile Include="Services\InternalCacheService.cs" />
+    <Compile Include="Services\IPermissionsService.cs" />
+    <Compile Include="Services\IResourceOrdersService.cs" />
+    <Compile Include="Services\IShiftsService.cs" />
+    <Compile Include="Services\ITextCommandService.cs" />
+    <Compile Include="Services\ITrainingService.cs" />
+    <Compile Include="Shift.cs" />
+    <Compile Include="ShiftAssignmentTypes.cs" />
+    <Compile Include="ShiftDay.cs" />
+    <Compile Include="ShiftGroup.cs" />
+    <Compile Include="ShiftAdmin.cs" />
+    <Compile Include="ShiftStaffingPerson.cs" />
+    <Compile Include="ShiftPerson.cs" />
+    <Compile Include="ShiftGroupAssignment.cs" />
+    <Compile Include="ShiftGroupRole.cs" />
+    <Compile Include="ShiftScheduleTypes.cs" />
+    <Compile Include="ShiftSignup.cs" />
+    <Compile Include="ShiftSignupTradeStates.cs" />
+    <Compile Include="ShiftSignupTradeUser.cs" />
+    <Compile Include="ShiftSignupTrade.cs" />
+    <Compile Include="ShiftSignupTradeUserShift.cs" />
+    <Compile Include="ShiftStaffing.cs" />
+    <Compile Include="ShiftTradeTypes.cs" />
+    <Compile Include="TextCommandPayload.cs" />
+    <Compile Include="TextCommandTypes.cs" />
+    <Compile Include="Training.cs" />
+    <Compile Include="TrainingAttachment.cs" />
+    <Compile Include="TrainingQuestion.cs" />
+    <Compile Include="TrainingQuestionAnswer.cs" />
+    <Compile Include="TrainingUser.cs" />
+    <Compile Include="UnitLocation.cs" />
+    <Compile Include="UnitRole.cs" />
+    <Compile Include="Providers\CallEmailsResult.cs" />
+    <Compile Include="Providers\IDistributionListProvider.cs" />
+    <Compile Include="Providers\IOutboundEventProvider.cs" />
+    <Compile Include="Providers\INotificationProvider.cs" />
+    <Compile Include="Providers\INumberProvider.cs" />
+    <Compile Include="PushRegistrationDescription.cs" />
+    <Compile Include="PushTemplate.cs" />
+    <Compile Include="Repositories\IUserStatesRepository.cs" />
+    <Compile Include="ScheduledTaskLog.cs" />
+    <Compile Include="DepartmentSettingTypes.cs" />
+    <Compile Include="Helpers\TimeConverterHelper.cs" />
+    <Compile Include="PersonnelRole.cs" />
+    <Compile Include="PersonnelRoleUser.cs" />
+    <Compile Include="Repositories\IGenericDataRepository.cs" />
+    <Compile Include="CalendarItem.cs" />
+    <Compile Include="CalendarItemType.cs" />
+    <Compile Include="ScheduleTypes.cs" />
+    <Compile Include="Services\IAffiliateService.cs" />
+    <Compile Include="Services\ICalendarService.cs" />
+    <Compile Include="Services\ICertificationService.cs" />
+    <Compile Include="Services\IDepartmentSettingsService.cs" />
+    <Compile Include="Services\IDistributionListsService.cs" />
+    <Compile Include="Services\IDocumentsService.cs" />
+    <Compile Include="Services\INotesService.cs" />
+    <Compile Include="Services\INumbersService.cs" />
+    <Compile Include="Services\IPaymentProviderService.cs" />
+    <Compile Include="Services\IPersonnelRolesService.cs" />
+    <Compile Include="Services\IScheduledTasksService.cs" />
+    <Compile Include="Services\IUnitsService.cs" />
+    <Compile Include="TaskTypes.cs" />
+    <Compile Include="TextMessage.cs" />
+    <Compile Include="TextNumber.cs" />
+    <Compile Include="UnitStateRole.cs" />
+    <Compile Include="UnitType.cs" />
+    <Compile Include="UnitLog.cs" />
+    <Compile Include="Countries.cs" />
+    <Compile Include="DeleteUserResults.cs" />
+    <Compile Include="Department.cs" />
+    <Compile Include="DepartmentBreakdown.cs" />
+    <Compile Include="DepartmentCallEmail.cs" />
+    <Compile Include="DepartmentCallPruning.cs" />
+    <Compile Include="DepartmentGroup.cs" />
+    <Compile Include="DepartmentGroupMember.cs" />
+    <Compile Include="DepartmentGroupTypes.cs" />
+    <Compile Include="DepartmentMember.cs" />
+    <Compile Include="DepartmentSetting.cs" />
+    <Compile Include="EmailNotification.cs" />
+    <Compile Include="Events\IDepartmentEvent.cs" />
+    <Compile Include="ICallEmailTemplate.cs" />
+    <Compile Include="IEntity.cs" />
+    <Compile Include="Invite.cs" />
+    <Compile Include="IQueue.cs" />
+    <Compile Include="IRepository.cs" />
+    <Compile Include="Job.cs" />
+    <Compile Include="JobTypes.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="LogEntry.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="MobileCarriers.cs" />
+    <Compile Include="Payment.cs" />
+    <Compile Include="PaymentMethods.cs" />
+    <Compile Include="Plan.cs" />
+    <Compile Include="PlanFrequency.cs" />
+    <Compile Include="PlanLimit.cs" />
+    <Compile Include="PlanLimitTypes.cs" />
+    <Compile Include="PlansBreakdown.cs" />
+    <Compile Include="Platforms.cs" />
+    <Compile Include="Providers\ICallEmailProvider.cs" />
+    <Compile Include="Providers\IEmailProvider.cs" />
+    <Compile Include="Providers\IGeoLocationProvider.cs" />
+    <Compile Include="PushLog.cs" />
+    <Compile Include="PushUri.cs" />
+    <Compile Include="QueueItem.cs" />
+    <Compile Include="QueueTypes.cs" />
+    <Compile Include="ResgridException.cs" />
+    <Compile Include="Services\IActionLogsService.cs" />
+    <Compile Include="Services\IAddressService.cs" />
+    <Compile Include="Services\ICallEmailFactory.cs" />
+    <Compile Include="Services\ICallsService.cs" />
+    <Compile Include="Services\ICommunicationService.cs" />
+    <Compile Include="Services\IDeleteService.cs" />
+    <Compile Include="Services\IDepartmentGroupsService.cs" />
+    <Compile Include="Services\IDepartmentsService.cs" />
+    <Compile Include="Services\IEmailService.cs" />
+    <Compile Include="Services\IAuthorizationService.cs" />
+    <Compile Include="Services\IInvitesService.cs" />
+    <Compile Include="Services\IJobsService.cs" />
+    <Compile Include="Services\ILimitsService.cs" />
+    <Compile Include="Services\ILogService.cs" />
+    <Compile Include="Services\IMessageService.cs" />
+    <Compile Include="Services\IPushLogsService.cs" />
+    <Compile Include="Services\IPushService.cs" />
+    <Compile Include="Services\IPushUriService.cs" />
+    <Compile Include="Services\IQueueService.cs" />
+    <Compile Include="Services\ISmsService.cs" />
+    <Compile Include="Services\ISubscriptionsService.cs" />
+    <Compile Include="Services\IUserProfileService.cs" />
+    <Compile Include="Services\IUsersService.cs" />
+    <Compile Include="Services\IUserStateService.cs" />
+    <Compile Include="Services\IWorkLogsService.cs" />
+    <Compile Include="SettingTypes.cs" />
+    <Compile Include="Messages\StandardPushMessage.cs" />
+    <Compile Include="Messages\StandardPushCall.cs" />
+    <Compile Include="SystemRoles.cs" />
+    <Compile Include="TimeZones.cs" />
+    <Compile Include="Unit.cs" />
+    <Compile Include="UnitState.cs" />
+    <Compile Include="UnitStateTypes.cs" />
+    <Compile Include="Update.cs" />
+    <Compile Include="UserGroupRole.cs" />
+    <Compile Include="UserProfile.cs" />
+    <Compile Include="ScheduledTask.cs" />
+    <Compile Include="UserProfileMaintenance.cs" />
+    <Compile Include="UserState.cs" />
+    <Compile Include="UserStateTypes.cs" />
+    <Compile Include="W3W.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk">
+      <Link>Resgrid-PubPriv-KeyFile.snk</Link>
+    </None>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\caf\Emergency_call.caf">
+      <Link>Audio\Emergency_call.caf</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\caf\High_call.caf">
+      <Link>Audio\High_call.caf</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\caf\Low_call.caf">
+      <Link>Audio\Low_call.caf</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\caf\Medium_call.caf">
+      <Link>Audio\Medium_call.caf</Link>
+    </EmbeddedResource>
+    <None Include="App.config" />
+    <Compile Include="InboundMessageTypes.cs" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj">
+      <Project>{21b7c3a0-bd8b-4f05-b5dd-4d2e6b1893fa}</Project>
+      <Name>Resgrid.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Call_closed.wav">
+      <Link>Audio\Call_closed.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Call_updated.wav">
+      <Link>Audio\Call_updated.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Emergency_call.wav">
+      <Link>Audio\Emergency_call.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\High_call.wav">
+      <Link>Audio\High_call.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Low_call.wav">
+      <Link>Audio\Low_call.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Medium_call.wav">
+      <Link>Audio\Medium_call.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\New_Call.wav">
+      <Link>Audio\New_Call.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\New_Chat.wav">
+      <Link>Audio\New_Chat.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\New_Message.wav">
+      <Link>Audio\New_Message.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\New_shift.wav">
+      <Link>Audio\New_shift.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\New_Training.wav">
+      <Link>Audio\New_Training.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Notification.wav">
+      <Link>Audio\Notification.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Personnel_Staffing_Updated.wav">
+      <Link>Audio\Personnel_Staffing_Updated.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Personnel_Status_Updated.wav">
+      <Link>Audio\Personnel_Status_Updated.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Trouble_Alert_emergency_.wav">
+      <Link>Audio\Trouble_Alert_emergency_.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Unit_Notice.wav">
+      <Link>Audio\Unit_Notice.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Unit_Status_Updated.wav">
+      <Link>Audio\Unit_Status_Updated.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Upcoming_shift.wav">
+      <Link>Audio\Upcoming_shift.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Web\Resgrid.WebCore\wwwroot\audio\wav\Upcoming_Training.wav">
+      <Link>Audio\Upcoming_Training.wav</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

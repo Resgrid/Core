@@ -1,0 +1,265 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Departments.CallSettings.CallSettingsView
+@{
+	ViewBag.Title = "Resgrid | Call Settings";
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Call Import Settings</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Call Import Settings</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Department" asp-action="CallSettings" asp-route-area="User" method="post">
+
+						@Html.AntiForgeryToken()
+						@Html.HiddenFor(m => m.EmailSettings.DepartmentCallEmailId)
+						@Html.HiddenFor(m => m.CallType)
+						@Html.HiddenFor(m => m.TextCallType)
+						<div asp-validation-summary="All" class="text-danger"></div>
+						@if (!String.IsNullOrEmpty(Model.Message))
+						{
+						<div class="alert alert-success">
+							@Model.Message
+						</div>
+						}
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Dispatch Import Email</label>
+							<div class="col-sm-10">
+								<strong>@Model.InternalDispatchEmail</strong>
+								<span class="help-block m-b-none">This is your ALL-CALL email address, all users in your department (who have call notifications enabled) will receive the call alert</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Prune (Auto Close) Calls</label>
+							<div class="col-sm-10">
+								<div class="checkbox checkbox-primary">
+									<input type="checkbox" class="checkbox checkbox-primary" asp-for="PruneEmailCalls">
+									<label></label>
+								</div>
+								<span class="help-block m-b-none">This will auto-close your automatically created calls (i.e. via an email, text or audio import process)</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Minutes to keep call open</label>
+							<div class="col-sm-10">
+								<strong><input type="number" asp-for="MinutesTillPrune" min="0" step="10" max="10080" /></strong>
+								<span class="help-block m-b-none">The value above will keep email imported calls open for that long, then they will be closed. The Prune checkbox also needs to be checked for auto closing to occur.</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Email Type</label>
+							<div class="col-sm-10">
+								<div id="listView"></div>
+								<div id="pager" class="k-pager-wrap"></div>								
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-8 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Update Call Import Settings</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="resgridEmailTypeModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Resgrid Email Type</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					Want to use the Call Import system to add calls into Resgrid? Are you able to control the format of emails? If so use the Resgrid email type.
+				</p>
+				<dl>
+					<dt>What is the Resgrid Email Type format?</dt>
+					<dd>
+						The Resgrid email type is formatted like this, values are separated by the PIPE, or vertical bar, character: <br /> <br />
+
+						ID | TYPE | PRIORITY | ADDRESS | MAPPAGE | NATURE | NOTES
+					</dd>
+					<dt>What are the values?</dt>
+					<dd>
+						<dl class="dl-horizontal">
+							<dt>ID</dt>
+							<dd>Incident Identifier from the CAD system. This field can be empty or set to 0000.</dd>
+							<dt>TYPE</dt>
+							<dd>Type of incident, can be anything, i.e. MEDICAL, FIRE, WILDLAND, HAZMAT, etc. This value can also be empty.</dd>
+							<dt>PRIORITY</dt>
+							<dd>Priority integer value of the Incident. Low = 0, Medium = 1, High = 2, Emergency = 3. This value can be empty.</dd>
+							<dt>ADDRESS</dt>
+							<dd>Full Address of incident (Address, City, State, Zip). This value is required.</dd>
+							<dt>MAPPAGE</dt>
+							<dd>Map page of the Incident. This value can be empty.</dd>
+							<dt>NATURE</dt>
+							<dd>Nature of the Incident, the reason the call exists. I.e. "Fully involved 2 story residential structure". This value is required</dd>
+							<dt>NOTES</dt>
+							<dd>Any additional information. This value can be empty.</dd>
+						</dl>
+					</dd>
+					<dt>How do I specify blank/empty values</dt>
+					<dd>
+						Just leave a space between the pipes: <br /> <br />
+
+						| MEDICAL | 3 | 155 Main St. Carson City, NV 89701 |  | 55 Y/O Male, Chest Pain, Diaphoretic, Conscious and abnormal breathing | <br /> <br />
+
+						In this example ID, MAPPAGE and NOTES are empty/not supplied.
+					</dd>
+				</dl>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="provisionPhoneNumberModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Resgrid Text-To-Call Number</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label class=" control-label">
+						Country
+					</label>
+					<div class="controls">
+						<select class="input-xlarge" id="country" name="country">
+							<option value="" selected="selected">Select Country</option>
+							<option value="US">United States</option>
+							<option value="CA">Canada</option>
+							<option value="GB">United Kingdom</option>
+							<option value="AU">Australia</option>
+						</select>
+					</div>
+				</div>
+
+				<table class="table table-bordered table-striped table-hover data-table">
+					<thead>
+						<tr>
+							<th>Phone Number</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody id="phoneNumberTableBody"></tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<a href="@Url.Action("CallSettings", "Department", new {area = "User"})" class="btn">Close</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+	<script type="text/x-kendo-tmpl" id="template">
+		<div class="product">
+			<img src="/images/CallEmails/${Code}.png" alt="${Code} image" />
+			<h4>${Name}</h4>
+		</div>
+	</script>
+
+	<script type="text/x-kendo-tmpl" id="textTemplate">
+		<div class="product">
+			<img src="/images/CallTexts/${Code}.png" alt="${Code} image" />
+			<h4>${Name}</h4>
+		</div>
+	</script>
+
+	<script src="~/js/app/internal/department/resgrid.department.callsettings.js" type="text/javascript"></script>
+
+	<style scoped>
+		.product {
+			float: left;
+			width: 270px;
+			height: 60px;
+			margin: 5px;
+			padding: 5px;
+			-moz-box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.15);
+			-webkit-box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.15);
+			box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.15);
+			-webkit-border-radius: 15px;
+			-moz-border-radius: 15px;
+			border-radius: 15px;
+			background-image: none;
+			cursor: pointer;
+		}
+
+			.product img {
+				float: left;
+				width: 140px;
+				height: 50px;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				margin: 4px 0 0 0;
+			}
+
+			.product h4 {
+				margin: 0px 0 0 0;
+				padding: 20px 2px 10px 10px;
+				font-size: 1em;
+				float: left;
+				max-width: 130px;
+				text-transform: uppercase;
+			}
+		/*.k-state-selected h3
+			{
+				color: #fff;
+				background-color: rgba(0,0,0,0.4);
+				-moz-box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+				-webkit-box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+				box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+				-moz-border-radius-topright: 5px;
+				-moz-border-radius-bottomright: 5px;
+				-webkit-border-top-right-radius: 5px;
+				-webkit-border-bottom-right-radius: 5px;
+				border-top-right-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}*/
+		.k-listview:after {
+			content: ".";
+			display: block;
+			height: 0;
+			clear: both;
+			visibility: hidden;
+		}
+
+		.k-listview {
+			border: 0;
+			padding: 0 0 20px 0;
+			min-width: 0;
+		}
+	</style>
+}

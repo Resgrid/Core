@@ -1,0 +1,103 @@
+﻿<html dir="LTR" xmlns:ndoc="urn:ndoc-schema">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>MessagePart Class</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">MessagePart Class</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> A MessagePart is a part of an email message used to describe the whole email parse tree.<br /><br /><b xmlns="urn:ndoc-schema">Email messages are tree structures</b>:<br /> Email messages may contain large tree structures, and the MessagePart are the nodes of the this structure.<br /> A MessagePart may either be a leaf in the structure or a internal node with links to other MessageParts.<br /> The root of the message tree is the <a href="OpenPop~OpenPop.Mime.Message.html">Message</a> class.<br /><br /><b xmlns="urn:ndoc-schema">Leafs</b>:<br /> If a MessagePart is a leaf, the part is not a <a href="OpenPop~OpenPop.Mime.MessagePart.IsMultiPart.html">MultiPart</a> message.<br /> Leafs are where the contents of an email are placed.<br /> This includes, but is not limited to: attachments, text or images referenced from HTML.<br /> The content of an attachment can be fetched by using the <a href="OpenPop~OpenPop.Mime.MessagePart.Body.html">Body</a> property.<br /> If you want to have the text version of a MessagePart, use the <a href="OpenPop~OpenPop.Mime.MessagePart.GetBodyAsText.html">GetBodyAsText</a> method which will<br /> convert the <b>Body</b> into a string using the encoding the message was sent with.<br /><br /><b xmlns="urn:ndoc-schema">Internal nodes</b>:<br /> If a MessagePart is an internal node in the email tree structure, then the part is a <b>MultiPart</b> message.<br /> The <a href="OpenPop~OpenPop.Mime.MessagePart.MessageParts.html">MessageParts</a> property will then contain links to the parts it contain.<br /> The <b>Body</b> property of the MessagePart will not be set.<br /><br /> See the example for a parsing example.<br /> This class cannot be instantiated from outside the library. </p>
+      <p>
+                For a list of all members of this type, see <a href="OpenPop~OpenPop.Mime.MessagePart~Members.html">MessagePart Members
+                </a>.
+              </p>
+      <p>
+        <a href="http://msdn.microsoft.com/en-us/library/System.Object(VS.80).aspx">System.Object</a>
+        <br />   <b>MessagePart</b></p>
+      <div class="syntax">
+        <div>public class MessagePart</div>
+      </div>
+      <H4 class="dtH4">Thread Safety</H4>
+      <P>
+					Public static (<b>Shared</b> in Visual Basic) members of this type are
+					safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+					thread-safe.
+				</P>
+      <h4 class="dtH4">Example</h4>
+      <p> This example illustrates how the message parse tree looks like given a specific message<br /><br /> The message source in this example is:<br /><pre class="code">MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="frontier"
+
+This is a message with multiple parts in MIME format.
+--frontier
+Content-Type: text/plain
+
+This is the body of the message.
+--frontier
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+
+PGh0bWw+CiAgPGHLYWQ+CiAgPC9oZWFkPgogIDxib2R5PgogICAgPHA+VGhpcyBpcyB0aGUg
+Ym9keSBvZiB0aGUgbWVzc2FnZS48L3A+CiAgPC9ib2R5Pgo8L2h0bWw+Cg==
+--frontier--
+</pre> The tree will look as follows, where the content-type media type of the message is listed<br /><pre class="code">- Message root
+  - multipart/mixed MessagePart
+    - text/plain MessagePart
+    - application/octet-stream MessagePart
+</pre> It is possible to have more complex message trees like the following:<br /><pre class="code">- Message root
+  - multipart/mixed MessagePart
+    - text/plain MessagePart
+    - text/plain MessagePart
+    - multipart/parallel
+      - audio/basic
+      - image/tiff
+    - text/enriched
+    - message/rfc822
+</pre> But it is also possible to have very simple message trees like:<br /><pre class="code">- Message root
+  - text/plain
+</pre></p>
+      <h4 class="dtH4">Requirements</h4>
+      <p>
+        <b>Namespace: </b>
+        <a href="~OpenPop.Mime.html">OpenPop.Mime</a>
+      </p>
+      <p>
+        <b>Assembly: </b>OpenPop (in OpenPop.dll)
+          </p>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="OpenPop~OpenPop.Mime.MessagePart~Members.html">MessagePart Members</a> | <a href="~OpenPop.Mime.html">OpenPop.Mime Namespace</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="MessagePart class, about MessagePart class">
+        </param>
+      </object>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20MessagePart%20Class">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>Generated from assembly OpenPop [2.0.4.369] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+      </div>
+    </div>
+  </body>
+</html>

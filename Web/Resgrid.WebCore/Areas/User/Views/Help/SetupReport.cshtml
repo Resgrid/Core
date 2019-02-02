@@ -1,0 +1,291 @@
+﻿@model Resgrid.Web.Areas.User.Models.Help.SetupReportView
+@{
+	ViewBag.Title = "Resgrid | Department Setup Progress";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@section Styles
+{
+	<style>
+		.explanation {
+			height: 120px;
+			padding: 12px 40px 20px 54px;
+			margin-top: 36px;
+			text-align: center;
+		}
+
+		.explanation-text {
+			vertical-align: middle;
+			text-align: center;
+		}
+
+
+		.progress-table {
+			zoom: 1;
+			border-collapse: collapse;
+			width: 100%;
+			font-size: 14px;
+			top: -50px;
+		}
+
+		#progress-table tr:first-child td {
+			border: none;
+		}
+
+
+		#progress-table td.step {
+			padding-top: 7px;
+			padding-left: 6px;
+			width: 34px;
+			height: 52px;
+		}
+
+		#progress-table tr td {
+			border-top: 1px solid #e5e5e5;
+		}
+
+		#progress-table td.step-status {
+			color: #49b26f;
+			text-align: right;
+			padding-right: 26px;
+		}
+	</style>
+}
+
+<div id="content-header">
+	<h1>Department Setup Progress</h1>
+</div>
+<div id="breadcrumb">
+	<a href="@Url.Action("Dashboard", "Home", new { Area = "User" })" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
+	<a href="#" class="current">Department Setup Progress</a>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+			<div class="widget-title">
+				<span class="icon">
+					<i class="icon-gears"></i>
+				</span>
+				<h5>Department Setup Progress</h5>
+			</div>
+			<div class="widget-content">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="explanation-text">
+							<h2>Your department setup is <strong>@Model.SetupScore</strong>% complete</h2><p>Complete the steps below to setup some of the core parts of Resgrid. There is much more to Resgrid but will is a great way to start.</p>
+						</div>
+						@if (Model.SetupScore >= 90)
+						{
+							<div class="progress progress-striped progress-sm">
+								<div style="width: @Model.SetupScore%;" class="progress-bar progress-bar-success"></div>
+							</div>
+						}
+						else if (Model.SetupScore > 50)
+						{
+							<div class="progress progress-striped progress-sm">
+								<div style="width: @Model.SetupScore%;" class="progress-bar progress-bar-warning"></div>
+							</div>
+						}
+						else
+						{
+							<div class="progress progress-striped progress-sm">
+								<div style="width: @Model.SetupScore%;" class="progress-bar progress-bar-danger"></div>
+							</div>
+						}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<table class="progress-table" id="progress-table">
+							<tbody>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.Settings >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("Settings", "Department", new {Area = "User"})"><h4>Set Your Department Settings</h4></a>
+										</div>
+										<div>
+											In your department setting you should set your Time Zone, if you want to use 12 hour or 24 hour time. Your departments physical address (location of your offices, station or meeting location).
+										</div>
+									</td>
+									<td class="step-status"></td>
+								</tr>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.Groups >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("Index", "Groups", new {Area = "User"})"><h4>Create a Group</h4></a>
+										</div>
+										<div>
+											You can create two types of groups, a Station Group with a physical address that can house units and an originzational group to segement personnel. Personnel can only be in 1 group at a time.
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.Roles >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("Roles", "Personnel", new { Area = "User" })"><h4>Create Roles for Personnel</h4></a>
+										</div>
+										<div>
+											Personnel Roles allow you to tag users in Resgrid. For example you might have a role per job requirement or certification ("Firefighter", "EMT", etc). Personnel can be in many roles at the same time.
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.Users >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("AddPerson", "Personnel", new { Area = "User" })"><h4>Add or Invite Users</h4></a>
+										</div>
+										<div>
+											Invite your personnel to Resgrid, each person in your department should have thier own account so they can set their status and staffing and utilize the moble application.
+										</div>
+									</td>
+									<td class="step-status"></td>
+								</tr>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.UnitTypes >= 1 || Model.Report.CallTypes >= 1 || Model.Report.CertTypes >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("Types", "Department", new { Area = "User" })"><h4>Add Custom Types</h4></a>
+										</div>
+										<div>
+											Add custom types for your Units (i.e. "ENGINE", "TENDER", etc), Calls (i.e. "MEDICAL, "STRUCTURE FIRE", etc) and Certifications (i.e. "EMT", "HAZMAT", etc). Types help orginize items in Resgrid.
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.Units >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("NewUnit", "Units", new { Area = "User" })"><h4>Add Units</h4></a>
+										</div>
+										<div>
+											Add units (appratuses) into the system so you can manage and monitor them, added logs/maintenance, utilize personnel accountability and much more.
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.Notifications >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("Index", "Notifications", new { Area = "User" })"><h4>Add Department Notifications</h4></a>
+										</div>
+										<div>
+											In Resgrid you have the system notify personnel in any number of conditions, for example notifiying all personnel in the Engineer role when a unit goes out of service.
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="step">
+										<div>
+											@if (Model.Report.Calls >= 1)
+											{
+												<img src="@Url.Content("~/Images/complete.png")">
+											}
+											else
+											{
+												<img src="@Url.Content("~/Images/notcomplete.png")">
+											}
+										</div>
+									</td>
+									<td class="step-desc">
+										<div>
+											<a href="@Url.Action("NewCall", "Dispatch", new { Area = "User" })"><h4>Create a Call</h4></a>
+										</div>
+										<div>
+											Resgrid can dispatch\tone your personnel out automatically (via email or text message importing) or manually by creating a Call. You should create at least one call to see how it works. Each user needs to select how they want to recieve Call Alerts (Text, Email, Push and Voice).
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

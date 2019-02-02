@@ -1,0 +1,100 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Settings.SettingsAddressModel
+@{
+    ViewBag.Title = "Resgrid | Department Address";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<div id="content-header">
+    <h1>Department Address</h1>
+</div>
+<div id="breadcrumb">
+    <a href="@Url.Action("Dashboard", "Home", new { Area = "User" })" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
+    <a href="#" class="current">Department Address</a>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-gears"></i>
+                </span>
+                <h5>Department Address</h5>
+            </div>
+            <div class="widget-content">
+                @using (Html.BeginForm("Address", "Department", FormMethod.Post, new { area = "User", @class = "form-horizontal" }))
+                {
+                    if (!String.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-success">
+                            @Model.Message
+                        </div>
+                    }
+                    if (!String.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-error">
+                            @Model.ErrorMessage
+                        </div>
+                    }
+                    <span class="alert alert-error">
+                        @Html.ValidationSummary(false)
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Department.Name)
+                        @Html.HiddenFor(m => m.Department.Address.AddressId)
+                    </span>
+
+                    <div class="form-group">
+                        <label class="control-label">
+                            Street
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.Department.Address.Address1, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            City
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.Department.Address.City, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            State/Province
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.Department.Address.State, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Zip/Postal Code
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.Department.Address.PostalCode, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Country
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.Department.Address.Country, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <input class="btn btn-primary" id="submit_action" name="commit"
+                               type="submit" value="Save Address" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+
+}

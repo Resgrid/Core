@@ -1,0 +1,35 @@
+<project SchemaVersion="1.3">
+    <assemblies>
+        <assembly location=".\OpenPop\bin\Release\OpenPop.dll" documentation=".\OpenPop\bin\Release\OpenPop.xml" />
+    </assemblies>
+    <namespaces>
+        <namespace name="(global)">OpenPop.NET Library. For fetching emails using the POP3 protocol and afterwards decoding the Mime formatted email.</namespace>
+        <namespace name="OpenPop.Common">Everything that is common the OpenPop.Mime and OpenPop.Pop3.</namespace>
+        <namespace name="OpenPop.Common.Logging">Holds interfaces and classes used when the OpenPop library needs to log messages.</namespace>
+        <namespace name="OpenPop.Mime">Contains classes to hold and decode Mime emails.</namespace>
+        <namespace name="OpenPop.Mime.Decode">Contains utility classes to decode various encoded values.</namespace>
+        <namespace name="OpenPop.Mime.Header">Contains classes for Mime email headers.</namespace>
+        <namespace name="OpenPop.Mime.Traverse">Contains classes and interfaces to help traverse the Message hierarchy.</namespace>
+        <namespace name="OpenPop.Pop3">Contains classes specific to the POP3 protocol part of OpenPop.NET.</namespace>
+        <namespace name="OpenPop.Pop3.Exceptions">Contains the exceptions the Pop3Client might throw.</namespace>
+    </namespaces>
+    <documenters>
+        <documenter name="MSDN">
+            <property name="OutputDirectory" value="DocumentationOuput\" />
+            <property name="HtmlHelpName" value="OpenPop.NET Documentation" />
+            <property name="Title" value="OpenPop.NET POP3 Library Documentation" />
+            <property name="NamespaceTOCStyle" value="Hierarchical" />
+            <property name="ShowMissingSummaries" value="True" />
+            <property name="ShowMissingParams" value="True" />
+            <property name="ShowMissingReturns" value="True" />
+            <property name="DocumentInheritedFrameworkMembers" value="False" />
+            <property name="AssemblyVersionInfo" value="AssemblyVersion" />
+            <property name="CopyrightText" value="Public Domain Dedication" />
+            <property name="CopyrightHref" value="http://creativecommons.org/publicdomain/zero/1.0/" />
+            <property name="FeedbackEmailAddress" value="hpop-users@lists.sourceforge.net" />
+			<property name="SdkDocVersion" value="SDK_v2_0" />
+            <property name="SdkDocVersionString" value="VS.80" />
+            <property name="CleanIntermediates" value="True" />
+        </documenter>
+    </documenters>
+</project>

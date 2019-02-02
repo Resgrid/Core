@@ -1,0 +1,95 @@
+﻿@model Resgrid.Web.Areas.User.Models.Units.NewUnitView
+@{
+	ViewBag.Title = "Resgrid | New Unit";
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Unit</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
+			</li>
+			<li class="active">
+				<strong>New Unit</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Units" asp-action="NewUnit" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Name</label>
+							<div class="col-sm-10">@Html.TextBoxFor(m => m.Unit.Name, new { @class = "form-control" })</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Type</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.Unit.Type, new SelectList(Model.Types, "Type", "Type"), new { style = "width:200px;" })
+								<p class="help-block"><strong>Note:</strong> You can add a new Type <a href="@Url.Action("Types", "Department", new {Area = "User"})">here</a>.</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Station
+							</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.Unit.StationGroupId, new SelectList(Model.Stations, "DepartmentGroupId", "Name"), new { style = "width:250px;" })
+								<p class="help-block"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Roles
+							</label>
+							<div class="col-sm-10">
+								<table id="unitRoles" class="table table-striped table-bordered">
+									<thead style="font-size: 14px;">
+										<tr>
+											<th style="font-size: 14px;">Role Name</th>
+											<th style="font-size: 16px;"><a id="addRoleButton" onclick="resgrid.units.newunit.addRole();" class="btn btn-xs btn-success" style="float:right;" data-original-title="Add New Role">Add Role</a></th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Units" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Add Unit</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/units/resgrid.units.newunit.js"></script>
+	@Html.Partial("~/Areas/User/Views/Help/AddEditUnitTutorial.cshtml")
+}

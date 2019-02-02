@@ -1,0 +1,95 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Reports.Units.UnitEventsReportView
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Resgrid Unit Events Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Resgrid Unit Events Report">
+    <meta name="author" content="Resgrid">
+
+    <link href="@Url.Content("~/Content/newinternal/css/bootstrap.min.css", true)" rel="stylesheet">
+
+    <style>
+        .table th, .table td {
+            padding: 8px !important;
+            line-height: 20px !important;
+            text-align: left !important;
+            vertical-align: top !important;
+        }
+    </style>
+
+    <!--[if lt IE 9]>
+      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+    <link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+    <link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+    <link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+    <link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-5 col-md-offset-1">
+                <img src="@Url.Content("~/Images/Resgrid_JustText_small.png", true)" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+	        <div class="col-md-5" style="text-align: right;">
+		        
+				@if (Model.Rows != null && Model.Rows.Count > 0)
+				{
+					<h3 style="margin-top: 10px;">@Model.Rows[0].UnitName Events Report</h3>
+				}
+				else
+				{
+					<h3 style="margin-top: 10px;">Resgrid Unit Events Report</h3>
+				}
+	        </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Destination\Call</th>
+                            <th>Timestamp</th>
+	                        <th>Location</th>
+							<th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.Rows)
+                        {
+                            <tr>
+                                <td>@row.State</td>
+                                <td>@row.DestinationName</td>
+								<td>@row.Timestamp</td>
+                                <td>@row.Latitude,@row.Longitude</td>
+								<td>@row.Note</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Department)
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script>	window.jQuery || document.write('<script src="@Url.Content("~/Scripts/libs/jquery-1.8.2.min.js", true)"><\/script>')</script>
+    <script src="@Url.Content("~/Scripts/newinternal/bootstrap.min.js", true)"></script>
+</body>
+</html>

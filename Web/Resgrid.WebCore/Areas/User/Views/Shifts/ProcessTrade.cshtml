@@ -1,0 +1,334 @@
+﻿@using Resgrid.Framework
+@model Resgrid.Web.Areas.User.Models.Shifts.ProcessTradeView
+@{
+	ViewBag.Title = "Resgrid | Process Shift Trade Request";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@section Styles
+{
+
+}
+<style>
+	div.list-group-item {
+		height: auto;
+		min-height: 220px;
+	}
+
+		div.list-group-item.active small {
+			color: #fff;
+		}
+
+	.stars {
+		margin: 20px auto 1px;
+	}
+
+	.event-list {
+		list-style: none;
+		font-family: 'Lato', sans-serif;
+		margin: 0px;
+		padding: 0px;
+	}
+
+		.event-list > li {
+			background-color: rgb(255, 255, 255);
+			box-shadow: 0px 0px 5px rgb(51, 51, 51);
+			box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.7);
+			padding: 0px;
+			margin: 0px 0px 20px;
+		}
+
+			.event-list > li > time {
+				display: inline-block;
+				width: 100%;
+				color: rgb(255, 255, 255);
+				background-color: rgb(197, 44, 102);
+				padding: 5px;
+				text-align: center;
+				text-transform: uppercase;
+			}
+
+			.event-list > li:nth-child(even) > time {
+				background-color: rgb(165, 82, 167);
+			}
+
+			.event-list > li > time > span {
+				display: none;
+			}
+
+			.event-list > li > time > .day {
+				display: block;
+				font-size: 56pt;
+				font-weight: 100;
+				line-height: 1;
+			}
+
+			.event-list > li time > .month {
+				display: block;
+				font-size: 24pt;
+				font-weight: 900;
+				line-height: 1;
+			}
+
+			.event-list > li > img {
+				width: 100%;
+			}
+
+			.event-list > li > .info {
+				padding-top: 5px;
+				text-align: center;
+			}
+
+				.event-list > li > .info > .title {
+					font-size: 17pt;
+					font-weight: 700;
+					margin: 0px;
+				}
+
+				.event-list > li > .info > .desc {
+					font-size: 13pt;
+					font-weight: 300;
+					margin: 0px;
+				}
+
+				.event-list > li > .info > ul,
+				.event-list > li > .social > ul {
+					display: table;
+					list-style: none;
+					margin: 10px 0px 0px;
+					padding: 0px;
+					width: 100%;
+					text-align: center;
+				}
+
+			.event-list > li > .social > ul {
+				margin: 0px;
+			}
+
+				.event-list > li > .info > ul > li,
+				.event-list > li > .social > ul > li {
+					display: table-cell;
+					cursor: pointer;
+					color: rgb(30, 30, 30);
+					font-size: 11pt;
+					font-weight: 300;
+					padding: 3px 0px;
+				}
+
+					.event-list > li > .info > ul > li > a {
+						display: block;
+						width: 100%;
+						color: rgb(30, 30, 30);
+						text-decoration: none;
+					}
+
+				.event-list > li > .social > ul > li {
+					padding: 0px;
+				}
+
+					.event-list > li > .social > ul > li > a {
+						padding: 3px 0px;
+					}
+
+					.event-list > li > .info > ul > li:hover,
+					.event-list > li > .social > ul > li:hover {
+						color: rgb(30, 30, 30);
+						background-color: rgb(200, 200, 200);
+					}
+
+	.facebook a,
+	.twitter a,
+	.google-plus a {
+		display: block;
+		width: 100%;
+		color: rgb(75, 110, 168) !important;
+	}
+
+	.twitter a {
+		color: rgb(79, 213, 248) !important;
+	}
+
+	.google-plus a {
+		color: rgb(221, 75, 57) !important;
+	}
+
+	.facebook:hover a {
+		color: rgb(255, 255, 255) !important;
+		background-color: rgb(75, 110, 168) !important;
+	}
+
+	.twitter:hover a {
+		color: rgb(255, 255, 255) !important;
+		background-color: rgb(79, 213, 248) !important;
+	}
+
+	.google-plus:hover a {
+		color: rgb(255, 255, 255) !important;
+		background-color: rgb(221, 75, 57) !important;
+	}
+
+	@@media (min-width: 768px) {
+		.event-list > li {
+			position: relative;
+			display: block;
+			width: 100%;
+			height: 120px;
+			padding: 0px;
+		}
+
+			.event-list > li > time,
+			.event-list > li > img {
+				display: inline-block;
+			}
+
+			.event-list > li > time,
+			.event-list > li > img {
+				width: 120px;
+				float: left;
+			}
+
+			.event-list > li > .info {
+				background-color: rgb(245, 245, 245);
+				overflow: hidden;
+			}
+
+			.event-list > li > time,
+			.event-list > li > img {
+				width: 120px;
+				height: 120px;
+				padding: 0px;
+				margin: 0px;
+			}
+
+			.event-list > li > .info {
+				position: relative;
+				height: 120px;
+				text-align: left;
+				padding-right: 40px;
+			}
+
+				.event-list > li > .info > .title,
+				.event-list > li > .info > .desc {
+					padding: 0px 10px;
+				}
+
+				.event-list > li > .info > ul {
+					position: absolute;
+					left: 0px;
+					bottom: 0px;
+				}
+
+			.event-list > li > .social {
+				position: absolute;
+				top: 0px;
+				right: 0px;
+				display: block;
+				width: 40px;
+			}
+
+				.event-list > li > .social > ul {
+					border-left: 1px solid rgb(230, 230, 230);
+				}
+
+					.event-list > li > .social > ul > li {
+						display: block;
+						padding: 0px;
+					}
+
+						.event-list > li > .social > ul > li > a {
+							display: block;
+							width: 40px;
+							padding: 10px 0px 9px;
+						}
+	}
+</style>
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Process Trade Request</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">Your Shifts</a>
+			</li>
+			<li class="active">
+				<strong>Process Trade Request</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="ProcessTrade" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								@Html.HiddenFor(m => m.Trade.ShiftSignupTradeId)
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-12">
+								<ul class="event-list">
+									<li>
+										<time datetime="@Model.Trade.SourceShiftSignup.ShiftDay.ToShortDateString()">
+											<span class="day">@Model.Trade.SourceShiftSignup.ShiftDay.Day</span>
+											<span class="month">@DateTimeHelpers.MonthToShortString(Model.Trade.SourceShiftSignup.ShiftDay.Month)</span>
+											<span class="year">@Model.Trade.SourceShiftSignup.ShiftDay.Year</span>
+											<span class="time">@Model.Trade.SourceShiftSignup.Shift.StartTime</span>
+										</time>
+										<div class="info">
+											<h2 class="title">@Model.Trade.SourceShiftSignup.Shift.Name</h2>
+											<p class="desc">Starts at @Model.Trade.SourceShiftSignup.Shift.StartTime</p>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Dates to Trades</label>
+							<div class="col-sm-4">
+								<select id="dates" name="dates"></select>
+								<span class="help-block text-left">Click inside the input to select the shifts you are already on to complete the trade for. If you don't specify any day it's an unbalanced trade.</span>
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Note</label>
+							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A note or FYI for this trade" asp-for="Trade.Note"></textarea></div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">Cancel</a>
+								<a id="reject_button" href="#" data-confirm="You sure you want to decline this trade request?" rel="nofollow" class="btn btn-danger">Reject Trade Request</a>
+								<input class="btn btn-primary" id="submit_button" name="commit" type="submit" value="Propose Trade Request" />
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		var shiftTradeId = '@Model.Trade.ShiftSignupTradeId';
+	</script>
+	<script src="~/js/app/internal/shifts/resgrid.shifts.processtrade.js"></script>
+}

@@ -1,0 +1,114 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Documents.EditDocumentView
+@{
+		ViewBag.Title = "Resgrid | Edit Document";
+		Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Edit Document</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Documents" asp-action="Index" asp-route-area="User">Documents</a>
+			</li>
+			<li class="active">
+				<strong>Edit Document</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || @Model.Document.UserId != Model.UserId)
+			{
+				<a href="@Url.Action("DeleteDocument", "Documents", new {area = "User", documentId = Model.Document.DocumentId})" class="btn btn-danger" data-confirm="WARNING: This will permanently delete this document. Are you sure you want to delete the document @Model.Document.Name?" rel="nofollow">Delete</a>
+			}
+		</div>
+	</div>
+
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Documents" asp-action="NewDocument" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+
+								@Html.HiddenFor(m => m.DocumentId)
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Name</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Document" asp-for="Name"></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Category</label>
+							<div class="col-sm-10"><input id="Category" name="Category" placeholder="" asp-for="Category" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Description</label>
+							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the document" asp-for="Description"></textarea></div>
+						</div>
+						@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label required">
+									Viewable By
+								</label>
+								<div class="col-sm-10">
+									@Html.DropDownListFor(x => x.AdminOnly, new[]
+																				{
+																						new SelectListItem {Selected = true, Text = "Everyone", Value = Boolean.FalseString},
+																						new SelectListItem {Selected = false, Text = "Admins Only", Value = Boolean.TrueString}
+																				})
+								</div>
+							</div>
+						}
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Upload
+							</label>
+							<div class="col-sm-10">
+								<input name="fileToUpload" id="fileToUpload" type="file" />
+								<div class="alert alert-info" role="alert">Not all files types are allowed! File must be less then 10MB in size and must have one of these extensions (.png, .jpg, .jpeg, .gif, .pdf, .doc, .docx, .txt, .ppt, .pptx, .pps, .ppsx, .odt, .xls, .xlsx, .mp4, .mp3)</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Documents" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Update Document</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+		<script src="~/js/app/internal/documents/resgrid.documents.newdocument.js" type="text/javascript"></script>
+}

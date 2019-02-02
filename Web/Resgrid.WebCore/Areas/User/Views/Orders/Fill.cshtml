@@ -1,0 +1,187 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Orders.FillOrderView
+@{
+  ViewBag.Title = "Resgrid | Fill Order";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Fill Order</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Orders" asp-action="Index" asp-route-area="User">Orders</a>
+      </li>
+      <li class="active">
+        <strong>Fill Order</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInUp">
+      <div class="ibox">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="m-b-md">
+                <h2>@Model.Order.Title</h2>
+              </div>
+              <dl class="dl-horizontal">
+                <dt>Status:</dt>
+                <dd>
+                  @if (Model.Order.CloseDate.HasValue)
+				  {
+                    <span class="label label-info">Closed</span>
+				  }
+				  else
+				  {
+					if (Model.Order.IsFilled())
+					{
+                      <span class="label label-success">Filled</span>
+					}
+					else
+					{
+                      <span class="label label-primary">Open</span>
+					}
+				  }
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-5">
+              <dl class="dl-horizontal">
+                <dt>Created by:</dt>
+                <dd>@Model.Order.Department.Name</dd>
+                <dt>Incident:</dt>
+                <dd>@Model.Order.IncidentName</dd>
+                <dt>Number\ID:</dt>
+                <dd>@Model.Order.IncidentNumber</dd>
+                <dt>Finance Code:</dt>
+                <dd>@Model.Order.FinancialCode</dd>
+              </dl>
+            </div>
+            <div class="col-lg-7" id="cluster_info">
+              <dl class="dl-horizontal">
+                <dt>Last Updated:</dt>
+                <dd>@Model.Order.OpenDate.TimeConverterToString(Model.Department)</dd>
+                <dt>Created:</dt>
+                <dd>@Model.Order.OpenDate.TimeConverterToString(Model.Department)</dd>
+                <dt>Contact Name:</dt>
+                <dd>@Model.Order.ContactName</dd>
+                <dt>Contact Number:</dt>
+                <dd>@Model.Order.ContactNumber</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Fill:</dt>
+                <dd>
+                  <div class="progress progress-striped active m-b-sm">
+                    <div style="width: @Model.Order.FilledPrecentage()%;" class="progress-bar"></div>
+                  </div>
+                  <small>This resource order is <strong>@Model.Order.FilledPrecentage()%</strong> filled.</small>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row m-t-sm">
+            <div class="col-lg-12">
+              <div class="panel blank-panel">
+                <div class="panel-heading">
+                  <div class="panel-options">
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#tab-1" data-toggle="tab">Fills</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <div class="tab-content">
+                    <div class="tab-pane active" id="tab-1">
+
+                      @foreach (var item in Model.Order.Items)
+					  {
+                        <div class="row">
+                          <div class="col-md-4">
+                            <dl>
+                              <dt>Resource:</dt>
+                              <dd>@item.Resource</dd>
+                            </dl>
+                          </div>
+                          <div class="col-md-4">
+                            <dl>
+                              <dt>Requirements:</dt>
+                              <dd>@item.Requirements</dd>
+                            </dl>
+                          </div>
+                          <div class="col-md-1">
+                            <dl>
+                              <dt>Min:</dt>
+                              <dd>@item.Min</dd>
+                            </dl>
+                          </div>
+                          <div class="col-md-1">
+                            <dl>
+                              <dt>Max:</dt>
+                              <dd>@item.Max</dd>
+                            </dl>
+                          </div>
+                          <div class="col-md-1">
+                            <dl>
+                              <dt>Needed:</dt>
+	                            <dd>
+		                            @{
+			                            <script>
+                            				window['unitFillItem_@Model.Count'] = @(item.Max - item.UnitFillCount());
+                            				window['unitFillId_@Model.Count'] = @item.ResourceOrderItemId;
+                            			</script>
+		                            }
+								
+		                            <span>@(item.Max - item.UnitFillCount())</span>
+	                            </dd>
+                            </dl>
+                          </div>
+                        </div>
+
+						if (!item.IsFilled())
+						 {
+							 <div id="itemRow_@Model.Count" class="row" style="background: whitesmoke;">
+								 @{
+									 Model.Count++;
+								 }
+							 </div>
+						 }
+					  }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/app/internal/orders/resgrid.orders.fill.js"></script>
+
+  @for (int i = 0; i < Model.Count; i++)
+  {
+	  <script>
+  		var allowPartialFills = '@Model.Order.AllowPartialFills';
+  		$(document).ready(function () {
+  			resgrid.orders.fill.addItem('itemRow_@i');
+  		});
+  	</script>
+  }
+}

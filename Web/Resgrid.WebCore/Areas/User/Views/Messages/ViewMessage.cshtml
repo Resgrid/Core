@@ -1,0 +1,320 @@
+﻿@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Messages.ViewMessageView
+@{
+  ViewBag.Title = "Resgrid | View Message";
+  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content mailbox-content">
+          <div class="file-manager">
+            <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">Compose Message</a>
+
+            <div class="space-25"></div>
+            <h5>Folders</h5>
+            <ul class="folder-list m-b-md" style="padding: 0">
+              <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> Inbox <span class="label label-warning pull-right">@Model.UnreadMessages</span> </a></li>
+              <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> Sent Messages</a></li>
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="mailMessage" class="col-lg-9 animated fadeInRight">
+      <div class="mail-box-header">
+        <div class="pull-right tooltip-demo">
+          <button href="#" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Print email" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> </button>
+          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash-o"></i> </a>
+        </div>
+        <h2>
+          View Message
+        </h2>
+        <div class="mail-tools tooltip-demo m-t-md">
+          <h3>
+            <span class="font-noraml">Subject: </span>@Model.Message.Subject
+          </h3>
+          <h5>
+            <span class="pull-right font-noraml">@Model.Message.SentOn.TimeConverterToString(Model.Department)</span>
+
+            @if (!String.IsNullOrWhiteSpace(Model.Message.SendingUserId))
+			{
+              <span class="font-noraml">From: </span>@UserHelper.GetFullNameForUser(Model.Message.SendingUserId)
+			}
+			else
+			{
+              <span class="font-noraml">From: System</span>
+			}
+            <br />
+            @if (Model.Message.Type == (int)MessageTypes.Poll)
+			{
+              <span class="font-noraml">Type: Poll</span>
+			}
+			else if (Model.Message.Type == (int)MessageTypes.Callback)
+			{
+              <span class="font-noraml">Type: Callback</span>
+			}
+			else
+			{
+              <span class="font-noraml">Type: Message</span>
+			}
+            <br />
+            @if (Model.Message.Type == (int)MessageTypes.Poll || Model.Message.Type == (int)MessageTypes.Callback)
+			{
+			  if (Model.Message.ExpireOn.HasValue)
+			  {
+                <span class="font-bold danger">Expires: @Model.Message.ExpireOn.Value.TimeConverterToString(Model.Department)</span>
+			  }
+			  else
+			  {
+                <span class="font-noraml">Expires: Never</span>
+			  }
+			}
+          </h5>
+        </div>
+      </div>
+      <div class="mail-box">
+        <div class="mail-body">
+          @Html.Raw(Model.Message.Body)
+        </div>
+
+        @if (Model.Message.Type == (int)MessageTypes.Poll || Model.Message.Type == (int)MessageTypes.Callback)
+		{
+		  var recipient = Model.Message.MessageRecipients.FirstOrDefault(x => x.UserId == ClaimsAuthorizationHelper.GetUserId());
+		  if (recipient != null && String.IsNullOrWhiteSpace(recipient.Response))
+		  {
+            <div class="mail-attachment">
+              <div class="row">
+                <div class="form-group">
+                  <label class="control-label">
+                    Note
+                  </label>
+                  <div class="controls">
+                    <div class="col-md-6">
+	                    <input class="form-control" type="text" id="note" name="note">
+					  <span class="help-block m-b-none">Supply a note in the text box above before pressing a response button below if you want to send a note with your reponse.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group">
+                  <label class="control-label">
+                    Response
+                  </label>
+                  <div class="controls">
+                    <div class="col-md-6">
+                      <div class="btn-group">
+                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 1)" class="btn btn-success">Yes</a>
+                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 2)" class="btn btn-warning">Maybe</a>
+                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 3)" class="btn btn-danger">No</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+		  }
+		  else if (recipient != null)
+		  {
+            <div class="mail-attachment">
+              <div class="row">
+                <div class="form-group">
+                  <label class="control-label">
+                    Response
+                  </label>
+                  <div class="controls">
+                    <div class="col-md-6">
+                      @if (recipient.Response == "1")
+					  {
+                        <span class="label label-success">Yes</span>
+					  }
+					  else if (recipient.Response == "2")
+					  {
+                        <span class="label label-warning">Maybe</span>
+					  }
+					  else if (recipient.Response == "3")
+					  {
+                        <span class="label label-danger">No</span>
+					  }
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group">
+                  <label class="control-label">
+                    Note
+                  </label>
+                  <div class="controls">
+                    <div class="col-md-6">
+                      @if (!String.IsNullOrWhiteSpace(recipient.Note))
+					  {
+                        <span>@Html.Raw(recipient.Note)</span>
+					  }
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+
+
+		  }
+		}
+        @if (Model.Message.Type == (int)MessageTypes.Poll || Model.Message.Type == (int)MessageTypes.Callback)
+		{
+          <div class="mail-attachment">
+            <div class="form-group">
+              <label class="control-label">
+                Recipients
+              </label>
+              <div class="controls">
+                <table class="table table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Group</th>
+                      <th>Roles</th>
+                      <th>Response</th>
+                      <th>Read On</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach (var recipient in Model.Message.MessageRecipients)
+					{
+					  var groupAndRole = Model.UserGroupsAndRoles.FirstOrDefault(x => x.UserId == recipient.UserId);
+
+                      <tr>
+                        <td>@UserHelper.GetFullNameForUser(recipient.UserId)</td>
+                        <td>
+                          @if (groupAndRole == null || !groupAndRole.DepartmentGroupId.HasValue)
+						  {
+                            <span>No Group</span>
+						  }
+						  else
+						  {
+                            <span>@groupAndRole.DepartmentGroupName</span>
+						  }
+                        </td>
+                        <td>
+                          @if (groupAndRole == null || !groupAndRole.DepartmentGroupId.HasValue)
+						  {
+                            <span></span>
+						  }
+						  else
+						  {
+                            <span style="font-size: 8pt;">@groupAndRole.RoleNames</span>
+						  }
+                        </td>
+                        <td>
+                          @if (recipient.Response == "1")
+						  {
+                            <span class="label label-success">Yes</span>
+						  }
+						  else if (recipient.Response == "2")
+						  {
+                            <span class="label label-warning">Maybe</span>
+						  }
+						  else if (recipient.Response == "3")
+						  {
+                            <span class="label label-danger">No</span>
+						  }
+                        </td>
+                        <td>
+                          @if (recipient.ReadOn.HasValue)
+						  {
+                            <span>@recipient.ReadOn.Value.TimeConverterToString(Model.Department)</span>
+						  }
+						  else
+						  {
+                            <span>Never</span>
+						  }
+                        </td>
+                        <td>
+                          @Html.Raw(recipient.Note)
+                        </td>
+                      </tr>
+					}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+		}
+		else
+		{
+          <div class="mail-attachment">
+            <div class="form-group">
+              <label class="control-label">
+                Recipients
+              </label>
+              <div class="controls">
+                <table class="table table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Read On</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach (var recipient in Model.Message.MessageRecipients)
+					{
+                      <tr>
+                        <td>@UserHelper.GetFullNameForUser(recipient.UserId)</td>
+                        <td>
+                          @if (recipient.ReadOn.HasValue)
+						  {
+                            <span>@recipient.ReadOn.Value.TimeConverterToString(Model.Department)</span>
+						  }
+						  else
+						  {
+                            <span>Unread</span>
+						  }
+                        </td>
+                      </tr>
+					}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+		}
+        <div class="mail-attachment">
+          <p>
+            <span><i class="fa fa-paperclip"></i> Attachments</span>
+          </p>
+
+          <div class="attachment">
+
+            <div class="clearfix"></div>
+          </div>
+        </div>
+        <div class="mail-body text-right tooltip-demo">
+          <button title="" data-placement="top" data-toggle="tooltip" type="button" data-original-title="Print" class="btn btn-sm btn-white" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> Print</button>
+          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" data-placement="top" data-toggle="tooltip" data-original-title="Trash" class="btn btn-sm btn-white"><i class="fa fa-trash-o"></i> Delete</a>
+        </div>
+        <div class="clearfix"></div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/lib/printThis/printThis.js"></script>
+  <script src="~/js/app/internal/messages/resgrid.messages.viewMessage.js"></script>
+}

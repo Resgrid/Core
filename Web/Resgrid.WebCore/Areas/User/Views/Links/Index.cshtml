@@ -1,0 +1,210 @@
+﻿@using Resgrid.Framework
+@using Resgrid.Model
+@using Resgrid.Model.Events
+@using Resgrid.Web.Extensions
+@using Resgrid.Web.Helpers
+@model Resgrid.WebCore.Areas.User.Models.Links.LinksIndexView
+@{
+  ViewBag.Title = "Resgrid | Department Links";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Resource Orders</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Department Links</strong>
+			</li>
+		</ol>
+	</div>
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	{
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="Add a new department link" class="btn btn-success" asp-controller="Links" asp-action="New" asp-route-area="User">New Department Links</a>
+			</div>
+		</div>
+	}
+</div>
+
+  <div class="row">
+    @*@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	  {*@
+    @*Html.Raw("<div class='col-xs-9'>");*@
+    @*}
+	  else
+	  {
+		Html.Raw("<div class='col-xs-12'>");
+	  }*@
+    <div class='col-xs-9'>
+      <div class="wrapper wrapper-content">
+        <div class="ibox float-e-margins">
+          <div class="ibox-content">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>From Department</th>
+                    <th></th>
+                    <th>To Department</th>
+                    <th>Enabled</th>
+                    <th>Shared Data</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach (var l in Model.Links)
+				  {
+                    <tr>
+                      <td>
+                        <span>@l.Department.Name</span>
+                      </td>
+                      <td>
+                        @if (l.DepartmentId != Model.DepartmentId && !String.IsNullOrWhiteSpace(l.DepartmentColor))
+						{
+                          <i class="fa fa-arrow-right" style="color: @l.DepartmentColor"></i>
+						}
+						else
+						{
+                          <i class="fa fa-arrow-right"></i>
+						}
+                      </td>
+                      <td>
+                        <span>@l.LinkedDepartment.Name</span>
+                      </td>
+                      <td>
+                        @if (l.LinkEnabled)
+						{
+                          <span style="color: green;">Link Enabled</span>
+						}
+						else
+						{
+                          <span style="color: red;">Link Disabled</span>
+						}
+                      </td>
+                      <td>
+                        @{
+						  var data = String.Empty;
+
+						  if (l.DepartmentShareCalls)
+						  {
+							if (data.Length <= 0)
+							{
+							  data = "Calls";
+							}
+							else
+							{
+							  data = data + ",Calls";
+							}
+						  }
+
+						  if (l.DepartmentSharePersonnel)
+						  {
+							if (data.Length <= 0)
+							{
+							  data = "Personnel";
+							}
+							else
+							{
+							  data = data + ",Personnel";
+							}
+						  }
+
+						  if (l.DepartmentShareUnits)
+						  {
+							if (data.Length <= 0)
+							{
+							  data = "Units";
+							}
+							else
+							{
+							  data = data + ",Units";
+							}
+						  }
+
+						  if (l.DepartmentShareOrders)
+						  {
+							if (data.Length <= 0)
+							{
+							  data = "Orders";
+							}
+							else
+							{
+							  data = data + ",Orders";
+							}
+						  }
+                        }
+
+                        @if (!String.IsNullOrWhiteSpace(data))
+						{
+                          <span>@data</span>
+						}
+						else
+						{
+                          <span>No Data Shared</span>
+						}
+                      </td>
+                      <td>
+                        @if (l.DepartmentId != Model.DepartmentId && l.LinkEnabled == false && ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+						{
+                          <a href="@Url.Action("Enable", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-success'>
+                            Enable
+                          </a>
+						}
+						else if (l.DepartmentId != Model.DepartmentId && l.LinkEnabled && ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+						{
+                          <a href="@Url.Action("DisableLink", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-warning'>
+                            Disable
+                          </a>
+						}
+
+                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+						{
+                          <a href="@Url.Action("DeleteLink", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this link. Are you sure you want to delete it?" rel="nofollow">
+                            Delete
+                          </a>
+						}
+
+
+                        @if (l.DepartmentId != Model.DepartmentId && l.LinkEnabled)
+						{
+                          <a href="@Url.Action("View", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-primary'>
+                            View Data
+                          </a>
+						}
+                      </td>
+                    </tr>
+						  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanCreateLinks)
+	{
+      <div class="col-xs-3">
+        <div class="wrapper wrapper-content animated fadeInUp">
+          <div class="ibox">
+            <div class="ibox-content">
+              <div id="gravatarSection" style="text-align: center; padding-top: 10px;">
+
+                <span>Your Department Link Code</span>
+                <div style="color: #337ab7;">@Model.Code</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+	  }
+  </div>
+
+  @section Scripts
+{
+
+  }

@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BE40F1E9-E2DF-4A1A-987E-6A9E18C93384}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Resgrid.Providers.GeoLocationProvider</RootNamespace>
+    <AssemblyName>Resgrid.Providers.GeoLocationProvider</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Common\Resgrid-PubPriv-KeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Cloud|AnyCPU'">
+    <OutputPath>bin\Cloud\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Azure|AnyCPU'">
+    <OutputPath>bin\Azure\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\Staging\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Geocoding, Version=3.6.0.0, Culture=neutral, PublicKeyToken=7c714700b88674c7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Geocoding.net.3.6.1\lib\net40\Geocoding.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DotNetZip.Reduced.1.9.1.8\lib\net20\Ionic.Zip.Reduced.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpKml, Version=3.0.0.0, Culture=neutral, PublicKeyToken=9bb853c026a5c0ac, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpKml.Core.3.0.0\lib\portable45-net45+win8+wpa81\SharpKml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="GeoLocationProvider.cs" />
+    <Compile Include="GoogleMapsApi\Engine\MapsAPIGenericEngine.cs" />
+    <Compile Include="GoogleMapsApi\Engine\UnixTimeConverter.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Common\AddressLocation.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Common\ILocationString.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Common\IResponseFor.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Common\Location.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Common\MapsBaseRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Common\SignableRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Common\Type.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Request\AvoidWay.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Request\DirectionsRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Request\TravelMode.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\DirectionsResponse.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Distance.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Duration.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Leg.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Line.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\OverviewPolyline.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\PointsDecodingException.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Route.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\StatusCodes.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Step.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Stop.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\TransitAgency.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\TransitDetails.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\Vehicle.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Directions\Response\VehicleType.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Elevation\Request\ElevationRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Elevation\Response\ElevationResponse.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Elevation\Response\Result.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Elevation\Response\Status.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Request\GeocodingRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Response\AddressComponent.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Response\FramedLocation.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Response\GeocodingResponse.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Response\Geometry.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Response\LocationType.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Response\Result.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Geocoding\Response\Status.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlaceAutocomplete\Request\PlaceAutocompleteRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlaceAutocomplete\Response\MatchedSubstring.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlaceAutocomplete\Response\PlaceAutocompleteResponse.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlaceAutocomplete\Response\Prediction.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlaceAutocomplete\Response\Status.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlaceAutocomplete\Response\Term.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Request\PlacesDetailsRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\Aspect.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\Events.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\Geometry.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\OpeningHours.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\Period.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\PlacesDetailsResponse.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\Result.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\Review.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\Status.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesDetails\Response\TimeOfWeek.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesText\Request\PlacesTextRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesText\Response\Geometry.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesText\Response\PlacesTextResponse.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesText\Response\Result.cs" />
+    <Compile Include="GoogleMapsApi\Entities\PlacesText\Response\Status.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Places\Request\PlacesRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Places\Request\RankBy.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Places\Response\Geometry.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Places\Response\PlacesResponse.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Places\Response\Result.cs" />
+    <Compile Include="GoogleMapsApi\Entities\Places\Response\Status.cs" />
+    <Compile Include="GoogleMapsApi\Entities\TimeZone\Request\TimeZoneRequest.cs" />
+    <Compile Include="GoogleMapsApi\Entities\TimeZone\Response\Status.cs" />
+    <Compile Include="GoogleMapsApi\Entities\TimeZone\Response\TimeZoneResponse.cs" />
+    <Compile Include="GoogleMapsApi\GoogleMaps.cs" />
+    <Compile Include="GoogleMapsApi\QueryStringParametersList.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Entities\ImageSize.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Entities\MapStyle.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Entities\Marker.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Entities\MarkerStyle.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Entities\Path.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Entities\PathStyle.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Entities\StaticMapRequest.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Enums\ImageFormat.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Enums\MapElement.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Enums\MapFeatures.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Enums\MapType.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Enums\MapVisibility.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\Enums\MarkerSize.cs" />
+    <Compile Include="GoogleMapsApi\StaticMaps\StaticMapsEngine.cs" />
+    <Compile Include="GoogleMapsApi\TaskFactoryExtensions.cs" />
+    <Compile Include="GoogleMapsApi\WebClientEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GoogleMapsApi\WebClientExtensionMethods.cs" />
+    <Compile Include="KmlProvider.cs" />
+    <Compile Include="LocationIQResponse.cs" />
+    <Compile Include="ProviderModule.cs" />
+    <Compile Include="W3WResponse.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj">
+      <Project>{dd9e37af-9af3-4cbb-ba7f-b66158c61222}</Project>
+      <Name>Resgrid.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj">
+      <Project>{21b7c3a0-bd8b-4f05-b5dd-4d2e6b1893fa}</Project>
+      <Name>Resgrid.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj">
+      <Project>{8b7997ec-67a2-42ab-9fbd-f8ed2c2997c8}</Project>
+      <Name>Resgrid.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj">
+      <Project>{691efeb7-a87e-4478-8be2-4bcd0ce7a409}</Project>
+      <Name>Resgrid.Providers.Cache</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk">
+      <Link>Resgrid-PubPriv-KeyFile.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GoogleMapsApi\Entities\Directions\The Google Directions API - Google Maps API Web Services - Google Code.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

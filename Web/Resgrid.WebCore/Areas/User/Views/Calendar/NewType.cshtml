@@ -1,0 +1,87 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Calendar.NewTypeView
+@{
+		ViewBag.Title = "Resgrid | New Calendar Type";
+}
+
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Calendar Type</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Calendar" asp-action="Index" asp-route-area="User">Calendar</a>
+			</li>
+			<li>
+				<a asp-controller="Calendar" asp-action="Types" asp-route-area="User">Calendar Types</a>
+			</li>
+			<li class="active">
+				<strong>New Calendar Type</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Calendar" asp-action="NewType" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+								<div class="alert alert-success">
+									@Model.Message
+								</div>
+								}
+								<span class="alert-error">
+									@Html.AntiForgeryToken()
+								</span>
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Type Name</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Type" asp-for="Type.Name"></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Type Color</label>
+							<div class="col-sm-10"><input type="text" class="form-control" asp-for="Type.Color"/></div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Calendar" asp-action="Types" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Add Type</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+		<script>
+		$(document).ready(function () {
+			$("#Type_Color").kendoColorPicker({
+				value: "#ffffff",
+				buttons: false
+			});
+		});
+	</script>
+
+}

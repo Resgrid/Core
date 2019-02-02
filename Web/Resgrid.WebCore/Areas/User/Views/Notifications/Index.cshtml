@@ -1,0 +1,97 @@
+﻿@using Resgrid.Framework
+@using Resgrid.Model
+@using Resgrid.Model.Events
+@using Resgrid.Web.Extensions
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Notifications.NotificationIndexView
+@{
+	ViewBag.Title = "Resgrid | Notifications";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Notifications</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Notifications</strong>
+			</li>
+		</ol>
+	</div>
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	{
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="Add a new department link" class="btn btn-success" asp-controller="Notifications" asp-action="New" asp-route-area="User">New Notification</a>
+			</div>
+		</div>
+	}
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Type</th>
+									<th>Data</th>
+									<th>Before State</th>
+									<th>Current State</th>
+									<th>Notify</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								@foreach (var n in Model.Notifications)
+								{
+									<tr>
+										<td>
+											<span>@(((EventTypes)n.EventType).DisplayString())</span>
+										</td>
+										<td>
+											@if (Model.NotifyData.ContainsKey(n.DepartmentNotificationId))
+											{
+												<span>@Model.NotifyData[n.DepartmentNotificationId]</span>
+											}
+											else
+											{
+												<span>None</span>
+											}
+										</td>
+										<td>
+											<span>@(n.TranslateBefore(Model.CustomStates))</span>
+										</td>
+										<td>
+											<span>@(n.TranslateCurrent(Model.CustomStates))</span>
+										</td>
+										<td>
+											<span>@Model.NotifyUsers[n.DepartmentNotificationId]</span>
+										</td>
+										<td>
+											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+											{
+												<a style="text-decoration: none;" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Notifications", new { area = "User", notificationId = n.DepartmentNotificationId })" data-confirm="WARNING: This will permanently delete this notification. are you sure you want to continue?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

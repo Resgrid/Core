@@ -1,0 +1,10 @@
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Dd]ebug*/
+[Bb]in
+obj/
+*.suo
+*.user
+_ReSharper*/
+
+# mstest test results
+[Tt]est[Rr]esult*

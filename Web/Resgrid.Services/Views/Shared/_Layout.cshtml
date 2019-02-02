@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <!-- styles -->
+    <link href="@Url.Content("~/content/bootstrap.css")" rel="stylesheet">
+    <link href="@Url.Content("~/content/bootstrap-responsive.css")" rel="stylesheet">
+    <link href="@Url.Content("~/content/bootstrap-doc.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/google-code-prettify/prettify.css")" rel="stylesheet">
+    @RenderSection("scripts", required: false)
+</head>
+<body>
+    <header>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="@Url.Action("Index", "Help", new { area = "HelpPage" })">Resgrid API Documentation</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right">
+                            <li><a href="http://resgrid.com">Resgrid Home</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <article class="container">
+        <div class="row-fluid">
+            <div class="span3">
+                <!--sidebar -->
+                <ul class="nav nav-tabs nav-stacked">
+                    <li><a href="@Url.Action("GettingStarted", "Help", new { area = "HelpPage" })"><i class="icon-chevron-right pull-right"></i> Getting Started</a></li>
+                    <li><a href="@Url.Action("Authentication", "Help", new { area = "HelpPage" })"><i class="icon-chevron-right pull-right"></i> Authentication</a></li>
+                    <li><a href="@Url.Action("Index", "Help", new { area = "HelpPage" })"><i class="icon-chevron-right pull-right"></i> Api Reference</a></li>
+                </ul><!--/.sidebar -->
+            </div><!--/.span3 -->
+
+            <div class="span9">
+                <div class="doc-content-box">
+
+                    @RenderBody()
+
+                    <div class="shadow-right"> </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <footer>
+        <div class="footer">
+            <div class="container">
+                <p>Copyright &copy; 2012-2018. Resgrid, LLC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="@Url.Content("~/scripts/jquery.min.js")"></script>
+    <script src="@Url.Content("~/scripts/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/scripts/google-code-prettify/prettify.js")"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+
+            window.prettyPrint && prettyPrint();
+
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $("html,body").animate({ scrollTop: $(this.hash).offset().top - 50 }, 'slow');
+            });
+        });
+    </script>
+</body>
+</html>

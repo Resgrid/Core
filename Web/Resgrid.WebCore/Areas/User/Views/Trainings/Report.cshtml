@@ -1,0 +1,143 @@
+﻿
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Training.TrainingReportView
+@{
+	ViewBag.Title = "Resgrid | Training Report";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@section Styles
+{
+	
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Training Report</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">Trainings</a>
+			</li>
+			<li class="active">
+				<strong>Training Report</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										Name
+									</th>
+									<th>
+										Group
+									</th>
+									<th>
+										Viewed
+									</th>
+									<th>
+										Completed
+									</th>
+									<th>
+										Score
+									</th>
+									<th>
+										Result
+									</th>
+									<th>
+
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var u in Model.Training.Users)
+								{
+									<tr>
+										<td>@UserHelper.GetFullNameForUser(u.UserId)</td>
+										<td>
+											@if (Model.UserGroups.ContainsKey(u.UserId))
+											{
+												<span>@Model.UserGroups[u.UserId]</span>
+											}
+										</td>
+										<td>
+											@if (u.Viewed)
+											{
+												<span>@u.ViewedOn.Value.TimeConverterToString(Model.Department)</span>
+											}
+											else
+											{
+												<span>Not Viewed</span>
+											}
+										</td>
+										<td>
+											@if (u.Complete)
+											{
+												<span>@u.CompletedOn.Value.TimeConverterToString(Model.Department)</span>
+											}
+											else
+											{
+												<span>Not Completed</span>
+											}
+										</td>
+										<td>
+											@if (u.Complete && Model.Training.Questions != null && Model.Training.Questions.Count > 0)
+											{
+												<span>@u.Score</span>
+											}
+											else
+											{
+												<span>No Score</span>
+											}
+										</td>
+										<td>
+											@if (u.Complete && Model.Training.Questions != null && Model.Training.Questions.Count > 0)
+											{
+												if (@u.Score >= Model.Training.MinimumScore)
+												{
+													<span class='label label-success'>Pass</span>
+												}
+												else
+												{
+													<span class='label label-danger'>Failed</span>
+												}
+											}
+											else if (u.Viewed && Model.Training.Questions == null || Model.Training.Questions.Count <= 0)
+											{
+												<span>Complete</span>
+											}
+											else
+											{
+												<span>Pending</span>
+											}
+										</td>
+										<td>
+											<a href="@Url.Action("ResetUserTraining", "Trainings", new {Area ="User", trainingId = Model.Training.TrainingId, userId = u.UserId})" class="btn btn-primary btn-xs">Reset User</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+
+}

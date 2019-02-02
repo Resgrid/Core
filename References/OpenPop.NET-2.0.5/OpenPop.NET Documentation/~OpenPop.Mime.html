@@ -1,0 +1,70 @@
+﻿<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>OpenPop.Mime</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">OpenPop.Mime Namespace</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>Contains classes to hold and decode Mime emails.</p>
+      <p>
+        <a href="~OpenPop.Mime~Hierarchy.html">Namespace Hierarchy</a>
+      </p>
+      <h3 class="dtH3">Classes</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Class</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Mime.Message.html">Message</a>
+            </td>
+            <td width="50%"> This is the root of the email tree structure.<br xmlns:ndoc="urn:ndoc-schema" /><a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a> for a description about the structure.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /> A Message (this class) contains the headers of an email message such as: <pre class="code" xmlns:ndoc="urn:ndoc-schema"> - To
+ - From
+ - Subject
+ - Content-Type
+ - Message-ID
+</pre> which are located in the <a href="OpenPop~OpenPop.Mime.Message.Headers.html">Headers</a> property.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /> Use the <a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a> property to find the actual content of the email message. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Mime.MessagePart.html">MessagePart</a>
+            </td>
+            <td width="50%"> A MessagePart is a part of an email message used to describe the whole email parse tree.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /><b xmlns="urn:ndoc-schema">Email messages are tree structures</b>:<br xmlns:ndoc="urn:ndoc-schema" /> Email messages may contain large tree structures, and the MessagePart are the nodes of the this structure.<br xmlns:ndoc="urn:ndoc-schema" /> A MessagePart may either be a leaf in the structure or a internal node with links to other MessageParts.<br xmlns:ndoc="urn:ndoc-schema" /> The root of the message tree is the <a href="OpenPop~OpenPop.Mime.Message.html">Message</a> class.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /><b xmlns="urn:ndoc-schema">Leafs</b>:<br xmlns:ndoc="urn:ndoc-schema" /> If a MessagePart is a leaf, the part is not a <a href="OpenPop~OpenPop.Mime.MessagePart.IsMultiPart.html">MultiPart</a> message.<br xmlns:ndoc="urn:ndoc-schema" /> Leafs are where the contents of an email are placed.<br xmlns:ndoc="urn:ndoc-schema" /> This includes, but is not limited to: attachments, text or images referenced from HTML.<br xmlns:ndoc="urn:ndoc-schema" /> The content of an attachment can be fetched by using the <a href="OpenPop~OpenPop.Mime.MessagePart.Body.html">Body</a> property.<br xmlns:ndoc="urn:ndoc-schema" /> If you want to have the text version of a MessagePart, use the <a href="OpenPop~OpenPop.Mime.MessagePart.GetBodyAsText.html">GetBodyAsText</a> method which will<br xmlns:ndoc="urn:ndoc-schema" /> convert the <b xmlns:ndoc="urn:ndoc-schema">Body</b> into a string using the encoding the message was sent with.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /><b xmlns="urn:ndoc-schema">Internal nodes</b>:<br xmlns:ndoc="urn:ndoc-schema" /> If a MessagePart is an internal node in the email tree structure, then the part is a <b xmlns:ndoc="urn:ndoc-schema">MultiPart</b> message.<br xmlns:ndoc="urn:ndoc-schema" /> The <a href="OpenPop~OpenPop.Mime.MessagePart.MessageParts.html">MessageParts</a> property will then contain links to the parts it contain.<br xmlns:ndoc="urn:ndoc-schema" /> The <b xmlns:ndoc="urn:ndoc-schema">Body</b> property of the MessagePart will not be set.<br xmlns:ndoc="urn:ndoc-schema" /><br xmlns:ndoc="urn:ndoc-schema" /> See the example for a parsing example.<br xmlns:ndoc="urn:ndoc-schema" /> This class cannot be instantiated from outside the library. </td>
+          </tr>
+        </table>
+      </div>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20OpenPop.Mime%20Namespace">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

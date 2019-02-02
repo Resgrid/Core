@@ -1,0 +1,66 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Personnel.ViewRoleModel
+@{
+	ViewBag.Title = "Resgrid | View Role";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>View Role</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+			</li>
+			<li>
+				<a asp-controller="Personnel" asp-action="Roles" asp-route-area="User">Roles</a>
+			</li>
+			<li class="active">
+				<strong>View Role</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content  animated fadeInRight">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="ibox">
+				<div class="ibox-content">
+					<h2>@Model.Role.Name</h2>
+					<p>
+						@Model.Role.Description
+					</p>
+					<div class="clients-list">
+						<div class="tab-content">
+								<div class="full-height-scroll">
+									<div class="table-responsive">
+										<table class="table table-striped table-hover">
+											<tbody>
+												@foreach (var u in Model.Role.Users)
+												{
+												<tr>
+													<td class="client-avatar"><a href=""><img alt="image" src="https://api.resgrid.com/api/v3/Avatars/Get?id=@u.UserId" onerror="this.src='https://resgrid.com/Images/defaultProfile.png'"></a> </td>
+													<td><a asp-controller="Personnel" asp-action="ViewPerson" asp-route-area="User" asp-route-userId="@u.UserId" class="client-link">@UserHelper.GetFullNameForUser(u.UserId)</a></td>
+												</tr>
+												}
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

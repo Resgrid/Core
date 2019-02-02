@@ -1,0 +1,124 @@
+﻿@using Resgrid.Model
+
+@model Resgrid.WebCore.Areas.User.Models.Orders.OrderSetttingsView
+@{
+  ViewBag.Title = "Resgrid | Resource Order Settings";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Resource Order Settings</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Resource Order Settings</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<form role="form" class="form-horizontal" asp-controller="Orders" asp-action="Settings" asp-route-area="User" method="post">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="wrapper wrapper-content">
+        <div class="ibox float-e-margins">
+          <div class="ibox-content">
+
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Do Not Receive Orders</label>
+              <div class="col-sm-9">
+                <div class="checkbox checkbox-primary">
+                  <input type="checkbox" asp-for="Settings.DoNotReceiveOrders">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Default Order Visibility</label>
+              <div class="col-sm-9">
+                @Html.DropDownListFor(m => m.Settings.Visibility, Model.OrderVisibilities, new { style = "width: 250px" })
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">
+                Range for Visibility (in Mi)
+              </label>
+              <div class="col-sm-9">
+                <input type="number" asp-for="Settings.Range" min="1" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Default Order Managing User</label>
+              <div class="col-sm-3"><select asp-for="Settings.DefaultResourceOrderManagerUserId" asp-items="ViewBag.Users" style="padding-left: 0; width: 100%;"></select></div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Limit Order Notifications to Staffing</label>
+              <div class="col-sm-9">
+                <div class="checkbox checkbox-primary">
+                  <input type="checkbox" asp-for="Settings.LimitStaffingLevelToReceiveNotifications">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Allowed Notification Staffing Level</label>
+              <div class="col-sm-9">
+                @Html.DropDownListFor(m => m.Settings.AllowedStaffingLevelToReceiveNotifications, Model.StaffingLevels, new { style = "width: 250px" })
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Allowed Department Types</label>
+              <div class="col-sm-4">
+                <select id="departmentTypes" name="departmentTypes"></select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Automatically Accept Fills</label>
+              <div class="col-sm-9">
+                <div class="checkbox checkbox-primary">
+                  <input type="checkbox" asp-for="Settings.AutomaticFillAcceptance">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+	          <div class="form-group">
+		          <label class="col-sm-3 control-label">Notify Roles</label>
+		          <div class="col-sm-9">
+			          <div class="checkbox checkbox-primary">
+				          <input type="checkbox" asp-for="Settings.NotifyUsers">
+				          <label></label>
+			          </div>
+		          </div>
+	          </div>
+		    <div class="form-group">
+		      <label class="col-sm-3 control-label">Roles to Notify</label>
+		      <div class="col-sm-4">
+		        <select id="notifyRoles" name="notifyRoles"></select>
+		      </div>
+		    </div>
+            <div class="hr-line-dashed"></div>
+
+
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" asp-controller="Orders" asp-action="Index" asp-route-area="User">Cancel</a>
+                <button class="btn btn-primary" type="submit">Save Settings</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+@section Scripts
+{
+  <script src="~/js/app/internal/orders/resgrid.orders.settings.js" type="text/javascript"></script>
+}

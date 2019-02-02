@@ -1,0 +1,55 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Connect.PostsView
+@{
+	ViewBag.Title = "Resgrid | Connect Posts";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Connect Posts</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Connect" asp-action="Index" asp-route-area="User">Connect</a>
+			</li>
+			<li class="active">
+				<strong>Connect Posts</strong>
+			</li>
+		</ol>
+	</div>
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	{
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a id="addPersonButton" class="btn btn-success" asp-controller="Connect" asp-action="AddPost" asp-route-area="User">Add Post</a>
+			</div>
+		</div>
+	}
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div id="postsList"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script id="command-template" type="text/x-kendo-template">
+		@*<a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewPerson", "Personnel", new {area = "User"})?userId=#=Id#"><i class="icon-eye-open"></i> View</a>
+		<a style="text-decoration:none;" class="btn btn-xs btn-danger" href="@Url.Action("DeletePerson", "Personnel", new {area = "User"})?userId=#=Id#"><i class="icon-trash"></i> Delete</a>*@
+	</script>
+
+	<script>
+		var departmentProfileId = '@Model.DepartmentProfileId';
+	</script>
+	<script src="~/js/app/internal/connect/resgrid.connect.posts.js" type="text/javascript"></script>
+}

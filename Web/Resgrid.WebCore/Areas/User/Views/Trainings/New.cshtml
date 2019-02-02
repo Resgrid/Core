@@ -1,0 +1,200 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Training.NewTrainingModel
+@{
+	ViewBag.Title = "Resgrid | New Training";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Training</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">Trainings</a>
+			</li>
+			<li class="active">
+				<strong>New Training</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form id="newTrainingForm" class="form-horizontal" role="form" asp-controller="Trainings" asp-action="New" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+								@Html.AntiForgeryToken()
+								@Html.HiddenFor(m => m.Training.CreatedByUserId)
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Training name
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-5">
+									@Html.TextBoxFor(m => m.Training.Name, new { @class = "form-control", autofocus = "autofocus" })
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Description
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-6">
+									<input type="hidden" asp-for="Training.Description">
+			
+									<div id="editor-container" style="width:100%; height: 300px;">
+										@Html.Raw(Model.Training.Description)
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Training Text
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-10">
+									<input type="hidden" asp-for="Training.TrainingText">
+			
+									<div id="editor-container2" style="width:100%; height: 300px;">
+										@Html.Raw(Model.Training.TrainingText)
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Minimum Score
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-2">
+									<div class="input-group input-group-sm">
+										@Html.TextBoxFor(m => m.Training.MinimumScore, new { @class = "form-control", type = "number", min = "0", max = "100" })
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Due Date
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-5">
+									@Html.TextBoxFor(m => m.Training.ToBeCompletedBy, new { @class = "form-control", onkeydown = "javascript:return false;" })
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Attachments
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-5">
+									<input name="attachments" id="attachments" type="file" />
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Add all Personnel
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-4">
+										@Html.CheckBoxFor(m => m.SendToAll)
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Groups To Add
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-4"><select id="groupsToAdd" name="groupsToAdd"></select></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Roles To Add
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-6"><select id="rolesToAdd" name="rolesToAdd"></select></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Users To Add
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-6"><select id="usersToAdd" name="usersToAdd"></select></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Questions
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-10">Questions are optional, if you just want your personnel to view the training that will be tracked without questions. <br /></div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<table id="questions" class="table table-striped table-bordered">
+											<thead>
+												<tr>
+													<th style="max-width: 200px;font-size: 14px;">Question</th>
+													<th style="max-width: 350px;font-size: 14px;">Answers</th>
+													<th style="max-width: 90px;font-size: 16px;"><a id="addQuestionButton" class="btn btn-success btn-xs" onclick="resgrid.training.newtraining.addQuestion();" data-original-title="Add Question"><i class="icon-plus"></i> Add Question</a></th>
+												</tr>
+											</thead>
+											<tbody></tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Trainings" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Add Training</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	<script src="~/js/app/internal/training/resgrid.training.newtraining.js"></script>
+}

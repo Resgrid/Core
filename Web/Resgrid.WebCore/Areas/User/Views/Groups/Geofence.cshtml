@@ -1,0 +1,92 @@
+﻿@model Resgrid.Web.Areas.User.Models.Groups.GeofenceView
+@{
+	ViewBag.Title = "Resgrid | Geofence Station";
+}
+@section Styles
+{
+
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>
+			GeoFence Station
+		</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
+			</li>
+			<li class="active">
+				<strong>GeoFence Station</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="row">
+						<div class="col-md-offset-2 col-md-10">
+							<p>Below you can create a geofence for your station. Fields in <span class="required">blue italics</span> are required. Geofences allow you to create a boundary on the map that is this stations response area. This will be used to automatically route calls and determine responses. To create the Geofence first click on the map to create your start point then click again to draw a line, keep drawing lines until you have encircled the response area.</p>
+						</div>
+					</div>
+					<form id="edit_user" class="form-horizontal" role="form" asp-controller="Groups" asp-action="Geofence" asp-route-area="User" method="post">
+
+						@Html.HiddenFor(m => m.Group.DepartmentGroupId)
+						<div asp-validation-summary="All" class="text-danger"></div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Name</label>
+							<div class="col-sm-10">@Model.Group.Name</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">District Color</label>
+							<div class="col-sm-10">@Html.TextBoxFor(m => m.Group.GeofenceColor, new { @class = "form-control", id = "colorPicker" })</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Geofence</label>
+							<div class="col-sm-10"><div id="map_canvas" name="map_canvas" style="position: relative; width: 500px; height: 500px;"></div></div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-primary" id="submit_action" name="commit" onclick="resgrid.groups.geofence.saveGeofence();">Save Geofence</a>
+								<a class="btn btn-danger" id="reset_action" name="reset_action" onclick="resgrid.groups.geofence.resetGeofence();">Clear Geofence</a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	@if (String.IsNullOrWhiteSpace(Model.Group.Geofence))
+	{
+		<script type="text/javascript">
+			var polyCoordinates = [];
+		</script>
+	}
+	else
+	{
+		<script type="text/javascript">
+			var polyCoordinates = JSON.parse('@(Html.Raw(Model.Group.Geofence))');
+		</script>
+	}
+
+	<script type="text/javascript">
+		var latitude = '@(Model.Coordinates.Latitude)';
+		var longitude = '@(Model.Coordinates.Longitude)';
+	</script>
+
+	<script src="~/js/app/internal/groups/resgrid.groups.geofence.js"></script>
+}

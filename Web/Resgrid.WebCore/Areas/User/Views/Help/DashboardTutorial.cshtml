@@ -1,0 +1,97 @@
+﻿<div style="display: block;" id="help-button" class="help-button hidden-sm hidden-xs start-tour" data-demo></div>
+
+<script>
+	$(function() {
+		var $demo, duration, remaining, tour;
+		$demo = $("#help-button");
+		duration = 5000;
+		remaining = duration;
+		tour = new Tour({
+			onStart: function () {
+				resgrid.common.analytics.track('Tour - Dashboard');
+				return $demo.addClass("disabled", true);
+			},
+			onEnd: function() {
+				return $demo.removeClass("disabled", true);
+			},
+			debug: true,
+			steps: [
+				{
+					//path: "/User/Home/Dashboard",
+					orphan: true,
+					//backdrop: true,
+					title: "Dashboard Tutorial",
+					content: "Welcome to the walk through tutorial of the Dashboard page. Following the steps will guide you through all the important elements of the dashboard page."
+				}, {
+					//path: "/",
+					//backdrop: true,
+					//reflex: true,
+					element: "#menu-department",
+					placement: "bottom",
+					title: "Department Menu",
+					content: "This is the department menu. In this menu you can set your department options like call import options (using Email or Text messages), configure stations and more."
+				}, {
+					//path: "/",
+					element: "#menu-help",
+					placement: "bottom",
+					title: "Help Menu",
+					content: "In the help menu you can view the knowlege base, the faq and get in contact with us."
+				}, {
+					//path: "/api",
+					element: "#menu-profile",
+					placement: "bottom",
+					title: "User Profile",
+					content: "This is the link to your User Profile. In here you can edit all your personal settings, like your name, email address and setup a mobile number for text alerts and configure your notification preferences. You can set-up your Staffing Schedule, Certifications and more."//,
+					//reflex: true
+				}, {
+					//path: "/api",
+					element: "#sidebar-list",
+					placement: "right",
+					title: "Sidebar",
+					content: "In the sidebar you can find all the major parts of the Resgrid app. Explore each as there are additional options under each section."//,
+					//duration: 5000
+				}, {
+					//path: "/api",
+					element: "#personnelContainer",
+					placement: "top",
+					title: "Personnel Grid",
+					content: "Here is the personnel status grid, where each personnel is shown with there status, staffing level and the ability (if your an admin) to edit the personnel profile (by clicking the blue name) and change their status and staffing but using the blue buttons.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#actionsContainer",
+					placement: "left",
+					title: "Actions",
+					content: "Here are your quick actions, you can set your current action, like respond to a call or set yourself available. The down arrows on the side of the button denote more options for that action if you click the arrow.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#staffingContainer",
+					placement: "left",
+					title: "Staffing",
+					content: "Here is your current staffing level. You can change your current staffing level quickly by selecting a new one from the drop down and clicking the 'Set Staffing Level' button.",
+					//backdrop: true,
+					reflex: true
+				}, {
+					//path: "/api",
+					element: "#departmentInfoContainer",
+					placement: "left",
+					title: "Department Info",
+					content: "This is your department information, the Department Id and Department Code are needed to use mobile apps with the Resgrid system.",
+					//backdrop: true,
+					reflex: true
+				}
+			]
+		}).init();
+		$(document).on("click", "[data-demo]", function(e) {
+			e.preventDefault();
+			if ($(this).hasClass("disabled")) {
+				return;
+			}
+			tour.restart();
+			return $(".alert").alert("close");
+		});
+	});
+</script>

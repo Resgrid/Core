@@ -1,0 +1,160 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Command.NewCommandView
+@{
+	ViewBag.Title = "Resgrid | New Command Definition";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Command Definition</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Command" asp-action="Index" asp-route-area="User">Commands</a>
+			</li>
+			<li class="active">
+				<strong>New Command Definition</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Command" asp-action="New" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+												
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Command Name
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-5">
+									@Html.TextBoxFor(m => m.Command.Name, new { @class = "form-control", autofocus = "autofocus" })
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Command Description
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-5">
+									@Html.TextAreaFor(m => m.Command.Description, new { id = "editor", rows = "10", cols = "30", style = "width:560px;height:300px" })
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Call type
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-5">
+									<label class="radio">@Html.DropDownListFor(m => m.SelectedType, Model.Types, new { style = "width:200px;" })</label>
+								</div>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="col-sm-2 control-label">
+								Assignments\Tasks
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-10">During a command you can assign units/personnel to perform tasks. For example Interior Search, RIT, Water Supply, Safety, etc. <br /></div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<table id="assignments" class="table table-striped table-bordered">
+											<thead>
+												<tr>
+													<th style="max-width: 200px;font-size: 14px;">Name</th>
+													<th style="max-width: 350px;font-size: 14px;">Description</th>
+													<th style="max-width: 90px;font-size: 16px;"><a id="addQuestionButton" class="btn btn-success btn-xs" data-original-title="Add Question" data-toggle="modal" data-target="#newAssignmentModal"><i class="icon-plus"></i> Add Assignment</a></th>
+												</tr>
+											</thead>
+											<tbody></tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Command" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Create New Definition</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="newAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="exampleModalLabel">New Assignment</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label for="assignment-name" class="control-label">Name:</label>
+						<input type="text" class="form-control" id="assignment-name">
+					</div>
+					<div class="form-group">
+						<label for="description-text" class="control-label">Description:</label>
+						<textarea class="form-control" id="description-text"></textarea>
+					</div>
+					<div class="form-group">
+						<label class="control-label">Force Requirements:</label>
+						<input id="forceRequirements" type="checkbox"/>
+					</div>
+					<div class="form-group">
+						<label for="unitTypes" class="control-label">Unit Types:</label>
+						<input type="text" class="form-control" id="unitTypes">
+					</div>
+					<div class="form-group">
+						<label for="personnelRoles" class="control-label">Required Roles:</label>
+						<input type="text"  class="form-control" id="personnelRoles">
+					</div>
+					<div class="form-group">
+						<label for="certifications" class="control-label">Required Certifications:</label>
+						<input type="text"  class="form-control" id="certifications">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onclick="resgrid.commands.newcommand.addAssignment();">Add Assignment</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	<script src="~/js/app/internal/command/resgrid.commands.newcommand.js"></script>
+}

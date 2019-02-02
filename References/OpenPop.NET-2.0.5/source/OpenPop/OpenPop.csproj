@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{75B3E0DF-61C3-4643-AB47-DBE1CFE3D303}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyName>OpenPop</AssemblyName>
+    <AssemblyOriginatorKeyFile>../OpenPopKeyFile.pfx</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>OpenPop</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\OpenPop.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyCommon.cs" />
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mime\Decode\EncodingFinder.cs" />
+    <Compile Include="Mime\Decode\Rfc2231Decoder.cs" />
+    <Compile Include="Mime\Decode\Rfc2822DateTime.cs" />
+    <Compile Include="Mime\Decode\SizeParser.cs" />
+    <Compile Include="Mime\Decode\Utility.cs" />
+    <Compile Include="Mime\Header\Received.cs" />
+    <Compile Include="Mime\Header\RfcMailAddress.cs" />
+    <Compile Include="Mime\Traverse\AttachmentFinder.cs" />
+    <Compile Include="Mime\Traverse\FindAllMessagePartsWithMediaType.cs" />
+    <Compile Include="Mime\Traverse\IQuestionAnswerMessageTraverser.cs" />
+    <Compile Include="Mime\Traverse\FindFirstMessagePartWithMediaType.cs" />
+    <Compile Include="Mime\Traverse\MultipleMessagePartFinder.cs" />
+    <Compile Include="Mime\Traverse\TextVersionFinder.cs" />
+    <Compile Include="Mime\Header\ContentTransferEncoding.cs" />
+    <Compile Include="Mime\Decode\Base64.cs" />
+    <Compile Include="Mime\Decode\EncodedWord.cs" />
+    <Compile Include="Mime\Decode\QuotedPrintable.cs" />
+    <Compile Include="Mime\Message.cs" />
+    <Compile Include="Mime\Header\MessageHeader.cs" />
+    <Compile Include="Mime\MessagePart.cs" />
+    <Compile Include="Mime\Traverse\IAnswerMessageTraverser.cs" />
+    <Compile Include="Mime\Traverse\AnswerMessageTraverser.cs" />
+    <Compile Include="Mime\Header\HeaderFieldParser.cs" />
+    <Compile Include="Mime\Header\HeaderExtractor.cs" />
+    <Compile Include="Pop3\AuthenticationMethod.cs" />
+    <Compile Include="Pop3\CramMd5.cs" />
+    <Compile Include="Pop3\Disposable.cs" />
+    <Compile Include="Pop3\Exceptions\LoginDelayException.cs" />
+    <Compile Include="Pop3\Exceptions\PopClientException.cs" />
+    <Compile Include="Pop3\Exceptions\PopServerException.cs" />
+    <Compile Include="Pop3\Exceptions\InvalidLoginException.cs" />
+    <Compile Include="Pop3\Exceptions\InvalidUseException.cs" />
+    <Compile Include="Pop3\Apop.cs" />
+    <Compile Include="Pop3\Pop3Client.cs" />
+    <Compile Include="Pop3\ConnectionState.cs" />
+    <Compile Include="Pop3\Exceptions\PopServerNotAvailableException.cs" />
+    <Compile Include="Pop3\Exceptions\PopServerLockedException.cs" />
+    <Compile Include="Pop3\Exceptions\PopServerNotFoundException.cs" />
+    <Compile Include="Common\Logging\DiagnosticsLogger.cs" />
+    <Compile Include="Common\Logging\FileLogger.cs" />
+    <Compile Include="Common\Logging\DefaultLogger.cs" />
+    <Compile Include="Common\Logging\ILog.cs" />
+    <Compile Include="Common\StreamUtility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

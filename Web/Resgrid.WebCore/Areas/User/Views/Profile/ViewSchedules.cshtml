@@ -1,0 +1,82 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.EditProfileModel
+@{
+	ViewBag.Title = "Resgrid | Schedule";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>
+			@if (Model.Self)
+			{
+				<h1>Schedule</h1>
+			}
+			else
+			{
+				<h1>@Model.Name's Schedule</h1>
+			}
+		</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
+			</li>
+			<li class="active">
+				<strong>Staffing Schedule</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>Schedules</h5>
+					<div class="ibox-tools">
+						<div class="buttons-actions">
+							@if (Model.Self)
+							{
+								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewStaffingSchedule" asp-route-area="User">Add Staffing Schedule</a>
+							}
+							else
+							{
+								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewStaffingSchedule" asp-route-area="User" asp-route-userId="@Model.User.UserId">Add Staffing Schedule</a>
+							}
+						</div>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div id="staffingScheduleGrid"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	<script id="command-template" type="text/x-kendo-template">
+		# if(IsActive == 1) { #
+		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#"><span class="k-icon k-edit"></span>Edit</a>
+		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" onclick="resgrid.profile.schedule.deactivateSchedule(#=ScheduleId#);"><span class="k-icon k-cancel"></span>Deactivate</a>
+		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);"><span class="k-icon k-delete"></span>Delete</a>
+		# } else { #
+		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#"><span class="k-icon k-edit"></span>Edit</a>
+		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" onclick="resgrid.profile.schedule.activateSchedule(#=ScheduleId#);"><span class="k-icon k-i-tick"></span>Activate</a>
+		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);"><span class="k-icon k-delete"></span>Delete</a>
+		# } #
+	</script>
+
+	<script src="~/js/app/internal/profile/resgrid.profile.schedule.js" type="text/javascript"></script>
+
+	<script>
+		var userId = '@Model.User.UserId';
+	</script>
+}

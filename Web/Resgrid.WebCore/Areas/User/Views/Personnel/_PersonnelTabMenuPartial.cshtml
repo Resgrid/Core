@@ -1,0 +1,9 @@
+﻿@{
+  string currentAction = ViewContext.RouteData.Values["action"].ToString();
+  string currentController = ViewContext.RouteData.Values["controller"].ToString();
+}
+
+<ul class="nav nav-tabs">
+  @(new HtmlString(Html.TopMenuItem(currentAction, currentController, "Index", "Personnel", "Personnel", "User", "")))
+  @(new HtmlString(Html.TopMenuItem(currentAction, currentController, "Roles", "Personnel", "Roles", "User", "")))
+</ul>

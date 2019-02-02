@@ -1,0 +1,100 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Reports.Personnel.PersonnelReportView
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>Resgrid Personnel Report</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Resgrid Personnel Report">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+				crossorigin="anonymous"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+	
+	<style>
+		.table th, .table td {
+			padding: 8px !important;
+			line-height: 20px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+	</style>
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+	<link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+	<link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+	<link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+	<link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-5 col-md-offset-1">
+				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-md-5" style="text-align: right;">
+				<h3 style="margin-top: 10px;">Resgrid Personnel Report</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Username</th>
+							<th>Type</th>
+							<th>Group</th>
+							<th>Roles</th>
+							<th>Email</th>
+							<th>Mobile Number</th>
+							<th>Mailing Address</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var row in Model.Rows)
+						{
+							<tr>
+								<td>@row.ID</td>
+								<td>@row.Name</td>
+								<td>@row.Username</td>
+								<td>@row.DepartmentRole</td>
+								<td>@row.Group</td>
+								<td>@row.Roles</td>
+								<td>@row.Email</td>
+								<td>@row.MobilePhoneNumber</td>
+								<td>@Html.Raw(row.MailingAddress)</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1" style="text-align: right;">
+				@Model.RunOn.FormatForDepartment(Model.Department)
+			</div>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+﻿<html dir="LTR" xmlns:ndoc="urn:ndoc-schema">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Pop3Client.Capabilities Method</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Pop3Client.Capabilities Method</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Asks the server to return it's capability listing.<br /> This is an optional command, which a server is not enforced to accept. </p>
+      <div class="syntax">public <a href="">Dictionary</a>&lt;<a href="">string</a>, <a href="">List</a>&lt;<a href="">string</a>&gt;&gt; Capabilities();</div>
+      <h4 class="dtH4">Return Value</h4>
+      <p> The returned Dictionary keys are the capability names.<br /> The Lists pointed to are the capability parameters fitting that certain capability name. See <a href="http://tools.ietf.org/html/rfc2449#section-6" xmlns="urn:ndoc-schema">RFC section 6</a> for explanation for some of the capabilities. </p>
+      <h4 class="dtH4">Remarks</h4>
+      <p> Capabilities are case-insensitive.<br /> The dictionary uses case-insensitive searching, but the Lists inside does not. Therefore you will have to use something like the code below to search for a capability parameter.<br /> foo is the capability name and bar is the capability parameter. <pre class="code">List&lt;string&gt; arguments = capabilities["foo"];
+bool contains = null != arguments.Find(delegate(string str)
+            {
+                return String.Compare(str, "bar", true) == 0;
+            });
+</pre> If we were running on .NET framework &gt;= 3.5, a HashSet could have been used. </p>
+      <h4 class="dtH4">Exceptions</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Exception Type</th>
+            <th width="50%">Condition</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="OpenPop~OpenPop.Pop3.Exceptions.PopServerException.html">PopServerException</a>
+            </td>
+            <td width="50%">If the server did not accept the capability command</td>
+          </tr>
+        </table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="OpenPop~OpenPop.Pop3.Pop3Client.html">Pop3Client Class</a> | <a href="~OpenPop.Pop3.html">OpenPop.Pop3 Namespace</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="Capabilities method&#xD;&#xA;									">
+        </param>
+        <param name="Keyword" value="Capabilities method, Pop3Client class">
+        </param>
+        <param name="Keyword" value="Pop3Client.Capabilities method&#xD;&#xA;									">
+        </param>
+      </object>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20Pop3Client.Capabilities Method ">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>Generated from assembly OpenPop [2.0.4.369] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+      </div>
+    </div>
+  </body>
+</html>

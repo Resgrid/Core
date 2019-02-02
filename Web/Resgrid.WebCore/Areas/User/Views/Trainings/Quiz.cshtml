@@ -1,0 +1,168 @@
+﻿
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Training.ViewTrainingModel
+@{
+	ViewBag.Title = "Resgrid | Training Quiz";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrapvalidator/dist/css/bootstrapValidator.css" />
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Training Quiz</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">Trainings</a>
+			</li>
+			<li>
+				<a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">Training</a>
+			</li>
+			<li class="active">
+				<strong>Training Quiz</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+@{
+	var questionCount = 0;
+}
+
+<form class="form-horizontal" role="form" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" method="post">
+	@Html.HiddenFor(m => m.Training.TrainingId)
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="wrapper wrapper-content">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<div id="rootwizard">
+							<div class="navbar">
+								<div class="navbar-inner">
+									<div class="container">
+										<ul>
+											<li><a href="#start" data-toggle="tab">Start ></a></li>
+
+											@foreach (var question in Model.Training.Questions)
+											{
+												questionCount++;
+												var questionId = "#question" + question.TrainingQuestionId;
+
+												<li><a href="@questionId" data-toggle="tab">Question @questionCount ></a></li>
+											}
+											<li><a href="#finish" data-toggle="tab">Finish</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div class="tab-content">
+								<div class="tab-pane" id="start">
+									<div class="row">
+										<div class="col-xs-12">
+											<p>Welcome to the quiz for training (@Model.Training.Name). Please select the correct answer for each question. Press the next button to begin the quiz.</p>
+										</div>
+									</div>
+								</div>
+
+								@foreach (var question in Model.Training.Questions)
+								{
+									var questionId2 = "question" + question.TrainingQuestionId;
+
+									<div class="tab-pane" id="@questionId2">
+										<div class="row">
+											<div class="col-xs-12">
+												<p>@question.Question</p>
+												<table>
+													@foreach (var answer in question.Answers)
+													{
+														<tr>
+															<td style="padding: 5px;"><input type='radio' name='question_@question.TrainingQuestionId' value='@answer.TrainingQuestionAnswerId'></td>
+															<td style="padding: 5px;">@answer.Answer</td>
+														</tr>
+													}
+												</table>
+											</div>
+										</div>
+									</div>
+								}
+
+								<div class="tab-pane" id="finish">
+									<div class="row">
+										<div class="col-xs-12">
+											<p>Click the finish button below to submit your quiz answers. You can go back to ensure you answered every question you wish. Your quiz will be graded and the result will be shown on the training home page.</p>
+										</div>
+									</div>
+									<span class="alert alert-error">
+										@Html.ValidationSummary(false)
+										@Html.AntiForgeryToken()
+									</span>
+								</div>
+								<ul class="pager wizard" style="display:block;">
+									<li class="previous first" style="display:none;"><a href="#">First</a></li>
+									<li class="previous"><a href="#">Previous</a></li>
+									<li class="next"><a href="#">Next</a></li>
+									<li class="next finish" style="display:none;"><a href="javascript:;">Finish</a></li>
+								</ul>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+@section Scripts
+{
+	<script src="~/lib/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+	<script src="~/lib/bootstrapvalidator/dist/js/bootstrapValidator.min.js"></script>
+
+	<script>
+		$(document).ready(function () {
+			$('.sl2').select2();
+
+			$("#colorPicker").kendoColorPicker({
+				value: "#ffffff",
+				buttons: false
+			});
+
+			$('#rootwizard').bootstrapWizard({
+				onTabShow: function (tab, navigation, index) {
+					var $total = navigation.find('li').length;
+					var $current = index + 1;
+					//var $percent = ($current / $total) * 100;
+					//$('#rootwizard').find('.bar').css({ width: $percent + '%' });
+
+					// If it's the last tab then hide the last button and show the finish instead
+					if ($current >= $total) {
+						$('#rootwizard').find('.pager .next').hide();
+						$('#rootwizard').find('.pager .finish').show();
+						$('#rootwizard').find('.pager .finish').removeClass('disabled');
+					} else {
+						$('#rootwizard').find('.pager .next').show();
+						$('#rootwizard').find('.pager .finish').hide();
+					}
+				},
+				onTabClick: function (tab, navigation, index) {
+					return false;
+				},
+				onNext: function (tab, navigation, index) {
+					//var $validate = $("#trainingquiz").data('bootstrapValidator').validate();
+
+					//var $valid = $validate.isValid();
+					//if (!$valid) {
+					//	return false;
+					//}
+				}
+			});
+
+			$('#rootwizard .finish').click(function () {
+				$("form")[0].submit();
+			});
+		});
+	</script>
+	<script src="~/js/app/internal/training/resgrid.training.quiz.js"></script>
+}

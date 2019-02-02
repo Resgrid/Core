@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3A7A2F2F-0B57-47F9-8E1A-D34ECB961831}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Xipton.Razor</RootNamespace>
+    <AssemblyName>Xipton.Razor</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\..\OffRuleSet.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\Staging\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Azure|AnyCPU'">
+    <OutputPath>bin\Azure\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Config\TemplatesElement.cs" />
+    <Compile Include="Config\RootOperatorElement.cs" />
+    <Compile Include="Config\ConfigElement.cs" />
+    <Compile Include="Config\XmlConfigurationSection.cs" />
+    <Compile Include="Config\XElementExtension.cs" />
+    <Compile Include="Config\RazorConfig.cs" />
+    <Compile Include="Config\TemplateConfigurationException.cs" />
+    <Compile Include="Extension\AppDomainExtension.cs" />
+    <Compile Include="Core\ContentModifiedArgs.cs" />
+    <Compile Include="Core\ContentProvider\CompositeContentProvider.cs" />
+    <Compile Include="Core\ContentProvider\EmbeddedResourceContentProvider.cs" />
+    <Compile Include="Core\ContentProvider\MemoryContentProvider.cs" />
+    <Compile Include="Core\TemplateTreeException.cs" />
+    <Compile Include="Core\TemplateBindingException.cs" />
+    <Compile Include="Core\Generator\SetModelCodeGenerator.cs" />
+    <Compile Include="Core\Generator\CSharp\XiptonCSharpCodeLanguage.cs" />
+    <Compile Include="Core\Generator\CSharp\XiptonCSharpCodeParser.cs" />
+    <Compile Include="Core\Generator\IXiptonCodeLanguage.cs" />
+    <Compile Include="Core\ContentProvider\FileContentProvider.cs" />
+    <Compile Include="Core\DynamicData.cs" />
+    <Compile Include="Core\ITemplateInternal.cs" />
+    <Compile Include="Core\ContentManager.cs" />
+    <Compile Include="Core\IContentProvider.cs" />
+    <Compile Include="Core\VirtualPathBuilder.cs" />
+    <Compile Include="Extension\AssemblyExtension.cs" />
+    <Compile Include="Extension\StringExtension.cs" />
+    <Compile Include="Extension\TypeExtension.cs" />
+    <Compile Include="ITemplate`1.cs" />
+    <Compile Include="LiteralString.cs" />
+    <Compile Include="TemplateBase`1.cs" />
+    <Compile Include="Core\TemplateFactory.cs" />
+    <Compile Include="RazorContext.cs" />
+    <Compile Include="Core\TemplateCompileException.cs" />
+    <Compile Include="Core\TemplateException.cs" />
+    <Compile Include="Core\Generator\VB\XiptonVBCodeLanguage.cs" />
+    <Compile Include="Core\Generator\VB\XiptonVBCodeParser.cs" />
+    <Compile Include="Core\Generator\XiptonEngineHost.cs" />
+    <Compile Include="Extension\ObjectExtension.cs" />
+    <Compile Include="ITemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RazorMachine.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TemplateBase.cs" />
+    <Compile Include="Core\TemplateParseException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libraries\System.Web.Razor.dll" />
+    <None Include="Config\xipton.razor.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="web.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Xipton.Razor.Overview.cd" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

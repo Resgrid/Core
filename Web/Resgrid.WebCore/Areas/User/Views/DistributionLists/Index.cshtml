@@ -1,0 +1,116 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.DistributionLists.IndexView
+@{
+	ViewBag.Title = "Resgrid | Distribution Lists";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Distribution Lists</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>Distribution Lists</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>Distribution (Email) Lists</h5>
+					<div class="ibox-tools">
+						<div class="buttons-actions">
+							<a title="Add a new Distribution List" class="btn btn-success" asp-controller="DistributionLists" asp-action="NewList" asp-route-area="User">Add New List</a>
+						</div>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										List Name
+									</th>
+									<th>
+										State
+									</th>
+									<th>
+										Type
+									</th>
+									<th>
+										Members
+									</th>
+									<th class="span1">
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var g in Model.Lists)
+								{
+									<tr>
+										<td>
+											<a href="@Url.Action("EditList", "DistributionLists", new { area = "User", distributionListId = g.DistributionListId })">
+												@g.Name
+											</a>
+										</td>
+										<td>
+											@if (!g.IsDisabled)
+											{
+												<p>Active</p>
+											}
+											else
+											{
+												<p>Disabled</p>
+											}
+										</td>
+										<td>
+											@if (g.Type.HasValue)
+											{
+												<p>@(((DistributionListTypes)g.Type.Value).ToString())</p>
+											}
+											else
+											{
+												<p>External</p>
+											}
+										</td>
+
+										<td>
+											@g.Members.Count
+										</td>
+										<td>
+											<a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="DistributionLists" asp-action="EditList" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId">Edit</a>
+
+											@if (!g.IsDisabled)
+											{
+												<a style="text-decoration:none;" class="btn btn-xs btn-warning" asp-controller="DistributionLists" asp-action="SetListStatus" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" asp-route-disable="true">Disable</a>
+											}
+											else
+											{
+												<a style="text-decoration:none;" class="btn btn-xs btn-success" asp-controller="DistributionLists" asp-action="SetListStatus" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" asp-route-disable="false">Enable</a>
+											}
+											<a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="DistributionLists" asp-action="DeleteList" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" data-confirm="WARNING: This will permanently delete this distribution list! Are you sure you want to delete the list @g.Name ?" rel="nofollow">Delete</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

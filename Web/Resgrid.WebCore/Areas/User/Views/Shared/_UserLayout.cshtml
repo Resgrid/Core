@@ -1,0 +1,209 @@
+﻿@using Microsoft.ApplicationInsights.AspNetCore
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"]</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <environment names="Development">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css"
+		  crossorigin="anonymous"
+		  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css"
+		  asp-fallback-test-class="hidden"
+		  asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.css" />
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <link rel="stylesheet" href="~/lib/select2/dist/css/select2.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-tour/build/css/bootstrap-tour.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr/toastr.css" />
+    <link rel="stylesheet" href="~/lib/jquery-ui/themes/cupertino/jquery-ui.css" />
+    <link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
+    <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
+    <link rel="stylesheet" href="~/lib/sweetalert/dist/sweetalert.css" />
+    <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
+    <link rel="stylesheet" href="~/lib/quill/quill.snow.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.css" media="print" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+  </environment>
+  <environment names="Staging,Production">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		  crossorigin="anonymous"
+		  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+		  asp-fallback-test-class="hidden"
+		  asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-tour/build/css/bootstrap-tour.min.css" />
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <link rel="stylesheet" href="~/lib/select2/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+    <link rel="stylesheet" href="~/lib/jquery-ui/themes/cupertino/jquery-ui.min.css" />
+    <link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
+    <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
+    <link rel="stylesheet" href="~/lib/sweetalert/dist/sweetalert.css" />
+    <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
+    <link rel="stylesheet" href="~/lib/quill/quill.snow.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.css" media="print" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+  </environment>
+
+  <!-- Add local styles, mostly for plugins css file -->
+  @if (IsSectionDefined("Styles"))
+  {
+    @RenderSection("Styles", required: false)
+  }
+
+  @Html.Raw(JavaScriptSnippet.FullScript)
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+</head>
+<body>
+  <!-- Wrapper-->
+  <div id="wrapper" class="md-skin">
+
+    <!-- Navigation -->
+    @await Html.PartialAsync("_Navigation")
+
+    <!-- Page wraper -->
+    <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
+
+      <!-- Top Navbar -->
+      @await Html.PartialAsync("_TopNavbar")
+
+      <!-- Main view  -->
+      @RenderBody()
+
+      <div id="setupWizard"></div>
+
+      <!-- Footer -->
+      @await Html.PartialAsync("_Footer")
+    </div>
+    <!-- End page wrapper-->
+  </div>
+  <!-- End wrapper-->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
+
+  <environment names="Development">
+    <script src="~/lib/angular/angular.js"></script>
+    <script src="~/lib/metisMenu/dist/metisMenu.js"></script>
+    <script src="~/lib/slimScroll/jquery.slimscroll.js"></script>
+    <script src="~/lib/pace/pace.js"></script>
+    <script src="~/lib/select2/dist/js/select2.js"></script>
+    <script src="~/clib/kendo/js/kendo.web.min.js"></script>
+    <script src="~/lib/bootstrap-tour/build/js/bootstrap-tour.js"></script>
+    <script src="~/lib/toastr/toastr.js"></script>
+    <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
+    <script src="~/clib/ujs/jquery-ujs.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-ui/jquery-ui.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/clib/signalr/jquery.signalR-2.2.0.js"></script>
+    <script src="~/clib/picEdit/js/picedit.min.js"></script>
+    <script src="~/lib/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
+    <script src="~/lib/quill/quill.js"></script>
+    <script src='~/lib/fullcalendar/lib/moment.min.js'></script>
+    <script src="~/lib/fullcalendar/fullcalendar.js"></script>
+    <script src="~/js/site.min.js"></script>
+  </environment>
+  <environment names="Staging,Production">
+    <script src="~/lib/angular/angular.min.js"></script>
+    <script src="~/lib/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="~/lib/pace/pace.min.js"></script>
+    <script src="~/lib/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="~/lib/select2/dist/js/select2.min.js"></script>
+    <script src="~/clib/kendo/js/kendo.web.min.js"></script>
+    <script src="~/lib/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
+    <script src="~/clib/ujs/jquery-ujs.js"></script>
+    <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/clib/signalr/jquery.signalR-2.2.0.min.js"></script>
+    <script src="~/clib/picEdit/js/picedit.min.js"></script>
+    <script src="~/lib/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
+    <script src="~/lib/quill/quill.min.js"></script>
+    <script src='~/lib/fullcalendar/lib/moment.min.js'></script>
+    <script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"
+			asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.min.js"
+			asp-fallback-test="window.jQuery && window.jQuery.validator">
+    </script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"
+			asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+			asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive">
+    </script>
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+  </environment>
+
+  <!-- Signalr Hubs -->
+  <script src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/signalr/hubs"></script>
+
+  <script src="~/js/app/resgrid.js"></script>
+  <script src="~/js/app/internal/resgrid.user.js"></script>
+  <script src="~/js/app/common/analytics/resgrid.common.analytics.js"></script>
+  <script src="~/js/app/common/notifications/resgrid.common.notifications.js"></script>
+
+  <script>
+		var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
+		var userId = '@(ClaimsAuthorizationHelper.GetUserId())';
+  </script>
+
+  @if (IsSectionDefined("Scripts"))
+  {
+    @RenderSection("Scripts", required: false)
+  }
+
+  @Html.Raw(ViewBag.BodyObjects)
+
+  <script>
+	resgrid.init();
+  </script>
+
+  @if (!String.IsNullOrWhiteSpace(Resgrid.Config.MarketingConfig.UserVoiceApiKey))
+  {
+    <script>
+	  //<!-- UserVoice JavaScript SDK (only needed once on a page) -->
+	  (function () {
+		var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true; uv.src = '//widget.uservoice.com/@Resgrid.Config.MarketingConfig.UserVoiceApiKey.js'; var s = if;
+
+		(function () {
+		  var dropdownMenu;
+		  $(window).on('show.bs.dropdown', function (e) {
+			dropdownMenu = $(e.target).find('.dropdown-menu');
+			$('body').append(dropdownMenu.detach());
+			dropdownMenu.css('display', 'block');
+			dropdownMenu.position({
+			  'my': 'right top',
+			  'at': 'right bottom',
+			  'of': $(e.relatedTarget)
+
+			})
+		  });
+		  $(window).on('hide.bs.dropdown', function (e) {
+			$(e.target).append(dropdownMenu.detach());
+			dropdownMenu.hide();
+		  });
+		})();
+    </script>
+  }
+
+  @*@await Html.PartialAsync("_ChatWidget")*@
+</body>
+</html>

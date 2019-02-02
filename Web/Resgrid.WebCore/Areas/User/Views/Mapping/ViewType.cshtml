@@ -1,0 +1,127 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Mapping.ViewTypeView
+@{
+	ViewBag.Title = "Resgrid | View Type";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+@section Styles
+{
+	<link rel="stylesheet" href="~/clib/mapMarkers/map-icons.css" />
+
+	<style>
+		.labels {
+			color: red;
+			background-color: white;
+			font-family: "Lucida Grande", "Arial", sans-serif;
+			font-size: 10px;
+			font-weight: bold;
+			text-align: center;
+			width: 70px;
+			border: 2px solid black;
+			white-space: nowrap;
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>View Type</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User">POIs</a>
+			</li>
+			<li class="active">
+				<strong>View Type</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+			<div class="tabs-container">
+				<ul class="nav nav-tabs">
+					<li class="active"><a data-toggle="tab" href="#tab-1">Map</a></li>
+					<li class=""><a data-toggle="tab" href="#tab-2">Information</a></li>
+					<li class=""><a data-toggle="tab" href="#tab-3">List</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="tab-1" class="tab-pane active">
+						<div class="panel-body">
+							<div id="map" style="height: 650px; width: 100%;"></div>
+						</div>
+					</div>
+					<div id="tab-2" class="tab-pane">
+						<div class="panel-body">
+							<div style="height: 650px;">
+								<form class="form-horizontal">
+									<div class="form-group">
+										<label class="control-label required">
+											Name
+										</label>
+										<div class="controls">
+											<div class="col-md-6">
+												@Model.Type.Name
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label required">
+											Is Destination
+										</label>
+										<div class="controls">
+											<div class="col-md-6">
+												@if (Model.Type.IsDestination)
+												{
+													<span>True</span>
+												}
+												else
+												{
+													<span>False</span>
+												}
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label required">
+											Color
+										</label>
+										<div class="controls">
+											<div class="col-md-6">
+												<span style="color: @Model.Type.Color;">@Model.Type.Color</span>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div id="tab-3" class="tab-pane active">
+						<div class="panel-body">
+							<div id="poisGrid"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
+	<script src="~/clib/mapMarkers/map-icons.min.js"></script>
+	<script>
+		var centerLat = '@Model.Latitude';
+		var centerLon = '@Model.Longitude';
+		var poiTypeId = '@Model.Type.PoiTypeId';
+	</script>
+	<script src="~/js/app/internal/mapping/resgrid.mapping.viewType.js" type="text/javascript"></script>
+}

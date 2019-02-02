@@ -1,0 +1,101 @@
+﻿@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Inventory.ViewEntryView
+@{
+	ViewBag.Title = "Resgrid | View Inventory Entry";
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>View Inventory Entry</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">Inventory</a>
+			</li>
+			<li>
+				<a asp-controller="Inventory" asp-action="History" asp-route-area="User">History</a>
+			</li>
+			<li class="active">
+				<strong>View Inventory Entry</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+			<div class="wrapper wrapper-content animated fadeInUp">
+				<div class="ibox">
+					<div class="ibox-content">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="m-b-md">
+									<h2>@Model.Inventory.Type.Type</h2>
+								</div>
+								<dl class="dl-horizontal">
+									<dt>Status:</dt>
+									<dd><span class="label label-primary">Active</span></dd>
+								</dl>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-5">
+								<dl class="dl-horizontal">
+
+									<dt>Created by:</dt>
+									<dd></dd>
+									<dt>Group:</dt>
+									<dd> @if (Model.Inventory.Group != null)
+									{
+										@Html.Raw(Model.Inventory.Group.Name)
+									}
+									else
+									{
+										<span>No Group</span>
+									}</dd>
+									<dt>Unit:</dt>
+									<dd>@if (Model.Inventory.Unit != null)
+									{
+										@Html.Raw(Model.Inventory.Unit.Name)
+									}
+									else
+									{
+										<span>No Unit</span>
+									}</dd>
+									<dt>Amount:</dt>
+									<dd>@Model.Inventory.Amount</dd>
+								</dl>
+							</div>
+							<div class="col-lg-7" id="cluster_info">
+								<dl class="dl-horizontal">
+
+									<dt>Added On:</dt>
+									<dd>@Model.Inventory.TimeStamp.FormatForDepartment(Model.Department)</dd>
+									<dt>Batch\Serial:</dt>
+									<dd>@Model.Inventory.Batch</dd>
+									<dt>Location:</dt>
+									<dd>@Model.Inventory.Location</dd>
+								</dl>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-12">
+								<p>@Html.Raw(Model.Inventory.Note)</p>
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

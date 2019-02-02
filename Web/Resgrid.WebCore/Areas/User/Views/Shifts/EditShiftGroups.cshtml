@@ -1,0 +1,90 @@
+﻿
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Shifts.EditShiftView
+@{
+	ViewBag.Title = "Resgrid | Edit Shift Groups";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrapvalidator/dist/css/bootstrapValidator.min.css" />
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Edit Shift Calendar</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+			</li>
+			<li class="active">
+				<strong>Edit Shift Groups</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="EditShiftGroups" asp-route-area="User" method="post" id="editShiftGroupForm">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								@Html.HiddenFor(m => m.Shift.ShiftId)
+								@Html.HiddenFor(m => m.Shift.AssignmentType)
+								@Html.HiddenFor(m => m.Shift.ScheduleType)
+								<div asp-validation-summary="All" class="text-danger"></div>
+
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-xs-12">
+								<table id="groups" class="table table-striped table-bordered">
+									<thead>
+										<tr>
+											<th style="font-size: 14px;">Shift Group</th>
+											<th style="font-size: 14px;">Shift Roles</th>
+											<th style="font-size: 16px;"><a id="addGroupButton" class="btn btn-success btn-xs" onclick="resgrid.shifts.editshiftgroups.addGroup();" data-original-title="Add Group to Shift"><i class="icon-plus"></i> Add Group to Shift</a></th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Save Shift Groups</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/lib/bootstrapvalidator/dist/js/bootstrapValidator.js"></script>
+	<script>
+		function addGroupRoleField(name) {
+			var newField = $(name);
+			$('#editShiftGroupForm').bootstrapValidator('addField', newField);
+		}
+	</script>
+	<script src="~/js/app/internal/shifts/resgrid.shifts.editshiftgroups.js"></script>
+}

@@ -1,0 +1,104 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Shifts.ShiftCalendarView
+@{
+	ViewBag.Title = "Resgrid | " + @Model.Shift.Name + " Calendar";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+@section Styles
+{
+	<style>
+		.nohover {
+			text-decoration: none !important;
+			color: black !important;
+		}
+
+			.nohover a a:hover {
+				text-decoration: none !important;
+				color: black !important;
+			}
+
+		small {
+			font-size: 70%;
+			color: #000 !important;
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@Model.Shift.Name Calendar</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+			</li>
+			<li class="active">
+				<strong>@Model.Shift.Name Calendar</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div id="shiftCalendar"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script id="shift-template" type="text/x-kendo-template">
+		#if (signupType === 0) {#
+		<a class="nohover" href='/User/Shifts/ViewShift?shiftDayId=#=calendarItemId#'>
+			<h4 style="margin-top:2px;margin-bottom:2px;"><small>#= title#</small></h4>
+			<dl style="margin-top:2px;">
+				# for (var i = 0; i < Users.length; i++) { #
+				#if (Users[i].IsYouOnShift === true) {#
+				<dt style="text-decoration: underline;"><small>#= Users[i].Name#</small></dt>
+				#}else{#
+				<dt><small>#= Users[i].Name#</small></dt>
+				# } #
+				# } #
+			</dl>
+		</a>
+		#}else{#
+		<a class="nohover" href='/User/Shifts/Signup?shiftDayId=#=calendarItemId#'>
+			<div>
+				<h4 style="margin-top:2px;margin-bottom:2px;"><small>#= title#</small></h4>
+				<dl style="margin-top:2px;">
+					# for (var i = 0; i < Groups.length; i++) { #
+					<dt><small>#= Groups[i].Name#</small></dt>
+
+					# for (var t = 0; t < Groups[i].Needs.length; t++) { #
+					<dd>
+						<small style="float:left;display: block !important;width:90%;">&nbsp;&nbsp;&nbsp;#= Groups[i].Needs[t].Name#</small>
+						<small style="float:right;display: block !important;width:10%;">#= Groups[i].Needs[t].Needed#</small>
+					</dd>
+					# } #
+					# } #
+				</dl>
+			</div>
+
+			#if (userSignedUp === true) {#
+			<em><small><b>You are signed up for this shift</b></small></em>
+			#}#
+		</a>
+		#}#
+	</script>
+
+	<script>
+		var shiftCalendarId = '@Model.Shift.ShiftId';
+	</script>
+
+	<script src="~/js/app/internal/shifts/resgrid.shifts.calendar.js"></script>
+}

@@ -1,0 +1,160 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@using System.Text;
+@model Resgrid.Web.Areas.User.Models.Profile.YourDepartmentsView
+@{
+  ViewBag.Title = "Resgrid | Your Departments";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>
+      <h1>Your Departments</h1>
+    </h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Your Departments</strong>
+      </li>
+    </ol>
+  </div>
+  <div class="col-sm-8">
+    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+      <a title="Join Department" class="btn btn-success" href="#joinDepartmentModal" data-toggle="modal">Join Department</a>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Department</th>
+                  <th>Active</th>
+                  <th>Default</th>
+                  <th>Status</th>
+                  <th>Options</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var m in Model.Members)
+				{
+                  <tr>
+                    <td>
+                      @m.Department.Name
+                    </td>
+                    <td>
+                      @m.IsActive
+                    </td>
+                    <td style="max-width: 350px; overflow: hidden;">
+                      @m.IsDefault
+                    </td>
+                    <td>
+                      @{
+						var sb = new StringBuilder();
+
+						if (m.IsAdmin.HasValue && m.IsAdmin.Value || m.Department.ManagingUserId == Model.UserId)
+						{
+						  sb.Append("Admin");
+						}
+						else
+						{
+						  sb.Append("Normal");
+						}
+
+						if (m.IsDisabled.HasValue && m.IsDisabled.Value)
+						{
+						  sb.Append(sb.Length > 0 ? ", Disabled" : "Disabled");
+						}
+
+						if (m.IsHidden.HasValue && m.IsHidden.Value)
+						{
+						  sb.Append(sb.Length > 0 ? ", Hidden" : "Hidden");
+						}
+                      }
+
+                      @sb.ToString()
+                    </td>
+                    <td class="center">
+                      @if (!m.IsActive)
+					  {
+                        <a asp-controller="Profile" onclick="resgrid.profile.yourDepartments.switchActiveDepartment(@m.DepartmentId)" class="btn btn-xs btn-success" data-confirm="WARNING: This will change your current active department to @m.Department.Name, you can only be logged into one department at a time, are you sure?" rel="nofollow">Set As Active</a>
+					  }
+
+                      @if (!m.IsDefault)
+					  {
+                        <a asp-controller="Profile" asp-action="SetDefaultDepartment" asp-route-area="User" asp-route-departmentId="@m.DepartmentId"  class="btn btn-xs btn-info" data-confirm="WARNING: This will change your default department to @m.Department.Name and also set it as your active department, you can only be logged into one department at a time, are you sure?" rel="nofollow">Set As Default</a>
+					  }
+
+                      @if (m.Department.ManagingUserId != Model.UserId && Model.Members.Count > 1)
+					  {
+                        <a asp-controller="Profile" asp-action="DeleteDepartmentLink" asp-route-area="User" asp-route-departmentId="@m.DepartmentId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove your from the @m.Department.Name department. Are you sure you sure?" rel="nofollow">Remove Yourself From Department</a>
+					  }
+                    </td>
+                  </tr>
+				}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="joinDepartmentModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Join Department</h4>
+      </div>
+      @using (Html.BeginForm("JoinDepartment", "Profile", FormMethod.Post, new { area = "User", id = "joinDepartmentForm", @class = "form-horizontal" }))
+	  {
+        <div class="modal-body">
+          <span>
+            You need to supply the current Department Id and Code for the Resgrid Department you wish to join.
+          </span>
+          <div class="alert alert-danger" role="alert" id="errorMessage" style="display: none;">
+
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="control-label">
+                Department Id
+              </label>
+              <div class="controls">
+                <input type="text" id="deparmentId" name="deparmentId" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label">
+                Department Code
+              </label>
+              <div class="controls">
+                <input type="text" id="departmentCode" name="departmentCode" class="form-control" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="@Url.Action("YourDepartments", "Profile", new { area = "User" })" class="btn">Close</a>
+            <input class="btn btn-primary" id="submit-button" name="commit" type="submit" value="Join Department" />
+          </div>
+        </div>
+	  }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+  {
+  <script src="~/js/app/internal/profile/resgrid.profile.yourdepartments.js"></script>
+}

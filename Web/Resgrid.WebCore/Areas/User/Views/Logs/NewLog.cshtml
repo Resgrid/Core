@@ -1,0 +1,552 @@
+﻿@model Resgrid.Web.Areas.User.Models.Logs.NewLogView
+@{
+	ViewBag.Title = "Resgrid | New Log";
+}
+
+@section Styles
+{
+	<style>
+		.k-select {
+			line-height: 1.5em !important;
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Log</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Logs" asp-action="Index" asp-route-area="User">Logs</a>
+			</li>
+			<li class="active">
+				<strong>New Log</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<form id="newLogForm" class="form-horizontal" role="form" asp-controller="Logs" asp-action="NewLog" asp-route-area="User" method="post">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="wrapper wrapper-content">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>New Log</h5>
+					</div>
+					<div class="ibox-content">
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+								<span class="alert-error">
+									@Html.AntiForgeryToken()
+									@Html.HiddenFor(m => m.CallId)
+									@Html.HiddenFor(m => m.Log.LogId)
+								</span>
+
+								@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+								{
+									<span class="alert alert-danger">
+										@Model.ErrorMessage
+									</span>
+								}
+
+								Below you can add a new log to the system (i.e. run report, station work, training, event, etc). Logs an be used to detail information about call runs, meetings and trainings. Fields in blue italics are required.
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>General</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Type
+						</label>
+						<div class="col-sm-10">
+							@Html.DropDownListFor(m => m.LogType, Model.Types, new { @class = "sl2", style="width:150px;" })
+						</div>
+					</div>
+					<div class="form-group call-related">
+						<label class="col-sm-2 control-label">
+							Id
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-2" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.ExternalId, new { @class = "form-control call-validation" })
+							</div>
+						</div>
+					</div>
+					<div class="form-group coroner-related">
+						<label class="col-sm-2 control-label">
+							Case #
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-2" style="padding-left: 0;">
+								<input type="text" id="caseNumber" name="caseNumber" class="form-control coroner-validation" />
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Station
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-2" style="padding-left: 0;padding-bottom: 6px;">
+								@Html.DropDownListFor(m => m.Log.StationGroupId, new SelectList(Model.Stations, "DepartmentGroupId", "Name"), new { @class = "sl2", style = "width:200px;" })
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" id="callLogInformation">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>Call</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Call
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								<div class="btn-group">
+									<a id="newCallOption" onclick=" resgrid.logs.newlog.newCall(); " class="btn btn-default active">New Call</a>
+									<a id="selectCallOption" onclick=" resgrid.logs.newlog.selectCall(); " class="btn btn-default">Select Call</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Call Name
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Call.Name, new { @class = "form-control call-validation", autofocus = "autofocus" })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Call Priority
+						</label>
+						<div class="col-sm-10">
+							@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { @class = "sl2" })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Type
+						</label>
+						<div class="col-sm-10">
+							@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 360px;", @class = "sl2 input-large" })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Call Timestamp
+						</label>
+						<div class="col-sm-10">
+							@Html.TextBoxFor(m => m.Call.LoggedOn, new { @class = "form-control call-validation", onkeydown = "javascript:return false;", style="width:250px;" })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Nature of Call
+						</label>
+						<div class="col-sm-10">
+							@Html.TextAreaFor(m => m.Call.NatureOfCall, new { id = "NatureOfCall", @class = "call-validation", rows = "10", cols = "30", style = "width:450px;height:200px" })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Call Address
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Call.Address, new { @class = "form-control" })
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" id="trainingInformation" style="display: none;">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>Training</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Course\Training
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.Course, new { @class = "form-control", autofocus = "autofocus" })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Course\Training Code
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.CourseCode, new { @class = "form-control", autofocus = "autofocus" })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Instructors
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.Instructors, new { @class = "form-control", autofocus = "autofocus" })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Start
+						</label>
+						<div class="col-sm-10">
+							@Html.TextBoxFor(m => m.Log.StartedOn, new { @class = "form-control training-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Training start time is required." })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							End
+						</label>
+						<div class="col-sm-10">
+							@Html.TextBoxFor(m => m.Log.EndedOn, new { @class = "form-control training-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Training end time is required." })
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" id="workInformation" style="display: none;">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>Work Log</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Start
+						</label>
+						<div class="col-sm-10">
+							@Html.TextBoxFor(m => m.Log.StartedOn, new { id = "workStartTime", @class = "form-control work-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Work start time is required." })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							End
+						</label>
+						<div class="col-sm-10">
+							@Html.TextBoxFor(m => m.Log.EndedOn, new { id = "workEndTime", @class = "form-control work-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Work end time is required." })
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" id="meetingInformation" style="display: none;">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>Meeting</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Meeting Type
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.Type, new { @class = "form-control meeting-validation", data_val = "true", data_val_required = "Meeting type is required." })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Location
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.Location, new { @class = "form-control meeting-validation", data_val = "true", data_val_required = "Meeting location is required." })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Presiding Person(s)
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.Instructors, new { @class = "form-control" })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Other Attendees
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.OtherPersonnel, new { @class = "form-control" })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Start
+						</label>
+						<div class="col-sm-10">
+							@Html.TextBoxFor(m => m.Log.StartedOn, new { id = "meetingStartedOn", @class = "form-control meeting-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Meeting start time is required." })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							End
+						</label>
+						<div class="col-sm-10">
+							@Html.TextBoxFor(m => m.Log.EndedOn, new { id = "meetingEndedOn", @class = "form-control meeting-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Meeting end time is required." })
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" id="coronerInformation" style="display: none;">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>Coroner</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Date
+						</label>
+						<div class="col-sm-10">
+							<input type="text" id="coronerDate" name="coronerDate" class="form-control coroner-validation" onkeydown="javascript:return false;" data-val="true" data-val-required="Date is required." />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Pronounced Deceased By
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.PronouncedDeceasedBy, new { @class = "form-control coroner-validation", data_val = "true", data_val_required = "Pronounced Deceased By is required." })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Body Location
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								@Html.TextBoxFor(m => m.Log.BodyLocation, new { @class = "form-control coroner-validation", data_val = "true", data_val_required = "Body Location is required." })
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Senior (OIC)
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								<input type="text" id="coronerInstructors" name="coronerInstructors" class="form-control" />
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Destination Location
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								<input type="text" id="coronerDestination" name="coronerDestination" class="form-control" />
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Others Having Contact with Body
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								<input type="text" id="coronerOthers" name="coronerOthers" class="form-control" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>Units and Personnel</h5>
+				</div>
+				<div class="ibox-content">
+					<div id="unitsList" class="form-group">
+						<label class="col-sm-2 control-label">
+							Units
+						</label>
+						<div class="col-sm-10">
+							<a id="selectUnit" onclick="resgrid.logs.newlog.showUnits();" class="btn btn-info">Add Unit to Log</a>
+							<div id="unitsContainer" class="col-xs-12">
+
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Personnel
+						</label>
+						<div class="col-sm-10">
+							<div class="col-md-6" style="padding-left: 0;">
+								<select id="nonUnitPersonnel" name="nonUnitPersonnel"></select>
+								<br />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<span class="icon">
+						<i class="icon-reorder"></i>
+					</span>
+					<h5>Log Information</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="form-group call-related">
+						<label class="col-sm-2 control-label">
+							Condition
+						</label>
+						<div class="col-sm-10">
+							@Html.TextAreaFor(m => m.Log.InitialReport, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label required">
+							Narrative
+						</label>
+						<div class="col-sm-10">
+							@Html.TextAreaFor(m => m.Log.Narrative, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
+						</div>
+					</div>
+					<div class="form-group call-related">
+						<label class="col-sm-2 control-label">
+							Cause
+						</label>
+						<div class="col-sm-10">
+							@Html.TextAreaFor(m => m.Log.Cause, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
+						</div>
+					</div>
+					<div class="form-group call-related">
+						<label class="col-sm-2 control-label">
+							Investigator
+						</label>
+						<div class="col-sm-10">
+							@Html.DropDownListFor(m => m.Log.InvestigatedByUserId, new SelectList(Model.Users, "Key", "Value"), new { @class = "sl2" })
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							Attachments
+						</label>
+						<div class="col-sm-10">
+							<input name="files" id="files" type="file" multiple="multiple" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-4 col-sm-offset-2">
+							<a class="btn btn-white" asp-controller="Logs" asp-action="Index" asp-route-area="User">Cancel</a>
+							<button class="btn btn-primary" type="submit">Add Log</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+}
+
+<div class="callsWindow" id="callsWindow"></div>
+<div class="unitsWindow" id="unitsWindow"></div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/logs/resgrid.logs.newlog.js"></script>
+}

@@ -1,0 +1,90 @@
+﻿<html dir="LTR" xmlns:ndoc="urn:ndoc-schema">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="history" name="save" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Message Members</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">OpenPop.NET POP3 Library Documentation</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Message Members
+					</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>
+        <a href="OpenPop~OpenPop.Mime.Message.html">Message overview</a>
+      </p>
+      <h4 class="dtH4">Public Static Methods</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><img src="static.gif" /><a href="OpenPop~OpenPop.Mime.Message.Load~Overloads.html">Load</a></td><td width="50%">Overloaded.  Loads a <a href="OpenPop~OpenPop.Mime.Message.html">Message</a> from a file containing a raw email. </td></tr></table>
+      </div>
+      <h4 class="dtH4">Public Instance Constructors</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr VALIGN="top">
+            <td width="50%">
+              <img src="pubmethod.gif" />
+              <a href="OpenPop~OpenPop.Mime.Message~Constructors.html">Message</a>
+            </td>
+            <td width="50%">Overloaded. Initializes a new instance of the Message class.</td>
+          </tr>
+        </table>
+      </div>
+      <h4 class="dtH4">Public Instance Properties</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.Message.Headers.html">Headers</a></td><td width="50%"> Headers of the Message. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a></td><td width="50%"> This is the body of the email Message.<br /><br /> If the body was parsed for this Message, this property will never be a null reference. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="OpenPop~OpenPop.Mime.Message.RawMessage.html">RawMessage</a></td><td width="50%"> The raw content from which this message has been constructed.<br /> These bytes can be persisted and later used to recreate the Message. </td></tr></table>
+      </div>
+      <h4 class="dtH4">Public Instance Methods</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.FindAllAttachments.html">FindAllAttachments</a></td><td width="50%"> Finds all the <a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a>'s which are attachments to this message.<br /><br /><a href="OpenPop~OpenPop.Mime.MessagePart.IsAttachment.html">IsAttachment</a> for MessageParts which are considered to be attachments. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.FindAllMessagePartsWithMediaType.html">FindAllMessagePartsWithMediaType</a></td><td width="50%"> Finds all the <a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a>s in the <a href="OpenPop~OpenPop.Mime.Message.html">Message</a> hierarchy with the given MediaType. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.FindAllTextVersions.html">FindAllTextVersions</a></td><td width="50%"> Finds all the <a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a>'s which contains a text version.<br /><br /><a href="OpenPop~OpenPop.Mime.MessagePart.IsText.html">IsText</a> for MessageParts which are considered to be text versions.<br /><br /> Examples of MessageParts media types are: <ul type="disc"><li>text/plain</li><li>text/html</li><li>text/xml</li></ul></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.FindFirstHtmlVersion.html">FindFirstHtmlVersion</a></td><td width="50%"> Finds the first text/html <a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a> in this message.<br /> This is a convenience method - it simply propagates the call to <a href="OpenPop~OpenPop.Mime.Message.FindFirstMessagePartWithMediaType.html">FindFirstMessagePartWithMediaType</a>.<br /><br /> If no text/html version is found, a null reference is returned. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.FindFirstMessagePartWithMediaType.html">FindFirstMessagePartWithMediaType</a></td><td width="50%"> Finds the first <a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a> in the <a href="OpenPop~OpenPop.Mime.Message.html">Message</a> hierarchy with the given MediaType.<br /><br /> The search in the hierarchy is a depth-first traversal. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.FindFirstPlainTextVersion.html">FindFirstPlainTextVersion</a></td><td width="50%"> Finds the first text/plain <a href="OpenPop~OpenPop.Mime.Message.MessagePart.html">MessagePart</a> in this message.<br /> This is a convenience method - it simply propagates the call to <a href="OpenPop~OpenPop.Mime.Message.FindFirstMessagePartWithMediaType.html">FindFirstMessagePartWithMediaType</a>.<br /><br /> If no text/plain version is found, a null reference is returned. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.Save~Overloads.html">Save</a></td><td width="50%">Overloaded.  Save this <a href="OpenPop~OpenPop.Mime.Message.html">Message</a> to a file.<br /><br /> Can be loaded at a later time using the <a href="OpenPop~OpenPop.Mime.Message.Load1.html">Load</a> method. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="OpenPop~OpenPop.Mime.Message.ToMailMessage.html">ToMailMessage</a></td><td width="50%"> This method will convert this <a href="OpenPop~OpenPop.Mime.Message.html">Message</a> into a <a href="http://msdn.microsoft.com/en-us/library/System.Net.Mail.MailMessage(VS.80).aspx">MailMessage</a> equivalent.<br /> The returned <b>MailMessage</b> can be used with <a href="http://msdn.microsoft.com/en-us/library/System.Net.Mail.SmtpClient(VS.80).aspx">SmtpClient</a> to forward the email.<br /><br /> You should be aware of the following about this method: <ul type="disc"><li> All sender and receiver mail addresses are set. If you send this email using a <b>SmtpClient</b> then all receivers in To, From, Cc and Bcc will receive the email once again. </li><li> If you view the source code of this Message and looks at the source code of the forwarded <b>MailMessage</b> returned by this method, you will notice that the source codes are not the same. The content that is presented by a mail client reading the forwarded <b>MailMessage</b> should be the same as the original, though. </li><li> Content-Disposition headers will not be copied to the <b>MailMessage</b>. It is simply not possible to set these on Attachments. </li><li> HTML content will be treated as the preferred view for the <a href="http://msdn.microsoft.com/en-us/library/System.Net.Mail.MailMessage.Body(VS.80).aspx">Body</a>. Plain text content will be used for the <b>Body</b> when HTML is not available. </li></ul></td></tr></table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="OpenPop~OpenPop.Mime.Message.html">Message Class</a> | <a href="~OpenPop.Mime.html">OpenPop.Mime Namespace</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="Message class">
+        </param>
+        <param name="Keyword" value="OpenPop.Mime.Message class">
+        </param>
+        <param name="Keyword" value="Message class, all members">
+        </param>
+      </object>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:hpop-users@lists.sourceforge.net?subject=OpenPop.NET%20POP3%20Library%20Documentation%20Documentation%20Feedback:%20Message%20Members&#xD;&#xA;						">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a href="http://creativecommons.org/publicdomain/zero/1.0/">Public Domain Dedication</a>
+        </p>
+        <p>Generated from assembly OpenPop [2.0.4.369] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+      </div>
+    </div>
+  </body>
+</html>

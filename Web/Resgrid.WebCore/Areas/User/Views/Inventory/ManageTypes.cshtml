@@ -1,0 +1,56 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
+@{
+	ViewBag.Title = "Resgrid | Inventory Types";
+}
+
+<style>
+	.k-grid-content {
+		padding-bottom: 150px;
+	}
+</style>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Inventory Types</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">Inventory</a>
+			</li>
+			<li class="active">
+				<strong>Inventory Types</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a title="Add Type" class="btn btn-success" href="@Url.Action("AddType", "Inventory", new {area = "User"})">Add Type</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div id="typesIndexList"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script id="typecommand-template" type="text/x-kendo-template">
+		<a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("EditType", "Inventory", new {area = "User"})?typeId=#=TypeId#"><i class="icon-pencil"></i><span class="hidden-sm hidden-xs"> Update</span></a>
+		<a href="@Url.Action("DeleteType", "Inventory", new { area = "User" })?typeId=#=TypeId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this type and all inventory entries assoicated with this type. Are you sure you want to delete the type #=Name#?" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
+	</script>
+
+	<script src="~/js/app/internal/inventory/resgrid.inventory.manageTypes.js" type="text/javascript"></script>
+}

@@ -1,0 +1,88 @@
+﻿@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Resgrid | Affiliate Code Missing</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<environment names="Development">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+					crossorigin="anonymous"
+					asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css"
+					asp-fallback-test-class="hidden"
+					asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+		<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+		<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.css" />
+		<link rel="stylesheet" href="~/css/animate.css" />
+		<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+	</environment>
+	<environment names="Staging,Production">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+					crossorigin="anonymous"
+					asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+					asp-fallback-test-class="hidden"
+					asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+		<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
+		<link rel="stylesheet" href="~/css/animate.css" />
+		<link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true" />
+	</environment>
+
+
+
+	@Html.Raw(JavaScriptSnippet.FullScript)
+</head>
+<body class="gray-bg">
+
+
+	<div class="middle-box text-center animated fadeInDown">
+		<h1>404</h1>
+		<h2>Resgrid | Affiliate Code Missing</h2>
+		<h3 class="font-bold">Unable to find your Affiliate Code</h3>
+
+		<div class="error-desc">
+			We're sorry but we were unable to locate your affiliate record in Resgrid. Check your link or Url to ensure the "affiliateCode" or "aid" value is there.
+			<ul class="list-inline">
+				<li>
+					<a class="btn btn-primary m-t" href="javascript:history.back();">Go Back</a>
+				</li>
+				<li>
+
+				</li>
+				<li>
+					<a class="btn btn-primary m-t" asp-controller="Account" asp-action="LogOn" asp-route-area="">Log in</a>
+				</li>
+				<li>
+
+				</li>
+				<li>
+					<a class="btn btn-primary m-t" href="https://resgrid.com">Home</a>
+				</li>
+				<li>
+
+				</li>
+				<li>
+					<a href="javascript:void(0)" data-uv-lightbox="classic_widget" class="btn btn-primary m-t" data-uv-mode="full" data-uv-primary-color="#2447a6" data-uv-link-color="#0a8cc6" data-uv-default-mode="support" data-uv-forum-id="166536">Help &amp; Support</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+	<script>
+		//<!-- UserVoice JavaScript SDK (only needed once on a page) -->
+		(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/YEq07sizms9BOyRgs0F6w.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
+	</script>
+</body>
+</html>

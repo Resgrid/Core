@@ -1,0 +1,52 @@
+﻿@using Resgrid.Framework
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Notes.IndexView
+@{
+	ViewBag.Title = "Resgrid | Notes";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Notes</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				Notes
+			</li>
+			<li class="active">
+				<strong>Notes</strong>
+			</li>
+		</ol>
+	</div>
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	{
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="Add a new note" class="btn btn-success" asp-controller="Notes" asp-action="NewNote" asp-route-area="User">New Note</a>
+			</div>
+		</div>
+	}
+</div>
+<div class="wrapper wrapper-content animated fadeInUp">
+	<ul class="notes">
+		@{ int itemCounter = 0;}
+		@foreach (var note in Model.Notes)
+		{
+			if (note.IsAdminOnly == false || (note.IsAdminOnly == true && ClaimsAuthorizationHelper.IsUserDepartmentAdmin()))
+			{
+				<li>
+					<div>
+						<small>@note.AddedOn.TimeConverter(note.Department).ToShortDateString()</small>
+						<h4>@note.Title.Truncate(50)</h4>
+						<p>@Html.Raw(note.Body)</p>
+
+						<a title="View" class="btn btn-info noteButton" asp-controller="Notes" asp-action="View" asp-route-area="User" asp-route-noteId="@note.NoteId">View</a>
+					</div>
+				</li>
+			}
+			itemCounter++;
+		}
+	</ul>
+</div>

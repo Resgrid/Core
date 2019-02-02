@@ -1,0 +1,99 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Command.CommandIndexView
+@{
+  ViewBag.Title = "Resgrid | Commands";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Commands</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Commands</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a title="Add a command definition" class="btn btn-success" asp-controller="Command" asp-action="New" asp-route-area="User">New Command Definition</a>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Description
+                  </th>
+                  <th>
+                    Type
+                  </th>
+                  <th>
+
+                  </th>
+                  <th class="span1">
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var t in Model.Commands)
+				{
+                  <tr>
+                    <td>
+                      @t.Name
+                    </td>
+                    <td style="max-width: 300px;">
+                      @t.Description
+                    </td>
+                    <td>
+                      @if (t.CallTypeId != null)
+					  {
+
+					  }
+					  else
+					  {
+                        @Html.Raw("Any Call Type")
+					  }
+                    </td>
+                    <td></td>
+                    <td>
+                      <a asp-controller="Command" asp-action="View" asp-route-area="User" asp-route-commandId="@t.CommandDefinitionId" class="btn btn-xs btn-info">View</a>
+                      @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+					  {
+                        <a asp-controller="Command" asp-action="Edit" asp-route-area="User" asp-route-commandId="@t.CommandDefinitionId" class="btn btn-xs btn-primary">Edit</a>
+                        <a asp-controller="Command" asp-action="Delete" asp-route-area="User" asp-route-commandId="@t.CommandDefinitionId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove this command from the system. Are you sure you want to delete the @t.Name command?" rel="nofollow">Delete</a>
+					  }
+                    </td>
+                  </tr>
+				}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+  {
+
+}

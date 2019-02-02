@@ -1,0 +1,77 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.EditProfileModel
+@{
+		ViewBag.Title = "Resgrid | Devices";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Your Devices</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
+			</li>
+			<li class="active">
+				<strong>Your Devices</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Type</th>
+									<th>Added Date</th>
+									<th>Device Id</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var p in Model.PushUris)
+								{
+									<tr>
+										<td>
+											@if ((Platforms)p.PlatformType == Platforms.iPhone || (Platforms)p.PlatformType == Platforms.iPad)
+											{
+												<span>iOS</span>
+											}
+											else
+											{
+												@Html.Raw(((Platforms)p.PlatformType).ToString())
+											}
+										</td>
+										<td>
+											@p.CreatedOn
+										</td>
+										<td style="max-width: 350px; overflow: hidden;">
+											@p.DeviceId
+										</td>
+										<td class="center">
+											<a asp-controller="Home" asp-action="DeletePushUri" asp-route-area="User" asp-route-pushUriId="@p.PushUriId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove the ability to push messages to your @Html.Raw(((Platforms)p.PlatformType).ToString()) device. Are you sure you want to delete your @Html.Raw(((Platforms)p.PlatformType).ToString()) device?" rel="nofollow">Delete</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

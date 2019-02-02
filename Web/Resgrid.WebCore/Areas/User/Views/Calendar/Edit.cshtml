@@ -1,0 +1,312 @@
+﻿
+@model Resgrid.WebCore.Areas.User.Models.Calendar.EditCalendarEntry
+@{
+  ViewBag.Title = "Resgrid | Edit Calendar Entry";
+}
+
+@section Styles
+  {
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Edit Calendar Entry</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Calendar" asp-action="Index" asp-route-area="User">Calendar</a>
+      </li>
+      <li class="active">
+        <strong>Edit Calendar Entry</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <form class="form-horizontal" id="newCalEntryForm" role="form" asp-controller="Calendar" asp-action="Edit" asp-route-area="User" method="post">
+
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Item.CalendarItemId)
+
+            <div class="row">
+              <div class="col-md-8 col-md-offset-1">
+                @if (!String.IsNullOrEmpty(Model.Message))
+				{
+                  <div class="alert alert-success">
+                    @Model.Message
+                  </div>
+				}
+                <span class="alert-error">
+                  @Html.AntiForgeryToken()
+                </span>
+                <div asp-validation-summary="All" class="text-danger"></div>
+              </div>
+            </div>
+            @if (Model.IsRecurrenceParent)
+			{
+              <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                  <div class="alert alert-warning alert-block">
+                    <h4 class="alert alert-heading">Warning</h4>
+                    This is the recurrence parent item. If you check the "Apply to all" checkbox that will update all the recurrence items with the data from this item. If you delete this item all child recurrence items will also be deleted.
+                  </div>
+                </div>
+              </div>
+			}
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Type Name</label>
+              <div class="col-sm-6"><input type="text" class="form-control" placeholder="Title of the calendar entry" asp-for="Item.Title"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Type</label>
+              <div class="col-sm-2">
+                <select asp-for="Item.ItemType" asp-items="ViewBag.Types"></select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">All Day</label>
+              <div class="col-sm-1">
+                <div class="checkbox checkbox-primary">
+                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.IsAllDay">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Start</label>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" asp-for="StartTime" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">End</label>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" asp-for="EndTime" />
+              </div>
+            </div>
+            <div class="form-group" id="isRepeatChildWarning" style="display: none;">
+              <label class="col-sm-2 control-label"></label>
+              <div class="col-sm-6">
+				<div class="alert alert-info alert-block">
+				  <h4 class="alert alert-heading">Info</h4>
+				  This is the recurrence child item. You cannot alter recurrence settings for this item. If you need to change a recurrence pattern for this entry you will need to remove it and re-add from the parent entry.
+				</div>
+              </div>
+            </div>
+            <div class="form-group" id="isRepeatParentWarning" style="display: none;">
+              <label class="col-sm-2 control-label"></label>
+              <div class="col-sm-6">
+				<div class="alert alert-info alert-block">
+				  <h4 class="alert alert-heading">Info</h4>
+				  This is the recurrence parent item. You cannot alter recurrence settings for this item. If you need to change a recurrence pattern you need to first remove then create a new recurrence entry. You can change any of the other details in the entry.
+				</div>
+              </div>
+            </div>
+            <div class="form-group"  id="repeatSelection">
+              <label class="col-sm-2 control-label">Repeat</label>
+              <div class="col-sm-2">
+                <select asp-for="Item.RecurrenceType">
+                  <option value="0">None</option>
+                  <option value="1">Weekly</option>
+                  <option value="2">Monthly</option>
+                  <option value="3">Yearly</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" id="recurrenceEndBlock">
+              <label class="col-sm-2 control-label">End On</label>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" asp-for="Item.RecurrenceEnd" />
+                <span class="help-block m-b-none">Leave blank (empty) to never Expire or End</span>
+              </div>
+            </div>
+            <div class="form-group" id="daysOfTheWeekBlock">
+              <label class="col-sm-2 control-label">
+                Days of the Week
+              </label>
+              <div class="col-sm-10">
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" asp-for="Item.Sunday" class="checkbox checkbox-primary">
+                  <label for="Sunday"> Sunday </label>
+                </div>
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" asp-for="Item.Monday" class="checkbox checkbox-primary">
+                  <label for="Monday"> Monday </label>
+                </div>
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" asp-for="Item.Tuesday" class="checkbox checkbox-primary">
+                  <label for="Tuesday"> Tuesday </label>
+                </div>
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" asp-for="Item.Wednesday" class="checkbox checkbox-primary">
+                  <label for="Wednesday"> Wednesday </label>
+                </div>
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" asp-for="Item.Thursday" class="checkbox checkbox-primary">
+                  <label for="Thursday"> Thursday </label>
+                </div>
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" asp-for="Item.Friday" class="checkbox checkbox-primary">
+                  <label for="Friday"> Friday </label>
+                </div>
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" asp-for="Item.Saturday" class="checkbox checkbox-primary">
+                  <label for="Saturday"> Saturday </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group" id="monthlyBlock">
+              <label class="col-sm-2 control-label">
+                Repeat On
+              </label>
+              <div class="col-sm-4">
+                <ul style="list-style-type:none">
+                  <li>
+                    <label>
+                      <input type="radio" name="month" value="monthday" title="Day ">Day
+                    </label>
+                    <span>
+                      <span>
+                        <input type="text" title="Day ">
+                      </span>
+                    </span>
+                  </li>
+                  <li>
+                    <input type="radio" name="month" value="weekday" title="Repeat on: ">
+                    <span title="Repeat on: ">
+                      <span>
+                        <select>
+                          <option value="1">first</option>
+                          <option value="2">second</option>
+                          <option value="3">thrid</option>
+                          <option value="4">forth</option>
+                          <option value="5">last</option>
+                        </select>
+                      </span>
+                      <span>
+                        <select>
+                          <option value="0">Sunday</option>
+                          <option value="1">Monday</option>
+                          <option value="2">Tuesday</option>
+                          <option value="3">Wednesday</option>
+                          <option value="4">Thursday</option>
+                          <option value="5">Friday</option>
+                          <option value="6">Saturday</option>
+                        </select>
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Description</label>
+              <div class="col-sm-6">
+                <input type="hidden" asp-for="Item.Description">
+
+                <div id="editor-container" style="width:100%; height: 200px;">
+                  <p>@Model.Item.Description</p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Location</label>
+              <div class="col-sm-6"><input type="text" class="form-control" placeholder="Location of the Event" asp-for="Item.Location"></div>
+            </div>
+            @*<div class="form-group">
+				<label class="col-sm-2 control-label">Restrict Editing</label>
+				<div class="col-sm-1">
+				  <div class="checkbox checkbox-primary">
+					<input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.LockEditing">
+					<label></label>
+				  </div>
+				</div>
+			  </div>
+			  <div class="form-group">
+				  <label class="col-sm-2 control-label">Public</label>
+				  <div class="col-sm-1">
+					<div class="checkbox checkbox-primary">
+					  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.Public">
+					  <label></label>
+					</div>
+				  </div>
+				</div>*@
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Signup</label>
+              <div class="col-sm-1">
+                <select asp-for="Item.SignupType">
+                  <option value="0">None</option>
+                  @*<option value="1">Assigned</option>*@
+                  <option value="2">RSVP</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Reminder</label>
+              <div class="col-sm-1">
+                <select asp-for="Item.Reminder">
+                  <option value="0">None</option>
+                  <option value="1">0 Minutes</option>
+                  <option value="2">5 Minutes</option>
+                  <option value="3">10 Minutes</option>
+                  <option value="4">15 Minutes</option>
+                  <option value="5">30 Minutes</option>
+                  <option value="6">1 Hour</option>
+                  <option value="7">2 Hours</option>
+                  <option value="8">3 Hours</option>
+                  <option value="9">4 Hours</option>
+                  <option value="10">5 Hours</option>
+                  <option value="11">6 Hours</option>
+                  <option value="12">7 Hours</option>
+                  <option value="13">8 Hours</option>
+                  <option value="14">9 Hours</option>
+                  <option value="15">10 Hours</option>
+                  <option value="16">11 Hours</option>
+                  <option value="17">12 Hours</option>
+                  <option value="18">18 Hours</option>
+                  <option value="19">1 Day</option>
+                  <option value="20">2 Days</option>
+                  <option value="21">3 Days</option>
+                  <option value="22">4 Days</option>
+                  <option value="23">1 Week</option>
+                  <option value="24">2 Weeks</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Entities to Notify</label>
+              <div class="col-sm-4">
+                <select id="entities" name="entities"></select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" asp-controller="Calendar" asp-action="Index" asp-route-area="User">Cancel</a>
+                <button class="btn btn-primary" type="submit">Edit Entry</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+	<script>
+	  var recurranceParentId = '@Model.Item.RecurrenceId';
+	  var isRepeatParent = '@Model.IsRecurrenceParent';
+	</script>
+
+	<script src="~/js/app/internal/calendar/resgrid.calendar.editEntry.js" type="text/javascript"></script>
+}

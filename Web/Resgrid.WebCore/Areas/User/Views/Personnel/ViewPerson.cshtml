@@ -1,0 +1,131 @@
+﻿
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Personnel.ViewPersonView
+@{
+	ViewBag.Title = "Resgrid | View Profile";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>View Person</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+			</li>
+			<li class="active">
+				<strong>View Person</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="row">
+						<div class="col-md-3 col-lg-3 " align="center"><img style="width: 100px; height: 100px; text-align: center;" src="https://api.resgrid.com/api/v3/Avatars/Get?id=@Model.Profile.UserId" onerror="this.src = 'https://resgrid.com/Images/defaultProfile.png'" /><h3>@Model.Profile.FullName.AsFirstNameLastName</h3></div>
+						<div class=" col-md-9 col-lg-9 ">
+							<table class="table table-user-information">
+								<tbody>
+									<tr>
+										<td>Status:</td>
+										@if (Model.ActionLog != null)
+										{
+											var statusDef = CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, Model.ActionLog);
+
+											if (Model.ActionLog.ActionTypeId <= 25)
+											{
+												<td><span class="label @statusDef.ButtonColor">@statusDef.ButtonText</span></td>
+											}
+											else
+											{
+												<td><span class="label label-default" style="background-color: @statusDef.ButtonColor;">@statusDef.ButtonText</span></td>
+											}
+										}
+										else
+										{
+											<td><span class="label label-default">Standing By</span></td>
+										}
+									</tr>
+									<tr>
+										<td>Staffing:</td>
+										@if (Model.UserState != null)
+										{
+											var stateDef = CustomStatesHelper.GetCustomPersonnelStaffing(Model.Department.DepartmentId, Model.UserState);
+
+											if (Model.UserState.State <= 25)
+											{
+												<td><span class="label @stateDef.ButtonColor">@stateDef.ButtonText</span></td>
+											}
+											else
+											{
+												<td><span class="label label-default" style="background-color: @stateDef.ButtonColor;">@stateDef.ButtonText</span></td>
+											}
+										}
+										else
+										{
+											<td><span class="label label-default">Available</span></td>
+										}
+									</tr>
+									<tr>
+										<td>State:</td>
+										<td>@Model.State</td>
+									</tr>
+									<tr>
+										<td>Group:</td>
+
+										@if (Model.Group != null)
+										{
+											<td>@Model.Group.Name</td>
+										}
+										else
+										{
+											<td>None</td>
+										}
+									</tr>
+									<tr>
+										<td>Roles:</td>
+										<td>@Model.Roles</td>
+									</tr>
+									@if (ClaimsAuthorizationHelper.CanViewPII())
+									{
+										<tr>
+											<td>Email</td>
+											<td><a href="mailto:@Model.User.Email">@Model.User.Email</a></td>
+										</tr>
+										<tr>
+											<td>Phone Number(s)</td>
+											<td>
+												@if (!String.IsNullOrWhiteSpace(Model.Profile.HomeNumber))
+												{
+													<span>@Model.Profile.HomeNumber (Home)</span>
+													<br />
+												}
+												@if (!String.IsNullOrWhiteSpace(Model.Profile.MobileNumber))
+												{
+													<span>@Model.Profile.MobileNumber (Mobile)</span>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+
+}

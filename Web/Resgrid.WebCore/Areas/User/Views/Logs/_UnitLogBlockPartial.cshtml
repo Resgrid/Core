@@ -1,0 +1,73 @@
+﻿@model Resgrid.Web.Areas.User.Models.Logs.UnitBlockPartialView
+
+<div id='unit_@Model.UnitId' class='unit-block'>
+	<a class="close" onclick="resgrid.logs.newlog.removeUnit(@Model.UnitId);" href="#">×</a>
+	<strong>@Model.UnitName</strong>
+	<div class='row'>
+		<div class='col-md-3'>
+			<strong style="display: block;"><small>Dispatched</small></strong>
+			<input id='unit_dispatchtime_@Model.UnitId' name='unit_dispatchtime_@Model.UnitId' type='text' onkeydown="javascript:return false;" />
+		</div>
+		<div class='col-md-3'>
+			<strong style="display: block;"><small>Enrotue</small></strong>
+			<input id='unit_enroutetime_@Model.UnitId' name='unit_enroutetime_@Model.UnitId' type='text' onkeydown="javascript:return false;" />
+		</div>
+		<div class='col-md-3'>
+			<strong style="display: block;"><small>On Scene</small></strong>
+			<input id='unit_onscenetime_@Model.UnitId' name='unit_onscenetime_@Model.UnitId' type='text' onkeydown="javascript:return false;" />
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-md-3'>
+			<strong style="display: block;"><small>Released</small></strong>
+			<input id='unit_releasedtime_@Model.UnitId' name='unit_releasedtime_@Model.UnitId' type='text' onkeydown="javascript:return false;" />
+		</div>
+		<div class='col-md-3'>
+			<strong style="display: block;"><small>In Quarters</small></strong>
+			<input id='unit_inquarterstime_@Model.UnitId' name='unit_inquarterstime_@Model.UnitId' type='text' onkeydown="javascript:return false;" />
+		</div>
+		<div class='col-md-6'>
+			<strong style="display: block;"><small class="required">Unit Personnel</small></strong>
+			<select id='unit_personnel_@Model.UnitId' name='unit_personnel_@Model.UnitId' style="width:100%;" data-val="true" data-val-required="@Model.UnitName personnel required."></select>
+		</div>
+	</div>
+	
+	<script>
+		$(document).ready(function () {
+			$("#unit_dispatchtime_@Model.UnitId").kendoDateTimePicker({
+				interval: 1
+			});
+			$("#unit_enroutetime_@Model.UnitId").kendoDateTimePicker({
+				interval: 1
+			});
+			$("#unit_onscenetime_@Model.UnitId").kendoDateTimePicker({
+				interval: 1
+			});
+			$("#unit_releasedtime_@Model.UnitId").kendoDateTimePicker({
+				interval: 1
+			});
+			$("#unit_inquarterstime_@Model.UnitId").kendoDateTimePicker({
+				interval: 1
+			});
+
+			$('#unit_personnel_@Model.UnitId').kendoMultiSelect({
+				placeholder: "Select Personnel for @Model.UnitName ...",
+				dataTextField: "Name",
+				dataValueField: "UserId",
+				autoBind: false,
+				dataSource: {
+					type: "json",
+					transport: {
+						read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+					}
+				}
+			});
+
+			var form = $("#newLogForm");
+			form.removeData('validator');
+			form.removeData('unobtrusiveValidation');
+			$.validator.unobtrusive.parse(form);
+			resgrid.logs.newlog.supressValidation();
+		});
+	</script>
+</div>

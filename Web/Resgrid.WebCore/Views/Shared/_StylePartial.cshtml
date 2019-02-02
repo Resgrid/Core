@@ -1,0 +1,25 @@
+﻿<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+
+
+<environment names="Development">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css" crossorigin="anonymous"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css"/>
+	<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.css"/>
+	<link rel="stylesheet" href="~/css/animate.css"/>
+	<link rel="stylesheet" href="~/css/style.css" asp-append-version="true"/>
+</environment>
+<environment names="Staging,Production">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	      asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous"
+	      asp-fallback-test-class="hidden" 
+	      asp-fallback-test-property="visibility" asp-fallback-test-value="hidden"/>
+	<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css"/>
+	<link rel="stylesheet" href="~/css/animate.css"/>
+	<link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true"/>
+</environment>

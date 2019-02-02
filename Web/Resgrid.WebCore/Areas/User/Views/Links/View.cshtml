@@ -1,0 +1,91 @@
+﻿@model Resgrid.WebCore.Areas.User.Models.Links.LinkDataView
+@{
+  ViewBag.Title = "Resgrid | View Department Link";
+}
+
+@section Styles
+{
+  <style>
+	.k-select {
+	  line-height: 1.5em !important;
+	}
+  </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>View Department Link</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Links" asp-action="Index" asp-route-area="User">Department Links</a>
+      </li>
+      <li class="active">
+        <strong>View Department Link</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Calls</h5>
+        </div>
+        <div class="ibox-content">
+          <div id="callsList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Units</h5>
+        </div>
+        <div class="ibox-content">
+          <div id="unitsList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Personnel</h5>
+        </div>
+        <div class="ibox-content">
+          <div id="personnelList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script id="callPriority-template" type="text/x-kendo-template">
+    <p style="color: #=Color#;">#=Priority#</p>
+  </script>
+
+  <script id="state-template" type="text/x-kendo-template">
+    #if(StateId <= 25){#
+    <span class='label #=StateColor#'>#=State#</span>
+    #}else{#
+    <span class='label label-default' style="color:#=TextColor#;background-color:#=StateColor#;">#=State#</span>
+    #}#
+  </script>
+
+  <script>
+		var linkId = @Model.Link.DepartmentId;
+  </script>
+  <script src="~/js/app/internal/links/resgrid.links.viewdata.js" type="text/javascript"></script>
+}

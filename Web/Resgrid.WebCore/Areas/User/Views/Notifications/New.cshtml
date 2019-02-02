@@ -1,0 +1,191 @@
+﻿@model Resgrid.Web.Areas.User.Models.Notifications.NotificationNewView
+@{
+	ViewBag.Title = "Resgrid | New Notification";
+}
+
+@section Styles
+{
+	<style>
+		.k-select {
+			line-height: 1.5em !important;
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Notification</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Notifications" asp-action="Index" asp-route-area="User">Notifications</a>
+			</li>
+			<li class="active">
+				<strong>New Notification</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Notifications" asp-action="New" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@if (!String.IsNullOrEmpty(Model.Message))
+								{
+								<div class="alert alert-success">
+									@Model.Message
+								</div>
+								}
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+					
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Type</label>
+							<div class="col-sm-10"><select asp-for="Type" asp-items="ViewBag.Types" class="sl2" style="padding-left: 0; width: 100%;"></select></div>
+						</div>
+						<div class="form-group" id="beforeState">
+							<label class="col-sm-2 control-label">Before State</label>
+							<div class="col-sm-10" id="beforeStateControl"></div>
+						</div>
+						<div class="form-group" id="currentState">
+							<label class="col-sm-2 control-label">Current State</label>
+							<div class="col-sm-10" id="currentStateControl"></div>
+						</div>
+
+						<div class="form-group" id="unitTypesToMonitor" style="display: none;">
+							<label class="col-sm-2 control-label">
+								Unit Type To Monitor
+							</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.SelectedUnitType, new SelectList(Model.UnitsTypes, "UnitTypeId", "Type"), new { @class = "sl2", style = "width: 340px;" })
+							</div>
+						</div>
+						<div class="form-group" id="roleToMonitor" style="display: none;">
+							<label class="col-sm-2 control-label">
+								Role To Monitor
+							</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.SelectedRole, new SelectList(Model.PersonnelRoles, "PersonnelRoleId", "Name"), new { @class = "sl2", style = "width: 340px;" })
+							</div>
+						</div>
+						<div class="form-group" id="currentStateMulti" style="display: none;">
+							<label class="col-sm-2 control-label" id="currentStateMultiLabel">
+								Acceptable States
+							</label>
+							<div class="col-sm-10" id="currentStateMultiControl">
+								<select id="currentStates" name="currentStates"></select>
+							</div>
+						</div>
+						<div class="form-group" id="lowerLimitGroup" style="display: none;">
+							<label class="col-sm-2 control-label" id="lowerLimitGroupLabel">
+								Lower Limit
+							</label>
+							<div class="col-sm-10" id="lowerLimitGroupControl">
+								<input id="lowerLimit" name="lowerLimit" value="0" />
+							</div>
+						</div>
+						<div class="form-group" id="usersToNotify">
+							<label class="col-sm-2 control-label">
+								Users To Notify
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-md-2">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" asp-for="Notification.Everyone">
+											<label for="Notification_Everyone">
+												Everyone
+											</label>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" asp-for="Notification.DepartmentAdmins">
+											<label for="Notification_DepartmentAdmins">
+												Department Admins
+											</label>
+										</div>
+									</div>
+									<div class="col-md-2" id="lockToGroupSection">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" asp-for="Notification.LockToGroup">
+											<label for="Notification_LockToGroup">
+												Lock To Group
+											</label>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" asp-for="Notification.SelectedGroupsAdminsOnly">
+											<label for="Notification_SelectedGroupsAdminsOnly">
+												Group Admins Only
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-4">
+										<select id="groups" name="groups"></select>
+									</div>
+									<div class="col-xs-4">
+										<select id="roles" name="roles"></select>
+									</div>
+									<div class="col-xs-4">
+										<select id="users" name="users"></select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group" id="calendarNotice" style="display: none;">
+							<label class="col-sm-2 control-label">
+
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="alert alert-info" role="alert">
+										Calendar notifications are now driven based on the calendar event type (None, Assigned, RSVP) and the Entities apart of the event. For the None event type users in the Entities selection (the department or a group) will be notified. For RSVP events all users in the department will be notified and for assigned events only Required and Opertional attendees will be notified.
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group" id="shiftNotice" style="display: none;">
+							<label class="col-sm-2 control-label">
+
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="alert alert-info" role="alert">
+										Shift notifications are now driven based off of events performed against a shift (Created, Updated, Days Added). Users attached to an existing shift will be notified of updates, all users in the department will be notified about new shifts and for signup shifts all users will be notified about new days, and assigned just the people on that shift.
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Notifications" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Save Notification Role</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/notifications/resgrid.notifications.addNotification.js"></script>
+}

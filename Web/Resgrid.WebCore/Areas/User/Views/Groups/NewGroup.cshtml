@@ -1,0 +1,189 @@
+﻿
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Groups.NewGroupView
+@{
+	ViewBag.Title = "Resgrid | New Group";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>New Group</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
+			</li>
+			<li class="active">
+				<strong>New Group</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<div class="row">
+						<div class="col-md-12">
+							<p>Enter the information below to create a new department group. Station groups are a physical location and Organizational groups allow departments to group users without a physical location (i.e. Inactive Personnel).  Fields in <span class="required">blue italics</span> are required.</p>
+						</div>
+					</div>
+					<form class="form-horizontal" role="form" asp-controller="Groups" asp-action="NewGroup" asp-route-area="User" method="post">
+
+						@Html.AntiForgeryToken()
+						<div asp-validation-summary="All" class="text-danger"></div>
+						@if (!String.IsNullOrEmpty(Model.Message))
+						{
+							<div class="alert alert-success">
+								@Model.Message
+							</div>
+						}
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Group type</label>
+							<div class="col-sm-10">
+								<div class="radio radio-info radio-inline">
+									<input type="radio" class="form-control" asp-for="NewGroup.Type" value="1" id="groupTypeOrgRadio" onclick="resgrid.groups.newgroup.showParentFields();">
+									<label for="groupTypeOrgRadio">  Organizational Group </label>
+								</div>
+								<div class="radio radio-info radio-inline">
+									<input type="radio" class="form-control" asp-for="NewGroup.Type" value="2" id="groupTypeStationRadio" onclick="resgrid.groups.newgroup.showAddressFields();">
+									<label for="groupTypeStationRadio"> Station Group </label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Group Name</label>
+							<div class="col-sm-10"><input type="text" asp-for="NewGroup.Name" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Parent Group</label>
+							<div class="col-sm-10">@Html.DropDownListFor(m => m.NewGroup.ParentDepartmentGroupId, Model.StationGroups)</div>
+						</div>
+						<div class="form-group" id="StationAddress">
+							<label class="col-sm-2 control-label">
+								Station Address
+							</label>
+							<div class="col-sm-10">
+								<div class="well">
+									<span>Station groups require a physical location (as personnel and units can respond to them). Please enter an Address or GPS Coordinates or a <a href="https://what3words.com/about/" target="_blank">what3words address.</a></span>
+									<div class="form-group">
+										<label class="col-sm-2 control-label required">
+											Street
+										</label>
+										<div class="col-sm-10">
+											@Html.TextBoxFor(m => m.Address1, new { @class = "form-control" })
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label required">
+											City
+										</label>
+										<div class="col-sm-10">
+											@Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label required">
+											State/Province
+										</label>
+										<div class="col-sm-10">
+											@Html.TextBoxFor(m => m.State, new { @class = "form-control" })
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label required">
+											Zip/Postal Code
+										</label>
+										<div class="col-sm-10">
+											@Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control" })
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label required">
+											Country
+										</label>
+										<div class="col-sm-10">
+											@Html.DropDownListFor(m => m.Country, new SelectList(Countries.CountryNames), new { @class = "form-control", style = "width: 300px" })
+										</div>
+									</div>
+									<div style="text-align: center;">
+										<h4>Or</h4>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">
+											Gps Coordinates
+										</label>
+										<div class="controls">
+											<div class="col-md-4">
+												@Html.TextBoxFor(m => m.Latitude, new { @class = "form-control" })
+												<span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
+											</div>
+											<div class="col-md-4">
+												@Html.TextBoxFor(m => m.Longitude, new { @class = "form-control" })
+												<span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
+											</div>
+										</div>
+									</div>
+									<div style="text-align: center;">
+										<h4>Or</h4>
+									</div>
+									<div class="form-group">
+										<label class="control-label">
+											what3words Address
+										</label>
+										<div class="controls">
+											<div class="col-md-8">
+												@Html.TextBoxFor(m => m.What3Word, new { @class = "form-control", @style = "width:250px;", autocomplete = "off", placeholder = "what.three.words", tabindex = "8" })
+												<span class="help-inline">w3w Address (i.e. humble.echo.sticky)</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-10 col-md-offset-2">
+								<p>Users can only be in one group at a time. If you don't see your user in the list they are already in a group.</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Group Admins
+							</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-4"><select id="groupAdmins" name="groupAdmins"></select></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Group Users
+							</label>
+							<div class="col-sm-10">
+								<select id="groupUsers" name="groupUsers"></select>
+								</div>
+							</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Save Group</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/groups/resgrid.groups.newgroup.js"></script>
+}

@@ -1,0 +1,412 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Mapping.AddPOITypeView
+@{
+	ViewBag.Title = "Resgrid | Add POI Type";
+}
+
+@section Styles
+{
+	<link rel="stylesheet" href="~/clib/mapMarkers/map-icons.css"/>
+
+	<style>
+		.icons .map-icon {
+			font-size: 24px;
+			line-height: 1;
+			vertical-align: middle;
+		}
+
+		.icons {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+			.icons li {
+				float: left;
+				margin: 10px 0;
+				padding: 0;
+				width: 10%;
+			}
+	</style>
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Add POI Type</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+			</li>
+			<li class="active">
+				<strong>Add POI Type</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Mapping" asp-action="AddPOIType" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+
+								@if (!String.IsNullOrWhiteSpace(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Name
+							</label>
+							<div class="controls">
+								<div class="col-md-6">
+									@Html.TextBoxFor(x => x.Type.Name, new { @class = "form-control" })
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Is Destination
+							</label>
+							<div class="controls">
+								<div class="col-md-6">
+									@Html.CheckBoxFor(x => x.Type.IsDestination)
+									<span class="help-inline">To denote a potential destination for a unit/person. For example an office, rally point, hospital, access point, etc.</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Color
+							</label>
+							<div class="controls">
+								<div class="col-md-6">
+									@Html.TextBoxFor(x => x.Type.Color)
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Marker
+							</label>
+							<div class="col-md-10">
+								<div class="row">
+									<div class="col-xs-4">
+										<svg baseProfile="basic" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M24 0c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z"></path></svg>
+										@Html.RadioButtonFor(m => m.MarkerType, "MAP_PIN", new { style = "padding-left:100px;" })
+									</div>
+									<div class="col-xs-4">
+										<svg baseProfile="basic" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M45.5 0h-43v43h16.2l5.9 5 5.8-5h15.1z"></path></svg>
+										@Html.RadioButtonFor(m => m.MarkerType, "SQUARE_PIN")
+									</div>
+									<div class="col-xs-4">
+										<svg baseProfile="basic" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M42.7 16.2c.3-3.4 1.3-6.6 3.1-9.5l-7-6.7c-2.2 1.8-4.7 2.8-7.6 3-2.6.2-5.1-.2-7.4-1.4-2.3 1.1-4.8 1.6-7.4 1.4-2.7-.2-5.1-1.1-7.2-2.7l-6.9 6.7c1.7 2.9 2.7 6 2.9 9.2.1 1.5-.3 3.5-1.3 6.1-.5 1.5-.9 2.7-1.2 3.8-.2 1-.4 1.9-.4 2.5 0 2.8.8 5.3 2.4 7.5 1.3 1.6 3.5 3.4 6.4 5.4 3.3 1.6 5.8 2.6 7.6 3.1.5.2 1 .4 1.5.7l1.5.6c1.1.6 1.9 1.3 2.3 2.1.5-.8 1.3-1.5 2.4-2.1.7-.3 1.4-.6 1.9-.8.5-.2.9-.4 1.1-.5.4-.2.9-.4 1.5-.6.6-.2 1.4-.5 2.2-.8 1.7-.6 3-1.1 3.8-1.6 2.9-2 5-3.8 6.4-5.3 1.7-2.2 2.6-4.8 2.5-7.6-.1-1.3-.7-3.3-1.7-6.1-1.1-2.8-1.6-4.9-1.4-6.4z"></path></svg>
+										@Html.RadioButtonFor(m => m.MarkerType, "SHIELD")
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-4">
+										<svg baseProfile="basic" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M48 19.7c-.3-13.2-7.9-18.5-8.3-18.7l-1.2-.8-1.2.8c-2 1.4-4.1 2-6.1 2-3.4 0-5.8-1.9-5.9-1.9l-1.3-1.1-1.3 1.1c-.1.1-2.5 1.9-5.9 1.9-2.1 0-4.1-.7-6.1-2l-1.3-.8-1.2.8c-.8.5-7.9 5.8-8.2 18.7-.1 1.1 3 22.2 24 28.3 22.9-6.7 24.1-26.9 24-28.3z"></path></svg>
+										@Html.RadioButtonFor(m => m.MarkerType, "ROUTE")
+									</div>
+									<div class="col-xs-4">
+										<svg baseProfile="basic" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M0 0h48v48h-48z"></path></svg>
+										@Html.RadioButtonFor(m => m.MarkerType, "SQUARE")
+									</div>
+									<div class="col-xs-4">
+										<svg baseProfile="basic" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M48 40c0 4.4-3.6 8-8 8h-32c-4.4 0-8-3.6-8-8v-32c0-4.4 3.6-8 8-8h32c4.4 0 8 3.6 8 8v32z"></path></svg>
+										@Html.RadioButtonFor(m => m.MarkerType, "SQUARE_ROUNDED")
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Icon
+							</label>
+							<div class="col-md-10">
+								<span>None: @Html.RadioButtonFor(m => m.Type.Marker, "")</span>
+								<ul class="icons">
+									<li>
+										<span class="map-icon map-icon-art-gallery"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-art-gallery")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-campground"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-campground")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-bank"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-bank")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-hair-care"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-hair-care")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-gym"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-gym")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-point-of-interest"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-point-of-interest")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-post-box"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-post-box")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-post-office"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-post-office")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-university"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-university")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-beauty-salon"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-beauty-salon")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-atm"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-atm")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-rv-park"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-rv-park")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-school"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-school")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-library"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-library")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-spa"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-spa")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-route"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-route")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-postal-code"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-postal-code")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-stadium"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-stadium")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-postal-code-prefix"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-postal-code-prefix")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-museum"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-museum")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-finance"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-finance")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-natural-feature"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-natural-feature")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-funeral-home"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-funeral-home")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-cemetery"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-cemetery")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-park"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-park")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-lodging"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-lodging")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-train-station"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-train-station")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-subway-station"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-subway-station")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-bus-station"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-bus-station")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-transit-station"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-transit-station")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-parking"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-parking")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-gas-station"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-gas-station")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-car-rental"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-car-rental")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-car-dealer"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-car-dealer")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-car-repair"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-car-repair")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-car-wash"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-car-wash")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-airport"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-airport")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-taxi-stand"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-taxi-stand")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-health"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-health")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-dentist"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-dentist")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-doctor"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-doctor")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-hospital"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-hospital")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-pharmacy"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-pharmacy")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-physiotherapist"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-physiotherapist")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-veterinary-care"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-veterinary-care")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-courthouse"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-courthouse")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-political"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-political")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-local-government"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-local-government")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-embassy"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-embassy")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-city-hall"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-city-hall")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-fire-station"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-fire-station")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-police"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-police")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-storage"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-storage")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-electrician"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-electrician")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-moving-company"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-moving-company")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-painter"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-painter")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-plumber"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-plumber")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-roofing-contractor"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-roofing-contractor")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-general-contractor"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-general-contractor")</span>
+									</li>
+									<li>
+										<span class="map-icon map-icon-locksmith"></span>
+										<span class="icon-label">@Html.RadioButtonFor(m => m.Type.Image, "map-icon-locksmith")</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Add POI</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		$(document).ready(function () {
+			$("#Type_Color").kendoColorPicker({
+				value: "#ffffff"
+			});
+		});
+	</script>
+
+}

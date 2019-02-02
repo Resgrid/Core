@@ -1,0 +1,73 @@
+﻿<div style="display: block;" id="help-button" class="help-button hidden-sm hidden-xs start-tour" data-demo></div>
+
+<script>
+	$(function() {
+		var $demo, duration, remaining, tour;
+		$demo = $("#help-button");
+		duration = 5000;
+		remaining = duration;
+		tour = new Tour({
+			onStart: function () {
+				resgrid.common.analytics.track('Tour - Add/Edit Unit');
+				return $demo.addClass("disabled", true);
+			},
+			onEnd: function() {
+				return $demo.removeClass("disabled", true);
+			},
+			debug: true,
+			steps: [
+				{
+					//path: "/User/Home/Dashboard",
+					orphan: true,
+					//backdrop: true,
+					title: "Unit Tutorial",
+					content: "Welcome to the walk through tutorial of the Add/Edit Unit page. Following the steps will guide you through all the important elements of the page."
+				}, {
+					//path: "/",
+					//backdrop: true,
+					//reflex: true,
+					element: "#Unit_Name",
+					placement: "right",
+					title: "Unit Name",
+					content: "Enter in the name of the unit, as you want it to appear on all your applications and reports. Common names are like Engine 33, Medic 5, E3301, B106. The name should easily identify the unit to members of the station, department and external entities for example mutual aid partners."
+				}, {
+					//path: "/",
+					element: "#s2id_Unit_Type",
+					placement: "right",
+					title: "Unit Type",
+					content: "Unit types allow you to group and organize your units. Examples of types are (Type 1, Model 14, 3000G Tender, Rescue, etc). It’s recommend that you create types that match the unit’s capabilities allowing you to easily ascertain the capabilities of the unit based on its type."
+				}, {
+					//path: "/api",
+					element: "#s2id_Unit_StationGroupId",
+					placement: "right",
+					title: "Station",
+					content: "Select the station the unit will be housed at, or its logical home station. Assigning units to stations will allow you to view all the units for that station and determine their status at a glance. This information is also used to determine the units home district geo-fence and calculate times, availability and ETA’s."//,
+					//reflex: true
+				}, {
+					//path: "/api",
+					element: "#unitRoles",
+					placement: "top",
+					title: "Unit Roles",
+					content: "Unit roles are the seats for personnel in the current unit, named for the job function they perform. Examples of some Unit Roles are (Engineer, Operator, Captain, Firefighter, and Medic). Add only the roles for the seats you have on the apparatus. For example if you engine only seats 4 personnel, only add 4 roles. This information is used to assign personnel accountability and associate personnel with a call for a rig."//,
+					//duration: 5000
+				}, {
+					//path: "/api",
+					element: "#addRoleButton",
+					placement: "right",
+					title: "Add Role",
+					content: "Click the Blue Plus sign to add a new role and click the Red X on a line to remove that role. Role names can be added, removed or renamed at will. Note that removing a role will make it unavailable to assign a person to on the next call.",
+					//backdrop: true,
+					reflex: true
+				}
+			]
+		}).init();
+		$(document).on("click", "[data-demo]", function(e) {
+			e.preventDefault();
+			if ($(this).hasClass("disabled")) {
+				return;
+			}
+			tour.restart();
+			return $(".alert").alert("close");
+		});
+	});
+</script>

@@ -16,5 +16,12 @@
 		public static string DiafaanSmsGatewayUrl = "http://diafaan.yourcompany.local/";
 		public static string DiafaanSmsGatewayUserName = "";
 		public static string DiafaanSmsGatewayPassword = "";
+		
+		/// <summary>
+		/// Nexemo supports some countries that Twilio doesn't, if you need routing for specific numbers that may be Nexmo only put them in here.
+		/// </summary>
+		public static HashSet<string> NexemoNumbers = new HashSet<string>()
+		{
+		};
 	}
 }

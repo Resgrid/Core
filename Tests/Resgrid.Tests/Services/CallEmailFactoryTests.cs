@@ -268,10 +268,8 @@ namespace Resgrid.Tests.Services
 			}
 		}
 
-		[TestFixture]
 		public class when_importing_an_enhanced_parkland_call : with_the_calls_email_factory
 		{
-			[Test]
 			public void should_process_initial_callout()
 			{
 				CallEmail email = new CallEmail();
@@ -305,7 +303,6 @@ namespace Resgrid.Tests.Services
 				call.GeoLocationData.Should().Be("54.1425, -115.687");
 			}
 
-			[Test]
 			public void should_process_second_alarm()
 			{
 				CallEmail email = new CallEmail();

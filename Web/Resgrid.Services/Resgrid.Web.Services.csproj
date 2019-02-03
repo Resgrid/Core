@@ -630,13 +630,10 @@
     </Content>
     <None Include="Properties\PublishProfiles\ResgridAPI - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ResgridWeb - Web Deploy.pubxml" />
-    <Content Include="Scripts\jquery.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Configs\connectionStrings.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="StripeHandler.ashx" />
-    <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -649,15 +646,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\Error.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\BrainTree\" />
-    <Folder Include="Views\Devices\" />
-    <Folder Include="Views\Feed\" />
-    <Folder Include="Views\Security\" />
-    <Folder Include="Views\TwilioMessage\" />
-    <Folder Include="Views\UnitApp\" />
-    <Folder Include="Views\UnitStatus\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>

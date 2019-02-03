@@ -119,6 +119,7 @@
     <Compile Include="Logging.cs" />
     <Compile Include="ObjectCopier.cs" />
     <Compile Include="ObjectSerialization.cs" />
+    <Compile Include="PathHelpers.cs" />
     <Compile Include="RandomGenerator.cs" />
     <Compile Include="StringHelpers.cs" />
     <Compile Include="SymmetricEncryption.cs" />

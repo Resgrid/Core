@@ -10,7 +10,7 @@ namespace Resgrid.Providers.NumberProvider
 		public PhoneNumberResult Process(string phoneNumber, string countryCode = null)
 		{
 			var result = new PhoneNumberResult();
-			GlobalPhone.GlobalPhone.DbPath = "global_phone.json";
+			GlobalPhone.GlobalPhone.DbPath = $"{Framework.PathHelpers.GetAssemblyDirectory()}\\global_phone.json";
 
 			try
 			{

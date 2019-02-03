@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Resgrid.Config;
+using SharpRaven;
+using SharpRaven.Data;
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Resgrid.Config;
-using SharpRaven;
-using SharpRaven.Data;
 
 namespace Resgrid.Framework
 {
@@ -20,7 +20,12 @@ namespace Resgrid.Framework
 			if (_isInitialized == false)
 			{
 				if (String.IsNullOrWhiteSpace(key))
-					_ravenClient = new RavenClient(ExternalErrorConfig.ExternalErrorServiceUrl);
+				{
+					if (!String.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrl))
+					{
+						_ravenClient = new RavenClient(ExternalErrorConfig.ExternalErrorServiceUrl);
+					}
+				}
 				else
 					_ravenClient = new RavenClient(key);
 
@@ -37,47 +42,47 @@ namespace Resgrid.Framework
 			}
 		}
 
-		public static void LogException(Exception exception, string extraMessage = "", 
+		public static void LogException(Exception exception, string extraMessage = "",
 			[CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerMemberName = "", [CallerLineNumber] int callerLineNumber = 0)
 		{
 			Initialize(null);
 			string msgToLog = string.Format("{0}\r\n{4}\r\n\r\nAssemblyName:{5}\r\nCallerFilePath:{1}\r\nCallerMemberName:{2}\r\nCallerLineNumber:{3}", extraMessage,
 				callerFilePath, callerMemberName, callerLineNumber, exception.ToString(), Assembly.GetExecutingAssembly().FullName);
 
-			_ravenClient.Capture(new SentryEvent(exception));
-			//_logger.Log(LogLevel.Fatal, msgToLog, exception);
+			if (_ravenClient != null)
+				_ravenClient.Capture(new SentryEvent(exception));
 		}
 
 		public static void LogError(string message)
 		{
 			Initialize(null);
 
-			//_logger.Error(message);
-			_ravenClient.Capture(new SentryEvent(message));
+			if (_ravenClient != null)
+				_ravenClient.Capture(new SentryEvent(message));
 		}
 
 		public static void LogDebug(string message)
 		{
 			Initialize(null);
 
-			_ravenClient.Capture(new SentryEvent(message));
-			//_logger.Debug(message);
+			if (_ravenClient != null)
+				_ravenClient.Capture(new SentryEvent(message));
 		}
 
 		public static void LogInfo(string message)
 		{
 			Initialize(null);
 
-			_ravenClient.Capture(new SentryEvent(message));
-			//_logger.Info(string.Format("Message:{1}", message));
+			if (_ravenClient != null)
+				_ravenClient.Capture(new SentryEvent(message));
 		}
 
 		public static void LogTrace(string message)
 		{
 			Initialize(null);
 
-			_ravenClient.Capture(new SentryEvent(message));
-			//_logger.Trace(message);
+			if (_ravenClient != null)
+				_ravenClient.Capture(new SentryEvent(message));
 		}
 
 		public static void SendExceptionEmail(Exception exmail, string processName)
@@ -99,8 +104,8 @@ namespace Resgrid.Framework
 
 				EmailHead = "<b>Dear Team,</b>" + "<br/>" + "An exception occurred in [" + processName + "] " + "With following Details" + "<br/>" + "<br/>";
 				EmailSing = newline + "Thanks and Regards" + newline + "    " + "     " + "<b>Application Admin </b>" + "</br>";
-				Sub = "Exception occurred" + " " + "in [" +  processName + "]";
-				
+				Sub = "Exception occurred" + " " + "in [" + processName + "]";
+
 				string errortomail = EmailHead + "<b>Log Written Date: </b>" + " " + DateTime.Now.ToString() + newline + "<b>Error Line No :</b>" + " " + ErrorlineNo + "\t\n" + " " + newline + "<b>Error Message:</b>" + " " + Errormsg + newline + "<b>Exception Type:</b>" + " " + extype + newline + "<b> Error Details :</b>" + " " + ErrorLocation + newline + "<b> Inner Details :</b>" + " " + InnerException + newline + "<b>System:</b>" + " " + processName + newline + newline + newline + newline + EmailSing;
 
 				using (MailMessage mailMessage = new MailMessage())
@@ -131,7 +136,7 @@ namespace Resgrid.Framework
 
 				}
 			}
-			catch{}
+			catch { }
 		}
 
 		public static void Write(string message)

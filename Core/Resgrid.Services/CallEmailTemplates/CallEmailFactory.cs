@@ -44,7 +44,7 @@ namespace Resgrid.Services.CallEmailTemplates
 			{
 				Framework.Logging.LogException(ex, string.Format("Email Text: {0}", email.Body));
 			}
-			
+
 			return call;
 		}
 	}

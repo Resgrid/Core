@@ -2,6 +2,7 @@
 using SharpRaven;
 using SharpRaven.Data;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
@@ -49,40 +50,35 @@ namespace Resgrid.Framework
 			string msgToLog = string.Format("{0}\r\n{4}\r\n\r\nAssemblyName:{5}\r\nCallerFilePath:{1}\r\nCallerMemberName:{2}\r\nCallerLineNumber:{3}", extraMessage,
 				callerFilePath, callerMemberName, callerLineNumber, exception.ToString(), Assembly.GetExecutingAssembly().FullName);
 
-			if (_ravenClient != null)
-				_ravenClient.Capture(new SentryEvent(exception));
+			Log(new SentryEvent(exception));
 		}
 
 		public static void LogError(string message)
 		{
 			Initialize(null);
 
-			if (_ravenClient != null)
-				_ravenClient.Capture(new SentryEvent(message));
+			Log(new SentryEvent(message));
 		}
 
 		public static void LogDebug(string message)
 		{
 			Initialize(null);
 
-			if (_ravenClient != null)
-				_ravenClient.Capture(new SentryEvent(message));
+			Log(new SentryEvent(message));
 		}
 
 		public static void LogInfo(string message)
 		{
 			Initialize(null);
 
-			if (_ravenClient != null)
-				_ravenClient.Capture(new SentryEvent(message));
+			Log(new SentryEvent(message));
 		}
 
 		public static void LogTrace(string message)
 		{
 			Initialize(null);
 
-			if (_ravenClient != null)
-				_ravenClient.Capture(new SentryEvent(message));
+			Log(new SentryEvent(message));
 		}
 
 		public static void SendExceptionEmail(Exception exmail, string processName)
@@ -143,6 +139,22 @@ namespace Resgrid.Framework
 		{
 			ShowConsole();
 			Console.WriteLine(message);
+		}
+
+		private static void Log(SentryEvent sentryEvent)
+		{
+			if (_ravenClient != null)
+				_ravenClient.Capture(sentryEvent);
+			else
+			{
+				if (sentryEvent != null)
+				{
+					if (sentryEvent.Exception != null)
+						Debug.Write(sentryEvent.Exception.ToString());
+					else
+						Debug.Write(sentryEvent.Message);
+				}
+			}
 		}
 	}
 }

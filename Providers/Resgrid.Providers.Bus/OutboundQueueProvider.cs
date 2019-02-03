@@ -1,12 +1,12 @@
-﻿using System;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.ServiceBus;
+﻿using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 using Resgrid.Framework;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
+using System;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Providers.Bus
 {
@@ -39,7 +39,8 @@ namespace Resgrid.Providers.Bus
 					callQueue.Profiles = null;
 					serializedObject = ObjectSerialization.Serialize(callQueue);
 				}
-			} catch { }
+			}
+			catch { }
 
 			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
@@ -80,7 +81,8 @@ namespace Resgrid.Providers.Bus
 					messageQueue.Message.MessageRecipients = null;
 					serializedObject = ObjectSerialization.Serialize(messageQueue);
 				}
-			} catch { }
+			}
+			catch { }
 
 			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
@@ -119,7 +121,8 @@ namespace Resgrid.Providers.Bus
 					distributionListQueue.Message.Attachments = null;
 					serializedObject = ObjectSerialization.Serialize(distributionListQueue);
 				}
-			} catch { }
+			}
+			catch { }
 
 			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
@@ -151,117 +154,136 @@ namespace Resgrid.Providers.Bus
 
 			BrokeredMessage message = new BrokeredMessage(ObjectSerialization.Serialize(shiftQueueItem));
 			message.MessageId = Guid.NewGuid().ToString();
-			
+
 			SendMessage(_shiftsClient, message);
 		}
 
 		private void SendMessage(QueueClient client, BrokeredMessage message)
 		{
-#pragma warning disable 4014
-			Task.Run(() =>
+			if (client != null)
 			{
-				int retry = 0;
-				bool sent = false;
-
-				while (!sent)
+#pragma warning disable 4014
+				Task.Run(() =>
 				{
-					try
+					int retry = 0;
+					bool sent = false;
+
+					while (!sent)
 					{
-						client.Send(message);
-						sent = true;
+						try
+						{
+							client.Send(message);
+							sent = true;
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex, message.ToString());
+
+							if (retry >= 5)
+								return false;
+
+							Thread.Sleep(1000);
+							retry++;
+						}
 					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
 
-						if (retry >= 5)
-							return false;
-
-						Thread.Sleep(1000);
-						retry++;
-					}
-				}
-
-				return sent;
-			}).ConfigureAwait(false);
+					return sent;
+				}).ConfigureAwait(false);
 #pragma warning restore 4014
+			}
 		}
 
 		private void VerifyAndCreateClients()
 		{
-			while (_callClient == null || _callClient.IsClosed)
+			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueConnectionString))
 			{
-				try
+				while (_callClient == null || _callClient.IsClosed)
 				{
-					var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueConnectionString)
+					try
 					{
-						OperationTimeout = TimeSpan.FromMinutes(5)
-					};
+						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueConnectionString)
+						{
+							OperationTimeout = TimeSpan.FromMinutes(5)
+						};
 
-					var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-					_callClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.CallBroadcastQueueName);
+						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
+						_callClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.CallBroadcastQueueName);
+					}
+					catch (TimeoutException) { }
 				}
-				catch (TimeoutException) { }
 			}
 
-			while (_messageClient == null || _messageClient.IsClosed)
+			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueMessageConnectionString))
 			{
-				try
+				while (_messageClient == null || _messageClient.IsClosed)
 				{
-					var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueMessageConnectionString)
+					try
 					{
-						OperationTimeout = TimeSpan.FromMinutes(5)
-					};
+						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueMessageConnectionString)
+						{
+							OperationTimeout = TimeSpan.FromMinutes(5)
+						};
 
-					var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-					_messageClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.MessageBroadcastQueueName);
+						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
+						_messageClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.MessageBroadcastQueueName);
+					}
+					catch (TimeoutException) { }
 				}
-				catch (TimeoutException) { }
 			}
 
-			while (_notificationClient == null || _notificationClient.IsClosed)
-			{
-				try
-				{
-					var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueNotificationConnectionString)
-					{
-						OperationTimeout = TimeSpan.FromMinutes(5)
-					};
 
-					var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-					_notificationClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.NotificaitonBroadcastQueueName);
+			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueNotificationConnectionString))
+			{
+				while (_notificationClient == null || _notificationClient.IsClosed)
+				{
+					try
+					{
+						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueNotificationConnectionString)
+						{
+							OperationTimeout = TimeSpan.FromMinutes(5)
+						};
+
+						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
+						_notificationClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.NotificaitonBroadcastQueueName);
+					}
+					catch (TimeoutException) { }
 				}
-				catch (TimeoutException) { }
 			}
 
-			while (_shiftsClient == null || _shiftsClient.IsClosed)
+			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueShiftsConnectionString))
 			{
-				try
+				while (_shiftsClient == null || _shiftsClient.IsClosed)
 				{
-					var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueShiftsConnectionString)
+					try
 					{
-						OperationTimeout = TimeSpan.FromMinutes(5)
-					};
+						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueShiftsConnectionString)
+						{
+							OperationTimeout = TimeSpan.FromMinutes(5)
+						};
 
-					var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-					_shiftsClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.ShiftNotificationsQueueName);
+						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
+						_shiftsClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.ShiftNotificationsQueueName);
+					}
+					catch (TimeoutException) { }
 				}
-				catch (TimeoutException) { }
 			}
 
-			while (_distributionListClient == null || _distributionListClient.IsClosed)
+			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueEmailConnectionString))
 			{
-				try
+				while (_distributionListClient == null || _distributionListClient.IsClosed)
 				{
-					var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueEmailConnectionString)
+					try
 					{
-						OperationTimeout = TimeSpan.FromMinutes(5)
-					};
+						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueEmailConnectionString)
+						{
+							OperationTimeout = TimeSpan.FromMinutes(5)
+						};
 
-					var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-					_distributionListClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.EmailBroadcastQueueName);
+						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
+						_distributionListClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.EmailBroadcastQueueName);
+					}
+					catch (TimeoutException) { }
 				}
-				catch (TimeoutException) { }
 			}
 		}
 	}

@@ -42,6 +42,7 @@ namespace Resgrid.Services.CallEmailTemplates
 			}
 			catch (Exception ex)
 			{
+				Console.WriteLine(ex.ToString());
 				Framework.Logging.LogException(ex, string.Format("Email Text: {0}", email.Body));
 			}
 

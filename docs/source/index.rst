@@ -40,12 +40,17 @@ Getting started
    * :doc:`/setup/index` -- Walkthrough on setting up your department
    * :doc:`/configuration/index` -- All configuration options for your department
 
+Links
+*****
+
+* `Resgrid Homepage and Hosted Solution <https://resgrid.com>`_
+* `Documentation <https://resgrid-core.readthedocs.io/en/latest>`_
+* `Source code <https://github.com/Resgrid/Core>`_
+
 Documentation Contents
 *************
-
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    /installation/index
    /development/index
@@ -54,13 +59,6 @@ Documentation Contents
    /setup/index
    /configuration/index
    /providers/index
-
-Links
-*****
-
-* `Resgrid Homepage and Hosted Solution <https://resgrid.com>`_
-* `Documentation <https://resgrid-core.readthedocs.io/en/latest>`_
-* `Source code <https://github.com/Resgrid/Core>`_
 
 Indices and tables
 ==================

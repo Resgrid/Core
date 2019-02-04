@@ -47,6 +47,14 @@ Documentation Contents
    :maxdepth: 2
    :caption: Contents:
 
+   /installation/index
+   /development/index
+   /contributing/index
+   /system/index
+   /setup/index
+   /configuration/index
+   /providers/index
+
 Links
 *****
 

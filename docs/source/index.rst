@@ -52,13 +52,14 @@ Documentation Contents
 .. toctree::
    :maxdepth: 2
 
+   /overview/index
    /installation/index
-   /development/index
-   /contributing/index
-   /system/index
    /setup/index
    /configuration/index
    /providers/index
+   /system/index
+   /development/index
+   /contributing/index
 
 Indices and tables
 ==================

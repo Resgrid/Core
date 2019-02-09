@@ -58,6 +58,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -70,6 +73,7 @@
   <ItemGroup>
     <Compile Include="CacheConfig.cs" />
     <Compile Include="ChatConfig.cs" />
+    <Compile Include="ConfigProcessor.cs" />
     <Compile Include="DataConfig.cs" />
     <Compile Include="ExternalErrorConfig.cs" />
     <Compile Include="FirebaseConfig.cs" />
@@ -86,9 +90,16 @@
     <Compile Include="SymmetricEncryptionConfig.cs" />
     <Compile Include="SystemBehaviorConfig.cs" />
     <Compile Include="Topics.cs" />
+    <Compile Include="WorkerConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="_ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="ResgridConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,7 +3,7 @@
 namespace Resgrid.Config
 {
 	/// <summary>
-	/// General system behavior configs like determing if to broadcast messages, if
+	/// General system behavior configs like determining if to broadcast messages, if
 	/// the cache is enabled, etc.
 	/// </summary>
 	public static class SystemBehaviorConfig
@@ -21,7 +21,7 @@ namespace Resgrid.Config
 		/// <summary>
 		/// This will prevent the system from sending any outbound messages, for example 
 		/// email, push, text or call. Allows for testing the system without risk of sending
-		/// out a broadcast to unknowning users.
+		/// out a broadcast to unknowing users.
 		/// </summary>
 		public static bool DoNotBroadcast = true;
 
@@ -71,7 +71,7 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Sets the type of Service bus to use for the system, options are Azure or NATS
 		/// </summary>
-		public static ServiceBusTypes ServiceBusType = ServiceBusTypes.Nats;
+		public static ServiceBusTypes ServiceBusType = ServiceBusTypes.Rabbit;
 
 		/// <summary>
 		/// These are specific departments that will be forced to go through the om-prem SMS gateway no matter the send status, i.e. Direct or Gateway

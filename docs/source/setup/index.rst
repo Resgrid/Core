@@ -100,6 +100,48 @@ Force Department Update will clear out all of the in memory cached information f
 Creating Groups
 **************
 
+After you log into the website, click your department menu, it's the name of your Department in the upper right hand corner of the web application next to the Help menu. The menu will drop down and expose a list (detailed above), click on Stations and Groups.
+
+Resgrid has 2 types of groups Station and Organizational. Station groups require a physical address and are the only group types allow to have Units under them. A Station group is intended to denote a physical location that personnel or units may be responding out of, or responding to (i.e. to pick up some equipment or staff). Organizational groups have no physical location and are intended to allow users to be grouped together. For example you can use Organizational groups like East or West denote which users are in those response areas.
+
+.. note:: Users can only be in 1 group at a time, but a user can be a part of many roles. Ideally you would use Groups to define something static like Stations, Districts, Response Areas, etc and use Personnel Roles to define more dynamic information like if a person is a Paramedic or HAZMAT Technician.
+
+.. _organizational_groups:
+
+Organizational Groups
+=======================
+
+Organizational groups are intended to organize groups of users. This group type can only have personnel assigned to it.
+
+
+.. _station_groups:
+
+Station Groups
+=======================
+
+Station groups can have personnel and units assigned to them and must have a physical address. This address could be a building or open staging area. 
+
+
+.. list-table:: Creating a Group Options
+   :header-rows: 1
+
+   * - Setting
+     - Description
+   * - Group Type
+     - The type of group you want to create Organizational or Station
+   * - Group Name
+     - The name of your group
+   * - Parent Group
+     - You can have a group under a group, if you want this newly created group to show up underneath another group select the parent group here
+   * - Address
+     - Optional. If you have selected a Station group you need to supply a physical address for this group. An example would be a Fire Station, Staging Area, Ambulance Bay, etc.  
+   * - Group Admins
+     - These are the administrators for this group. Group Admins can modify personnel in the group, for example updating their profile
+   * - Group Users
+     - Personnel that are in the group
+
+.. note:: You do not have to add personnel here, you can leave both Group Admins and Group Users blank and add users to the groups when you add the users or edit their profiles. For very large groups the list of personnel in the group will be too big to maintain here and is best maintained at the personnel profile level.
+
 Personnel Metadata
 **************
 

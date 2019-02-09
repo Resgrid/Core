@@ -8,10 +8,11 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Resgrid.Console</RootNamespace>
     <AssemblyName>Resgrid.Console</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,8 +64,17 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Consolas.Core, Version=0.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Consolas.0.7.1\lib\net40\Consolas.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Nustache.Core, Version=1.13.8.22, Culture=neutral, PublicKeyToken=efd6f3d8f76ecd9f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Nustache.1.13.8.22\lib\net20\Nustache.Core.dll</HintPath>
@@ -76,7 +86,12 @@
       <HintPath>..\..\packages\SimpleInjector.2.5.0\lib\net45\SimpleInjector.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -86,7 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Args\DbUpdateArgs.cs" />
+    <Compile Include="Args\AddHostsArgs.cs" />
     <Compile Include="Args\HelpArgs.cs" />
+    <Compile Include="Commands\AddHostsCommand.cs" />
     <Compile Include="Commands\DbUpdateCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Program.cs" />
@@ -113,6 +130,58 @@
     <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj">
       <Project>{80fb64b4-62f9-4f06-9549-c519b4360dfc}</Project>
       <Name>Resgrid.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj">
+      <Project>{cad8c361-dbdb-4506-bee7-679df2c2b26a}</Project>
+      <Name>Resgrid.Providers.AddressVerification</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj">
+      <Project>{2bcb42d0-eeea-4295-8733-9bf9c77190c3}</Project>
+      <Name>Resgrid.Providers.Audio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj">
+      <Project>{f99a5b52-d8ef-4f51-89e5-12e45d6e9894}</Project>
+      <Name>Resgrid.Providers.Bus.Rabbit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj">
+      <Project>{d551040a-69be-4b9b-9f33-000ac41dad53}</Project>
+      <Name>Resgrid.Providers.Bus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj">
+      <Project>{691efeb7-a87e-4478-8be2-4bcd0ce7a409}</Project>
+      <Name>Resgrid.Providers.Cache</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.EmailProvider\Resgrid.Providers.EmailProvider.csproj">
+      <Project>{bf6d6f80-3424-4ea1-baf3-a815856e155c}</Project>
+      <Name>Resgrid.Providers.EmailProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj">
+      <Project>{7eef606f-04e4-4744-ad16-f68c796c5f41}</Project>
+      <Name>Resgrid.Providers.Firebase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.GeoLocationProvider\Resgrid.Providers.GeoProvider.csproj">
+      <Project>{be40f1e9-e2df-4a1a-987e-6a9e18c93384}</Project>
+      <Name>Resgrid.Providers.GeoProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj">
+      <Project>{cea86d8a-b122-42e0-b4be-596a6195cee7}</Project>
+      <Name>Resgrid.Providers.Marketing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.PdfProvider\Resgrid.Providers.PdfProvider.csproj">
+      <Project>{e9b3214b-dce0-48ce-9077-293d46ec1e6b}</Project>
+      <Name>Resgrid.Providers.PdfProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.TextProvider\Resgrid.Providers.NumberProvider.csproj">
+      <Project>{df186d09-8dfd-41b8-850a-74852b84d2a7}</Project>
+      <Name>Resgrid.Providers.NumberProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj">
+      <Project>{db5ded75-669d-485c-a093-736e02115892}</Project>
+      <Name>Resgrid.Repositories.DataRepository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj">
+      <Project>{43570079-e393-40d9-89af-f63e7b8437b8}</Project>
+      <Name>Resgrid.Workers.Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

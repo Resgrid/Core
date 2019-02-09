@@ -4,7 +4,7 @@ Installation
 
 In this section we will go over all the steps needed to get Resgrid running on your own environment. 
 
-.. important:: Resgrid requires working **RabbitMQ**, **Redis** and **SQL** servers, more info in :ref:`installation_prerequisites` below and currently only runs on Microsoft Windows operating systems
+.. important:: Resgrid requires working **RabbitMQ** and **SQL** servers, more info in :ref:`installation_prerequisites` below and currently only runs on Microsoft Windows operating systems
 
 .. _installation_prerequisites:
 
@@ -17,7 +17,23 @@ Prerequisites & Dependencies
 
 The following server dependencies need to be installed, configured and functional:
 
+* `.Net Framework <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Framework 4.6.2 (Developer Pack)
 * `RabbitMQ Server <https://www.rabbitmq.com>`_, version 3.6.0 or newer
-* `Redis Server <http://redis.io/>`_, version 4.0 or newer
 * `Microsoft SQL Server <https://www.microsoft.com/en-us/sql-server/default.aspx>`_, version 12.0 (SQL 2014) or newer
 * `Microsoft IIS <https://www.iis.net/>`_ version installed on Windows 8 or newer or Windows Server 2012 or newer
+
+
+RabbitMQ 
+=======================
+
+To install RabbitMQ follow the `Windows Installation <https://www.rabbitmq.com/install-windows.html>`_ guide. Ensure your firewall is configured to allow the ports listed in that guide through. It is also recommend you `enable the management UI <https://www.rabbitmq.com/management.html>`_ for RabbitMQ.
+
+.. note:: RabbitMQ required Erlang to be installed. You can download the `Windows installer <https://www.erlang.org/downloads>`_ at their website.
+
+Redis 
+=======================
+
+Redis is an standalone, resilient in memory data store that Redis uses to cache data that is shared across multiple servers. Redis is an optional dependency but is highly recommended for production installations of Resgrid. Redis does not run well on Windows and thus needs to be installed a Unix or Linux based system. You can get `Redis Server <http://redis.io/>`_ from their website. Version 4.0 or newer is recommended. 
+
+.. important:: Although Redis is optional, it's recommended for production installations or multi server installations of Resgrid.
+

@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
@@ -56,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RabbitBusModule.cs" />
     <Compile Include="RabbitInboundQueueProvider.cs" />
     <Compile Include="RabbitInboundEventProvider.cs" />
     <Compile Include="RabbitOutboundQueueProvider.cs" />

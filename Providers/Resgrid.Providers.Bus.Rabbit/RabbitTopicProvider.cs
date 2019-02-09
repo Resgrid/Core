@@ -1,9 +1,9 @@
-﻿
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using System;
+using System.Text;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
@@ -64,19 +64,29 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private static void VerifyAndCreateClients()
 		{
-			var factory = new ConnectionFactory() { HostName = "localhost" };
+			var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 			using (var connection = factory.CreateConnection())
 			{
 				using (var channel = connection.CreateModel())
 				{
-					
+					channel.ExchangeDeclare(Topics.EventingTopic, "fanout");
 				}
 			}
 		}
 
 		private bool SendMessage(string topicName, string message)
 		{
-			VerifyAndCreateClients();
+			var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+			using (var connection = factory.CreateConnection())
+			{
+				using (var channel = connection.CreateModel())
+				{
+					channel.BasicPublish(exchange: topicName,
+								 routingKey: "",
+								 basicProperties: null,
+								 body: Encoding.ASCII.GetBytes(message));
+				}
+			}
 
 			return true;
 		}

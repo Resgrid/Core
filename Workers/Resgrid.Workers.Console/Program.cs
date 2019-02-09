@@ -49,8 +49,9 @@ namespace Resgrid.Workers.Console
 			// Setup DI
 			var containerBuilder = new ContainerBuilder();
 			containerBuilder.RegisterModule(new QuidjiboModule(typeof(Program).Assembly));
+			containerBuilder.RegisterInstance<ILogger>(logger);
 			var container = containerBuilder.Build();
-
+			
 			// Setup Quidjibo
 			var quidjiboBuilder = new QuidjiboBuilder()
 								  .ConfigureLogging(loggerFactory)

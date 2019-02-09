@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model.Services;
@@ -14,6 +15,12 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Call Email Import";
 		public int Priority => 1;
+		public ILogger _logger;
+
+		public CallEmailImport(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		public async Task ProcessAsync(CallEmailImportCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
@@ -28,30 +35,30 @@ namespace Resgrid.Workers.Console.Tasks
 
 				if (items != null)
 				{
-					progress.Report(1, "CallEmailImport::Email Import Settings: " + items.Count);
+					_logger.LogInformation("CallEmailImport::Email Import Settings: " + items.Count);
 
 					foreach (var i in items)
 					{
 						var cqi = new CallEmailQueueItem();
 						cqi.EmailSettings = i;
 
-						progress.Report(1, "CallEmailImport::Processing Email for DepartmentCallEmailId:" + cqi.EmailSettings.DepartmentCallEmailId);
+						_logger.LogInformation("CallEmailImport::Processing Email for DepartmentCallEmailId:" + cqi.EmailSettings.DepartmentCallEmailId);
 
 						var result = logic.Process(cqi);
 
 						if (result.Item1)
 						{
-							progress.Report(1, $"CallEmailImport::Processed Email Import {cqi.EmailSettings.DepartmentCallEmailId} successfully.");
+							_logger.LogInformation($"CallEmailImport::Processed Email Import {cqi.EmailSettings.DepartmentCallEmailId} successfully.");
 						}
 						else
 						{
-							progress.Report(1, $"CallEmailImport::Failed to Processed Email Import {cqi.EmailSettings.DepartmentCallEmailId} error {result.Item2}");
+							_logger.LogInformation($"CallEmailImport::Failed to Processed Email Import {cqi.EmailSettings.DepartmentCallEmailId} error {result.Item2}");
 						}
 					}
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-			progress.Report(1, $"Finishing the {Name} Task");
+			progress.Report(100, $"Finishing the {Name} Task");
 		}
 	}
 }

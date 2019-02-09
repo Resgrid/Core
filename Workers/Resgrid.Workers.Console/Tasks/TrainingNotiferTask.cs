@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model.Services;
@@ -6,7 +7,6 @@ using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
 using Resgrid.Workers.Framework.Workers.TrainingNotifier;
-using Serilog.Core;
 using System;
 using System.Linq;
 using System.Threading;
@@ -18,7 +18,12 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Training Notifier";
 		public int Priority => 1;
+		public ILogger _logger;
 
+		public TrainingNotiferTask(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		public async Task ProcessAsync(TrainingNotiferCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
@@ -33,7 +38,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 				if (trainings != null && trainings.Any())
 				{
-					progress.Report(2, "TrainingNotifer::Trainings to Notify: " + trainings.Count());
+					_logger.LogInformation("TrainingNotifer::Trainings to Notify: " + trainings.Count());
 
 					foreach (var training in trainings)
 					{
@@ -45,17 +50,17 @@ namespace Resgrid.Workers.Console.Tasks
 
 						if (result.Item1)
 						{
-							progress.Report(4, $"TrainingNotifer::Processed Training Notification {qi.Training.TrainingId} successfully.");
+							_logger.LogInformation($"TrainingNotifer::Processed Training Notification {qi.Training.TrainingId} successfully.");
 						}
 						else
 						{
-							progress.Report(5, $"TrainingNotifer::Failed to Process Training Notification {qi.Training.TrainingId} error {result.Item2}");
+							_logger.LogInformation($"TrainingNotifer::Failed to Process Training Notification {qi.Training.TrainingId} error {result.Item2}");
 						}
 					}
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-			progress.Report(6, $"Finishing the {Name} Task");
+			progress.Report(100, $"Finishing the {Name} Task");
 		}
 	}
 }

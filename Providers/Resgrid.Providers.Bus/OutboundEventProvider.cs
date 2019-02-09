@@ -5,6 +5,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
+using Resgrid.Providers.Bus.Rabbit;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,13 +17,15 @@ namespace Resgrid.Providers.Bus
 		private readonly IEventAggregator _eventAggregator;
 		private static ISignalrProvider _signalrProvider;
 		private static IOutboundQueueProvider _outboundQueueProvider;
-
+		private static RabbitTopicProvider _rabbitTopicProvider;
 
 		public OutboundEventProvider(IEventAggregator eventAggregator, IOutboundQueueProvider outboundQueueProvider, ISignalrProvider signalrProvider)
 		{
 			_eventAggregator = eventAggregator;
 			_outboundQueueProvider = outboundQueueProvider;
 			_signalrProvider = signalrProvider;
+
+			_rabbitTopicProvider = new RabbitTopicProvider();
 
 			_eventAggregator.AddListener(new UnitStatusHandler(), true);
 			_eventAggregator.AddListener(new UnitTypeGroupAvailabilityHandler(), true);
@@ -616,6 +619,12 @@ namespace Resgrid.Providers.Bus
 			{
 				try
 				{
+					if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+					{
+						_rabbitTopicProvider.PersonnelStatusChanged(message);
+						return;
+					}
+
 					var topicClient =
 						TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
 					var topicMessage = CreateMessage(Guid.NewGuid(),
@@ -672,6 +681,12 @@ namespace Resgrid.Providers.Bus
 			{
 				try
 				{
+					if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+					{
+						_rabbitTopicProvider.PersonnelStaffingChanged(message);
+						return;
+					}
+
 					var topicClient =
 						TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
 					var topicMessage = CreateMessage(Guid.NewGuid(),
@@ -728,6 +743,12 @@ namespace Resgrid.Providers.Bus
 			{
 				try
 				{
+					if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+					{
+						_rabbitTopicProvider.UnitStatusChanged(message);
+						return;
+					}
+
 					var topicClient =
 						TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
 					var topicMessage = CreateMessage(Guid.NewGuid(),
@@ -781,6 +802,12 @@ namespace Resgrid.Providers.Bus
 		{
 			public void Handle(CallAddedEvent message)
 			{
+				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				{
+					_rabbitTopicProvider.CallAdded(message);
+					return;
+				}
+
 				try
 				{
 					var topicClient =

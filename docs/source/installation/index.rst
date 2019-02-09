@@ -13,6 +13,8 @@ Prerequisites & Dependencies
 
 `Resgrid <https://resgrid.com/>`_ requires Microsoft .Net Framework 4.6.2 and .Net Core 1.1. and running on a Windows environment, Windows Server is recommended but not required. 
 
+.. note:: Please ensure your Windows system is up to date with all Windows and Microsoft updates before installing the Resgrid System.
+
 The following server dependencies need to be installed, configured and functional:
 
 * `RabbitMQ Server <https://www.rabbitmq.com>`_, version 3.6.0 or newer

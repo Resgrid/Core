@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model;
@@ -20,6 +21,12 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Report Delivery";
 		public int Priority => 1;
+		public ILogger _logger;
+
+		public ReportDeliveryTask(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		public async Task ProcessAsync(ReportDeliveryTaskCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
@@ -54,7 +61,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 					if (items != null && items.Count() > 0)
 					{
-						progress.Report(2, "ReportDelivery::Reports to Deliver: " + items.Count());
+						_logger.LogInformation("ReportDelivery::Reports to Deliver: " + items.Count());
 
 						foreach (var i in items)
 						{
@@ -63,17 +70,17 @@ namespace Resgrid.Workers.Console.Tasks
 							qi.Department = i.Department;
 							qi.Email = i.Email;
 
-							progress.Report(3, "ReportDelivery::Processing Report:" + qi.ScheduledTask.ScheduledTaskId);
+							_logger.LogInformation("ReportDelivery::Processing Report:" + qi.ScheduledTask.ScheduledTaskId);
 
 							var result = logic.Process(qi);
 
 							if (result.Item1)
 							{
-								progress.Report(4, $"ReportDelivery::Processed Report {qi.ScheduledTask.ScheduledTaskId} successfully.");
+								_logger.LogInformation($"ReportDelivery::Processed Report {qi.ScheduledTask.ScheduledTaskId} successfully.");
 							}
 							else
 							{
-								progress.Report(5, $"ReportDelivery::Failed to Process report {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
+								_logger.LogInformation($"ReportDelivery::Failed to Process report {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
 							}
 						}
 
@@ -81,7 +88,7 @@ namespace Resgrid.Workers.Console.Tasks
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-			progress.Report(6, $"Finishing the {Name} Task");
+			progress.Report(100, $"Finishing the {Name} Task");
 		}
 	}
 }

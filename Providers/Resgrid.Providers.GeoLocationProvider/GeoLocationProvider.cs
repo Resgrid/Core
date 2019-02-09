@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Geocoding;
 using Geocoding.Google;
 using Geocoding.Microsoft;
-using Geocoding.Yahoo;
 using GoogleMapsApi.Entities.Directions.Request;
 using GoogleMapsApi.Entities.Directions.Response;
-using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using RestSharp;

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model;
@@ -20,6 +21,12 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Shift Notifier Prune";
 		public int Priority => 1;
+		public ILogger _logger;
+
+		public ShiftNotiferTask(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		public async Task ProcessAsync(ShiftNotiferCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
@@ -37,7 +44,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 				if (shifts != null && shifts.Any())
 				{
-					progress.Report(2, "ShiftNotifer::Shifts to Notify: " + shifts.Count());
+					_logger.LogInformation("ShiftNotifer::Shifts to Notify: " + shifts.Count());
 
 					_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 					_logsService = Bootstrapper.GetKernel().Resolve<ILogService>();
@@ -86,24 +93,24 @@ namespace Resgrid.Workers.Console.Tasks
 
 							qi.Shift = shift;
 
-							progress.Report(3, "ShiftNotifer::Processing Shift Notification: " + qi.Shift.ShiftId);
+							_logger.LogInformation("ShiftNotifer::Processing Shift Notification: " + qi.Shift.ShiftId);
 
 							var result = logic.Process(qi);
 
 							if (result.Item1)
 							{
-								progress.Report(4, $"ShiftNotifer::Processed Shift Notification {qi.Shift.ShiftId} successfully.");
+								_logger.LogInformation($"ShiftNotifer::Processed Shift Notification {qi.Shift.ShiftId} successfully.");
 							}
 							else
 							{
-								progress.Report(5, $"ShiftNotifer::Failed to Process shift notification {qi.Shift.ShiftId} error {result.Item2}");
+								_logger.LogInformation($"ShiftNotifer::Failed to Process shift notification {qi.Shift.ShiftId} error {result.Item2}");
 							}
 						}
 					}
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-			progress.Report(6, $"Finishing the {Name} Task");
+			progress.Report(100, $"Finishing the {Name} Task");
 		}
 	}
 }

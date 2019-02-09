@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model.Services;
@@ -16,6 +17,12 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Call Prune";
 		public int Priority => 1;
+		public ILogger _logger;
+
+		public CallPruneTask(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		public async Task ProcessAsync(CallPruneCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
@@ -30,31 +37,31 @@ namespace Resgrid.Workers.Console.Tasks
 
 				if (items != null)
 				{
-					progress.Report(1, "CallPrune::Call Pruning To Process: " + items.Count);
+					_logger.LogInformation("CallPrune::Call Pruning To Process: " + items.Count);
 
 					foreach (var i in items)
 					{
 						var item = new CallPruneQueueItem();
 						item.PruneSettings = i;
 
-						progress.Report(1, "CallPrune::Processing Calls for DepartmentId:" + item.PruneSettings.DepartmentId);
+						_logger.LogInformation("CallPrune::Processing Calls for DepartmentId:" + item.PruneSettings.DepartmentId);
 
 						var result = logic.Process(item);
 
 						if (result.Item1)
 						{
-							progress.Report(1, $"CallPrune::Processing Calls for Department {item.PruneSettings.DepartmentId} successfully.");
+							_logger.LogInformation($"CallPrune::Processing Calls for Department {item.PruneSettings.DepartmentId} successfully.");
 						}
 						else
 						{
-							progress.Report(1, $"CallPrune::Failed to Process Calls for Department {item.PruneSettings.DepartmentId} error {result.Item2}");
+							_logger.LogInformation($"CallPrune::Failed to Process Calls for Department {item.PruneSettings.DepartmentId} error {result.Item2}");
 						}
 					}
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
 
-			progress.Report(1, $"Finishing the {Name} Task");
+			progress.Report(100, $"Finishing the {Name} Task");
 		}
 	}
 }

@@ -33,15 +33,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 			catch { }
 
-			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
 			{
 				callQueue.Profiles = null;
 				serializedObject = ObjectSerialization.Serialize(callQueue);
 			}
-
-			//BrokeredMessage message = new BrokeredMessage(serializedObject);
-			//message.MessageId = string.Format("{0}|{1}", callQueue.Call.CallId, callQueue.Call.DispatchCount);
 
 			SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
 		}
@@ -73,7 +70,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 			catch { }
 
-			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
 			{
 				messageQueue.Profiles = null;
@@ -109,7 +106,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 			catch { }
 
-			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
 			{
 				distributionListQueue.Users = null;

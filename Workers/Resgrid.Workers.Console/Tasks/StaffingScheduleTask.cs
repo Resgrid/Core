@@ -1,12 +1,11 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
-using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
-using Serilog.Core;
 using System;
 using System.Linq;
 using System.Threading;
@@ -18,6 +17,12 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Staffing Scheduler";
 		public int Priority => 1;
+		public ILogger _logger;
+
+		public StaffingScheduleTask(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		public async Task ProcessAsync(Commands.StaffingScheduleCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
@@ -48,7 +53,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 					if (items != null && items.Any())
 					{
-						progress.Report(2, "StaffingSchedule::Staffing Levels to Change: " + items.Count());
+						_logger.LogInformation("StaffingSchedule::Staffing Levels to Change: " + items.Count());
 
 						foreach (var i in items)
 						{
@@ -56,17 +61,17 @@ namespace Resgrid.Workers.Console.Tasks
 							qi.ScheduledTask = i.ScheduledTask;
 							qi.Department = i.Department;
 
-							progress.Report(1, "StaffingSchedule::Processing Staffing Schedule:" + qi.ScheduledTask.ScheduledTaskId);
+							_logger.LogInformation("StaffingSchedule::Processing Staffing Schedule:" + qi.ScheduledTask.ScheduledTaskId);
 
 							var result = logic.Process(qi);
 
 							if (result.Item1)
 							{
-								progress.Report(3, $"StaffingSchedule::Processed Staffing Schedule {qi.ScheduledTask.ScheduledTaskId} successfully.");
+								_logger.LogInformation($"StaffingSchedule::Processed Staffing Schedule {qi.ScheduledTask.ScheduledTaskId} successfully.");
 							}
 							else
 							{
-								progress.Report(4, $"StaffingSchedule::Failed to Process staffing schedule {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
+								_logger.LogInformation($"StaffingSchedule::Failed to Process staffing schedule {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
 							}
 						}
 					}
@@ -76,7 +81,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 
 
-			progress.Report(5, $"Finishing the {Name} Task");
+			progress.Report(100, $"Finishing the {Name} Task");
 		}
 	}
 }

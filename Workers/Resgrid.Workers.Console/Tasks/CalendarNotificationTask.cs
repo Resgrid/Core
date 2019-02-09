@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Quidjibo.Commands;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
@@ -18,6 +19,12 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Calendar Notifier";
 		public int Priority => 1;
+		public ILogger _logger;
+
+		public CalendarNotificationTask(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		public async Task ProcessAsync(CalendarNotificationCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
@@ -32,24 +39,24 @@ namespace Resgrid.Workers.Console.Tasks
 
 				if (calendarItems != null)
 				{
-					progress.Report(2, "CalendarNotification::Calendar Items to Notify: " + calendarItems.Count);
+					_logger.LogInformation("CalendarNotification::Calendar Items to Notify: " + calendarItems.Count);
 
 					foreach (var calendarItem in calendarItems)
 					{
 						var qi = new CalendarNotifierQueueItem();
 						qi.CalendarItem = calendarItem;
 
-						progress.Report(3, "CalendarNotification::Processing Notification for CalendarId:" + qi.CalendarItem.CalendarItemId);
+						_logger.LogInformation("CalendarNotification::Processing Notification for CalendarId:" + qi.CalendarItem.CalendarItemId);
 
 						var result = logic.Process(qi);
 
 						if (result.Item1)
 						{
-							progress.Report(4, $"CalendarNotification::Processed Calendar Notification {qi.CalendarItem.CalendarItemId} successfully.");
+							_logger.LogInformation($"CalendarNotification::Processed Calendar Notification {qi.CalendarItem.CalendarItemId} successfully.");
 						}
 						else
 						{
-							progress.Report(5, $"CalendarNotification::Failed to Processed Calendar Notification {qi.CalendarItem.CalendarItemId} error {result.Item2}");
+							_logger.LogInformation($"CalendarNotification::Failed to Processed Calendar Notification {qi.CalendarItem.CalendarItemId} error {result.Item2}");
 						}
 					}
 				}
@@ -59,7 +66,7 @@ namespace Resgrid.Workers.Console.Tasks
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-			progress.Report(7, $"Finishing the {Name} Task");
+			progress.Report(100, $"Finishing the {Name} Task");
 		}
 	}
 }

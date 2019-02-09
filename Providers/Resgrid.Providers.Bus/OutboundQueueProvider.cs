@@ -1,8 +1,10 @@
 ﻿using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
+using Resgrid.Providers.Bus.Rabbit;
 using System;
 using System.Text;
 using System.Threading;
@@ -12,6 +14,7 @@ namespace Resgrid.Providers.Bus
 {
 	public class OutboundQueueProvider : IOutboundQueueProvider
 	{
+		private readonly RabbitOutboundQueueProvider _rabbitOutboundQueueProvider;
 		private static QueueClient _callClient = null;
 		private static QueueClient _messageClient = null;
 		private static QueueClient _notificationClient = null;
@@ -20,11 +23,19 @@ namespace Resgrid.Providers.Bus
 
 		public OutboundQueueProvider()
 		{
+			_rabbitOutboundQueueProvider = new RabbitOutboundQueueProvider();
+
 			VerifyAndCreateClients();
 		}
 
 		public void EnqueueCall(CallQueueItem callQueue)
 		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			{
+				_rabbitOutboundQueueProvider.EnqueueCall(callQueue);
+				return;
+			}
+
 			VerifyAndCreateClients();
 			string serializedObject = String.Empty;
 
@@ -42,7 +53,7 @@ namespace Resgrid.Providers.Bus
 			}
 			catch { }
 
-			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
 			{
 				callQueue.Profiles = null;
@@ -58,6 +69,12 @@ namespace Resgrid.Providers.Bus
 
 		public void EnqueueMessage(MessageQueueItem messageQueue)
 		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			{
+				_rabbitOutboundQueueProvider.EnqueueMessage(messageQueue);
+				return;
+			}
+
 			VerifyAndCreateClients();
 			string serializedObject = String.Empty;
 
@@ -84,7 +101,7 @@ namespace Resgrid.Providers.Bus
 			}
 			catch { }
 
-			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
 			{
 				messageQueue.Profiles = null;
@@ -100,6 +117,12 @@ namespace Resgrid.Providers.Bus
 
 		public void EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
 		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			{
+				_rabbitOutboundQueueProvider.EnqueueDistributionList(distributionListQueue);
+				return;
+			}
+
 			VerifyAndCreateClients();
 			string serializedObject = String.Empty;
 
@@ -124,7 +147,7 @@ namespace Resgrid.Providers.Bus
 			}
 			catch { }
 
-			// If we get an Excpetion, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
 			if (String.IsNullOrWhiteSpace(serializedObject))
 			{
 				distributionListQueue.Users = null;
@@ -140,6 +163,12 @@ namespace Resgrid.Providers.Bus
 
 		public void EnqueueNotification(NotificationItem notificationQueue)
 		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			{
+				_rabbitOutboundQueueProvider.EnqueueNotification(notificationQueue);
+				return;
+			}
+
 			VerifyAndCreateClients();
 
 			BrokeredMessage message = new BrokeredMessage(ObjectSerialization.Serialize(notificationQueue));
@@ -150,6 +179,12 @@ namespace Resgrid.Providers.Bus
 
 		public void EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
 		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			{
+				_rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
+				return;
+			}
+
 			VerifyAndCreateClients();
 
 			BrokeredMessage message = new BrokeredMessage(ObjectSerialization.Serialize(shiftQueueItem));

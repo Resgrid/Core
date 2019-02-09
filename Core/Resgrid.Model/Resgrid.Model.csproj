@@ -320,6 +320,7 @@
     <Compile Include="Providers\IInboundEventProvider.cs" />
     <Compile Include="Providers\IKanbanProvider.cs" />
     <Compile Include="Providers\IKmlProvider.cs" />
+    <Compile Include="Providers\IRabbitOutboundQueueProvider.cs" />
     <Compile Include="Providers\IShortenUrlProvider.cs" />
     <Compile Include="Providers\ISignalrProvider.cs" />
     <Compile Include="Providers\IUnitNotificationProvider.cs" />

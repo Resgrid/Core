@@ -151,6 +151,10 @@
       <Project>{8b7997ec-67a2-42ab-9fbd-f8ed2c2997c8}</Project>
       <Name>Resgrid.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj">
+      <Project>{f99a5b52-d8ef-4f51-89e5-12e45d6e9894}</Project>
+      <Name>Resgrid.Providers.Bus.Rabbit</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

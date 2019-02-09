@@ -42,192 +42,195 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private void StartMonitoring()
 		{
-			var callQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-			callQueueReceivedConsumer.Received += (model, ea) =>
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			{
-				if (ea != null && ea.Body != null && ea.Body.Length > 0)
+				var callQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				callQueueReceivedConsumer.Received += (model, ea) =>
 				{
-					var body = ea.Body;
-					var message = Encoding.UTF8.GetString(body);
-
-					try
+					if (ea != null && ea.Body != null && ea.Body.Length > 0)
 					{
-						var cqi = ObjectSerialization.Deserialize<CallQueueItem>(message);
+						var body = ea.Body;
+						var message = Encoding.UTF8.GetString(body);
 
-						if (cqi != null)
+						try
 						{
-							CallQueueReceived?.Invoke(cqi);
+							var cqi = ObjectSerialization.Deserialize<CallQueueItem>(message);
+
+							if (cqi != null)
+							{
+								CallQueueReceived?.Invoke(cqi);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
 						}
 					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-					}
-				}
 
-				_channel.BasicAck(ea.DeliveryTag, false);
-			};
+					_channel.BasicAck(ea.DeliveryTag, false);
+				};
 
-			var messageQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-			messageQueueReceivedConsumer.Received += (model, ea) =>
-			{
-				if (ea != null && ea.Body != null && ea.Body.Length > 0)
+				var messageQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				messageQueueReceivedConsumer.Received += (model, ea) =>
 				{
-					var body = ea.Body;
-					var message = Encoding.UTF8.GetString(body);
-
-					try
+					if (ea != null && ea.Body != null && ea.Body.Length > 0)
 					{
-						var mqi = ObjectSerialization.Deserialize<MessageQueueItem>(message);
+						var body = ea.Body;
+						var message = Encoding.UTF8.GetString(body);
 
-						if (mqi != null)
+						try
 						{
-							MessageQueueReceived?.Invoke(mqi);
+							var mqi = ObjectSerialization.Deserialize<MessageQueueItem>(message);
+
+							if (mqi != null)
+							{
+								MessageQueueReceived?.Invoke(mqi);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
 						}
 					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-					}
-				}
 
-				_channel.BasicAck(ea.DeliveryTag, false);
-			};
+					_channel.BasicAck(ea.DeliveryTag, false);
+				};
 
-			var distributionListQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-			distributionListQueueReceivedConsumer.Received += (model, ea) =>
-			{
-				if (ea != null && ea.Body != null && ea.Body.Length > 0)
+				var distributionListQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				distributionListQueueReceivedConsumer.Received += (model, ea) =>
 				{
-					var body = ea.Body;
-					var message = Encoding.UTF8.GetString(body);
-
-					try
+					if (ea != null && ea.Body != null && ea.Body.Length > 0)
 					{
-						var dlqi = ObjectSerialization.Deserialize<DistributionListQueueItem>(message);
+						var body = ea.Body;
+						var message = Encoding.UTF8.GetString(body);
 
-						if (dlqi != null)
+						try
 						{
-							DistributionListQueueReceived?.Invoke(dlqi);
+							var dlqi = ObjectSerialization.Deserialize<DistributionListQueueItem>(message);
+
+							if (dlqi != null)
+							{
+								DistributionListQueueReceived?.Invoke(dlqi);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
 						}
 					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-					}
-				}
 
-				_channel.BasicAck(ea.DeliveryTag, false);
-			};
+					_channel.BasicAck(ea.DeliveryTag, false);
+				};
 
-			var notificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-			notificationQueueReceivedConsumer.Received += (model, ea) =>
-			{
-				if (ea != null && ea.Body != null && ea.Body.Length > 0)
+				var notificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				notificationQueueReceivedConsumer.Received += (model, ea) =>
 				{
-					var body = ea.Body;
-					var message = Encoding.UTF8.GetString(body);
-
-					try
+					if (ea != null && ea.Body != null && ea.Body.Length > 0)
 					{
-						var ni = ObjectSerialization.Deserialize<NotificationItem>(message);
+						var body = ea.Body;
+						var message = Encoding.UTF8.GetString(body);
 
-						if (ni != null)
+						try
 						{
-							NotificationQueueReceived?.Invoke(ni);
+							var ni = ObjectSerialization.Deserialize<NotificationItem>(message);
+
+							if (ni != null)
+							{
+								NotificationQueueReceived?.Invoke(ni);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
 						}
 					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-					}
-				}
 
-				_channel.BasicAck(ea.DeliveryTag, false);
-			};
+					_channel.BasicAck(ea.DeliveryTag, false);
+				};
 
-			var shiftNotificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-			shiftNotificationQueueReceivedConsumer.Received += (model, ea) =>
-			{
-				if (ea != null && ea.Body != null && ea.Body.Length > 0)
+				var shiftNotificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				shiftNotificationQueueReceivedConsumer.Received += (model, ea) =>
 				{
-					var body = ea.Body;
-					var message = Encoding.UTF8.GetString(body);
-
-					try
+					if (ea != null && ea.Body != null && ea.Body.Length > 0)
 					{
-						var sqi = ObjectSerialization.Deserialize<ShiftQueueItem>(message);
+						var body = ea.Body;
+						var message = Encoding.UTF8.GetString(body);
 
-						if (sqi != null)
+						try
 						{
-							ShiftNotificationQueueReceived?.Invoke(sqi);
+							var sqi = ObjectSerialization.Deserialize<ShiftQueueItem>(message);
+
+							if (sqi != null)
+							{
+								ShiftNotificationQueueReceived?.Invoke(sqi);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
 						}
 					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-					}
-				}
 
-				_channel.BasicAck(ea.DeliveryTag, false);
-			};
+					_channel.BasicAck(ea.DeliveryTag, false);
+				};
 
-			var cqrsEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-			cqrsEventQueueReceivedConsumer.Received += (model, ea) =>
-			{
-				if (ea != null && ea.Body != null && ea.Body.Length > 0)
+				var cqrsEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				cqrsEventQueueReceivedConsumer.Received += (model, ea) =>
 				{
-					var body = ea.Body;
-					var message = Encoding.UTF8.GetString(body);
-
-					try
+					if (ea != null && ea.Body != null && ea.Body.Length > 0)
 					{
-						var cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+						var body = ea.Body;
+						var message = Encoding.UTF8.GetString(body);
 
-						if (cqrs != null)
+						try
 						{
-							CqrsEventQueueReceived?.Invoke(cqrs);
+							var cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+
+							if (cqrs != null)
+							{
+								CqrsEventQueueReceived?.Invoke(cqrs);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
 						}
 					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-					}
-				}
 
-				_channel.BasicAck(ea.DeliveryTag, false);
-			};
+					_channel.BasicAck(ea.DeliveryTag, false);
+				};
 
 
-			String callQueueReceivedConsumerTag = _channel.BasicConsume(
-				queue: ServiceBusConfig.CallBroadcastQueueName,
-				autoAck: false,
-				consumer: callQueueReceivedConsumer);
+				String callQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: ServiceBusConfig.CallBroadcastQueueName,
+					autoAck: false,
+					consumer: callQueueReceivedConsumer);
 
-			String messageQueueReceivedConsumerTag = _channel.BasicConsume(
-				queue: ServiceBusConfig.MessageBroadcastQueueName,
-				autoAck: false,
-				consumer: messageQueueReceivedConsumer);
+				String messageQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: ServiceBusConfig.MessageBroadcastQueueName,
+					autoAck: false,
+					consumer: messageQueueReceivedConsumer);
 
-			String distributionListQueueReceivedConsumerTag = _channel.BasicConsume(
-				queue: ServiceBusConfig.EmailBroadcastQueueName,
-				autoAck: false,
-				consumer: distributionListQueueReceivedConsumer);
+				String distributionListQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: ServiceBusConfig.EmailBroadcastQueueName,
+					autoAck: false,
+					consumer: distributionListQueueReceivedConsumer);
 
-			String notificationQueueReceivedConsumerTag = _channel.BasicConsume(
-				queue: ServiceBusConfig.NotificaitonBroadcastQueueName,
-				autoAck: false,
-				consumer: notificationQueueReceivedConsumer);
+				String notificationQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: ServiceBusConfig.NotificaitonBroadcastQueueName,
+					autoAck: false,
+					consumer: notificationQueueReceivedConsumer);
 
-			String shiftNotificationQueueReceivedConsumerTag = _channel.BasicConsume(
-				queue: ServiceBusConfig.ShiftNotificationsQueueName,
-				autoAck: false,
-				consumer: shiftNotificationQueueReceivedConsumer);
+				String shiftNotificationQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: ServiceBusConfig.ShiftNotificationsQueueName,
+					autoAck: false,
+					consumer: shiftNotificationQueueReceivedConsumer);
 
-			String cqrsEventQueueReceivedConsumerTag = _channel.BasicConsume(
-				queue: ServiceBusConfig.SystemQueueName,
-				autoAck: false,
-				consumer: cqrsEventQueueReceivedConsumer);
+				String cqrsEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: ServiceBusConfig.SystemQueueName,
+					autoAck: false,
+					consumer: cqrsEventQueueReceivedConsumer);
+			}
 		}
 	}
 }

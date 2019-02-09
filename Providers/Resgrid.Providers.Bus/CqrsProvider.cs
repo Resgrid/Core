@@ -5,27 +5,42 @@ using Microsoft.ServiceBus.Messaging;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Providers.Bus.Rabbit;
 
 namespace Resgrid.Providers.Bus
 {
 	public class CqrsProvider : ICqrsProvider
 	{
+		private readonly RabbitOutboundQueueProvider _rabbitOutboundQueueProvider;
 		private readonly QueueClient _systemClient = null;
 
 		public CqrsProvider()
 		{
-			while (_systemClient == null)
+			if (Config.SystemBehaviorConfig.ServiceBusType == Config.ServiceBusTypes.Azure)
 			{
-				try
+				while (_systemClient == null)
 				{
-					_systemClient = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.SystemQueueName);
+					try
+					{
+						_systemClient = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.SystemQueueName);
+					}
+					catch (TimeoutException) { }
 				}
-				catch (TimeoutException) { }
+			}
+			else
+			{
+				_rabbitOutboundQueueProvider = new RabbitOutboundQueueProvider();
 			}
 		}
 
 		public void EnqueueCqrsEvent(CqrsEvent cqrsEvent)
 		{
+			if (Config.SystemBehaviorConfig.ServiceBusType == Config.ServiceBusTypes.Rabbit)
+			{
+				_rabbitOutboundQueueProvider.EnqueueCqrsEvent(cqrsEvent);
+				return;
+			}
+
 			var serializedObject = ObjectSerialization.Serialize(cqrsEvent);
 			BrokeredMessage message = new BrokeredMessage(serializedObject);
 			message.MessageId = string.Format("{0}", cqrsEvent.EventId);
@@ -35,6 +50,12 @@ namespace Resgrid.Providers.Bus
 
 		public async Task<bool> EnqueueCqrsEventAsync(CqrsEvent cqrsEvent)
 		{
+			if (Config.SystemBehaviorConfig.ServiceBusType == Config.ServiceBusTypes.Rabbit)
+			{
+				_rabbitOutboundQueueProvider.EnqueueCqrsEvent(cqrsEvent);
+				return true;
+			}
+
 			var serializedObject = ObjectSerialization.Serialize(cqrsEvent);
 			BrokeredMessage message = new BrokeredMessage(serializedObject);
 			message.MessageId = string.Format("{0}", cqrsEvent.EventId);
@@ -44,8 +65,10 @@ namespace Resgrid.Providers.Bus
 
 		private void SendMessage(QueueClient client, BrokeredMessage message)
 		{
+			if (Config.SystemBehaviorConfig.ServiceBusType == Config.ServiceBusTypes.Azure)
+			{
 #pragma warning disable 4014
-			Task.Run(() =>
+				Task.Run(() =>
 			{
 				int retry = 0;
 				bool sent = false;
@@ -72,33 +95,39 @@ namespace Resgrid.Providers.Bus
 				return sent;
 			}).ConfigureAwait(false);
 #pragma warning restore 4014
+			}
 		}
 
 		private async Task<bool> SendMessageAsync(QueueClient client, BrokeredMessage message)
 		{
-			int retry = 0;
-			bool sent = false;
-
-			while (!sent)
+			if (Config.SystemBehaviorConfig.ServiceBusType == Config.ServiceBusTypes.Azure)
 			{
-				try
-				{
-					await client.SendAsync(message);
-					sent = true;
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, message.ToString());
+				int retry = 0;
+				bool sent = false;
 
-					if (retry >= 5)
-						return false;
+				while (!sent)
+				{
+					try
+					{
+						await client.SendAsync(message);
+						sent = true;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, message.ToString());
 
-					Thread.Sleep(250);
-					retry++;
+						if (retry >= 5)
+							return false;
+
+						Thread.Sleep(250);
+						retry++;
+					}
 				}
+
+				return sent;
 			}
 
-			return sent;
+			return false;
 		}
 	}
 }

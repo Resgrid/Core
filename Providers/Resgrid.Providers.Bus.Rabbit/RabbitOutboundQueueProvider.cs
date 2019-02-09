@@ -144,80 +144,88 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public static void VerifyAndCreateClients()
 		{
-			try
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			{
-				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = factory.CreateConnection())
+				try
 				{
-					using (var channel = connection.CreateModel())
+					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					using (var connection = factory.CreateConnection())
 					{
-						channel.QueueDeclare(queue: ServiceBusConfig.SystemQueueName,
-									 durable: true,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+						using (var channel = connection.CreateModel())
+						{
+							channel.QueueDeclare(queue: ServiceBusConfig.SystemQueueName,
+										 durable: true,
+										 exclusive: false,
+										 autoDelete: false,
+										 arguments: null);
 
-						channel.QueueDeclare(queue: ServiceBusConfig.CallBroadcastQueueName,
-									 durable: true,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+							channel.QueueDeclare(queue: ServiceBusConfig.CallBroadcastQueueName,
+										 durable: true,
+										 exclusive: false,
+										 autoDelete: false,
+										 arguments: null);
 
-						channel.QueueDeclare(queue: ServiceBusConfig.MessageBroadcastQueueName,
-									 durable: true,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+							channel.QueueDeclare(queue: ServiceBusConfig.MessageBroadcastQueueName,
+										 durable: true,
+										 exclusive: false,
+										 autoDelete: false,
+										 arguments: null);
 
-						channel.QueueDeclare(queue: ServiceBusConfig.EmailBroadcastQueueName,
-									 durable: true,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+							channel.QueueDeclare(queue: ServiceBusConfig.EmailBroadcastQueueName,
+										 durable: true,
+										 exclusive: false,
+										 autoDelete: false,
+										 arguments: null);
 
-						channel.QueueDeclare(queue: ServiceBusConfig.NotificaitonBroadcastQueueName,
-									 durable: true,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+							channel.QueueDeclare(queue: ServiceBusConfig.NotificaitonBroadcastQueueName,
+										 durable: true,
+										 exclusive: false,
+										 autoDelete: false,
+										 arguments: null);
 
-						channel.QueueDeclare(queue: ServiceBusConfig.ShiftNotificationsQueueName,
-									 durable: true,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+							channel.QueueDeclare(queue: ServiceBusConfig.ShiftNotificationsQueueName,
+										 durable: true,
+										 exclusive: false,
+										 autoDelete: false,
+										 arguments: null);
+						}
 					}
 				}
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
 			}
 		}
 
 		private bool SendMessage(string queueName, string message)
 		{
-			try
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			{
-				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = factory.CreateConnection())
+				try
 				{
-					using (var channel = connection.CreateModel())
+					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					using (var connection = factory.CreateConnection())
 					{
-						channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
-									 routingKey: queueName,
-									 basicProperties: null,
-									 body: Encoding.ASCII.GetBytes(message));
-					}
+						using (var channel = connection.CreateModel())
+						{
+							channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
+										 routingKey: queueName,
+										 basicProperties: null,
+										 body: Encoding.ASCII.GetBytes(message));
+						}
 
-					return true;
+						return true;
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+					return false;
 				}
 			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-				return false;
-			}
+
+			return false;
 		}
 	}
 }

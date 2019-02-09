@@ -106,6 +106,8 @@ Resgrid has 2 types of groups Station and Organizational. Station groups require
 
 .. note:: Users can only be in 1 group at a time, but a user can be a part of many roles. Ideally you would use Groups to define something static like Stations, Districts, Response Areas, etc and use Personnel Roles to define more dynamic information like if a person is a Paramedic or HAZMAT Technician.
 
+On the Department Groups list you'll see columns calls "Dispatch Email" and "Message Email". These are unique email addresses for those groups. The "Dispatch Email" address will create a call for that specific group and dispatch all personnel and units under that group. The "Message Email" address will create a in-system message in Resgrid to all personnel in that group. 
+
 .. _organizational_groups:
 
 Organizational Groups
@@ -121,6 +123,11 @@ Station Groups
 
 Station groups can have personnel and units assigned to them and must have a physical address. This address could be a building or open staging area. 
 
+
+.. _add_group_page:
+
+Add Group Page
+=======================
 
 .. list-table:: Creating a Group Options
    :header-rows: 1
@@ -142,8 +149,14 @@ Station groups can have personnel and units assigned to them and must have a phy
 
 .. note:: You do not have to add personnel here, you can leave both Group Admins and Group Users blank and add users to the groups when you add the users or edit their profiles. For very large groups the list of personnel in the group will be too big to maintain here and is best maintained at the personnel profile level.
 
-Personnel Metadata
+Personnel Roles
 **************
+
+After you log into the website, click the Personnel module from the left hand module list, it's under your name, Home and Calls buttons. This will take you the Personnel Section, there is a blue button on the right hand side of the screen, below the top bar with "Help" and "Log out" named "Manage Roles", this is where you can administer your Personnel Roles.
+
+Personnel can be in any number of Roles; roles are used to define attributes of your personnel, for example it could be an MOS or Job Function like Firefighter, Paramedic, Officer, etc or could be ranks or roles within your organization like Manager, Supervisor or Coordinator. Roles allow you to filter personnel when making calls, sending messages, assigning trainings and the like. For example say you have a training for your EMT's, you can have roles for your EMT's, AEMT's and Paramedics and assign the training just to them. 
+
+Once you create the role, you can click "Edit" in the roles list to assign personnel to that role. Additionally the recommended way to assign personnel to roles is via the personnel profile view (accessible by editing the person from the Personnel list, or clicking their name on the dashboard). When adding a person to the system you can assign roles at that time as well. 
 
 Adding Personnel
 **************

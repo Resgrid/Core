@@ -47,9 +47,9 @@
 		#endregion Azure Service Bus Values
 
 		#region RabbitMQ Bus Values
-		public static string RabbitHostname = "";
-		public static string RabbitUsername = "";
-		public static string RabbbitPassword = "";
+		public static string RabbitHostname = "localhost";
+		public static string RabbitUsername = "guest";
+		public static string RabbbitPassword = "guest";
 		public static string RabbbitExchange = "";
 		#endregion RabbitMQ Bus Values
 	}

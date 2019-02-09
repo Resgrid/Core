@@ -27,9 +27,16 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 		}
 
-		public void Process(NotificationQueueItem item)
+		public void Process(NotificationItem item)
 		{
-			ProcessQueueMessage(_client.Receive());
+			if (Config.SystemBehaviorConfig.IsAzure)
+			{
+				ProcessQueueMessage(_client.Receive());
+			}
+			else
+			{
+				ProcessNotificationItem(item, Guid.NewGuid().ToString(), "");
+			}
 		}
 
 		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
@@ -57,62 +64,7 @@ namespace Resgrid.Workers.Framework.Logic
 							message.DeadLetter();
 						}
 
-						if (ni != null)
-						{
-							var _notificationService = Bootstrapper.GetKernel().Resolve<INotificationService>();
-							var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-							var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-							var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-							var _departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-
-							var item = new ProcessedNotification();
-
-							if (ni.DepartmentId != 0)
-								item.DepartmentId = ni.DepartmentId;
-							else
-								item.DepartmentId = _notificationService.GetDepartmentIdForType(ni);
-
-							item.Type = (EventTypes)ni.Type;
-							item.Value = ni.Value;
-							item.MessageId = message.MessageId;
-							item.Data = body;
-							item.ItemId = ni.ItemId;
-
-							var queueItem = new NotificationQueueItem();
-							queueItem.Department = _departmentsService.GetDepartmentById(item.DepartmentId, false);
-							queueItem.DepartmentTextNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(item.DepartmentId);
-							queueItem.NotificationSettings = _notificationService.GetNotificationsByDepartment(item.DepartmentId);
-							queueItem.Profiles = _userProfileService.GetAllProfilesForDepartment(item.DepartmentId);
-
-							queueItem.Notifications = new List<ProcessedNotification>();
-							queueItem.Notifications.Add(item);
-
-							var notificaitons = _notificationService.ProcessNotifications(queueItem.Notifications, queueItem.NotificationSettings);
-							if (notificaitons != null)
-							{
-								foreach (var notification in notificaitons)
-								{
-									var text = _notificationService.GetMessageForType(notification);
-
-									if (!String.IsNullOrWhiteSpace(text))
-									{
-										foreach (var user in notification.Users)
-										{
-											if (queueItem.Profiles.ContainsKey(user))
-												_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, "Notification", queueItem.Profiles[user]);
-											//else
-											//	_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber);
-										}
-									}
-								}
-							}
-
-							_notificationService = null;
-							_communicationService = null;
-							_departmentsService = null;
-							_userProfileService = null;
-							_departmentSettingsService = null;
-						}
+						ProcessNotificationItem(ni, message.MessageId, body);
 					}
 					else
 					{
@@ -140,6 +92,66 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return new Tuple<bool, string>(success, result);
+		}
+
+		public static void ProcessNotificationItem(NotificationItem ni, string messageId, string body)
+		{
+			if (ni != null)
+			{
+				var _notificationService = Bootstrapper.GetKernel().Resolve<INotificationService>();
+				var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
+				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+				var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+				var _departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+
+				var item = new ProcessedNotification();
+
+				if (ni.DepartmentId != 0)
+					item.DepartmentId = ni.DepartmentId;
+				else
+					item.DepartmentId = _notificationService.GetDepartmentIdForType(ni);
+
+				item.Type = (EventTypes)ni.Type;
+				item.Value = ni.Value;
+				item.MessageId = messageId;
+				item.Data = body;
+				item.ItemId = ni.ItemId;
+
+				var queueItem = new NotificationQueueItem();
+				queueItem.Department = _departmentsService.GetDepartmentById(item.DepartmentId, false);
+				queueItem.DepartmentTextNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(item.DepartmentId);
+				queueItem.NotificationSettings = _notificationService.GetNotificationsByDepartment(item.DepartmentId);
+				queueItem.Profiles = _userProfileService.GetAllProfilesForDepartment(item.DepartmentId);
+
+				queueItem.Notifications = new List<ProcessedNotification>();
+				queueItem.Notifications.Add(item);
+
+				var notificaitons = _notificationService.ProcessNotifications(queueItem.Notifications, queueItem.NotificationSettings);
+				if (notificaitons != null)
+				{
+					foreach (var notification in notificaitons)
+					{
+						var text = _notificationService.GetMessageForType(notification);
+
+						if (!String.IsNullOrWhiteSpace(text))
+						{
+							foreach (var user in notification.Users)
+							{
+								if (queueItem.Profiles.ContainsKey(user))
+									_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, "Notification", queueItem.Profiles[user]);
+								//else
+								//	_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber);
+							}
+						}
+					}
+				}
+
+				_notificationService = null;
+				_communicationService = null;
+				_departmentsService = null;
+				_userProfileService = null;
+				_departmentSettingsService = null;
+			}
 		}
 	}
 }

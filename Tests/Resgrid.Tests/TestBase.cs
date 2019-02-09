@@ -14,9 +14,9 @@ namespace Resgrid.Tests
 	{
 		static TestBase()
 		{
-			Config.SystemBehaviorConfig.CacheEnabled = false;
-			Config.SystemBehaviorConfig.UseInternalCache = true;
-			Config.SystemBehaviorConfig.DoNotBroadcast = true;
+			Resgrid.Config.SystemBehaviorConfig.CacheEnabled = false;
+			Resgrid.Config.SystemBehaviorConfig.UseInternalCache = true;
+			Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = true;
 
 			//DbConfiguration.SetConfiguration(Resgrid.Repositories.DataRepository.Configurations.TestDbConfiguration);
 

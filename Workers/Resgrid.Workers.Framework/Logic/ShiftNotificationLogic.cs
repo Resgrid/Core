@@ -27,7 +27,14 @@ namespace Resgrid.Workers.Framework.Logic
 
 		public void Process(ShiftQueueItem item)
 		{
-			ProcessQueueMessage(_client.Receive());
+			if (Config.SystemBehaviorConfig.IsAzure)
+			{
+				ProcessQueueMessage(_client.Receive());
+			}
+			else
+			{
+				ProcessShiftQueueItem(item);
+			}
 		}
 
 		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
@@ -55,106 +62,7 @@ namespace Resgrid.Workers.Framework.Logic
 							message.Complete();
 						}
 
-						if (sqi != null)
-						{
-							var _shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
-							var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-							var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-
-							if (sqi.Type == (int)ShiftQueueTypes.TradeRequested)
-							{
-								var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
-								var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
-								var text = _shiftsService.GenerateShiftTradeNotificationText(sourceUserProfile, tradeRequest);
-
-								var userProfiles = _userProfileService.GetSelectedUserProfiles(tradeRequest.Users.Select(x => x.UserId).ToList());
-								foreach (var user in tradeRequest.Users)
-								{
-									UserProfile profile = userProfiles.FirstOrDefault(x => x.UserId == user.UserId);
-									_communicationService.SendNotification(user.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
-										tradeRequest.SourceShiftSignup.Shift.Name, profile);
-								}
-							}
-							else if (sqi.Type == (int)ShiftQueueTypes.TradeRejected && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
-							{
-								var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
-								var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
-								var targetUserProfile = _userProfileService.GetProfileByUserId(sqi.SourceUserId);
-
-								var text = _shiftsService.GenerateShiftTradeRejectionText(targetUserProfile, tradeRequest);
-
-								_communicationService.SendNotification(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
-										tradeRequest.SourceShiftSignup.Shift.Name, sourceUserProfile);
-							}
-							else if (sqi.Type == (int)ShiftQueueTypes.TradeProposed && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
-							{
-								var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
-								var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
-								var proposedUserProfile = _userProfileService.GetProfileByUserId(sqi.SourceUserId);
-
-								var text = _shiftsService.GenerateShiftTradeProposedText(proposedUserProfile, tradeRequest);
-
-								_communicationService.SendNotification(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
-										tradeRequest.SourceShiftSignup.Shift.Name, sourceUserProfile);
-							}
-							else if (sqi.Type == (int)ShiftQueueTypes.TradeFilled && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
-							{
-								var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
-								var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
-								var proposedUserProfile = _userProfileService.GetProfileByUserId(sqi.SourceUserId);
-
-								var text = _shiftsService.GenerateShiftTradeFilledText(sourceUserProfile, tradeRequest);
-
-								_communicationService.SendNotification(proposedUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
-										tradeRequest.SourceShiftSignup.Shift.Name, proposedUserProfile);
-							}
-							else if (sqi.Type == (int) ShiftQueueTypes.ShiftCreated)
-							{
-								var shift = _shiftsService.GetShiftById(sqi.ShiftId);
-								var profiles = _userProfileService.GetAllProfilesForDepartment(sqi.DepartmentId);
-
-								var text = $"New Shift {shift.Name} has been created";
-
-								foreach (var profile in profiles.Select(x => x.Value))
-								{ 
-									_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, "New Shift", profile);
-								}
-							}
-							else if (sqi.Type == (int)ShiftQueueTypes.ShiftUpdated)
-							{
-								var shift = _shiftsService.GetShiftById(sqi.ShiftId);
-								var profiles = _userProfileService.GetAllProfilesForDepartment(sqi.DepartmentId);
-
-								var text = $"Shift {shift.Name} has been updated";
-
-								foreach (var profile in shift.Personnel)
-								{
-									if (profiles.ContainsKey(profile.UserId))
-										_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
-									else
-										_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
-								}
-							}
-							else if (sqi.Type == (int)ShiftQueueTypes.ShiftDaysAdded)
-							{
-								var shift = _shiftsService.GetShiftById(sqi.ShiftId);
-								var profiles = _userProfileService.GetAllProfilesForDepartment(sqi.DepartmentId);
-
-								var text = $"Shift {shift.Name} has been updated";
-
-								foreach (var profile in shift.Personnel)
-								{
-									if (profiles.ContainsKey(profile.UserId))
-										_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
-									else
-										_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
-								}
-							}
-
-							_shiftsService = null;
-							_communicationService = null;
-							_userProfileService = null;
-						}
+						ProcessShiftQueueItem(sqi);
 					}
 
 					try
@@ -177,6 +85,110 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return new Tuple<bool, string>(success, result);
+		}
+
+		public static void ProcessShiftQueueItem(ShiftQueueItem sqi)
+		{
+			if (sqi != null)
+			{
+				var _shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
+				var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
+				var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+
+				if (sqi.Type == (int)ShiftQueueTypes.TradeRequested)
+				{
+					var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
+					var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
+					var text = _shiftsService.GenerateShiftTradeNotificationText(sourceUserProfile, tradeRequest);
+
+					var userProfiles = _userProfileService.GetSelectedUserProfiles(tradeRequest.Users.Select(x => x.UserId).ToList());
+					foreach (var user in tradeRequest.Users)
+					{
+						UserProfile profile = userProfiles.FirstOrDefault(x => x.UserId == user.UserId);
+						_communicationService.SendNotification(user.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+							tradeRequest.SourceShiftSignup.Shift.Name, profile);
+					}
+				}
+				else if (sqi.Type == (int)ShiftQueueTypes.TradeRejected && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
+				{
+					var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
+					var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
+					var targetUserProfile = _userProfileService.GetProfileByUserId(sqi.SourceUserId);
+
+					var text = _shiftsService.GenerateShiftTradeRejectionText(targetUserProfile, tradeRequest);
+
+					_communicationService.SendNotification(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+							tradeRequest.SourceShiftSignup.Shift.Name, sourceUserProfile);
+				}
+				else if (sqi.Type == (int)ShiftQueueTypes.TradeProposed && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
+				{
+					var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
+					var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
+					var proposedUserProfile = _userProfileService.GetProfileByUserId(sqi.SourceUserId);
+
+					var text = _shiftsService.GenerateShiftTradeProposedText(proposedUserProfile, tradeRequest);
+
+					_communicationService.SendNotification(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+							tradeRequest.SourceShiftSignup.Shift.Name, sourceUserProfile);
+				}
+				else if (sqi.Type == (int)ShiftQueueTypes.TradeFilled && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
+				{
+					var tradeRequest = _shiftsService.GetShiftTradeById(sqi.ShiftSignupTradeId);
+					var sourceUserProfile = _userProfileService.GetProfileByUserId(tradeRequest.SourceShiftSignup.UserId);
+					var proposedUserProfile = _userProfileService.GetProfileByUserId(sqi.SourceUserId);
+
+					var text = _shiftsService.GenerateShiftTradeFilledText(sourceUserProfile, tradeRequest);
+
+					_communicationService.SendNotification(proposedUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+							tradeRequest.SourceShiftSignup.Shift.Name, proposedUserProfile);
+				}
+				else if (sqi.Type == (int)ShiftQueueTypes.ShiftCreated)
+				{
+					var shift = _shiftsService.GetShiftById(sqi.ShiftId);
+					var profiles = _userProfileService.GetAllProfilesForDepartment(sqi.DepartmentId);
+
+					var text = $"New Shift {shift.Name} has been created";
+
+					foreach (var profile in profiles.Select(x => x.Value))
+					{
+						_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, "New Shift", profile);
+					}
+				}
+				else if (sqi.Type == (int)ShiftQueueTypes.ShiftUpdated)
+				{
+					var shift = _shiftsService.GetShiftById(sqi.ShiftId);
+					var profiles = _userProfileService.GetAllProfilesForDepartment(sqi.DepartmentId);
+
+					var text = $"Shift {shift.Name} has been updated";
+
+					foreach (var profile in shift.Personnel)
+					{
+						if (profiles.ContainsKey(profile.UserId))
+							_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
+						else
+							_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
+					}
+				}
+				else if (sqi.Type == (int)ShiftQueueTypes.ShiftDaysAdded)
+				{
+					var shift = _shiftsService.GetShiftById(sqi.ShiftId);
+					var profiles = _userProfileService.GetAllProfilesForDepartment(sqi.DepartmentId);
+
+					var text = $"Shift {shift.Name} has been updated";
+
+					foreach (var profile in shift.Personnel)
+					{
+						if (profiles.ContainsKey(profile.UserId))
+							_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
+						else
+							_communicationService.SendNotification(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
+					}
+				}
+
+				_shiftsService = null;
+				_communicationService = null;
+				_userProfileService = null;
+			}
 		}
 	}
 }

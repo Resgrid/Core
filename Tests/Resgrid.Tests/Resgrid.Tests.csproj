@@ -345,10 +345,15 @@
     <Content Include="Data\Strings\BadWordHtmlCallName.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="..\..\Core\Resgrid.Config\ResgridConfig.json">
+      <Link>ResgridConfig.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\Providers\Resgrid.Providers.TextProvider\global_phone.json">
       <Link>global_phone.json</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="Config\ConfigProcessorTests.cs" />
     <Compile Include="Framework\ExtensionTests.cs" />
     <Compile Include="Framework\HtmlToTextHelperTests.cs" />
     <Compile Include="Framework\ObjectSerializationTests.cs" />

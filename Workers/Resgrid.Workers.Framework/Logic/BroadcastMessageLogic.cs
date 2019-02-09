@@ -37,56 +37,7 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 			else
 			{
-				if (item != null && item.Message != null)
-				{
-					_queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
-					var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-					var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-
-					try
-					{
-						string name = string.Empty;
-						if (!String.IsNullOrWhiteSpace(item.Message.SendingUserId))
-						{
-							var profile = item.Profiles.FirstOrDefault(x => x.UserId == item.Message.SendingUserId);
-
-							if (profile != null)
-								name = profile.FullName.AsFirstNameLastName;
-							else
-							{
-								var sender = userProfileService.GetProfileByUserId(item.Message.SendingUserId);
-
-								if (sender != null)
-									name = sender.FullName.AsFirstNameLastName;
-							}
-						}
-
-						var sendingToProfile = item.Profiles.FirstOrDefault(x => x.UserId == item.Message.ReceivingUserId);
-
-						_communicationService.SendMessage(item.Message, name, item.DepartmentTextNumber, item.DepartmentId, sendingToProfile);
-					}
-					catch (System.Net.Sockets.SocketException ex)
-					{
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-						_queueService.Requeue(item.QueueItem);
-
-						success = false;
-					}
-
-
-					if (success)
-						_queueService.SetQueueItemCompleted(item.QueueItem.QueueItemId);
-
-					_communicationService = null;
-				}
-				else
-				{
-					if (item != null)
-						_queueService.SetQueueItemCompleted(item.QueueItem.QueueItemId);
-				}
+				ProcessMessageQueueItem(item);
 			}
 
 			_queueService = null;
@@ -107,8 +58,6 @@ namespace Resgrid.Workers.Framework.Logic
 
 					if (!String.IsNullOrWhiteSpace(body))
 					{
-						var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-
 						try
 						{
 							mqi = ObjectSerialization.Deserialize<MessageQueueItem>(body);
@@ -120,80 +69,7 @@ namespace Resgrid.Workers.Framework.Logic
 							message.Complete();
 						}
 
-						if (mqi != null && mqi.Message == null && mqi.MessageId != 0)
-						{
-							var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
-							mqi.Message = messageService.GetMessageById(mqi.MessageId);
-						}
-
-						if (mqi != null && mqi.Message != null)
-						{
-							if (mqi.Message.MessageRecipients == null || mqi.Message.MessageRecipients.Count <= 0)
-							{
-								var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
-								mqi.Message = messageService.GetMessageById(mqi.Message.MessageId);
-							}
-
-							// If we didn't get any profiles chances are the message size was too big for Azure, get selected profiles now.
-							if (mqi.Profiles == null)
-							{
-								var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-
-								if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
-								{
-									mqi.Profiles = userProfileService.GetSelectedUserProfiles(mqi.Message.MessageRecipients.Select(x => x.UserId).ToList());
-								}
-								else
-								{
-									mqi.Profiles = userProfileService.GetAllProfilesForDepartment(mqi.DepartmentId).Select(x => x.Value).ToList();
-								}
-							}
-
-							string name = string.Empty;
-							if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId))
-							{
-								var profile = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.SendingUserId);
-
-								if (profile != null)
-									name = profile.FullName.AsFirstNameLastName;
-							}
-
-							if (mqi.Message.ReceivingUserId != null && (mqi.Message.Recipients == null || !mqi.Message.Recipients.Any()))
-							{
-								if (mqi.Profiles != null)
-								{
-									var sendingToProfile = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.ReceivingUserId);
-
-									if (sendingToProfile != null)
-									{
-										_communicationService.SendMessage(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
-									}
-									else
-									{
-										var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-										var sender = userProfileService.GetProfileByUserId(mqi.Message.SendingUserId);
-
-										if (sender != null)
-											name = sender.FullName.AsFirstNameLastName;
-									}
-								}
-							}
-							else if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
-							{
-								foreach (var recipient in mqi.Message.MessageRecipients)
-								{
-									var sendingToProfile = mqi.Profiles.FirstOrDefault(x => x.UserId == recipient.UserId);
-									mqi.Message.ReceivingUserId = recipient.UserId;
-
-									if (sendingToProfile != null)
-									{
-										_communicationService.SendMessage(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
-									}
-								}
-							}
-						}
-
-						_communicationService = null;
+						ProcessMessageQueueItem(mqi);
 					}
 
 					try
@@ -230,6 +106,86 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return new Tuple<bool, string>(success, result);
+		}
+
+		public static void ProcessMessageQueueItem(MessageQueueItem mqi)
+		{
+			var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
+
+			if (mqi != null && mqi.Message == null && mqi.MessageId != 0)
+			{
+				var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
+				mqi.Message = messageService.GetMessageById(mqi.MessageId);
+			}
+
+			if (mqi != null && mqi.Message != null)
+			{
+				if (mqi.Message.MessageRecipients == null || mqi.Message.MessageRecipients.Count <= 0)
+				{
+					var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
+					mqi.Message = messageService.GetMessageById(mqi.Message.MessageId);
+				}
+
+				// If we didn't get any profiles chances are the message size was too big for Azure, get selected profiles now.
+				if (mqi.Profiles == null)
+				{
+					var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+
+					if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
+					{
+						mqi.Profiles = userProfileService.GetSelectedUserProfiles(mqi.Message.MessageRecipients.Select(x => x.UserId).ToList());
+					}
+					else
+					{
+						mqi.Profiles = userProfileService.GetAllProfilesForDepartment(mqi.DepartmentId).Select(x => x.Value).ToList();
+					}
+				}
+
+				string name = string.Empty;
+				if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId))
+				{
+					var profile = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.SendingUserId);
+
+					if (profile != null)
+						name = profile.FullName.AsFirstNameLastName;
+				}
+
+				if (mqi.Message.ReceivingUserId != null && (mqi.Message.Recipients == null || !mqi.Message.Recipients.Any()))
+				{
+					if (mqi.Profiles != null)
+					{
+						var sendingToProfile = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.ReceivingUserId);
+
+						if (sendingToProfile != null)
+						{
+							_communicationService.SendMessage(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
+						}
+						else
+						{
+							var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+							var sender = userProfileService.GetProfileByUserId(mqi.Message.SendingUserId);
+
+							if (sender != null)
+								name = sender.FullName.AsFirstNameLastName;
+						}
+					}
+				}
+				else if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
+				{
+					foreach (var recipient in mqi.Message.MessageRecipients)
+					{
+						var sendingToProfile = mqi.Profiles.FirstOrDefault(x => x.UserId == recipient.UserId);
+						mqi.Message.ReceivingUserId = recipient.UserId;
+
+						if (sendingToProfile != null)
+						{
+							_communicationService.SendMessage(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
+						}
+					}
+				}
+			}
+
+			_communicationService = null;
 		}
 	}
 }

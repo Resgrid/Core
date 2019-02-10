@@ -34,6 +34,57 @@ SET @TestDepartmentId = 1
 
 DECLARE @TestDepartmentListId INT
 
+INSERT INTO [dbo].[Applications]
+           ([ApplicationId]
+           ,[ApplicationName]
+           ,[Description])
+     VALUES
+           ('97a8aef2-6330-4e56-a81c-d359bca614b0'
+           ,'Resgrid'
+           ,'Resgrid App')
+
+INSERT INTO [dbo].[Users]
+           ([UserId]
+           ,[ApplicationId]
+           ,[UserName]
+           ,[IsAnonymous]
+           ,[LastActivityDate])
+     VALUES
+           ('474468cd-6bfd-4717-8302-60bbe3530fdb'
+		   ,'97a8aef2-6330-4e56-a81c-d359bca614b0'
+           ,'systematest1'
+           ,0
+		   ,'1753-01-01 00:00:00.000')
+
+
+INSERT INTO [dbo].[UsersInRoles]
+           ([UserId]
+           ,[RoleId])
+     VALUES
+           ('474468cd-6bfd-4717-8302-60bbe3530fdb'
+           ,'38b461d7-e848-46ef-8c06-ece5b618d9d1')
+
+INSERT INTO [dbo].[Users]
+           ([UserId]
+           ,[ApplicationId]
+           ,[UserName]
+           ,[IsAnonymous]
+           ,[LastActivityDate])
+     VALUES
+           ('c4d78e63-aa6e-4c38-9f03-a0a6311b4aa5'
+		   ,'97a8aef2-6330-4e56-a81c-d359bca614b0'
+           ,'systematest2'
+           ,0
+		   ,'1753-01-01 00:00:00.000')
+
+
+INSERT INTO [dbo].[UsersInRoles]
+           ([UserId]
+           ,[RoleId])
+     VALUES
+           ('c4d78e63-aa6e-4c38-9f03-a0a6311b4aa5'
+           ,'38b461d7-e848-46ef-8c06-ece5b618d9d1')
+
 SET IDENTITY_INSERT [dbo].[Departments] ON
       INSERT INTO [dbo].[Departments]
              ([DepartmentId]
@@ -127,7 +178,15 @@ INSERT INTO [dbo].[UserProfiles]
            ,0
            ,0)";
 
-		public const string TestDepartmentDataSql = @"/* THIS CREATES THE DEFAULT DEPARTMENT FOR A NEW INSTALL */
+		public const string TestDepartmentDataSql = @"/* INTENTIONALLY LEFT BLANK */";
+
+		public const string TestDepartmentCustomStatesSql = @"/* INTENTIONALLY LEFT BLANK */";
+
+		public const string PlansSql = @"/* INTENTIONALLY LEFT BLANK */";
+
+		public const string PlanFixSql = @"/* INTENTIONALLY LEFT BLANK */";
+
+		public const string CreatingTheDefaultDepartmentSql = @"/* THIS CREATES THE DEFAULT DEPARTMENT FOR A NEW INSTALL */
 INSERT INTO [dbo].[AspNetUsers]
            ([Id]
            ,[UserName]
@@ -228,12 +287,6 @@ INSERT INTO [dbo].[UserProfiles]
            ,0
            ,0
            ,0)";
-
-		public const string TestDepartmentCustomStatesSql = @"";
-
-		public const string PlansSql = @"";
-
-		public const string PlanFixSql = @"";
 
 		#endregion SQL Statements
 	}

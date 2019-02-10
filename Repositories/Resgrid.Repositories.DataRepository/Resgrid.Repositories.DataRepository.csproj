@@ -173,6 +173,10 @@
     <Compile Include="Migrations\201812171730255_AddingV2CalendarSupport.Designer.cs">
       <DependentUpon>201812171730255_AddingV2CalendarSupport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902100124102_AddingDefaultDepartment.cs" />
+    <Compile Include="Migrations\201902100124102_AddingDefaultDepartment.Designer.cs">
+      <DependentUpon>201902100124102_AddingDefaultDepartment.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlansRepository.cs" />
     <Compile Include="PushUriRepository.cs" />
     <Compile Include="MessageRepository.cs" />
@@ -2180,6 +2184,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812171730255_AddingV2CalendarSupport.resx">
       <DependentUpon>201812171730255_AddingV2CalendarSupport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902100124102_AddingDefaultDepartment.resx">
+      <DependentUpon>201902100124102_AddingDefaultDepartment.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -43,6 +43,7 @@ namespace Resgrid.Repositories.DataRepository.Migrations
 			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Depar__2CBDA3B5]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileUsers DROP CONSTRAINT DF__Departmen__Depar__2CBDA3B5");
 			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Creat__7EF6D905]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileArticles DROP CONSTRAINT DF__Departmen__Creat__7EF6D905");
 			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Creat__251C81ED]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileArticles DROP CONSTRAINT DF__Departmen__Creat__251C81ED");
+			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Creat__7BB05806]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileArticles DROP CONSTRAINT DF__Departmen__Creat__7BB05806");
 			DropForeignKey("dbo.DepartmentProfileArticles", "FK_dbo.DepartmentProfileArticles_dbo.Users_CreatedByUserId");
 			DropIndex("dbo.DepartmentProfileUserFollows", new[] { "DepartmentProfileUserId" });
 			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Depar__0697FACD]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileUsers DROP CONSTRAINT DF__Departmen__Depar__0697FACD");
@@ -120,6 +121,7 @@ namespace Resgrid.Repositories.DataRepository.Migrations
 			AlterColumn("dbo.DepartmentMembers", "UserId", c => c.String(nullable: false, maxLength: 128));
 			AlterColumn("dbo.DepartmentProfileArticles", "CreatedByUserId", c => c.String(nullable: false, maxLength: 128));
 			AlterColumn("dbo.DepartmentProfileUserFollows", "DepartmentProfileUserId", c => c.String(nullable: false, maxLength: 128));
+			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Depar__090A5324]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileUsers DROP CONSTRAINT DF__Departmen__Depar__090A5324");
 			AlterColumn("dbo.DepartmentProfileUsers", "DepartmentProfileUserId", c => c.String(nullable: false, maxLength: 128));
 			AlterColumn("dbo.DistributionListMembers", "UserId", c => c.String(nullable: false, maxLength: 128));
 			AlterColumn("dbo.Documents", "UserId", c => c.String(nullable: false, maxLength: 128));
@@ -133,9 +135,11 @@ namespace Resgrid.Repositories.DataRepository.Migrations
 			AlterColumn("dbo.LogUsers", "UserId", c => c.String(nullable: false, maxLength: 128));
 			AlterColumn("dbo.MessageRecipients", "UserId", c => c.String(nullable: false, maxLength: 128));
 			AlterColumn("dbo.Messages", "SendingUserId", c => c.String(maxLength: 128));
+			Sql("IF OBJECT_ID('dbo.[DF__Messages__Receiv__6E01572D]') IS NOT NULL ALTER TABLE dbo.Messages DROP CONSTRAINT DF__Messages__Receiv__6E01572D");
 			AlterColumn("dbo.Messages", "ReceivingUserId", c => c.String(maxLength: 128));
 			AlterColumn("dbo.Notes", "UserId", c => c.String());
 			AlterColumn("dbo.Payments", "PurchasingUserId", c => c.String(nullable: false, maxLength: 128));
+			Sql("IF OBJECT_ID('dbo.[DF__Permissio__Updat__1F2E9E6D]') IS NOT NULL ALTER TABLE dbo.Permissions DROP CONSTRAINT DF__Permissio__Updat__1F2E9E6D");
 			AlterColumn("dbo.Permissions", "UpdatedBy", c => c.String());
 			AlterColumn("dbo.PersonnelCertifications", "UserId", c => c.String(nullable: false, maxLength: 128));
 			AlterColumn("dbo.PushUris", "UserId", c => c.String(nullable: false, maxLength: 128));

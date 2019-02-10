@@ -72,10 +72,13 @@
               <small>Forgot your username or password?</small>
             </a>
 
-            <p class="text-muted text-center">
-              <small>Do not have an account?</small>
-            </p>
-            <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">Create an account</a>
+			@if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
+			{
+			  <p class="text-muted text-center">
+				<small>Do not have an account?</small>
+			  </p>
+			  <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">Create an account</a>
+			}
           </form>
           <p class="m-t">
 

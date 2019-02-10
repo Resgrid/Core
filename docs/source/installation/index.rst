@@ -37,3 +37,13 @@ Redis is an standalone, resilient in memory data store that Redis uses to cache 
 
 .. important:: Although Redis is optional, it's recommended for production installations or multi server installations of Resgrid.
 
+
+Database Installation
+****************************
+
+
+Initial Web Login
+****************************
+
+Once you have completed the steps above you will be able to log into the web applications user interface. Open up a web browser and navigate to http://resgrid.local, you will then be prompted by the login screen. Your default administrator credentials are **admin/changeme1234**. Once you log into the system it's recommended that you change your admin password from the Edit Profile page by clicking on the Administrator name in the upper left hand corner. 
+

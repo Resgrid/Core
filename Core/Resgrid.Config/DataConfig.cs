@@ -210,7 +210,7 @@ INSERT INTO [dbo].[AspNetUsers]
            ,'admin@yourcompany.local'
            ,'ADMIN@YOURCOMPANY.LOCAL'
            ,1
-           ,'6uXx/JeiEhoCQx6WIZR/+19LhZg=|1|bACzdqFfeURO0k5eNSythQ=='
+           ,'AQAAAAEAACcQAAAAEB3WroDEDRMBLpq6xkKCCQCF1nfwjsIrTb2AmO1/+0PaMdfJYZSfq33DSYws5wF4Xg=='
            ,'6e526153-a336-478c-9ade-d9ebcbc9748e'
            ,NULL
            ,NULL

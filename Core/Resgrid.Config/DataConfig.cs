@@ -251,17 +251,23 @@ SET IDENTITY_INSERT [dbo].[Departments] ON
 SET IDENTITY_INSERT [dbo].[Departments] OFF
 
 INSERT INTO [dbo].[DepartmentMembers]
-             ([DepartmentId]
-             ,[UserId]
-             ,[IsAdmin]
-             ,[IsDisabled]
-             ,[IsHidden])
+           ([DepartmentId]
+           ,[UserId]
+           ,[IsAdmin]
+           ,[IsDisabled]
+           ,[IsHidden]
+           ,[IsDefault]
+           ,[IsActive]
+           ,[IsDeleted])
        VALUES
              (2
              ,'88b16e75-a5ca-4489-8b38-eba1e4cdcba0'
+             ,1
              ,0
              ,0
-             ,0)
+			 ,1
+			 ,1
+			 ,0)
 
 INSERT INTO [dbo].[UserProfiles]
            ([UserId]

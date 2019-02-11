@@ -60,7 +60,12 @@ namespace Resgrid.Services
 
 			var groups = GetAllGroupsForDepartmentUnlimited(departmentId);
 
-			int limit = _subscriptionsService.GetCurrentPlanForDepartment(departmentId).GetLimitForTypeAsInt(PlanLimitTypes.Groups);
+			int limit = 0;
+			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
+				limit = int.MaxValue;
+			else
+				limit = _subscriptionsService.GetCurrentPlanForDepartment(departmentId).GetLimitForTypeAsInt(PlanLimitTypes.Groups);
+
 			int count = groups.Count < limit ? groups.Count : limit;
 
 			// Only return users up to the plans group limit

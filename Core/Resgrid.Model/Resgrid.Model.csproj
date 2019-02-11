@@ -557,6 +557,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj">
+      <Project>{dd9e37af-9af3-4cbb-ba7f-b66158c61222}</Project>
+      <Name>Resgrid.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj">
       <Project>{21b7c3a0-bd8b-4f05-b5dd-4d2e6b1893fa}</Project>
       <Name>Resgrid.Framework</Name>

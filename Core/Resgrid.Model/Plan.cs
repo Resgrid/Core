@@ -43,6 +43,9 @@ namespace Resgrid.Model
 
 		public int GetLimitForTypeAsInt(PlanLimitTypes limitType)
 		{
+			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
+				return int.MaxValue;
+
 			var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
 
 			if (limt != null)

@@ -178,10 +178,12 @@
 
   @if (!String.IsNullOrWhiteSpace(Resgrid.Config.MarketingConfig.UserVoiceApiKey))
   {
+	var userVoiceJS = Resgrid.Config.MarketingConfig.UserVoiceApiKey + ".js";
+
     <script>
 	  //<!-- UserVoice JavaScript SDK (only needed once on a page) -->
 	  (function () {
-		var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true; uv.src = '//widget.uservoice.com/@Resgrid.Config.MarketingConfig.UserVoiceApiKey.js'; var s = if;
+		var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true; uv.src = '//widget.uservoice.com/@userVoiceJS'; var s = if;
 
 		(function () {
 		  var dropdownMenu;

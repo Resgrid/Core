@@ -161,6 +161,60 @@ Once you create the role, you can click "Edit" in the roles list to assign perso
 Adding Personnel
 **************
 
+After you log into the website, click the Personnel module from the left hand module list, it's under your name, Home and Calls buttons. This will take you the Personnel Section, from here you can add personnel in 2 ways, manually or via an invite.
+
+Add a Single Person
+=======================
+
+Clicking the turquoise "Add Person" button on the Personnel list page will allow you to add one user one by one. This is the preferred way to add personnel into the system by Department or Group Admins as it allows you to specify all the information for the user at the time of entry. 
+
+.. list-table:: Creating a Group Options
+   :header-rows: 1
+
+   * - Setting
+     - Description
+   * - UserName
+     - The Username that the user will use to log into the system with
+   * - Password
+     - The password that the user will use to log into the system
+   * - Confirm Password
+     - Ensure the password is correct
+   * - ID
+     - Optional, the Identification number for the person. This could be a badge or employee number.
+   * - First Name
+     - The users First Name
+   * - Last Name
+     - The Users Last Name
+   * - Email Address
+     - Email address for the user, this email address is used for communication and is the "Forgot Account" email address.
+   * - Group
+     - The Group (Station or Organization) that the user should be placed under
+   * - Is Group Admin
+     - Do you want this user to be a Group Admin for the group they are assigned
+   * - Roles
+     - Personnel Roles that are applicable for the user
+   * - Mobile Number
+     - The mobile\cell phone number for the user
+   * - Mobile Carrier
+     - The mobile carrier for the users mobile\cell phone. This is required as Resgrid will route text messages directly to the carrier for the cell phone.
+   * - Call Options
+     - How do you want this user to be communicated to for Dispatch\Calls
+   * - Message Options
+     - How do you want this user to be communicated to for Messages
+   * - Notification Options
+     - How do you want this user to be communicated to for Notifications
+   * - Notify User
+     - Do you want Resgrid to email the user with their account information
+
+Send Out Invites
+=======================
+
+On the Personnel list page you can click the green "Manage Invites" button to invite personnel by sending out an invite email to their email address. On this page you will see the email address you have sent invites too and when you sent that invite. Also on this list you can see if the user has completed the invite and resend the invite if the user has not completed it. 
+
+To send invites to email addresses you can enter them in, one or many at a time, in the "Email Addresses" textarea inside the "Send Invites" card. Email addresses in this textarea need to be comma "," separated. For example "user1@yourcompany.local, user2@yourcompany.local, user3@yourcompany.local" without the double quotes. Once your list is populated you can click the blue "Send Invites" button.
+
+.. note:: It's recommended to send 20 invites or less at a single time to ensure the POST request length is not too large which could cause failures for browsers with a poor connection. If an email address supplied in the textarea doesn't appear in the list there was an error processing that email address and an invite was NOT sent to that user.
+
 Units Metadata
 **************
 

@@ -21,14 +21,14 @@ The following server dependencies need to be installed, configured and functiona
 * `RabbitMQ Server <https://www.rabbitmq.com>`_, version 3.6.0 or newer
 * `Microsoft SQL Server <https://www.microsoft.com/en-us/sql-server/default.aspx>`_, version 12.0 (SQL 2014) or newer
 * `Microsoft IIS <https://www.iis.net/>`_ version installed on Windows 8 or newer or Windows Server 2012 or newer
-
+* `Elastic ELK <https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html>`_ 6.6.0 or newer
 
 RabbitMQ 
 =======================
 
 To install RabbitMQ follow the `Windows Installation <https://www.rabbitmq.com/install-windows.html>`_ guide. Ensure your firewall is configured to allow the ports listed in that guide through. It is also recommend you `enable the management UI <https://www.rabbitmq.com/management.html>`_ for RabbitMQ.
 
-.. note:: RabbitMQ required Erlang to be installed. You can download the `Windows installer <https://www.erlang.org/downloads>`_ at their website.
+.. note:: RabbitMQ requires Erlang to be installed. You can download the `Windows installer <https://www.erlang.org/downloads>`_ at their website.
 
 Redis 
 =======================
@@ -40,6 +40,7 @@ Redis is an standalone, resilient in memory data store that Redis uses to cache 
 
 Database Installation
 ****************************
+
 
 
 Initial Web Login

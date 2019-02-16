@@ -74,6 +74,11 @@ namespace Resgrid.Config
 		public static ServiceBusTypes ServiceBusType = ServiceBusTypes.Rabbit;
 
 		/// <summary>
+		/// Sets the type of External error and logging provider for the system to use
+		/// </summary>
+		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Elk;
+
+		/// <summary>
 		/// These are specific departments that will be forced to go through the om-prem SMS gateway no matter the send status, i.e. Direct or Gateway
 		/// </summary>
 		public static HashSet<int> DepartmentsToForceSmsGateway = new HashSet<int>()

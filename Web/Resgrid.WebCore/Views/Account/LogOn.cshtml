@@ -72,12 +72,12 @@
               <small>Forgot your username or password?</small>
             </a>
 
-			@if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
+            @if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
 			{
-			  <p class="text-muted text-center">
-				<small>Do not have an account?</small>
-			  </p>
-			  <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">Create an account</a>
+              <p class="text-muted text-center">
+                <small>Do not have an account?</small>
+              </p>
+              <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">Create an account</a>
 			}
           </form>
           <p class="m-t">
@@ -96,7 +96,21 @@
       </div>
     </div>
   </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+  <script src="~/clib/ujs/jquery-ujs.js"></script>
+  <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+  <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"
+		  asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.min.js"
+		  asp-fallback-test="window.jQuery && window.jQuery.validator">
+  </script>
+  <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"
+		  asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+		  asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive">
+  </script>
+  <script src="~/lib/select2/dist/js/select2.min.js"></script>
 
+  <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
   @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 </body>
 </html>

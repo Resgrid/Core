@@ -1,4 +1,7 @@
 ﻿using Resgrid.Config;
+using Serilog;
+using Serilog.Core;
+using Serilog.Sinks.Elasticsearch;
 using SharpRaven;
 using SharpRaven.Data;
 using System;
@@ -12,6 +15,7 @@ namespace Resgrid.Framework
 {
 	public static class Logging
 	{
+		private static Logger _logger;
 		private static RavenClient _ravenClient;
 		private static bool _isInitialized;
 		private static bool _consoleVisible;
@@ -20,15 +24,27 @@ namespace Resgrid.Framework
 		{
 			if (_isInitialized == false)
 			{
-				if (String.IsNullOrWhiteSpace(key))
+				if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Sentry)
 				{
-					if (!String.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrl))
+					if (String.IsNullOrWhiteSpace(key))
 					{
-						_ravenClient = new RavenClient(ExternalErrorConfig.ExternalErrorServiceUrl);
+						if (!String.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrl))
+						{
+							_ravenClient = new RavenClient(ExternalErrorConfig.ExternalErrorServiceUrl);
+						}
 					}
+					else
+						_ravenClient = new RavenClient(key);
 				}
-				else
-					_ravenClient = new RavenClient(key);
+				else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)
+				{
+					var loggerConfig = new LoggerConfiguration()
+										.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(ExternalErrorConfig.ElkServiceUrl))
+										{
+											AutoRegisterTemplate = true,
+											AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6
+										}).CreateLogger();
+				}
 
 				_isInitialized = true;
 			}
@@ -50,35 +66,75 @@ namespace Resgrid.Framework
 			string msgToLog = string.Format("{0}\r\n{4}\r\n\r\nAssemblyName:{5}\r\nCallerFilePath:{1}\r\nCallerMemberName:{2}\r\nCallerLineNumber:{3}", extraMessage,
 				callerFilePath, callerMemberName, callerLineNumber, exception.ToString(), Assembly.GetExecutingAssembly().FullName);
 
-			Log(new SentryEvent(exception));
+			if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Sentry)
+			{
+				Log(new SentryEvent(exception));
+			}
+			else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)
+			{
+				if (_logger != null)
+					_logger.Fatal(exception, msgToLog);
+			}
 		}
 
 		public static void LogError(string message)
 		{
 			Initialize(null);
 
-			Log(new SentryEvent(message));
+			if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Sentry)
+			{
+				Log(new SentryEvent(message));
+			}
+			else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)
+			{
+				if (_logger != null)
+					_logger.Error(message);
+			}
 		}
 
 		public static void LogDebug(string message)
 		{
 			Initialize(null);
 
-			Log(new SentryEvent(message));
+			if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Sentry)
+			{
+				Log(new SentryEvent(message));
+			}
+			else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)
+			{
+				if (_logger != null)
+					_logger.Debug(message);
+			}
 		}
 
 		public static void LogInfo(string message)
 		{
 			Initialize(null);
 
-			Log(new SentryEvent(message));
+			if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Sentry)
+			{
+				Log(new SentryEvent(message));
+			}
+			else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)
+			{
+				if (_logger != null)
+					_logger.Information(message);
+			}
 		}
 
 		public static void LogTrace(string message)
 		{
 			Initialize(null);
 
-			Log(new SentryEvent(message));
+			if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Sentry)
+			{
+				Log(new SentryEvent(message));
+			}
+			else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)
+			{
+				if (_logger != null)
+					_logger.Debug(message);
+			}
 		}
 
 		public static void SendExceptionEmail(Exception exmail, string processName)

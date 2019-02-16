@@ -292,7 +292,99 @@ INSERT INTO [dbo].[UserProfiles]
            ,0
            ,0
            ,0
-           ,0)";
+           ,0)
+
+SET IDENTITY_INSERT [dbo].[Plans] ON
+INSERT INTO [dbo].[Plans]
+           ([PlanId]
+		   ,[Name]
+           ,[Cost]
+           ,[Frequency]
+           ,[ExternalId])
+     VALUES
+           (1
+		   ,'Default Plan'
+           ,0
+           ,1
+           ,'')
+SET IDENTITY_INSERT [dbo].[Plans] OFF
+
+INSERT INTO [dbo].[PlanLimits]
+           ([PlanId]
+           ,[LimitType]
+           ,[LimitValue])
+     VALUES
+           (1
+           ,1
+           ,2147483647)
+
+INSERT INTO [dbo].[PlanLimits]
+           ([PlanId]
+           ,[LimitType]
+           ,[LimitValue])
+     VALUES
+           (1
+           ,2
+           ,2147483647)
+
+INSERT INTO [dbo].[PlanLimits]
+           ([PlanId]
+           ,[LimitType]
+           ,[LimitValue])
+     VALUES
+           (1
+           ,3
+           ,2147483647)
+
+INSERT INTO [dbo].[PlanLimits]
+           ([PlanId]
+           ,[LimitType]
+           ,[LimitValue])
+     VALUES
+           (1
+           ,4
+           ,2147483647)
+
+INSERT INTO [dbo].[Payments]
+       ([DepartmentId]
+       ,[PlanId]
+       ,[Method]
+       ,[IsTrial]
+       ,[PurchaseOn]
+       ,[PurchasingUserId]
+       ,[TransactionId]
+       ,[Successful]
+       ,[Data]
+       ,[IsUpgrade]
+       ,[Description]
+       ,[EffectiveOn]
+       ,[Amount]
+       ,[Payment_PaymentId]
+       ,[EndingOn]
+       ,[Cancelled]
+       ,[CancelledOn]
+       ,[CancelledData]
+       ,[UpgradedPaymentId])
+ VALUES
+       (2
+       ,1
+       ,4
+       ,0
+       ,GETDATE()
+       ,'88b16e75-a5ca-4489-8b38-eba1e4cdcba0'
+       ,'SYSTEM'
+       ,1
+       ,NULL
+       ,0
+       ,'Default Forever Plan'
+       ,DATEADD(dd,-1,GETDATE())
+       ,0.00
+       ,NULL
+       ,'9999-12-31 23:59:59.997'
+	   ,0
+	   ,NULL
+	   ,NULL
+	   ,NULL)";
 
 		#endregion SQL Statements
 	}

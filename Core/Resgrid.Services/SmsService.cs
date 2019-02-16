@@ -115,7 +115,7 @@ namespace Resgrid.Services
 
 					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, true);
 				}
-				else if(Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
+				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					string text = HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
 					text = StringHelpers.StripHtmlTagsCharArray(text);

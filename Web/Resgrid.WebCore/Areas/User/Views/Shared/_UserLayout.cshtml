@@ -161,8 +161,11 @@
   <script src="~/js/app/common/notifications/resgrid.common.notifications.js"></script>
 
   <script>
-		var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
-		var userId = '@(ClaimsAuthorizationHelper.GetUserId())';
+	var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
+	var userId = '@(ClaimsAuthorizationHelper.GetUserId())';
+
+	resgrid.absoluteBaseUrl = "";
+	resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
   </script>
 
   @if (IsSectionDefined("Scripts"))

@@ -1,6 +1,8 @@
 var resgrid;
 (function (resgrid) {
     resgrid.absoluteBaseUrl = "";
+    resgrid.absoluteApiBaseUrl = "";
+
     function init() {
         $.validator.setDefaults({
             //errorElement: "span",

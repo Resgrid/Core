@@ -1,16 +1,10 @@
-//interface ConnectionOptions {
-//	transport?: string | Array<string> | Transport;
-//	callback?: Function;
-//	waitForPageLoad?: boolean;
-//	jsonp?: boolean;
-//	withCredentials: boolean;
-//	pingInterval?: number;
-//}
 var resgrid;
 (function (resgrid) {
     var common;
     (function (common) {
         var signalr;
+        var eventHub;
+
         (function (signalr) {
             function init(callCallback, actionCallback, staffingCallback, unitCallback) {
                 if (callCallback) {
@@ -25,16 +19,17 @@ var resgrid;
                 if (unitCallback) {
                     unitStatusUpdatedCallback = unitCallback;
                 }
-                //$.connection.hub.url = absoluteBaseUrl + '/signalr';
-                $.connection.hub.url = 'https://api.resgrid.com/signalr';
-                //$.connection.hub.url = 'http://resgridapi.local/signalr';
-                eventHub = $.connection.eventingHub;
-                registerClientMethods();
-                startConnection();
+
+                if ($ && $.connection && $.connection.hub) {
+                    $.connection.hub.url = resgrid.absoluteApiBaseUrl + '/signalr';
+                    eventHub = $.connection.eventingHub;
+                    registerClientMethods();
+                    startConnection();
+                }
             }
             signalr.init = init;
             function startConnection() {
-                if (departmentId && departmentId > 0) {
+                if (departmentId && departmentId > 0 && $ && $.connection && $.connection.hub && $.connection.hub.disconnected && $.connection.hub.start) {
                     $.connection.hub.disconnected(function () {
                         console.log('disconnected');
                         setTimeout(function () {
@@ -54,29 +49,31 @@ var resgrid;
                 }
             }
             function registerClientMethods() {
-                eventHub.client.onConnected = function (id) {
-                    connectionId = id;
-                };
-                eventHub.client.callsUpdated = function (id) {
-                    if (callsUpdatedCallback) {
-						callsUpdatedCallback(id);
-                    }
-                };
-                eventHub.client.personnelStatusUpdated = function (id) {
-                    if (personnelActionUpdatedCallback) {
-                        personnelActionUpdatedCallback();
-                    }
-                };
-                eventHub.client.unitStatusUpdated = function (id) {
-                    if (unitStatusUpdatedCallback) {
-                        unitStatusUpdatedCallback();
-                    }
-                };
-                eventHub.client.personnelStaffingUpdated = function (id) {
-                    if (personnelStaffingUpdatedCallback) {
-                        personnelStaffingUpdatedCallback();
-                    }
-                };
+                if (eventHub && eventHub.client) {
+                    eventHub.client.onConnected = function (id) {
+                        connectionId = id;
+                    };
+                    eventHub.client.callsUpdated = function (id) {
+                        if (callsUpdatedCallback) {
+                            callsUpdatedCallback(id);
+                        }
+                    };
+                    eventHub.client.personnelStatusUpdated = function (id) {
+                        if (personnelActionUpdatedCallback) {
+                            personnelActionUpdatedCallback();
+                        }
+                    };
+                    eventHub.client.unitStatusUpdated = function (id) {
+                        if (unitStatusUpdatedCallback) {
+                            unitStatusUpdatedCallback();
+                        }
+                    };
+                    eventHub.client.personnelStaffingUpdated = function (id) {
+                        if (personnelStaffingUpdatedCallback) {
+                            personnelStaffingUpdatedCallback();
+                        }
+                    };
+                }
             }
         })(signalr = common.signalr || (common.signalr = {}));
     })(common = resgrid.common || (resgrid.common = {}));

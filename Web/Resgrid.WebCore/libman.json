@@ -1,0 +1,233 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "cdnjs",
+      "library": "twitter-bootstrap@3.4.0",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery@2.2.4",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery-validation-unobtrusive@3.2.11",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery-validate@1.19.0",
+      "destination": "wwwroot/lib/jquery-validate/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "font-awesome@4.7.0",
+      "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "quill@1.3.6",
+      "destination": "wwwroot/lib/quill/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "fullcalendar@3.10.0",
+      "destination": "wwwroot/lib/fullcalendar/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "metisMenu@3.0.3",
+      "destination": "wwwroot/lib/metisMenu/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "pace@1.0.2",
+      "destination": "wwwroot/lib/pace/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jQuery-slimScroll@1.3.8",
+      "destination": "wwwroot/lib/slimScroll/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "peity@2.0.3",
+      "destination": "wwwroot/lib/peity/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "morris.js@0.5.1",
+      "destination": "wwwroot/lib/morrisjs/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "rickshaw@1.6.6",
+      "destination": "wwwroot/lib/rickshaw/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "d3@3.5.6",
+      "destination": "wwwroot/lib/d3/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "chartist@0.11.0",
+      "destination": "wwwroot/lib/chartist/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "c3@0.6.12",
+      "destination": "wwwroot/lib/c3/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "awesome-bootstrap-checkbox@1.0.1",
+      "destination": "wwwroot/lib/awesome-bootstrap-checkbox/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jasny-bootstrap@3.1.3",
+      "destination": "wwwroot/lib/jasny-bootstrap/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "bootstrap-datepicker@1.8.0",
+      "destination": "wwwroot/lib/bootstrap-datepicker/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "cropper@4.0.0",
+      "destination": "wwwroot/lib/cropper/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "select2@4.0.5",
+      "destination": "wwwroot/lib/select2/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "bootstrap-touchspin@3.0.3",
+      "destination": "wwwroot/lib/bootstrap-touchspin/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "moment.js@2.24.0",
+      "destination": "wwwroot/lib/moment/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "bootstrap-markdown@2.10.0",
+      "destination": "wwwroot/lib/bootstrap-markdown/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "markdown.js@0.5.0",
+      "destination": "wwwroot/lib/markdown/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jqueryui@1.12.1",
+      "destination": "wwwroot/lib/jqueryui/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "sweetalert@2.1.2",
+      "destination": "wwwroot/lib/sweetalert/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery-idletimer@1.0.0",
+      "destination": "wwwroot/lib/jquery-idletimer/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jQuery.dotdotdot@4.0.2",
+      "destination": "wwwroot/lib/jQuery.dotdotdot/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "codemirror@5.43.0",
+      "destination": "wwwroot/lib/codemirror/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jstree@3.3.7",
+      "destination": "wwwroot/lib/jstree/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "Ladda@1.0.6",
+      "destination": "wwwroot/lib/Ladda/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "masonry@4.2.2",
+      "destination": "wwwroot/lib/masonry/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery-footable@3.1.6",
+      "destination": "wwwroot/lib/footable/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "slick-carousel@1.9.0",
+      "destination": "wwwroot/lib/slick-carousel/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "blueimp-gallery@2.33.0",
+      "destination": "wwwroot/lib/blueimp-gallery/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery.gridster@0.5.6",
+      "destination": "wwwroot/lib/gridster/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "vide@0.5.1",
+      "destination": "wwwroot/lib/vide/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "angular.js@1.7.7",
+      "destination": "wwwroot/lib/angular/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery.bootstrapvalidator@0.5.3",
+      "destination": "wwwroot/lib/bootstrapvalidator/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "twitter-bootstrap-wizard@1.2",
+      "destination": "wwwroot/lib/twitter-bootstrap-wizard/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "retina.js@1.3.0",
+      "destination": "wwwroot/lib/retina.js/"
+    },
+    {
+      "library": "jplayer@2.9.2",
+      "destination": "wwwroot/lib/jplayer/"
+    },
+    {
+      "library": "plyr@3.4.8",
+      "destination": "wwwroot/lib/plyr/"
+    },
+    {
+      "library": "bootstrap-tour@0.11.0",
+      "destination": "wwwroot/lib/bootstrap-tour/"
+    }
+  ]
+}

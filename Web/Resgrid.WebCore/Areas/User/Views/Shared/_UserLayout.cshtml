@@ -8,52 +8,41 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <environment names="Development">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css"
-		  crossorigin="anonymous"
-		  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css"
-		  asp-fallback-test-class="hidden"
-		  asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
-
+	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.css" />
+    <link rel="stylesheet" href="~/lib/metisMenu/metisMenu.min.css" />
     <link rel="stylesheet" href="~/css/animate.css" />
-    <link rel="stylesheet" href="~/lib/select2/dist/css/select2.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap-tour/build/css/bootstrap-tour.css" />
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
+	<link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
     <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
     <link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
     <link rel="stylesheet" href="~/lib/toastr/toastr.css" />
-    <link rel="stylesheet" href="~/lib/jquery-ui/themes/cupertino/jquery-ui.css" />
+    <link rel="stylesheet" href="~/lib/jqueryui/themes/cupertino/jquery-ui.css" />
     <link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
     <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
-    <link rel="stylesheet" href="~/lib/sweetalert/dist/sweetalert.css" />
     <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
-    <link rel="stylesheet" href="~/lib/quill/quill.snow.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.css" media="print" />
+    <link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
   </environment>
   <environment names="Staging,Production">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-		  crossorigin="anonymous"
-		  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-		  asp-fallback-test-class="hidden"
-		  asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap-tour/build/css/bootstrap-tour.min.css" />
+    <link rel="stylesheet" href="~/lib/metisMenu/metisMenu.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
     <link rel="stylesheet" href="~/css/animate.css" />
-    <link rel="stylesheet" href="~/lib/select2/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
     <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
     <link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
     <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
-    <link rel="stylesheet" href="~/lib/jquery-ui/themes/cupertino/jquery-ui.min.css" />
+    <link rel="stylesheet" href="~/lib/jqueryui/themes/cupertino/jquery-ui.css" />
     <link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
     <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
-    <link rel="stylesheet" href="~/lib/sweetalert/dist/sweetalert.css" />
     <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
-    <link rel="stylesheet" href="~/lib/quill/quill.snow.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.css" media="print" />
+    <link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
   </environment>
 
@@ -101,54 +90,48 @@
 
   <environment names="Development">
     <script src="~/lib/angular/angular.js"></script>
-    <script src="~/lib/metisMenu/dist/metisMenu.js"></script>
+	<script src="~/lib/metisMenu/metisMenu.min.js"></script>
     <script src="~/lib/slimScroll/jquery.slimscroll.js"></script>
     <script src="~/lib/pace/pace.js"></script>
-    <script src="~/lib/select2/dist/js/select2.js"></script>
+    <script src="~/lib/select2/js/select2.full.min.js"></script>
     <script src="~/clib/kendo/js/kendo.web.min.js"></script>
-    <script src="~/lib/bootstrap-tour/build/js/bootstrap-tour.js"></script>
-    <script src="~/lib/toastr/toastr.js"></script>
+    <script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
     <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
     <script src="~/clib/ujs/jquery-ujs.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-    <script src="~/lib/jquery-ui/jquery-ui.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/clib/signalr/jquery.signalR-2.2.0.js"></script>
     <script src="~/clib/picEdit/js/picedit.min.js"></script>
-    <script src="~/lib/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
-    <script src="~/lib/quill/quill.js"></script>
-    <script src='~/lib/fullcalendar/lib/moment.min.js'></script>
-    <script src="~/lib/fullcalendar/fullcalendar.js"></script>
+    <script src="~/lib/quill/quill.min.js"></script>
+    <script src="~/lib/moment/moment.min.js"></script>
+    <script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
     <script src="~/js/site.min.js"></script>
   </environment>
   <environment names="Staging,Production">
     <script src="~/lib/angular/angular.min.js"></script>
-    <script src="~/lib/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="~/lib/metisMenu/metisMenu.min.js"></script>
     <script src="~/lib/pace/pace.min.js"></script>
     <script src="~/lib/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="~/lib/select2/dist/js/select2.min.js"></script>
+    <script src="~/lib/select2/js/select2.full.min.js"></script>
     <script src="~/clib/kendo/js/kendo.web.min.js"></script>
-    <script src="~/lib/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
-    <script src="~/lib/toastr/toastr.min.js"></script>
+	<script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
+	<script src="~/lib/toastr/toastr.min.js"></script>
     <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
     <script src="~/clib/ujs/jquery-ujs.js"></script>
-    <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+	<script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/clib/signalr/jquery.signalR-2.2.0.min.js"></script>
     <script src="~/clib/picEdit/js/picedit.min.js"></script>
-    <script src="~/lib/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
     <script src="~/lib/quill/quill.min.js"></script>
-    <script src='~/lib/fullcalendar/lib/moment.min.js'></script>
+    <script src="~/lib/moment/moment.min.js"></script>
     <script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"
-			asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.min.js"
-			asp-fallback-test="window.jQuery && window.jQuery.validator">
-    </script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"
-			asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
-			asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive">
-    </script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
   </environment>
 
@@ -185,8 +168,7 @@
 
     <script>
 	  //<!-- UserVoice JavaScript SDK (only needed once on a page) -->
-	  (function () {
-		var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true; uv.src = '//widget.uservoice.com/@userVoiceJS'; var s = if;
+	  (function () {var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true; uv.src = '//widget.uservoice.com/@userVoiceJS';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s) })();
 
 		(function () {
 		  var dropdownMenu;

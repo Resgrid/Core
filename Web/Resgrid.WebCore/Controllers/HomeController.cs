@@ -62,6 +62,13 @@ namespace Resgrid.Web.Controllers
 			return View();
 		}
 
+		public IActionResult OpenSource()
+		{
+			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
+				return RedirectToAction("LogOn", "Account");
+
+			return View();
+		}
 
 		[HttpPost, ValidateAntiForgeryToken]
 		public IActionResult Contact(ContactView model)

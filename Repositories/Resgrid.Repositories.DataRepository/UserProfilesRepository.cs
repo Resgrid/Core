@@ -79,6 +79,26 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public List<UserProfile> GetAllUserProfilesForDepartmentIncDisabledDeleted(int departmentId)
+		{
+			try
+			{
+				using (IDbConnection db = new SqlConnection(connectionString))
+				{
+					return db.Query<UserProfile>($@"SELECT up.*, u.Email as 'MembershipEmail' FROM UserProfiles up
+												INNER JOIN DepartmentMembers dm ON dm.UserId = up.UserId
+												INNER JOIN AspNetusers u ON u.Id = up.UserId
+												WHERE dm.DepartmentId = @departmentId", new { departmentId = departmentId }).ToList();
+				}
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogError(string.Format("GetAllUserProfilesForDepartment Exception DepartmentId:{0} Error: {1}", departmentId, ex.ToString()));
+
+				throw;
+			}
+		}
+
 		public List<UserProfile> GetSelectedUserProfiles(List<string> userIds)
 		{
 			using (IDbConnection db = new SqlConnection(connectionString))

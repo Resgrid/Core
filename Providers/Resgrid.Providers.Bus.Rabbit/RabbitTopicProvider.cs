@@ -66,34 +66,48 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			{
-				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = factory.CreateConnection())
+				try
 				{
-					using (var channel = connection.CreateModel())
+					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					using (var connection = factory.CreateConnection())
 					{
-						channel.ExchangeDeclare(Topics.EventingTopic, "fanout");
+						using (var channel = connection.CreateModel())
+						{
+							channel.ExchangeDeclare(Topics.EventingTopic, "fanout");
+						}
 					}
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 				}
 			}
 		}
 
 		private bool SendMessage(string topicName, string message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			try
 			{
-				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = factory.CreateConnection())
+				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 				{
-					using (var channel = connection.CreateModel())
+					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					using (var connection = factory.CreateConnection())
 					{
-						channel.BasicPublish(exchange: topicName,
-									 routingKey: "",
-									 basicProperties: null,
-									 body: Encoding.ASCII.GetBytes(message));
+						using (var channel = connection.CreateModel())
+						{
+							channel.BasicPublish(exchange: topicName,
+										 routingKey: "",
+										 basicProperties: null,
+										 body: Encoding.ASCII.GetBytes(message));
+						}
 					}
-				}
 
-				return true;
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
 			}
 
 			return false;

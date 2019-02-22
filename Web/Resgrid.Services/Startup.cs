@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Stripe;
 using System.Configuration;
 using WebApiThrottle;
+using Resgrid.Config;
 
 [assembly: OwinStartup(typeof(Resgrid.Web.Services.Startup))]
 namespace Resgrid.Web.Services
@@ -26,6 +27,8 @@ namespace Resgrid.Web.Services
 		//public void Configuration(IAppBuilder app, IDependencyResolver resolver = null)
 		public void Configuration(IAppBuilder app)
 		{
+			ConfigProcessor.LoadAndProcessConfig(ConfigurationManager.AppSettings["ConfigPath"]);
+
 			WebBootstrapper.Initialize();
 
 			Framework.Logging.Initialize(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite);

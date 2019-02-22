@@ -11,5 +11,6 @@
 		public string TwilioApiSecret { get; set; }
 		public string TwilioIpmServiceSid { get; set; }
 		public string TwilioAuthToken { get; set; }
+		public string ConfigPath { get; set; }
 	}
 }

@@ -1,25 +1,35 @@
 ﻿using PostmarkDotNet;
 using PostmarkDotNet.Exceptions;
+using Resgrid.Config;
 using Resgrid.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Providers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Web;
 
 namespace Resgrid.Providers.EmailProvider
 {
 	public class PostmarkTemplateProvider : IEmailProvider
 	{
-		private static string FROM_EMAIL = "team@resgrid.com";
-		private static string DONOTREPLY_EMAIL = "do-not-reply@resgrid.com";
-		private static string LOGIN_URL = $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn";
-		private static string LIVECHAT_URL = $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Home/Contact";
+		private readonly IEmailSender _emailSender;
+
+		private static string FROM_EMAIL = OutboundEmailServerConfig.ToMail;
+		private static string DONOTREPLY_EMAIL = OutboundEmailServerConfig.FromMail;
+		private static string LOGIN_URL = $"{SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn";
+		private static string LIVECHAT_URL = $"{SystemBehaviorConfig.ResgridBaseUrl}/Home/Contact";
 		private static string HELP_URL = "https://resgrid.uservoice.com";
-		private static string UPDATEBILLINGINFO_URL = $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription/UpdateBillingInfo";
+		private static string UPDATEBILLINGINFO_URL = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription/UpdateBillingInfo";
+
+		public PostmarkTemplateProvider(IEmailSender emailSender)
+		{
+			_emailSender = emailSender;
+		}
 
 		public void Configure(object sender, string fromAddress)
 		{
-			
+
 		}
 
 		public void SendAffiliateRegister(string email, string affiliateCode)
@@ -68,26 +78,41 @@ namespace Resgrid.Providers.EmailProvider
 				templateModel.Add("callAudio_url", shortenedAudioUrl);
 			}
 
-			var message = new TemplatedPostmarkMessage
+			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
-				From = DONOTREPLY_EMAIL,
-				To = email,
-				TemplateId = Config.OutboundEmailServerConfig.PostmarkCallEmailTemplateId,
-				TemplateModel = templateModel
-			};
-
-			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
-
-			try
-			{
-				PostmarkResponse response = client.SendMessageAsync(message).Result;
-
-				if (response.Status != PostmarkStatus.Success)
+				var message = new TemplatedPostmarkMessage
 				{
-					//Console.WriteLine("Response was: " + response.Message);
+					From = DONOTREPLY_EMAIL,
+					To = email,
+					TemplateId = Config.OutboundEmailServerConfig.PostmarkCallEmailTemplateId,
+					TemplateModel = templateModel
+				};
+
+				var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
+
+				try
+				{
+					PostmarkResponse response = client.SendMessageAsync(message).Result;
+
+					if (response.Status != PostmarkStatus.Success)
+					{
+						//Console.WriteLine("Response was: " + response.Message);
+					}
 				}
+				catch (PostmarkValidationException) { }
 			}
-			catch (PostmarkValidationException)	{ }
+			else
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("Call.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = FROM_EMAIL;
+				newEmail.To.Add(email);
+
+				_emailSender.Send(newEmail);
+			}
 		}
 
 		public void SendTroubleAlertMail(string email, string unitName, string gpsLocation, string personnel, string callAddress, string unitAddress, string dispatchedOn, string callName)
@@ -109,28 +134,35 @@ namespace Resgrid.Providers.EmailProvider
 				},
 			};
 
-			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
-
-			try
+			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
-				PostmarkResponse response = client.SendMessageAsync(message).Result;
+				var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 
-				if (response.Status != PostmarkStatus.Success)
+				try
 				{
-					//Console.WriteLine("Response was: " + response.Message);
+					PostmarkResponse response = client.SendMessageAsync(message).Result;
+
+					if (response.Status != PostmarkStatus.Success)
+					{
+						//Console.WriteLine("Response was: " + response.Message);
+					}
 				}
+				catch (PostmarkValidationException) { }
 			}
-			catch (PostmarkValidationException) { }
+			else
+			{
+
+			}
 		}
 
 		public void SendCancellationReciept(string name, string email, string endDate, string departmentName)
 		{
-				var message = new TemplatedPostmarkMessage
-				{
-					From = FROM_EMAIL,
-					To = email,
-					TemplateId = Config.OutboundEmailServerConfig.PostmarkCancelRecieptTemplateId,
-					TemplateModel = new Dictionary<string, object> {
+			var message = new TemplatedPostmarkMessage
+			{
+				From = FROM_EMAIL,
+				To = email,
+				TemplateId = Config.OutboundEmailServerConfig.PostmarkCancelRecieptTemplateId,
+				TemplateModel = new Dictionary<string, object> {
 						{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
 						{ "subscriptions_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
 						{ "feedback_url", LIVECHAT_URL },
@@ -140,7 +172,7 @@ namespace Resgrid.Providers.EmailProvider
 						{ "plans_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Home/Pricing" },
 						{ "close_account_url", HELP_URL},
 					},
-				};
+			};
 
 			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 			var response = client.SendMessageAsync(message).Result;
@@ -155,10 +187,10 @@ namespace Resgrid.Providers.EmailProvider
 			// Example request
 			var message = new TemplatedPostmarkMessage
 			{
-						From = FROM_EMAIL,
-						To = email,
-						TemplateId = Config.OutboundEmailServerConfig.PostmarkChargeFailedTemplateId,
-						TemplateModel = new Dictionary<string, object> {
+				From = FROM_EMAIL,
+				To = email,
+				TemplateId = Config.OutboundEmailServerConfig.PostmarkChargeFailedTemplateId,
+				TemplateModel = new Dictionary<string, object> {
 					{ "plan_name", planName },
 					{ "action_url", UPDATEBILLINGINFO_URL },
 					{ "subscriptions_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
@@ -218,13 +250,7 @@ namespace Resgrid.Providers.EmailProvider
 
 		public void SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn, int messageId)
 		{
-			// Example request
-			var message = new TemplatedPostmarkMessage
-			{
-				From = DONOTREPLY_EMAIL,
-				To = email,
-				TemplateId = Config.OutboundEmailServerConfig.PostmarkMessageTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+			var templateModel = new Dictionary<string, object> {
 					{ "sender_name", senderName },
 					{ "title", subject },
 					{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
@@ -241,31 +267,51 @@ namespace Resgrid.Providers.EmailProvider
 					{ "action_url", $"https://resgrid.com/User/Messages/ViewMessage?messageId={messageId}" },
 					{ "timestamp", sentOn },
 					{ "commenter_name", senderName }
-				},
-			};
+				};
 
-			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
-			try
+			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
-				PostmarkResponse response = client.SendMessageAsync(message).Result;
-
-				if (response.Status != PostmarkStatus.Success)
+				var message = new TemplatedPostmarkMessage
 				{
-					//Console.WriteLine("Response was: " + response.Message);
+					From = DONOTREPLY_EMAIL,
+					To = email,
+					TemplateId = Config.OutboundEmailServerConfig.PostmarkMessageTemplateId,
+					TemplateModel = templateModel,
+				};
+
+				var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
+				try
+				{
+					PostmarkResponse response = client.SendMessageAsync(message).Result;
+
+					if (response.Status != PostmarkStatus.Success)
+					{
+						//Console.WriteLine("Response was: " + response.Message);
+					}
+				}
+				catch (PostmarkValidationException) { }
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 				}
 			}
-			catch (Exception) { }
+			else
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("Message.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = FROM_EMAIL;
+				newEmail.To.Add(email);
+
+				_emailSender.Send(newEmail);
+			}
 		}
 
 		public void SendPasswordResetMail(string name, string password, string userName, string email, string departmentName)
 		{
-			// Example request
-			var message = new TemplatedPostmarkMessage
-			{
-				From = FROM_EMAIL,
-				To = email,
-				TemplateId = Config.OutboundEmailServerConfig.PostmarkResetPasswordTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+			var templateModel = new Dictionary<string, object> {
 					{ "name", name },
 					{ "department_Name", departmentName },
 					{ "login_url", LOGIN_URL },
@@ -275,23 +321,45 @@ namespace Resgrid.Providers.EmailProvider
 					{ "action_url", LOGIN_URL },
 					{ "operating_system", "" },
 					{ "browser_name", "" },
-				},
-			};
+				};
 
-			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
-			try
+			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
-				PostmarkResponse response = client.SendMessageAsync(message).Result;
-
-				if (response.Status != PostmarkStatus.Success)
+				var message = new TemplatedPostmarkMessage
 				{
-					//Console.WriteLine("Response was: " + response.Message);
+					From = FROM_EMAIL,
+					To = email,
+					TemplateId = Config.OutboundEmailServerConfig.PostmarkResetPasswordTemplateId,
+					TemplateModel = templateModel,
+				};
+
+				var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
+				try
+				{
+					PostmarkResponse response = client.SendMessageAsync(message).Result;
+
+					if (response.Status != PostmarkStatus.Success)
+					{
+						//Console.WriteLine("Response was: " + response.Message);
+					}
 				}
+				catch (PostmarkValidationException) { }
 			}
-			catch (PostmarkValidationException) { }
+			else
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("PasswordReset.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = FROM_EMAIL;
+				newEmail.To.Add(email);
+
+				_emailSender.Send(newEmail);
+			}
 		}
 
-		public void SendPaymentReciept(string departmentName, string name, string processDate, string amount, string email, string processor, string transactionId, 
+		public void SendPaymentReciept(string departmentName, string name, string processDate, string amount, string email, string processor, string transactionId,
 			string planName, string effectiveDates, string nextBillingDate, int paymentId)
 		{
 			var message = new TemplatedPostmarkMessage
@@ -352,13 +420,7 @@ namespace Resgrid.Providers.EmailProvider
 
 		public void SendWelcomeMail(string name, string departmentName, string userName, string password, string email, int departmentId)
 		{
-			// Example request
-			var message = new TemplatedPostmarkMessage
-			{
-				From = FROM_EMAIL,
-				To = email,
-				TemplateId = Config.OutboundEmailServerConfig.PostmarkWelcomeTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+			var templateModel = new Dictionary<string, object> {
 					{ "name", name },
 					{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}" },
 					{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
@@ -369,20 +431,42 @@ namespace Resgrid.Providers.EmailProvider
 					{ "support_email", FROM_EMAIL },
 					{ "live_chat_url", LIVECHAT_URL },
 					{ "help_url", HELP_URL },
-				},
-			};
+				};
 
-			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
-			try
+			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
-				PostmarkResponse response = client.SendMessageAsync(message).Result;
-
-				if (response.Status != PostmarkStatus.Success)
+				var message = new TemplatedPostmarkMessage
 				{
-					//Console.WriteLine("Response was: " + response.Message);
+					From = FROM_EMAIL,
+					To = email,
+					TemplateId = Config.OutboundEmailServerConfig.PostmarkWelcomeTemplateId,
+					TemplateModel = templateModel,
+				};
+
+				var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
+				try
+				{
+					PostmarkResponse response = client.SendMessageAsync(message).Result;
+
+					if (response.Status != PostmarkStatus.Success)
+					{
+						//Console.WriteLine("Response was: " + response.Message);
+					}
 				}
+				catch (PostmarkValidationException) { }
 			}
-			catch (PostmarkValidationException) { }
+			else
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("Welcome.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = FROM_EMAIL;
+				newEmail.To.Add(email);
+
+				_emailSender.Send(newEmail);
+			}
 		}
 
 		public void TEAM_SendNofifySubCancelled(string name, string email, string departmentName, string departmentId, string reason, string processedOn, string planName, string refundIssued)
@@ -426,6 +510,17 @@ namespace Resgrid.Providers.EmailProvider
 				}
 			}
 			catch (PostmarkValidationException) { }
+		}
+
+		private string GetTempate(string templateName)
+		{
+			using (var resource = typeof(PostmarkTemplateProvider).Assembly.GetManifestResourceStream(templateName))
+			{
+				using (var reader = new StreamReader(resource))
+				{
+					return reader.ReadToEnd();
+				}
+			}
 		}
 	}
 }

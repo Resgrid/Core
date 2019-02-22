@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Resgrid.Model;
+﻿using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Resgrid.Services
 {
@@ -33,7 +33,7 @@ namespace Resgrid.Services
 		{
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<UserProfile> getProfile = delegate()
+				Func<UserProfile> getProfile = delegate ()
 				{
 					//return _userProfileRepository.GetAll().FirstOrDefault(x => x.UserId == userId);
 					return _userProfileRepository.GetProfileByUserId(userId);
@@ -81,7 +81,7 @@ namespace Resgrid.Services
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<List<UserProfile>> getAllUserProfiles = delegate()
+				Func<List<UserProfile>> getAllUserProfiles = delegate ()
 				{
 					return _userProfileRepository.GetAllUserProfilesForDepartment(departmentId);
 				};
@@ -96,11 +96,16 @@ namespace Resgrid.Services
 			}
 		}
 
+		public Dictionary<string, UserProfile> GetAllProfilesForDepartmentIncDisabledDeleted(int departmentId)
+		{
+			var profile = _userProfileRepository.GetAllUserProfilesForDepartmentIncDisabledDeleted(departmentId);
+			return profile.ToDictionary(userProfile => userProfile.UserId);
+		}
 
 		public UserProfile SaveProfile(int DepartmentId, UserProfile profile)
 		{
 			_userProfileRepository.SaveOrUpdate(profile);
-			
+
 			ClearUserProfileFromCache(profile.UserId);
 			ClearAllUserProfilesFromCache(DepartmentId);
 
@@ -142,10 +147,10 @@ namespace Resgrid.Services
 
 			var profiles = _userProfileRepository.GetAll().Where(x => x.MobileNumber != null).ToList();
 			var profile = from p in profiles
-				where
-					p.MobileNumber != null &&
-					p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-				select p;
+						  where
+							  p.MobileNumber != null &&
+							  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
+						  select p;
 
 			if (profile.Count() == 1)
 				return profile.First();
@@ -156,10 +161,10 @@ namespace Resgrid.Services
 					numberToTest = numberToTest.Remove(0, 1);
 
 					profile = from p in profiles
-								where
-									p.MobileNumber != null &&
-									p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-								select p;
+							  where
+								  p.MobileNumber != null &&
+								  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
+							  select p;
 
 					return profile.FirstOrDefault();
 				}

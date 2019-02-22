@@ -80,6 +80,9 @@
     <Reference Include="MimeKit, Version=1.18.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MimeKit.1.18.1\lib\net451\MimeKit.dll</HintPath>
     </Reference>
+    <Reference Include="Mustachio, Version=1.0.26.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Mustachio.1.1.26\lib\net45\Mustachio.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -180,6 +183,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Template\Welcome.html" />
+    <EmbeddedResource Include="Template\TroubleAlert.html" />
+    <EmbeddedResource Include="Template\PasswordReset.html" />
+    <EmbeddedResource Include="Template\Message.html" />
+    <EmbeddedResource Include="Template\Invitation.html" />
+    <EmbeddedResource Include="Template\Call.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

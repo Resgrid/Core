@@ -20,5 +20,6 @@ namespace Resgrid.Model.Services
 		UserProfile GetUserProfileForEditing(string userId);
 		Task<UserProfile> GetProfileByUserIdAsync(string userId, bool bypassCache = false);
 		Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds);
+		Dictionary<string, UserProfile> GetAllProfilesForDepartmentIncDisabledDeleted(int departmentId);
 	}
 }

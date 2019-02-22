@@ -4,7 +4,7 @@
 	{
 		public static string FromMail = "do-not-reply@yourcompany.local";
 		public static string ToMail = "administrator@yourcompany.local";
-		public static string Host = "mail.yourcompany.local";
+		public static string Host = "localhost";
 		public static bool EnableSsl = false;
 		public static int Port = 25;
 		public static string UserName = "";
@@ -25,5 +25,11 @@
 		public static long PostmarkRecieptTemplateId = 0;
 		public static long PostmarkWelcomeTemplateId = 0;
 		public static long PostmarkNewDepLinkTemplateId = 0;
+	}
+
+	public enum OutboundEmailTypes
+	{
+		Postmark = 0,
+		Smtp = 1
 	}
 }

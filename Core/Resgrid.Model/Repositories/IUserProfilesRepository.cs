@@ -10,5 +10,6 @@ namespace Resgrid.Model.Repositories
 		UserProfile GetProfileByUserId(string userId);
 		Task<UserProfile> GetProfileByUserIdAsync(string userId);
 		Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds);
+		List<UserProfile> GetAllUserProfilesForDepartmentIncDisabledDeleted(int departmentId);
 	}
 }

@@ -24,6 +24,7 @@ using Resgrid.Providers.Claims;
 using Configuration = Resgrid.Repositories.DataRepository.Migrations.Configuration;
 using Stripe;
 using Microsoft.Practices.ServiceLocation;
+using Resgrid.Config;
 
 namespace Resgrid.Web
 {
@@ -56,6 +57,8 @@ namespace Resgrid.Web
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
+			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
+
 			Framework.Logging.Initialize(Configuration["AppOptions:SentryKey"]);
 
 			var manager = new ApplicationPartManager();
@@ -71,7 +74,10 @@ namespace Resgrid.Web
 			element.SetValue(settings, false);
 			collection.SetValue(settings, false);
 
-			settings.Add(new ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+			if (!configResult)
+				settings.Add(new ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+			else
+				settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
 
 			// Repeat above line as necessary
 
@@ -92,9 +98,12 @@ namespace Resgrid.Web
 			services.AddScoped<IPasswordHasher<IdentityUser>, SqlPasswordHasher>();
 
 			//Inject ApplicationDbContext in place of IdentityDbContext and use connection string
-			services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
+			if (!configResult)
+				services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
 					new ApplicationDbContext(Configuration["ConnectionStrings:ResgridContext"]));
-
+			else
+				services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
+					new ApplicationDbContext(DataConfig.ConnectionString));
 
 			//Configure Identity middleware with ApplicationUser and the EF6 IdentityDbContext
 			services.AddIdentity<IdentityUser, IdentityRole>(config =>

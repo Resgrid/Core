@@ -22,6 +22,9 @@ The following server dependencies need to be installed, configured and functiona
 * `Microsoft SQL Server <https://www.microsoft.com/en-us/sql-server/default.aspx>`_, version 12.0 (SQL 2014) or newer
 * `Microsoft IIS <https://www.iis.net/>`_ version installed on Windows 8 or newer or Windows Server 2012 or newer
 * `Elastic ELK <https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html>`_ 6.6.0 or newer
+* SMTP Server for sending email
+
+.. note:: Any correctly configured SMTP server will work if it's local or not. If you have an SMTP server provided by your ISP or provider that will also work. For non-server Windows installations (i.e. Windows Home or Professional) we recommended `hMailServer <https://www.hmailserver.com/download>`_.
 
 RabbitMQ 
 =======================

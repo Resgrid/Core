@@ -8,6 +8,7 @@ using EmailModule;
 using PostmarkDotNet;
 using PostmarkDotNet.Exceptions;
 using PostmarkDotNet.Legacy;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -57,34 +58,60 @@ namespace Resgrid.Providers.EmailProvider
 
 			try
 			{
-				if (mail.From != null && mail.From.Address.Contains("resgrid.com") && mail.From.Address != "systemlist@resgrid.com" &&
-						mail.From.Address != "systemcheck@resgrid.com" && mail.From.Address != "systemcheck2@resgrid.com" &&
-						email.To.First() != "systemlist@resgrid.com" &&
-						email.To.First() != "systemcheck@resgrid.com" && email.To.First() != "systemcheck2@resgrid.com")
+				if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 				{
-					var to = new StringBuilder();
-					foreach (var t in email.To)
+					if (mail.From != null && mail.From.Address.Contains("resgrid.com") && mail.From.Address != "systemlist@resgrid.com" &&
+							mail.From.Address != "systemcheck@resgrid.com" && mail.From.Address != "systemcheck2@resgrid.com" &&
+							email.To.First() != "systemlist@resgrid.com" &&
+							email.To.First() != "systemcheck@resgrid.com" && email.To.First() != "systemcheck2@resgrid.com")
 					{
-						if (to.Length == 0)
-							to.Append(t);
-						else
-							to.Append("," + t);
+						var to = new StringBuilder();
+						foreach (var t in email.To)
+						{
+							if (to.Length == 0)
+								to.Append(t);
+							else
+								to.Append("," + t);
+						}
+
+						//var message = new PostmarkMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
+						var message = new PostmarkMessage("", to.ToString(), email.Subject, email.HtmlBody);
+						var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
+
+						message.From = null;
+						//var response = newClient.SendMessage(message);
+
+						//var response = newClient.SendMessageAsync(email.From, to.ToString(), email.Subject, email.HtmlBody).Result;
+						var response = newClient.SendMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
+
+						if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
+								!response.Message.Contains("You tried to send to a recipient that has been marked as inactive"))
+							Logging.LogError(string.Format("Error from PostmarkEmailSender->Send: {3} {0} FromEmail:{1} ToEmail:{2}",
+								response.Message, mail.From.Address, mail.To.First().Address, response.ErrorCode));
 					}
+					else
+					{
+						try
+						{
+							using (var smtpClient = new SmtpClient
+							{
+								DeliveryMethod = SmtpDeliveryMethod.Network,
+								Host = Config.OutboundEmailServerConfig.Host
+							})
+							{
+								if (!String.IsNullOrWhiteSpace(OutboundEmailServerConfig.UserName) && !String.IsNullOrWhiteSpace(OutboundEmailServerConfig.Password))
+								{
+									smtpClient.Credentials = new System.Net.NetworkCredential(OutboundEmailServerConfig.UserName, OutboundEmailServerConfig.Password);
+								}
 
-					//var message = new PostmarkMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
-					var message = new PostmarkMessage("", to.ToString(), email.Subject, email.HtmlBody);
-					var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
-
-					message.From = null;
-					//var response = newClient.SendMessage(message);
-
-					//var response = newClient.SendMessageAsync(email.From, to.ToString(), email.Subject, email.HtmlBody).Result;
-					var response = newClient.SendMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
-
-					if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
-							!response.Message.Contains("You tried to send to a recipient that has been marked as inactive"))
-						Logging.LogError(string.Format("Error from PostmarkEmailSender->Send: {3} {0} FromEmail:{1} ToEmail:{2}",
-							response.Message, mail.From.Address, mail.To.First().Address, response.ErrorCode));
+								smtpClient.Send(mail);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+						}
+					}
 				}
 				else
 				{
@@ -93,10 +120,14 @@ namespace Resgrid.Providers.EmailProvider
 						using (var smtpClient = new SmtpClient
 						{
 							DeliveryMethod = SmtpDeliveryMethod.Network,
-							Host = Config.OutboundEmailServerConfig.Host
+							Host = OutboundEmailServerConfig.Host
 						})
 						{
-							smtpClient.Credentials = new System.Net.NetworkCredential(Config.OutboundEmailServerConfig.UserName, Config.OutboundEmailServerConfig.Password);
+							if (!String.IsNullOrWhiteSpace(OutboundEmailServerConfig.UserName) && !String.IsNullOrWhiteSpace(OutboundEmailServerConfig.Password))
+							{
+								smtpClient.Credentials = new System.Net.NetworkCredential(OutboundEmailServerConfig.UserName, OutboundEmailServerConfig.Password);
+							}
+
 							smtpClient.Send(mail);
 						}
 					}

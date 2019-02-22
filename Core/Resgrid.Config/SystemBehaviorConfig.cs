@@ -79,10 +79,22 @@ namespace Resgrid.Config
 		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Elk;
 
 		/// <summary>
+		/// Sets the type of outbound email server or provider to use
+		/// </summary>
+		public static OutboundEmailTypes OutboundEmailType = OutboundEmailTypes.Smtp;
+
+		/// <summary>
 		/// These are specific departments that will be forced to go through the om-prem SMS gateway no matter the send status, i.e. Direct or Gateway
 		/// </summary>
 		public static HashSet<int> DepartmentsToForceSmsGateway = new HashSet<int>()
 		{
 		};
+
+		/// <summary>
+		/// To send push notifications with your on-prem Resgrid installation with our apps in the App Stores (Google and Apple)
+		/// you need to pay for a site key to send push notifications through our push infrastructure. To get a site key, which is
+		/// an annual payment, please contact team@resgrid.com. 
+		/// </summary>
+		public static string SiteKey = "";
 	}
 }

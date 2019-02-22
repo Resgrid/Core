@@ -15,26 +15,29 @@ namespace Resgrid.Config
 				if (String.IsNullOrWhiteSpace(path))
 					path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase).Replace("file:\\", "");
 
-				var configFile = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($"{path}\\ResgridConfig.json"));
-
-				foreach (var configValue in configFile)
+				if (File.Exists(path))
 				{
-					if (!String.IsNullOrWhiteSpace(configValue.Value))
+					var configFile = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($"{path}\\ResgridConfig.json"));
+
+					foreach (var configValue in configFile)
 					{
-						var parts = configValue.Key.Split(char.Parse("."));
-
-						if (parts.Length == 2)
+						if (!String.IsNullOrWhiteSpace(configValue.Value))
 						{
-							Type configObj = Type.GetType($"Resgrid.Config.{parts[0]}");
+							var parts = configValue.Key.Split(char.Parse("."));
 
-							if (configObj != null)
+							if (parts.Length == 2)
 							{
-								FieldInfo prop = configObj.GetField(parts[1]);
-								if (null != prop)
+								Type configObj = Type.GetType($"Resgrid.Config.{parts[0]}");
+
+								if (configObj != null)
 								{
-									Type t = Nullable.GetUnderlyingType(prop.FieldType) ?? prop.FieldType;
-									object safeValue = Convert.ChangeType(configValue.Value, t);
-									prop.SetValue(configObj, safeValue);
+									FieldInfo prop = configObj.GetField(parts[1]);
+									if (null != prop)
+									{
+										Type t = Nullable.GetUnderlyingType(prop.FieldType) ?? prop.FieldType;
+										object safeValue = Convert.ChangeType(configValue.Value, t);
+										prop.SetValue(configObj, safeValue);
+									}
 								}
 							}
 						}

@@ -574,7 +574,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			//var actionLogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId, true);
 			//var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
 			var canGroupAdminsDelete = _authorizationService.CanGroupAdminsRemoveUsers(DepartmentId);
-			var profiles = _userProfileService.GetAllProfilesForDepartment(DepartmentId);
+			var profiles = _userProfileService.GetAllProfilesForDepartmentIncDisabledDeleted(DepartmentId);
 			var userGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, false);
 
 			foreach (var user in users)

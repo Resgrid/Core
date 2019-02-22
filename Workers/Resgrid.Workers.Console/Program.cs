@@ -116,6 +116,8 @@ namespace Resgrid.Workers.Console
 
 		private static void Prime()
 		{
+			ConfigProcessor.LoadAndProcessConfig(ConfigurationManager.AppSettings["ConfigPath"]);
+
 			SetConnectionString();
 
 			Bootstrapper.Initialize();

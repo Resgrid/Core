@@ -2,117 +2,117 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.PersonnelModel
 @{
-	ViewBag.Title = "Resgrid | Personnel";
+  ViewBag.Title = "Resgrid | Personnel";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Personnel List</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li class="active">
-				<strong>Personnel</strong>
-			</li>
-		</ol>
-	</div>
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-	{
-		<div class="col-sm-8">
-			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a id="rolesButton" class="btn btn-primary top-button" title="Personnel Roles" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">Manage Roles</a>
-			</div>
-		</div>
-	}
+  <div class="col-sm-4">
+    <h2>Personnel List</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Personnel</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a id="rolesButton" class="btn btn-primary top-button" title="Personnel Roles" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">Manage Roles</a>
+      </div>
+    </div>
+  }
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins" id="personnelContainer">
-				<div class="ibox-title">
-					<h5>Personnel</h5>
-					<div class="ibox-tools">
-						@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanAddNewUser)
-						{
-							<div class="buttons-actions">
-								<a id="addPersonButton" title="Add a single person" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})"><i class="icon-user"></i> Add a Person</a>
-								<a id="manageInvitesButton" title="Invite multiple people" class="btn btn-success" href="@Url.Action("Invites", "Department", new {area = "User"})"><i class="icon-plus"></i> Manage Invites</a>
-							</div>
-						}
-						else if (Model.CanGroupAdminsAdd && Model.CanAddNewUser)
-						{
-							<div class="buttons-actions">
-								<a id="addPersonButton" title="Add a single person" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})"><i class="icon-user"></i> Add a Person</a>
-							</div>
-						}
-					</div>
-				</div>
-				<div class="ibox-content">
-					<div id="personnelIndexList"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins" id="personnelContainer">
+        <div class="ibox-title">
+          <h5>Personnel</h5>
+          <div class="ibox-tools">
+            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanAddNewUser)
+			{
+              <div class="buttons-actions">
+                <a id="addPersonButton" title="Add a single person" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})"><i class="icon-user"></i> Add a Person</a>
+                <a id="manageInvitesButton" title="Invite multiple people" class="btn btn-success" href="@Url.Action("Invites", "Department", new {area = "User"})"><i class="icon-plus"></i> Manage Invites</a>
+              </div>
+			}
+			else if (Model.CanGroupAdminsAdd && Model.CanAddNewUser)
+			{
+              <div class="buttons-actions">
+                <a id="addPersonButton" title="Add a single person" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})"><i class="icon-user"></i> Add a Person</a>
+              </div>
+			}
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div id="personnelIndexList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 @section Scripts
-{
-	<script id="command-template" type="text/x-kendo-template">
-		<a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewPerson", "Personnel", new {area = "User"})?userId=#=UserId#"><i class="icon-eye-open"></i> View</a>
-		#if (CanEditUser){#
-		<div class="btn-group">
-			<a href="@Url.Action("EditUserProfile", "Home", new {area = "User"})?userId=#=UserId#" class="btn btn-xs btn-primary"><i class="icon-pencil"></i> Edit</a>
-			<button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<span class="caret"></span>
-				<span class="sr-only">Toggle Dropdown</span>
-			</button>
-			<ul class="dropdown-menu">
-				<li><a href="@Url.Action("ResetPasswordForUser", "Profile", new {area = "User"})?userId=#=UserId#"><i class="icon-cog"></i> Change Password</a></li>
-			</ul>
-		</div>
+  {
+  <script id="command-template" type="text/x-kendo-template">
+    <a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewPerson", "Personnel", new {area = "User"})?userId=#=UserId#"><i class="icon-eye-open"></i> View</a>
+    #if (CanEditUser){#
+    <div class="btn-group">
+      <a href="@Url.Action("EditUserProfile", "Home", new {area = "User"})?userId=#=UserId#" class="btn btn-xs btn-primary"><i class="icon-pencil"></i> Edit</a>
+      <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="@Url.Action("ResetPasswordForUser", "Profile", new {area = "User"})?userId=#=UserId#"><i class="icon-cog"></i> Change Password</a></li>
+      </ul>
+    </div>
 
-		#}#
-		#if (CanRemoveUser){#
-		<a style="text-decoration:none;" class="btn btn-xs btn-danger" href="@Url.Action("DeletePerson", "Personnel", new {area = "User"})?userId=#=UserId#"><i class="icon-trash"></i> Delete</a>
-		#}#
-	</script>
+    #}#
+    #if (CanRemoveUser){#
+    <a style="text-decoration:none;" class="btn btn-xs btn-danger" href="@Url.Action("DeletePerson", "Personnel", new {area = "User"})?userId=#=UserId#"><i class="icon-trash"></i> Delete</a>
+    #}#
+  </script>
 
-	<script src="@Url.Content("~/js/app/internal/personnel/resgrid.personnel.index.js")" type="text/javascript"></script>
+  <script src="@Url.Content("~/js/app/internal/personnel/resgrid.personnel.index.js")" type="text/javascript"></script>
 
-	@Html.Partial("~/Areas/User/Views/Help/PersonnelTutorial.cshtml")
+  @Html.Partial("~/Areas/User/Views/Help/PersonnelTutorial.cshtml")
 
-	<script>
-		(function () {
-			// hold onto the drop down menu
-			var dropdownMenu;
+  <script>
+	(function () {
+	  // hold onto the drop down menu
+	  var dropdownMenu;
 
-			// and when you show it, move it to the body
-			$(window).on('show.bs.dropdown', function (e) {
+	  // and when you show it, move it to the body
+	  $(window).on('show.bs.dropdown', function (e) {
 
-				// grab the menu
-				dropdownMenu = $(e.target).find('.dropdown-menu');
+		// grab the menu
+		dropdownMenu = $(e.target).find('.dropdown-menu');
 
-				// detach it and append it to the body
-				$('body').append(dropdownMenu.detach());
+		// detach it and append it to the body
+		$('body').append(dropdownMenu.detach());
 
-				// grab the new offset position
-				var eOffset = $(e.target).offset();
+		// grab the new offset position
+		var eOffset = $(e.target).offset();
 
-				// make sure to place it where it would normally go (this could be improved)
-				dropdownMenu.css({
-					'display': 'block',
-					'top': eOffset.top + $(e.target).outerHeight(),
-					'left': eOffset.left
-				});
-			});
+		// make sure to place it where it would normally go (this could be improved)
+		dropdownMenu.css({
+		  'display': 'block',
+		  'top': eOffset.top + $(e.target).outerHeight(),
+		  'left': eOffset.left
+		});
+	  });
 
-			// and when you hide it, reattach the drop down, and hide it normally
-			$(window).on('hide.bs.dropdown', function (e) {
-				$(e.target).append(dropdownMenu.detach());
-				dropdownMenu.hide();
-			});
-		})();
-	</script>
+	  // and when you hide it, reattach the drop down, and hide it normally
+	  $(window).on('hide.bs.dropdown', function (e) {
+		$(e.target).append(dropdownMenu.detach());
+		dropdownMenu.hide();
+	  });
+	})();
+  </script>
 }

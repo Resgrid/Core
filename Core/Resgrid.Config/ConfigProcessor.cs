@@ -13,11 +13,14 @@ namespace Resgrid.Config
 			try
 			{
 				if (String.IsNullOrWhiteSpace(path))
+				{
 					path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase).Replace("file:\\", "");
+					path = $"{path}\\ResgridConfig.json";
+				}
 
 				if (File.Exists(path))
 				{
-					var configFile = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($"{path}\\ResgridConfig.json"));
+					var configFile = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
 
 					foreach (var configValue in configFile)
 					{

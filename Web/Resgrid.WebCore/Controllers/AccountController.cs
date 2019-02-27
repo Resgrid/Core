@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework6;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +11,9 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Web.Models;
 using Resgrid.Web.Models.AccountViewModels;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Resgrid.Web.Controllers
 {
@@ -86,46 +84,63 @@ namespace Resgrid.Web.Controllers
 			{
 				// This doesn't count login failures towards account lockout
 				// To enable password failures to trigger account lockout, set lockoutOnFailure: true
-				var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
-				if (result.Succeeded)
+
+				try
 				{
-					if (_usersService.DoesUserHaveAnyActiveDepartments(model.Username))
+					var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
+					if (result.Succeeded)
 					{
-
-						await HttpContext.Authentication.SignInAsync("ResgridCookieMiddlewareInstance", HttpContext.User,
-							new AuthenticationProperties
-							{
-								ExpiresUtc = DateTime.UtcNow.AddHours(8),
-								IsPersistent = false,
-								AllowRefresh = false
-							});
-
-						if (!String.IsNullOrWhiteSpace(returnUrl))
-							return RedirectToLocal(returnUrl);
-						else
+						if (_usersService.DoesUserHaveAnyActiveDepartments(model.Username))
 						{
-							if (HttpContext.User.IsInRole("Admins"))
-								return RedirectToAction("Index", "Home", new {Area = "Admin"});
+
+							await HttpContext.Authentication.SignInAsync("ResgridCookieMiddlewareInstance", HttpContext.User,
+								new AuthenticationProperties
+								{
+									ExpiresUtc = DateTime.UtcNow.AddHours(8),
+									IsPersistent = false,
+									AllowRefresh = false
+								});
+
+							if (!String.IsNullOrWhiteSpace(returnUrl))
+								return RedirectToLocal(returnUrl);
 							else
 							{
-								return RedirectToAction("Dashboard", "Home", new {Area = "User"});
+								if (HttpContext.User.IsInRole("Admins"))
+									return RedirectToAction("Index", "Home", new { Area = "Admin" });
+								else
+								{
+									return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+								}
 							}
 						}
+						else
+						{
+							ModelState.AddModelError(string.Empty, "You do not have any active departments for this user. To log into Resgrid you need at least one active department. You can have a department add you by sending an email based invite to your Resgrid accounts email address.");
+							return View(model);
+						}
+					}
+					if (result.IsLockedOut)
+					{
+						return View("Lockout");
 					}
 					else
 					{
-						ModelState.AddModelError(string.Empty, "You do not have any active departments for this user. To log into Resgrid you need at least one active department. You can have a department add you by sending an email based invite to your Resgrid accounts email address.");
+						ModelState.AddModelError(string.Empty, "Invalid username or password, please check them and try again.");
 						return View(model);
 					}
 				}
-				if (result.IsLockedOut)
+				catch (Exception ex)
 				{
-					return View("Lockout");
-				}
-				else
-				{
-					ModelState.AddModelError(string.Empty, "Invalid username or password, please check them and try again.");
-					return View(model);
+					if (!_usersService.DoesUserHaveAnyActiveDepartments(model.Username))
+					{
+						ModelState.AddModelError(string.Empty, "You do not have any active departments for this user. This usually happens when you only belong to one department and you have been removed (deleted) from that department. To log into Resgrid you need at least one active department. You can have a department add you by sending an email based invite to your Resgrid accounts email address.");
+						return View(model);
+					}
+					else
+					{
+						ModelState.AddModelError(string.Empty, "An unknown login error has occurred, please check your credentials, ensure you are an active member of a department and have a department to log into.");
+						return View(model);
+					}
 				}
 			}
 
@@ -287,7 +302,7 @@ namespace Resgrid.Web.Controllers
 		{
 			return View();
 		}
-		
+
 		[AllowAnonymous]
 		[HttpGet]
 		public IActionResult MissingInvite()
@@ -372,7 +387,7 @@ namespace Resgrid.Web.Controllers
 					_departmentsService.InvalidatePersonnelNamesInCache(model.Invite.DepartmentId);
 					_usersService.ClearCacheForDepartment(model.Invite.DepartmentId);
 					_departmentsService.InvalidateDepartmentMembers();
-					
+
 					_invitesService.CompleteInvite(model.Invite.Code, user.UserId);
 					_emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
@@ -408,7 +423,7 @@ namespace Resgrid.Web.Controllers
 			{
 				var requestCookie = Request.Cookies[cookie];//..Expires = DateTime.Now.AddDays(-1);
 
-				Response.Cookies.Append(cookie, requestCookie, new Microsoft.AspNetCore.Http.CookieOptions {Expires = DateTime.Now.AddDays(-1) });
+				Response.Cookies.Append(cookie, requestCookie, new Microsoft.AspNetCore.Http.CookieOptions { Expires = DateTime.Now.AddDays(-1) });
 			}
 		}
 

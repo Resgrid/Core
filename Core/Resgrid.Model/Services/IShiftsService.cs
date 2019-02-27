@@ -39,5 +39,6 @@ namespace Resgrid.Model.Services
 		ShiftStaffing GetShiftStaffingByShiftDay(int shiftId, DateTime shiftDay);
 		ShiftStaffing SaveShiftStaffing(ShiftStaffing staffing);
 		List<ShiftDay> GetShiftDaysForDay(DateTime currentTime, int departmentId);
+		List<ShiftGroup> GetShiftGroupsByGroupId(int departmentGroupId);
 	}
 }

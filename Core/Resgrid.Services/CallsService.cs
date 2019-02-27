@@ -569,6 +569,12 @@ namespace Resgrid.Services
 			}
 		}
 
+		public void ClearGroupForDispatches(int departmentGroupId)
+		{
+			var groupDispatches = _callDispatchGroupRepository.GetAll().Where(x => x.DepartmentGroupId == departmentGroupId);
+			_callDispatchGroupRepository.DeleteAll(groupDispatches);
+		}
+
 		public string CallStateToString(CallStates state)
 		{
 			switch (state)

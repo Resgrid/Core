@@ -511,5 +511,10 @@ namespace Resgrid.Services
 
 			return staffing;
 		}
+
+		public List<ShiftGroup> GetShiftGroupsByGroupId(int departmentGroupId)
+		{
+			return _shiftGroupsRepository.GetAll().Where(x => x.DepartmentGroupId == departmentGroupId).ToList();
+		}
 	}
 }

@@ -1,0 +1,109 @@
+﻿@model Resgrid.Web.Areas.User.Models.Groups.DeleteGroupView
+@{
+		ViewBag.Title = "Resgrid | Delete Group";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Delete Group</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
+      </li>
+      <li class="active">
+        <strong>Delete Group</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+		  <form id="edit_user" class="form-horizontal" role="form" asp-controller="Groups" asp-action="DeleteGroup" asp-route-area="User" method="post">
+
+		    @Html.AntiForgeryToken()
+		  @Html.HiddenFor(m => m.Group.DepartmentGroupId)
+		  <div asp-validation-summary="All" class="text-danger"></div>
+
+		  <div class='page-header'>
+		    <h3>
+		      Delete @Model.Group.Name
+		  </h3>
+		  </div>
+		  <div class="alert alert-error">
+		    <strong>Are you sure you want to delete this group?</strong> If you choose to delete this group the groups information, for example dispatch and message addresses will be removed with the group and won't be able to be used again.
+		    <br />
+		  </div>
+		  @if (Model.UserCount > 0)
+			{
+		  <hr />
+		  <div class="alert alert-danger">
+		    This group has active users underneath it, you must move or delete the users to be able to delete the group.
+		  </div>
+			}
+
+		  @if (Model.ChildGroupCount > 0)
+			{
+		  <hr />
+		  <div class='alert alert-danger'>
+		    This group has child groups under it. You will need to move or delete the child group before deleting the group.
+		  </div>
+			}
+
+		  @if (Model.UnitsCount > 0)
+			{
+		  <hr />
+		  <div class='alert alert-danger'>
+		    >This group has units assigned to it. You will need to move the unit to another Station Group or delete the unit to be able to delete the group.
+		  </div>
+			}
+
+		  @if (Model.ShiftsCount > 0)
+			{
+		  <hr />
+		  <div class='alert alert-danger'>
+		    This group has shift groups assigned to it. You will need to remove those shift groups, Shifts assigned to a Station\Group, to be able to delete the group.
+		  </div>
+			}
+
+		  @if (Model.UserCount == 0 && Model.ChildGroupCount == 0 && Model.UnitsCount == 0 && Model.ShiftsCount == 0)
+			{
+		  <hr />
+		  <div class='alert alert-warning'>
+		    <i class='picons-16-basic1-104'></i>Click the checkbox below to delete this user.
+		  </div>
+
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label">Confirm Delete?</label>
+		    <div class="col-sm-10">
+		      <div class="checkbox checkbox-primary">
+		        <input type="checkbox" class="checkbox checkbox-primary" asp-for="AreYouSure">
+		        <label></label>
+		      </div>
+		    </div>
+		  </div>
+
+		  <div class="form-group">
+		    <div class="col-sm-4 col-sm-offset-2">
+		      <a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">Cancel</a>
+		      <button class="btn btn-primary" type="submit">Delete Group</button>
+		    </div>
+		  </div>
+			}
+		  </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+  {
+
+}

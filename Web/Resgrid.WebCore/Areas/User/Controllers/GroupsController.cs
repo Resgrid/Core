@@ -32,10 +32,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDeleteService _deleteService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IUnitsService _unitsService;
+		private readonly IShiftsService _shiftsService;
 
 		public GroupsController(IDepartmentsService departmentsService, IUsersService usersService, IDepartmentGroupsService departmentGroupsService,
 			Model.Services.IAuthorizationService authorizationService, ILimitsService limitsService, IGeoLocationProvider geoLocationProvider, IDeleteService deleteService,
-			IEventAggregator eventAggregator, IUserProfileService userProfileService)
+			IEventAggregator eventAggregator, IUserProfileService userProfileService, IUnitsService unitsService, IShiftsService shiftsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -46,6 +48,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_deleteService = deleteService;
 			_eventAggregator = eventAggregator;
 			_userProfileService = userProfileService;
+			_unitsService = unitsService;
+			_shiftsService = shiftsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -222,28 +226,85 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View("NewGroup", model);
 		}
 
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_Delete)]
 		public IActionResult DeleteGroup(int departmentGroupId)
 		{
-			if (!_authorizationService.CanUserEditDepartmentGroup(UserId, departmentGroupId))
+			DeleteGroupView model = new DeleteGroupView();
+			model.Group = _departmentGroupsService.GetGroupById(departmentGroupId);
+
+			if (model.Group == null || model.Group.DepartmentId != DepartmentId || !_authorizationService.CanUserEditDepartmentGroup(UserId, departmentGroupId))
 				Unauthorized();
 
-			var group = _departmentGroupsService.GetGroupById(departmentGroupId);
+			var users = _departmentGroupsService.GetAllUsersForGroup(departmentGroupId);
 			var childGroups = _departmentGroupsService.GetAllChildDepartmentGroups(departmentGroupId);
+			var units = _unitsService.GetAllUnitsForGroup(departmentGroupId);
+			var shifts = _shiftsService.GetShiftGroupsByGroupId(departmentGroupId);
 
-			if (childGroups != null && childGroups.Count > 0)
+			if (users != null)
+				model.UserCount = users.Count;
+			else
+				model.UserCount = 0;
+
+			if (childGroups != null)
+				model.ChildGroupCount = childGroups.Count;
+			else
+				model.ChildGroupCount = 0;
+
+			if (units != null)
+				model.UnitsCount = units.Count;
+			else
+				model.UnitsCount = 0;
+
+			if (shifts != null)
+				model.ShiftsCount = shifts.Count;
+			else
+				model.ShiftsCount = 0;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.GenericGroup_Delete)]
+		public IActionResult DeleteGroup(DeleteGroupView model)
+		{
+			if (!_authorizationService.CanUserEditDepartmentGroup(UserId, model.Group.DepartmentGroupId))
+				Unauthorized();
+
+			var group = _departmentGroupsService.GetGroupById(model.Group.DepartmentGroupId);
+
+			var users = _departmentGroupsService.GetAllUsersForGroup(model.Group.DepartmentGroupId);
+			var childGroups = _departmentGroupsService.GetAllChildDepartmentGroups(model.Group.DepartmentGroupId);
+			var units = _unitsService.GetAllUnitsForGroup(model.Group.DepartmentGroupId);
+			var shifts = _shiftsService.GetShiftGroupsByGroupId(model.Group.DepartmentGroupId);
+
+			if (childGroups.Count > 0 || users.Count > 0 || units.Count > 0 || shifts.Count > 0)
 			{
-				DepartmentGroupsModel model = new DepartmentGroupsModel();
-				model.Department = _departmentsService.GetDepartmentByUserId(UserId);
-				model.User = _usersService.GetUserById(UserId);
-				model.Users = _departmentsService.GetAllUsersForDepartment(model.Department.DepartmentId);
-				model.Groups = _departmentGroupsService.GetAllGroupsForDepartmentUnlimited(model.Department.DepartmentId);
+				model.Group = group;
 
-				model.CanAddNewGroup = _limitsService.CanDepartentAddNewGroup(model.Department.DepartmentId);
+				if (users != null)
+					model.UserCount = users.Count;
+				else
+					model.UserCount = 0;
 
-				model.Message = string.Format("Cannot delete the {0} group because it is the parent to other groups.", group.Name);
+				if (childGroups != null)
+					model.ChildGroupCount = childGroups.Count;
+				else
+					model.ChildGroupCount = 0;
 
-				return View("Index", model);
+				if (units != null)
+					model.UnitsCount = units.Count;
+				else
+					model.UnitsCount = 0;
+
+				if (shifts != null)
+					model.ShiftsCount = shifts.Count;
+				else
+					model.ShiftsCount = 0;
+
+				model.Message = string.Format("Cannot delete the {0} group because it is the parent to other groups, has users or units in it or has shifts assigned to it.", model.Group.Name);
+
+				return View(model);
 			}
 
 			var department = _departmentsService.GetDepartmentById(group.DepartmentId);
@@ -257,7 +318,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.Before = group.CloneJson();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				_deleteService.DeleteGroup(group.DepartmentGroupId);
+				_deleteService.DeleteGroup(group.DepartmentGroupId, UserId);
 			}
 
 			return RedirectToAction("Index", "Groups", new { Area = "User" });

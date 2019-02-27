@@ -30,5 +30,8 @@ namespace Resgrid.Model.Services
 		DateTime GetDepartmentUpdateTimestamp(int departmentId);
 		string GetBrainTreeCustomerIdForDepartment(int departmentId);
 		int? GetDepartmentIdForBrainTreeCustomerId(string stripeCustomerId);
+		PersonnelSortOrders GetDepartmentPersonnelSortOrder(int departmentId);
+		UnitSortOrders GetDepartmentUnitsSortOrder(int departmentId);
+		CallSortOrders GetDepartmentCallSortOrder(int departmentId);
 	}
 }

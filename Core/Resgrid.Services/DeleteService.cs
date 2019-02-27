@@ -81,12 +81,18 @@ namespace Resgrid.Services
 			return DeleteUserResults.NoFailure;
 		}
 
-		public void DeleteGroup(int departmentGroupId)
+		public DeleteGroupResults DeleteGroup(int departmentGroupId, string currentUserId)
 		{
+			if (!_authorizationService.CanUserEditDepartmentGroup(currentUserId, departmentGroupId))
+				return DeleteGroupResults.UnAuthroized;
+
+			_callsService.ClearGroupForDispatches(departmentGroupId);
 			_workLogsService.ClearGroupForLogs(departmentGroupId);
 			_unitsService.ClearGroupForUnits(departmentGroupId);
 			_shiftsService.DeleteShiftGroupsByGroupId(departmentGroupId);
 			_departmentGroupsService.DeleteGroupById(departmentGroupId);
+
+			return DeleteGroupResults.NoFailure;
 		}
 	}
 }

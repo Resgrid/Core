@@ -41,6 +41,15 @@ namespace Resgrid.Web.Areas.User.Models
 		public int ResetStatusTo { get; set; }
 		public ActionTypes UserStatusTypes { get; set; }
 
+		public int PersonnelSort { get; set; }
+		public SelectList PersonnelSortTypes { get; set; }
+
+		public int UnitsSort { get; set; }
+		public SelectList UnitSortTypes { get; set; }
+
+		public int CallsSort { get; set; }
+		public SelectList CallSortTypes { get; set; }
+
 		public DepartmentSettingsModel()
 		{
 			Users = new Dictionary<string, string>();

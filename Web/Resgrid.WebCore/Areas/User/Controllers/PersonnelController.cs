@@ -44,12 +44,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICustomStateService _customStateService;
 		private readonly IGeoService _geoService;
 		private readonly UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _userManager;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
-			IGeoService geoService, UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> userManager)
+			IGeoService geoService, UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -68,6 +69,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_customStateService = customStateService;
 			_geoService = geoService;
 			_userManager = userManager;
+			_departmentSettingsService = departmentSettingsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -577,6 +579,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var profiles = _userProfileService.GetAllProfilesForDepartmentIncDisabledDeleted(DepartmentId);
 			var userGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, false);
 
+			var sortOrder = _departmentSettingsService.GetDepartmentPersonnelSortOrder(DepartmentId);
+
 			foreach (var user in users)
 			{
 				var person = new PersonnelForListJson();
@@ -594,6 +598,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var userProfile = profiles[user.UserId];
 					person.Name = userProfile.FullName.AsFirstNameLastName;
+					person.FirstName = userProfile.FirstName;
+					person.LastName = userProfile.LastName;
 				}
 
 				if (ClaimsAuthorizationHelper.CanViewPII())
@@ -672,7 +678,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelJson.Add(person);
 			}
 
-			return Json(personnelJson);
+			switch (sortOrder)
+			{
+				case PersonnelSortOrders.Default:
+					return Json(personnelJson);
+				case PersonnelSortOrders.FirstName:
+					return Json(personnelJson.OrderBy(x => x.FirstName));
+				case PersonnelSortOrders.LastName:
+					return Json(personnelJson.OrderBy(x => x.LastName));
+				default:
+					return Json(personnelJson);
+			}
 		}
 
 		[HttpGet]

@@ -189,6 +189,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Users = new SelectList(model.Users, "Key", "Value");
 
+			PersonnelSortOrders personnelSortOrders = PersonnelSortOrders.Default;
+			model.PersonnelSortTypes = personnelSortOrders.ToSelectListInt();
+
+			UnitSortOrders unitSortTypes = UnitSortOrders.Default;
+			model.UnitSortTypes = unitSortTypes.ToSelectListInt();
+
+			CallSortOrders callSortTypes = CallSortOrders.Default;
+			model.CallSortTypes = callSortTypes.ToSelectListInt();
+
 			if (model.Department.Use24HourTime.HasValue)
 				model.Use24HourTime = model.Department.Use24HourTime.Value;
 			else
@@ -306,6 +315,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			d.ManagingUserId = model.Department.ManagingUserId;
 			d.Use24HourTime = model.Use24HourTime;
 
+			PersonnelSortOrders personnelSortOrders = PersonnelSortOrders.Default;
+			model.PersonnelSortTypes = personnelSortOrders.ToSelectListInt();
+
+			UnitSortOrders unitSortTypes = UnitSortOrders.Default;
+			model.UnitSortTypes = unitSortTypes.ToSelectListInt();
+
+			CallSortOrders callSortTypes = CallSortOrders.Default;
+			model.CallSortTypes = callSortTypes.ToSelectListInt();
+
 			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
 			if (staffingLevels == null)
 			{
@@ -415,6 +433,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable);
 				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable);
+
+				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.PersonnelSort.ToString(), DepartmentSettingTypes.PersonnelSortOrder);
+				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.UnitsSort.ToString(), DepartmentSettingTypes.UnitsSortOrder);
+				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.CallsSort.ToString(), DepartmentSettingTypes.CallsSortOrder);
 
 				if (!String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLatitude) && !String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLongitude))
 					_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.MapCenterGpsCoordinatesLatitude + "," + model.MapCenterGpsCoordinatesLongitude, DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates);

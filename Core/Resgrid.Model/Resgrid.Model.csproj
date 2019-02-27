@@ -191,9 +191,11 @@
     <Compile Include="Call.cs" />
     <Compile Include="CallDispatchRole.cs" />
     <Compile Include="CallDispatchUnit.cs" />
+    <Compile Include="CallSortOrders.cs" />
     <Compile Include="CustomAudioTypes.cs" />
     <Compile Include="Dapper\SimpleCRUD.cs" />
     <Compile Include="Dapper\SimpleCRUDAsync.cs" />
+    <Compile Include="DeleteGroupResults.cs" />
     <Compile Include="DepartmentCallPriority.cs" />
     <Compile Include="DepartmentLink.cs" />
     <Compile Include="DepartmentProfile.cs" />
@@ -301,6 +303,7 @@
     <Compile Include="PermissionTypes.cs" />
     <Compile Include="PersonName.cs" />
     <Compile Include="PersonnelCertification.cs" />
+    <Compile Include="PersonnelSortOrders.cs" />
     <Compile Include="PhoneNumberResult.cs" />
     <Compile Include="Plans.cs" />
     <Compile Include="Poi.cs" />
@@ -451,6 +454,7 @@
     <Compile Include="TaskTypes.cs" />
     <Compile Include="TextMessage.cs" />
     <Compile Include="TextNumber.cs" />
+    <Compile Include="UnitSortOrders.cs" />
     <Compile Include="UnitStateRole.cs" />
     <Compile Include="UnitType.cs" />
     <Compile Include="UnitLog.cs" />
@@ -527,7 +531,6 @@
     <Compile Include="Unit.cs" />
     <Compile Include="UnitState.cs" />
     <Compile Include="UnitStateTypes.cs" />
-    <Compile Include="Update.cs" />
     <Compile Include="UserGroupRole.cs" />
     <Compile Include="UserProfile.cs" />
     <Compile Include="ScheduledTask.cs" />

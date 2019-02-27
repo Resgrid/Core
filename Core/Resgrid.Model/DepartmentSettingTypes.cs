@@ -18,6 +18,9 @@
 		EnableTextCommand = 14,
 		InternalDispatchEmail = 15,
 		UpdateTimestamp = 16,
-		BrainTreeCustomerId = 17
+		BrainTreeCustomerId = 17,
+		PersonnelSortOrder = 18,
+		UnitsSortOrder = 19,
+		CallsSortOrder = 20
 	}
 }

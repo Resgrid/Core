@@ -4,7 +4,7 @@
     "noEmit": true
   },
   "include": [
-    "wwwroot/js/app/**/*", "Areas/User/Models/Calendar/EditCalendarEntry.cs", "../../Tools/Resgrid.Console/Args/DbUpdateArgs.cs"
+    "wwwroot/js/app/**/*", "Areas/User/Models/Calendar/EditCalendarEntry.cs", "../../Tools/Resgrid.Console/Args/DbUpdateArgs.cs", "../../Core/Resgrid.Model/UnitSortOrders.cs", "../../Core/Resgrid.Model/CallSortOrders.cs"
   ]//,
   //"exclude": [
   //  "node_modules",

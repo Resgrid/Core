@@ -481,5 +481,44 @@ namespace Resgrid.Services
 
 			return DateTime.MinValue;
 		}
+
+		public PersonnelSortOrders GetDepartmentPersonnelSortOrder(int departmentId)
+		{
+			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
+								where setting.DepartmentId == departmentId &&
+										setting.SettingType == (int)DepartmentSettingTypes.PersonnelSortOrder
+								select setting).FirstOrDefault();
+
+			if (settingValue != null)
+				return (PersonnelSortOrders)int.Parse(settingValue.Setting);
+
+			return PersonnelSortOrders.Default;
+		}
+
+		public UnitSortOrders GetDepartmentUnitsSortOrder(int departmentId)
+		{
+			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
+								where setting.DepartmentId == departmentId &&
+										setting.SettingType == (int)DepartmentSettingTypes.UnitsSortOrder
+								select setting).FirstOrDefault();
+
+			if (settingValue != null)
+				return (UnitSortOrders)int.Parse(settingValue.Setting);
+
+			return UnitSortOrders.Default;
+		}
+
+		public CallSortOrders GetDepartmentCallSortOrder(int departmentId)
+		{
+			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
+								where setting.DepartmentId == departmentId &&
+										setting.SettingType == (int)DepartmentSettingTypes.CallsSortOrder
+								select setting).FirstOrDefault();
+
+			if (settingValue != null)
+				return (CallSortOrders)int.Parse(settingValue.Setting);
+
+			return CallSortOrders.Default;
+		}
 	}
 }

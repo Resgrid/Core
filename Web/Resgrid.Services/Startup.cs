@@ -18,6 +18,7 @@ using Stripe;
 using System.Configuration;
 using WebApiThrottle;
 using Resgrid.Config;
+using System.Reflection;
 
 [assembly: OwinStartup(typeof(Resgrid.Web.Services.Startup))]
 namespace Resgrid.Web.Services
@@ -27,7 +28,30 @@ namespace Resgrid.Web.Services
 		//public void Configuration(IAppBuilder app, IDependencyResolver resolver = null)
 		public void Configuration(IAppBuilder app)
 		{
-			ConfigProcessor.LoadAndProcessConfig(ConfigurationManager.AppSettings["ConfigPath"]);
+			string configConnectionString = ConfigurationManager.ConnectionStrings["ResgridContext"].ToString();
+			bool configResult = ConfigProcessor.LoadAndProcessConfig(ConfigurationManager.AppSettings["ConfigPath"]);
+
+			var configManager = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
+			var connectionStringsSection = (ConnectionStringsSection)configManager.GetSection("connectionStrings");
+
+			if (!configResult)
+			{
+				if (connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString != configConnectionString)
+				{
+					connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = configConnectionString;
+					configManager.Save();
+					ConfigurationManager.RefreshSection("connectionStrings");
+				}
+			}
+			else
+			{
+				if (connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString != DataConfig.ConnectionString)
+				{
+					connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = DataConfig.ConnectionString;
+					configManager.Save();
+					ConfigurationManager.RefreshSection("connectionStrings");
+				}
+			}
 
 			WebBootstrapper.Initialize();
 
@@ -43,7 +67,7 @@ namespace Resgrid.Web.Services
 
 			if (Config.ServiceBusConfig.SignalRServiceBusConnectionString != "NOTSET")
 				GlobalHost.DependencyResolver.UseServiceBus(Config.ServiceBusConfig.SignalRServiceBusConnectionString, Config.ServiceBusConfig.SignalRTopicName);
-			
+
 			// Branch the pipeline here for requests that start with "/signalr"
 			app.Map("/signalr", map =>
 			{
@@ -87,13 +111,8 @@ namespace Resgrid.Web.Services
 				},
 				Repository = new CacheRepository()
 			});
-			
-			//app.UseAutofacMiddleware(container);
-			//app.UseAutofacWebApi(config);
-			//app.UseWebApi(config);
 
 			StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.ProductionKey);
-			//StripeConfiguration.SetApiKey(ConfigurationManager.AppSettings["StripeApiKey"]);
 
 			ConfigureAuth(app);
 		}

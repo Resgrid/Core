@@ -107,7 +107,7 @@
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="bower install" />
+    <Exec Command="libman restore" />
     <Exec Command="dotnet bundle" />
   </Target>
 

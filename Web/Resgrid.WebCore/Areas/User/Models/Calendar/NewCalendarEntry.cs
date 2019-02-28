@@ -9,5 +9,6 @@ namespace Resgrid.WebCore.Areas.User.Models.Calendar
 		public CalendarItem Item { get; set; }
 		public RecurrenceTypes RecurrenceTypes { get; set; }
 		public List<CalendarItemType> Types { get; set; }
+		public string entities { get; set; }
 	}
 }

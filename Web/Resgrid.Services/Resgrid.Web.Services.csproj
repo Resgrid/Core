@@ -568,15 +568,11 @@
     </Content>
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap-doc.css" />
-    <Content Include="Content\bootstrap-responsive.css" />
-    <Content Include="Content\bootstrap.css" />
     <Content Include="Content\google-code-prettify\prettify.css" />
     <Content Include="Global.asax" />
     <Content Include="Images\glyphicons-halflings-white.png" />
     <Content Include="Images\glyphicons-halflings.png" />
     <Content Include="Images\shadow.png" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\google-code-prettify\prettify.js" />
     <Content Include="Scripts\html5shiv.js" />
     <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
@@ -630,7 +626,6 @@
     </Content>
     <None Include="Properties\PublishProfiles\ResgridAPI - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ResgridWeb - Web Deploy.pubxml" />
-    <Content Include="Scripts\jquery.min.js" />
     <Content Include="Configs\connectionStrings.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="StripeHandler.ashx" />

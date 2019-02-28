@@ -222,10 +222,10 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				if (customState.IsDeleted)
 					continue;
 
-				foreach (var stateDetail in customState.GetActiveDetails())
+				foreach (var stateDetail in customState.Details)
 				{
-					if (stateDetail.IsDeleted)
-						continue;
+					//if (stateDetail.IsDeleted)
+					//	continue;
 
 					var customStateResult = new CustomStatusesResult();
 					customStateResult.Id = stateDetail.CustomStateDetailId;

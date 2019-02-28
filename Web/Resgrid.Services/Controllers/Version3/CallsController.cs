@@ -41,6 +41,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IUnitsService _unitsService;
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -52,7 +53,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			IUsersService usersService,
 			IUnitsService unitsService,
 			IActionLogsService actionLogsService,
-			IDepartmentGroupsService departmentGroupsService
+			IDepartmentGroupsService departmentGroupsService,
+			IPersonnelRolesService personnelRolesService
 			)
 		{
 			_callsService = callsService;
@@ -65,6 +67,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_unitsService = unitsService;
 			_actionLogsService = actionLogsService;
 			_departmentGroupsService = departmentGroupsService;
+			_personnelRolesService = personnelRolesService;
 		}
 		#endregion Members and Constructors
 
@@ -527,9 +530,42 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
 			handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 
+			var profiles = new List<string>();
+
+			if (call.Dispatches != null && call.Dispatches.Any())
+			{
+				profiles.AddRange(call.Dispatches.Select(x => x.UserId).ToList());
+			}
+
+			if (call.GroupDispatches != null && call.GroupDispatches.Any())
+			{
+				foreach (var groupDispatch in call.GroupDispatches)
+				{
+					var group = _departmentGroupsService.GetGroupById(groupDispatch.DepartmentGroupId);
+
+					if (group != null && group.Members != null)
+					{
+						profiles.AddRange(group.Members.Select(x => x.UserId));
+					}
+				}
+			}
+
+			if (call.RoleDispatches != null && call.RoleDispatches.Any())
+			{
+				foreach (var roleDispatch in call.RoleDispatches)
+				{
+					var members = _personnelRolesService.GetAllMembersOfRole(roleDispatch.RoleId);
+
+					if (members != null)
+					{
+						profiles.AddRange(members.Select(x => x.UserId).ToList());
+					}
+				}
+			}
+
 			var cqi = new CallQueueItem();
 			cqi.Call = savedCall;
-			cqi.Profiles = _userProfileService.GetSelectedUserProfiles(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
+			cqi.Profiles = _userProfileService.GetSelectedUserProfiles(profiles);
 
 			_queueService.EnqueueCallBroadcast(cqi);
 

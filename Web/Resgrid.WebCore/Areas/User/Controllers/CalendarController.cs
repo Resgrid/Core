@@ -113,6 +113,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.Item.DepartmentId = DepartmentId;
 				model.Item.CreatorUserId = UserId;
+				model.Item.Entities = model.entities;
 
 				_calendarService.AddNewV2CalendarItem(model.Item, department.TimeZone);
 

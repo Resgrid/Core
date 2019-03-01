@@ -14,5 +14,6 @@ namespace Resgrid.WebCore.Areas.User.Models.Calendar
 		public DateTime StartTime { get; set; }
 		public DateTime EndTime { get; set; }
 		public bool IsRecurrenceParent { get; set; }
+		public string entities { get; set; }
 	}
 }

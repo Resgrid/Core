@@ -185,6 +185,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Item.End = model.EndTime;
 				model.Item.DepartmentId = DepartmentId;
 				model.Item.CreatorUserId = UserId;
+				model.Item.Entities = model.entities;
 
 				_calendarService.UpdateV2CalendarItem(model.Item, department.TimeZone);
 

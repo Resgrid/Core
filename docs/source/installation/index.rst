@@ -40,14 +40,178 @@ Redis is an standalone, resilient in memory data store that Redis uses to cache 
 
 .. important:: Although Redis is optional, it's recommended for production installations or multi server installations of Resgrid.
 
+Elastic ELK 
+=======================
+
+To install ELK from Elastic follow the `Elasticsearch MSI Installer <https://www.elastic.co/guide/en/elasticsearch/reference/6.6/windows.html>`_ and the Kilbana `Install Instructions <https://www.elastic.co/guide/en/kibana/6.6/windows.html>`_. You don't need Logstash as Resgrid can log directly to Elasticsearch. When installing Elasticsearch ensure it's port is externally accessible. 
+
+Microsoft IIS
+=======================
+
+Installing Microsoft IIS (Webserver) will differ based on what version of Windows you are using; for example Windows 8 or Windows Server 2016. For you specific version of Windows 
+
+.. list-table:: IIS Options
+   :header-rows: 1
+
+   * - Section
+     - Sub Section
+     - Option
+   * - Web Management Tools
+     -  
+     - IIS Management Console
+   * - World Wide Web Services
+     - Application Development Features 
+     - .Net Extensibility 3.5
+   * - World Wide Web Services
+     - Application Development Features 
+     - .Net Extensibility 4.7
+   * - World Wide Web Services
+     - Application Development Features 
+     - ASP.NET 3.5
+   * - World Wide Web Services
+     - Application Development Features 
+     - ASP.NET 4.7
+   * - World Wide Web Services
+     - Application Development Features 
+     - ISAPI Extensions
+   * - World Wide Web Services
+     - Application Development Features 
+     - ISAPI Filters
+   * - World Wide Web Services
+     - Common HTTP Features 
+     - Default Document
+   * - World Wide Web Services
+     - Common HTTP Features 
+     - HTTP Errors
+   * - World Wide Web Services
+     - Common HTTP Features 
+     - HTTP Redirection
+   * - World Wide Web Services
+     - Common HTTP Features 
+     - Static Content
+   * - World Wide Web Services
+     - Performance Features
+     - Dynamic Content Compression
+   * - World Wide Web Services
+     - Performance Features
+     - Static Content Compression
+   * - World Wide Web Services
+     - Security
+     - Basic Authentication
+   * - World Wide Web Services
+     - Security
+     - IP Security
+
+.. note:: Depending on the requirements of your web server, environment and other factors your installed IIS options may be different. Resgrid requires at a minimum the .NET Extensibility and ASP.NET Options to run minimally. 
+
+Install Resgrid
+****************************
+
+Download the latest stable release from the `Resgrid Core Github Releases <https://github.com/Resgrid/Core/releases>`_ page. Pre-release or Beta versions will also be available for download but should not be used in production systems. Instead should only be used for testing or evaluating new features or functionality. 
+
+Once you've download the release package extract the zip folder to your computer. It will reveal the directory structure in the table below.
+
+.. list-table:: Resgrid Folder Structure
+   :header-rows: 1
+
+   * - Folder
+     - Description
+   * - Api
+     - Resgrid.Services API web application that will need to be exposed via IIS
+   * - Config
+     - Contains the ResgridConfig.json document to configure the Resgrid system
+   * - Tools
+     - Various tools, both UI and CLI to interact with Resgrid from the server
+   * - Web
+     - The primary Resgrid web application that will need to be exposed via IIS
+   * - Workers
+     - Backend workers to enable processing of async and scheduled tasks
+
+The default installation location for Resgrid is C:\Resgrid, with the Api, Config, Tools, Web and Workers folder underneath that. So the full path to the config file is C:\Resgrid\Config\ResgridConfig.json. You can install Resgrid wherever you want, but you will need to update each application's config file (app.config, web.config or appsettings.json) with the correct path to the ResgridConfig.json file.
+
+Create a new folder on your C:\ Drive called "Resgrid" and copy the above 5 folders, that you extracted from the zip downloaded from Github, into that directory. 
+
+Setup Hosts File
+=======================
+
+Run Notepad as Administrator, open up the hosts file in the following directory 'C:\Windows\System32\drivers\etc' and add the following lines at the bottom.
+
+    127.0.0.1	resgrid.local
+    127.0.0.1	resgridapi.local
+
+This will allow you to access locally on the box using the above domain names. If you have your own names you can use those in the IIS configuration below. If you already have the entries into your hosts file you do not need to add them again.
 
 Database Installation
 ****************************
 
+You will need to install and configure Microsoft SQL Server you can find tutorials online an example of one is `from tutorialpoint <https://www.tutorialspoint.com/ms_sql_server/ms_sql_server_installation.htm>`_. You will need SQL Server and SQL Managment Studio which can be `downloaded form Microsoft <https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-2017>`_.
 
+Once you have Microsoft SQL and Microsoft SQL Management Studio installed; open up Microsoft SQL Management studio, connect to your SQL Server and create an empty database called Resgrid. 
+
+Install\Update Resgrid Schema
+=======================
+
+Open up the Windows Command Prompt (cmd) and type:
+
+    cd C:\Resgrid\Tools\ 
+
+your command prompt should now read "C:\Resgrid\Tools>". You can now type the following command into the command prompt:
+
+    Resgrid.Console.exe dbupdate
+
+That will start the Resgrid Database Update process and either Update or Install your Resgrid database. If everything worked correctly you should see close to the following output:
+
+    C:\Resgrid\Tools>Resgrid.Console.exe dbupdate
+    Resgrid Console
+    -----------------------------------------
+    Starting the Resgrid Database Update Process
+    Please Wait...
+    Completed updating the Resgrid Database!
+
+
+    C:\Resgrid\Tools>
+
+This will be run when your upgrading your Resgrid installation as well.
+
+IIS Installation
+****************************
+
+Run the 'Internet Information Services (IIS) Manager' and expand the top server node and the Sites node in the tree view on the left hand side. If you don't have 2 sites called 'resgrid' and 'resgridapi' you will need to add those sites. Right click the Sites folder and select "Add Website"
+
+.. list-table:: Resgrid Web Website Options
+   :header-rows: 1
+
+   * - Option
+     - Value
+   * - Site name
+     - resgrid
+   * - Physical path
+     - C:\Resgrid\Web
+   * - Binding Type
+     - https (Select from the drop-down)
+   * - Host name
+     - resgrid.local
+   * - SSL certificate
+     - *Select Any*
+
+.. list-table:: Resgrid API Website Options
+   :header-rows: 1
+
+   * - Option
+     - Value
+   * - Site name
+     - resgridapi
+   * - Physical path
+     - C:\Resgrid\Api
+   * - Host name:
+     - resgridapi.local
+
+.. important:: If you don't have a valid SSL certificate you can create a self-signed certificate by using `these instructions <https://aboutssl.org/how-to-create-a-self-signed-certificate-in-iis/>`_. You cannot use a self-signed certificate for the resgridapi IIS website as self-signed certificated will be rejected by the applications. We *HIGHLY* recommend you get valid SSL Certificates from a trusted vender and have both the resgrid and resgridapi protected by those.
+
+.. note:: If you are using a Self Signed or Development SSL certificate you will get a Certificate Warning using any modern web browser. If your url is pointing to localhost,127.0.0.1,resgrid.local or resgridapi.local it is safe to proceed to the website and bypass that certificate error. We do not recommend doing that on public websites.
 
 Initial Web Login
 ****************************
 
-Once you have completed the steps above you will be able to log into the web applications user interface. Open up a web browser and navigate to http://resgrid.local, you will then be prompted by the login screen. Your default administrator credentials are **admin/changeme1234**. Once you log into the system it's recommended that you change your admin password from the Edit Profile page by clicking on the Administrator name in the upper left hand corner. 
+Once you have completed the steps above you will be able to log into the web applications user interface. Open up a web browser and navigate to https://resgrid.local, you will then be prompted by the login screen. Your default administrator credentials are **admin/changeme1234**. Once you log into the system it's recommended that you change your admin password from the Edit Profile page by clicking on the Administrator name in the upper left hand corner. 
 

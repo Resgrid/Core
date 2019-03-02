@@ -65,7 +65,7 @@ namespace Resgrid.Web.Services
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-			if (Config.ServiceBusConfig.SignalRServiceBusConnectionString != "NOTSET")
+			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.SignalRServiceBusConnectionString))
 				GlobalHost.DependencyResolver.UseServiceBus(Config.ServiceBusConfig.SignalRServiceBusConnectionString, Config.ServiceBusConfig.SignalRTopicName);
 
 			// Branch the pipeline here for requests that start with "/signalr"

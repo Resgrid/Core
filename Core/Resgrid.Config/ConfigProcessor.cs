@@ -37,22 +37,37 @@ namespace Resgrid.Config
 									FieldInfo prop = configObj.GetField(parts[1]);
 									if (null != prop)
 									{
-										Type t = Nullable.GetUnderlyingType(prop.FieldType) ?? prop.FieldType;
-										object safeValue = Convert.ChangeType(configValue.Value, t);
-										prop.SetValue(configObj, safeValue);
+										if (prop.FieldType.BaseType == typeof(Enum))
+										{
+											Type t = Nullable.GetUnderlyingType(prop.FieldType) ?? prop.FieldType;
+
+											String name = Enum.GetName(t, int.Parse(configValue.Value));
+											Object enumValue = Enum.Parse(t, name, false);
+
+											object safeValue = Convert.ChangeType(enumValue, t);
+											prop.SetValue(configObj, safeValue);
+										}
+										else
+										{
+											Type t = Nullable.GetUnderlyingType(prop.FieldType) ?? prop.FieldType;
+											object safeValue = Convert.ChangeType(configValue.Value, t);
+											prop.SetValue(configObj, safeValue);
+										}
 									}
 								}
 							}
 						}
 					}
+
+					return true;
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
 				return false;
 			}
 
-			return true;
+			return false;
 		}
 	}
 }

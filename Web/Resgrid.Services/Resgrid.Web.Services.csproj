@@ -624,8 +624,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\ResgridAPI - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\ResgridWeb - Web Deploy.pubxml" />
     <Content Include="Configs\connectionStrings.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="StripeHandler.ashx" />
@@ -704,6 +702,9 @@
       <Project>{db5ded75-669d-485c-a093-736e02115892}</Project>
       <Name>Resgrid.Repositories.DataRepository</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

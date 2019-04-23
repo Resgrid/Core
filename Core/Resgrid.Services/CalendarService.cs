@@ -27,17 +27,17 @@ namespace Resgrid.Services
 
 		public List<CalendarItem> GetAllCalendarItemsForDepartment(int departmentId)
 		{
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.IsV2Schedule == true).ToList();
 		}
 
 		public List<CalendarItem> GetAllCalendarItemsForDepartment(int departmentId, DateTime startDate)
 		{
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= startDate).ToList();
+			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= startDate && x.IsV2Schedule == true).ToList();
 		}
 
 		public List<CalendarItem> GetAllCalendarItemsForDepartmentInRange(int departmentId, DateTime startDate, DateTime endDate)
 		{
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= startDate && x.End <= endDate).ToList();
+			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= startDate && x.End <= endDate && x.IsV2Schedule == true).ToList();
 		}
 
 		public List<CalendarItemType> GetAllCalendarItemTypesForDepartment(int departmentId)
@@ -48,7 +48,7 @@ namespace Resgrid.Services
 		public List<CalendarItem> GetUpcomingCalendarItems(int departmentId, DateTime start)
 		{
 			var endDate = start.AddDays(7);
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= start && x.Start <= endDate).ToList();
+			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= start && x.Start <= endDate && x.IsV2Schedule == true).ToList();
 		}
 
 		public CalendarItem SaveCalendarItem(CalendarItem calendarItem)

@@ -30,5 +30,6 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.CoreData
 		public bool Gps { get; set; }
 		public int Note { get; set; }
 		public int Detail { get; set; }
+		public bool IsDeleted { get; set; }
 	}
 }

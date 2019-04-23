@@ -73,7 +73,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			using (IDbConnection db = new SqlConnection(connectionString))
 			{
-				db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail WHERE Id = @userId", new { userId = userId, newEmail = newEmail });
+				db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail, [NormalizedEmail] = @newEmailUpper WHERE Id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail.ToUpper() });
 			}
 		}
 

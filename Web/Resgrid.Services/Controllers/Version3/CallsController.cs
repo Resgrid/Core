@@ -149,6 +149,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		{
 			var c = _callsService.GetCallById(callId);
 			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			//var types = _callsService.GetCallTypesForDepartment(DepartmentId);
 
 			var call = new CallResult();
 
@@ -163,6 +164,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			call.Rnm = c.ContactName;
 			call.Rci = c.ContactNumber;
 			call.Rid = c.ReferenceNumber;
+			call.Typ = c.Type;
 
 			if (c.CallNotes != null)
 				call.Nts = c.CallNotes.Count();
@@ -213,6 +215,11 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			return call;
 		}
 
+		/// <summary>
+		/// Gets all the meta-data around a call, dispatched personnel, units, groups and responses
+		/// </summary>
+		/// <param name="callId">CallId to get data for</param>
+		/// <returns></returns>
 		public CallDataResult GetCallExtraData(int callId)
 		{
 			var result = new CallDataResult();
@@ -394,7 +401,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		/// <summary>
-		/// Saves a new call in the Resgrid system
+		/// Saves a call in the Resgrid system
 		/// </summary>
 		/// <param name="newCallInput"></param>
 		/// <returns></returns>
@@ -572,7 +579,11 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			return Request.CreateResponse(HttpStatusCode.Created);
 		}
 
-
+		/// <summary>
+		/// Adds a new call into Resgrid and Dispatches the call
+		/// </summary>
+		/// <param name="callInput">Call data to add into the system</param>
+		/// <returns></returns>
 		public async Task<AddCallInput> AddCall([FromBody] AddCallInput callInput)
 		{
 			try
@@ -1019,6 +1030,31 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			return new HttpResponseMessage(HttpStatusCode.NotFound);
 		}
 
+
+		/// <summary>
+		/// Get all the call types for a department
+		/// </summary>
+		/// <returns>An array of call types</returns>
+		public List<CallTypeResult> GetCallTypes()
+		{
+			var result = new List<CallTypeResult>();
+
+			var callTypes = _callsService.GetCallTypesForDepartment(DepartmentId);
+
+			if (callTypes != null && callTypes.Any())
+			{
+				foreach(var callType in callTypes)
+				{
+					var type = new CallTypeResult();
+					type.Id = callType.CallTypeId;
+					type.Name = callType.Type;
+
+					result.Add(type);
+				}
+			}
+
+			return result;
+		}
 
 		public HttpResponseMessage Options()
 		{

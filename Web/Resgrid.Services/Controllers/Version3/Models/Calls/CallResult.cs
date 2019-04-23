@@ -52,7 +52,7 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.Calls
 		public string Add { get; set; }
 
 		/// <summary>
-		/// Gelocation Coordinates
+		/// Geo location Coordinates
 		/// </summary>
 		public string Geo { get; set; }
 
@@ -120,6 +120,11 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.Calls
 		/// Audio File Id
 		/// </summary>
 		public string Aid { get; set; }
+
+		/// <summary>
+		/// Call Type
+		/// </summary>
+		public string Typ { get; set; }
 
 		/// <summary>
 		/// When was the call Logged On in UTC time

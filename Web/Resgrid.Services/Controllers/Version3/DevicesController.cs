@@ -54,7 +54,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		/// <summary>
-		/// Register a device to recieve push notificaiton from the Resgrid system
+		/// Register a device to receive push notification from the Resgrid system
 		/// </summary>
 		/// <param name="registrationInput">Input to create the registration for</param>
 		/// <returns>Result for the registration</returns>

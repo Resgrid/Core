@@ -75,6 +75,7 @@ Major initiatives for the Resgrid project in 2019!
 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/resgrid/core?svg=true)](https://ci.appveyor.com/project/ShawnJackson/core)
 [![CodeFactor](https://www.codefactor.io/repository/github/resgrid/core/badge)](https://www.codefactor.io/repository/github/resgrid/core)
+[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
 ## Copyright and License
 

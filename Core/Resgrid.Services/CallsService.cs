@@ -124,6 +124,11 @@ namespace Resgrid.Services
 			return _callsRepository.GetActiveCallsByDepartment(departmentId);
 		}
 
+		public List<Call> GetActiveCallsByDepartmentForUpdate(int departmentId)
+		{
+			return _callsRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.State == 0 && x.IsDeleted == false).ToList();
+		}
+
 		public List<Call> GetLatest10ActiveCallsByDepartment(int departmentId)
 		{
 			var calls = (from c in _callsRepository.GetAll()

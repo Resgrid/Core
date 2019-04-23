@@ -433,6 +433,7 @@
     <Compile Include="Controllers\Version3\Models\Calls\CallNoteResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallPriorityDataResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallResult.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\CallTypeResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CloseCallInput.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\EditCallInput.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\NewCallInput.cs" />
@@ -624,11 +625,19 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\ResgridAPI - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\ResgridWeb - Web Deploy.pubxml" />
     <Content Include="Configs\connectionStrings.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="StripeHandler.ashx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\Error.cshtml" />
@@ -704,7 +713,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Web.Azure.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -16,9 +16,14 @@ namespace Resgrid.Providers.Firebase
 		public async Task<string> CreateResponderCustomAuthToken(string userId, Dictionary<string, object> claims = null)
 		{
 			CreateResponderInstance();
-			string customToken = await FirebaseAuth.GetAuth(_responderFirebaseApp).CreateCustomTokenAsync(userId, claims);
 
-			return customToken;
+			if (_responderFirebaseApp != null)
+			{
+				string customToken = await FirebaseAuth.GetAuth(_responderFirebaseApp).CreateCustomTokenAsync(userId, claims);
+				return customToken;
+			}
+
+			return "";
 		}
 
 		private void CreateResponderInstance()
@@ -32,12 +37,19 @@ namespace Resgrid.Providers.Firebase
 			// If it still doesn't exist create it
 			if (_responderFirebaseApp == null)
 			{
-				AppOptions options = new AppOptions();
-				options.ProjectId = FirebaseConfig.ResponderProjectId;
-				options.ServiceAccountId = FirebaseConfig.ResponderProjectEmail;
-				options.Credential = GoogleCredential.FromJson(FirebaseConfig.ResponderJsonFile);
+				try
+				{
+					AppOptions options = new AppOptions();
+					options.ProjectId = FirebaseConfig.ResponderProjectId;
+					options.ServiceAccountId = FirebaseConfig.ResponderProjectEmail;
+					options.Credential = GoogleCredential.FromJson(FirebaseConfig.ResponderJsonFile);
 
-				_responderFirebaseApp = FirebaseApp.Create(options, _appName);
+					_responderFirebaseApp = FirebaseApp.Create(options, _appName);
+				}
+				catch (System.ArgumentException aex)
+				{
+					_responderFirebaseApp = FirebaseApp.GetInstance(_appName);
+				}
 			}
 		}
 	}

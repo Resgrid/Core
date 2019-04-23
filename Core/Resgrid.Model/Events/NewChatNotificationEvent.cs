@@ -20,5 +20,8 @@ namespace Resgrid.Model.Events
 
 		[ProtoMember(5)]
 		public string Message { get; set; }
+
+		[ProtoMember(6)]
+		public int Type { get; set; }
 	}
 }

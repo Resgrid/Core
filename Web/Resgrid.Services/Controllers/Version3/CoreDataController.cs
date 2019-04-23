@@ -224,8 +224,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 				foreach (var stateDetail in customState.Details)
 				{
-					//if (stateDetail.IsDeleted)
-					//	continue;
+					if (stateDetail.IsDeleted)
+						continue;
 
 					var customStateResult = new CustomStatusesResult();
 					customStateResult.Id = stateDetail.CustomStateDetailId;
@@ -237,6 +237,11 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					customStateResult.Gps = stateDetail.GpsRequired;
 					customStateResult.Note = stateDetail.NoteType;
 					customStateResult.Detail = stateDetail.DetailType;
+
+					if (customState.IsDeleted)
+						customStateResult.IsDeleted = true;
+					else
+						customStateResult.IsDeleted = stateDetail.IsDeleted;
 
 					results.Statuses.Add(customStateResult);
 				}

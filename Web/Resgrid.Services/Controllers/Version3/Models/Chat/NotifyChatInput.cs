@@ -9,5 +9,6 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.Chat
 		public string SendingUserId { get; set; }
 		public List<string> RecipientUserIds { get; set; }
 		public string Message { get; set; }
+		public int Type { get; set; }
 	}
 }

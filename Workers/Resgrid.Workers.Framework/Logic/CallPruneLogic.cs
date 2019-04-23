@@ -24,7 +24,7 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					var calls = _callsService.GetActiveCallsByDepartment(item.PruneSettings.DepartmentId);
+					var calls = _callsService.GetActiveCallsByDepartmentForUpdate(item.PruneSettings.DepartmentId);
 
 					if (calls != null && calls.Count > 0)
 					{

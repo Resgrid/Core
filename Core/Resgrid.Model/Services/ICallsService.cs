@@ -50,5 +50,6 @@ namespace Resgrid.Model.Services
 		Task<string> GetShortenedAudioUrlAsync(int callId, int callAttachmentId);
 		string GetShortenedAudioUrl(int callId, int callAttachmentId);
 		void ClearGroupForDispatches(int departmentGroupId);
+		List<Call> GetActiveCallsByDepartmentForUpdate(int departmentId);
 	}
 }

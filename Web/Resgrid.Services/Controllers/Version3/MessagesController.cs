@@ -64,7 +64,99 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		public IEnumerable<MessageResult> GetMessages()
 		{
 			var result = new List<MessageResult>();
-			var messages = _messageService.GetInboxMessagesByUserId(UserId).OrderBy(x => x.SentOn);
+			var messages = _messageService.GetInboxMessagesByUserId(UserId).OrderBy(x => x.SentOn).OrderByDescending(x => x.SentOn);
+			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+
+			foreach (var m in messages)
+			{
+				var message = new MessageResult();
+
+				message.Mid = m.MessageId;
+				message.Sub = m.Subject;
+				message.Bdy = StringHelpers.StripHtmlTagsCharArray(m.Body).Truncate(100);
+				message.Son = m.SentOn.TimeConverter(department);
+				message.SUtc = m.SentOn;
+				message.Typ = m.Type;
+
+				if (!String.IsNullOrWhiteSpace(m.SendingUserId))
+					message.Uid = m.SendingUserId;
+
+				var respose = m.MessageRecipients.FirstOrDefault(x => x.UserId == UserId);
+
+				if (respose != null)
+				{
+					if (String.IsNullOrWhiteSpace(respose.Response))
+						message.Rsp = true;
+
+					message.Ron = respose.ReadOn;
+				}
+				else
+				{
+					message.Ron = m.ReadOn;
+				}
+
+				result.Add(message);
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Returns all inbox messages for a user.
+		/// </summary>
+		/// <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+		/// <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+		[AcceptVerbs("GET")]
+		public IEnumerable<MessageResult> GetMessagesPaged(int page)
+		{
+			var result = new List<MessageResult>();
+			var messages = _messageService.GetInboxMessagesByUserId(UserId).OrderByDescending(x => x.SentOn);
+			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+
+			foreach (var m in messages)
+			{
+				var message = new MessageResult();
+
+				message.Mid = m.MessageId;
+				message.Sub = m.Subject;
+				message.Bdy = StringHelpers.StripHtmlTagsCharArray(m.Body).Truncate(100);
+				message.Son = m.SentOn.TimeConverter(department);
+				message.SUtc = m.SentOn;
+				message.Typ = m.Type;
+
+				if (!String.IsNullOrWhiteSpace(m.SendingUserId))
+					message.Uid = m.SendingUserId;
+
+				var respose = m.MessageRecipients.FirstOrDefault(x => x.UserId == UserId);
+
+				if (respose != null)
+				{
+					if (String.IsNullOrWhiteSpace(respose.Response))
+						message.Rsp = true;
+
+					message.Ron = respose.ReadOn;
+				}
+				else
+				{
+					message.Ron = m.ReadOn;
+				}
+
+				result.Add(message);
+			}
+
+			return result.Skip(25 * page).Take(25);
+		}
+
+		/// <summary>
+		/// Returns all the outbox messages for a user.
+		/// </summary>
+		/// <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+		/// <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+		[AcceptVerbs("GET")]
+		public IEnumerable<MessageResult> GetOutboxMessages()
+		{
+			var result = new List<MessageResult>();
+			var messages = _messageService.GetSentMessagesByUserId(UserId).OrderBy(x => x.SentOn).OrderByDescending(x => x.SentOn);
 			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
 
 			foreach (var m in messages)
@@ -107,10 +199,10 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
 		/// <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
 		[AcceptVerbs("GET")]
-		public IEnumerable<MessageResult> GetOutboxMessages()
+		public IEnumerable<MessageResult> GetOutboxMessagesPaged(int page)
 		{
 			var result = new List<MessageResult>();
-			var messages = _messageService.GetSentMessagesByUserId(UserId).OrderBy(x => x.SentOn);
+			var messages = _messageService.GetSentMessagesByUserId(UserId).OrderBy(x => x.SentOn).OrderByDescending(x => x.SentOn);
 			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
 
 			foreach (var m in messages)
@@ -144,7 +236,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				result.Add(message);
 			}
 
-			return result;
+			return result.Skip(25 * page).Take(25);
 		}
 
 		/// <summary>

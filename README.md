@@ -47,6 +47,24 @@
 - **Mobile Apps** Apps available on Google Play and Apple App Store that can work with any standard installation. For Personnel, Units, Stations and Commanders.
 - **API** Included API with information about calls allow for easy extension and interaction without having to change code in the Resgrid Core codebase
 
+## Screen Shots
+
+![Resgrid Main Screen](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_MainScreen.png)
+
+![Resgrid Calls](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Calls.png)
+
+![Resgrid Calendar](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Calendar.png)
+
+![Resgrid Shifts](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgird_Shifts.png)
+
+![Resgrid Reports](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Reports.png)
+
+![Resgrid Trainings](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Trainings.png)
+
+![Resgrid Inventory](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgird_Inventory.png)
+
+![Resgrid Documents](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgird_Documents.png)
+
 ## Applications
 
 Below are the repositories for the applications built utilizing the [Resgrid API](https://api.resgrid.com).

@@ -22,6 +22,7 @@
 ## Table of Contents
 
 - [Features](#features)
+- [Hosted](#hosted)
 - [Applications](#applications)
 - [Initiatives](#initiatives)
 - [Status](#status)
@@ -46,6 +47,13 @@
 - **Department Linking** Create powerful department links to allow for multiple independent organizations (i.e. mutual aid agreements or centralized dispatch center) to cooperate
 - **Mobile Apps** Apps available on Google Play and Apple App Store that can work with any standard installation. For Personnel, Units, Stations and Commanders.
 - **API** Included API with information about calls allow for easy extension and interaction without having to change code in the Resgrid Core codebase
+
+## Hosted
+
+If you don't want to run your own instance of Resgrid, we provide a hosted version (on Microsoft Azure) with both free and paid plans. The same code base provided here runs
+the hosted version as well and we update the system every few weeks with the latest features and fixes.
+
+[Sign up for your free Resgrid Account Today!](https://resgrid.com)
 
 ## Screen Shots
 

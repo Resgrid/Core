@@ -48,30 +48,15 @@
 - **Mobile Apps** Apps available on Google Play and Apple App Store that can work with any standard installation. For Personnel, Units, Stations and Commanders.
 - **API** Included API with information about calls allow for easy extension and interaction without having to change code in the Resgrid Core codebase
 
+
+![Resgrid Main Screen](https://raw.githubusercontent.com/resgrid/core/master/misc/images/ResgridIntro.gif)
+
 ## Hosted
 
 If you don't want to run your own instance of Resgrid, we provide a hosted version (on Microsoft Azure) with both free and paid plans. The same code base provided here runs
 the hosted version as well and we update the system every few weeks with the latest features and fixes.
 
 [Sign up for your free Resgrid Account Today!](https://resgrid.com)
-
-## Screen Shots
-
-![Resgrid Main Screen](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_MainScreen.png)
-
-![Resgrid Calls](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Calls.png)
-
-![Resgrid Calendar](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Calendar.png)
-
-![Resgrid Shifts](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgird_Shifts.png)
-
-![Resgrid Reports](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Reports.png)
-
-![Resgrid Trainings](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgrid_Trainings.png)
-
-![Resgrid Inventory](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgird_Inventory.png)
-
-![Resgrid Documents](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Resgird_Documents.png)
 
 ## Applications
 
@@ -102,6 +87,7 @@ Major initiatives for the Resgrid project in 2019!
 [![Build status](https://ci.appveyor.com/api/projects/status/github/resgrid/core?svg=true)](https://ci.appveyor.com/project/ShawnJackson/core)
 [![CodeFactor](https://www.codefactor.io/repository/github/resgrid/core/badge)](https://www.codefactor.io/repository/github/resgrid/core)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
+<a href="https://discord.gg/YDs7tHB"><img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" /></a>
 
 ## Copyright and License
 

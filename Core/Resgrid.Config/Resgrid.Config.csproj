@@ -90,6 +90,7 @@
     <Compile Include="SymmetricEncryptionConfig.cs" />
     <Compile Include="SystemBehaviorConfig.cs" />
     <Compile Include="Topics.cs" />
+    <Compile Include="WebConfig.cs" />
     <Compile Include="WorkerConfig.cs" />
   </ItemGroup>
   <ItemGroup>

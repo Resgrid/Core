@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Models;
@@ -73,7 +76,9 @@ namespace Resgrid.Web.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public IActionResult Contact(ContactView model)
 		{
-			if (ModelState.IsValid)
+			CaptchaResponse response = ValidateCaptcha(Request.Form["g-recaptcha-response"]);
+
+			if (response.Success && ModelState.IsValid)
 			{
 				try
 				{
@@ -85,7 +90,7 @@ namespace Resgrid.Web.Controllers
 
 					_emailService.Notify(email);
 
-					model.Result = "Your message has been sent.";
+					model.Result = "Your message has been sent. We will get back to you within 48 hours M-F.";
 					model.Name = String.Empty;
 					model.Email = String.Empty;
 					model.Message = String.Empty;
@@ -100,6 +105,13 @@ namespace Resgrid.Web.Controllers
 			}
 
 			return View(model);
+		}
+
+		public static CaptchaResponse ValidateCaptcha(string response)
+		{
+			var client = new WebClient();
+			var jsonResult = client.DownloadString(string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", Resgrid.Config.WebConfig.RecaptchaPrivateKey, response));
+			return JsonConvert.DeserializeObject<CaptchaResponse>(jsonResult.ToString());
 		}
 
 		public IActionResult Pricing()
@@ -118,5 +130,21 @@ namespace Resgrid.Web.Controllers
 			return View();
 		}
 
+	}
+
+	public class CaptchaResponse
+	{
+		[JsonProperty("success")]
+		public bool Success
+		{
+			get;
+			set;
+		}
+		[JsonProperty("error-codes")]
+		public List<string> ErrorMessage
+		{
+			get;
+			set;
+		}
 	}
 }

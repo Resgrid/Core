@@ -88,6 +88,8 @@ Major initiatives for the Resgrid project in 2019!
 [![CodeFactor](https://www.codefactor.io/repository/github/resgrid/core/badge)](https://www.codefactor.io/repository/github/resgrid/core)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 <a href="https://discord.gg/YDs7tHB"><img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" /></a>
+<a href="https://github.com/Resgrid/Core/blob/master/LICENSE"><img src="https://img.shields.io/github/license/resgrid/core.svg" alt="License" /></a>
+[![codecov](https://codecov.io/gh/Resgrid/Core/branch/master/graph/badge.svg)](https://codecov.io/gh/Resgrid/Core)
 
 ## Copyright and License
 

@@ -90,11 +90,7 @@ namespace Resgrid.Services
 			{
 				mail.To.Add("team@resgrid.com");
 				mail.Subject = email.Subject;
-
-				if (!String.IsNullOrWhiteSpace(email.From))
-					mail.From = new MailAddress(email.From);
-				else
-					mail.From = new MailAddress("do-not-reply@resgrid.com");
+				mail.From = new MailAddress("do-not-reply@resgrid.com");
 
 				mail.Body = string.Format("Name: {0}<br/> Email: {1}<br/> {2}", email.Name, email.From, email.Body);
 				mail.IsBodyHtml = true;

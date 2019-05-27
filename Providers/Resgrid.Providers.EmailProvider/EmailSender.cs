@@ -44,7 +44,14 @@ namespace Resgrid.Providers.EmailProvider
 
 		public void SendEmail(MailMessage email)
 		{
-			// Do Nothing
+			try
+			{
+				using (var client = CreateClientFactory())
+				{
+					client.Send(email);
+				}
+			}
+			catch (InvalidOperationException) { }
 		}
 
 		public MailMessage CreateMailMessageFromEmail(Email email)

@@ -84,10 +84,34 @@ namespace Resgrid.Config
 		public static OutboundEmailTypes OutboundEmailType = OutboundEmailTypes.Smtp;
 
 		/// <summary>
+		/// Sets the type of sms provider to use
+		/// </summary>
+		public static SmsProviderTypes SmsProviderType = SmsProviderTypes.Twilio;
+
+		/// <summary>
+		/// Sets the type of backup sms provider to use
+		/// </summary>
+		public static SmsProviderTypes BackupSmsProviderType = SmsProviderTypes.SignalWire;
+
+		/// <summary>
+		/// If you wish to always send sms messages via the email to sms gateway as well even if
+		/// the provider has a direct send option. 
+		/// </summary>
+		public static bool SendCallsToSmsEmailGatewayAdditionally = true;
+
+		/// <summary>
 		/// These are specific departments that will be forced to go through the om-prem SMS gateway no matter the send status, i.e. Direct or Gateway
 		/// </summary>
 		public static HashSet<int> DepartmentsToForceSmsGateway = new HashSet<int>()
 		{
+		};
+
+		/// <summary>
+		/// These are specific departments that will be forced to go through the backup sms provider
+		/// </summary>
+		public static HashSet<int> DepartmentsToForceBackupSmsProvider = new HashSet<int>()
+		{
+
 		};
 
 		/// <summary>

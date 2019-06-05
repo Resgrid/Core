@@ -112,8 +112,15 @@ namespace Resgrid.Services
 					{
 						text = text + " " + call.ShortenedAudioUrl;
 					}
+					else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
+					{
+						text = text + " " + call.ShortenedCallUrl;
+					}
 
 					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, true);
+
+					if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
+						SendCallViaEmailSmsGateway(call, address, profile);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
@@ -125,35 +132,50 @@ namespace Resgrid.Services
 					{
 						text = text + " " + call.ShortenedAudioUrl;
 					}
+					else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
+					{
+						text = text + " " + call.ShortenedCallUrl;
+					}
 
 					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier);
+
+					if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
+						SendCallViaEmailSmsGateway(call, address, profile);
 				}
 				else
 				{
-					MailMessage email = new MailMessage();
-					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
-
-					email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGCall");
-					email.Subject = call.Name;
-
-					if (!string.IsNullOrEmpty(call.NatureOfCall))
-					{
-						email.Body = HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
-						email.Body = StringHelpers.StripHtmlTagsCharArray(email.Body);
-					}
-
-					email.Body = email.Body + " " + address;
-
-					if (!String.IsNullOrWhiteSpace(call.ShortenedAudioUrl))
-					{
-						email.Body = email.Body + " " + call.ShortenedAudioUrl;
-					}
-
-					email.IsBodyHtml = false;
-
-					_emailSender.SendEmail(email);
+					SendCallViaEmailSmsGateway(call, address, profile);
 				}
 			}
+		}
+		private void SendCallViaEmailSmsGateway(Call call, string address, UserProfile profile)
+		{
+			MailMessage email = new MailMessage();
+			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+
+			email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGCall");
+			email.Subject = call.Name;
+
+			if (!string.IsNullOrEmpty(call.NatureOfCall))
+			{
+				email.Body = HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
+				email.Body = StringHelpers.StripHtmlTagsCharArray(email.Body);
+			}
+
+			email.Body = email.Body + " " + address;
+
+			if (!String.IsNullOrWhiteSpace(call.ShortenedAudioUrl))
+			{
+				email.Body = email.Body + " " + call.ShortenedAudioUrl;
+			}
+			else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
+			{
+				email.Body = email.Body + " " + call.ShortenedCallUrl;
+			}
+
+			email.IsBodyHtml = false;
+
+			_emailSender.SendEmail(email);
 		}
 
 		public void SendTroubleAlert(Unit unit, Call call, string unitAddress, string departmentNumber, int departmentId, UserProfile profile)

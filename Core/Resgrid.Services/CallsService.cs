@@ -574,6 +574,27 @@ namespace Resgrid.Services
 			}
 		}
 
+		public string GetShortenedCallLinkUrl(int callId)
+		{
+			try
+			{
+				string encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+				string shortenedUrl =
+					_shortenUrlProvider.Shorten(
+						$"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/CallExportEx?query={encryptedQuery}");
+
+				if (String.IsNullOrWhiteSpace(shortenedUrl))
+					return String.Empty;
+
+				return shortenedUrl;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return String.Empty;
+			}
+		}
+
 		public void ClearGroupForDispatches(int departmentGroupId)
 		{
 			var groupDispatches = _callDispatchGroupRepository.GetAll().Where(x => x.DepartmentGroupId == departmentGroupId);

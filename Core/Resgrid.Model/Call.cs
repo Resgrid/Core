@@ -146,6 +146,9 @@ namespace Resgrid.Model
 		public string ShortenedAudioUrl { get; set; }
 
 		[NotMapped]
+		public string ShortenedCallUrl { get; set; }
+
+		[NotMapped]
 		public DepartmentCallPriority CallPriority { get; set; }
 
 		[NotMapped]

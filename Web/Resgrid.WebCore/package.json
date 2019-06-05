@@ -15,5 +15,8 @@
     "rimraf": "2.2.8",
     "sass": "^0.5.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2"
+  }
 }

@@ -8,12 +8,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <environment names="Development">
-	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="~/lib/metisMenu/metisMenu.min.css" />
     <link rel="stylesheet" href="~/css/animate.css" />
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
-	<link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
     <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
     <link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
     <link rel="stylesheet" href="~/lib/toastr/toastr.css" />
@@ -46,6 +46,8 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
   </environment>
 
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
   <!-- Add local styles, mostly for plugins css file -->
   @if (IsSectionDefined("Styles"))
   {
@@ -59,24 +61,24 @@
   <!-- Wrapper-->
   <div id="wrapper" class="md-skin">
 
-    <!-- Navigation -->
-    @await Html.PartialAsync("_Navigation")
+	<!-- Navigation -->
+	@await Html.PartialAsync("_Navigation")
 
-    <!-- Page wraper -->
-    <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
+	<!-- Page wraper -->
+	<div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
 
-      <!-- Top Navbar -->
-      @await Html.PartialAsync("_TopNavbar")
+	  <!-- Top Navbar -->
+	  @await Html.PartialAsync("_TopNavbar")
 
-      <!-- Main view  -->
-      @RenderBody()
+	  <!-- Main view  -->
+	  @RenderBody()
 
-      <div id="setupWizard"></div>
+	  <div id="setupWizard"></div>
 
-      <!-- Footer -->
-      @await Html.PartialAsync("_Footer")
-    </div>
-    <!-- End page wrapper-->
+	  <!-- Footer -->
+	  @await Html.PartialAsync("_Footer")
+	</div>
+	<!-- End page wrapper-->
   </div>
   <!-- End wrapper-->
 
@@ -90,7 +92,7 @@
 
   <environment names="Development">
     <script src="~/lib/angular/angular.js"></script>
-	<script src="~/lib/metisMenu/metisMenu.min.js"></script>
+    <script src="~/lib/metisMenu/metisMenu.min.js"></script>
     <script src="~/lib/slimScroll/jquery.slimscroll.js"></script>
     <script src="~/lib/pace/pace.js"></script>
     <script src="~/lib/select2/js/select2.full.min.js"></script>
@@ -118,11 +120,11 @@
     <script src="~/lib/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="~/lib/select2/js/select2.full.min.js"></script>
     <script src="~/clib/kendo/js/kendo.web.min.js"></script>
-	<script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
-	<script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
     <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
     <script src="~/clib/ujs/jquery-ujs.js"></script>
-	<script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/clib/signalr/jquery.signalR-2.2.0.min.js"></script>
     <script src="~/clib/picEdit/js/picedit.min.js"></script>
     <script src="~/lib/sweetalert/sweetalert.min.js"></script>
@@ -153,7 +155,7 @@
 
   @if (IsSectionDefined("Scripts"))
   {
-    @RenderSection("Scripts", required: false)
+	@RenderSection("Scripts", required: false)
   }
 
   @Html.Raw(ViewBag.BodyObjects)
@@ -166,7 +168,7 @@
   {
 	var userVoiceJS = Resgrid.Config.MarketingConfig.UserVoiceApiKey + ".js";
 
-    <script>
+	<script>
 	  //<!-- UserVoice JavaScript SDK (only needed once on a page) -->
 	  (function () {var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true; uv.src = '//widget.uservoice.com/@userVoiceJS';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s) })();
 
@@ -188,7 +190,7 @@
 			dropdownMenu.hide();
 		  });
 		})();
-    </script>
+	</script>
   }
 
   @*@await Html.PartialAsync("_ChatWidget")*@

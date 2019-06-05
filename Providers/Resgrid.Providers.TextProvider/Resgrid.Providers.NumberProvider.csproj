@@ -98,6 +98,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\SignalWireMessageResponse.cs" />
     <Compile Include="NexmoProvider.cs" />
     <Compile Include="NumberHelper.cs" />
     <Compile Include="NumberProviderFactory.cs" />

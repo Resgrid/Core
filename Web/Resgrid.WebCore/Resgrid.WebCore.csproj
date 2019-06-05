@@ -20,6 +20,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Staging|AnyCPU'" />
 
   <ItemGroup>
+    <Content Remove="package-lock.json" />
     <Content Remove="wwwroot\robots.txt" />
   </ItemGroup>
 

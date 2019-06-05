@@ -138,9 +138,11 @@ namespace Resgrid.Workers.Framework.Logic
 
 					if (cqi.CallDispatchAttachmentId > 0)
 					{
-						var callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-						cqi.Call.ShortenedAudioUrl = callsService.GetShortenedAudioUrl(cqi.Call.CallId, cqi.CallDispatchAttachmentId);
+						//var callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
+						cqi.Call.ShortenedAudioUrl = _callsService.GetShortenedAudioUrl(cqi.Call.CallId, cqi.CallDispatchAttachmentId);
 					}
+
+					cqi.Call.ShortenedCallUrl = _callsService.GetShortenedCallLinkUrl(cqi.Call.CallId);
 
 					try
 					{

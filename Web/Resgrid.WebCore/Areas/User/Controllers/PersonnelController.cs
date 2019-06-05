@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Resgrid.Web.Areas.User.Models.Profile;
+using Resgrid.WebCore.Areas.User.Models.Personnel;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -689,6 +690,140 @@ namespace Resgrid.Web.Areas.User.Controllers
 				default:
 					return Json(personnelJson);
 			}
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public IActionResult GetPersonnelListPaged(int perPage, int page)
+		{
+			PersonnelListPagedResult result = new PersonnelListPagedResult();
+			result.Data = new List<PersonnelForListJson>();
+
+			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var users = _departmentsService.GetAllUsersForDepartmentUnlimited(DepartmentId);
+			var departmentMembers = _departmentsService.GetAllMembersForDepartmentUnlimited(DepartmentId);
+			//var actionLogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId, true);
+			//var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var canGroupAdminsDelete = _authorizationService.CanGroupAdminsRemoveUsers(DepartmentId);
+			var profiles = _userProfileService.GetAllProfilesForDepartmentIncDisabledDeleted(DepartmentId);
+			var userGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, false);
+
+			var sortOrder = _departmentSettingsService.GetDepartmentPersonnelSortOrder(DepartmentId);
+
+			foreach (var user in users)
+			{
+				var person = new PersonnelForListJson();
+				person.UserId = user.UserId.ToString();
+
+				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+				//var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
+				//var userProfile = _userProfileService.GetProfileByUserId(user.UserId);
+
+				if (!profiles.ContainsKey(user.UserId))
+				{
+					person.Name = "Unknown User";
+				}
+				else
+				{
+					var userProfile = profiles[user.UserId];
+					person.Name = userProfile.FullName.AsFirstNameLastName;
+					person.FirstName = userProfile.FirstName;
+					person.LastName = userProfile.LastName;
+				}
+
+				if (ClaimsAuthorizationHelper.CanViewPII())
+					person.EmailAddress = user.Email;
+				else
+					person.EmailAddress = "";
+
+				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
+				if (group != null)
+				{
+					person.Group = group.Name;
+
+					if (department.IsUserAnAdmin(UserId) || (canGroupAdminsDelete && group.IsUserGroupAdmin(UserId) && !department.IsUserAnAdmin(user.UserId)))
+						person.CanRemoveUser = true;
+
+					if (group.IsUserGroupAdmin(UserId) || department.IsUserAnAdmin(UserId))
+						person.CanEditUser = true;
+				}
+				else
+				{
+					if (department.IsUserAnAdmin(UserId))
+					{
+						person.CanRemoveUser = true;
+						person.CanEditUser = true;
+					}
+				}
+
+				//var roles = _personnelRolesService.GetRolesForUser(user.UserId);
+				//foreach (var role in roles)
+				//{
+				//	if (String.IsNullOrWhiteSpace(person.Roles))
+				//		person.Roles = role.Name;
+				//	else
+				//		person.Roles += ", " + role.Name;
+				//}
+
+				var userGroupRole = userGroupRoles.FirstOrDefault(x => x.UserId == user.UserId);
+				if (userGroupRole != null)
+					person.Roles = userGroupRole.RoleNames;
+				else
+					person.Roles = "";
+
+				StringBuilder sb = new StringBuilder();
+
+				if (member != null)
+				{
+					if (member.IsAdmin.HasValue && member.IsAdmin.Value ||
+							department.ManagingUserId == user.UserId)
+						sb.Append("Admin");
+					else
+						sb.Append("Normal");
+
+					if (member.IsDisabled.HasValue && member.IsDisabled.Value)
+						sb.Append(sb.Length > 0 ? ", Disabled" : "Disabled");
+
+					if (member.IsHidden.HasValue && member.IsHidden.Value)
+						sb.Append(sb.Length > 0 ? ", Hidden" : "Hidden");
+
+					person.State = sb.ToString();
+					//person.EmailAddress = membership.Email;
+				}
+				else
+				{
+					person.State = "Normal";
+				}
+
+				//if (actionLog != null)
+				//{
+				//	person.LastActivityDate = actionLog.Timestamp.TimeConverterToString(department);
+				//}
+				//else
+				//{
+				//	person.LastActivityDate = "Never";
+				//}
+
+				result.Data.Add(person);
+			}
+
+			switch (sortOrder)
+			{
+				case PersonnelSortOrders.FirstName:
+					result.Data = result.Data.OrderBy(x => x.FirstName).ToList();
+					break;
+				case PersonnelSortOrders.LastName:
+					result.Data = result.Data.OrderBy(x => x.LastName).ToList();
+					break;
+			}
+
+			result.Total = result.Data.Count;
+			result.Page = page;
+			result.Data = result.Data.Skip(perPage * (page - 1))
+									 .Take(perPage).ToList();
+
+			return Json(result);
 		}
 
 		[HttpGet]

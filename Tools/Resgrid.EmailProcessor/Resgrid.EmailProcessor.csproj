@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C20ADE85-B220-45D8-A737-FC1D8EF289E0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Resgrid.EmailProcessor</RootNamespace>
+    <AssemblyName>Resgrid.EmailProcessor</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework6, Version=3.0.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Identity.EntityFramework6.3.0.21\lib\Microsoft.AspNet.Identity.EntityFramework6.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit, Version=1.18.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MimeKit.1.18.1\lib\net451\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="SmtpServer, Version=6.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SmtpServer.6.2.0\lib\netstandard2.0\SmtpServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SampleMessageStore.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj">
+      <Project>{dd9e37af-9af3-4cbb-ba7f-b66158c61222}</Project>
+      <Name>Resgrid.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj">
+      <Project>{21b7c3a0-bd8b-4f05-b5dd-4d2e6b1893fa}</Project>
+      <Name>Resgrid.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj">
+      <Project>{8b7997ec-67a2-42ab-9fbd-f8ed2c2997c8}</Project>
+      <Name>Resgrid.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj">
+      <Project>{80fb64b4-62f9-4f06-9549-c519b4360dfc}</Project>
+      <Name>Resgrid.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj">
+      <Project>{d551040a-69be-4b9b-9f33-000ac41dad53}</Project>
+      <Name>Resgrid.Providers.Bus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj">
+      <Project>{691efeb7-a87e-4478-8be2-4bcd0ce7a409}</Project>
+      <Name>Resgrid.Providers.Cache</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.GeoLocationProvider\Resgrid.Providers.GeoProvider.csproj">
+      <Project>{be40f1e9-e2df-4a1a-987e-6a9e18c93384}</Project>
+      <Name>Resgrid.Providers.GeoProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj">
+      <Project>{db5ded75-669d-485c-a093-736e02115892}</Project>
+      <Name>Resgrid.Repositories.DataRepository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj">
+      <Project>{43570079-e393-40d9-89af-f63e7b8437b8}</Project>
+      <Name>Resgrid.Workers.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

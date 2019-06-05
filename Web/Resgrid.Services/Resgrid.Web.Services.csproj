@@ -397,6 +397,7 @@
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\RedirectController.cs" />
     <Compile Include="Controllers\FeedsController.cs" />
+    <Compile Include="Controllers\SendGridEmailController.cs" />
     <Compile Include="Controllers\TextMessagesController.cs" />
     <Compile Include="Controllers\AuthenticatedApiControllerbase.cs" />
     <Compile Include="Controllers\TwilioProviderController.cs" />
@@ -546,6 +547,7 @@
     <Compile Include="Models\CropRequest.cs" />
     <Compile Include="Models\DepartmentCreationInput.cs" />
     <Compile Include="Models\DepartmentCreationResult.cs" />
+    <Compile Include="Models\EmailModel.cs" />
     <Compile Include="Models\Services\Inputs\V1\NewCallInput.cs" />
     <Compile Include="Models\Services\Results\V1\CallResult.cs" />
     <Compile Include="Models\Services\Results\V1\DepartmentStatusEx.cs" />

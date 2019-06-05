@@ -185,14 +185,6 @@
     {
       "library": "bootstrap-tour@0.11.0",
       "destination": "wwwroot/lib/bootstrap-tour/"
-    },
-    {
-      "library": "react@16.8.6",
-      "destination": "wwwroot/lib/react/"
-    },
-    {
-      "library": "redux@4.0.1",
-      "destination": "wwwroot/lib/redux/"
     }
   ]
 }

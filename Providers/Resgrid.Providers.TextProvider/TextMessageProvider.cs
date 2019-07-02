@@ -14,27 +14,48 @@ namespace Resgrid.Providers.NumberProvider
 {
 	public class TextMessageProvider : ITextMessageProvider
 	{
-		public void SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, bool forceGateway = false)
+		public void SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false)
 		{
 			if (carrier == MobileCarriers.Telstra)
 				SendTextMessageViaNexmo(number, message, departmentNumber);
 			else if (Carriers.OnPremSmsGatewayCarriers.Contains(carrier) || forceGateway)
 			{
-				if (!SendTextMessageViaDiafaan(number, message))
+				if (!Config.SystemBehaviorConfig.DepartmentsToForceBackupSmsProvider.Contains(departmentId))
+				{
+					if (!SendTextMessageViaDiafaan(number, message))
+					{
+						SendTextMessageViaSignalWire(number, message, departmentNumber);
+					}
+				}
+				else
 				{
 					SendTextMessageViaSignalWire(number, message, departmentNumber);
 				}
 			}
 			else if (Config.SystemBehaviorConfig.SmsProviderType == Config.SmsProviderTypes.SignalWire)
 			{
-				if (!SendTextMessageViaSignalWire(number, message, departmentNumber))
+				if (!Config.SystemBehaviorConfig.DepartmentsToForceBackupSmsProvider.Contains(departmentId))
+				{
+					if (!SendTextMessageViaSignalWire(number, message, departmentNumber))
+					{
+						SendTextMessageViaTwillio(number, message, departmentNumber);
+					}
+				}
+				else
 				{
 					SendTextMessageViaTwillio(number, message, departmentNumber);
 				}
 			}
 			else
 			{
-				if (!SendTextMessageViaTwillio(number, message, departmentNumber))
+				if (!Config.SystemBehaviorConfig.DepartmentsToForceBackupSmsProvider.Contains(departmentId))
+				{
+					if (!SendTextMessageViaTwillio(number, message, departmentNumber))
+					{
+						SendTextMessageViaSignalWire(number, message, departmentNumber);
+					}
+				}
+				else
 				{
 					SendTextMessageViaSignalWire(number, message, departmentNumber);
 				}

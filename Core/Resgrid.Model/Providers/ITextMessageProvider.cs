@@ -2,6 +2,6 @@
 {
 	public interface ITextMessageProvider
 	{
-		void SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, bool forceGateway = false);
+		void SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false);
 	}
 }

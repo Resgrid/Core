@@ -39,6 +39,7 @@ Getting started
    * :doc:`/system/index` -- Overview of the Resgrid system and features
    * :doc:`/setup/index` -- Walkthrough on setting up your department
    * :doc:`/configuration/index` -- All configuration options for your department
+   * :doc:`/apps/index` -- Documentation for our external applications
 
 Links
 *****
@@ -58,6 +59,7 @@ Documentation Contents
    /configuration/index
    /providers/index
    /system/index
+   /apps/index
    /development/index
    /contributing/index
 

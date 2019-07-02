@@ -127,14 +127,14 @@ Once you've download the release package extract the zip folder to your computer
    * - Workers
      - Backend workers to enable processing of async and scheduled tasks
 
-The default installation location for Resgrid is C:\Resgrid, with the Api, Config, Tools, Web and Workers folder underneath that. So the full path to the config file is C:\Resgrid\Config\ResgridConfig.json. You can install Resgrid wherever you want, but you will need to update each application's config file (app.config, web.config or appsettings.json) with the correct path to the ResgridConfig.json file.
+The default installation location for Resgrid is C:\\Resgrid, with the Api, Config, Tools, Web and Workers folder underneath that. So the full path to the config file is C:\\Resgrid\\Config\\ResgridConfig.json. You can install Resgrid wherever you want, but you will need to update each application's config file (app.config, web.config or appsettings.json) with the correct path to the ResgridConfig.json file.
 
-Create a new folder on your C:\ Drive called "Resgrid" and copy the above 5 folders, that you extracted from the zip downloaded from Github, into that directory. 
+Create a new folder on your C:\\ Drive called "Resgrid" and copy the above 5 folders, that you extracted from the zip downloaded from Github, into that directory. 
 
 Setup Hosts File
 =======================
 
-Run Notepad as Administrator, open up the hosts file in the following directory 'C:\Windows\System32\drivers\etc' and add the following lines at the bottom.
+Run Notepad as Administrator, open up the hosts file in the following directory 'C:\\Windows\\System32\\drivers\\etc' and add the following lines at the bottom.
 
     127.0.0.1	resgrid.local
     127.0.0.1	resgridapi.local
@@ -148,20 +148,20 @@ You will need to install and configure Microsoft SQL Server you can find tutoria
 
 Once you have Microsoft SQL and Microsoft SQL Management Studio installed; open up Microsoft SQL Management studio, connect to your SQL Server and create an empty database called Resgrid. 
 
-Install\Update Resgrid Schema
+Install\\Update Resgrid Schema
 =======================
 
 Open up the Windows Command Prompt (cmd) and type:
 
-    cd C:\Resgrid\Tools\ 
+    cd C:\\Resgrid\\Tools\\ 
 
-your command prompt should now read "C:\Resgrid\Tools>". You can now type the following command into the command prompt:
+your command prompt should now read "C:\\Resgrid\\Tools>". You can now type the following command into the command prompt:
 
     Resgrid.Console.exe dbupdate
 
 That will start the Resgrid Database Update process and either Update or Install your Resgrid database. If everything worked correctly you should see close to the following output:
 
-    C:\Resgrid\Tools>Resgrid.Console.exe dbupdate
+    C:\\Resgrid\\Tools>Resgrid.Console.exe dbupdate
     Resgrid Console
     -----------------------------------------
     Starting the Resgrid Database Update Process
@@ -169,7 +169,7 @@ That will start the Resgrid Database Update process and either Update or Install
     Completed updating the Resgrid Database!
 
 
-    C:\Resgrid\Tools>
+    C:\\Resgrid\\Tools>
 
 This will be run when your upgrading your Resgrid installation as well.
 
@@ -186,7 +186,7 @@ Run the 'Internet Information Services (IIS) Manager' and expand the top server 
    * - Site name
      - resgrid
    * - Physical path
-     - C:\Resgrid\Web
+     - C:\\Resgrid\\Web
    * - Binding Type
      - https (Select from the drop-down)
    * - Host name
@@ -202,7 +202,7 @@ Run the 'Internet Information Services (IIS) Manager' and expand the top server 
    * - Site name
      - resgridapi
    * - Physical path
-     - C:\Resgrid\Api
+     - C:\\Resgrid\\Api
    * - Host name:
      - resgridapi.local
 

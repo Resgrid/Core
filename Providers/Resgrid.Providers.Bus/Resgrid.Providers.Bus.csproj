@@ -123,6 +123,9 @@
     <Compile Include="CqrsProvider.cs" />
     <Compile Include="EventAggregator.cs" />
     <Compile Include="InboundEventProvider.cs" />
+    <Compile Include="Models\ApnsAlert.cs" />
+    <Compile Include="Models\ApnsHeader.cs" />
+    <Compile Include="Models\ApnsPayload.cs" />
     <Compile Include="SignalrProvider.cs" />
     <Compile Include="UnitNotificationProvider.cs" />
     <Compile Include="OutboundEventProvider.cs" />

@@ -84,6 +84,11 @@ namespace Resgrid.Config
 		public static OutboundEmailTypes OutboundEmailType = OutboundEmailTypes.Smtp;
 
 		/// <summary>
+		/// Sets the type of url link shortner provider to use
+		/// </summary>
+		public static LinksProviderTypes LinkProviderType = LinksProviderTypes.Polr;
+
+		/// <summary>
 		/// Sets the type of sms provider to use
 		/// </summary>
 		public static SmsProviderTypes SmsProviderType = SmsProviderTypes.Twilio;

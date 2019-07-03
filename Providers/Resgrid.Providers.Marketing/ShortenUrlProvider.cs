@@ -10,7 +10,6 @@ namespace Resgrid.Providers.Marketing
 {
 	public class ShortenUrlProvider: IShortenUrlProvider
 	{
-		private string BitlyApi = @"https://api-ssl.bitly.com/shorten?access_token={0}&longUrl={1}";
 		public string ACCESS_TOKEN { get; set; }
 
 		/// <summary>
@@ -31,7 +30,7 @@ namespace Resgrid.Providers.Marketing
 			if (string.IsNullOrEmpty(ACCESS_TOKEN))
 				return false;
 
-			string temp = string.Format(BitlyApi, ACCESS_TOKEN, "google.com");
+			string temp = string.Format(Config.LinksConfig.BitlyApi, ACCESS_TOKEN, "google.com");
 			using (HttpClient client = new HttpClient())
 			{
 				HttpResponseMessage res = client.GetAsync(temp).Result;
@@ -55,17 +54,41 @@ namespace Resgrid.Providers.Marketing
 		/// <returns></returns>
 		public string Shorten(string long_url)
 		{
-			if (CheckAccessToken())
+			if (Config.SystemBehaviorConfig.LinkProviderType == Config.LinksProviderTypes.Bitly)
+			{
+				if (CheckAccessToken())
+				{
+					using (HttpClient client = new HttpClient())
+					{
+						string temp = string.Format(Config.LinksConfig.BitlyApi, ACCESS_TOKEN, WebUtility.UrlEncode(long_url));
+						var res = client.GetAsync(temp).Result;
+						if (res.IsSuccessStatusCode)
+						{
+							var message = res.Content.ReadAsStringAsync().Result;
+							dynamic obj = JsonConvert.DeserializeObject(message);
+							return obj.results[long_url].shortUrl;
+						}
+						else
+						{
+							return "Can not short URL";
+						}
+					}
+				}
+				else
+				{
+					return "Can not short URL";
+				}
+			}
+			else if (Config.SystemBehaviorConfig.LinkProviderType == Config.LinksProviderTypes.Polr)
 			{
 				using (HttpClient client = new HttpClient())
 				{
-					string temp = string.Format(BitlyApi, ACCESS_TOKEN, WebUtility.UrlEncode(long_url));
+					string temp = string.Format(Config.LinksConfig.PolrApi, Config.LinksConfig.PolrAccessToken, WebUtility.UrlEncode(long_url));
 					var res = client.GetAsync(temp).Result;
 					if (res.IsSuccessStatusCode)
 					{
 						var message = res.Content.ReadAsStringAsync().Result;
-						dynamic obj = JsonConvert.DeserializeObject(message);
-						return obj.results[long_url].shortUrl;
+						return message.Trim();
 					}
 					else
 					{
@@ -73,10 +96,8 @@ namespace Resgrid.Providers.Marketing
 					}
 				}
 			}
-			else
-			{
-				return "Can not short URL";
-			}
+
+			return "Can not short URL";
 		}
 
 		/// <summary>

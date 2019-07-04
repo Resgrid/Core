@@ -397,6 +397,7 @@
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\RedirectController.cs" />
     <Compile Include="Controllers\FeedsController.cs" />
+    <Compile Include="Controllers\SignalWireController.cs" />
     <Compile Include="Controllers\SendGridEmailController.cs" />
     <Compile Include="Controllers\TextMessagesController.cs" />
     <Compile Include="Controllers\AuthenticatedApiControllerbase.cs" />

@@ -226,12 +226,12 @@ namespace Resgrid.Model
 		public static HashSet<MobileCarriers> DirectSendCarriers = new HashSet<MobileCarriers>()
 		{
 			MobileCarriers.Telstra,
-			//MobileCarriers.Att,
+			MobileCarriers.Att,
 			MobileCarriers.Cricket,
-			//MobileCarriers.Sprint,
+			MobileCarriers.Sprint,
 			MobileCarriers.Btc,
 			MobileCarriers.EE,
-			//MobileCarriers.Verizon,
+			MobileCarriers.Verizon,
 			MobileCarriers.TelusMobility,
 			MobileCarriers.TracFone,
 			MobileCarriers.STC,
@@ -246,8 +246,8 @@ namespace Resgrid.Model
 
 		public static HashSet<MobileCarriers> OnPremSmsGatewayCarriers = new HashSet<MobileCarriers>()
 		{
-			MobileCarriers.Cricket,
-			MobileCarriers.TracFone
+			//MobileCarriers.Cricket,
+			//MobileCarriers.TracFone
 		};
 
 

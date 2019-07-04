@@ -179,12 +179,12 @@ namespace Resgrid.Web.Services.Controllers
 									case TextCommandTypes.Action:
 										messageEvent.Processed = true;
 										_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Status", string.Format("Resgrid recieved your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Status", string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Staffing:
 										messageEvent.Processed = true;
 										_userStateService.CreateUserState(profile.UserId, department.DepartmentId,(int)payload.GetStaffingType());
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Staffing", string.Format("Resgrid recieved your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Staffing", string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
 										break;
 								}
 							}

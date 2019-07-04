@@ -1,28 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Text;
-using System.Web.Http;
-using System.Web.Http.Cors;
+﻿using Microsoft.AspNet.Identity.EntityFramework6;
+using MimeKit;
 using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
-using Resgrid.Web.Services.Models;
-using Twilio.Mvc;
-using Twilio.TwiML;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Resgrid.Web.Services.Controllers
 {
 	[EnableCors(origins: "*", headers: "*", methods: "*")]
 	[System.Web.Http.Description.ApiExplorerSettings(IgnoreApi = true)]
-	public class TwilioProviderController : ApiController
+	public class SignalWireController : ApiController
 	{
 		#region Private Readonly Properties and Constructors
 		private readonly IDepartmentSettingsService _departmentSettingsService;
@@ -41,7 +42,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly ICustomStateService _customStateService;
 		private readonly IUnitsService _unitsService;
 
-		public TwilioProviderController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
+		public SignalWireController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
@@ -66,20 +67,34 @@ namespace Resgrid.Web.Services.Controllers
 		#endregion Private Readonly Properties and Constructors
 
 		[HttpGet]
-		public HttpResponseMessage IncomingMessage([FromUri]TwilioMessage request)
+		[EnableCors(origins: "*", headers: "*", methods: "*")]
+		public HttpResponseMessage Test()
 		{
-			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From) || string.IsNullOrWhiteSpace(request.Body))
-				return Request.CreateResponse(HttpStatusCode.BadRequest);
 
-			var response = new TwilioResponse();
+			return new HttpResponseMessage(HttpStatusCode.OK);
+		}
+
+
+		[HttpGet]
+		[EnableCors(origins: "*", headers: "*", methods: "*")]
+		public async Task<HttpResponseMessage> Receive()
+		{
+			var queryValues = Request.RequestUri.ParseQueryString();
 
 			var textMessage = new TextMessage();
-			textMessage.To = request.To.Replace("+", "");
-			textMessage.Msisdn = request.From.Replace("+", "");
-			textMessage.MessageId = request.MessageSid;
+			//textMessage.Type = queryValues["type"];
+			textMessage.To = queryValues["To"].Replace("+", "");
+			textMessage.Msisdn = queryValues["From"].Replace("+", ""); //queryValues["SmsSid"];
+			textMessage.NetworkCode = queryValues["AccountSid"];
+			textMessage.MessageId = queryValues["MessageSid"];
 			textMessage.Timestamp = DateTime.UtcNow.ToLongDateString();
-			textMessage.Data = request.Body;
-			textMessage.Text = request.Body;
+			//textMessage.Concat = queryValues["concat"];
+			//textMessage.ConcatRef = queryValues["concat-ref"];
+			//textMessage.ConcatTotal = queryValues["concat-total"];
+			//textMessage.ConcatPart = queryValues["concat-part"];
+			textMessage.Data = queryValues["Body"];
+			//textMessage.Udh = queryValues["udh"];
+			textMessage.Text = queryValues["Body"];
 
 			var messageEvent = new InboundMessageEvent();
 			messageEvent.MessageType = (int)InboundMessageTypes.TextMessage;
@@ -91,7 +106,21 @@ namespace Resgrid.Web.Services.Controllers
 
 			try
 			{
+				UserProfile profile = null;
 				var departmentId = _departmentSettingsService.GetDepartmentIdByTextToCallNumber(textMessage.To);
+
+				if (!departmentId.HasValue)
+				{
+					profile = _userProfileService.FindProfileByMobileNumber(textMessage.Msisdn);
+
+					if (profile != null)
+					{
+						var department = _departmentsService.GetDepartmentByUserId(profile.UserId);
+
+						if (department != null)
+							departmentId = department.DepartmentId;
+					}
+				}
 
 				if (departmentId.HasValue)
 				{
@@ -152,8 +181,6 @@ namespace Resgrid.Web.Services.Controllers
 
 						if (!isDispatchSource && textCommandEnabled)
 						{
-							var profile = _userProfileService.FindProfileByMobileNumber(textMessage.Msisdn);
-
 							if (profile != null)
 							{
 								var payload = _textCommandService.DetermineType(textMessage.Text);
@@ -163,7 +190,7 @@ namespace Resgrid.Web.Services.Controllers
 								switch (payload.Type)
 								{
 									case TextCommandTypes.None:
-										response.Message("Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.");
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.", department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Help:
 										messageEvent.Processed = true;
@@ -220,26 +247,22 @@ namespace Resgrid.Web.Services.Controllers
 											help.Append("onshift or s4: On Shift Staffing" + Environment.NewLine);
 										}
 
-										response.Message(help.ToString());
-
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Action:
 										messageEvent.Processed = true;
 										_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
-										response.Message(string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()));
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Status", string.Format("Resgrid recieved your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Staffing:
 										messageEvent.Processed = true;
 										_userStateService.CreateUserState(profile.UserId, department.DepartmentId, (int)payload.GetStaffingType());
-										response.Message(string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()));
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Staffing", string.Format("Resgrid recieved your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Stop:
 										messageEvent.Processed = true;
 										_userProfileService.DisableTextMessagesForUser(profile.UserId);
-										response.Message("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.CustomAction:
 										messageEvent.Processed = true;
@@ -248,11 +271,11 @@ namespace Resgrid.Web.Services.Controllers
 										if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any() && customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType()) != null)
 										{
 											var detail = customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType());
-											response.Message(string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText));
+											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
 										}
 										else
 										{
-											response.Message("Resgrid received your text command and updated your status");
+											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your status", department.DepartmentId, textMessage.To, profile);
 										}
 										break;
 									case TextCommandTypes.CustomStaffing:
@@ -262,11 +285,11 @@ namespace Resgrid.Web.Services.Controllers
 										if (customStaffing != null && customStaffing.IsDeleted == false && customStaffing.GetActiveDetails() != null && customStaffing.GetActiveDetails().Any() && customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType()) != null)
 										{
 											var detail = customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType());
-											response.Message(string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText));
+											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
 										}
 										else
 										{
-											response.Message("Resgrid received your text command and updated your staffing");
+											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your staffing", department.DepartmentId, textMessage.To, profile);
 										}
 										break;
 									case TextCommandTypes.MyStatus:
@@ -279,7 +302,7 @@ namespace Resgrid.Web.Services.Controllers
 										var customStatusLevel = _customStateService.GetCustomPersonnelStatus(department.DepartmentId, userStatus);
 										var customStaffingLevel = _customStateService.GetCustomPersonnelStaffing(department.DepartmentId, userStaffing);
 
-										response.Message($"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.");
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", $"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.", department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Calls:
 										messageEvent.Processed = true;
@@ -296,7 +319,7 @@ namespace Resgrid.Web.Services.Controllers
 										}
 
 
-										response.Message(activeCallText.ToString());
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", activeCallText.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Units:
 										messageEvent.Processed = true;
@@ -313,7 +336,7 @@ namespace Resgrid.Web.Services.Controllers
 											unitStatusesText.Append($"{unit.Unit.Name} is {unitState.ButtonText}" + Environment.NewLine);
 										}
 
-										response.Message(unitStatusesText.ToString());
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", unitStatusesText.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.CallDetail:
 										messageEvent.Processed = true;
@@ -348,42 +371,41 @@ namespace Resgrid.Web.Services.Controllers
 											}
 										}
 
-										response.Message(callText.ToString());
+										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", callText.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 								}
 							}
 						}
 					}
-				}
-				else if (textMessage.To == "17753765253") // Resgrid master text number
-				{
-					var profile = _userProfileService.FindProfileByMobileNumber(textMessage.Msisdn);
-					var payload = _textCommandService.DetermineType(textMessage.Text);
-
-					switch (payload.Type)
+					else if (textMessage.To == Config.NumberProviderConfig.SignalWireResgridNumber.Replace("+", "")) // Resgrid master text number
 					{
-						case TextCommandTypes.None:
-							response.Message("Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.");
-							break;
-						case TextCommandTypes.Help:
-							messageEvent.Processed = true;
+						var payload = _textCommandService.DetermineType(textMessage.Text);
 
-							var help = new StringBuilder();
-							help.Append("Resgrid Text Commands" + Environment.NewLine);
-							help.Append("---------------------" + Environment.NewLine);
-							help.Append("This is the Resgrid system for first responders (https://resgrid.com) automated text system. Your department isn't signed up for inbound text messages, but you can send the following commands." + Environment.NewLine);
-							help.Append("---------------------" + Environment.NewLine);
-							help.Append("STOP: To turn off all text messages" + Environment.NewLine);
-							help.Append("HELP: This help text" + Environment.NewLine);
+						switch (payload.Type)
+						{
+							case TextCommandTypes.None:
+								_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.", department.DepartmentId, textMessage.To, profile);
+								break;
+							case TextCommandTypes.Help:
+								messageEvent.Processed = true;
 
-							response.Message(help.ToString());
+								var help = new StringBuilder();
+								help.Append("Resgrid Text Commands" + Environment.NewLine);
+								help.Append("---------------------" + Environment.NewLine);
+								help.Append("This is the Resgrid system for first responders (https://resgrid.com) automated text system. Your department isn't signed up for inbound text messages, but you can send the following commands." + Environment.NewLine);
+								help.Append("---------------------" + Environment.NewLine);
+								help.Append("STOP: To turn off all text messages" + Environment.NewLine);
+								help.Append("HELP: This help text" + Environment.NewLine);
 
-							break;
-						case TextCommandTypes.Stop:
-							messageEvent.Processed = true;
-							_userProfileService.DisableTextMessagesForUser(profile.UserId);
-							response.Message("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
-							break;
+								_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
+
+								break;
+							case TextCommandTypes.Stop:
+								messageEvent.Processed = true;
+								_userProfileService.DisableTextMessagesForUser(profile.UserId);
+								_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
+								break;
+						}
 					}
 				}
 			}
@@ -396,174 +418,8 @@ namespace Resgrid.Web.Services.Controllers
 				_numbersService.SaveInboundMessageEvent(messageEvent);
 			}
 
-			//return Request.CreateResponse(HttpStatusCode.OK);
 
-			//var response = new TwilioResponse();
-
-			return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
+			return new HttpResponseMessage(HttpStatusCode.OK);
 		}
-
-		[HttpGet]
-		public HttpResponseMessage VoiceCall(string userId, int callId)
-		{
-			var response = new TwilioResponse();
-			var call = _callsService.GetCallById(callId);
-
-			if (call == null)
-			{
-				response.Say("This call has been closed. Goodbye.").Hangup();
-				return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-			}
-
-			if (call.State == (int)CallStates.Cancelled || call.State == (int)CallStates.Closed || call.IsDeleted)
-			{
-				response.Say(string.Format("This call, Id {0} has been closed. Goodbye.", call.Number)).Hangup();
-				return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-			}
-
-			var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(call.DepartmentId);
-
-			string address = call.Address;
-			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData))
-			{
-				try
-				{
-					string[] points = call.GeoLocationData.Split(char.Parse(","));
-
-					if (points != null && points.Length == 2)
-					{
-						address = _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
-					}
-				}
-				catch { }
-			}
-
-			if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
-				address = call.Address;
-
-			StringBuilder sb = new StringBuilder();
-
-			if (!String.IsNullOrWhiteSpace(address))
-				sb.Append(string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), call.Address, call.NatureOfCall));
-			else
-				sb.Append(string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), call.NatureOfCall));
-
-
-			sb.Append(", Press 0 to repeat, Press 1 to respond to the scene");
-
-			for (int i = 0; i < stations.Count; i++)
-			{
-				if (i >= 8)
-					break;
-
-				sb.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
-			}
-
-			response.BeginGather(new { numDigits = 1, timeout = 10, method = "GET", action = string.Format("{0}/Twilio/VoiceCallAction/{1}/{2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId) }).Say(sb.ToString()).EndGather().Pause(10).Hangup();
-
-			return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-		}
-
-		[HttpGet]
-		public HttpResponseMessage VoiceCallAction(string userId, int callId, [FromUri]TwilioGatherRequest twilioRequest)
-		{
-			var response = new TwilioResponse();
-
-			if (twilioRequest.Digits == "0")
-				response.Redirect(string.Format("{0}/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId), "GET");
-			else if (twilioRequest.Digits == "1")
-			{
-				var call = _callsService.GetCallById(callId);
-				_actionLogsService.SetUserAction(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId);
-
-				response.Say("You have been marked responding to the scene, goodbye.").Hangup();
-			}
-			else
-			{
-				var call = _callsService.GetCallById(callId);
-				var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(call.DepartmentId);
-
-				int index = int.Parse(twilioRequest.Digits) - 2;
-
-				if (index >= 0 && index < 8)
-				{
-					var station = stations[index];
-
-					if (station != null)
-					{
-						_actionLogsService.SetUserAction(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null,
-							station.DepartmentGroupId);
-
-						response.Say(string.Format("You have been marked responding to {0}, goodbye.", station.Name)).Hangup();
-					}
-
-				}
-			}
-
-			return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-		}
-
-		[HttpGet]
-		public HttpResponseMessage InboundVoice([FromUri]TwilioGatherRequest request)
-		{
-			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From))
-				return Request.CreateResponse(HttpStatusCode.BadRequest);
-
-			var response = new TwilioResponse();
-			var departmentId = _departmentSettingsService.GetDepartmentIdByTextToCallNumber(request.To.Replace("+", ""));
-
-			if (departmentId.HasValue)
-			{
-				var authroized = _limitsService.CanDepartmentProvisionNumber(departmentId.Value);
-
-
-				request.From.Replace("+", "");
-				if (authroized)
-				{
-					var department = _departmentsService.GetDepartmentById(departmentId.Value, false);
-
-					UserProfile profile = null;
-					profile = _userProfileService.FindProfileByMobileNumber(request.From.Replace("+", ""));
-
-					if (profile == null)
-						profile = _userProfileService.FindProfileByHomeNumber(request.From.Replace("+", ""));
-
-					if (department != null && profile != null)
-					{
-						StringBuilder sb = new StringBuilder();
-						sb.Append($@"Hello {profile.FirstName}, this is the Automated Voice System for {department.Name}. Please select from the following options. 
-											To list current active calls press 1, 
-											To list current user statuses press 2, 
-											To list current unit statuses press 3, 
-											To list upcoming Calendar events press 4,
-											To list upcoming Shifts press 5");
-
-						response.Say(sb.ToString());
-					}
-					else
-					{
-						response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
-					}
-				}
-				else
-				{
-					response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
-				}
-			}
-			else
-			{
-				response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
-			}
-
-			return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-		}
-	}
-
-	[Serializable]
-	public class TwilioMessage : TwilioRequest
-	{
-		public string MessageSid { get; set; }
-		public string SmsMessageSid { get; set; }
-		public string Body { get; set; }
 	}
 }

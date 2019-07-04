@@ -96,6 +96,12 @@ namespace Resgrid.Web.Services.App_Start
 					defaults: new { controller = "DepartmentRegistration" }
 			);
 
+			config.Routes.MapHttpRoute(
+					name: "SignalWireProvider",
+					routeTemplate: "signalwire/{action}",
+					defaults: new { controller = "SignalWire" }
+			);
+
 			// Configure SignalR with our JSON Serialization settings
 			//var serializer = new Microsoft.AspNet.SignalR.Json.JsonNetSerializer(JsonSerializationExtensions.JsonSerializerSettings);
 			//Microsoft.AspNet.SignalR.GlobalHost.DependencyResolver.Register(typeof(Microsoft.AspNet.SignalR.Json.IJsonSerializer), () => serializer);

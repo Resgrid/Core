@@ -104,6 +104,13 @@ Installing Microsoft IIS (Webserver) will differ based on what version of Window
 
 .. note:: Depending on the requirements of your web server, environment and other factors your installed IIS options may be different. Resgrid requires at a minimum the .NET Extensibility and ASP.NET Options to run minimally. 
 
+Microsoft SQL Server
+=======================
+
+.. important:: Resgrid only supports SQL Server 2014 or newer and we recommend SQL 2016 SP1 or newer. A server collation of "SQL_Latin1_General_CP1_CI_AS" is also required. 
+
+.. note:: If your using a Named SQL server instance, i.e. any SQL instance that's not the default instance and your are supplying the named instance name in the ResgridConfig.json file you will need to use double back slash's in between the server and SQL instance name. For example if you have a named SQL instance SQL2014 on the locally installed SQL server you need to specify the DataSource as "(local)\\SQL2014" with 2 backslashes "\\" in between the server and instance names.
+
 Install Resgrid
 ****************************
 

@@ -112,10 +112,10 @@ namespace Resgrid.Services
 					{
 						text = text + " " + call.ShortenedAudioUrl;
 					}
-					else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
-					{
-						text = text + " " + call.ShortenedCallUrl;
-					}
+					//else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
+					//{
+					//	text = text + " " + call.ShortenedCallUrl;
+					//}
 
 					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true);
 
@@ -132,10 +132,10 @@ namespace Resgrid.Services
 					{
 						text = text + " " + call.ShortenedAudioUrl;
 					}
-					else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
-					{
-						text = text + " " + call.ShortenedCallUrl;
-					}
+					//else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
+					//{
+					//	text = text + " " + call.ShortenedCallUrl;
+					//}
 
 					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId);
 
@@ -168,10 +168,10 @@ namespace Resgrid.Services
 			{
 				email.Body = email.Body + " " + call.ShortenedAudioUrl;
 			}
-			else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
-			{
-				email.Body = email.Body + " " + call.ShortenedCallUrl;
-			}
+			//else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
+			//{
+			//	email.Body = email.Body + " " + call.ShortenedCallUrl;
+			//}
 
 			email.IsBodyHtml = false;
 

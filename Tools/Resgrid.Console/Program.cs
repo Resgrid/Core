@@ -9,6 +9,8 @@ using Resgrid.Providers.Bus;
 using Resgrid.Workers.Framework;
 using SimpleInjector;
 using System.Configuration;
+using System.IO;
+using System.Reflection;
 
 namespace Resgrid.Console
 {
@@ -34,6 +36,12 @@ namespace Resgrid.Console
 
 		private static void Prime()
 		{
+			var configPath = ConfigurationManager.AppSettings.Get("ConfigPath");
+			if (ConfigProcessor.LoadAndProcessConfig(configPath))
+			{
+				System.Console.WriteLine($"Loaded Config: {configPath}");
+			}
+
 			SetConnectionString();
 
 			Bootstrapper.Initialize();
@@ -47,6 +55,7 @@ namespace Resgrid.Console
 
 		private static void SetConnectionString()
 		{
+
 			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
 

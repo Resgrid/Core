@@ -197,8 +197,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ViewUnitLocationPermissions = new SelectList(viewUnitLocationPermissions, "Id", "Name");
 
 
-
-
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateMessage))
 				model.CreateMessage = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateMessage).Action;
 			else
@@ -210,6 +208,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			createMessagePermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
 			createMessagePermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
 			model.CreateMessagePermissions = new SelectList(createMessagePermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers))
+				model.ViewGroupsUsers = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers).Action;
+			else
+				model.ViewGroupsUsers = 3;
+
+			var viewGroupUsersPermissions = new List<dynamic>();
+			viewGroupUsersPermissions.Add(new { Id = 3, Name = "Everyone" });
+			viewGroupUsersPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			viewGroupUsersPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			viewGroupUsersPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.ViewGroupUsersPermissions = new SelectList(viewGroupUsersPermissions, "Id", "Name");
 
 			return View(model);
 		}

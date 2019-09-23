@@ -4,7 +4,7 @@
     <Description>Cloud system for First Responders</Description>
     <VersionPrefix>2.0.0</VersionPrefix>
     <Authors>Resgrid</Authors>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>Resgrid.WebCore</AssemblyName>
     <OutputType>Exe</OutputType>

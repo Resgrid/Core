@@ -1,6 +1,8 @@
-﻿<div class="row border-bottom" style="height: 50px;">
+﻿@using Resgrid.Framework;
+
+<div class="row border-bottom" style="height: 50px;">
 	<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-		<div class="navbar-header" style="width: 50%;">
+		<div class="navbar-header" style="width: 30%;">
 			<div class="hidden-sm hidden-xs" id="top-icons-area">
 
 			</div>
@@ -11,7 +13,7 @@
 		</div>
 		<ul class="nav navbar-top-links navbar-right">
 			<li class="btn dropdown" id="menu-department">
-				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName()</span>&nbsp;<b class="caret"></b></a>
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					{

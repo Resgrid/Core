@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Resgrid.Console</RootNamespace>
     <AssemblyName>Resgrid.Console</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -100,10 +100,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Args\ValidateArgs.cs" />
     <Compile Include="Args\DbUpdateArgs.cs" />
     <Compile Include="Args\AddHostsArgs.cs" />
     <Compile Include="Args\HelpArgs.cs" />
     <Compile Include="Commands\AddHostsCommand.cs" />
+    <Compile Include="Commands\ValidateCommand.cs" />
     <Compile Include="Commands\DbUpdateCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Program.cs" />

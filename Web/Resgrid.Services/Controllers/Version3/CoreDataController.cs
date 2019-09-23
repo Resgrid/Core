@@ -219,31 +219,34 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			foreach (var customState in customStates)
 			{
-				if (customState.IsDeleted)
-					continue;
-
-				foreach (var stateDetail in customState.Details)
+				if (customState != null)
 				{
-					if (stateDetail.IsDeleted)
+					if (customState.IsDeleted || customState.Details == null)
 						continue;
 
-					var customStateResult = new CustomStatusesResult();
-					customStateResult.Id = stateDetail.CustomStateDetailId;
-					customStateResult.Type = customState.Type;
-					customStateResult.StateId = stateDetail.CustomStateId;
-					customStateResult.Text = stateDetail.ButtonText;
-					customStateResult.BColor = stateDetail.ButtonColor;
-					customStateResult.Color = stateDetail.TextColor;
-					customStateResult.Gps = stateDetail.GpsRequired;
-					customStateResult.Note = stateDetail.NoteType;
-					customStateResult.Detail = stateDetail.DetailType;
+					foreach (var stateDetail in customState.Details)
+					{
+						if (stateDetail == null || stateDetail.IsDeleted)
+							continue;
 
-					if (customState.IsDeleted)
-						customStateResult.IsDeleted = true;
-					else
-						customStateResult.IsDeleted = stateDetail.IsDeleted;
+						var customStateResult = new CustomStatusesResult();
+						customStateResult.Id = stateDetail.CustomStateDetailId;
+						customStateResult.Type = customState.Type;
+						customStateResult.StateId = stateDetail.CustomStateId;
+						customStateResult.Text = stateDetail.ButtonText;
+						customStateResult.BColor = stateDetail.ButtonColor;
+						customStateResult.Color = stateDetail.TextColor;
+						customStateResult.Gps = stateDetail.GpsRequired;
+						customStateResult.Note = stateDetail.NoteType;
+						customStateResult.Detail = stateDetail.DetailType;
 
-					results.Statuses.Add(customStateResult);
+						if (customState.IsDeleted)
+							customStateResult.IsDeleted = true;
+						else
+							customStateResult.IsDeleted = stateDetail.IsDeleted;
+
+						results.Statuses.Add(customStateResult);
+					}
 				}
 			}
 

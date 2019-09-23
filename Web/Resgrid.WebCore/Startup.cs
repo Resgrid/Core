@@ -35,7 +35,7 @@ namespace Resgrid.Web
 
 		public Startup(IHostingEnvironment env)
 		{
-			var builder = new ConfigurationBuilder()
+			var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
 					.SetBasePath(env.ContentRootPath)
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 					.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
@@ -273,7 +273,7 @@ namespace Resgrid.Web
 				//app.UseDatabaseErrorPage();
 				app.UseBrowserLink();
 
-				var builder = new ConfigurationBuilder()
+				var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
 					.SetBasePath(env.ContentRootPath)
 					.AddJsonFile(@"Properties/launchSettings.json", optional: false, reloadOnChange: true);
 				var launchConfig = builder.Build();

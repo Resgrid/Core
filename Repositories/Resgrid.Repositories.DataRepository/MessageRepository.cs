@@ -24,7 +24,7 @@ namespace Resgrid.Repositories.DataRepository
 
 		public int GetUnreadMessageCount(string userId)
 		{
-			var query = $@"SELECT COUNT(*) FROM MessageRecipients WHERE UserId = @userId AND ReadOn IS NULL AND IsDeleted = 0";
+			var query = $@"SELECT COUNT(*) FROM Messages m LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId WHERE mr.UserId = @userId AND mr.IsDeleted = 0 AND m.IsDeleted = 0";
 
 			using (IDbConnection db = new SqlConnection(connectionString))
 			{
@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<int> GetUnreadMessageCountAsync(string userId)
 		{
-			var query = $@"SELECT COUNT(*) FROM MessageRecipients WHERE UserId = @userId AND ReadOn IS NULL AND IsDeleted = 0";
+			var query = $@"SELECT COUNT(*) FROM Messages m LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId WHERE mr.UserId = @userId AND mr.IsDeleted = 0 AND m.IsDeleted = 0";
 
 			using (IDbConnection db = new SqlConnection(connectionString))
 			{

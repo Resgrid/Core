@@ -15,6 +15,7 @@
 		AdjustInventory,
 		CanSeePersonnelLocations,
 		CanSeeUnitLocations,
-		CreateMessage
+		CreateMessage,
+		ViewGroupUsers
 	}
 }

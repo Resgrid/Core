@@ -40,13 +40,48 @@ namespace Resgrid.Repositories.DataRepository.Migrations
 			DropIndex("dbo.DepartmentMembers", new[] { "UserId" });
 			DropForeignKey("dbo.DepartmentMembers", "FK_DepartmentMembers_Users_UserId");
 			DropIndex("dbo.DepartmentProfileArticles", new[] { "CreatedByUserId" });
-			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Depar__2CBDA3B5]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileUsers DROP CONSTRAINT DF__Departmen__Depar__2CBDA3B5");
-			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Creat__7EF6D905]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileArticles DROP CONSTRAINT DF__Departmen__Creat__7EF6D905");
-			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Creat__251C81ED]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileArticles DROP CONSTRAINT DF__Departmen__Creat__251C81ED");
-			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Creat__7BB05806]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileArticles DROP CONSTRAINT DF__Departmen__Creat__7BB05806");
+			Sql(@"
+					DECLARE @schema_name NVARCHAR(256)
+					DECLARE @table_name NVARCHAR(256)
+					DECLARE @col_name NVARCHAR(256)
+					DECLARE @Command  NVARCHAR(1000)
+
+					SET @schema_name = N'dbo'
+					SET @table_name = N'DepartmentProfileUsers'
+					SET @col_name = N'DepartmentProfileUserId'
+
+					SELECT @Command = 'ALTER TABLE ' + @schema_name + '.[' + @table_name + '] DROP CONSTRAINT ' + d.name
+					 FROM sys.tables t
+					  JOIN sys.default_constraints d ON d.parent_object_id = t.object_id
+					  JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = d.parent_column_id
+					 WHERE t.name = @table_name
+					  AND t.schema_id = schema_id(@schema_name)
+					  AND c.name = @col_name
+
+					execute (@Command)
+			");
+			Sql(@"
+					DECLARE @schema_name NVARCHAR(256)
+					DECLARE @table_name NVARCHAR(256)
+					DECLARE @col_name NVARCHAR(256)
+					DECLARE @Command  NVARCHAR(1000)
+
+					SET @schema_name = N'dbo'
+					SET @table_name = N'DepartmentProfileArticles'
+					SET @col_name = N'CreatedByUserId'
+
+					SELECT @Command = 'ALTER TABLE ' + @schema_name + '.[' + @table_name + '] DROP CONSTRAINT ' + d.name
+					 FROM sys.tables t
+					  JOIN sys.default_constraints d ON d.parent_object_id = t.object_id
+					  JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = d.parent_column_id
+					 WHERE t.name = @table_name
+					  AND t.schema_id = schema_id(@schema_name)
+					  AND c.name = @col_name
+
+					execute (@Command)
+			");
 			DropForeignKey("dbo.DepartmentProfileArticles", "FK_dbo.DepartmentProfileArticles_dbo.Users_CreatedByUserId");
 			DropIndex("dbo.DepartmentProfileUserFollows", new[] { "DepartmentProfileUserId" });
-			Sql("IF OBJECT_ID('dbo.[DF__Departmen__Depar__0697FACD]') IS NOT NULL ALTER TABLE dbo.DepartmentProfileUsers DROP CONSTRAINT DF__Departmen__Depar__0697FACD");
 			DropIndex("dbo.DistributionListMembers", new[] { "UserId" });
 			DropForeignKey("dbo.DistributionListMembers", "FK_dbo.DistributionListMembers_dbo.Users_UserId");
 			DropIndex("dbo.Documents", new[] { "UserId" });
@@ -69,12 +104,48 @@ namespace Resgrid.Repositories.DataRepository.Migrations
 			DropIndex("dbo.Messages", new[] { "ReceivingUserId" });
 			DropForeignKey("dbo.Messages", "FK_dbo.Messages_dbo.Users_ReceivingUserId");
 			DropForeignKey("dbo.Messages", "FK_Messages_Users_ReceivingUserId");
-			Sql("IF OBJECT_ID('dbo.[DF__Messages__Receiv__10216507]') IS NOT NULL ALTER TABLE dbo.Messages DROP CONSTRAINT DF__Messages__Receiv__10216507");
-			Sql("IF OBJECT_ID('dbo.[DF__Messages__Receiv__36470DEF]') IS NOT NULL ALTER TABLE dbo.Messages DROP CONSTRAINT DF__Messages__Receiv__36470DEF");
+			Sql(@"
+					DECLARE @schema_name NVARCHAR(256)
+					DECLARE @table_name NVARCHAR(256)
+					DECLARE @col_name NVARCHAR(256)
+					DECLARE @Command  NVARCHAR(1000)
+
+					SET @schema_name = N'dbo'
+					SET @table_name = N'Messages'
+					SET @col_name = N'ReceivingUserId'
+
+					SELECT @Command = 'ALTER TABLE ' + @schema_name + '.[' + @table_name + '] DROP CONSTRAINT ' + d.name
+					 FROM sys.tables t
+					  JOIN sys.default_constraints d ON d.parent_object_id = t.object_id
+					  JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = d.parent_column_id
+					 WHERE t.name = @table_name
+					  AND t.schema_id = schema_id(@schema_name)
+					  AND c.name = @col_name
+
+					execute (@Command)
+			");
 			DropIndex("dbo.Payments", new[] { "PurchasingUserId" });
 			DropForeignKey("dbo.Payments", "FK_dbo.Payments_dbo.Users_PurchasingUserId");
-			Sql("IF OBJECT_ID('dbo.[DF__Permissio__Updat__16CE6296]') IS NOT NULL ALTER TABLE dbo.Permissions DROP CONSTRAINT DF__Permissio__Updat__16CE6296");
-			Sql("IF OBJECT_ID('dbo.[DF__Permissio__Updat__3CF40B7E]') IS NOT NULL ALTER TABLE dbo.Permissions DROP CONSTRAINT DF__Permissio__Updat__3CF40B7E");
+			Sql(@"
+					DECLARE @schema_name NVARCHAR(256)
+					DECLARE @table_name NVARCHAR(256)
+					DECLARE @col_name NVARCHAR(256)
+					DECLARE @Command  NVARCHAR(1000)
+
+					SET @schema_name = N'dbo'
+					SET @table_name = N'Permissions'
+					SET @col_name = N'UpdatedBy'
+
+					SELECT @Command = 'ALTER TABLE ' + @schema_name + '.[' + @table_name + '] DROP CONSTRAINT ' + d.name
+					 FROM sys.tables t
+					  JOIN sys.default_constraints d ON d.parent_object_id = t.object_id
+					  JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = d.parent_column_id
+					 WHERE t.name = @table_name
+					  AND t.schema_id = schema_id(@schema_name)
+					  AND c.name = @col_name
+
+					execute (@Command)
+			");
 			DropIndex("dbo.PersonnelCertifications", new[] { "UserId" });
 			DropForeignKey("dbo.PersonnelCertifications", "FK_dbo.PersonnelCertifications_dbo.Users_UserId");
 			DropIndex("dbo.PushUris", new[] { "UserId" });

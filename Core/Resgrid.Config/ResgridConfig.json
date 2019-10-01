@@ -1,5 +1,8 @@
 ﻿{
+  "InfoConfig.ConfigVersion": "1",
+
   "DataConfig.ConnectionString": "Data Source=(local);Initial Catalog=Resgrid;Integrated Security=True;MultipleActiveResultSets=True;",
+
   "SystemBehaviorConfig.ResgridBaseUrl": "http://resgrid.local",
   "SystemBehaviorConfig.ResgridApiBaseUrl": "http://resgridapi.local",
   "SystemBehaviorConfig.DoNotBroadcast": "false",

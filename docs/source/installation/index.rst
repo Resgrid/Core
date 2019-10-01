@@ -104,13 +104,6 @@ Installing Microsoft IIS (Webserver) will differ based on what version of Window
 
 .. note:: Depending on the requirements of your web server, environment and other factors your installed IIS options may be different. Resgrid requires at a minimum the .NET Extensibility and ASP.NET Options to run minimally. 
 
-Microsoft SQL Server
-=======================
-
-.. important:: Resgrid only supports SQL Server 2014 or newer and we recommend SQL 2016 SP1 or newer. A server collation of "SQL_Latin1_General_CP1_CI_AS" is also required. 
-
-.. note:: If your using a Named SQL server instance, i.e. any SQL instance that's not the default instance and your are supplying the named instance name in the ResgridConfig.json file you will need to use double back slash's in between the server and SQL instance name. For example if you have a named SQL instance SQL2014 on the locally installed SQL server you need to specify the DataSource as "(local)\\SQL2014" with 2 backslashes "\\" in between the server and instance names.
-
 Install Resgrid
 ****************************
 
@@ -143,17 +136,60 @@ Setup Hosts File
 
 Run Notepad as Administrator, open up the hosts file in the following directory 'C:\\Windows\\System32\\drivers\\etc' and add the following lines at the bottom.
 
-    127.0.0.1	resgrid.local
-    127.0.0.1	resgridapi.local
+  |  127.0.0.1	resgrid.local
+  |  127.0.0.1	resgridapi.local
+  |  127.0.0.1  rgdevserver
 
 This will allow you to access locally on the box using the above domain names. If you have your own names you can use those in the IIS configuration below. If you already have the entries into your hosts file you do not need to add them again.
+
+.. note:: If you are installing Resgrid components on multiple systems (i.e. web server boxes, api boxes, database server, etc) replace '127.0.0.1' with the static IP address of the server where those components are installed.
 
 Database Installation
 ****************************
 
-You will need to install and configure Microsoft SQL Server you can find tutorials online an example of one is `from tutorialpoint <https://www.tutorialspoint.com/ms_sql_server/ms_sql_server_installation.htm>`_. You will need SQL Server and SQL Managment Studio which can be `downloaded form Microsoft <https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-2017>`_.
+You will need to install and configure Microsoft SQL Server you can find tutorials online an example of one is `from tutorialpoint <https://www.tutorialspoint.com/ms_sql_server/ms_sql_server_installation.htm>`_. You will need SQL Server and SQL Management Studio which can be `downloaded from Microsoft <https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-2017>`_.
+
+Microsoft SQL Server
+=======================
+
+.. important:: Resgrid only supports SQL Server 2014 or newer and we recommend SQL 2016 SP1 or newer. A server collation of "SQL_Latin1_General_CP1_CI_AS" is also required. 
+
+For the most basic SQL Server installation you will need "Database Engine Services" and "Management Tools". If Management Tools isn't available for your SQL Install.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerOptions1.png
+  :width: 800
+  :alt: SQL Install Options 1
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerOptions2.png
+  :width: 800
+  :alt: SQL Install Options 2
+
+SQL Server can be installed as a "Default Instance" or "Named Instance" the standard way Resgrid is configured out of the box is a locally installed Default Instance of SQL Server. If you are installing SQL Server on another server then the Resgrid applications or you are configuring SQL to be a Named Instance you will need to modify the ResgridConfig.json which is located in the Config directory of the Resgrid installation folder. Default location is C:\\Resgrid\\Config\\.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerInstance.png
+  :width: 800
+  :alt: SQL Instance Setup
+
+During the installation of SQL Server you will need to set the collation for the SQL server. Resgrid requires "SQL_Latin1_General_CP1_CI_AS", but this can also be set at the Database level if this SQL Server is shared. 
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerCollation.png
+  :width: 800
+  :alt: SQL Server SQL_Latin1_General_CP1_CI_AS Collation
+
+.. note:: If your using a Named SQL server instance, i.e. any SQL instance that's not the default instance and your are supplying the named instance name in the ResgridConfig.json file you will need to use double back slash's in between the server and SQL instance name. For example if you have a named SQL instance SQL2014 on the locally installed SQL server you need to specify the DataSource as "(local)\\SQL2014" with 2 backslashes "\\" in between the server and instance names.
+
+Database Creation
+=======================
 
 Once you have Microsoft SQL and Microsoft SQL Management Studio installed; open up Microsoft SQL Management studio, connect to your SQL Server and create an empty database called Resgrid. 
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLDatabase.png
+  :width: 800
+  :alt: Database Creation 1
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLDatabaseOptions.png
+  :width: 800
+  :alt: Database Creation 2
 
 Install\\Update Resgrid Schema
 =======================
@@ -178,7 +214,7 @@ That will start the Resgrid Database Update process and either Update or Install
 
     C:\\Resgrid\\Tools>
 
-This will be run when your upgrading your Resgrid installation as well.
+This will be run when your upgrading your Resgrid installation as well. If you installed (unzipped and copied) Resgrid to another path other then C:\\Resgrid ensure you are opening the command prompt to that directory instead of C:\\Resgrid.
 
 IIS Installation
 ****************************

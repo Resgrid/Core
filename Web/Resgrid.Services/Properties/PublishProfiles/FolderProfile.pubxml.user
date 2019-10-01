@@ -6,5 +6,812 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>G:\Resgrid\ResgridCore\Web\Resgrid.Services\bin\Release\Publish</_PublishTargetUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <File Include="ApplicationInsights.config">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/HelpPage.css">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/Api.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/Authentication.cshtml">
+      <publishTime>12/14/2015 16:48:07</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/ApiGroup.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/CollectionModelDescription.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/ComplexTypeModelDescription.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/DictionaryModelDescription.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/EnumTypeModelDescription.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/HelpPageApiModel.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/ImageSample.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/InvalidSample.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/ModelDescriptionLink.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/Parameters.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/SimpleTypeModelDescription.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/TextSample.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/GettingStarted.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/Index.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Help/ResourceModel.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Shared/_Layout.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/Web.config">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Areas/HelpPage/Views/_ViewStart.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/disableAppPoolTimeout.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/increaseTransactionTimeoutNET2.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/increaseTransactionTimeoutNET4.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/logIISThreadSettings.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/readme.textile">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/setMaxProcessesToAvailableProcessors.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/Startup.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Azure/upgradeIISthreadcount.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>09/10/2013 16:29:20</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.pdb">
+      <publishTime>09/10/2013 16:29:20</publishTime>
+    </File>
+    <File Include="bin/ApplicationInsights.config">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/App_global.asax.compiled">
+      <publishTime>09/30/2019 07:23:02</publishTime>
+    </File>
+    <File Include="bin/App_global.asax.dll">
+      <publishTime>09/30/2019 07:23:02</publishTime>
+    </File>
+    <File Include="bin/AsyncEnumerable.dll">
+      <publishTime>01/27/2019 20:43:26</publishTime>
+    </File>
+    <File Include="bin/Autofac.dll">
+      <publishTime>07/25/2017 05:11:08</publishTime>
+    </File>
+    <File Include="bin/Autofac.Integration.Mvc.dll">
+      <publishTime>04/10/2017 15:40:32</publishTime>
+    </File>
+    <File Include="bin/Autofac.Integration.WebApi.dll">
+      <publishTime>08/02/2017 18:28:14</publishTime>
+    </File>
+    <File Include="bin/AWSSDK.Core.dll">
+      <publishTime>05/11/2017 14:28:44</publishTime>
+    </File>
+    <File Include="bin/AWSSDK.Core.pdb">
+      <publishTime>05/11/2017 14:28:44</publishTime>
+    </File>
+    <File Include="bin/AWSSDK.SimpleEmail.dll">
+      <publishTime>05/11/2017 14:32:10</publishTime>
+    </File>
+    <File Include="bin/AWSSDK.SimpleEmail.pdb">
+      <publishTime>05/11/2017 14:32:10</publishTime>
+    </File>
+    <File Include="bin/Azure/disableAppPoolTimeout.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Azure/increaseTransactionTimeoutNET2.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Azure/increaseTransactionTimeoutNET4.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Azure/logIISThreadSettings.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Azure/readme.textile">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Azure/setMaxProcessesToAvailableProcessors.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Azure/Startup.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/Azure/upgradeIISthreadcount.cmd">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="bin/BouncyCastle.Crypto.dll">
+      <publishTime>04/26/2016 12:16:00</publishTime>
+    </File>
+    <File Include="bin/CommonServiceLocator.dll">
+      <publishTime>09/20/2017 08:32:46</publishTime>
+    </File>
+    <File Include="bin/Dapper.dll">
+      <publishTime>07/22/2016 14:52:40</publishTime>
+    </File>
+    <File Include="bin/Elasticsearch.Net.dll">
+      <publishTime>01/30/2018 13:23:04</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.BulkInsert.dll">
+      <publishTime>04/30/2014 02:07:34</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.BulkInsert.pdb">
+      <publishTime>04/30/2014 02:07:34</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.dll">
+      <publishTime>03/02/2015 09:32:26</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.MappingAPI.dll">
+      <publishTime>11/13/2014 21:56:20</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.MappingAPI.pdb">
+      <publishTime>11/13/2014 21:56:20</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.SqlServer.dll">
+      <publishTime>03/02/2015 09:32:26</publishTime>
+    </File>
+    <File Include="bin/FirebaseAdmin.dll">
+      <publishTime>08/16/2018 18:04:26</publishTime>
+    </File>
+    <File Include="bin/Geocoding.dll">
+      <publishTime>06/13/2017 16:42:06</publishTime>
+    </File>
+    <File Include="bin/GlobalPhone.dll">
+      <publishTime>07/20/2016 19:07:28</publishTime>
+    </File>
+    <File Include="bin/global_phone.json">
+      <publishTime>07/22/2015 20:17:37</publishTime>
+    </File>
+    <File Include="bin/Google.Apis.Auth.dll">
+      <publishTime>07/20/2018 10:09:26</publishTime>
+    </File>
+    <File Include="bin/Google.Apis.Auth.pdb">
+      <publishTime>07/20/2018 10:09:26</publishTime>
+    </File>
+    <File Include="bin/Google.Apis.Core.dll">
+      <publishTime>07/20/2018 10:09:14</publishTime>
+    </File>
+    <File Include="bin/Google.Apis.Core.pdb">
+      <publishTime>07/20/2018 10:09:14</publishTime>
+    </File>
+    <File Include="bin/Google.Apis.dll">
+      <publishTime>07/20/2018 10:09:20</publishTime>
+    </File>
+    <File Include="bin/Google.Apis.pdb">
+      <publishTime>07/20/2018 10:09:20</publishTime>
+    </File>
+    <File Include="bin/HtmlAgilityPack.dll">
+      <publishTime>09/08/2017 10:49:52</publishTime>
+    </File>
+    <File Include="bin/HtmlAgilityPack.pdb">
+      <publishTime>09/08/2017 10:49:52</publishTime>
+    </File>
+    <File Include="bin/JWT.dll">
+      <publishTime>05/15/2015 10:15:52</publishTime>
+    </File>
+    <File Include="bin/log4net.dll">
+      <publishTime>03/08/2017 19:26:22</publishTime>
+    </File>
+    <File Include="bin/Makrill.dll">
+      <publishTime>07/11/2016 16:31:08</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
+      <publishTime>06/27/2017 12:59:34</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.DependencyCollector.dll">
+      <publishTime>07/07/2017 17:39:02</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.PerfCounterCollector.dll">
+      <publishTime>07/07/2017 17:44:52</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.ServerTelemetryChannel.dll">
+      <publishTime>06/27/2017 15:30:06</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.Web.dll">
+      <publishTime>07/07/2017 17:44:50</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.WindowsServer.dll">
+      <publishTime>07/07/2017 17:44:52</publishTime>
+    </File>
+    <File Include="bin/Microsoft.ApplicationInsights.dll">
+      <publishTime>06/27/2017 15:33:08</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.EntityFramework6.dll">
+      <publishTime>12/02/2016 08:57:04</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Client.dll">
+      <publishTime>07/14/2016 02:35:18</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Core.dll">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Core.pdb">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Owin.dll">
+      <publishTime>08/19/2014 20:13:24</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Redis.dll">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Redis.pdb">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.ServiceBus.dll">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.ServiceBus.dll.config">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.ServiceBus.pdb">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.SqlServer.dll">
+      <publishTime>03/24/2016 17:49:52</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.SqlServer.pdb">
+      <publishTime>03/24/2016 17:49:52</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.SystemWeb.dll">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.SystemWeb.dll.config">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.SystemWeb.pdb">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.TelemetryCorrelation.dll">
+      <publishTime>06/28/2017 15:05:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Authentication.Cookies.dll">
+      <publishTime>09/08/2017 22:02:28</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Authentication.dll">
+      <publishTime>09/08/2017 22:02:28</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Cryptography.Internal.dll">
+      <publishTime>09/08/2017 22:02:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll">
+      <publishTime>09/08/2017 22:02:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.DataProtection.Abstractions.dll">
+      <publishTime>09/08/2017 22:02:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.DataProtection.dll">
+      <publishTime>09/08/2017 22:02:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Hosting.Abstractions.dll">
+      <publishTime>09/08/2017 22:02:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Hosting.Server.Abstractions.dll">
+      <publishTime>09/08/2017 22:02:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Http.Abstractions.dll">
+      <publishTime>04/27/2017 18:53:24</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Http.dll">
+      <publishTime>04/27/2017 18:53:24</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Http.Features.dll">
+      <publishTime>04/27/2017 18:53:24</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.Identity.dll">
+      <publishTime>06/21/2018 07:54:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNetCore.WebUtilities.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Azure.NotificationHubs.dll">
+      <publishTime>08/09/2016 00:10:36</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Diagnostics.Tracing.EventSource.dll">
+      <publishTime>12/01/2015 14:31:46</publishTime>
+    </File>
+    <File Include="bin/Microsoft.EntityFrameworkCore.dll">
+      <publishTime>08/31/2016 18:26:18</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.Configuration.Abstractions.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.DependencyInjection.Abstractions.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.FileProviders.Abstractions.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.Logging.Abstractions.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.ObjectPool.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.Options.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.Primitives.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Extensions.WebEncoders.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.IdentityModel.Logging.dll">
+      <publishTime>06/11/2017 20:59:08</publishTime>
+    </File>
+    <File Include="bin/Microsoft.IdentityModel.Tokens.dll">
+      <publishTime>06/11/2017 20:59:18</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Net.Http.Headers.dll">
+      <publishTime>04/27/2017 18:53:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Cors.dll">
+      <publishTime>02/13/2015 13:16:32</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.dll">
+      <publishTime>02/13/2015 13:16:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Host.SystemWeb.dll">
+      <publishTime>02/13/2015 13:16:34</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.Cookies.dll">
+      <publishTime>02/13/2015 13:16:38</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.dll">
+      <publishTime>02/13/2015 13:16:36</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.OAuth.dll">
+      <publishTime>02/13/2015 13:16:40</publishTime>
+    </File>
+    <File Include="bin/Microsoft.ServiceBus.dll">
+      <publishTime>02/08/2017 18:46:24</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>07/25/2012 11:48:56</publishTime>
+    </File>
+    <File Include="bin/Microsoft.WindowsAzure.Configuration.dll">
+      <publishTime>02/03/2016 16:22:42</publishTime>
+    </File>
+    <File Include="bin/MimeKit.dll">
+      <publishTime>09/03/2017 10:53:24</publishTime>
+    </File>
+    <File Include="bin/Mustachio.dll">
+      <publishTime>06/03/2016 15:01:02</publishTime>
+    </File>
+    <File Include="bin/Mustachio.pdb">
+      <publishTime>06/03/2016 15:01:02</publishTime>
+    </File>
+    <File Include="bin/NAudio.dll">
+      <publishTime>09/05/2017 19:18:04</publishTime>
+    </File>
+    <File Include="bin/NewRelic.Api.Agent.dll">
+      <publishTime>08/28/2017 09:14:34</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>06/18/2017 13:57:10</publishTime>
+    </File>
+    <File Include="bin/NodaTime.dll">
+      <publishTime>07/08/2017 21:53:26</publishTime>
+    </File>
+    <File Include="bin/NodaTime.pdb">
+      <publishTime>07/08/2017 21:53:26</publishTime>
+    </File>
+    <File Include="bin/NReco.PdfGenerator.dll">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/Owin.dll">
+      <publishTime>11/13/2012 12:19:34</publishTime>
+    </File>
+    <File Include="bin/Postmark.Convenience.dll">
+      <publishTime>02/26/2016 16:31:00</publishTime>
+    </File>
+    <File Include="bin/Postmark.Convenience.pdb">
+      <publishTime>02/26/2016 16:31:00</publishTime>
+    </File>
+    <File Include="bin/Postmark.dll">
+      <publishTime>02/26/2016 16:31:00</publishTime>
+    </File>
+    <File Include="bin/Postmark.pdb">
+      <publishTime>02/26/2016 16:31:00</publishTime>
+    </File>
+    <File Include="bin/protobuf-net.dll">
+      <publishTime>08/04/2017 16:51:16</publishTime>
+    </File>
+    <File Include="bin/RabbitMQ.Client.dll">
+      <publishTime>06/18/2018 15:49:02</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Config.dll">
+      <publishTime>09/30/2019 06:57:32</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Config.pdb">
+      <publishTime>09/30/2019 06:57:32</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Framework.dll">
+      <publishTime>09/30/2019 06:57:32</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Framework.dll.config">
+      <publishTime>09/11/2019 17:09:13</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Framework.pdb">
+      <publishTime>09/30/2019 06:57:32</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Model.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Model.dll.config">
+      <publishTime>09/11/2019 17:09:24</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Model.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.AddressVerification.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.AddressVerification.dll.config">
+      <publishTime>09/11/2019 17:09:49</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.AddressVerification.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Audio.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Audio.dll.config">
+      <publishTime>09/11/2019 17:10:02</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Audio.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Bus.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Bus.dll.config">
+      <publishTime>09/11/2019 17:10:16</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Bus.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Bus.Rabbit.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Bus.Rabbit.dll.config">
+      <publishTime>09/11/2019 17:10:38</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Bus.Rabbit.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Cache.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Cache.dll.config">
+      <publishTime>09/11/2019 17:10:45</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Cache.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Claims.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Claims.dll.config">
+      <publishTime>09/11/2019 17:10:55</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Claims.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.EmailProvider.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.EmailProvider.dll.config">
+      <publishTime>09/11/2019 17:11:10</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Firebase.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Firebase.dll.config">
+      <publishTime>09/11/2019 17:11:22</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Firebase.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.GeoLocationProvider.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.GeoLocationProvider.dll.config">
+      <publishTime>09/11/2019 17:11:31</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.GeoLocationProvider.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Marketing.dll">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Marketing.dll.config">
+      <publishTime>09/11/2019 17:11:43</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.Marketing.pdb">
+      <publishTime>09/30/2019 06:57:33</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.NumberProvider.dll">
+      <publishTime>09/30/2019 06:57:35</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.NumberProvider.dll.config">
+      <publishTime>09/11/2019 17:11:54</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.NumberProvider.pdb">
+      <publishTime>09/30/2019 06:57:35</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.PdfProvider.dll">
+      <publishTime>09/30/2019 06:57:34</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.PdfProvider.dll.config">
+      <publishTime>09/11/2019 17:12:03</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.PdfProvider.pdb">
+      <publishTime>09/30/2019 06:57:34</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Repositories.DataRepository.dll">
+      <publishTime>09/30/2019 06:57:35</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Repositories.DataRepository.dll.config">
+      <publishTime>09/11/2019 17:12:13</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Repositories.DataRepository.pdb">
+      <publishTime>09/30/2019 06:57:35</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Services.dll">
+      <publishTime>09/30/2019 06:57:34</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Services.dll.config">
+      <publishTime>09/11/2019 17:09:35</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Services.pdb">
+      <publishTime>09/30/2019 06:57:34</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Web.Services.dll">
+      <publishTime>09/30/2019 06:57:37</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Web.Services.pdb">
+      <publishTime>09/30/2019 06:57:37</publishTime>
+    </File>
+    <File Include="bin/ResgridConfig.json">
+      <publishTime>02/22/2019 14:03:05</publishTime>
+    </File>
+    <File Include="bin/RestSharp.dll">
+      <publishTime>08/26/2015 16:33:34</publishTime>
+    </File>
+    <File Include="bin/SDammann.WebApi.Versioning.dll">
+      <publishTime>09/25/2016 14:57:12</publishTime>
+    </File>
+    <File Include="bin/SDammann.WebApi.Versioning.pdb">
+      <publishTime>09/25/2016 14:57:12</publishTime>
+    </File>
+    <File Include="bin/Serilog.dll">
+      <publishTime>12/03/2017 20:05:46</publishTime>
+    </File>
+    <File Include="bin/Serilog.Sinks.Elasticsearch.dll">
+      <publishTime>04/21/2018 11:05:46</publishTime>
+    </File>
+    <File Include="bin/Serilog.Sinks.File.dll">
+      <publishTime>10/29/2017 18:30:08</publishTime>
+    </File>
+    <File Include="bin/Serilog.Sinks.PeriodicBatching.dll">
+      <publishTime>06/20/2017 16:12:50</publishTime>
+    </File>
+    <File Include="bin/Serilog.Sinks.RollingFile.dll">
+      <publishTime>01/03/2017 03:05:26</publishTime>
+    </File>
+    <File Include="bin/SharpKml.dll">
+      <publishTime>07/30/2016 07:47:50</publishTime>
+    </File>
+    <File Include="bin/SharpRaven.dll">
+      <publishTime>02/06/2017 19:36:56</publishTime>
+    </File>
+    <File Include="bin/SharpRaven.pdb">
+      <publishTime>02/06/2017 19:36:56</publishTime>
+    </File>
+    <File Include="bin/StackExchange.Redis.dll">
+      <publishTime>08/01/2017 12:19:14</publishTime>
+    </File>
+    <File Include="bin/StackExchange.Redis.StrongName.dll">
+      <publishTime>08/01/2017 12:20:24</publishTime>
+    </File>
+    <File Include="bin/Stripe.net.dll">
+      <publishTime>11/29/2016 08:40:10</publishTime>
+    </File>
+    <File Include="bin/System.Buffers.dll">
+      <publishTime>11/05/2016 04:55:30</publishTime>
+    </File>
+    <File Include="bin/System.Collections.Immutable.dll">
+      <publishTime>09/28/2019 08:54:20</publishTime>
+    </File>
+    <File Include="bin/System.Diagnostics.DiagnosticSource.dll">
+      <publishTime>06/27/2017 11:17:34</publishTime>
+    </File>
+    <File Include="bin/System.IdentityModel.Tokens.Jwt.dll">
+      <publishTime>06/11/2017 20:59:28</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.dll">
+      <publishTime>03/26/2018 16:24:54</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>01/28/2015 04:02:42</publishTime>
+    </File>
+    <File Include="bin/System.Runtime.CompilerServices.Unsafe.dll">
+      <publishTime>11/05/2016 04:56:46</publishTime>
+    </File>
+    <File Include="bin/System.Text.Encodings.Web.dll">
+      <publishTime>04/19/2017 16:58:54</publishTime>
+    </File>
+    <File Include="bin/System.Web.Cors.dll">
+      <publishTime>01/28/2015 04:01:46</publishTime>
+    </File>
+    <File Include="bin/System.Web.Helpers.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.Cors.dll">
+      <publishTime>01/28/2015 04:03:04</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>01/28/2015 04:02:54</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>01/28/2015 04:03:46</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>01/28/2015 04:02:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Optimization.dll">
+      <publishTime>02/11/2014 15:26:04</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>01/28/2015 04:02:32</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Deployment.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Razor.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/TimeZoneConverter.dll">
+      <publishTime>06/04/2019 19:46:50</publishTime>
+    </File>
+    <File Include="bin/Twilio.Auth.dll">
+      <publishTime>09/19/2016 21:12:34</publishTime>
+    </File>
+    <File Include="bin/Twilio.Auth.pdb">
+      <publishTime>09/19/2016 21:12:34</publishTime>
+    </File>
+    <File Include="bin/Twilio.dll">
+      <publishTime>05/24/2017 12:01:40</publishTime>
+    </File>
+    <File Include="bin/Twilio.IpMessaging.dll">
+      <publishTime>03/15/2016 23:53:18</publishTime>
+    </File>
+    <File Include="bin/Twilio.IpMessaging.pdb">
+      <publishTime>03/15/2016 23:53:18</publishTime>
+    </File>
+    <File Include="bin/Twilio.Mvc.dll">
+      <publishTime>08/24/2016 01:10:42</publishTime>
+    </File>
+    <File Include="bin/Twilio.Mvc.pdb">
+      <publishTime>08/24/2016 01:10:42</publishTime>
+    </File>
+    <File Include="bin/Twilio.Twiml.dll">
+      <publishTime>03/15/2016 23:53:12</publishTime>
+    </File>
+    <File Include="bin/Twilio.Twiml.pdb">
+      <publishTime>03/15/2016 23:53:12</publishTime>
+    </File>
+    <File Include="bin/Vereyon.Web.HtmlSanitizer.dll">
+      <publishTime>06/14/2017 21:32:16</publishTime>
+    </File>
+    <File Include="bin/WebApi.OutputCache.Core.dll">
+      <publishTime>07/11/2016 08:36:52</publishTime>
+    </File>
+    <File Include="bin/WebApi.OutputCache.V2.dll">
+      <publishTime>07/11/2016 08:36:52</publishTime>
+    </File>
+    <File Include="bin/WebApiThrottle.StrongName.dll">
+      <publishTime>07/31/2017 21:41:08</publishTime>
+    </File>
+    <File Include="bin/WebGrease.dll">
+      <publishTime>01/23/2014 13:57:34</publishTime>
+    </File>
+    <File Include="Configs/appSettings.config">
+      <publishTime>01/31/2019 11:06:41</publishTime>
+    </File>
+    <File Include="Configs/connectionStrings.config">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Content/bootstrap-doc.css">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Content/google-code-prettify/prettify.css">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Hubs/Web.config">
+      <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="Images/glyphicons-halflings-white.png">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Images/glyphicons-halflings.png">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Images/shadow.png">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>09/11/2019 17:13:11</publishTime>
+    </File>
+    <File Include="PrecompiledApp.config">
+      <publishTime>09/30/2019 07:22:58</publishTime>
+    </File>
+    <File Include="Scripts/google-code-prettify/prettify.js">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Scripts/html5shiv.js">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="StripeHandler.ashx">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Views/Shared/Error.cshtml">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Views/Shared/_Layout.cshtml">
+      <publishTime>02/28/2019 09:46:32</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>03/01/2019 09:21:11</publishTime>
+    </File>
+  </ItemGroup>
 </Project>

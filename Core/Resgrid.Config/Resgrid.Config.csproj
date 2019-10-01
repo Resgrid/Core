@@ -79,6 +79,7 @@
     <Compile Include="ExternalErrorConfig.cs" />
     <Compile Include="FirebaseConfig.cs" />
     <Compile Include="InboundEmailConfig.cs" />
+    <Compile Include="InfoConfig.cs" />
     <Compile Include="LinksConfig.cs" />
     <Compile Include="MappingConfig.cs" />
     <Compile Include="MarketingConfig.cs" />

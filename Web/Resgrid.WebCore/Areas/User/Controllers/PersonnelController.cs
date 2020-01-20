@@ -303,7 +303,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					catch { }
 
-					_departmentsService.AddUserToDepartment(model.Department.Name, user.UserId);
+					//_departmentsService.AddUserToDepartment(model.Department.Name, user.UserId);
+					_departmentsService.AddUserToDepartment(DepartmentId, user.UserId);
 
 					var userObject = _usersService.GetUserById(user.UserId);
 

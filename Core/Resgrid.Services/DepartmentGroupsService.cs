@@ -46,6 +46,11 @@ namespace Resgrid.Services
 			_identityRepository = identityRepository;
 		}
 
+		public List<DepartmentGroup> GetAll()
+		{
+			return _departmentGroupsRepository.GetAll().ToList();
+		}
+
 		public DepartmentGroup Save(DepartmentGroup departmentGroup)
 		{
 			_departmentGroupsRepository.SaveOrUpdate(departmentGroup);

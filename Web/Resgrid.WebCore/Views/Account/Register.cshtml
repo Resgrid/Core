@@ -17,6 +17,19 @@
 
 
   @Html.Raw(JavaScriptSnippet.FullScript)
+
+  <style>
+	.dropcap {
+	color: #1F8AC4;
+	float: left;
+	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 75px;
+	line-height: 60px;
+	padding-top: 4px;
+	padding-right: 8px;
+	padding-left: 3px;
+	}
+  </style>
 </head>
 <body class="gray-bg">
 
@@ -27,17 +40,31 @@
         <div style="text-align: center;">
           <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
         </div>
-        <p>
-          Supply the information to the side to create a NEW department entry in the Resgrid system.
-        </p>
-
-        <p>
-          If someone from your department has already signed up your department in Resgrid, contact them to have that user send you an invite to that existing department.
-        </p>
-
-        <p>
-          If your department has not yet signed up for Resgrid you can create a new account here then invite your other department members from inside the system. Only the first user in a department needs to create their account from this screen.
-        </p>
+        <div style="font-size: 16px !important; padding-top:4px;padding-bottom: 18px;">
+          <p>
+            Registering for Resgrid is as easy as 1,2,3!
+          </p>
+          <div class="row" style="padding-bottom:12px;">
+            <div class="col-sm-12">
+              <span class="dropcap">1</span>Have <b>one</b> person from your org fill out this form, we <a href="https://youtu.be/J0ry0Ki1dx0">have a video to watch</a>
+            </div>
+          </div>
+          <div class="row" style="padding-bottom:12px;">
+            <div class="col-sm-12">
+              <span class="dropcap">2</span>Once Signed up, you can invite or add people from the Personnel page inside the app
+            </div>
+          </div>
+          <div class="row" style="padding-bottom:12px;">
+            <div class="col-sm-12">
+              <span class="dropcap">3</span>Thats it! Only a single person needs to Register the organization
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12" style="font-size: 14px !important;">
+              If someone in your organization <b>already has an account with Resgrid</b> have them invite you to their department instead of creating a new one, if you want to use Resgrid with them.
+            </div>
+          </div>
+        </div>
 
         <div class='alert alert-info'>
           By signing up, you accept Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">
@@ -54,7 +81,7 @@
       </div>
       <div class="col-md-6">
         <div class="ibox-content">
-          <form class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post">
+          <form id="registrationForm" class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post">
             <div class="form-group">
               <input type="text" class="form-control" placeholder="First Name" asp-for="FirstName" required="">
             </div>
@@ -84,7 +111,7 @@
               <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required="" />
               <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary block full-width m-b">Register</button>
+            <button id="registerButton" type="submit" class="btn btn-primary block full-width m-b">Register</button>
 
             <div asp-validation-summary="All" class="text-danger"></div>
           </form>
@@ -112,5 +139,16 @@
 
   <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
   @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+  <script>
+	$(document).ready(function () {
+	  $("#registrationForm").bind("submit", function (e) {
+		if ($(this).valid()) {
+		  // On submit disable form submit button
+		  $('#registerButton').prop('disabled', true);
+		}
+	  });
+	});
+  </script>
 </body>
 </html>

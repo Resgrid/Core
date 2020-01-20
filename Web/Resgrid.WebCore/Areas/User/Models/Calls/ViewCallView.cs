@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Microsoft.AspNet.Identity.EntityFramework6;
+using System;
 
 namespace Resgrid.Web.Areas.User.Models.Calls
 {
@@ -20,5 +21,23 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<UnitState> UnitStates { get; set; }
 		public List<ActionLog> ActionLogs { get; set; }
 		public List<UserGroupRole> UserGroupRoles { get; set; }
+		public List<Unit> Units { get; set; }
+		public List<DepartmentGroup> Stations { get; set; }
+
+		public string IsMapTabActive()
+		{
+			if (!String.IsNullOrEmpty(Call.Address) || !String.IsNullOrEmpty(Call.GeoLocationData))
+				return "active";
+
+			return "";
+		}
+
+		public string IsDispatchTabActive()
+		{
+			if (String.IsNullOrEmpty(Call.Address) && String.IsNullOrEmpty(Call.GeoLocationData))
+				return "active";
+
+			return "";
+		}
 	}
 }

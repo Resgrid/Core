@@ -183,10 +183,9 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var query = @"SELECT d.*, dm.*
 							FROM AspNetUsers u
-							INNER JOIN DepartmentMembers dm1 ON dm1.UserId = u.Id
-							INNER JOIN Departments d ON d.DepartmentId = dm1.DepartmentId
 							INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
-							WHERE u.UserName = @userName AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = 0 AND (dm.IsActive = 1 OR dm.IsDefault = 1)";
+							INNER JOIN Departments d ON d.DepartmentId = dm.DepartmentId
+							WHERE u.UserName = @userName AND dm.IsDeleted = 0 AND (dm.IsActive = 1 OR dm.IsDefault = 1)";
 
 				//var multi = (await db.QueryMultipleAsync(query, new { userName = userName }));
 				//var department = multi.Read<Department>().FirstOrDefault();
@@ -195,7 +194,7 @@ namespace Resgrid.Repositories.DataRepository
 				//	department.Members = multi.Read<DepartmentMember>().ToList();
 
 				var multi = db.QueryMultiple(query, new { userName = userName });
-				department = multi.Read<Department, DepartmentMember, Department>((possibleDupeDepartment, dm) =>
+				var departments = multi.Read<Department, DepartmentMember, Department>((possibleDupeDepartment, dm) =>
 				{
 					Department dep;
 
@@ -216,7 +215,12 @@ namespace Resgrid.Repositories.DataRepository
 
 					return dep;
 
-				}, splitOn: "DepartmentId").FirstOrDefault();
+				}, splitOn: "DepartmentId").ToList();
+
+				department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsActive));
+
+				if (department == null)
+					department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsDefault));
 			}
 
 			if (department != null && department.Members != null)
@@ -256,7 +260,7 @@ namespace Resgrid.Repositories.DataRepository
 				//	department.Members = multi.Read<DepartmentMember>().ToList();
 
 				var multi = await db.QueryMultipleAsync(query, new { userName = userName });
-				department = multi.Read<Department, DepartmentMember, Department>((possibleDupeDepartment, dm) =>
+				var departments = multi.Read<Department, DepartmentMember, Department>((possibleDupeDepartment, dm) =>
 				{
 					Department dep;
 
@@ -277,7 +281,12 @@ namespace Resgrid.Repositories.DataRepository
 
 					return dep;
 
-				}, splitOn: "DepartmentId").FirstOrDefault();
+				}, splitOn: "DepartmentId").ToList();
+
+				department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsActive));
+
+				if (department == null)
+					department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsDefault));
 			}
 
 			if (department != null && department.Members != null)

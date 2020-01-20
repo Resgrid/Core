@@ -44,22 +44,34 @@ namespace Resgrid.Web.Services.Hubs
 
 		public void PersonnelStatusUpdated(int departmentId, int id)
 		{
-			Clients.Group(departmentId.ToString()).personnelStatusUpdated(id);
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				group.personnelStatusUpdated(id);
 		}
 
 		public void PersonnelStaffingUpdated(int departmentId, int id)
 		{
-			Clients.Group(departmentId.ToString()).personnelStaffingUpdated(id);
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				group.personnelStaffingUpdated(id);
 		}
 
 		public void UnitStatusUpdated(int departmentId, int id)
 		{
-			Clients.Group(departmentId.ToString()).unitStatusUpdated(id);
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				group.unitStatusUpdated(id);
 		}
 
 		public void CallsUpdated(int departmentId, int id)
 		{
-			Clients.Group(departmentId.ToString()).callsUpdated(id);
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				group.callsUpdated(id);
 		}
 	}
 }

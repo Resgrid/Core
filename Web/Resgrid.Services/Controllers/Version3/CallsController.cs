@@ -21,6 +21,7 @@ using Resgrid.Model.Queue;
 using Resgrid.Providers.Bus;
 using Resgrid.Web.Services.Controllers.Version3.Models.Calls;
 using Resgrid.Web.Services.Helpers;
+using Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -999,7 +1000,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			return Request.CreateResponse(HttpStatusCode.OK);
 		}
 
-
 		[System.Web.Http.AcceptVerbs("GET")]
 		[AllowAnonymous]
 		public HttpResponseMessage GetCallAudio(string query)
@@ -1030,6 +1030,18 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			return new HttpResponseMessage(HttpStatusCode.NotFound);
 		}
 
+		/// <summary>
+		/// Get notes for a call
+		/// </summary>
+		/// <param name="departmentId">CallId of the call you want to get notes for</param>
+		/// <returns></returns>
+		public List<CallPriorityResult> GetActiveCallPrioritiesForDepartment(int departmentId)
+		{
+			var result = new List<CallPriorityResult>();
+
+
+			return result;
+		}
 
 		/// <summary>
 		/// Get all the call types for a department

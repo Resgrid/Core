@@ -7,6 +7,7 @@ using Resgrid.Web.Services.Controllers.Version3.Models.Roles;
 using Resgrid.Web.Services.Controllers.Version3.Models.Security;
 using Resgrid.Web.Services.Controllers.Version3.Models.Units;
 using Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities;
+using CallPriorityResult = Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities.CallPriorityResult;
 
 namespace Resgrid.Web.Services.Controllers.Version3.Models
 {

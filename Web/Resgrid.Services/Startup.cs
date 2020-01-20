@@ -148,8 +148,8 @@ namespace Resgrid.Web.Services
 
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
 
-			if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\ResgridContext.sdf"))
-				File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\ResgridContext.sdf");
+			if (System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\ResgridContext.sdf"))
+				System.IO.File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\ResgridContext.sdf");
 
 			//DbConfiguration.Loaded += (_, a) =>
 			//{

@@ -177,6 +177,22 @@
     <Compile Include="Migrations\201902100124102_AddingDefaultDepartment.Designer.cs">
       <DependentUpon>201902100124102_AddingDefaultDepartment.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911080245289_AddingAutomationTable.cs" />
+    <Compile Include="Migrations\201911080245289_AddingAutomationTable.Designer.cs">
+      <DependentUpon>201911080245289_AddingAutomationTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911090037317_AddingCallQuickTemplateTable.cs" />
+    <Compile Include="Migrations\201911090037317_AddingCallQuickTemplateTable.Designer.cs">
+      <DependentUpon>201911090037317_AddingCallQuickTemplateTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911211920365_AddingPrinterAndFaxToGroupTable.cs" />
+    <Compile Include="Migrations\201911211920365_AddingPrinterAndFaxToGroupTable.Designer.cs">
+      <DependentUpon>201911211920365_AddingPrinterAndFaxToGroupTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001201728324_AddStartsOnForNote.cs" />
+    <Compile Include="Migrations\202001201728324_AddStartsOnForNote.Designer.cs">
+      <DependentUpon>202001201728324_AddStartsOnForNote.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlansRepository.cs" />
     <Compile Include="PushUriRepository.cs" />
     <Compile Include="MessageRepository.cs" />
@@ -2187,6 +2203,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902100124102_AddingDefaultDepartment.resx">
       <DependentUpon>201902100124102_AddingDefaultDepartment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911080245289_AddingAutomationTable.resx">
+      <DependentUpon>201911080245289_AddingAutomationTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911090037317_AddingCallQuickTemplateTable.resx">
+      <DependentUpon>201911090037317_AddingCallQuickTemplateTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911211920365_AddingPrinterAndFaxToGroupTable.resx">
+      <DependentUpon>201911211920365_AddingPrinterAndFaxToGroupTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001201728324_AddStartsOnForNote.resx">
+      <DependentUpon>202001201728324_AddStartsOnForNote.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

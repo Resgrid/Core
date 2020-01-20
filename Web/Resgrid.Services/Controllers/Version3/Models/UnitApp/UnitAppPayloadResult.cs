@@ -9,6 +9,7 @@ using Resgrid.Web.Services.Controllers.Version3.Models.Security;
 using UnitInfoResult = Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult;
 using Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities;
 using Resgrid.Web.Services.Controllers.Version3.Models.Units;
+using CallPriorityResult = Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities.CallPriorityResult;
 
 namespace Resgrid.Web.Services.Controllers.Version3.Models.UnitApp
 {

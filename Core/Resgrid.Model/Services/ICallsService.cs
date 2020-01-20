@@ -38,6 +38,7 @@ namespace Resgrid.Model.Services
 		void DeleteRoleDispatches(List<CallDispatchRole> dispatches);
 		void DeleteUnitDispatches(List<CallDispatchUnit> dispatches);
 		void RegenerateCallNumbers(int departmentId);
+		List<DepartmentCallPriority> GetAllCallPriorities();
 		List<DepartmentCallPriority> GetCallPrioritesForDepartment(int departmentId, bool bypassCache = false);
 		DepartmentCallPriority SaveCallPriority(DepartmentCallPriority callPriority);
 		void InvalidateCallPrioritiesForDepartmentInCache(int departmentId);
@@ -51,6 +52,8 @@ namespace Resgrid.Model.Services
 		string GetShortenedAudioUrl(int callId, int callAttachmentId);
 		void ClearGroupForDispatches(int departmentGroupId);
 		List<Call> GetActiveCallsByDepartmentForUpdate(int departmentId);
-		string GetShortenedCallLinkUrl(int callId);
+		string GetShortenedCallLinkUrl(int callId, bool pdf = false, int? stationId = null);
+		string GetShortenedCallPdfUrl(int callId, bool pdf = false, int? stationId = null);
+		string GetCallPdfUrl(int callId, bool pdf = false, int? stationId = null);
 	}
 }

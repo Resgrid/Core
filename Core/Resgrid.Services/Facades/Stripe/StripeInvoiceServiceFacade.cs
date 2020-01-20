@@ -7,31 +7,31 @@ namespace Resgrid.Services.Facades.Stripe
 {
 	public class StripeInvoiceServiceFacade : IStripeInvoiceServiceFacade
 	{
-		private readonly StripeInvoiceService _stripeInvoiceService;
+		private readonly InvoiceService _stripeInvoiceService;
 
 		public StripeInvoiceServiceFacade()
 		{
-			_stripeInvoiceService = new StripeInvoiceService();
+			_stripeInvoiceService = new InvoiceService();
 		}
 
-		public StripeInvoice Get(string invoiceId)
+		public Invoice Get(string invoiceId)
 		{
 			return _stripeInvoiceService.Get(invoiceId);
 		}
 
-		public List<StripeInvoice> List(string customerId)
+		public List<Invoice> List(string customerId)
 		{
-			return _stripeInvoiceService.List(new StripeInvoiceListOptions { CustomerId = customerId }).ToList();
+			return _stripeInvoiceService.List(new InvoiceListOptions { Customer = customerId }).ToList();
 		}
 
-		public StripeInvoice Create(string customerId)
+		public Invoice Create(string customerId)
 		{
-			return _stripeInvoiceService.Create(customerId);
+			return _stripeInvoiceService.Create(new InvoiceCreateOptions { Customer = customerId });
 		}
 
-		public StripeInvoice Pay(string invoiceId)
+		public Invoice Pay(string invoiceId)
 		{
-			return _stripeInvoiceService.Pay(invoiceId);
+			return _stripeInvoiceService.Pay(invoiceId, new InvoicePayOptions { });
 		}
 	}
 }

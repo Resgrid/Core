@@ -18,6 +18,7 @@
 		SpottedDog = 14,
 		PortJervis = 15,
 		Yellowhead = 16,
-		ParklandCounty2 = 17
+		ParklandCounty2 = 17,
+		FourPartPipe = 18
 	}
 }

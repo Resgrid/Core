@@ -121,8 +121,41 @@ namespace Resgrid.Web
 
 			services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ClaimsPrincipalFactory<IdentityUser, IdentityRole>>();
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
 			services.AddSingleton(manager);
+
+			services.AddCors(options =>
+			{
+				options.AddPolicy("_resgridWebsiteAllowSpecificOrigins",
+				builder =>
+				{
+					builder.WithOrigins("http://resgrid.com",
+										"http://www.resgrid.com",
+										"https://resgrid.com",
+										"https://www.resgrid.com",
+										"https://s3.amazonaws.com",
+										"https://resgrid.freshdesk.com",
+										"https://www.google.com",
+										"https://js.stripe.com",
+										"https://wchat.freshchat.com",
+										"https://q.stripe.com",
+										"https://cdn.plyr.io",
+										"https://unit.resgrid.com",
+										"https://responder.resgrid.com",
+										"https://cdn.jsdelivr.net",
+										"https://ajax.googleapis.com",
+										"https://maps.googleapis.com",
+										"https://assetscdn-wchat.freshchat.com",
+										"https://assets.freshdesk.com",
+										"https://assets1.freshdesk.com",
+										"https://assets2.freshdesk.com",
+										"https://assets3.freshdesk.com",
+										"https://assets4.freshdesk.com",
+										"https://assets5.freshdesk.com",
+										"https://assets6.freshdesk.com",
+										"https://az416426.vo.msecnd.net");
+				});
+			});
+
 			services.AddMvc().AddJsonOptions(opt =>
 			{
 				var resolver = opt.SerializerSettings.ContractResolver;
@@ -133,6 +166,7 @@ namespace Resgrid.Web
 				}
 			});
 
+			#region Auth Roles
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(ResgridResources.SystemAdmin, policy => policy.RequireClaim(System.Security.Claims.ClaimTypes.Role, "Admins"));
@@ -241,7 +275,7 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.Connect_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Connect, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Connect_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Connect, ResgridClaimTypes.Actions.Delete));
 			});
-
+			#endregion Auth Roles
 
 			var configOptions = Configuration.GetSection("AppOptions").Get<AppOptions>();
 			services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
@@ -271,13 +305,13 @@ namespace Resgrid.Web
 			{
 				app.UseDeveloperExceptionPage();
 				//app.UseDatabaseErrorPage();
-				app.UseBrowserLink();
+				//app.UseBrowserLink();
 
-				var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
-					.SetBasePath(env.ContentRootPath)
-					.AddJsonFile(@"Properties/launchSettings.json", optional: false, reloadOnChange: true);
-				var launchConfig = builder.Build();
-				sslPort = launchConfig.GetValue<int>("iisSettings:iisExpress:sslPort");
+				//var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+				//	.SetBasePath(env.ContentRootPath)
+				//	.AddJsonFile(@"Properties/launchSettings.json", optional: false, reloadOnChange: true);
+				//var launchConfig = builder.Build();
+				//sslPort = launchConfig.GetValue<int>("iisSettings:iisExpress:sslPort");
 			}
 			else if (env.IsStaging())
 			{

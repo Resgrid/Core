@@ -14,6 +14,8 @@ using Microsoft.AspNet.Identity.EntityFramework6;
 using System.Linq;
 using System.Collections.Generic;
 using Resgrid.Model.Providers;
+using Newtonsoft.Json;
+using Stripe.Checkout;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -105,7 +107,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						catch (Exception ex)
 						{
-							
+
 						}
 
 						if (unitLocation != null)
@@ -118,7 +120,7 @@ namespace Resgrid.Workers.Framework.Logic
 							}
 							catch (Exception ex)
 							{
-								
+
 							}
 							finally
 							{
@@ -135,7 +137,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						catch (Exception ex)
 						{
-							
+
 						}
 
 						if (data != null)
@@ -154,7 +156,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						catch (Exception ex)
 						{
-							
+
 						}
 
 						if (unitData != null)
@@ -176,7 +178,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						break;
 					case CqrsEventTypes.StripeChargeSucceeded:
-						var succeededCharge = Stripe.Mapper<StripeCharge>.MapFromJson(qi.Data);
+						var succeededCharge = JsonConvert.DeserializeObject<Charge>(qi.Data);
 
 						if (succeededCharge != null)
 						{
@@ -186,7 +188,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						break;
 					case CqrsEventTypes.StripeChargeFailed:
-						var failedCharge = Stripe.Mapper<StripeCharge>.MapFromJson(qi.Data);
+						var failedCharge = JsonConvert.DeserializeObject<Charge>(qi.Data);
 
 						if (failedCharge != null)
 						{
@@ -196,7 +198,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						break;
 					case CqrsEventTypes.StripeChargeRefunded:
-						var refundedCharge = Stripe.Mapper<StripeCharge>.MapFromJson(qi.Data);
+						var refundedCharge = JsonConvert.DeserializeObject<Charge>(qi.Data);
 
 						if (refundedCharge != null)
 						{
@@ -206,7 +208,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						break;
 					case CqrsEventTypes.StripeSubUpdated:
-						var updatedSubscription = Stripe.Mapper<StripeSubscription>.MapFromJson(qi.Data);
+						var updatedSubscription = JsonConvert.DeserializeObject<Subscription>(qi.Data);
 
 						if (updatedSubscription != null)
 						{
@@ -216,7 +218,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						break;
 					case CqrsEventTypes.StripeSubDeleted:
-						var deletedSubscription = Stripe.Mapper<StripeSubscription>.MapFromJson(qi.Data);
+						var deletedSubscription = JsonConvert.DeserializeObject<Subscription>(qi.Data);
 
 						if (deletedSubscription != null)
 						{
@@ -259,7 +261,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						else
 						{
-							
+
 						}
 						break;
 					case CqrsEventTypes.NewChatMessage:
@@ -273,7 +275,7 @@ namespace Resgrid.Workers.Framework.Logic
 							}
 							catch (Exception ex)
 							{
-								
+
 							}
 
 							if (newChatEvent != null)
@@ -314,7 +316,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						catch (Exception ex)
 						{
-							
+
 						}
 
 						if (troubleAlertEvent != null && troubleAlertEvent.DepartmentId.HasValue)
@@ -387,7 +389,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						catch (Exception ex)
 						{
-							
+
 						}
 
 						if (auditEvent != null)
@@ -511,6 +513,26 @@ namespace Resgrid.Workers.Framework.Logic
 								auditLog.LoggedOn = DateTime.UtcNow;
 								auditLogsRepository.SaveOrUpdate(auditLog);
 							}
+						}
+						break;
+					case CqrsEventTypes.StripeCheckoutCompleted:
+						var stripeCheckoutSession = JsonConvert.DeserializeObject<Session>(qi.Data);
+
+						if (stripeCheckoutSession != null)
+						{
+							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+
+							paymentProviderService.ProcessStripeCheckoutCompleted(stripeCheckoutSession);
+						}
+						break;
+					case CqrsEventTypes.StripeCheckoutUpdated:
+						var stripeCheckoutSessionUpdated = JsonConvert.DeserializeObject<Session>(qi.Data);
+
+						if (stripeCheckoutSessionUpdated != null)
+						{
+							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+
+							paymentProviderService.ProcessStripeCheckoutUpdate(stripeCheckoutSessionUpdated);
 						}
 						break;
 					default:

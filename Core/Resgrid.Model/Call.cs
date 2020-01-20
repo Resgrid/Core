@@ -168,11 +168,26 @@ namespace Resgrid.Model
 
 		public bool HasUserBeenDispatched(string userId)
 		{
-			if (Dispatches != null && Dispatches.Count > 0)
+			if (Dispatches != null && Dispatches.Any())
 			{
 				var dispatch = from d in Dispatches
 											 where d.UserId == userId
 											 select d;
+
+				if (dispatch != null && dispatch.Any())
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasUnitBeenDispatched(int unitId)
+		{
+			if (UnitDispatches != null && UnitDispatches.Any())
+			{
+				var dispatch = from d in UnitDispatches
+							   where d.UnitId == unitId
+							   select d;
 
 				if (dispatch != null && dispatch.Any())
 					return true;

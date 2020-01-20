@@ -93,7 +93,8 @@ namespace Resgrid.Web.Controllers
 
 				Department department = _departmentsService.CreateDepartment(model.DepartmentName, user.Id, model.DepartmentType);
 
-				_departmentsService.AddUserToDepartment(model.DepartmentName, user.Id);
+				//_departmentsService.AddUserToDepartment(model.DepartmentName, user.Id);
+				_departmentsService.AddUserToDepartment(department.DepartmentId, user.Id);
 				_subscriptionsService.CreateFreePlanPayment(department.DepartmentId, user.Id);
 				_emailMarketingProvider.SubscribeUserToAdminList(up.FirstName, up.LastName, model.Email);
 				_departmentsService.InvalidateDepartmentMembers();

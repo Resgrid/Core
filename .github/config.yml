@@ -1,0 +1,29 @@
+# Configuration for welcome - https://github.com/behaviorbot/welcome
+
+# Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
+# Comment to be posted to on first time issues
+newIssueWelcomeComment: >
+  Thanks for opening this issue. A contributor should be by to give feedback soon. In the meantime, please check out the [contributing guidelines](https://github.com/Resgrid/Core/blob/master/.github/CONTRIBUTING.md).
+# Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
+# Comment to be posted to on PRs from first time contributors in your repository
+newPRWelcomeComment: >
+  Thanks for opening this pull request! A contributor should be by to give feedback soon. In the meantime, please check out the [contributing guidelines](https://github.com/Resgrid/Core/blob/master/.github/CONTRIBUTING.md).
+# Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
+# Comment to be posted to on pull requests merged by a first time user
+firstPRMergeComment: >
+  Thanks for your contribution to Resgrid! :tada:
+  
+  ![Congrats!](https://media.giphy.com/media/Tugu78Y5vg0Ss/giphy.gif)
+# Configuration for request-info - https://github.com/behaviorbot/request-info
+# Comment to reply with
+requestInfoReplyComment: >
+  Thanks for opening this, but we'd appreciate a little more information. Could you update it with more details?
+# Configuration for sentiment-bot - https://github.com/behaviorbot/sentiment-bot
+
+# *Required* toxicity threshold between 0 and .99 with the higher numbers being the most toxic
+# Anything higher than this threshold will be marked as toxic and commented on
+sentimentBotToxicityThreshold: .9
+
+# *Required* Comment to reply with
+sentimentBotReplyComment: >
+  Please be sure to review the code of conduct and be respectful of other users. cc/ @Resgrid/resgrid-team

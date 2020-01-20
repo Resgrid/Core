@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Vereyon.Web;
@@ -166,6 +167,11 @@ namespace Resgrid.Framework
 		public static string SerializeProto(this object o)
 		{
 			return ObjectSerialization.Serialize(o);
+		}
+
+		public static string GetNumbers(string input)
+		{
+			return new string(input.Where(c => char.IsDigit(c)).ToArray());
 		}
 	}
 }

@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Resgrid.Web.Services.ApplicationCore;
 using Resgrid.Web.Services.Controllers.Version2;
 
@@ -34,6 +38,14 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			get
 			{
 				return this.User.V3AuthToken().DepartmentId;
+			}
+		}
+
+		protected bool IsSystem
+		{
+			get
+			{
+				return ((App_Start.ResgridPrincipleV3)this.User).IsSystem;
 			}
 		}
 	}

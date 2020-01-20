@@ -5,6 +5,7 @@ namespace Resgrid.Model.Services
 {
 	public interface IUnitsService
 	{
+		List<Unit> GetAll();
 		List<Unit> GetUnitsForDepartment(int departmentId);
 		List<UnitType> GetUnitTypesForDepartment(int departmentId);
 		UnitType AddUnitType(int departmentId, string name);

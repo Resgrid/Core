@@ -10,6 +10,7 @@ using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Home;
 using Resgrid.Web.Areas.User.Models.Mapping;
 using Resgrid.Web.Helpers;
+using Resgrid.WebCore.Areas.User.Models.Mapping;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -512,6 +513,77 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(poisJson);
+		}
+
+		[HttpGet]
+		public IActionResult LiveRouting(int callId)
+		{
+			StationRoutingView model = new StationRoutingView();
+
+			var call = _callsService.GetCallById(callId);
+
+			if (call.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			string endLat = "";
+			string endLon = "";
+
+			var callCocationParts = call.GeoLocationData.Split(char.Parse(","));
+			endLat = callCocationParts[0];
+			endLon = callCocationParts[1];
+
+			model.EndLat = endLat;
+			model.EndLon = endLon;
+
+			return View(model);
+		}
+
+		[HttpGet]
+		public IActionResult StationRouting(int stationId, int callId)
+		{
+			StationRoutingView model = new StationRoutingView();
+
+			var station = _departmentGroupsService.GetGroupById(stationId);
+			var call = _callsService.GetCallById(callId);
+
+			if (station.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			if (call.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			string startLat = "";
+			string startLon = "";
+
+			if (!String.IsNullOrWhiteSpace(station.Latitude) && !String.IsNullOrWhiteSpace(station.Longitude))
+			{
+				startLat = station.Latitude;
+				startLon = station.Longitude;
+			} else if (station.Address != null)
+			{
+				var location = _geoLocationProvider.GetLatLonFromAddress(station.Address.FormatAddress());
+
+				if (!String.IsNullOrWhiteSpace(location))
+				{
+					var locationParts = location.Split(char.Parse(","));
+					startLat = locationParts[0];
+					startLon = locationParts[1];
+				}
+			}
+
+			string endLat = "";
+			string endLon = "";
+
+			var callCocationParts = call.GeoLocationData.Split(char.Parse(","));
+			endLat = callCocationParts[0];
+			endLon = callCocationParts[1];
+
+			model.StartLat = startLat;
+			model.StartLon = startLon;
+			model.EndLat = endLat;
+			model.EndLon = endLon;
+
+			return View(model);
 		}
 	}
 }

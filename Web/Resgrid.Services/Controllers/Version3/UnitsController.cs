@@ -11,6 +11,7 @@ using Resgrid.Web.Services.Controllers.Version3.Models.Units;
 using System.Net.Http;
 using System.Net;
 using Resgrid.Web.Services.Controllers.Version3.Models.Personnel;
+using Resgrid.Web.Services.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -160,6 +161,71 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				}
 			}
 				 * */
+
+			return results;
+		}
+
+		/// <summary>
+		/// Get's all the units in a department and their basic info
+		/// </summary>
+		/// <returns>List of UnitResult objects, with basic information for each unit.</returns>
+		[AcceptVerbs("GET")]
+		public List<UnitResult> GetUnitsForDepartment(int departmentId)
+		{
+			var results = new List<UnitResult>();
+
+			if (departmentId != DepartmentId && !IsSystem)
+				throw HttpStatusCode.Unauthorized.AsException();
+
+
+			if (departmentId == 0 && IsSystem)
+			{
+				// Get All
+				var departments = _departmentsService.GetAll();
+
+				foreach (var department in departments)
+				{
+					var units = _unitsService.GetUnitsForDepartment(departmentId);
+
+					foreach (var u in units)
+					{
+						var unitResult = new UnitResult();
+						unitResult.Id = u.UnitId;
+						unitResult.DepartmentId = u.DepartmentId;
+						unitResult.Name = u.Name;
+						unitResult.Type = u.Type;
+						unitResult.StationId = u.StationGroupId;
+						unitResult.VIN = u.VIN;
+						unitResult.PlateNumber = u.PlateNumber;
+						unitResult.FourWheel = u.FourWheel;
+						unitResult.SpecialPermit = u.SpecialPermit;
+
+						results.Add(unitResult);
+					}
+				}
+
+				return results;
+			}
+			else
+			{
+				var units = _unitsService.GetUnitsForDepartment(departmentId);
+
+				foreach (var u in units)
+				{
+					var unitResult = new UnitResult();
+					unitResult.Id = u.UnitId;
+					unitResult.DepartmentId = u.DepartmentId;
+					unitResult.Name = u.Name;
+					unitResult.Type = u.Type;
+					unitResult.StationId = u.StationGroupId;
+					unitResult.VIN = u.VIN;
+					unitResult.PlateNumber = u.PlateNumber;
+					unitResult.FourWheel = u.FourWheel;
+					unitResult.SpecialPermit = u.SpecialPermit;
+
+					results.Add(unitResult);
+				}
+			}
 
 			return results;
 		}

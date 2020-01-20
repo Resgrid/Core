@@ -1006,7 +1006,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public string JoinDepartment(int id, string code)
 		{
 			if (id == 0 || String.IsNullOrWhiteSpace(code))
-				return "Departent Id and Code are required.";
+				return "Department Id and Code are required.";
 
 			var department = _departmentsService.GetDepartmentById(id);
 
@@ -1071,7 +1071,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("YourDepartments");
 		}
 
-		[HttpPost]
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> SetDefaultDepartment(int departmentId)
 		{

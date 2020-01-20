@@ -50,13 +50,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICustomStateService _customStateService;
 		private readonly ICqrsProvider _cqrsProvider;
+		private readonly IPrinterProvider _printerProvider;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
 			IInvitesService invitesService, Model.Services.IAuthorizationService authorizationService, IAddressService addressService, ISubscriptionsService subscriptionsService,
 			ILimitsService limitsService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService,
 			ICertificationService certificationService, INumbersService numbersService, IScheduledTasksService scheduledTasksService, IPersonnelRolesService personnelRolesService,
-			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider)
+			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -80,6 +81,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 			_customStateService = customStateService;
 			_cqrsProvider = cqrsProvider;
+			_printerProvider = printerProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -917,6 +919,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						parklandCounty2.Code = v.ToString();
 						callEmailTypes.Add(parklandCounty2);
 						break;
+					case CallEmailTypes.FourPartPipe:
+						CallEmailTypesForJson fourPartPipe = new CallEmailTypesForJson();
+						fourPartPipe.Id = (int)v;
+						fourPartPipe.Name = "Four Part Pipe";
+						fourPartPipe.Code = v.ToString();
+						callEmailTypes.Add(fourPartPipe);
+						break;
 				}
 			}
 
@@ -1481,6 +1490,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new JsonResult("{}");
 		}
 		#endregion Setup Wizard
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public IActionResult GetPrinterNetPrinters(string key)
+		{
+			return Json(_printerProvider.GetPrinters(key));
+		}
 	}
 
 	public class SetupWizardFormPayload

@@ -5,10 +5,10 @@ namespace Resgrid.Model.Facades.Stripe
 {
 	public interface IStripeSubscriptionServiceFacade
 	{
-		StripeSubscription Get(string customerId, string subscriptionId);
-		StripeSubscription Create(string customerId, string planId, StripeSubscriptionCreateOptions createOptions = null);
-		StripeSubscription Update(string customerId, string subscriptionId, StripeSubscriptionUpdateOptions updateOptions);
-		StripeSubscription Cancel(string customerId, string subscriptionId, bool cancelAtPeriodEnd = false);
-		IEnumerable<StripeSubscription> List(string customerId, StripeListOptions listOptions = null);
+		Subscription Get(string customerId, string subscriptionId);
+		Subscription Create(string customerId, string planId, SubscriptionCreateOptions createOptions = null);
+		Subscription Update(string customerId, string subscriptionId, SubscriptionUpdateOptions updateOptions);
+		Subscription Cancel(string customerId, string subscriptionId, bool cancelAtPeriodEnd = false);
+		IEnumerable<Subscription> List(string customerId, ListOptions listOptions = null);
 	}
 }

@@ -91,12 +91,12 @@
 
                       @if (!m.IsDefault)
 					  {
-                        <a asp-controller="Profile" asp-action="SetDefaultDepartment" asp-route-area="User" asp-route-departmentId="@m.DepartmentId"  class="btn btn-xs btn-info" data-confirm="WARNING: This will change your default department to @m.Department.Name and also set it as your active department, you can only be logged into one department at a time, are you sure?" rel="nofollow">Set As Default</a>
+                        <a asp-controller="Profile" asp-action="SetDefaultDepartment" asp-route-area="User" asp-route-departmentId="@m.DepartmentId"  class="btn btn-xs btn-info" data-confirm="WARNING: This will change your default department to @m.Department.Name, if you want to view this department you will need to activate it afterwards." rel="nofollow">Set As Default</a>
 					  }
 
                       @if (m.Department.ManagingUserId != Model.UserId && Model.Members.Count > 1)
 					  {
-                        <a asp-controller="Profile" asp-action="DeleteDepartmentLink" asp-route-area="User" asp-route-departmentId="@m.DepartmentId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove your from the @m.Department.Name department. Are you sure you sure?" rel="nofollow">Remove Yourself From Department</a>
+                        <a asp-controller="Profile" asp-action="DeleteDepartmentLink" asp-route-area="User" asp-route-departmentId="@m.DepartmentId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove you from the @m.Department.Name department. Are you sure you sure?" rel="nofollow">Remove Yourself From Department</a>
 					  }
                     </td>
                   </tr>

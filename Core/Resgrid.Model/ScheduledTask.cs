@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNet.Identity.EntityFramework6;
 using System.Linq;
 using ProtoBuf;
+using Resgrid.Framework;
 
 namespace Resgrid.Model
 {
@@ -136,12 +137,23 @@ namespace Resgrid.Model
 
 					if (timeParts.Count() == 2)
 					{
-						hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
-						minute = int.Parse(timeParts[1].ToLower().Replace("am", "").Replace("pm", "").Trim());
+						var stringHour = StringHelpers.GetNumbers(timeParts[0]);
+						var stringMinute = StringHelpers.GetNumbers(timeParts[1]);
+
+						if (String.IsNullOrWhiteSpace(stringHour) || String.IsNullOrWhiteSpace(stringMinute))
+							return null;
+
+						hour = int.Parse(stringHour.Trim());
+						minute = int.Parse(stringMinute.Trim());
 					}
 					else if (timeParts.Count() == 1)
 					{
-						hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
+						var stringHour = StringHelpers.GetNumbers(timeParts[0]);
+
+						if (String.IsNullOrWhiteSpace(stringHour))
+							return null;
+
+						hour = int.Parse(stringHour);
 
 						if (!Time.ToUpper().Contains("AM") || !Time.ToUpper().Contains("PM"))
 							if (hour < 12)

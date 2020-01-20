@@ -24,6 +24,11 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string MapCenterLatitude { get; set; }
 		public string MapCenterLongitude { get; set; }
 		public bool ReCalcuateCallNumbers { get; set; }
+		public List<Unit> Units { get; set; }
+		public List<UnitState> UnitStates { get; set; }
+		public List<CustomState> UnitStatuses { get; set; }
+		public SelectList CallTemplates { get; set; }
+		public int CallTemplateId { get; set; }
 
 		public NewCallView()
 		{

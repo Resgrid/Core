@@ -40,6 +40,6 @@ namespace Resgrid.Web.Models.AccountViewModels
 		[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
 		public string ConfirmPassword { get; set; }
 
-		public IEnumerable<string> DepartmentTypes = new List<string>() { "Volunteer Fire", "Career Fire", "Search and Rescue", "HAZMAT", "EMS", "CERT", "Public Safety", "Disaster Response", "Relief Org", "Private", "Security", "Other" };
+		public IEnumerable<string> DepartmentTypes = new List<string>() { "Volunteer Fire", "Career Fire", "Search and Rescue", "HAZMAT", "EMS", "CERT", "Public Safety", "Disaster Response", "Relief Org", "Security", "Repair Services", "Delivery Services", "Oil and Gas", "Power", "Chemical", "Nuclear", "Other Industrial", "Other Private", "Other Public", "Other" };
 	}
 }

@@ -42,6 +42,11 @@ namespace Resgrid.Services
 			_unitLocationRepository = unitLocationRepository;
 		}
 
+		public List<Unit> GetAll()
+		{
+			return _unitsRepository.GetAll().ToList();
+		}
+
 		public Unit SaveUnit(Unit unit)
 		{
 			_unitsRepository.SaveOrUpdate(unit);

@@ -69,6 +69,7 @@ namespace Resgrid.Services
 			builder.RegisterType<ResourceOrdersService>().As<IResourceOrdersService>().InstancePerLifetimeScope();
 			builder.RegisterType<HealthService>().As<IHealthService>().InstancePerLifetimeScope();
 			builder.RegisterType<FirebaseService>().As<IFirebaseService>().InstancePerLifetimeScope();
+			builder.RegisterType<TemplatesService>().As<ITemplatesService>().InstancePerLifetimeScope();
 
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();

@@ -362,6 +362,11 @@ namespace Resgrid.Services
 			_callsRepository.MarkCallDispatchesAsSent(callId, usersToMark);
 		}
 
+		public List<DepartmentCallPriority> GetAllCallPriorities()
+		{
+			return _departmentCallPriorityRepository.GetAll().ToList();
+		}
+
 		public DepartmentCallPriority GetCallPrioritesById(int departmentId, int priorityId, bool bypassCache = false)
 		{
 			if (priorityId > 3)
@@ -574,11 +579,25 @@ namespace Resgrid.Services
 			}
 		}
 
-		public string GetShortenedCallLinkUrl(int callId)
+		public string GetShortenedCallLinkUrl(int callId, bool pdf = false, int? stationId = null)
 		{
 			try
 			{
-				string encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+				string encryptedQuery = "";
+
+				if (!stationId.HasValue && !pdf)
+				{
+					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+				}
+				else
+				{
+					string type = pdf ? "pdf" : "web";
+					string station = stationId.HasValue ? stationId.Value.ToString() : "0";
+
+					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt($"{callId.ToString()}|${type}|${station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+				}
+
+
 				string shortenedUrl =
 					_shortenUrlProvider.Shorten(
 						$"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/CallExportEx?query={encryptedQuery}");
@@ -587,6 +606,55 @@ namespace Resgrid.Services
 					return String.Empty;
 
 				return shortenedUrl;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return String.Empty;
+			}
+		}
+
+		public string GetShortenedCallPdfUrl(int callId, bool pdf = false, int? stationId = null)
+		{
+			try
+			{
+				string shortenedUrl =
+					_shortenUrlProvider.Shorten(GetCallPdfUrl(callId, pdf, stationId));
+
+				if (String.IsNullOrWhiteSpace(shortenedUrl))
+					return String.Empty;
+
+				return shortenedUrl;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return String.Empty;
+			}
+		}
+
+		public string GetCallPdfUrl(int callId, bool pdf = false, int? stationId = null)
+		{
+			try
+			{
+				string encryptedQuery = "";
+
+				if (!stationId.HasValue && !pdf)
+				{
+					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+				}
+				else
+				{
+					string type = pdf ? "pdf" : "web";
+					string station = stationId.HasValue ? stationId.Value.ToString() : "0";
+
+					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt($"{callId.ToString()}|{type}|{station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+				}
+
+
+				return $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/CallExportPdf?query={encryptedQuery}";
+
+
 			}
 			catch (Exception ex)
 			{

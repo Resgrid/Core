@@ -96,8 +96,8 @@
     <Reference Include="MimeKit, Version=1.18.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MimeKit.1.18.1\lib\net451\MimeKit.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OpenPop, Version=2.0.4.369, Culture=neutral, PublicKeyToken=6bdb97f144b7efc8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -117,9 +117,8 @@
     <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Remotion.Linq.2.1.2\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Stripe.net, Version=6.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Stripe.net.6.12.0\lib\net45\Stripe.net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Stripe.net, Version=33.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Stripe.net.33.3.0\lib\net45\Stripe.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -182,6 +181,7 @@
     <Compile Include="ApplicationUserToken.cs" />
     <Compile Include="AuditLog.cs" />
     <Compile Include="AuditLogTypes.cs" />
+    <Compile Include="Automation.cs" />
     <Compile Include="AzureTransactionScope.cs" />
     <Compile Include="Cache\CustomStatesCacheContainer.cs" />
     <Compile Include="CalendarItemAttendee.cs" />
@@ -191,12 +191,14 @@
     <Compile Include="Call.cs" />
     <Compile Include="CallDispatchRole.cs" />
     <Compile Include="CallDispatchUnit.cs" />
+    <Compile Include="CallQuickTemplate.cs" />
     <Compile Include="CallSortOrders.cs" />
     <Compile Include="CustomAudioTypes.cs" />
     <Compile Include="Dapper\SimpleCRUD.cs" />
     <Compile Include="Dapper\SimpleCRUDAsync.cs" />
     <Compile Include="DeleteGroupResults.cs" />
     <Compile Include="DepartmentCallPriority.cs" />
+    <Compile Include="DepartmentGroupPrinter.cs" />
     <Compile Include="DepartmentLink.cs" />
     <Compile Include="DepartmentProfile.cs" />
     <Compile Include="DepartmentProfileInvite.cs" />
@@ -323,6 +325,7 @@
     <Compile Include="Providers\IInboundEventProvider.cs" />
     <Compile Include="Providers\IKanbanProvider.cs" />
     <Compile Include="Providers\IKmlProvider.cs" />
+    <Compile Include="Providers\IPrinterProvider.cs" />
     <Compile Include="Providers\IRabbitOutboundQueueProvider.cs" />
     <Compile Include="Providers\IShortenUrlProvider.cs" />
     <Compile Include="Providers\ISignalrProvider.cs" />
@@ -332,6 +335,10 @@
     <Compile Include="Providers\IPdfProvider.cs" />
     <Compile Include="Providers\IPhoneNumberProcesserProvider.cs" />
     <Compile Include="Providers\ITextMessageProvider.cs" />
+    <Compile Include="Providers\Models\PrintNode\Computer.cs" />
+    <Compile Include="Providers\Models\PrintNode\Printer.cs" />
+    <Compile Include="Providers\Models\PrintNode\PrintJob.cs" />
+    <Compile Include="Providers\Models\PrintNode\Whoami.cs" />
     <Compile Include="PushSoundTypes.cs" />
     <Compile Include="Queue\CallQueueItem.cs" />
     <Compile Include="Queue\DistributionListQueueItem.cs" />
@@ -395,6 +402,7 @@
     <Compile Include="Services\IResourceOrdersService.cs" />
     <Compile Include="Services\IShiftsService.cs" />
     <Compile Include="Services\ITextCommandService.cs" />
+    <Compile Include="Services\ITemplatesService.cs" />
     <Compile Include="Services\ITrainingService.cs" />
     <Compile Include="Shift.cs" />
     <Compile Include="ShiftAssignmentTypes.cs" />

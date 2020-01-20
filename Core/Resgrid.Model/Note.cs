@@ -35,6 +35,8 @@ namespace Resgrid.Model
 
 		public DateTime? ExpiresOn { get; set; }
 
+		public DateTime? StartsOn { get; set; }
+
 		public DateTime AddedOn { get; set; }
 
 		[NotMapped]

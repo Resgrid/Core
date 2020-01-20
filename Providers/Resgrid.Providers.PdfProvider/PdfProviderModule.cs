@@ -8,6 +8,7 @@ namespace Resgrid.Providers.PdfProvider
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterType<NRecoProvider>().As<IPdfProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<PrintNodeProvider>().As<IPrinterProvider>().InstancePerLifetimeScope();
 		}
 	}
 }

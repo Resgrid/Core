@@ -86,7 +86,9 @@
     <Compile Include="NumberProviderConfig.cs" />
     <Compile Include="OutboundEmailServerConfig.cs" />
     <Compile Include="PaymentProviderConfig.cs" />
+    <Compile Include="PrintConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecurityConfig.cs" />
     <Compile Include="ServiceBusConfig.cs" />
     <Compile Include="StatusSystemConfig.cs" />
     <Compile Include="SymmetricEncryptionConfig.cs" />

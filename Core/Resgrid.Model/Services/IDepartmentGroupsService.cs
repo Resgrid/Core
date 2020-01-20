@@ -7,6 +7,7 @@ namespace Resgrid.Model.Services
 {
 	public interface IDepartmentGroupsService
 	{
+		List<DepartmentGroup> GetAll();
 		DepartmentGroup Save(DepartmentGroup departmentGroup);
 		List<DepartmentGroup> GetAllGroupsForDepartment(int departmentId);
 		DepartmentGroup GetGroupById(int departmentGroupId, bool bypassCache = true);

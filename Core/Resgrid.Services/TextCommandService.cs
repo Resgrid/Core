@@ -114,7 +114,7 @@ namespace Resgrid.Services
 				payload.Type = TextCommandTypes.MyStatus;
 
 			// Call Detail
-			if (string.IsNullOrWhiteSpace(payload.Data))
+			if (string.IsNullOrWhiteSpace(payload.Data) && payload.Type == TextCommandTypes.None)
 			{
 				if (message.Trim().ToLower()[0] == char.Parse("c"))
 				{

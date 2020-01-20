@@ -14,5 +14,11 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public List<UnitState> UnitStates { get; set; } 
 		public List<ActionLog> ActionLogs { get; set; } 
 		public List<DepartmentGroup> Groups { get; set; }
+		public List<Unit> Units { get; set; }
+		public DepartmentGroup Station { get; set; }
+		public string StartLat { get; set; }
+		public string StartLon { get; set; }
+		public string EndLat { get; set; }
+		public string EndLon { get; set; }
 	}
 }

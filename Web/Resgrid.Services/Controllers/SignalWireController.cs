@@ -7,12 +7,14 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
+using Resgrid.Providers.NumberProvider;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -104,6 +106,8 @@ namespace Resgrid.Web.Services.Controllers
 			messageEvent.Processed = false;
 			messageEvent.CustomerId = "";
 
+			string response = "";
+
 			try
 			{
 				UserProfile profile = null;
@@ -190,7 +194,8 @@ namespace Resgrid.Web.Services.Controllers
 								switch (payload.Type)
 								{
 									case TextCommandTypes.None:
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.", department.DepartmentId, textMessage.To, profile);
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.", department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond("Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.");
 										break;
 									case TextCommandTypes.Help:
 										messageEvent.Processed = true;
@@ -247,35 +252,71 @@ namespace Resgrid.Web.Services.Controllers
 											help.Append("onshift or s4: On Shift Staffing" + Environment.NewLine);
 										}
 
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond(help.ToString());
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Action:
 										messageEvent.Processed = true;
-										_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
+
+										var activeResponseCalls = _callsService.GetActiveCallsByDepartment(department.DepartmentId).Where(x => DateTime.Now == x.LoggedOn.Within(TimeSpan.FromMinutes(15)));
+
+										if (activeResponseCalls != null && activeResponseCalls.Any())
+										{
+											_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, (int)payload.GetActionType(), null, activeResponseCalls.First().CallId);
+											response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0} to call {1}", payload.GetActionType(), activeResponseCalls.First().Name));
+										}
+										else
+										{
+											_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
+											response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()));
+											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
+										}
 										break;
 									case TextCommandTypes.Staffing:
 										messageEvent.Processed = true;
 										_userStateService.CreateUserState(profile.UserId, department.DepartmentId, (int)payload.GetStaffingType());
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()));
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Stop:
 										messageEvent.Processed = true;
 										_userProfileService.DisableTextMessagesForUser(profile.UserId);
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.CustomAction:
 										messageEvent.Processed = true;
-										_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, payload.GetCustomActionType());
+
+										var activeResponseCalls2 = _callsService.GetActiveCallsByDepartment(department.DepartmentId).Where(x => DateTime.Now == x.LoggedOn.Within(TimeSpan.FromMinutes(15)));
+
+										if (activeResponseCalls2 != null && activeResponseCalls2.Any())
+										{
+											_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, payload.GetCustomActionType(), null, activeResponseCalls2.First().CallId);
+										}
+										else
+										{
+											_actionLogsService.SetUserAction(profile.UserId, department.DepartmentId, payload.GetCustomActionType());
+										}
 
 										if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any() && customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType()) != null)
 										{
 											var detail = customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType());
-											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
+
+											if (activeResponseCalls2 != null && activeResponseCalls2.Any())
+											{
+												response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0} to call {1}", detail.ButtonText, activeResponseCalls2.First().Name));
+												//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
+											}
+											else
+											{
+												response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText));
+												//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
+											}
 										}
 										else
 										{
-											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your status", department.DepartmentId, textMessage.To, profile);
+											response = LaMLResponse.Message.Respond("Resgrid received your text command and updated your status");
+											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your status", department.DepartmentId, textMessage.To, profile);
 										}
 										break;
 									case TextCommandTypes.CustomStaffing:
@@ -285,11 +326,13 @@ namespace Resgrid.Web.Services.Controllers
 										if (customStaffing != null && customStaffing.IsDeleted == false && customStaffing.GetActiveDetails() != null && customStaffing.GetActiveDetails().Any() && customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType()) != null)
 										{
 											var detail = customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType());
-											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
+											response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText));
+											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
 										}
 										else
 										{
-											_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your staffing", department.DepartmentId, textMessage.To, profile);
+											response = LaMLResponse.Message.Respond("Resgrid received your text command and updated your staffing");
+											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your staffing", department.DepartmentId, textMessage.To, profile);
 										}
 										break;
 									case TextCommandTypes.MyStatus:
@@ -302,24 +345,28 @@ namespace Resgrid.Web.Services.Controllers
 										var customStatusLevel = _customStateService.GetCustomPersonnelStatus(department.DepartmentId, userStatus);
 										var customStaffingLevel = _customStateService.GetCustomPersonnelStaffing(department.DepartmentId, userStaffing);
 
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", $"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.", department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond($"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.");
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", $"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.", department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Calls:
 										messageEvent.Processed = true;
 
 										var activeCalls = _callsService.GetActiveCallsByDepartment(department.DepartmentId);
 
+										if (activeCalls.Count > 10)
+											activeCalls = activeCalls.Take(10).ToList();
+
 										var activeCallText = new StringBuilder();
-										activeCallText.Append($"Active Calls for {department.Name}" + Environment.NewLine);
+										activeCallText.Append($"Top 10 Active Calls for {department.Name}" + Environment.NewLine);
 										activeCallText.Append("---------------------" + Environment.NewLine);
 
 										foreach (var activeCall in activeCalls)
 										{
-											activeCallText.Append($"CallId: {activeCall.CallId} Name: {activeCall.Name} Nature:{activeCall.NatureOfCall}" + Environment.NewLine);
+											activeCallText.Append($"CallId: {activeCall.CallId} Name: {activeCall.Name.Truncate(15)} Nature:{activeCall.NatureOfCall.Truncate(30)}" + Environment.NewLine);
 										}
 
-
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", activeCallText.ToString(), department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond(activeCallText.ToString());
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", activeCallText.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Units:
 										messageEvent.Processed = true;
@@ -336,7 +383,8 @@ namespace Resgrid.Web.Services.Controllers
 											unitStatusesText.Append($"{unit.Unit.Name} is {unitState.ButtonText}" + Environment.NewLine);
 										}
 
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", unitStatusesText.ToString(), department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond(unitStatusesText.ToString());
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", unitStatusesText.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.CallDetail:
 										messageEvent.Processed = true;
@@ -371,7 +419,8 @@ namespace Resgrid.Web.Services.Controllers
 											}
 										}
 
-										_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", callText.ToString(), department.DepartmentId, textMessage.To, profile);
+										response = LaMLResponse.Message.Respond(callText.ToString());
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", callText.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 								}
 							}
@@ -397,17 +446,26 @@ namespace Resgrid.Web.Services.Controllers
 								help.Append("STOP: To turn off all text messages" + Environment.NewLine);
 								help.Append("HELP: This help text" + Environment.NewLine);
 
-								_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
+								response = LaMLResponse.Message.Respond(help.ToString());
+								//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
 
 								break;
 							case TextCommandTypes.Stop:
 								messageEvent.Processed = true;
 								_userProfileService.DisableTextMessagesForUser(profile.UserId);
-								_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
+
+								response = LaMLResponse.Message.Respond("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
+								//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
 								break;
 						}
 					}
 				}
+
+				return new HttpResponseMessage()
+				{
+					StatusCode = HttpStatusCode.OK,
+					Content = new StringContent(response, Encoding.UTF8, "application/xml")
+				};
 			}
 			catch (Exception ex)
 			{

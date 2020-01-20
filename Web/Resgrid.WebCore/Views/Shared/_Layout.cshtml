@@ -2,28 +2,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="Content-Language" content="en">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="description" content="Free cloud logsitics, communications and management for first responders">
-	<meta name="author" content="Resgrid">
-	<meta name="keywords" content="fire, department, volunteer, brigade, cert, search and rescue, sar, ems, emt, fire fighter, firefighter, logistics, personnel, apparatus, unit, security, disaster, response">
-	<link rel="shortcut icon" href="~/favicon.ico" />
-	<link rel="apple-touch-icon" href="~/images/apple-touch-icon-iphone.png" />
-	<link rel="apple-touch-icon" sizes="72x72" href="~/images/apple-touch-icon-ipad.png" />
-	<link rel="apple-touch-icon" sizes="114x114" href="~/images/apple-touch-icon-iphone4.png" />
-	<link rel="apple-touch-icon" sizes="144x144" href="~/images/apple-touch-icon-ipad3.png" />
-	<title>@ViewData["Title"]</title>
-	@Html.Partial("_StylePartial")
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Language" content="en">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Complete dispatch solution for first responders, business and industry">
+  <meta name="author" content="Resgrid">
+  <meta name="keywords" content="dispatch, cad, automated, computer, response, fire, department, volunteer, brigade, cert, search and rescue, sar, ems, emt, fire fighter, firefighter, logistics, personnel, apparatus, unit, security, disaster">
+  <link rel="shortcut icon" href="~/favicon.ico" />
+  <link rel="apple-touch-icon" href="~/images/apple-touch-icon-iphone.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="~/images/apple-touch-icon-ipad.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="~/images/apple-touch-icon-iphone4.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="~/images/apple-touch-icon-ipad3.png" />
+  <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+  <title>@ViewData["Title"]</title>
+  @Html.Partial("_StylePartial")
 
-	<!-- Add local styles, mostly for plugins css file -->
-	@if (IsSectionDefined("Styles"))
-	{
-		@RenderSection("Styles", required: false)
-	}
+  <!-- Add local styles, mostly for plugins css file -->
+  @if (IsSectionDefined("Styles"))
+  {
+    @RenderSection("Styles", required: false)
+  }
 
-	@Html.Raw(JavaScriptSnippet.FullScript)
+  @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body id="page-top" class="landing-page">
 
@@ -56,10 +57,11 @@
 					</p>
 				</div>
 				<div class="col-lg-4">
-					<address>
-						<strong><span class="navy">Contact Us</span></strong><br/>
-						Email: <a href="mailto:team@resgrid.com">team@resgrid.com</a><br/>
-					</address>
+				  <address>
+				    <strong><span class="navy">Contact Us</span></strong><br />
+				    +1 888 570-4953<br />
+				    <a href="https://resgrid.freshdesk.com/support/home">Contact Our Team</a><br />
+				  </address>
 					<p>Subscribe to our newsletter</p>
 					<form onsubmit="return resgrid.public.mailer.addPublicSubscriber($('#newsletter_input').val())" id="newsletter" name="mc-embedded-subscribe-form" target="_blank" novalidate>
 						<div class="row">

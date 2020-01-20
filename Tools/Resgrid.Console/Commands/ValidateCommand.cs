@@ -15,7 +15,7 @@ namespace Resgrid.Console.Commands
 
 		public string Execute(ValidateArgs args)
         {
-			_console.WriteLine("Starting the Resgrid Database Update Process");
+			_console.WriteLine("Validating the Environment for Resgrid Operations");
 			_console.WriteLine("Please Wait...");
 
 			try

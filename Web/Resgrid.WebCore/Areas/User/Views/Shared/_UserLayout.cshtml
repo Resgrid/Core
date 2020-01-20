@@ -55,30 +55,30 @@
   }
 
   @Html.Raw(JavaScriptSnippet.FullScript)
-  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
   <!-- Wrapper-->
   <div id="wrapper" class="md-skin">
 
-	<!-- Navigation -->
-	@await Html.PartialAsync("_Navigation")
+    <!-- Navigation -->
+    @await Html.PartialAsync("_Navigation")
 
-	<!-- Page wraper -->
-	<div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
+    <!-- Page wraper -->
+    <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
 
-	  <!-- Top Navbar -->
-	  @await Html.PartialAsync("_TopNavbar")
+      <!-- Top Navbar -->
+      @await Html.PartialAsync("_TopNavbar")
 
-	  <!-- Main view  -->
-	  @RenderBody()
+      <!-- Main view  -->
+      @RenderBody()
 
-	  <div id="setupWizard"></div>
+      <div id="setupWizard"></div>
 
-	  <!-- Footer -->
-	  @await Html.PartialAsync("_Footer")
-	</div>
-	<!-- End page wrapper-->
+      <!-- Footer -->
+      @await Html.PartialAsync("_Footer")
+    </div>
+    <!-- End page wrapper-->
   </div>
   <!-- End wrapper-->
 
@@ -155,7 +155,7 @@
 
   @if (IsSectionDefined("Scripts"))
   {
-	@RenderSection("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
   }
 
   @Html.Raw(ViewBag.BodyObjects)
@@ -163,35 +163,6 @@
   <script>
 	resgrid.init();
   </script>
-
-  @if (!String.IsNullOrWhiteSpace(Resgrid.Config.MarketingConfig.UserVoiceApiKey))
-  {
-	var userVoiceJS = Resgrid.Config.MarketingConfig.UserVoiceApiKey + ".js";
-
-	<script>
-	  //<!-- UserVoice JavaScript SDK (only needed once on a page) -->
-	  (function () {var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true; uv.src = '//widget.uservoice.com/@userVoiceJS';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s) })();
-
-		(function () {
-		  var dropdownMenu;
-		  $(window).on('show.bs.dropdown', function (e) {
-			dropdownMenu = $(e.target).find('.dropdown-menu');
-			$('body').append(dropdownMenu.detach());
-			dropdownMenu.css('display', 'block');
-			dropdownMenu.position({
-			  'my': 'right top',
-			  'at': 'right bottom',
-			  'of': $(e.relatedTarget)
-
-			})
-		  });
-		  $(window).on('hide.bs.dropdown', function (e) {
-			$(e.target).append(dropdownMenu.detach());
-			dropdownMenu.hide();
-		  });
-		})();
-	</script>
-  }
 
   @*@await Html.PartialAsync("_ChatWidget")*@
 </body>

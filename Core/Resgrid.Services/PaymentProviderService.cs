@@ -1,13 +1,7 @@
-﻿using System;
-using System.Linq;
-using Newtonsoft.Json;
-using Resgrid.Framework;
-using Resgrid.Model;
-using Resgrid.Model.Facades.Stripe;
-using Resgrid.Model.Helpers;
-using Resgrid.Model.Repositories;
+﻿using Resgrid.Model;
 using Resgrid.Model.Services;
 using Stripe;
+using Stripe.Checkout;
 
 namespace Resgrid.Services
 {
@@ -26,27 +20,57 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public Payment ProcessStripePayment(StripeCharge charge)
+		public Payment ProcessStripePayment(Charge charge)
 		{
 			return null;
 		}
 
-		public Payment ProcessStripeSubscriptionUpdate(StripeSubscription stripeSubscription)
+		public Payment ProcessStripeSubscriptionUpdate(Subscription stripeSubscription)
 		{
 			return null;
 		}
 
-		public Payment ProcessStripeSubscriptionCancellation(StripeSubscription stripeSubscription)
+		public Payment ProcessStripeSubscriptionCancellation(Subscription stripeSubscription)
 		{		
 			return null;
 		}
 
-		public Payment ProcessStripeSubscriptionRefund(StripeCharge stripeCharge)
+		public Payment ProcessStripeSubscriptionRefund(Charge stripeCharge)
 		{
 			return null;
 		}
 
-		public Payment ProcessStripeChargeFailed(StripeCharge stripeCharge)
+		public Payment ProcessStripeChargeFailed(Charge stripeCharge)
+		{
+			return null;
+		}
+
+		public Session CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string emailAddress, string departmentName)
+		{
+			return null;
+		}
+
+		public Session CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress, string departmentName)
+		{
+			return null;
+		}
+
+		public Payment ProcessStripeCheckoutCompleted(Session session)
+		{
+			return null;
+		}
+
+		public void ProcessStripeCheckoutUpdate(Session session)
+		{
+			return;
+		}
+
+		public Subscription GetActiveStripeSubscription(string stripeCustomerId)
+		{
+			return null;
+		}
+
+		public Invoice ChangeActiveSubscription(string stripeCustomerId, string stripePlanId)
 		{
 			return null;
 		}

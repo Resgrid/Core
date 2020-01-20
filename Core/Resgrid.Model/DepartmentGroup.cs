@@ -71,6 +71,14 @@ namespace Resgrid.Model
 
 		public string What3Words { get; set; }
 
+		public bool DispatchToPrinter { get; set; }
+
+		public string PrinterData { get; set; }
+
+		public bool DispatchToFax { get; set; }
+
+		public string FaxNumber { get; set; }
+
 		[NotMapped]
 		public object Id
 		{

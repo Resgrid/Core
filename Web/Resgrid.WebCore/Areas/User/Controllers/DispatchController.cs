@@ -27,6 +27,9 @@ using Microsoft.AspNet.Identity.EntityFramework6;
 using Resgrid.Web.Areas.User.Models.Home;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using RestSharp;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -49,12 +52,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ICustomStateService _customStateService;
+		private readonly ITemplatesService _templatesService;
+		private readonly IPdfProvider _pdfProvider;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IGeoLocationProvider geoLocationProvider,
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
-						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator)
+						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
+						ITemplatesService templatesService, IPdfProvider pdfProvider)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -71,6 +78,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_unitsService = unitsService;
 			_actionLogsService = actionLogsService;
 			_eventAggregator = eventAggregator;
+			_customStateService = customStateService;
+			_templatesService = templatesService;
+			_pdfProvider = pdfProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -294,7 +304,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					_queueService.EnqueueCallBroadcast(cqi);
 
 
-				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call});
+				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 			}
@@ -512,6 +522,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Call = _callsService.GetCallById(callId);
 			model = FillViewCallView(model);
 			model.CallPriority = (CallPriority)model.Call.Priority;
+			model.Stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+
+			if (model.Stations == null)
+				model.Stations = new List<DepartmentGroup>();
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
 			{
@@ -762,7 +776,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			note.CallId = model.CallId;
 			note.Note = model.Note;
 			note.Timestamp = DateTime.UtcNow;
-			note.Source = (int) CallNoteSources.Web;
+			note.Source = (int)CallNoteSources.Web;
 
 			_callsService.SaveCallNote(note);
 
@@ -827,6 +841,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitStates = _unitsService.GetUnitStatesForCall(model.Call.DepartmentId, callId).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 			model.ActionLogs = _actionLogsService.GetActionLogsForCall(model.Call.DepartmentId, callId).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			model.Units = _unitsService.GetUnitsForDepartment(DepartmentId);
 
 			return View(model);
 		}
@@ -838,25 +853,125 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(query))
 				Unauthorized();
 
-			var callId = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
-			if (String.IsNullOrWhiteSpace(callId))
+			var decryptedQuery = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+
+			if (!decryptedQuery.Contains("|"))
+			{
+				// Legacy query, just the call id
+				var callId = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+
+				if (String.IsNullOrWhiteSpace(callId))
+					Unauthorized();
+
+				var call = _callsService.GetCallById(int.Parse(callId));
+
+				if (call == null)
+					Unauthorized();
+
+				var model = new CallExportView();
+				model.Call = call;
+				model.CallLogs = _workLogsService.GetCallLogsForCall(call.CallId);
+				model.Department = _departmentsService.GetDepartmentById(model.Call.DepartmentId, false);
+				model.UnitStates = _unitsService.GetUnitStatesForCall(model.Call.DepartmentId, call.CallId).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
+				model.ActionLogs = _actionLogsService.GetActionLogsForCall(model.Call.DepartmentId, call.CallId).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+				model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(model.Call.DepartmentId);
+				model.Units = _unitsService.GetUnitsForDepartment(DepartmentId);
+
+				return View(model);
+			}
+			else
+			{
+				var items = decryptedQuery.Split(char.Parse("|"));
+
+				if (String.IsNullOrWhiteSpace(items[0]) || items[0] == "0")
+					Unauthorized();
+
+				var call = _callsService.GetCallById(int.Parse(items[0]));
+
+				if (call == null)
+					Unauthorized();
+
+				var model = new CallExportView();
+				model.Call = call;
+				model.CallLogs = _workLogsService.GetCallLogsForCall(call.CallId);
+				model.Department = _departmentsService.GetDepartmentById(model.Call.DepartmentId, false);
+				model.UnitStates = _unitsService.GetUnitStatesForCall(model.Call.DepartmentId, call.CallId).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
+				model.ActionLogs = _actionLogsService.GetActionLogsForCall(model.Call.DepartmentId, call.CallId).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+				model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(model.Call.DepartmentId);
+				model.Units = _unitsService.GetUnitsForDepartment(model.Call.DepartmentId);
+
+				if (!String.IsNullOrWhiteSpace(items[2]) && items[2] != "0")
+				{
+					model.Station = _departmentGroupsService.GetGroupById(int.Parse(items[2]));
+
+					string startLat = "";
+					string startLon = "";
+
+					if (!String.IsNullOrWhiteSpace(model.Station.Latitude) && !String.IsNullOrWhiteSpace(model.Station.Longitude))
+					{
+						startLat = model.Station.Latitude;
+						startLon = model.Station.Longitude;
+					}
+					else if (model.Station.Address != null)
+					{
+						var location = _geoLocationProvider.GetLatLonFromAddress(model.Station.Address.FormatAddress());
+
+						if (!String.IsNullOrWhiteSpace(location))
+						{
+							var locationParts = location.Split(char.Parse(","));
+							startLat = locationParts[0];
+							startLon = locationParts[1];
+						}
+					}
+
+					string endLat = "";
+					string endLon = "";
+
+					var callCocationParts = call.GeoLocationData.Split(char.Parse(","));
+					endLat = callCocationParts[0];
+					endLon = callCocationParts[1];
+
+					model.StartLat = startLat;
+					model.StartLon = startLon;
+					model.EndLat = endLat;
+					model.EndLon = endLon;
+				}
+
+
+				return View(model);
+			}
+		}
+
+		[HttpGet]
+		[AllowAnonymous]
+		public IActionResult CallExportPdf(string query)
+		{
+			if (String.IsNullOrWhiteSpace(query))
 				Unauthorized();
 
-			var call = _callsService.GetCallById(int.Parse(callId));
+			//var decryptedQuery = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
-			if (call == null)
-				Unauthorized();
+			var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);
+			var request = new RestRequest($"User/Dispatch/CallExportEx?query={HttpUtility.UrlEncode(query)}", Method.GET);
 
-			var model = new CallExportView();
-			model.Call = call;
-			model.CallLogs = _workLogsService.GetCallLogsForCall(call.CallId);
-			model.Department = _departmentsService.GetDepartmentById(model.Call.DepartmentId, false);
-			model.UnitStates = _unitsService.GetUnitStatesForCall(model.Call.DepartmentId, call.CallId).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-			model.ActionLogs = _actionLogsService.GetActionLogsForCall(model.Call.DepartmentId, call.CallId).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(model.Call.DepartmentId);
+			var response = client.Execute(request);
 
-			return View(model);
+			if (!string.IsNullOrWhiteSpace(response.Content))
+			{
+				Regex rRemScript = new Regex(@"<script[^>]*>[\s\S]*?</script>");
+				var content = rRemScript.Replace(response.Content, "");
+
+				var file = _pdfProvider.ConvertHtmlToPdf(content);
+
+				MemoryStream output = new MemoryStream();
+				output.Write(file, 0, file.Length);
+				output.Position = 0;
+
+				return File(output, "application/pdf");
+			}
+
+			throw new HttpException(404, "Unknown Call");
 		}
 
 		[HttpGet]
@@ -868,7 +983,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			_callsService.ReOpenCallById(callId);
 
-			return RedirectToAction("Dashboard", "Dispatch", new { Area = "User"});
+			return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 		}
 
 		[HttpGet]
@@ -1154,7 +1269,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (!String.IsNullOrWhiteSpace(grouppedCall.Key))
 						key = grouppedCall.Key;
 
-					callTypes.Add(new CallTypesJson() {Count = grouppedCall.ToList().Count, Type = key});
+					callTypes.Add(new CallTypesJson() { Count = grouppedCall.ToList().Count, Type = key });
 				}
 			}
 
@@ -1174,7 +1289,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var groupedCallStates = calls.GroupBy(x => x.State);
 				foreach (var grouppedCall in groupedCallStates)
 				{
-					callTypes.Add(new CallTypesJson(){Count = grouppedCall.ToList().Count, Type = ((CallStates)grouppedCall.Key).ToString()});
+					callTypes.Add(new CallTypesJson() { Count = grouppedCall.ToList().Count, Type = ((CallStates)grouppedCall.Key).ToString() });
 				}
 			}
 
@@ -1276,7 +1391,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				attachment.UserId = UserId;
 				attachment.Name = model.FriendlyName;
 				attachment.FileName = fileToUpload.FileName;
-				attachment.CallAttachmentType = (int) CallAttachmentTypes.File;
+				attachment.CallAttachmentType = (int)CallAttachmentTypes.File;
 				attachment.Timestamp = DateTime.UtcNow;
 
 				byte[] uploadedFile = new byte[fileToUpload.OpenReadStream().Length];
@@ -1288,7 +1403,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				_callsService.SaveCallAttachment(attachment);
 			}
 
-			return RedirectToAction("CallData", new {callId = model.CallId});
+			return RedirectToAction("CallData", new { callId = model.CallId });
 		}
 
 		[Authorize(Policy = ResgridResources.Call_View)]
@@ -1340,6 +1455,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.User = _usersService.GetUserById(UserId);
 			model.CenterCoordinates = _departmentSettingsService.GetMapCenterCoordinates(model.Department);
 			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(model.Department.DepartmentId);
+			model.Units = _unitsService.GetUnitsForDepartment(model.Department.DepartmentId);
+			model.UnitStates = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(model.Department.DepartmentId);
+			model.UnitStatuses = _customStateService.GetAllActiveUnitStatesForDepartment(model.Department.DepartmentId);
 
 			var priorites = _callsService.GetCallPrioritesForDepartment(model.Department.DepartmentId);
 			//model.CallPriorities = model.CallPriority.ToSelectList();
@@ -1347,9 +1465,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnGroupedUsers = new List<IdentityUser>();
 
 			List<CallType> types = new List<CallType>();
-			types.Add(new CallType {CallTypeId = 0, Type = "No Type"});
+			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
 			types.AddRange(_callsService.GetCallTypesForDepartment(DepartmentId));
 			model.CallTypes = new SelectList(types, "Type", "Type");
+
+			var templates = _templatesService.GetAllCallQuickTemplatesForDepartment(DepartmentId);
+			if (templates != null)
+				model.CallTemplates = new SelectList(templates, "CallQuickTemplateId", "Name");
 
 			var allUsers = _departmentsService.GetAllUsersForDepartment(model.Department.DepartmentId);
 
@@ -1364,8 +1486,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var ungroupedUsers = from u in allUsers
-													 where !(groupedUserIds.Contains(u.UserId))
-													 select u;
+								 where !(groupedUserIds.Contains(u.UserId))
+								 select u;
 
 			foreach (var u in ungroupedUsers)
 			{
@@ -1381,6 +1503,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.User = _usersService.GetUserById(UserId);
 			model.CenterCoordinates = _departmentSettingsService.GetMapCenterCoordinates(model.Department);
 			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(model.Department.DepartmentId);
+			model.Units = _unitsService.GetUnitsForDepartment(model.Department.DepartmentId);
+			model.UnitStates = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(model.Department.DepartmentId);
+
 			var priorites = _callsService.GetCallPrioritesForDepartment(model.Department.DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 			model.UnGroupedUsers = new List<IdentityUser>();
@@ -1403,8 +1528,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var ungroupedUsers = from u in allUsers
-													 where !(groupedUserIds.Contains(u.UserId))
-													 select u;
+								 where !(groupedUserIds.Contains(u.UserId))
+								 select u;
 
 			foreach (var u in ungroupedUsers)
 			{
@@ -1441,13 +1566,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var ungroupedUsers = from u in allUsers
-													 where !(groupedUserIds.Contains(u.UserId))
-													 select u;
+								 where !(groupedUserIds.Contains(u.UserId))
+								 select u;
 
 			foreach (var u in ungroupedUsers)
 			{
 				model.UnGroupedUsers.Add(allUsers.Where(x => x.UserId == u.UserId).FirstOrDefault());
 			}
+
+
+			var units = _unitsService.GetUnitsForDepartment(model.Call.DepartmentId);
+
+			if (units != null)
+				model.Units = units;
+			else
+				model.Units = new List<Unit>();
 
 			return model;
 		}

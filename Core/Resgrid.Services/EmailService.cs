@@ -327,18 +327,25 @@ namespace Resgrid.Services
 			_emailProvider.SendCancellationReciept(name, user.Email, payment.EndingOn.ToShortDateString(), department.Name);
 		}
 
-		public void SendChargeFailedEmail(Payment payment, Department department, Plan plan)
+		public void SendChargeFailedEmail(Payment payment, Department department, Resgrid.Model.Plan plan)
 		{
-			var user = _usersService.GetUserById(department.ManagingUserId);
-			var profile = _userProfileService.GetProfileByUserId(user.UserId);
+			if (payment != null && department != null)
+			{
+				var user = _usersService.GetUserById(department.ManagingUserId);
+				var profile = _userProfileService.GetProfileByUserId(user.UserId);
+				string planName = "";
 
-			if (profile != null)
-				_emailProvider.SendChargeFailed(profile.FullName.AsFirstNameLastName, user.Email, payment.EndingOn.ToShortDateString(), department.Name, plan.Name);
-			else
-				_emailProvider.SendChargeFailed("", user.Email, payment.EndingOn.ToShortDateString(), department.Name, plan.Name);
+				if (plan != null)
+					planName = plan.Name;
+
+				if (profile != null)
+					_emailProvider.SendChargeFailed(profile.FullName.AsFirstNameLastName, user.Email, payment.EndingOn.ToShortDateString(), department.Name, planName);
+				else
+					_emailProvider.SendChargeFailed("", user.Email, payment.EndingOn.ToShortDateString(), department.Name, planName);
+			}
 		}
 
-		public void SendCancellationWithRefundEmail(Payment payment, StripeCharge charge, Department department)
+		public void SendCancellationWithRefundEmail(Payment payment, Charge charge, Department department)
 		{
 			var user = _usersService.GetUserById(department.ManagingUserId);
 			var profile = _userProfileService.GetProfileByUserId(user.UserId);
@@ -362,7 +369,7 @@ namespace Resgrid.Services
 					payment.Plan.Name, refundIssued.ToString());
 		}
 
-		public void SendRefundIssuedNotificationToTeam(Payment payment, StripeCharge charge, Department department)
+		public void SendRefundIssuedNotificationToTeam(Payment payment, Charge charge, Department department)
 		{
 			_emailProvider.TEAM_SendNotifyRefundIssued(department.DepartmentId.ToString(), department.Name, DateTime.UtcNow.ToShortDateString() + " " + DateTime.UtcNow.ToShortTimeString(),
 													(float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C"), ((PaymentMethods)payment.Method).ToString(), charge.Id, payment.PaymentId.ToString());

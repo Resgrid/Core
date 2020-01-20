@@ -16,6 +16,7 @@ using Resgrid.Web.Areas.User.Models.Departments;
 using Resgrid.Web.Areas.User.Models.Groups;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -207,6 +208,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.NewGroup.ParentDepartmentGroupId <= 0)
 					model.NewGroup.ParentDepartmentGroupId = null;
 
+				if (!String.IsNullOrWhiteSpace(model.PrinterApiKey) && !String.IsNullOrWhiteSpace(model.PrinterId))
+				{
+					var printer = new DepartmentGroupPrinter();
+					printer.PrinterId = int.Parse(model.PrinterId);
+					printer.PrinterName = model.PrinterName;
+					printer.ApiKey = SymmetricEncryption.Encrypt(model.PrinterApiKey, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+
+					model.NewGroup.DispatchToPrinter = true;
+					model.NewGroup.PrinterData = JsonConvert.SerializeObject(printer);
+				}
+
 				model.NewGroup.Members = users;
 				model.NewGroup.DispatchEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 				model.NewGroup.MessageEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
@@ -354,6 +366,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.State = model.EditGroup.Address.State;
 			}
 
+			if (!String.IsNullOrWhiteSpace(model.EditGroup.PrinterData))
+			{
+				var printer = JsonConvert.DeserializeObject<DepartmentGroupPrinter>(model.EditGroup.PrinterData);
+
+				model.PrinterId = printer.PrinterId.ToString();
+				model.PrinterName = printer.PrinterName;
+			}
+
 			return View(model);
 		}
 
@@ -492,6 +512,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.EditGroup.ParentDepartmentGroupId <= 0)
 					group.ParentDepartmentGroupId = null;
+
+				if (!String.IsNullOrWhiteSpace(model.PrinterApiKey) && !String.IsNullOrWhiteSpace(model.PrinterId))
+				{
+					var printer = new DepartmentGroupPrinter();
+					printer.PrinterId = int.Parse(model.PrinterId);
+					printer.PrinterName = model.PrinterName;
+					printer.ApiKey = SymmetricEncryption.Encrypt(model.PrinterApiKey, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+
+					group.PrinterData = JsonConvert.SerializeObject(printer);
+				}
+				group.DispatchToPrinter = model.EditGroup.DispatchToPrinter;
 
 				group.Members = users;
 				_departmentGroupsService.Update(group);

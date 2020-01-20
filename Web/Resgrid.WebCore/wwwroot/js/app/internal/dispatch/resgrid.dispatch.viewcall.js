@@ -28,7 +28,6 @@ var resgrid;
 						bounds: false
 					});
 				});
-				getCallNotes();
 
 				$('.callImages').slick({
 					infinite: true,
@@ -36,7 +35,22 @@ var resgrid;
 					adaptiveHeight: true
 				});
 
+				$("#note-box").keyup(function (event) {
+					if (event.keyCode === 13) {
+						$("#note-box-submit").click();
+					}
+				});
+
+				$("#note-box1").keyup(function (event) {
+					if (event.keyCode === 13) {
+						$("#note-box-submit1").click();
+					}
+				});
+
+				viewcall.player = new Plyr('#player');
+
 				resgrid.common.signalr.init(notifyCallUpdated, null, null, null);
+				viewcall.getCallNotes(false);
 			});
 			function notifyCallUpdated(id) {
 				if (id == callId) {
@@ -55,10 +69,25 @@ var resgrid;
 					type: 'POST'
 				}).done(function (data) {
 					$('#note-box').val('');
-                    getCallNotes(true);
+					getCallNotes(false);
 				});
 			}
 			viewcall.addCallNote = addCallNote;
+			function addCallNote1() {
+				$.ajax({
+					url: resgrid.absoluteBaseUrl + '/User/Dispatch/AddCallNote',
+					data: JSON.stringify({
+						CallId: callId,
+						Note: $('#note-box1').val()
+					}),
+					contentType: 'application/json',
+					type: 'POST'
+				}).done(function (data) {
+					$('#note-box1').val('');
+					getCallNotes(true);
+				});
+			}
+			viewcall.addCallNote1 = addCallNote1;
 			function getCallNotes(fromSubmitButton) {
 				$.ajax({
 					url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCallNotes?callId=' + callId,
@@ -66,20 +95,30 @@ var resgrid;
 					type: 'GET'
 				}).done(function (result) {
 					var notesHtml = $('#note-messages-inner');
+					var notesHtml1 = $('#note-messages-inner1');
 					if (result) {
 						notesHtml.empty();
+						notesHtml1.empty();
 						for (var i = 0; i < result.length; i++) {
 							notesHtml.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='https://api.resgrid.com/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='https://resgrid.com/Images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well'>" + result[i].Note + "</div></div></div>");
-                        }
+							notesHtml1.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='https://api.resgrid.com/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='https://resgrid.com/Images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well'>" + result[i].Note + "</div></div></div>");
+						}
 
-                        if (fromSubmitButton) {
-                            $('html, body').animate({
-                                scrollTop: $(document).height() - $(window).height()
-                            },
-                                1400,
-                                "easeOutQuint"
-                            );
-                        }
+						if (fromSubmitButton) {
+							$('html, body').animate({
+								scrollTop: $(document).height() - $(window).height()
+							},
+								1400,
+								"easeOutQuint"
+							);
+						} else {
+							$('#note-messages-inner').animate({
+								scrollTop: $('#note-messages-inner')[0].scrollHeight
+							},
+								1400,
+	                            "easeOutQuint"
+							);
+						}
 					}
 				});
 			}
@@ -87,7 +126,7 @@ var resgrid;
 			function reOpenCall() {
 				swal({
 					title: "Are you sure?",
-					text: "Are you sure you want to re-open this call? This was delete all the assoicated close data (i.e. who closed the call, when, it's close state and any notes on the close).",
+					text: "Are you sure you want to re-open this call? This was delete all the associated close data (i.e. who closed the call, when, it's close state and any notes on the close).",
 					type: "warning",
 					showCancelButton: true,
 					confirmButtonColor: "#DD6B55",

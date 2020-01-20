@@ -410,7 +410,10 @@ namespace Resgrid.Services
 				if (recipient.SendPush)
 				{
 					var spc = new StandardPushCall();
-					spc.CallId = call.CallId;
+
+					if (call != null)
+						spc.CallId = call.CallId;
+
 					spc.Title = string.Format("TROUBLE ALERT for {0}", unit.Name);
 					spc.Priority = (int)CallPriority.Emergency;
 					spc.ActiveCallCount = 1;

@@ -1,57 +1,58 @@
 ﻿@using Resgrid.Framework;
 
 <div class="row border-bottom" style="height: 50px;">
-	<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-		<div class="navbar-header" style="width: 30%;">
-			<div class="hidden-sm hidden-xs" id="top-icons-area">
+  <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <div class="navbar-header" style="width: 30%;">
+      <div class="hidden-sm hidden-xs" id="top-icons-area">
 
-			</div>
+      </div>
 
-			<div class="hidden-xs hidden-sm hidden-md" id="top-upgrade-area">
+      <div class="hidden-xs hidden-sm hidden-md" id="top-upgrade-area">
 
-			</div>
-		</div>
-		<ul class="nav navbar-top-links navbar-right">
-			<li class="btn dropdown" id="menu-department">
-				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
-				<ul class="dropdown-menu">
-					@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-					{
-						<li class="@Html.IsSelected(controller: "Department", action: "Settings")"><a asp-controller="Department" asp-action="Settings" asp-route-area="User">Department Settings</a></li>
-						<li class="@Html.IsSelected(controller: "Groups", action: "Index")"><a asp-controller="Groups" asp-action="Index" asp-route-area="User">Stations & Groups</a></li>
-						<li class="@Html.IsSelected(controller: "Department", action: "CallSettings")"><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">Call Import Settings</a></li>
-						<li class="@Html.IsSelected(controller: "CustomStatuses", action: "Index")"><a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">Custom Statuses</a></li>
-						<li class="@Html.IsSelected(controller: "Department", action: "TextSettings")"><a asp-controller="Department" asp-action="TextSettings" asp-route-area="User">Text Messaging</a></li>
-						<li class="@Html.IsSelected(controller: "Department", action: "Api")"><a asp-controller="Department" asp-action="Api" asp-route-area="User">Api Settings</a></li>
-						<li class="@Html.IsSelected(controller: "Department", action: "Types")"><a asp-controller="Department" asp-action="Types" asp-route-area="User">Types</a></li>
-						<li class="@Html.IsSelected(controller: "DistributionLists", action: "Index")"><a asp-controller="DistributionLists" asp-action="Index" asp-route-area="User">Distribution Lists</a></li>
-						<li class="@Html.IsSelected(controller: "Security", action: "Index")"><a asp-controller="Security" asp-action="Index" asp-route-area="User">Security & Permissions</a></li>
-						<li class="@Html.IsSelected(controller: "Subscription", action: "Index")"><a asp-controller="Subscription" asp-action="Index" asp-route-area="User">Subscription & Billing</a></li>
-						<li class="divider"></li>
-					}
-					@*<li class="@Html.IsSelected(controller: "Connect", action: "Index")"><a asp-controller="Connect" asp-action="Index" asp-route-area="User">Connect</a></li>*@
-					<li class="@Html.IsSelected(controller: "Orders", action: "Index")"><a asp-controller="Orders" asp-action="Index" asp-route-area="User">Orders</a></li>
-					<li class="@Html.IsSelected(controller: "Links", action: "Index")"><a asp-controller="Links" asp-action="Index" asp-route-area="User">Links</a></li>
-					<li class="@Html.IsSelected(controller: "Notifications", action: "Index")"><a asp-controller="Notifications" asp-action="Index" asp-route-area="User">Notifications</a></li>
-					<li class="@Html.IsSelected(controller: "Command", action: "Index")"><a asp-controller="Command" asp-action="Index" asp-route-area="User">Commands</a></li>
-					<li><a href="https://bigboard.resgrid.com" target="_blank">Big Board</a></li>
-				</ul>
-			</li>
-			<li class="btn dropdown" id="menu-help">
-				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">Help</span>&nbsp;<b class="caret"></b></a>
-				<ul class="dropdown-menu">
-					<li><a href="javascript:void(0)" data-uv-lightbox="classic_widget" data-uv-mode="full" data-uv-primary-color="#2447a6" data-uv-link-color="#0a8cc6" data-uv-default-mode="support" data-uv-forum-id="166536">Help &amp; Support</a></li>
-					<li><a href="http://resgrid.uservoice.com/knowledgebase" target="_blank">Knowledge Base</a></li>
-					<li><a href="https://resgrid.wistia.com/projects/9irn4g1q8c" target="_blank">Videos</a></li>
-					<li><a href="http://blog.resgrid.com" target="_blank">Blog</a></li>
-					<li><a href="http://resgrid.com/Home/Contact" target="_blank">Contact Us</a></li>
-				</ul>
-			</li>
-			<li>
-				<a asp-controller="Account" asp-action="LogOff" asp-route-area="">
-					<i class="fa fa-sign-out"></i> Log out
-				</a>
-			</li>
-		</ul>
-	</nav>
+      </div>
+    </div>
+    <ul class="nav navbar-top-links navbar-right">
+      <li class="btn dropdown" id="menu-department">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+		  {
+            <li class="@Html.IsSelected(controller: "Department", action: "Settings")"><a asp-controller="Department" asp-action="Settings" asp-route-area="User">Department Settings</a></li>
+            <li class="@Html.IsSelected(controller: "Groups", action: "Index")"><a asp-controller="Groups" asp-action="Index" asp-route-area="User">Stations & Groups</a></li>
+            <li class="@Html.IsSelected(controller: "Department", action: "CallSettings")"><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">Call Import Settings</a></li>
+            <li class="@Html.IsSelected(controller: "CustomStatuses", action: "Index")"><a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">Custom Statuses</a></li>
+            <li class="@Html.IsSelected(controller: "Department", action: "TextSettings")"><a asp-controller="Department" asp-action="TextSettings" asp-route-area="User">Text Messaging</a></li>
+            @*<li class="@Html.IsSelected(controller: "Department", action: "Api")"><a asp-controller="Department" asp-action="Api" asp-route-area="User">Api Settings</a></li>*@
+            <li class="@Html.IsSelected(controller: "Templates", action: "Index")"><a asp-controller="Templates" asp-action="Index" asp-route-area="User">Templates</a></li>
+            <li class="@Html.IsSelected(controller: "Department", action: "Types")"><a asp-controller="Department" asp-action="Types" asp-route-area="User">Types</a></li>
+            <li class="@Html.IsSelected(controller: "DistributionLists", action: "Index")"><a asp-controller="DistributionLists" asp-action="Index" asp-route-area="User">Distribution Lists</a></li>
+            <li class="@Html.IsSelected(controller: "Security", action: "Index")"><a asp-controller="Security" asp-action="Index" asp-route-area="User">Security & Permissions</a></li>
+            <li class="@Html.IsSelected(controller: "Subscription", action: "Index")"><a asp-controller="Subscription" asp-action="Index" asp-route-area="User">Subscription & Billing</a></li>
+            <li class="divider"></li>
+		  }
+          @*<li class="@Html.IsSelected(controller: "Connect", action: "Index")"><a asp-controller="Connect" asp-action="Index" asp-route-area="User">Connect</a></li>*@
+          <li class="@Html.IsSelected(controller: "Orders", action: "Index")"><a asp-controller="Orders" asp-action="Index" asp-route-area="User">Orders</a></li>
+          <li class="@Html.IsSelected(controller: "Links", action: "Index")"><a asp-controller="Links" asp-action="Index" asp-route-area="User">Links</a></li>
+          <li class="@Html.IsSelected(controller: "Notifications", action: "Index")"><a asp-controller="Notifications" asp-action="Index" asp-route-area="User">Notifications</a></li>
+          <li class="@Html.IsSelected(controller: "Command", action: "Index")"><a asp-controller="Command" asp-action="Index" asp-route-area="User">Commands</a></li>
+          <li><a href="https://bigboard.resgrid.com" target="_blank">Big Board</a></li>
+        </ul>
+      </li>
+      <li class="btn dropdown" id="menu-help">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">Help</span>&nbsp;<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="https://resgrid.freshdesk.com/support/home" target="_blank">Help &amp; Support</a></li>
+          <li><a href="https://resgrid.freshdesk.com/support/home" target="_blank">Knowledge Base</a></li>
+          <li><a href="https://resgrid.wistia.com/projects/9irn4g1q8c" target="_blank">Videos</a></li>
+          <li><a href="http://blog.resgrid.com" target="_blank">Blog</a></li>
+          <li><a href="http://resgrid.com/Home/Contact" target="_blank">Contact Us</a></li>
+        </ul>
+      </li>
+      <li>
+        <a asp-controller="Account" asp-action="LogOff" asp-route-area="">
+          <i class="fa fa-sign-out"></i> Log out
+        </a>
+      </li>
+    </ul>
+  </nav>
 </div>

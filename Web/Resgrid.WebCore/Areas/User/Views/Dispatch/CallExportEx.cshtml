@@ -56,7 +56,7 @@
     </div>
     <div class="row">
       <div class="col-xs-6">
-        <a href="https://resgrid.com/Account/LogOn"><img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;"></a>
+        <a href="https://resgrid.com/Account/LogOn"><img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid" alt="Resgrid" style="margin-top: 10px; margin-bottom: 5px;"></a>
       </div>
       <div class="col-xs-6" style="text-align: right;">
         <h3 style="margin-top: 10px;">Call Export</h3>
@@ -197,6 +197,47 @@
     </div>
     <div class="row">
       <div class="col-xs-12">
+        <strong><small>Dispatched Units</small></strong>
+        <table class="table table-condensed table-bordered">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Station</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var d in Model.Call.UnitDispatches)
+			{
+			  var unit = Model.Units.FirstOrDefault(x => x.UnitId == d.UnitId);
+
+			  if (unit != null)
+			  {
+				var groupName = "";
+
+				if (unit.StationGroupId != null)
+				{
+				  var group = Model.Groups.FirstOrDefault(x => x.DepartmentGroupId == unit.StationGroupId);
+
+				  if (group != null)
+				  {
+					groupName = group.Name;
+				  }
+				}
+
+                <tr>
+                  <td>@unit.Name</td>
+                  <td>@groupName</td>
+                  <td>@unit.Type</td>
+                </tr>
+			  }
+			}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
         <strong><small>Dispatched Personnel</small></strong>
         <table class="table table-condensed table-bordered">
           <thead>
@@ -304,6 +345,26 @@
         </table>
       </div>
     </div>
+    @if (Model.Station != null)
+	{
+      <div class="row">
+        <div class="col-xs-12">
+		  <div style="text-align:center;">
+		    <h3>Driving Directions from @Model.Station.Name</h3>
+		  </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="dvDistance" style="font-size:x-large; text-align: center">
+          </div>
+          <div id="dvMap">
+          </div>
+          <div id="dvPanel">
+          </div>
+        </div>
+      </div>
+	}
     <div class="row">
       <div class="col-xs-12" style="text-align: right;">
         @DateTime.UtcNow.FormatForDepartment(Model.Department)
@@ -327,6 +388,69 @@
 
   <script src="~/clib/kendo/js/kendo.all.min.js"></script>
   <script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
 
+  @if (Model.Station != null)
+  {
+    <script type="text/javascript">
+	var source;
+	var destination;
+	var directionsDisplay;
+	var directionsService;
+
+	function route() {
+	  var station = new google.maps.LatLng(@Model.StartLat, @Model.StartLon);
+	  var call = new google.maps.LatLng(@Model.EndLat, @Model.EndLon);
+
+	  var mapOptions = {
+		zoom: 7,
+		center: station
+	  };
+	  map = new google.maps.Map(document.getElementById('dvMap'), mapOptions);
+	  directionsDisplay.setMap(map);
+	  directionsDisplay.setPanel(document.getElementById('dvPanel'));
+
+	  var request = {
+		origin: station,
+		destination: call,
+		travelMode: google.maps.TravelMode.DRIVING
+	  };
+	  directionsService.route(request, function (response, status) {
+		if (status == google.maps.DirectionsStatus.OK) {
+		  directionsDisplay.setDirections(response);
+		}
+	  });
+
+
+	  var service = new google.maps.DistanceMatrixService();
+	  service.getDistanceMatrix({
+		origins: [station],
+		destinations: [call],
+		travelMode: google.maps.TravelMode.DRIVING,
+		unitSystem: google.maps.UnitSystem.METRIC,
+		avoidHighways: false,
+		avoidTolls: false
+	  }, function (response, status) {
+		if (status == google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status != "ZERO_RESULTS") {
+		  var distance = response.rows[0].elements[0].distance.text;
+		  var duration = response.rows[0].elements[0].duration.text;
+		  var dvDistance = document.getElementById("dvDistance");
+		  dvDistance.innerHTML = "";
+		  dvDistance.innerHTML += "Distance: " + distance + "<br />";
+		  dvDistance.innerHTML += "Duration: " + duration;
+		  //alert(dvDistance.innerHTML);
+		} else {
+		  alert("Your Request For Distance Not Available");
+		}
+	  });
+	}
+
+	$(document).ready(function () {
+	  directionsService = new google.maps.DirectionsService();
+	  directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': true });
+	  route();
+	});
+    </script>
+  }
 </body>
 </html>

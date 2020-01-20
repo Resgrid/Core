@@ -86,10 +86,20 @@ namespace Resgrid.Web.Services.App_Start
 				var authToken = V3AuthToken.Decode(encodedUserPass);
 				string userId;
 
-				if (!ValidateUserAndDepartmentByUser(cacheProvider, departmentsRepository, authToken.UserName, authToken.DepartmentId, null, out userId))
-					return false;
+				if (Config.SecurityConfig.SystemLoginCredentials.ContainsKey(authToken.UserName))
+				{
+					if (Config.SecurityConfig.SystemLoginCredentials[authToken.UserName] != encodedUserPass)
+						return false;
 
-				authToken.UserId = userId;
+					authToken.UserId = authToken.UserName;
+				}
+				else
+				{
+					if (!ValidateUserAndDepartmentByUser(cacheProvider, departmentsRepository, authToken.UserName, authToken.DepartmentId, null, out userId))
+						return false;
+
+					authToken.UserId = userId;
+				}
 
 				var principal = new ResgridPrincipleV3(authToken);
 				Thread.CurrentPrincipal = principal;
@@ -112,7 +122,7 @@ namespace Resgrid.Web.Services.App_Start
 				{
 					context.User = principal;
 				}
-				
+
 			}
 
 			return true;
@@ -148,7 +158,7 @@ namespace Resgrid.Web.Services.App_Start
 		{
 			if (!bypassCache)
 			{
-				Func<ValidateUserForDepartmentResult> validateForDepartment = delegate()
+				Func<ValidateUserForDepartmentResult> validateForDepartment = delegate ()
 				{
 					return departmentRepository.GetValidateUserForDepartmentData(userName);
 				};
@@ -341,6 +351,7 @@ namespace Resgrid.Web.Services.App_Start
 		public ResgridPrincipleV3(V3AuthToken authToken)
 		{
 			AuthToken = authToken;
+			IsSystem = false;
 
 			_identity = new GenericIdentity(authToken.UserName, "Basic");
 		}
@@ -356,5 +367,7 @@ namespace Resgrid.Web.Services.App_Start
 		{
 			throw new NotImplementedException();
 		}
+
+		public bool IsSystem { get; set; }
 	}
 }

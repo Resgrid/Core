@@ -171,6 +171,8 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
 		{
+			ViewBag.DepartmentTypes = new SelectList(model.DepartmentTypes);
+
 			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
 				return RedirectToAction("LogOn", "Account");
 
@@ -193,7 +195,7 @@ namespace Resgrid.Web.Controllers
 					var savedUser = await _userManager.FindByIdAsync(user.Id);
 
 					Department department = _departmentsService.CreateDepartment(model.DepartmentName, user.Id, model.DepartmentType);
-					_departmentsService.AddUserToDepartment(model.DepartmentName, user.Id);
+					_departmentsService.AddUserToDepartment(department.DepartmentId, user.Id);
 					_subscriptionsService.CreateFreePlanPayment(department.DepartmentId, user.Id);
 					_emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
 
@@ -205,7 +207,7 @@ namespace Resgrid.Web.Controllers
 					//return RedirectToLocal(returnUrl);
 
 					var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
-					if (result.Succeeded)
+					if (loginResult.Succeeded)
 					{
 						await HttpContext.Authentication.SignInAsync("ResgridCookieMiddlewareInstance", HttpContext.User, new AuthenticationProperties
 						{

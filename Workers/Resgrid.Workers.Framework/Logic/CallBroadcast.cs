@@ -5,8 +5,10 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Autofac;
 using Microsoft.ServiceBus.Messaging;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 
@@ -126,6 +128,8 @@ namespace Resgrid.Workers.Framework.Logic
 					_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
 					_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
 
+					List<int> groupIds = new List<int>();
+
 					/* Trying to see if I can eek out a little perf here now that profiles are in Redis. Previously the
 						 * the parallel operation would cause EF errors. This shouldn't be the case now because profiles are
 						 * cached and GetProfileForUser operations will hit that first.
@@ -177,13 +181,16 @@ namespace Resgrid.Workers.Framework.Logic
 						});
 					}
 
+					var departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
+
 					// Dispatch Groups
 					if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())
 					{
-						var departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
-
 						foreach (var d in cqi.Call.GroupDispatches)
 						{
+							if (!groupIds.Contains(d.DepartmentGroupId))
+								groupIds.Add(d.DepartmentGroupId);
+
 							var members = departmentGroupsService.GetAllMembersForGroup(d.DepartmentGroupId);
 
 							foreach (var member in members)
@@ -213,11 +220,14 @@ namespace Resgrid.Workers.Framework.Logic
 					if (cqi.Call.UnitDispatches != null && cqi.Call.UnitDispatches.Any())
 					{
 						var unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
-						var departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
 
 						foreach (var d in cqi.Call.UnitDispatches)
 						{
 							var unit = unitsService.GetUnitById(d.UnitId);
+
+							if (unit != null && unit.StationGroupId.HasValue)
+								if (!groupIds.Contains(unit.StationGroupId.Value))
+									groupIds.Add(unit.StationGroupId.Value);
 
 							_communicationService.SendUnitCall(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Address);
 
@@ -306,6 +316,53 @@ namespace Resgrid.Workers.Framework.Logic
 
 								}
 							}
+						}
+					}
+
+					// Send Call Print to Printer
+					var printerProvider = Bootstrapper.GetKernel().Resolve<IPrinterProvider>();
+
+					Dictionary<int, DepartmentGroup> fetchedGroups = new Dictionary<int, DepartmentGroup>();
+					if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
+					{
+						foreach (var d in cqi.Call.Dispatches)
+						{
+							var group = departmentGroupsService.GetGroupForUser(d.UserId, cqi.Call.DepartmentId);
+
+							if (group != null)
+							{
+								if (!groupIds.Contains(group.DepartmentGroupId))
+									groupIds.Add(group.DepartmentGroupId);
+
+								if (!fetchedGroups.ContainsKey(group.DepartmentGroupId))
+									fetchedGroups.Add(group.DepartmentGroupId, group);
+							}
+						}
+					}
+
+					foreach (var groupId in groupIds)
+					{
+						try
+						{
+							DepartmentGroup group = null;
+
+							if (fetchedGroups.ContainsKey(groupId))
+								group = fetchedGroups[groupId];
+							else
+								group = departmentGroupsService.GetGroupById(groupId);
+
+							if (!String.IsNullOrWhiteSpace(group.PrinterData) && group.DispatchToPrinter)
+							{
+								var printerData = JsonConvert.DeserializeObject<DepartmentGroupPrinter>(group.PrinterData);
+								var apiKey = SymmetricEncryption.Decrypt(printerData.ApiKey, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+								var callUrl = _callsService.GetShortenedCallPdfUrl(cqi.Call.CallId, true, groupId);
+
+								var printJob = printerProvider.SubmitPrintJob(apiKey, printerData.PrinterId, "CallPrint", callUrl);
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
 						}
 					}
 				}

@@ -13,7 +13,7 @@ namespace Resgrid.Model.Services
 		Department GetDepartmentByName(string name);
 		Department GetDepartmentById(int departmentId, bool bypassCache = true);
 		Department CreateDepartment(string name, string userId, string type);
-		DepartmentMember AddUserToDepartment(string name, string userId);
+		//DepartmentMember AddUserToDepartment(string name, string userId);
 		Department UpdateDepartment(Department department);
 		Department GetDepartmentForUser(string userName);
 		Department GetDepartmentByUserId(string userId, bool bypassCache = false);

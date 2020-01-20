@@ -102,8 +102,8 @@
     <Reference Include="MoreLinq, Version=2.8.21218.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\morelinq.2.8.0\lib\net40\MoreLinq.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OpenPop, Version=2.0.4.369, Culture=neutral, PublicKeyToken=6bdb97f144b7efc8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -117,9 +117,8 @@
       <HintPath>..\..\packages\Postmark.2.1.5\lib\net45\Postmark.Convenience.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Stripe.net, Version=6.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Stripe.net.6.12.0\lib\net45\Stripe.net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Stripe.net, Version=33.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Stripe.net.33.3.0\lib\net45\Stripe.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -161,6 +160,7 @@
     <Compile Include="CallEmailTemplates\CalFireScuTemplate.cs" />
     <Compile Include="CallEmailTemplates\ParklandCounty2Template.cs" />
     <Compile Include="CallEmailTemplates\PortJervisTemplate.cs" />
+    <Compile Include="CallEmailTemplates\FourPartPipeTemplate.cs" />
     <Compile Include="CallEmailTemplates\YellowHeadTemplate.cs" />
     <Compile Include="CallEmailTemplates\SpottedDogTemplate.cs" />
     <Compile Include="CallEmailTemplates\HancockTemplate.cs" />
@@ -225,6 +225,7 @@
     <Compile Include="SmsService.cs" />
     <Compile Include="SubscriptionsService.cs" />
     <Compile Include="TextCommandService.cs" />
+    <Compile Include="TemplatesService.cs" />
     <Compile Include="TrainingService.cs" />
     <Compile Include="UnitsService.cs" />
     <Compile Include="UserProfileService.cs" />

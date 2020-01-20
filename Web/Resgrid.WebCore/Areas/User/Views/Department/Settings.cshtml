@@ -23,138 +23,140 @@
     <div class="col-sm-8">
       <div class="wrapper wrapper-content">
         <div class="ibox float-e-margins">
-		  <div class="ibox-content">
+          <div class="ibox-content">
 
-		    @Html.AntiForgeryToken()
-		  @Html.HiddenFor(m => m.Department.Address.AddressId)
-		  @Html.HiddenFor(m => m.Department.DepartmentId)
-		  <div asp-validation-summary="All" class="text-danger"></div>
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Department.Address.AddressId)
+            @Html.HiddenFor(m => m.Department.DepartmentId)
+            <div asp-validation-summary="All" class="text-danger"></div>
 
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Department Name</label>
-		    <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Department" asp-for="Department.Name"></div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Time Zone</label>
-		    <div class="col-sm-10"><select asp-for="Department.TimeZone" asp-items="ViewBag.TimeZones" style="padding-left: 0; width: 100%;"></select></div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Use 24-Hour Time</label>
-		    <div class="col-sm-10">
-		      <div class="checkbox checkbox-primary">
-		        <input type="checkbox" asp-for="Use24HourTime">
-		        <label></label>
-		      </div>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Managing User</label>
-		    <div class="col-sm-10"><select asp-for="Department.ManagingUserId" asp-items="ViewBag.Users" style="padding-left: 0; width: 100%;"></select></div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Disable Auto-Available</label>
-		    <div class="col-sm-10">
-		      <div class="checkbox checkbox-primary">
-		        <input type="checkbox" asp-for="DisableAutoAvailable">
-		        <label></label>
-		      </div>
-		      <span class="help-block m-b-none">Disable automatically setting personnel's status to Available after an hour</span>
-		    </div>
-		  </div>
-		  <div class="hr-line-dashed"></div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Department Name</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Department" asp-for="Department.Name"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Time Zone</label>
+              <div class="col-sm-10"><select asp-for="Department.TimeZone" asp-items="ViewBag.TimeZones" style="padding-left: 0; width: 100%;"></select></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Use 24-Hour Time</label>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-sm-10">
+                    <input type="checkbox" asp-for="Use24HourTime">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Managing User</label>
+              <div class="col-sm-10"><select asp-for="Department.ManagingUserId" asp-items="ViewBag.Users" style="padding-left: 0; width: 100%;"></select></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Disable Auto-Available</label>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-sm-10">
+                    <input type="checkbox" asp-for="DisableAutoAvailable">
+                  </div>
+                </div>
+                <span class="help-block m-b-none">Disable automatically setting personnel's status to Available after an hour</span>
+              </div>
+            </div>
+            <div class="hr-line-dashed"></div>
 
-		  <h3>
-		    Sorting
-		  </h3>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Personnel Sorting</label>
-		    <div class="col-sm-10"><select asp-for="PersonnelSort" asp-items="Model.PersonnelSortTypes" style="padding-left: 0; width: 100%;"></select></div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Unit Sorting</label>
-		    <div class="col-sm-10"><select asp-for="UnitsSort" asp-items="Model.UnitSortTypes" style="padding-left: 0; width: 100%;"></select></div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">Call Sorting</label>
-		    <div class="col-sm-10"><select asp-for="CallsSort" asp-items="Model.CallSortTypes" style="padding-left: 0; width: 100%;"></select></div>
-		  </div>
-		  <div class="hr-line-dashed"></div>
+            <h3>
+              Sorting
+            </h3>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Personnel Sorting</label>
+              <div class="col-sm-10"><select asp-for="PersonnelSort" asp-items="Model.PersonnelSortTypes" style="padding-left: 0; width: 100%;"></select></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Unit Sorting</label>
+              <div class="col-sm-10"><select asp-for="UnitsSort" asp-items="Model.UnitSortTypes" style="padding-left: 0; width: 100%;"></select></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Call Sorting</label>
+              <div class="col-sm-10"><select asp-for="CallsSort" asp-items="Model.CallSortTypes" style="padding-left: 0; width: 100%;"></select></div>
+            </div>
+            <div class="hr-line-dashed"></div>
 
-		  <h3>
-		    Address
-		  </h3>
-		  <div class='row'>
-		    <div class="col-md-12">
-		      <p>This is the address of your department; it could be the address of a single station or your district office. This address is used to help locate your district and area, and is used as a fallback for some operations (i.e. centering the big board).</p>
-		    </div>
-		  </div>
-		  <div id="departmentAddressFailure" class="alert alert-warning" style="display: none;">
-		    We were unable verify the address supplied. Check to ensure it's correct before you continue.
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label required">
-		      Street
-		    </label>
-		    <div class="col-sm-10">
-		      @Html.TextBoxFor(m => m.Department.Address.Address1, new { @class = "form-control" })
-		  </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label required">
-		      City
-		    </label>
-		    <div class="col-sm-10">
-		      @Html.TextBoxFor(m => m.Department.Address.City, new { @class = "form-control" })
-		  </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label required">
-		      State/Province
-		    </label>
-		    <div class="col-sm-10">
-		      @Html.TextBoxFor(m => m.Department.Address.State, new { @class = "form-control" })
-		  </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label required">
-		      Zip/Postal Code
-		    </label>
-		    <div class="col-sm-10">
-		      @Html.TextBoxFor(m => m.Department.Address.PostalCode, new { @class = "form-control" })
-		  </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label required">
-		      Country
-		    </label>
-		    <div class="col-sm-10">
-		      <select asp-for="Department.Address.Country" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2 control-label">
-		      Default Map Center GPS Coordinates
-		    </label>
-		    <div class="col-sm-10">
-		      <div class="col-md-5">
-		        <input type="text" class="form-control" placeholder="Mapping Center Latitude" asp-for="MapCenterGpsCoordinatesLatitude">
-		        <span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
-		      </div>
-		      <div class="col-md-5">
-		        <input type="text" class="form-control" placeholder="Mapping Center Longitude" asp-for="MapCenterGpsCoordinatesLongitude">
-		        <span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
-		      </div>
-		    </div>
-		  </div>
+            <h3>
+              Address
+            </h3>
+            <div class='row'>
+              <div class="col-md-12">
+                <p>This is the address of your department; it could be the address of a single station or your district office. This address is used to help locate your district and area, and is used as a fallback for some operations (i.e. centering the big board).</p>
+              </div>
+            </div>
+            <div id="departmentAddressFailure" class="alert alert-warning" style="display: none;">
+              We were unable verify the address supplied. Check to ensure it's correct before you continue.
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label required">
+                Street
+              </label>
+              <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.Department.Address.Address1, new { @class = "form-control" })
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label required">
+                City
+              </label>
+              <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.Department.Address.City, new { @class = "form-control" })
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label required">
+                State/Province
+              </label>
+              <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.Department.Address.State, new { @class = "form-control" })
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label required">
+                Zip/Postal Code
+              </label>
+              <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.Department.Address.PostalCode, new { @class = "form-control" })
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label required">
+                Country
+              </label>
+              <div class="col-sm-10">
+                <select asp-for="Department.Address.Country" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">
+                Default Map Center GPS Coordinates
+              </label>
+              <div class="col-sm-10">
+                <div class="col-md-5">
+                  <input type="text" class="form-control" placeholder="Mapping Center Latitude" asp-for="MapCenterGpsCoordinatesLatitude">
+                  <span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
+                </div>
+                <div class="col-md-5">
+                  <input type="text" class="form-control" placeholder="Mapping Center Longitude" asp-for="MapCenterGpsCoordinatesLongitude">
+                  <span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
+                </div>
+              </div>
+            </div>
 
 
-		  <div class="form-group">
-		    <div class="col-sm-4 col-sm-offset-2">
-		      <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Cancel</a>
-		      <button class="btn btn-primary" type="submit">Save Settings</button>
-		    </div>
-		  </div>
-		  </div>
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Cancel</a>
+                <button class="btn btn-primary" type="submit">Save Settings</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -251,7 +253,7 @@
             </div>
             <div class="form-group">
               <div class="col-sm-12">
-			    <button class="btn btn-w-m btn-block btn-danger" type="button" onclick="resgrid.department.settings.refreshDepartmentCache();">Force Department Update</button>
+                <button class="btn btn-w-m btn-block btn-danger" type="button" onclick="resgrid.department.settings.refreshDepartmentCache();">Force Department Update</button>
               </div>
             </div>
           </div>

@@ -180,29 +180,36 @@ namespace Resgrid.Services
 
 			foreach (var shift in shifts)
 			{
-				var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shift.Department);
-
-				var shiftStart = shift.StartTime;
-
-				if (String.IsNullOrWhiteSpace(shiftStart))
-					shiftStart = "12:00 AM";
-
-				var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shift.Department.Use24HourTime.GetValueOrDefault());
-
-				var shiftDays = from sd in shift.Days
-												let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault())
-								let nextDayShiftTime = localizedDate.AddDays(1)
-								where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
-								select sd;
-
-				if (shiftDays.Any())
+				try
 				{
-					var previousShift = from sd in shift.Days
-										where sd.Day.ToShortDateString() == startTime.ToShortDateString()
-										select sd;
+					var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shift.Department);
 
-					if (!previousShift.Any())
-						upcomingShifts.Add(shift);
+					var shiftStart = shift.StartTime;
+
+					if (String.IsNullOrWhiteSpace(shiftStart))
+						shiftStart = "12:00 AM";
+
+					var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shift.Department.Use24HourTime.GetValueOrDefault());
+
+					var shiftDays = from sd in shift.Days
+									let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault())
+									let nextDayShiftTime = localizedDate.AddDays(1)
+									where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
+									select sd;
+
+					if (shiftDays.Any())
+					{
+						var previousShift = from sd in shift.Days
+											where sd.Day.ToShortDateString() == startTime.ToShortDateString()
+											select sd;
+
+						if (!previousShift.Any())
+							upcomingShifts.Add(shift);
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"DepartmentId:{shift.DepartmentId}");
 				}
 			}
 

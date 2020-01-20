@@ -54,7 +54,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public IActionResult Index()
 		{
 			var model = new UnitsIndexView();
+			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
 			model.CanUserAddUnit = _limitsService.CanDepartentAddNewUnit(DepartmentId);
+			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			model.Units = _unitsService.GetUnitsForDepartment(DepartmentId);
+			model.States = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(DepartmentId);
+			model.UnitStatuses = _customStateService.GetAllActiveUnitStatesForDepartment(DepartmentId);
+			model.UnitCustomStates = new Dictionary<int, CustomState>();
+
+			foreach (var unit in model.Units)
+			{
+				var type = _unitsService.GetUnitTypeByName(DepartmentId, unit.Type);
+				if (type != null && type.CustomStatesId.HasValue)
+				{
+					var customStates = _customStateService.GetCustomSateById(type.CustomStatesId.Value);
+
+					if (customStates != null)
+					{
+						model.UnitCustomStates.Add(unit.UnitId, customStates);
+					}
+				}
+			}
 
 			return View(model);
 		}
@@ -260,6 +280,60 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+			}
+
+			return RedirectToAction("Index");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public IActionResult SetUnitStateForMultiple(string unitIds, int stateType)
+		{
+			if (!String.IsNullOrWhiteSpace(unitIds) && unitIds.Split(char.Parse("|")).Any())
+			{
+				foreach (var unitId in unitIds.Split(char.Parse("|")))
+				{
+					var unit = _unitsService.GetUnitById(int.Parse(unitId));
+
+					if (!_authorizationService.CanUserViewUnit(UserId, unit.UnitId))
+						Unauthorized();
+
+					_unitsService.SetUnitState(unit.UnitId, stateType);
+				}
+			}
+
+			return RedirectToAction("Index");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public IActionResult SetUnitStateWithDestForMultiple(string unitIds, int stateType, int type, int destination)
+		{
+			if (!String.IsNullOrWhiteSpace(unitIds) && unitIds.Split(char.Parse("|")).Any())
+			{
+				foreach (var unitId in unitIds.Split(char.Parse("|")))
+				{
+					var unit = _unitsService.GetUnitById(int.Parse(unitId));
+
+					if (!_authorizationService.CanUserViewUnit(UserId, unit.UnitId))
+						Unauthorized();
+
+					var state = new UnitState();
+					state.UnitId = unit.UnitId;
+					state.LocalTimestamp = DateTime.UtcNow;
+					state.State = stateType;
+					state.Timestamp = DateTime.UtcNow;
+					state.DestinationId = destination;
+
+					try
+					{
+						var savedState = _unitsService.SetUnitState(state, DepartmentId);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
 			}
 
 			return RedirectToAction("Index");
@@ -734,7 +808,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				StringBuilder sb = new StringBuilder();
 				sb.Append($"<ul class='dropdown-menu multi-level unitStateList_{unitId}'>");
 
-				foreach (var state in customStates.GetActiveDetails().OrderBy(x => x.Order))
+				var activeDetails = customStates.GetActiveDetails();
+
+				foreach (var state in activeDetails.OrderBy(x => x.Order))
 				{
 					if (state.DetailType == (int)CustomStateDetailTypes.None)
 					{
@@ -752,7 +828,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						{
 							sb.Append($"<li><a href='/User/Units/SetUnitStateWithDest?unitId={unitId}&stateType={state.CustomStateDetailId}&type=2&destination={call.CallId}'>{call.GetIdentifier()}:{call.Name}</a></li>");
 						}
-						
+
 						sb.Append("</ul>");
 					}
 					else if (state.DetailType == (int)CustomStateDetailTypes.Stations)
@@ -810,6 +886,106 @@ namespace Resgrid.Web.Areas.User.Controllers
 				sb.Append("</ul>");
 
 				buttonHtml = sb.ToString();
+			}
+
+			return Content(buttonHtml);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public IActionResult GetUnitOptionsDropdownForStates(int stateId, string units)
+		{
+			string buttonHtml = string.Empty;
+
+			if (stateId > 1)
+			{
+				var customStates = _customStateService.GetCustomSateById(stateId);
+				var activeCalls = _callsService.GetActiveCallsByDepartment(DepartmentId);
+				var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+
+				StringBuilder sb = new StringBuilder();
+				sb.Append($"<ul class='dropdown-menu multi-level unitStateList_{stateId}'>");
+				var activeDetails = customStates.GetActiveDetails();
+
+				if (activeDetails.Any())
+				{
+					foreach (var state in activeDetails.OrderBy(x => x.Order))
+					{
+						if (state.DetailType == (int)CustomStateDetailTypes.None)
+						{
+							sb.Append("<li><a style='color:" + state.ButtonColor + ";' href='/User/Units/SetUnitStateForMultiple?unitIds=" + units + "&stateType=" + state.CustomStateDetailId + "'>" + state.ButtonText + "</a></li>");
+						}
+						else if (state.DetailType == (int)CustomStateDetailTypes.Calls)
+						{
+							sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
+							sb.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
+							sb.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
+							sb.Append("<li class='divider'></li>");
+							sb.Append("<li class='dropdown-header'>Calls</li>");
+
+							foreach (var call in activeCalls)
+							{
+								sb.Append($"<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}&type=2&destination={call.CallId}'>{call.GetIdentifier()}:{call.Name}</a></li>");
+							}
+
+							sb.Append("</ul>");
+						}
+						else if (state.DetailType == (int)CustomStateDetailTypes.Stations)
+						{
+							sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
+							sb.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
+							sb.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
+							sb.Append("<li class='divider'></li>");
+							sb.Append("<li class='dropdown-header'>Stations</li>");
+
+							foreach (var station in stations)
+							{
+								sb.Append("<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds=" + units + "&stateType=" + state.CustomStateDetailId + "&type=2&destination=" + station.DepartmentGroupId + "'>" + station.Name + "</a></li>");
+							}
+
+							sb.Append("</ul>");
+						}
+						else if (state.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
+						{
+							sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
+							sb.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
+							sb.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
+							sb.Append("<li class='divider'></li>");
+							sb.Append("<li class='dropdown-header'>Calls</li>");
+
+							foreach (var call in activeCalls)
+							{
+								sb.Append($"<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}&type=2&destination={call.CallId}'>{call.GetIdentifier()}:{call.Name}</a></li>");
+							}
+
+							sb.Append("<li class='dropdown-header'>Stations</li>");
+
+							foreach (var station in stations)
+							{
+								sb.Append($"<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}&type=2&destination={station.DepartmentGroupId}'>{station.Name}</a></li>");
+							}
+
+							sb.Append("</ul>");
+						}
+					}
+					sb.Append("</ul>");
+
+					buttonHtml = sb.ToString();
+				}
+			}
+
+			if (String.IsNullOrWhiteSpace(buttonHtml))
+			{
+				StringBuilder sb2 = new StringBuilder();
+				sb2.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
+				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=0'>Available</a></li>");
+				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=3'>Committed</a></li>");
+				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=1'>Delayed</a></li>");
+				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=4'>Out Of Service</a></li>");
+				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=2'>Unavailable</a></li>");
+				sb2.Append("</ul>");
+
+				buttonHtml = sb2.ToString();
 			}
 
 			return Content(buttonHtml);

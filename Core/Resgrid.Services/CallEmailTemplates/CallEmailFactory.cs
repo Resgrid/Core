@@ -30,6 +30,7 @@ namespace Resgrid.Services.CallEmailTemplates
 			_templates.Add((int)CallEmailTypes.PortJervis, new PortJervisTemplate());
 			_templates.Add((int)CallEmailTypes.Yellowhead, new YellowHeadTemplate());
 			_templates.Add((int)CallEmailTypes.ParklandCounty2, new ParklandCounty2Template());
+			_templates.Add((int)CallEmailTypes.FourPartPipe, new FourPartPipeTemplate());
 		}
 
 		public Call GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority)

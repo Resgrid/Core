@@ -1,0 +1,127 @@
+﻿@model Resgrid.WebCore.Areas.User.Models.Mapping.StationRoutingView
+@{
+  ViewBag.Title = "Resgrid | Live Navigation";
+}
+
+@section Styles
+{
+  <style>
+	#dvMap {
+	height: 500px;
+	}
+  </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Live Routing</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+      </li>
+      <li class="active">
+        <strong>Live Routing</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-8">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div id="dvDistance" style="font-size:x-large; text-align: center">
+          </div>
+          <div id="dvMap">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-4">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div id="dvPanel">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+@section Scripts
+{
+  <script type="text/javascript">
+	var unit;
+	var destination;
+	var directionsDisplay;
+	var directionsService;
+
+	function route() {
+	  var call = new google.maps.LatLng(@Model.EndLat, @Model.EndLon);
+
+	  var mapOptions = {
+		zoom: 9,
+		center: unit
+	  };
+	  map = new google.maps.Map(document.getElementById('dvMap'), mapOptions);
+	  directionsDisplay.setMap(map);
+	  directionsDisplay.setPanel(document.getElementById('dvPanel'));
+
+	  var request = {
+		origin: unit,
+		destination: call,
+		travelMode: google.maps.TravelMode.DRIVING
+	  };
+	  directionsService.route(request, function (response, status) {
+		if (status == google.maps.DirectionsStatus.OK) {
+		  directionsDisplay.setDirections(response);
+		}
+	  });
+
+
+	  var service = new google.maps.DistanceMatrixService();
+	  service.getDistanceMatrix({
+		origins: [unit],
+		destinations: [call],
+		travelMode: google.maps.TravelMode.DRIVING,
+		unitSystem: google.maps.UnitSystem.METRIC,
+		avoidHighways: false,
+		avoidTolls: false
+	  }, function (response, status) {
+		if (status == google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status != "ZERO_RESULTS") {
+		  var distance = response.rows[0].elements[0].distance.text;
+		  var duration = response.rows[0].elements[0].duration.text;
+		  var dvDistance = document.getElementById("dvDistance");
+		  dvDistance.innerHTML = "";
+		  dvDistance.innerHTML += "Distance Is: " + distance + "<br />";
+		  dvDistance.innerHTML += "Duration Is: " + duration;
+		  //alert(dvDistance.innerHTML);
+		} else {
+		  alert("Your Request For Distance Not Available");
+		}
+	  });
+	}
+	function foundLocation(position) {
+	  unit = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	   route();
+	}
+
+	function noLocation() {
+
+	}
+
+	$(document).ready(function () {
+	  directionsService = new google.maps.DirectionsService();
+	  directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': true });
+
+	  navigator.geolocation.getCurrentPosition(foundLocation, noLocation, { timeout: 5000 });
+	});
+  </script>
+}

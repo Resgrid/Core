@@ -18,6 +18,11 @@ namespace Resgrid.Services
 			_distributionListMemberRepository = distributionListMemberRepository;
 		}
 
+		public List<DistributionList> GetAll()
+		{
+			return _distributionListRepository.GetAll().ToList();
+		}
+
 		public DistributionList GetDistributionListById(int distributionListId)
 		{
 			return _distributionListRepository.GetAll().FirstOrDefault(x => x.DistributionListId == distributionListId);

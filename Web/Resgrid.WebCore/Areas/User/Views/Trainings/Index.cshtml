@@ -2,129 +2,129 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Training.TrainingIndexModel
 @{
-	ViewBag.Title = "Resgrid | Trainings";
+  ViewBag.Title = "Resgrid | Trainings";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Trainings</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li class="active">
-				<strong>Trainings</strong>
-			</li>
-		</ol>
-	</div>
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-	{
-		<div class="col-sm-8">
-			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a new training" class="btn btn-success" asp-controller="Trainings" asp-action="New" asp-route-area="User">Add Training</a>
-			</div>
-		</div>
-	}
+  <div class="col-sm-4">
+    <h2>Trainings</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Trainings</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a title="Add a new training" class="btn btn-success" asp-controller="Trainings" asp-action="New" asp-route-area="User">Add Training</a>
+      </div>
+    </div>
+  }
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>
-										Name
-									</th>
-									<th style="max-width: 300px;">
-										Description
-									</th>
-									<th>
-										Due Date
-									</th>
-									<th>
-										Action
-									</th>
-									<th class="span1">
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var t in Model.Trainings)
-								{
-									<tr>
-										<td>
-											@t.Name
-										</td>
-										<td style="max-width: 300px;">
-											@Html.Raw(t.Description)
-										</td>
-										<td>
-											@if (t.ToBeCompletedBy != null)
-											{
-												@Html.Raw(t.ToBeCompletedBy.Value.ToShortDateString())
-											}
-											else
-											{
-												@Html.Raw("No Due Date")
-											}
-										</td>
-										<td>
-											@if (t.Users.Any(x => x.UserId == ClaimsAuthorizationHelper.GetUserId()))
-											{
-												var userRecord = t.Users.FirstOrDefault(x => x.UserId == ClaimsAuthorizationHelper.GetUserId());
-												if (userRecord != null)
-												{
-													if (!userRecord.Viewed)
-													{
-														@Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
-													}
-													else if (userRecord.Complete && (t.Questions == null || t.Questions.Count <= 0))
-													{
-														@Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
-													}
-													else if (userRecord.Complete && userRecord.Score >= t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
-													{
-														@Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-success'>Training Complete</a>")
-													}
-													else if (userRecord.Complete && userRecord.Score < t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
-													{
-														@Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-danger'>Training Complete</a>")
-													}
-													else
-													{
-														@Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
-													}
-												}
-											}
-										</td>
-										<td>
-											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-											{
-												<a href="@Url.Action("Report", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>
-													<i class='icon-eye-open'></i> Report
-												</a>
-												<a href="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this training. Are you sure you want to delete the training @t.Name ?" rel="nofollow">
-													<i class="icon-trash">
-													</i> Delete
-												</a>
-											}
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th style="max-width: 300px;">
+                    Description
+                  </th>
+                  <th>
+                    Due Date
+                  </th>
+                  <th>
+                    Action
+                  </th>
+                  <th class="span1">
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var t in Model.Trainings)
+				{
+                  <tr>
+                    <td>
+                      @t.Name
+                    </td>
+                    <td style="max-width: 300px;">
+                      @Html.Raw(t.Description)
+                    </td>
+                    <td>
+                      @if (t.ToBeCompletedBy != null)
+					  {
+                        @Html.Raw(t.ToBeCompletedBy.Value.ToShortDateString())
+					  }
+					  else
+					  {
+                        @Html.Raw("No Due Date")
+					  }
+                    </td>
+                    <td>
+                      @if (t.Users.Any(x => x.UserId == ClaimsAuthorizationHelper.GetUserId()))
+					  {
+						var userRecord = t.Users.FirstOrDefault(x => x.UserId == ClaimsAuthorizationHelper.GetUserId());
+						if (userRecord != null)
+						{
+						  if (!userRecord.Viewed)
+						  {
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
+						  }
+						  else if (userRecord.Complete && (t.Questions == null || t.Questions.Count <= 0))
+						  {
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
+						  }
+						  else if (userRecord.Complete && userRecord.Score >= t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
+						  {
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-success'>Training Complete</a>")
+						  }
+						  else if (userRecord.Complete && userRecord.Score < t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
+						  {
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-danger'>Training Complete</a>")
+						  }
+						  else
+						  {
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
+						  }
+						}
+					  }
+                    </td>
+                    <td>
+                      @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+					  {
+                        <a href="@Url.Action("Report", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>
+                          <i class='icon-eye-open'></i> Report
+                        </a>
+                        <a href="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this training. Are you sure you want to delete the training @t.Name ?" rel="nofollow">
+                          <i class="icon-trash">
+                          </i> Delete
+                        </a>
+					  }
+                    </td>
+                  </tr>
+				}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 @section Scripts
 {
-	<script src="~/js/app/internal/training/resgrid.training.index.js"></script>
+  <script src="~/js/app/internal/training/resgrid.training.index.js"></script>
 }

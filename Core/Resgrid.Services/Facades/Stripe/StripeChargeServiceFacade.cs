@@ -5,14 +5,14 @@ namespace Resgrid.Services.Facades.Stripe
 {
 	public class StripeChargeServiceFacade : IStripeChargeServiceFacade
 	{
-		private readonly StripeChargeService _stripeChargeService;
+		private readonly ChargeService _stripeChargeService;
 
 		public StripeChargeServiceFacade()
 		{
-			_stripeChargeService = new StripeChargeService();
+			_stripeChargeService = new ChargeService();
 		}
 
-		public StripeCharge Get(string chargeId)
+		public Charge Get(string chargeId)
 		{
 			return _stripeChargeService.Get(chargeId);
 		}

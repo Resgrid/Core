@@ -133,6 +133,8 @@ namespace Resgrid.Repositories.DataRepository.Contexts
 		public DbSet<ResourceOrderFill> ResourceOrderFills { get; set; }
 		public DbSet<ResourceOrderFillUnit> ResourceOrderFillUnits { get; set; }
 		public DbSet<DepartmentCallPriority> DepartmentCallPriorities { get; set; }
+		public DbSet<Automation> Automations { get; set; }
+		public DbSet<CallQuickTemplate> CallQuickTemplates { get; set; }
 
 		public DataContext()
 			: base(ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>().FirstOrDefault(x => x.Name == "ResgridContext").ConnectionString)

@@ -14,6 +14,8 @@
 		ClearDepartmentCache = 9,
 		AuditLog = 10,
 		NewChatMessage = 11,
-		TroubleAlert = 12
+		TroubleAlert = 12,
+		StripeCheckoutCompleted = 13,
+		StripeCheckoutUpdated = 14
 	}
 }

@@ -99,7 +99,7 @@ namespace Resgrid.Providers.EmailProvider
 						//Console.WriteLine("Response was: " + response.Message);
 					}
 				}
-				catch (PostmarkValidationException) { }
+				catch (Exception) { }
 			}
 			else
 			{
@@ -147,7 +147,7 @@ namespace Resgrid.Providers.EmailProvider
 						//Console.WriteLine("Response was: " + response.Message);
 					}
 				}
-				catch (PostmarkValidationException) { }
+				catch (Exception) { }
 			}
 			else
 			{
@@ -175,11 +175,16 @@ namespace Resgrid.Providers.EmailProvider
 			};
 
 			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
-			var response = client.SendMessageAsync(message).Result;
-			if (response.Status != PostmarkStatus.Success)
+			try
 			{
-				//Console.WriteLine("Response was: " + response.Message);
+				PostmarkResponse response = client.SendMessageAsync(message).Result;
+
+				if (response.Status != PostmarkStatus.Success)
+				{
+					//Console.WriteLine("Response was: " + response.Message);
+				}
 			}
+			catch (Exception) { }
 		}
 
 		public void SendChargeFailed(string name, string email, string endDate, string departmentName, string planName)
@@ -212,7 +217,7 @@ namespace Resgrid.Providers.EmailProvider
 					//Console.WriteLine("Response was: " + response.Message);
 				}
 			}
-			catch (PostmarkValidationException) { }
+			catch (Exception) { }
 		}
 
 		public void SendInviteMail(string code, string departmentName, string email, string senderName, string senderEmail)
@@ -245,7 +250,7 @@ namespace Resgrid.Providers.EmailProvider
 					//Console.WriteLine("Response was: " + response.Message);
 				}
 			}
-			catch (PostmarkValidationException) { }
+			catch (Exception) { }
 		}
 
 		public void SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn, int messageId)
@@ -289,11 +294,7 @@ namespace Resgrid.Providers.EmailProvider
 						//Console.WriteLine("Response was: " + response.Message);
 					}
 				}
-				catch (PostmarkValidationException) { }
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-				}
+				catch (Exception) {	}
 			}
 			else
 			{
@@ -343,7 +344,7 @@ namespace Resgrid.Providers.EmailProvider
 						//Console.WriteLine("Response was: " + response.Message);
 					}
 				}
-				catch (PostmarkValidationException) { }
+				catch (Exception) { }
 			}
 			else
 			{
@@ -400,7 +401,7 @@ namespace Resgrid.Providers.EmailProvider
 					//Console.WriteLine("Response was: " + response.Message);
 				}
 			}
-			catch (PostmarkValidationException) { }
+			catch (Exception) { }
 		}
 
 		public void SendRefundReciept(string name, string email, string departmentName, string processDate, string amount, string processor, string transactionId, string originalPaymentId)
@@ -453,7 +454,7 @@ namespace Resgrid.Providers.EmailProvider
 						//Console.WriteLine("Response was: " + response.Message);
 					}
 				}
-				catch (PostmarkValidationException) { }
+				catch (Exception) { }
 			}
 			else
 			{
@@ -509,7 +510,7 @@ namespace Resgrid.Providers.EmailProvider
 					//Console.WriteLine("Response was: " + response.Message);
 				}
 			}
-			catch (PostmarkValidationException) { }
+			catch (Exception) { }
 		}
 
 		private string GetTempate(string templateName)

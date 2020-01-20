@@ -5,6 +5,6 @@ namespace Resgrid.Model.Facades.Stripe
 {
 	public interface IStripeChargeServiceFacade
 	{
-		StripeCharge Get(string chargeId);
+		Charge Get(string chargeId);
 	}
 }

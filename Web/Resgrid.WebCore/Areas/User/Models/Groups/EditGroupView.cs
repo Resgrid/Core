@@ -34,5 +34,8 @@ namespace Resgrid.Web.Areas.User.Models.Groups
 
 		public string Longitude { get; set; }
 		public string What3Word { get; set; }
+		public string PrinterName { get; set; }
+		public string PrinterId { get; set; }
+		public string PrinterApiKey { get; set; }
 	}
 }

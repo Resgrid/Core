@@ -6,39 +6,47 @@ namespace Resgrid.Services.Facades.Stripe
 {
 	public class StripeSubscriptionServiceFacade : IStripeSubscriptionServiceFacade
 	{
-		private readonly StripeSubscriptionService _stripeSubscriptionService;
+		private readonly SubscriptionService _stripeSubscriptionService;
 
 		public StripeSubscriptionServiceFacade()
 		{
-#if DEBUG
-			_stripeSubscriptionService = new StripeSubscriptionService(Config.PaymentProviderConfig.TestKey);
-#else
-			_stripeSubscriptionService = new StripeSubscriptionService(Config.PaymentProviderConfig.ProductionKey);
-#endif
-		}
-		public StripeSubscription Get(string customerId, string subscriptionId)
-		{
-			return _stripeSubscriptionService.Get(customerId, subscriptionId);
+			_stripeSubscriptionService = new SubscriptionService();
 		}
 
-		public StripeSubscription Create(string customerId, string planId, StripeSubscriptionCreateOptions createOptions = null)
+		public Subscription Get(string customerId, string subscriptionId)
 		{
-			return _stripeSubscriptionService.Create(customerId, planId, createOptions);
+			return _stripeSubscriptionService.Get(subscriptionId);
 		}
 
-		public StripeSubscription Update(string customerId, string subscriptionId, StripeSubscriptionUpdateOptions updateOptions)
+		public Subscription Create(string customerId, string planId, SubscriptionCreateOptions createOptions = null)
 		{
-			return _stripeSubscriptionService.Update(customerId, subscriptionId, updateOptions);
+			if (createOptions == null)
+				createOptions = new SubscriptionCreateOptions();
+
+			createOptions.Customer = customerId;
+			createOptions.Items = new List<SubscriptionItemOption>();
+			createOptions.Items.Add(new SubscriptionItemOption { Plan = planId, Quantity = 1 });
+
+			return _stripeSubscriptionService.Create(createOptions);
 		}
 
-		public StripeSubscription Cancel(string customerId, string subscriptionId, bool cancelAtPeriodEnd = false)
+		public Subscription Update(string customerId, string subscriptionId, SubscriptionUpdateOptions updateOptions)
 		{
-			return _stripeSubscriptionService.Cancel(customerId, subscriptionId, cancelAtPeriodEnd);
+			if (updateOptions == null)
+				updateOptions = new SubscriptionUpdateOptions();
+
+			return _stripeSubscriptionService.Update(subscriptionId, updateOptions);
 		}
 
-		public IEnumerable<StripeSubscription> List(string customerId, StripeListOptions listOptions = null)
+		public Subscription Cancel(string customerId, string subscriptionId, bool cancelAtPeriodEnd = false)
 		{
-			return _stripeSubscriptionService.List(customerId, listOptions);
+
+			return _stripeSubscriptionService.Cancel(subscriptionId, new SubscriptionCancelOptions { });
+		}
+
+		public IEnumerable<Subscription> List(string customerId, ListOptions listOptions = null)
+		{
+			return _stripeSubscriptionService.List(new SubscriptionListOptions { Customer = customerId });
 		}
 	}
 }

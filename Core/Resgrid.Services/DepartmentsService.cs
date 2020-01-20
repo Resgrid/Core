@@ -200,36 +200,37 @@ namespace Resgrid.Services
 
 		public Department CreateDepartment(string name, string userId, string type, string affiliateCode)
 		{
-			if (!DoesDepartmentExist(name))
+			// I'm disabling the below check, department name doesn't need to be unique, I think I was trying to stop duplicate users from signing up. -SJ
+			//if (!DoesDepartmentExist(name))
+			//{
+			var d = new Department();
+			d.Name = name;
+			d.Code = CreateCode(4);
+			d.ManagingUserId = userId;
+			d.ShowWelcome = true;
+			d.CreatedOn = DateTime.UtcNow;
+			d.UpdatedOn = DateTime.UtcNow;
+			d.DepartmentType = type;
+			d.AffiliateCode = affiliateCode;
+
+			SaveDepartment(d);
+
+			if (String.IsNullOrWhiteSpace(_departmentSettingsService.GetDispatchEmailForDepartment(d.DepartmentId)))
 			{
-				var d = new Department();
-				d.Name = name;
-				d.Code = CreateCode(4);
-				d.ManagingUserId = userId;
-				d.ShowWelcome = true;
-				d.CreatedOn = DateTime.UtcNow;
-				d.UpdatedOn = DateTime.UtcNow;
-				d.DepartmentType = type;
-				d.AffiliateCode = affiliateCode;
+				var dispatchCode = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 
-				SaveDepartment(d);
-
-				if (String.IsNullOrWhiteSpace(_departmentSettingsService.GetDispatchEmailForDepartment(d.DepartmentId)))
+				while (_departmentSettingsService.GetDepartmentIdForDispatchEmail(dispatchCode) != null)
 				{
-					var dispatchCode = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
-
-					while (_departmentSettingsService.GetDepartmentIdForDispatchEmail(dispatchCode) != null)
-					{
-						dispatchCode = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
-					}
-
-					_departmentSettingsService.SaveOrUpdateSetting(d.DepartmentId, dispatchCode, DepartmentSettingTypes.InternalDispatchEmail);
+					dispatchCode = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 				}
 
-				return d;
+				_departmentSettingsService.SaveOrUpdateSetting(d.DepartmentId, dispatchCode, DepartmentSettingTypes.InternalDispatchEmail);
 			}
 
-			return null;
+			return d;
+			//}
+
+			//return null;
 		}
 
 		public Department UpdateDepartment(Department department)
@@ -305,37 +306,37 @@ namespace Resgrid.Services
 			_departmentMembersRepository.SaveOrUpdate(dm);
 		}
 
-		public DepartmentMember AddUserToDepartment(string name, string userId)
-		{
-			Department d = GetDepartmentByName(name);
-			if (d != null)
-			{
-				var currentDm = GetDepartmentMember(userId, d.DepartmentId);
-				if (currentDm == null)
-				{
-					var dm = new DepartmentMember();
-					dm.DepartmentId = d.DepartmentId;
-					dm.UserId = userId;
-					dm.IsAdmin = false;
-					dm.IsDisabled = false;
-					dm.IsHidden = false;
-					dm.IsActive = true;
-					dm.IsDefault = true;
+		//public DepartmentMember AddUserToDepartment(string name, string userId)
+		//{
+		//	Department d = GetDepartmentByName(name);
+		//	if (d != null)
+		//	{
+		//		var currentDm = GetDepartmentMember(userId, d.DepartmentId);
+		//		if (currentDm == null)
+		//		{
+		//			var dm = new DepartmentMember();
+		//			dm.DepartmentId = d.DepartmentId;
+		//			dm.UserId = userId;
+		//			dm.IsAdmin = false;
+		//			dm.IsDisabled = false;
+		//			dm.IsHidden = false;
+		//			dm.IsActive = true;
+		//			dm.IsDefault = true;
 
-					_departmentMembersRepository.SaveOrUpdate(dm);
-					_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
-					{
-						DepartmentId = d.DepartmentId
-					});
+		//			_departmentMembersRepository.SaveOrUpdate(dm);
+		//			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
+		//			{
+		//				DepartmentId = d.DepartmentId
+		//			});
 
-					InvalidateDepartmentUsersInCache(d.DepartmentId);
+		//			InvalidateDepartmentUsersInCache(d.DepartmentId);
 
-					return dm;
-				}
-			}
+		//			return dm;
+		//		}
+		//	}
 
-			return null;
-		}
+		//	return null;
+		//}
 
 		public DepartmentMember DeleteUser(int departmentId, string userIdToDelete, string deletingUserId)
 		{
@@ -430,16 +431,12 @@ namespace Resgrid.Services
 			foreach (var department in currentDepartments)
 			{
 				if (department.DepartmentId == departmentId)
-				{
-					department.IsActive = true;
 					department.IsDefault = true;
-				}
 				else
-					department.IsActive = false;
+					department.IsDefault = false;
 			}
 
 			_departmentMembersRepository.SaveOrUpdateAll(currentDepartments);
-			InvalidateAllDepartmentsCache(departmentId);
 			InvalidateDepartmentUserInCache(userId, user);
 		}
 
@@ -457,32 +454,27 @@ namespace Resgrid.Services
 
 		public DepartmentMember AddUserToDepartment(int departmentId, string userId)
 		{
-			Department d = GetDepartmentById(departmentId);
-
-			if (d != null)
+			var currentDm = GetDepartmentMember(userId, departmentId);
+			if (currentDm == null)
 			{
-				var currentDm = GetDepartmentMember(userId, departmentId);
-				if (currentDm == null)
+				var dm = new DepartmentMember();
+				dm.DepartmentId = departmentId;
+				dm.UserId = userId;
+				dm.IsAdmin = false;
+				dm.IsDisabled = false;
+				dm.IsHidden = false;
+				dm.IsDefault = true;
+				dm.IsActive = true;
+
+				_departmentMembersRepository.SaveOrUpdate(dm);
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 				{
-					var dm = new DepartmentMember();
-					dm.DepartmentId = d.DepartmentId;
-					dm.UserId = userId;
-					dm.IsAdmin = false;
-					dm.IsDisabled = false;
-					dm.IsHidden = false;
-					dm.IsDefault = true;
-					dm.IsActive = true;
+					DepartmentId = departmentId
+				});
 
-					_departmentMembersRepository.SaveOrUpdate(dm);
-					_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
-					{
-						DepartmentId = d.DepartmentId
-					});
+				InvalidateDepartmentUsersInCache(departmentId);
 
-					InvalidateDepartmentUsersInCache(d.DepartmentId);
-
-					return dm;
-				}
+				return dm;
 			}
 
 			return null;

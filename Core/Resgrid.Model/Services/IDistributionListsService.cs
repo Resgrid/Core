@@ -5,6 +5,7 @@ namespace Resgrid.Model.Services
 {
 	public interface IDistributionListsService
 	{
+		List<DistributionList> GetAll();
 		DistributionList GetDistributionListById(int distributionListId);
 		List<DistributionList> GetDistributionListsByDepartmentId(int departmentId);
 		DistributionList SaveDistributionList(DistributionList distributionList);

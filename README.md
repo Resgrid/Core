@@ -74,13 +74,11 @@ The Resgrid Relay is a console based application to monitor an audio input, for 
 
 ## Initiatives
 
-Major initiatives for the Resgrid project in 2019!
+Major initiatives for the Resgrid project in 2020!
 
-* **Open Source**: Get the Resgrid Core system open sourced.
 * **Setup Documentation**: Tied to Docker, as that should be the preferred way to stand up Resgrid in a very consistent manner and get it working out of the box regardless of environment or configuration. 
 * **Dapper**: We are migrating away from Entity Framework to Dapper, with corresponding Sync and Async calls. The meta-data overheard for Entity Framework has caused some issues along with query design. When we are in a system, for example Calls, and we have to modify the underlying repository calls at that point we start migrating them to Dapper. The first phase goal is to only have EF calls for Adding\Updating objects. Final phase would be utilizing Dapper for all CRUD operations.
 * **.Net Core**: The main web application Resgrid.WebCore was migrated to .Net Core 1.1 but the rest of the stack has lagged. The goal would be to migrate the API project (Resgrid.Services) to the latest .Net Core and update the Web application to the latest as well, then move down the stack migrating all assembly projects to the latest .Net Core version as well. The intention here to to allow for deployment of Resgrid on any environment type (Windows, Linux, Unix) instead of just Windows.
-* **Docker**: Utilization of containers to setup all the discrete parts of the Resgrid system is vital. This would allow for easy deployments to dev, test and production environments while also making the initial deployment story on on-premises or custom deployments easier. 
 
 ## Status
 
@@ -89,8 +87,7 @@ Major initiatives for the Resgrid project in 2019!
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 <a href="https://discord.gg/YDs7tHB"><img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" /></a>
 <a href="https://github.com/Resgrid/Core/blob/master/LICENSE"><img src="https://img.shields.io/github/license/resgrid/core.svg" alt="License" /></a>
-[![codecov](https://codecov.io/gh/Resgrid/Core/branch/master/graph/badge.svg)](https://codecov.io/gh/Resgrid/Core)
 
 ## Copyright and License
 
-Code and documentation copyright 2019 the [Resgrid Core Authors](https://github.com/Resgrid/Core/graphs/contributors) and [Resgrid, LLC.](https://resgrid.com) Code released under the [Apache License 2.0](https://github.com/Resgrid/Core/blob/master/LICENSE).
+Code and documentation copyright 2020 the [Resgrid Core Authors](https://github.com/Resgrid/Core/graphs/contributors) and [Resgrid, LLC.](https://resgrid.com) Code released under the [Apache License 2.0](https://github.com/Resgrid/Core/blob/master/LICENSE).

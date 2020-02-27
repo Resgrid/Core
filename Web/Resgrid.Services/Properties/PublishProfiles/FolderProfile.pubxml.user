@@ -6,11 +6,14 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>G:\Resgrid\ResgridCore\Web\Resgrid.Services\bin\Release\Publish</_PublishTargetUrl>
+    <_PublishTargetUrl>G:\Resgrid\_RGApi</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="ApplicationInsights.config">
       <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="App_Data/Resgrid.Web.Services.XML">
+      <publishTime>02/26/2020 16:12:11</publishTime>
     </File>
     <File Include="Areas/HelpPage/HelpPage.css">
       <publishTime>07/22/2015 20:17:46</publishTime>
@@ -107,6 +110,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/ApplicationInsights.config">
       <publishTime>03/30/2018 19:04:59</publishTime>
+    </File>
+    <File Include="bin/App_Data/Resgrid.Web.Services.XML">
+      <publishTime>02/26/2020 16:12:11</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
       <publishTime>09/30/2019 07:23:02</publishTime>
@@ -430,7 +436,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/28/2017 09:14:34</publishTime>
     </File>
     <File Include="bin/Newtonsoft.Json.dll">
-      <publishTime>06/18/2017 13:57:10</publishTime>
+      <publishTime>11/09/2019 00:56:44</publishTime>
     </File>
     <File Include="bin/NodaTime.dll">
       <publishTime>07/08/2017 21:53:26</publishTime>
@@ -463,160 +469,166 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2018 15:49:02</publishTime>
     </File>
     <File Include="bin/Resgrid.Config.dll">
-      <publishTime>09/30/2019 06:57:32</publishTime>
+      <publishTime>02/26/2020 16:12:06</publishTime>
     </File>
     <File Include="bin/Resgrid.Config.pdb">
-      <publishTime>09/30/2019 06:57:32</publishTime>
+      <publishTime>02/26/2020 16:12:06</publishTime>
     </File>
     <File Include="bin/Resgrid.Framework.dll">
-      <publishTime>09/30/2019 06:57:32</publishTime>
+      <publishTime>02/26/2020 16:12:06</publishTime>
     </File>
     <File Include="bin/Resgrid.Framework.dll.config">
-      <publishTime>09/11/2019 17:09:13</publishTime>
+      <publishTime>11/23/2019 00:11:56</publishTime>
     </File>
     <File Include="bin/Resgrid.Framework.pdb">
-      <publishTime>09/30/2019 06:57:32</publishTime>
+      <publishTime>02/26/2020 16:12:06</publishTime>
     </File>
     <File Include="bin/Resgrid.Model.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:06</publishTime>
     </File>
     <File Include="bin/Resgrid.Model.dll.config">
-      <publishTime>09/11/2019 17:09:24</publishTime>
+      <publishTime>11/23/2019 00:11:59</publishTime>
     </File>
     <File Include="bin/Resgrid.Model.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:06</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.AddressVerification.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.AddressVerification.dll.config">
-      <publishTime>09/11/2019 17:09:49</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.AddressVerification.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Audio.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Audio.dll.config">
-      <publishTime>09/11/2019 17:10:02</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Audio.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Bus.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Bus.dll.config">
-      <publishTime>09/11/2019 17:10:16</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Bus.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Bus.Rabbit.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Bus.Rabbit.dll.config">
-      <publishTime>09/11/2019 17:10:38</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Bus.Rabbit.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Cache.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Cache.dll.config">
-      <publishTime>09/11/2019 17:10:45</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Cache.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Claims.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Claims.dll.config">
-      <publishTime>09/11/2019 17:10:55</publishTime>
+      <publishTime>11/23/2019 10:42:32</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Claims.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.EmailProvider.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.EmailProvider.dll.config">
-      <publishTime>09/11/2019 17:11:10</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Providers.EmailProvider.pdb">
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Firebase.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Firebase.dll.config">
-      <publishTime>09/11/2019 17:11:22</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Firebase.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.GeoLocationProvider.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.GeoLocationProvider.dll.config">
-      <publishTime>09/11/2019 17:11:31</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.GeoLocationProvider.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Marketing.dll">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Marketing.dll.config">
-      <publishTime>09/11/2019 17:11:43</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.Marketing.pdb">
-      <publishTime>09/30/2019 06:57:33</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.NumberProvider.dll">
-      <publishTime>09/30/2019 06:57:35</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.NumberProvider.dll.config">
-      <publishTime>09/11/2019 17:11:54</publishTime>
+      <publishTime>11/23/2019 10:42:55</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.NumberProvider.pdb">
-      <publishTime>09/30/2019 06:57:35</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.PdfProvider.dll">
-      <publishTime>09/30/2019 06:57:34</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.PdfProvider.dll.config">
-      <publishTime>09/11/2019 17:12:03</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Providers.PdfProvider.pdb">
-      <publishTime>09/30/2019 06:57:34</publishTime>
+      <publishTime>02/26/2020 16:12:07</publishTime>
     </File>
     <File Include="bin/Resgrid.Repositories.DataRepository.dll">
-      <publishTime>09/30/2019 06:57:35</publishTime>
+      <publishTime>02/26/2020 16:12:09</publishTime>
     </File>
     <File Include="bin/Resgrid.Repositories.DataRepository.dll.config">
-      <publishTime>09/11/2019 17:12:13</publishTime>
+      <publishTime>01/20/2020 09:28:18</publishTime>
     </File>
     <File Include="bin/Resgrid.Repositories.DataRepository.pdb">
-      <publishTime>09/30/2019 06:57:35</publishTime>
+      <publishTime>02/26/2020 16:12:09</publishTime>
     </File>
     <File Include="bin/Resgrid.Services.dll">
-      <publishTime>09/30/2019 06:57:34</publishTime>
+      <publishTime>02/26/2020 16:12:08</publishTime>
     </File>
     <File Include="bin/Resgrid.Services.dll.config">
-      <publishTime>09/11/2019 17:09:35</publishTime>
+      <publishTime>11/23/2019 00:12:00</publishTime>
     </File>
     <File Include="bin/Resgrid.Services.pdb">
-      <publishTime>09/30/2019 06:57:34</publishTime>
+      <publishTime>02/26/2020 16:12:08</publishTime>
     </File>
     <File Include="bin/Resgrid.Web.Services.dll">
-      <publishTime>09/30/2019 06:57:37</publishTime>
+      <publishTime>02/26/2020 16:12:11</publishTime>
     </File>
     <File Include="bin/Resgrid.Web.Services.pdb">
-      <publishTime>09/30/2019 06:57:37</publishTime>
+      <publishTime>02/26/2020 16:12:11</publishTime>
+    </File>
+    <File Include="bin/Resgrid.Web.Services.XML">
+      <publishTime>02/26/2020 16:12:11</publishTime>
     </File>
     <File Include="bin/ResgridConfig.json">
-      <publishTime>02/22/2019 14:03:05</publishTime>
+      <publishTime>02/26/2020 13:58:10</publishTime>
     </File>
     <File Include="bin/RestSharp.dll">
       <publishTime>08/26/2015 16:33:34</publishTime>
@@ -658,13 +670,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/01/2017 12:20:24</publishTime>
     </File>
     <File Include="bin/Stripe.net.dll">
-      <publishTime>11/29/2016 08:40:10</publishTime>
+      <publishTime>11/08/2019 03:49:28</publishTime>
+    </File>
+    <File Include="bin/Stripe.net.pdb">
+      <publishTime>11/08/2019 03:49:28</publishTime>
     </File>
     <File Include="bin/System.Buffers.dll">
       <publishTime>11/05/2016 04:55:30</publishTime>
     </File>
     <File Include="bin/System.Collections.Immutable.dll">
-      <publishTime>09/28/2019 08:54:20</publishTime>
+      <publishTime>02/03/2020 08:03:41</publishTime>
     </File>
     <File Include="bin/System.Diagnostics.DiagnosticSource.dll">
       <publishTime>06/27/2017 11:17:34</publishTime>
@@ -774,6 +789,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Content/google-code-prettify/prettify.css">
       <publishTime>07/22/2015 20:17:46</publishTime>
     </File>
+    <File Include="Global.asax">
+      <publishTime>07/22/2015 20:17:46</publishTime>
+    </File>
     <File Include="Hubs/Web.config">
       <publishTime>03/30/2018 19:04:59</publishTime>
     </File>
@@ -787,7 +805,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/22/2015 20:17:46</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>09/11/2019 17:13:11</publishTime>
+      <publishTime>11/23/2019 00:12:01</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
       <publishTime>09/30/2019 07:22:58</publishTime>

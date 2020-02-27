@@ -442,6 +442,11 @@
     <Compile Include="Controllers\Version3\Models\Calls\CallResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallTypeResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CloseCallInput.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\DepartmentCallDispatchGroupResult.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\DepartmentCallDispatchResult.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\DepartmentCallDispatchRoleResult.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\DepartmentCallDispatchUnitResult.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\DepartmentCallResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\EditCallInput.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\NewCallInput.cs" />
     <Compile Include="Controllers\Version3\Models\Chat\ChannelData.cs" />

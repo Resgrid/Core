@@ -73,5 +73,13 @@ namespace Resgrid.Web.Services.Hubs
 			if (group != null)
 				group.callsUpdated(id);
 		}
+
+		public void DepartmentUpdated(int departmentId)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				group.departmentUpdated();
+		}
 	}
 }

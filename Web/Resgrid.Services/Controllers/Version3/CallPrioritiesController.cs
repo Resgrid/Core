@@ -75,6 +75,39 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		/// <summary>
+		/// Returns all the call priorities (including deleted ones) for a selected department
+		/// </summary>
+		/// <returns>Array of CallPriorityResult objects for each call priority in the department</returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		public List<CallPriorityResult> GetAllCallPrioritesForDepartment(int departmentId)
+		{
+			var result = new List<CallPriorityResult>();
+
+			if (departmentId != DepartmentId && !IsSystem)
+				Unauthorized();
+
+			var priorities = _callsService.GetCallPrioritesForDepartment(departmentId);
+
+			foreach (var p in priorities)
+			{
+				var priority = new CallPriorityResult();
+
+				priority.Id = p.DepartmentCallPriorityId;
+				priority.DepartmentId = p.DepartmentId;
+				priority.Name = StringHelpers.SanitizeHtmlInString(p.Name);
+				priority.Color = p.Color;
+				priority.Sort = p.Sort;
+				priority.IsDeleted = p.IsDeleted;
+				priority.IsDefault = p.IsDefault;
+				priority.Tone = p.Tone;
+
+				result.Add(priority);
+			}
+
+			return result;
+		}
+
+		/// <summary>
 		/// Return the audio file for push notifications for a specific call priority
 		/// </summary>
 		/// <returns>File download result for push dispatch audio for a call priority</returns>

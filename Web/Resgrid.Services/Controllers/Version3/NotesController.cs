@@ -61,6 +61,44 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		/// <summary>
+		/// Get's all the notes in a department
+		/// </summary>
+		/// <returns>List of NotesResult objects.</returns>
+		[AcceptVerbs("GET")]
+		public List<NotesResult> GetAllUnexpiredNotesByCategory(string category)
+		{
+			var results = new List<NotesResult>();
+			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+
+			var notes = _notesService.GetNotesForDepartmentFiltered(DepartmentId, department.IsUserAnAdmin(UserId));
+
+			foreach (var n in notes)
+			{
+				if ((n.StartsOn.HasValue || n.StartsOn.Value >= DateTime.UtcNow) && (n.ExpiresOn.HasValue || n.ExpiresOn.Value <= DateTime.UtcNow))
+				{
+					if (!String.IsNullOrWhiteSpace(category) || n.Category.Trim().Equals(category, StringComparison.InvariantCultureIgnoreCase))
+					{
+						var noteResult = new NotesResult();
+						noteResult.Nid = n.NoteId;
+						noteResult.Uid = n.UserId;
+						noteResult.Ttl = n.Title;
+						noteResult.Bdy = StringHelpers.StripHtmlTagsCharArray(n.Body).Truncate(100);
+						noteResult.Adn = n.AddedOn.TimeConverter(department);
+						noteResult.Cat = n.Category;
+						noteResult.Clr = n.Color;
+
+						if (n.ExpiresOn.HasValue)
+							noteResult.Exp = n.ExpiresOn.Value;
+
+						results.Add(noteResult);
+					}
+				}
+			}
+
+			return results;
+		}
+
+		/// <summary>
 		/// Gets a specific note by it's Id.
 		/// </summary>
 		/// <param name="noteId">Integer note Identifier</param>

@@ -385,6 +385,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			foreach (var station in stations)
 			{
 				MapMakerInfo info = new MapMakerInfo();
+				info.Id = $"s{station.DepartmentGroupId}";
 				info.ImagePath = "Station";
 				info.Title = station.Name;
 				info.InfoWindowContent = station.Name;
@@ -417,6 +418,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				MapMakerInfo info = new MapMakerInfo();
 				info.ImagePath = "Call";
+				info.Id = $"c{call.CallId}";
 				info.Title = call.Name;
 				info.InfoWindowContent = call.NatureOfCall;
 
@@ -451,6 +453,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				{
 					MapMakerInfo info = new MapMakerInfo();
 					info.ImagePath = "Engine_Responding";
+					info.Id = $"u{unit.UnitId}";
 					info.Title = unit.Unit.Name;
 					info.InfoWindowContent = "";
 					info.Latitude = double.Parse(unit.Latitude.Value.ToString());
@@ -492,6 +495,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						info.ImagePath = "Person_RespondingCall";
 					}
 
+					//info.Id = $"p{person.}";
 					info.Title = person.Name;
 					info.InfoWindowContent = "";
 					info.Latitude = double.Parse(person.Latitude.Value.ToString());

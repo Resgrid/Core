@@ -2,7 +2,7 @@
 {
 	public class DataConfig
 	{
-		public static string ConnectionString = "Data Source=(local);Initial Catalog=Resgrid;Integrated Security=True;MultipleActiveResultSets=True;";
+		public static string ConnectionString = "Server=rgdevserver;Database=Resgrid;User Id=resgrid_app;Password=resgrid123;MultipleActiveResultSets=True;";
 
 		public const string UsersIdentityRoleId = "38b461d7-e848-46ef-8c06-ece5b618d9d1";
 		public const string AdminsIdentityRoleId = "1f6a03a8-62f4-4179-80fc-2eb96266cf04";

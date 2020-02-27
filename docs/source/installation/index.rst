@@ -11,13 +11,14 @@ In this section we will go over all the steps needed to get Resgrid running on y
 Prerequisites & Dependencies
 ****************************
 
-`Resgrid <https://resgrid.com/>`_ requires Microsoft .Net Framework 4.6.2 and .Net Core 1.1. and running on a Windows environment, Windows Server is recommended but not required. 
+`Resgrid <https://resgrid.com/>`_ requires Microsoft .Net Framework 4.7.2 and .Net Core 1.1. and running on a Windows environment, Windows Server is recommended but not required. 
 
 .. note:: Please ensure your Windows system is up to date with all Windows and Microsoft updates before installing the Resgrid System.
 
 The following server dependencies need to be installed, configured and functional:
 
-* `.Net Framework <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Framework 4.6.2 (Developer Pack)
+* `.Net Framework <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Framework 4.7.2 (Developer Pack)
+* `.Net Core <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Core 1.1 (Runtime for your architecture x86 or x64)
 * `RabbitMQ Server <https://www.rabbitmq.com>`_, version 3.6.0 or newer
 * `Microsoft SQL Server <https://www.microsoft.com/en-us/sql-server/default.aspx>`_, version 12.0 (SQL 2014) or newer
 * `Microsoft IIS <https://www.iis.net/>`_ version installed on Windows 8 or newer or Windows Server 2012 or newer
@@ -77,6 +78,9 @@ Installing Microsoft IIS (Webserver) will differ based on what version of Window
    * - World Wide Web Services
      - Application Development Features 
      - ISAPI Filters
+   * - World Wide Web Services
+     - Application Development Features 
+     - WebSockets Protocol
    * - World Wide Web Services
      - Common HTTP Features 
      - Default Document
@@ -176,7 +180,13 @@ During the installation of SQL Server you will need to set the collation for the
   :width: 800
   :alt: SQL Server SQL_Latin1_General_CP1_CI_AS Collation
 
-.. note:: If your using a Named SQL server instance, i.e. any SQL instance that's not the default instance and your are supplying the named instance name in the ResgridConfig.json file you will need to use double back slash's in between the server and SQL instance name. For example if you have a named SQL instance SQL2014 on the locally installed SQL server you need to specify the DataSource as "(local)\\SQL2014" with 2 backslashes "\\" in between the server and instance names.
+For Resgrid you will need to use the Mixed Mode Authentication setting, this allows SQL server to use it's own internal account in addition to Windows or Domain accounts. Specify any password you wish in the "Enter password" and "Confirm password" boxes (they need to match) this will be your admin or system admin sql password. Also Add Current User to the SQL Server administrators list on this view.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerAuth.png
+  :width: 800
+  :alt: SQL Server SQL_Latin1_General_CP1_CI_AS Collation
+
+.. note:: If your using a Named SQL server instance, i.e. any SQL instance that's not the default instance and your are supplying the named instance name in the ResgridConfig.json file you will need to use double back slash's in between the server and SQL instance name. For example if you have a named SQL instance SQL2014 on the locally installed SQL server you need to specify the DataSource as "(local)\\\\SQL2014" with 2 backslashes "\\" in between the server and instance names.
 
 Database Creation
 =======================
@@ -191,7 +201,43 @@ Once you have Microsoft SQL and Microsoft SQL Management Studio installed; open 
   :width: 800
   :alt: Database Creation 2
 
-Install\\Update Resgrid Schema
+You will also need to create a 'ResgridWorkers' database as well with the same options as the Resgrid database.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLDatabaseWorkers.png
+  :width: 800
+  :alt: Database Workers Creation
+
+Once the databases are created you will need to create a new SQL user for Resgrid to connect to the 2 databases on this SQL Server. You will be using the "SQL Server authentication" mode for this user.
+
+  |  Login Name:	resgrid_app
+  |  Password:	  resgrid123
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerRGUser.png
+  :width: 800
+  :alt: Database User Setup
+
+Uncheck "Enforce password expiration" and "User must change password at next login" options on this view. Once you have that setup, click the "User Mapping" page in the upper left hand corner of this window.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerRGUser2.png
+  :width: 800
+  :alt: Database User Setup 2
+
+Check the checkbox next to "Resgrid" database and then select the "db_owner" database role for this user. Do the same for the "ResgridWorkers" database as well.
+
+.. warning:: Once your system is setup and you've verified it working we highly creating a new SQL user with a custom Login name and password to secure your installation. Your SQL Server should also not be directly connected to the internet or have any SQL ports directly accessible over the Internet. Review Microsoft's guidance for securing your SQL Server `Securing SQL Server <https://docs.microsoft.com/en-us/sql/relational-databases/security/securing-sql-server?view=sql-server-ver15>`_
+
+SQL Server Network Configuration
+=======================
+
+Resgrid uses TCP/IP based connections to connect to the SQL Server database. By default most installations of SQL Server have TCP/IP disabled by default. To enable, you need to start up the "SQL Server Configuration Manager" application and enable the TCP/IP protocol for the SQL Server Network Configuration.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/SQLServerNetworkConfig.png
+  :width: 600
+  :alt: SQL Configuration Manager
+
+Note, you will need to restart the system, or at a minimum the SQL Server instance (MSSQLSERVER), for the above change to take effect. If the TCP/IP protocol is already enabled for your install SQL Server instance you can continue without making any changes.
+
+Install or Update Resgrid Schema
 =======================
 
 Open up the Windows Command Prompt (cmd) and type:
@@ -237,6 +283,10 @@ Run the 'Internet Information Services (IIS) Manager' and expand the top server 
    * - SSL certificate
      - *Select Any*
 
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetup.png
+  :width: 600
+  :alt: IIS Site Setup
+
 .. list-table:: Resgrid API Website Options
    :header-rows: 1
 
@@ -249,9 +299,31 @@ Run the 'Internet Information Services (IIS) Manager' and expand the top server 
    * - Host name:
      - resgridapi.local
 
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetupAPI.png
+  :width: 800
+  :alt: IIS API Site Setup
+
+Your IIS Server should look like this for the Websites and Application Pools views:
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISOverview.png
+  :width: 800
+  :alt: IIS Overview
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISApps.png
+  :width: 800
+  :alt: IIS Application Pools
+
 .. important:: If you don't have a valid SSL certificate you can create a self-signed certificate by using `these instructions <https://aboutssl.org/how-to-create-a-self-signed-certificate-in-iis/>`_. You cannot use a self-signed certificate for the resgridapi IIS website as self-signed certificated will be rejected by the applications. We *HIGHLY* recommend you get valid SSL Certificates from a trusted vender and have both the resgrid and resgridapi protected by those.
 
 .. note:: If you are using a Self Signed or Development SSL certificate you will get a Certificate Warning using any modern web browser. If your url is pointing to localhost,127.0.0.1,resgrid.local or resgridapi.local it is safe to proceed to the website and bypass that certificate error. We do not recommend doing that on public websites.
+
+DotNetCore Hosting Module
+=======================
+
+Once your IIS Server is setup and you've created the web applications you will need to install the .Net Core 1.1 Server Hosting bundle, this allows the Resgrid web application to run under IIS. 
+
+You can download the Hosting Bundle from the `Microsoft Download Center <https://go.microsoft.com/fwlink/?linkid=844461>`_
+
 
 Initial Web Login
 ****************************

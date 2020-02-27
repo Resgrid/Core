@@ -89,6 +89,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			results.UnitRoles = new List<UnitRoleResult>();
 			results.Priorities = new List<CallPriorityResult>();
 			results.Departments = new List<JoinedDepartmentResult>();
+			results.CallTypes = new List<CallTypeResult>();
 
 			var users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
 			var groups = _departmentGroupsService.GetAllDepartmentGroupsForDepartment(DepartmentId);
@@ -99,6 +100,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var units = _unitsService.GetUnitsForDepartment(DepartmentId);
 			var unitTypes = _unitsService.GetUnitTypesForDepartment(DepartmentId);
 			var callPriorites = _callsService.GetCallPrioritesForDepartment(DepartmentId);
+			var callTypes = _callsService.GetCallTypesForDepartment(DepartmentId);
 
 
 			foreach (var user in users)
@@ -388,6 +390,18 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				depRest.Nme = member.Department.Name;
 
 				results.Departments.Add(depRest);
+			}
+
+			if (callTypes != null && callTypes.Any())
+			{
+				foreach (var callType in callTypes)
+				{
+					var type = new CallTypeResult();
+					type.Id = callType.CallTypeId;
+					type.Name = callType.Type;
+
+					results.CallTypes.Add(type);
+				}
 			}
 
 

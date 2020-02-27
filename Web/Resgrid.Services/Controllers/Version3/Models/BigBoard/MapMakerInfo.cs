@@ -7,6 +7,7 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.BigBoard
 {
 	public class MapMakerInfo
 	{
+		public string Id { get; set; }
 		public double Longitude { get; set; }
 		public double Latitude { get; set; }
 		public string Title { get; set; }

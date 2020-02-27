@@ -1,7 +1,7 @@
 ﻿{
   "InfoConfig.ConfigVersion": "1",
 
-  "DataConfig.ConnectionString": "Data Source=(local);Initial Catalog=Resgrid;Integrated Security=True;MultipleActiveResultSets=True;",
+  "DataConfig.ConnectionString": "Server=rgdevserver;Database=Resgrid;User Id=resgrid_app;Password=resgrid123;MultipleActiveResultSets=True;",
 
   "SystemBehaviorConfig.ResgridBaseUrl": "http://resgrid.local",
   "SystemBehaviorConfig.ResgridApiBaseUrl": "http://resgridapi.local",
@@ -43,7 +43,7 @@
   "OutboundEmailServerConfig.PostmarkWelcomeTemplateId": "",
   "OutboundEmailServerConfig.PostmarkNewDepLinkTemplateId": "",
 
-  "WorkerConfig.WorkerDbConnectionString": "Data Source=(local);Initial Catalog=ResgridWorkers;Integrated Security=True;MultipleActiveResultSets=True;",
+  "WorkerConfig.WorkerDbConnectionString": "Server=rgdevserver;Database=ResgridWorkers;User Id=resgrid_app;Password=resgrid123;MultipleActiveResultSets=True;",
   "WorkerConfig.PayloadKey": "XsBYpdbdHkhuGsU3tvTMawyV6d3M2F8EQ8wQ2jVLBREECQmwngACk2hm4Ykb7eW7Qsm6za8RdJBY5Z3xvN6erYry47nJ5XmL",
 
   "ServiceBusConfig.RabbitHostname": "localhost",

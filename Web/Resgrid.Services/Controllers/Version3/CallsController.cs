@@ -142,6 +142,157 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		/// <summary>
+		/// Returns all the active calls for the department (extended object result, more verbose then GetActiveCalls)
+		/// </summary>
+		/// <returns>Array of DepartmentCallResult objects for each active call in the department</returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		public List<DepartmentCallResult> GetActiveCallsForDepartment(int departmentId)
+		{
+			var result = new List<DepartmentCallResult>();
+
+			if (departmentId != DepartmentId && !IsSystem)
+				Unauthorized();
+
+			var calls = _callsService.GetActiveCallsByDepartment(departmentId).OrderByDescending(x => x.LoggedOn);
+			var department = _departmentsService.GetDepartmentById(departmentId, false);
+
+			foreach (var c in calls)
+			{
+				var call = new DepartmentCallResult();
+
+				call.Name = StringHelpers.SanitizeHtmlInString(c.Name);
+
+				if (!String.IsNullOrWhiteSpace(c.NatureOfCall))
+					call.NatureOfCall = StringHelpers.SanitizeHtmlInString(c.NatureOfCall);
+
+				if (!String.IsNullOrWhiteSpace(c.Notes))
+					call.Notes = StringHelpers.SanitizeHtmlInString(c.Notes);
+
+				//if (c.CallNotes != null)
+				//	call.Nts = c.CallNotes.Count();
+				//else
+				//	call.Nts = 0;
+
+				//if (c.Attachments != null)
+				//{
+				//	call.Aud = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
+				//	call.Img = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.Image);
+				//	call.Fls = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.File);
+				//}
+				//else
+				//{
+				//	call.Aud = 0;
+				//	call.Img = 0;
+				//	call.Fls = 0;
+				//}
+
+				//if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+				//{
+				//	var geo = c.GeoLocationData.Split(char.Parse(","));
+
+				//	if (geo.Length == 2)
+				//		call.Add = _geoLocationProvider.GetAddressFromLatLong(double.Parse(geo[0]), double.Parse(geo[1]));
+				//}
+				//else
+				//	call.Address = c.Address;
+
+				call.LoggedOn = c.LoggedOn.TimeConverter(department);
+				call.LoggedOnUtc = c.LoggedOn;
+				call.CallId = c.CallId;
+				call.Number = c.Number;
+				call.DepartmentId = c.DepartmentId;
+				call.ReportingUserId = c.ReportingUserId;
+				call.Priority = c.Priority;
+				call.IsCritical = c.IsCritical;
+				call.Type = c.Type;
+				call.IncidentNumber = c.IncidentNumber;
+				call.MapPage = c.MapPage;
+				call.CompletedNotes = c.CompletedNotes;
+				call.Address = c.Address;
+				call.GeoLocationData = c.GeoLocationData;
+				call.ClosedByUserId = c.ClosedByUserId;
+				call.ClosedOn = c.ClosedOn;
+				call.State = c.State;
+				call.IsDeleted = c.IsDeleted;
+				call.CallSource = c.CallSource;
+				call.DispatchCount = c.DispatchCount;
+				call.LastDispatchedOn = c.LastDispatchedOn;
+				call.SourceIdentifier = c.SourceIdentifier;
+				call.ContactName = c.ContactName;
+				call.ContactNumber = c.ContactNumber;
+				call.Public = c.Public;
+				call.ExternalIdentifier = c.ExternalIdentifier;
+				call.ReferenceNumber = c.ReferenceNumber;
+
+				if (c.Dispatches != null)
+				{
+					foreach (var dispatch in c.Dispatches)
+					{
+						var dispatchResult = new DepartmentCallDispatchResult();
+						dispatchResult.CallDispatchId = dispatch.CallDispatchId;
+						dispatchResult.CallId = dispatch.CallId;
+						dispatchResult.UserId = dispatch.UserId;
+						dispatchResult.GroupId = dispatch.GroupId;
+						dispatchResult.DispatchCount = dispatch.DispatchCount;
+						dispatchResult.LastDispatchedOn = dispatch.LastDispatchedOn;
+						dispatchResult.ActionLogId = dispatch.ActionLogId;
+
+						call.Dispatches.Add(dispatchResult);
+					}
+				}
+
+				if (c.GroupDispatches != null)
+				{
+					foreach (var dispatch in c.GroupDispatches)
+					{
+						var dispatchResult = new DepartmentCallDispatchGroupResult();
+						dispatchResult.CallDispatchGroupId = dispatch.CallDispatchGroupId;
+						dispatchResult.CallId = dispatch.CallId;
+						dispatchResult.DepartmentGroupId = dispatch.DepartmentGroupId;
+						dispatchResult.DispatchCount = dispatch.DispatchCount;
+						dispatchResult.LastDispatchedOn = dispatch.LastDispatchedOn;
+
+						call.GroupDispatches.Add(dispatchResult);
+					}
+				}
+
+				if (c.UnitDispatches != null)
+				{
+					foreach (var dispatch in c.UnitDispatches)
+					{
+						var dispatchResult = new DepartmentCallDispatchUnitResult();
+						dispatchResult.CallDispatchUnitId = dispatch.CallDispatchUnitId;
+						dispatchResult.CallId = dispatch.CallId;
+						dispatchResult.UnitId = dispatch.UnitId;
+						dispatchResult.DispatchCount = dispatch.DispatchCount;
+						dispatchResult.LastDispatchedOn = dispatch.LastDispatchedOn;
+
+						call.UnitDispatches.Add(dispatchResult);
+					}
+				}
+
+				if (c.RoleDispatches != null)
+				{
+					foreach (var dispatch in c.RoleDispatches)
+					{
+						var dispatchResult = new DepartmentCallDispatchRoleResult();
+						dispatchResult.CallDispatchRoleId = dispatch.CallDispatchRoleId;
+						dispatchResult.CallId = dispatch.CallId;
+						dispatchResult.RoleId = dispatch.RoleId;
+						dispatchResult.DispatchCount = dispatch.DispatchCount;
+						dispatchResult.LastDispatchedOn = dispatch.LastDispatchedOn;
+
+						call.RoleDispatches.Add(dispatchResult);
+					}
+				}
+
+				result.Add(call);
+			}
+
+			return result;
+		}
+
+		/// <summary>
 		/// Returns a specific call from the Resgrid System
 		/// </summary>
 		/// <returns>CallResult of the call in the Resgrid system</returns>

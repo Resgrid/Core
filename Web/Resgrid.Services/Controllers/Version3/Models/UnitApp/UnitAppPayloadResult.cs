@@ -27,5 +27,6 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.UnitApp
 		public List<UnitRoleResult> UnitRoles { get; set; }
 		public List<CallPriorityResult> Priorities { get; set; }
 		public List<JoinedDepartmentResult> Departments { get; set; }
+		public List<CallTypeResult> CallTypes { get; set; }
 	}
 }

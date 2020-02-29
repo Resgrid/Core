@@ -19,6 +19,7 @@ The following server dependencies need to be installed, configured and functiona
 
 * `.Net Framework <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Framework 4.7.2 (Developer Pack)
 * `.Net Core <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Core 1.1 (Runtime for your architecture x86 or x64)
+* `Erlang <https://www.erlang.org/downloads>`_, needed for RabbitMQ
 * `RabbitMQ Server <https://www.rabbitmq.com>`_, version 3.6.0 or newer
 * `Microsoft SQL Server <https://www.microsoft.com/en-us/sql-server/default.aspx>`_, version 12.0 (SQL 2014) or newer
 * `Microsoft IIS <https://www.iis.net/>`_ version installed on Windows 8 or newer or Windows Server 2012 or newer
@@ -33,6 +34,31 @@ RabbitMQ
 To install RabbitMQ follow the `Windows Installation <https://www.rabbitmq.com/install-windows.html>`_ guide. Ensure your firewall is configured to allow the ports listed in that guide through. It is also recommend you `enable the management UI <https://www.rabbitmq.com/management.html>`_ for RabbitMQ.
 
 .. note:: RabbitMQ requires Erlang to be installed. You can download the `Windows installer <https://www.erlang.org/downloads>`_ at their website.
+
+You will need to grant Erl and Epmd access to the network if your using the Windows firewall.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/RabbitMQFirewall.png
+  :width: 1100
+  :alt: Firewall Options for Erl and Epmd
+
+Once RabbitMQ is installed and setup, and the Admin console is installed you will need to create the following user:
+
+  |  Username:	resgrid
+  |  Password:	resgrid!
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/RabbitMQUserSetup.png
+  :width: 1100
+  :alt: RabbitMQ User setup
+
+Once the user is setup you need to edit the "/" virtual host and grant permissions to that user to virtual host and topics.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/RabbitMQVHost.png
+  :width: 1100
+  :alt: RabbitMQ Virtual Host
+
+You'll want .*, for all regexp values for both Virtual Host and Topic Permissions.
+
+.. warning:: Once your system is setup and you've verified it working we highly creating a new username and password for Resgrid to use for RabbitMQ.
 
 Redis 
 =======================

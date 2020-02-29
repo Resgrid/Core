@@ -47,8 +47,8 @@
   "WorkerConfig.PayloadKey": "XsBYpdbdHkhuGsU3tvTMawyV6d3M2F8EQ8wQ2jVLBREECQmwngACk2hm4Ykb7eW7Qsm6za8RdJBY5Z3xvN6erYry47nJ5XmL",
 
   "ServiceBusConfig.RabbitHostname": "localhost",
-  "ServiceBusConfig.RabbitUsername": "guest",
-  "ServiceBusConfig.RabbbitPassword": "guest",
+  "ServiceBusConfig.RabbitUsername": "resgrid",
+  "ServiceBusConfig.RabbbitPassword": "resgrid!",
   "ServiceBusConfig.RabbbitExchange": "",
   "ServiceBusConfig.SignalRServiceBusConnectionString": "",
   "ServiceBusConfig.SignalRTopicName": "",

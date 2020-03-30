@@ -16,7 +16,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against the connect sub-system. Connect allows the public to communicate with a department.
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class ConnectController : ApiController
 	{
 		private readonly IDepartmentsService _departmentsService;

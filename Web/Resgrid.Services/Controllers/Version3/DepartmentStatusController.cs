@@ -12,7 +12,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// General department level options
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class DepartmentStatusController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IDepartmentSettingsService _departmentSettingsService;

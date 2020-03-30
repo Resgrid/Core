@@ -23,8 +23,8 @@ using System.Web.Http.Cors;
 
 namespace Resgrid.Web.Services.Controllers
 {
-	[EnableCors(origins: "*", headers: "*", methods: "*")]
 	[System.Web.Http.Description.ApiExplorerSettings(IgnoreApi = true)]
+	[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 	public class SignalWireController : ApiController
 	{
 		#region Private Readonly Properties and Constructors
@@ -69,7 +69,7 @@ namespace Resgrid.Web.Services.Controllers
 		#endregion Private Readonly Properties and Constructors
 
 		[HttpGet]
-		[EnableCors(origins: "*", headers: "*", methods: "*")]
+		[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 		public HttpResponseMessage Test()
 		{
 
@@ -78,7 +78,7 @@ namespace Resgrid.Web.Services.Controllers
 
 
 		[HttpGet]
-		[EnableCors(origins: "*", headers: "*", methods: "*")]
+		[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 		public async Task<HttpResponseMessage> Receive()
 		{
 			var queryValues = Request.RequestUri.ParseQueryString();

@@ -409,6 +409,7 @@
     <Compile Include="Controllers\TwilioProviderController.cs" />
     <Compile Include="Controllers\JsonNetFormatterConfigAttribute.cs" />
     <Compile Include="Controllers\Version3\AuthController.cs" />
+    <Compile Include="Controllers\Version3\DispatchAppController.cs" />
     <Compile Include="Controllers\Version3\GeoController.cs" />
     <Compile Include="Controllers\Version3\BigBoardController.cs" />
     <Compile Include="Controllers\Version3\CalendarController.cs" />
@@ -479,6 +480,7 @@
     <Compile Include="Controllers\Version3\Models\Devices\DeviceRegistrationInput.cs" />
     <Compile Include="Controllers\Version3\Models\Devices\DeviceRegistrationResult.cs" />
     <Compile Include="Controllers\Version3\Models\Devices\DeviceUnRegistrationInput.cs" />
+    <Compile Include="Controllers\Version3\Models\DispatchApp\NewCallPayloadResult.cs" />
     <Compile Include="Controllers\Version3\Models\Geo\CoordinatesResult.cs" />
     <Compile Include="Controllers\Version3\Models\Geo\WhatThreeWordsResult.cs" />
     <Compile Include="Controllers\Version3\Models\Groups\GroupInfoResult.cs" />

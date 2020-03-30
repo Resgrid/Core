@@ -26,5 +26,6 @@
 		bool CanUserViewPII(string userId, int departmentId);
 		bool CanUserCreateNote(string userId, int departmentId);
 		bool CanUserModifyCalendarEntry(string userId, int calendarItemId);
+		bool CanUserEditProfile(string userId, int departmentId, string editingProfileId);
 	}
 }

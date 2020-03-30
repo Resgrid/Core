@@ -7,8 +7,8 @@ using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Services.Controllers
 {
-	[EnableCors(origins: "*", headers: "*", methods: "*")]
 	[System.Web.Http.Description.ApiExplorerSettings(IgnoreApi = true)]
+	[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 	public class RedirectController : ApiController
 	{
 		private readonly IDepartmentsService _departmentsService;

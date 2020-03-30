@@ -417,5 +417,33 @@ namespace Resgrid.Services
 
 			return false;
 		}
+
+		public bool CanUserEditProfile(string userId, int departmentId, string editingProfileId)
+		{
+			if (userId == editingProfileId)
+				return true;
+
+			var usersDepartment = _departmentsService.GetDepartmentByUserId(editingProfileId);
+
+			if (usersDepartment == null)
+				return false;
+
+			if (usersDepartment.DepartmentId != departmentId)
+				return false;
+
+			var department = _departmentsService.GetDepartmentById(departmentId);
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			var group = _departmentGroupsService.GetGroupForUser(userId, departmentId);
+			if (group != null)
+			{
+				if (group.IsUserGroupAdmin(userId) && group.IsUserInGroup(editingProfileId))
+					return true;
+			}
+
+
+			return false;
+		}
 	}
 }

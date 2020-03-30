@@ -18,7 +18,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against units in a department
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class UnitsController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;

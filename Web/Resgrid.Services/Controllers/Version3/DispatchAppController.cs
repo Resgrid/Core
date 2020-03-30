@@ -1,33 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web.Http.Cors;
-using System.Web.Mvc;
-using Resgrid.Model;
-using Resgrid.Model.Helpers;
-using Resgrid.Model.Providers;
+using System.Threading.Tasks;
 using Resgrid.Model.Services;
-using Resgrid.Services.CoreWeb;
-using Resgrid.Web.Services.Controllers.Version3.Models.Calls;
-using Resgrid.Web.Services.Controllers.Version3.Models.CoreData;
-using Resgrid.Web.Services.Controllers.Version3.Models.Groups;
-using Resgrid.Web.Services.Controllers.Version3.Models.Personnel;
-using Resgrid.Web.Services.Controllers.Version3.Models.Roles;
-using Resgrid.Web.Services.Controllers.Version3.Models.Security;
-using Resgrid.Web.Services.Controllers.Version3.Models.UnitApp;
-using UnitInfoResult = Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult;
+using System.Web.Http;
+using System.Web.Http.Cors;
+using Resgrid.Web.Services.Controllers.Version3.Models.Departments;
 using System.Net.Http;
-using Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities;
-using Resgrid.Web.Services.Controllers.Version3.Models.Units;
-using Resgrid.Framework;
-using Resgrid.Model.Events;
+using System.Net;
+using System.Web.Http.Results;
 using Resgrid.Web.Services.Helpers;
+using Resgrid.Model;
+using Resgrid.Web.Services.Controllers.Version3.Models.DispatchApp;
+using Resgrid.Web.Services.Controllers.Version3.Models.Personnel;
+using Resgrid.Web.Services.Controllers.Version3.Models.Groups;
+using Resgrid.Web.Services.Controllers.Version3.Models.Units;
+using Resgrid.Web.Services.Controllers.Version3.Models.Roles;
+using Resgrid.Web.Services.Controllers.Version3.Models.CoreData;
+using Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities;
+using Resgrid.Web.Services.Controllers.Version3.Models.Calls;
+using Resgrid.Services.CoreWeb;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Helpers;
+using System;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
+	/// <summary>
+	/// Operations to support Dispatch operations
+	/// </summary>
 	[System.Web.Http.Description.ApiExplorerSettings(IgnoreApi = true)]
-	public class UnitAppController : V3AuthenticatedApiControllerbase
+	public class DispatchAppController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;
 		private readonly IActionLogsService _actionLogsService;
@@ -43,7 +45,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly ICqrsProvider _cqrsProvider;
 
-		public UnitAppController(
+		public DispatchAppController(
 			IUsersService usersService,
 			IActionLogsService actionLogsService,
 			IDepartmentsService departmentsService,
@@ -75,21 +77,20 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		[AcceptVerbs("GET")]
-		public UnitAppPayloadResult GetUnitAppCoreData()
+		public NewCallPayloadResult GetNewCallData()
 		{
-			var results = new UnitAppPayloadResult();
+			var results = new NewCallPayloadResult();
 			results.Personnel = new List<PersonnelInfoResult>();
 			results.Groups = new List<GroupInfoResult>();
 			results.Units = new List<UnitInfoResult>();
 			results.Roles = new List<RoleInfoResult>();
 			results.Statuses = new List<CustomStatusesResult>();
-			results.Calls = new List<CallResult>();
 			results.UnitStatuses = new List<UnitStatusCoreResult>();
 			results.UnitRoles = new List<UnitRoleResult>();
 			results.Priorities = new List<CallPriorityResult>();
-			results.Departments = new List<JoinedDepartmentResult>();
 			results.CallTypes = new List<CallTypeResult>();
 
+			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
 			var users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
 			var groups = _departmentGroupsService.GetAllDepartmentGroupsForDepartment(DepartmentId);
 			var rolesForUsersInDepartment = _personnelRolesService.GetAllRolesForUsersInDepartment(DepartmentId);
@@ -159,29 +160,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				}
 
 				results.Personnel.Add(result);
-			}
-
-
-			results.Rights = new DepartmentRightsResult();
-			var currentUser = _usersService.GetUserByName(UserName);
-
-			if (currentUser == null)
-				throw HttpStatusCode.Unauthorized.AsException();
-
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
-
-			results.Rights.Adm = department.IsUserAnAdmin(currentUser.UserId);
-			results.Rights.Grps = new List<GroupRight>();
-
-			var currentGroup = _departmentGroupsService.GetGroupForUser(currentUser.UserId, DepartmentId);
-
-			if (currentGroup != null)
-			{
-				var groupRight = new GroupRight();
-				groupRight.Gid = currentGroup.DepartmentGroupId;
-				groupRight.Adm = currentGroup.IsUserGroupAdmin(currentUser.UserId);
-
-				results.Rights.Grps.Add(groupRight);
 			}
 
 			foreach (var group in allGroups)
@@ -305,62 +283,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			}
 
-
-			var calls = _callsService.GetActiveCallsByDepartment(DepartmentId).OrderByDescending(x => x.LoggedOn);
-
-			if (calls != null && calls.Any())
-			{
-				foreach (var c in calls)
-				{
-					var call = new CallResult();
-
-					call.Cid = c.CallId;
-					call.Pri = c.Priority;
-					call.Ctl = c.IsCritical;
-					call.Nme = c.Name;
-					call.Noc = c.NatureOfCall;
-					call.Map = c.MapPage;
-					call.Not = c.Notes;
-
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
-					{
-						var geo = c.GeoLocationData.Split(char.Parse(","));
-
-						if (geo.Length == 2)
-							call.Add = _geoLocationProvider.GetAddressFromLatLong(double.Parse(geo[0]), double.Parse(geo[1]));
-					}
-					else
-						call.Add = c.Address;
-
-					call.Add = c.Address;
-					call.Geo = c.GeoLocationData;
-					call.Lon = c.LoggedOn.TimeConverter(department);
-					call.Ste = c.State;
-					call.Num = c.Number;
-
-					results.Calls.Add(call);
-				}
-			}
-			else
-			{
-				// This is a hack due to a bug in the current units app! -SJ 1-31-2016
-				var call = new CallResult();
-				call.Cid = 0;
-				call.Pri = 0;
-				call.Ctl = false;
-				call.Nme = "No Call";
-				call.Noc = "";
-				call.Map = "";
-				call.Not = "";
-				call.Add = "";
-				call.Geo = "";
-				call.Lon = DateTime.UtcNow;
-				call.Ste = 0;
-				call.Num = "";
-
-				results.Calls.Add(call);
-			}
-
 			foreach (var priority in callPriorites)
 			{
 				var priorityResult = new CallPriorityResult();
@@ -373,22 +295,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				priorityResult.IsDefault = priority.IsDefault;
 
 				results.Priorities.Add(priorityResult);
-			}
-
-			var members = _departmentsService.GetAllDepartmentsForUser(UserId);
-			foreach (var member in members)
-			{
-				if (member.IsDeleted)
-					continue;
-
-				if (member.IsDisabled.GetValueOrDefault())
-					continue;
-
-				var depRest = new JoinedDepartmentResult();
-				depRest.Did = member.DepartmentId;
-				depRest.Nme = member.Department.Name;
-
-				results.Departments.Add(depRest);
 			}
 
 			if (callTypes != null && callTypes.Any())
@@ -405,100 +311,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 
 			return results;
-		}
-
-		[AcceptVerbs("GET")]
-		public UnitAppPayloadResult GetUnitAppCallDataOnly()
-		{
-			var results = new UnitAppPayloadResult();
-			results.Calls = new List<CallResult>();
-
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
-			var calls = _callsService.GetActiveCallsByDepartment(DepartmentId).OrderByDescending(x => x.LoggedOn);
-			
-			if (calls != null && calls.Any())
-			{
-				foreach (var c in calls)
-				{
-					var call = new CallResult();
-
-					call.Cid = c.CallId;
-					call.Pri = c.Priority;
-					call.Ctl = c.IsCritical;
-					call.Nme = c.Name;
-					call.Noc = c.NatureOfCall;
-					call.Map = c.MapPage;
-					call.Not = c.Notes;
-
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
-					{
-						var geo = c.GeoLocationData.Split(char.Parse(","));
-
-						if (geo.Length == 2)
-							call.Add = _geoLocationProvider.GetAddressFromLatLong(double.Parse(geo[0]), double.Parse(geo[1]));
-					}
-					else
-						call.Add = c.Address;
-
-					call.Add = c.Address;
-					call.Geo = c.GeoLocationData;
-					call.Lon = c.LoggedOn.TimeConverter(department);
-					call.Ste = c.State;
-					call.Num = c.Number;
-
-					results.Calls.Add(call);
-				}
-			}
-			else
-			{
-				// This is a hack due to a bug in the current units app! -SJ 1-31-2016
-				var call = new CallResult();
-				call.Cid = 0;
-				call.Pri = 0;
-				call.Ctl = false;
-				call.Nme = "No Call";
-				call.Noc = "";
-				call.Map = "";
-				call.Not = "";
-				call.Add = "";
-				call.Geo = "";
-				call.Lon = DateTime.UtcNow;
-				call.Ste = 0;
-				call.Num = "";
-
-				results.Calls.Add(call);
-			}
-			
-			return results;
-		}
-
-		[AcceptVerbs("POST")]
-		public HttpResponseMessage TroubleAlert(TroubleAlertEvent troubleInput)
-		{
-			if (troubleInput == null)
-				throw HttpStatusCode.NotFound.AsException();
-
-			try
-			{
-				troubleInput.DepartmentId = DepartmentId;
-				troubleInput.UserId = UserId;
-				troubleInput.TimeStamp = DateTime.UtcNow;
-
-				CqrsEvent registerUnitPushEvent = new CqrsEvent();
-				registerUnitPushEvent.Type = (int)CqrsEventTypes.TroubleAlert;
-				registerUnitPushEvent.Data = ObjectSerialization.Serialize(troubleInput);
-
-				_cqrsProvider.EnqueueCqrsEvent(registerUnitPushEvent);
-
-				return Request.CreateResponse(HttpStatusCode.Created);
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-				throw HttpStatusCode.InternalServerError.AsException();
-			}
-
-			throw HttpStatusCode.BadRequest.AsException();
 		}
 
 		public HttpResponseMessage Options()

@@ -12,7 +12,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against the security sub-system
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class CommandsController : V3AuthenticatedApiControllerbase
 	{
 		private readonly ICommandsService _commandsService;

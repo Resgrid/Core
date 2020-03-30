@@ -16,7 +16,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to be performed against the chat system
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class ChatController : V3AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors

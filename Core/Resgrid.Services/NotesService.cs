@@ -27,16 +27,16 @@ namespace Resgrid.Services
 		public Note Save(Note note)
 		{
 			_notesRepository.SaveOrUpdate(note);
-			_eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent(){DepartmentId = note.DepartmentId, Note = note});
-			
+			_eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent() { DepartmentId = note.DepartmentId, Note = note });
+
 			return note;
 		}
 
 		public List<string> GetDistinctCategoriesByDepartmentId(int departmentId)
 		{
 			var categories = (from doc in _notesRepository.GetAll()
-								where doc.DepartmentId == departmentId
-								select doc.Category).Distinct().ToList();
+							  where doc.DepartmentId == departmentId && doc.Category != null && doc.Category != ""
+							  select doc.Category).Distinct().ToList();
 
 			return categories;
 		}
@@ -51,18 +51,18 @@ namespace Resgrid.Services
 			_notesRepository.DeleteOnSubmit(note);
 		}
 
-			public List<Note> GetNotesForDepartmentFiltered(int departmentId, bool isAdmin)
+		public List<Note> GetNotesForDepartmentFiltered(int departmentId, bool isAdmin)
+		{
+			if (isAdmin)
 			{
-					if (isAdmin)
-					{
-							return (from note in _notesRepository.GetAll()
-											where note.DepartmentId == departmentId
-											select note).ToList();
-					}
-
-						return (from note in _notesRepository.GetAll()
-										where note.DepartmentId == departmentId && note.IsAdminOnly == false
-										select note).ToList();
+				return (from note in _notesRepository.GetAll()
+						where note.DepartmentId == departmentId
+						select note).ToList();
 			}
+
+			return (from note in _notesRepository.GetAll()
+					where note.DepartmentId == departmentId && note.IsAdminOnly == false
+					select note).ToList();
+		}
 	}
 }

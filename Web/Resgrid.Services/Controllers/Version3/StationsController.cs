@@ -17,7 +17,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations that can be performed against resgrid recipients, usually for sending messages
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class StationsController : V3AuthenticatedApiControllerbase
 	{
 		private ICallsService _callsService;

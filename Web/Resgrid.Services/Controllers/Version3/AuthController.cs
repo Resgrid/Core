@@ -10,6 +10,8 @@ using Resgrid.Web.Services.Controllers.Version3.Models.Auth;
 using RestSharp;
 using System.Net.Http;
 using Resgrid.Web.Services.Helpers;
+using System.Web.Http.Cors;
+using Resgrid.Config;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -18,7 +20,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[RequireHttps]
 	[JsonNetFormatterConfig]
-	//[EnableCors(origins: "*", headers: "*", methods: "*")]
+	[EnableCors(origins: ApiConfig.CorsAllowedHostnames, headers: "*", methods: ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 	public class AuthController : ApiController
 	{
 		private readonly IUsersService _usersService;

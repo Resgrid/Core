@@ -1101,6 +1101,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Your Departments
 
+
+		#region Avatar
 		[HttpGet]
 		public IActionResult GetAvatar(string id, int? type)
 		{
@@ -1221,7 +1223,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			public const string Error = "error";
 		}
 
-		#region Avatar
 		private const int AvatarStoredWidth = 100;  // ToDo - Change the size of the stored avatar image
 		private const int AvatarStoredHeight = 100; // ToDo - Change the size of the stored avatar image
 		private const int AvatarScreenWidth = 400;  // ToDo - Change the value of the width of the image on the screen

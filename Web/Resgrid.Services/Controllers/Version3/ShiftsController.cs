@@ -16,7 +16,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against shifts in a department
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class ShiftsController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IShiftsService _shiftsService;

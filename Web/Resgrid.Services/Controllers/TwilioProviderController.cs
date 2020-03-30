@@ -20,8 +20,8 @@ using Twilio.TwiML;
 
 namespace Resgrid.Web.Services.Controllers
 {
-	[EnableCors(origins: "*", headers: "*", methods: "*")]
 	[System.Web.Http.Description.ApiExplorerSettings(IgnoreApi = true)]
+	[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 	public class TwilioProviderController : ApiController
 	{
 		#region Private Readonly Properties and Constructors

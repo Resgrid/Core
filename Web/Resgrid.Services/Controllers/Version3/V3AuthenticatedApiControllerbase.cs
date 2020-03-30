@@ -14,7 +14,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	[System.Web.Http.AuthorizeAttribute]
 	[JsonNetFormatterConfig]
 	[RequireHttps]
-	//[EnableCors(origins:"*", headers:"*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
+	[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 	public class V3AuthenticatedApiControllerbase : ApiController
 	{
 		protected string UserId

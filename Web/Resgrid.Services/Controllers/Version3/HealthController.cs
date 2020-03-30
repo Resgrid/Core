@@ -14,7 +14,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// Health Check system to get information and health status of the services
 	/// </summary>
 	[System.Web.Mvc.AllowAnonymous]
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
+	[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 	public class HealthController: ApiController
 	{
 		#region Members and Constructors

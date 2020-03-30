@@ -14,7 +14,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against user statuses and their actions
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class StaffingController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;

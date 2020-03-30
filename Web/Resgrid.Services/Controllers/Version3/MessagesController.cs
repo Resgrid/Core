@@ -18,7 +18,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Collection of methods to perform operations against messages
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class MessagesController : V3AuthenticatedApiControllerbase
 	{
 		#region Private Members and Constructors

@@ -23,7 +23,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// is formatted and optimized for these scenarios to be outputted directly into a web application.
 	/// </summary>
 	[System.Web.Http.Description.ApiExplorerSettings(IgnoreApi = true)]
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class BigBoardController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;

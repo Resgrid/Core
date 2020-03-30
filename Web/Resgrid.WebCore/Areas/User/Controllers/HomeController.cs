@@ -335,6 +335,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
 			var departmentMember = _departmentsService.GetDepartmentMember(userId, DepartmentId);
 
+			if (!_authorizationService.CanUserEditProfile(UserId, DepartmentId, userId))
+				Unauthorized();
+
 			var groups = new List<DepartmentGroup>();
 			var defaultGroup = new DepartmentGroup();
 			defaultGroup.Name = "No Group";
@@ -438,6 +441,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> EditUserProfile(EditProfileModel model, IFormCollection form)
 		{
+			if (!_authorizationService.CanUserEditProfile(UserId, DepartmentId, model.UserId))
+				Unauthorized();
+
 			model.User = _usersService.GetUserById(model.UserId);
 			//model.PushUris = _pushUriService.GetPushUrisByUserId(model.UserId);
 			model.Department = _departmentsService.GetDepartmentById(DepartmentId);

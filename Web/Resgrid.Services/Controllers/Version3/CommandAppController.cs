@@ -23,7 +23,6 @@ using Resgrid.Web.Services.Helpers;
 namespace Resgrid.Web.Services.Controllers.Version3
 {
 	[System.Web.Http.Description.ApiExplorerSettings(IgnoreApi = true)]
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class CommandAppController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;

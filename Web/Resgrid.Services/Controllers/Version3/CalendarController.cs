@@ -22,7 +22,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Used to interact with the calendar system
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class CalendarController : V3AuthenticatedApiControllerbase
 	{
 		private readonly ICalendarService _calendarService;

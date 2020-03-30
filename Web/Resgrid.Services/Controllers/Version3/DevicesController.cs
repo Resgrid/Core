@@ -18,7 +18,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against devices for personnel
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class DevicesController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;
@@ -118,7 +117,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// <summary>
 		/// Removed a Push Notification support by PushUriId.
 		/// </summary>
-		/// <param name="input">Input to deregister the device for</param>
+		/// <param name="input">Input to de-register the device for</param>
 		/// <returns></returns>
 		[System.Web.Http.AcceptVerbs("DELETE")]
 		public async Task<HttpResponseMessage> UnRegisterDevice([FromUri] DeviceUnRegistrationInput input)
@@ -173,7 +172,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 
 		/// <summary>
-		/// Register a unit device to receive push notificaiton from the Resgrid system
+		/// Register a unit device to receive push notification from the Resgrid system
 		/// </summary>
 		/// <param name="registrationInput">Input to create the registration for</param>
 		/// <returns>Result for the registration</returns>

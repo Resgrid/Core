@@ -13,7 +13,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to be performed against calls
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class CallPrioritiesController : V3AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors

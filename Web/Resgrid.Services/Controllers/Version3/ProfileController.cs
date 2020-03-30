@@ -16,7 +16,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against a logged in users (determined via the token) profile
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class ProfileController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;

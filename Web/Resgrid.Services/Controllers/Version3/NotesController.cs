@@ -16,7 +16,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Operations to perform against a departments notes
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
 	public class NotesController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IDepartmentsService _departmentsService;
@@ -65,7 +64,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// </summary>
 		/// <returns>List of NotesResult objects.</returns>
 		[AcceptVerbs("GET")]
-		public List<NotesResult> GetAllUnexpiredNotesByCategory(string category)
+		public List<NotesResult> GetAllUnexpiredNotesByCategory(string category, bool includeUnCategorized)
 		{
 			var results = new List<NotesResult>();
 			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
@@ -74,9 +73,25 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			foreach (var n in notes)
 			{
-				if ((n.StartsOn.HasValue || n.StartsOn.Value >= DateTime.UtcNow) && (n.ExpiresOn.HasValue || n.ExpiresOn.Value <= DateTime.UtcNow))
+				if ((!n.StartsOn.HasValue || n.StartsOn.Value >= DateTime.UtcNow) && (!n.ExpiresOn.HasValue || n.ExpiresOn.Value <= DateTime.UtcNow))
 				{
-					if (!String.IsNullOrWhiteSpace(category) || n.Category.Trim().Equals(category, StringComparison.InvariantCultureIgnoreCase))
+					if (!String.IsNullOrWhiteSpace(category) && !String.IsNullOrWhiteSpace(n.Category) && n.Category.Trim().Equals(category, StringComparison.InvariantCultureIgnoreCase))
+					{
+						var noteResult = new NotesResult();
+						noteResult.Nid = n.NoteId;
+						noteResult.Uid = n.UserId;
+						noteResult.Ttl = n.Title;
+						noteResult.Bdy = StringHelpers.StripHtmlTagsCharArray(n.Body).Truncate(100);
+						noteResult.Adn = n.AddedOn.TimeConverter(department);
+						noteResult.Cat = n.Category;
+						noteResult.Clr = n.Color;
+
+						if (n.ExpiresOn.HasValue)
+							noteResult.Exp = n.ExpiresOn.Value;
+
+						results.Add(noteResult);
+					}
+					else if (includeUnCategorized && String.IsNullOrWhiteSpace(n.Category))
 					{
 						var noteResult = new NotesResult();
 						noteResult.Nid = n.NoteId;
@@ -151,6 +166,18 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			note.UserId = UserId;
 
 			_notesService.Save(note);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Get's all the note Categories for a Department
+		/// </summary>
+		/// <returns>List of string of distinct note category.</returns>
+		[AcceptVerbs("GET")]
+		public List<string> GetNoteCategories()
+		{
+			var result = _notesService.GetDistinctCategoriesByDepartmentId(DepartmentId);
 
 			return result;
 		}

@@ -20,7 +20,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Used to interact with the user avatars (profile pictures) in the Resgrid system. The authentication header isn't required to access this method.
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
+	[EnableCors(origins: Config.ApiConfig.CorsAllowedHostnames, headers: "*", methods: Config.ApiConfig.CorsAllowedMethods, SupportsCredentials = true)]
 	public class AvatarsController : ApiController
 	{
 		private readonly IImageService _imageService;

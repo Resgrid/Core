@@ -14,8 +14,6 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <summary>
 	/// Geolocation API methods for gps and other functions (like what3words)
 	/// </summary>
-	[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE,OPTIONS")]
-
 	public class GeoController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IGeoLocationProvider _geoLocationProvider;

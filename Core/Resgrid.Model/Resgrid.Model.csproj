@@ -169,6 +169,7 @@
     <Compile Include="ActionLog.cs" />
     <Compile Include="ActionTypes.cs" />
     <Compile Include="ActiveDepartment.cs" />
+    <Compile Include="DispatchProtocol.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="Affiliate.cs" />
     <Compile Include="ApplicationRole.cs" />

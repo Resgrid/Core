@@ -160,6 +160,7 @@
     <Compile Include="Logic\ShiftNotificationLogic.cs" />
     <Compile Include="Logic\ShiftNotifierLogic.cs" />
     <Compile Include="Logic\StaffingScheduleLogic.cs" />
+    <Compile Include="Logic\PaymentQueueLogic.cs" />
     <Compile Include="Logic\SystemQueueLogic.cs" />
     <Compile Include="Logic\ResourceOrderNotifierLogic.cs" />
     <Compile Include="Logic\TrainingNotifierLogic.cs" />

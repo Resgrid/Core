@@ -1,0 +1,271 @@
+﻿@using Resgrid.Model
+@using Resgrid.Framework
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ViewProtocolModel
+@{
+  ViewBag.Title = "Resgrid | View Protocol";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>View Protocol</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Protocols" asp-action="Index" asp-route-area="User">Protocols</a>
+      </li>
+      <li class="active">
+        <strong>View Protocol</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInUp">
+      <div class="ibox">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="m-b-md">
+                <h2>@Model.Protocol.Name</h2>
+              </div>
+              <dl class="dl-horizontal" style="margin-bottom: 0px;">
+                <dt>Status:</dt>
+                <dd>
+                  @if (Model.Protocol.IsDisabled == false)
+				  {
+                    <span style="display: block; color: green;">Active</span>
+				  }
+				  else
+				  {
+                    <span style="display: block; color: black;">Disabled</span>
+				  }
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-5">
+              <dl class="dl-horizontal">
+                <dt>Code:</dt>
+                <dd>@Model.Protocol.Code</dd>
+                <dt>Type:</dt>
+                <dd>
+                  <span style="display: block;">Dispatch Protocol</span>
+                </dd>
+              </dl>
+            </div>
+            <div class="col-lg-7" id="cluster_info">
+              <dl class="dl-horizontal">
+                <dt>Created By:</dt>
+                <dd>@UserHelper.GetFullNameForUser(Model.Protocol.CreatedByUserId)</dd>
+                <dt>Created On:</dt>
+                <dd>@Model.Protocol.CreatedOn.TimeConverterToString(Model.Department)</dd>
+                <dt>Weight:</dt>
+                <dd>@Model.Protocol.MinimumWeight</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Description:</dt>
+                <dd>
+                  @Html.Raw(Model.Protocol.Description)
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Protocol Text:</dt>
+                <dd>
+                  @Html.Raw(Model.Protocol.ProtocolText)
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row m-t-sm">
+            <div class="col-lg-12">
+              <div class="panel blank-panel">
+                <div class="panel-heading">
+                  <div class="panel-options">
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#tab-1" data-toggle="tab" aria-expanded="true">Triggers</a></li>
+                      <li class=""><a href="#tab-2" data-toggle="tab" aria-expanded="false">Attachments</a></li>
+                      <li class=""><a href="#tab-3" data-toggle="tab" aria-expanded="false">Questions</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <div class="tab-content">
+                    <div class="tab-pane active" id="tab-1">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Type</th>
+                            <th>Starts On</th>
+                            <th>Ends On</th>
+                            <th>Priority</th>
+                            <th>Call Type</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach (var t in Model.Protocol.Triggers)
+						  {
+                            <tr>
+                              <td>
+                                @if (t.Type == 0)
+								{
+                                  <span>Call Priority</span>
+								}
+								else if (t.Type == 1)
+								{
+                                  <span>Call Type</span>
+								}
+								else if (t.Type == 2)
+								{
+                                  <span>Call Priority & Type</span>
+								}
+                              </td>
+                              <td>
+                                @if (!t.StartsOn.HasValue)
+								{
+                                  <span>No Start Date</span>
+								}
+								else
+								{
+                                  <span>@t.StartsOn.Value.TimeConverterToString(Model.Department)</span>
+								}
+                              </td>
+                              <td>
+                                @if (!t.EndsOn.HasValue)
+								{
+                                  <span>No End Date</span>
+								}
+								else
+								{
+                                  <span>@t.EndsOn.Value.TimeConverterToString(Model.Department)</span>
+								}
+                              </td>
+                              <td>
+                                @if (t.Priority.HasValue && (t.Type == 2 || t.Type == 0))
+								{
+                                <span>@CallPriorityHelper.CallPriorityToString(Model.Department.DepartmentId, t.Priority.Value)</span>
+								}
+								else
+								{
+                                  <span>N/A</span>
+								}
+                              </td>
+                              <td>
+                                @if (t.Type == 2 || t.Type == 1)
+								{
+                                  <span>@t.CallType</span>
+								}
+								else
+								{
+                                  <span>N/A</span>
+								}
+                              </td>
+                            </tr>
+						  }
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="tab-pane" id="tab-2">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>File Type</th>
+                            <th>Size</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach (var a in Model.Protocol.Attachments)
+                          {
+                            <tr>
+                              <td>
+                                <span>@a.FileName</span>
+                              </td>
+                              <td>
+                                <span>@a.FileType</span>
+                              </td>
+                              <td>
+                                @if (a.Data != null && a.Data.Length > 0)
+                                {
+                                  <span>@((long)a.Data.Length).GetSizeInMemory()</span>
+                                }
+                                else
+                                {
+                                  <span>0</span>
+                                }
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="tab-pane" id="tab-3">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Question</th>
+                            <th>Answers</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach (var q in Model.Protocol.Questions)
+                          {
+                            <tr>
+                              <td style="width:450px;">
+                                <span>@q.Question</span>
+                              </td>
+                              <td>
+                                <table class="table table-striped">
+                                  <thead>
+                                    <tr>
+                                      <th>Weight</th>
+                                      <th>Answer</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    @foreach (var a in q.Answers)
+                                    {
+                                      <tr>
+                                        <td>
+                                          <span>@a.Weight</span>
+                                        </td>
+                                        <td>
+                                          <span>@a.Answer</span>
+                                        </td>
+                                      </tr>
+                                    }
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+
+}

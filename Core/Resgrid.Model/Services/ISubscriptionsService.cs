@@ -8,7 +8,7 @@ namespace Resgrid.Model.Services
 	{
 		Plan GetCurrentPlanForDepartment(int departmentId, bool byPassCache = true);
 		Payment GetCurrentPaymentForDepartment(int departmentId, bool byPassCache = true);
-		Plan GetPlanById(int planId);
+		Plan GetPlanById(int planId, bool byPassCache = false);
 		Payment GetPaymentById(int paymentId);
 		bool ValidateUserSelectableBuyNowPlan(int planId);
 		Payment SavePayment(Payment payment);
@@ -17,7 +17,7 @@ namespace Resgrid.Model.Services
 		double GetAdjustedUpgradePrice(int paymentId, int planId);
 		Payment GetUpcomingPaymentForDepartment(int departmentId);
 		void CreateOpenPreviewPayment(int departmentId, string userId);
-		Plan GetPlanByExternalId(string externalId);
+		Plan GetPlanByExternalId(string externalId, bool byPassCache = false);
 		List<Payment> GetAllNonFreePaymentsForDepartment(int departmentId);
 		void CreateFreePlanPayment(int departmentId, string userId);
 		bool IsPlanRestrictedOrFree(int planId);

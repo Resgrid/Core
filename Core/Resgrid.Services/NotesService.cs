@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
@@ -21,7 +22,15 @@ namespace Resgrid.Services
 
 		public List<Note> GetAllNotesForDepartment(int departmentId)
 		{
-			return _notesRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var notes = _notesRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+
+			// Temp fix for the Notes screen in the Core web app and it's sticky notes display. -SJ
+			foreach (var note in notes)
+			{
+				note.Body = StringHelpers.SanitizeHtmlInString(note.Body);
+			}
+
+			return notes;
 		}
 
 		public Note Save(Note note)

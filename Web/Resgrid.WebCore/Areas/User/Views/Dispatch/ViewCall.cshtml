@@ -166,6 +166,7 @@
                       <li class=""><a href="#tab-5" data-toggle="tab" aria-expanded="false">Images</a></li>
                       <li class=""><a href="#tab-7" data-toggle="tab" aria-expanded="false">Files</a></li>
                       <li class=""><a href="#tab-6" data-toggle="tab" aria-expanded="false">Notes</a></li>
+                      <li class=""><a href="#tab-8" data-toggle="tab" aria-expanded="false">Protocols</a></li>
                     </ul>
                   </div>
                 </div>
@@ -480,7 +481,55 @@
                         </div>
                       </div>
                     </div>
+                    <div class="tab-pane" id="tab-8">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Text</th>
+                            <th>Attachments</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach (var callProtocol in Model.Call.Protocols)
+						  {
+							var protocol = Model.Protocols.FirstOrDefault(x => x.DispatchProtocolId == callProtocol.DispatchProtocolId);
 
+							if (protocol != null)
+							{
+                              <tr>
+                                <td>
+                                  <span>@protocol.Code</span>
+                                </td>
+                                <td>
+                                  <span>@protocol.Name</span>
+                                </td>
+                                <td>
+                                  <a data-toggle="modal" data-target="#protocolTextWindow" data-protocolId="@protocol.Id">View Text</a>
+                                </td>
+                                <td>
+                                  @if (protocol.Attachments != null && protocol.Attachments.Any())
+                                  {
+                                    foreach (var attachment in protocol.Attachments)
+                                    {
+                                      <dl>
+                                        <dt>@attachment.FileName</dt>
+                                        <dd> <a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@attachment.DispatchProtocolAttachmentId">View</a></dd>
+                                      </dl>
+                                    }
+                                  }
+                                  else
+                                  {
+                                    <span>No Attachments</span>
+                                  }
+                                </td>
+                              </tr>
+							}
+						  }
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -532,6 +581,24 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="protocolTextWindow">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Protocol Text</h4>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+
     </div>
   </div>
 </div>

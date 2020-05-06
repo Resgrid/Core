@@ -142,6 +142,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			SendMessage(ServiceBusConfig.SystemQueueName, serializedObject);
 		}
 
+		public void EnqueuePaymentEvent(CqrsEvent cqrsEvent)
+		{
+			var serializedObject = ObjectSerialization.Serialize(cqrsEvent);
+
+			SendMessage(ServiceBusConfig.PaymentQueueName, serializedObject);
+		}
+
 		public static void VerifyAndCreateClients()
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
@@ -184,6 +191,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 										 arguments: null);
 
 							channel.QueueDeclare(queue: ServiceBusConfig.ShiftNotificationsQueueName,
+										 durable: true,
+										 exclusive: false,
+										 autoDelete: false,
+										 arguments: null);
+
+							channel.QueueDeclare(queue: ServiceBusConfig.PaymentQueueName,
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,

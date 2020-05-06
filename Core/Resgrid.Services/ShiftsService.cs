@@ -11,7 +11,7 @@ namespace Resgrid.Services
 {
 	public class ShiftsService : IShiftsService
 	{
-		private readonly IGenericDataRepository<Shift> _shiftsRepository;
+		private readonly IShiftsRepository _shiftsRepository;
 		private readonly IGenericDataRepository<ShiftPerson> _shiftPersonRepository;
 		private readonly IGenericDataRepository<ShiftDay> _shiftDaysRepository;
 		private readonly IGenericDataRepository<ShiftGroup> _shiftGroupsRepository;
@@ -23,7 +23,7 @@ namespace Resgrid.Services
 		private readonly IGenericDataRepository<ShiftStaffingPerson> _shiftStaffingPersonRepository;
 		private readonly IPersonnelRolesService _personnelRolesService;
 
-		public ShiftsService(IGenericDataRepository<Shift> shiftsRepository, IGenericDataRepository<ShiftPerson> shiftPersonRepository,
+		public ShiftsService(IShiftsRepository shiftsRepository, IGenericDataRepository<ShiftPerson> shiftPersonRepository,
 			IGenericDataRepository<ShiftDay> shiftDaysRepository, IGenericDataRepository<ShiftGroup> shiftGroupsRepository,
 			IGenericDataRepository<ShiftSignup> shiftSignupRepository, IGenericDataRepository<ShiftSignupTrade> shiftSignupTradeRepository, IPersonnelRolesService personnelRolesService,
 			IGenericDataRepository<ShiftSignupTradeUser> shiftSignupTradeUserRepository, IGenericDataRepository<ShiftSignupTradeUserShift> shiftSignupTradeUserShiftsRepository,
@@ -175,8 +175,7 @@ namespace Resgrid.Services
 		{
 			var upcomingShifts = new List<Shift>();
 
-			var shifts = (from s in _shiftsRepository.GetAll()
-						 select s).ToList();
+			var shifts = _shiftsRepository.GetAllShiftsAndDays();
 
 			foreach (var shift in shifts)
 			{
@@ -196,6 +195,16 @@ namespace Resgrid.Services
 									let nextDayShiftTime = localizedDate.AddDays(1)
 									where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
 									select sd;
+
+					//List<ShiftDay> shiftDays = new List<ShiftDay>();
+					//foreach (var sd in shift.Days)
+					//{
+					//	var shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault());
+					//	var nextDayShiftTime = localizedDate.AddDays(1);
+
+					//	if (shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15)))
+					//		shiftDays.Add(sd);
+					//}
 
 					if (shiftDays.Any())
 					{

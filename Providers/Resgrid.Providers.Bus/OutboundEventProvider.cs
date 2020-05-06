@@ -171,7 +171,8 @@ namespace Resgrid.Providers.Bus
 				nqi.DepartmentId = message.DepartmentId;
 				nqi.StateId = message.Staffing.UserStateId;
 				nqi.PreviousStateId = previousStaffing;
-				nqi.Value = message.Staffing.State.ToString();
+				//nqi.Value = message.Staffing.State.ToString();
+				nqi.Value = message.Staffing.UserStateId.ToString();
 
 				_outboundQueueProvider.EnqueueNotification(nqi);
 			}
@@ -191,7 +192,8 @@ namespace Resgrid.Providers.Bus
 				nqi.DepartmentId = message.DepartmentId;
 				nqi.StateId = message.Staffing.UserStateId;
 				nqi.PreviousStateId = previousStaffing;
-				nqi.Value = message.Staffing.State.ToString();
+				//nqi.Value = message.Staffing.State.ToString();
+				nqi.Value = message.Staffing.UserStateId.ToString();
 
 				_outboundQueueProvider.EnqueueNotification(nqi);
 				_signalrProvider.PersonnelStaffingUpdated(message.Staffing.DepartmentId, message.Staffing);

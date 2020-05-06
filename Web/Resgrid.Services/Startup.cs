@@ -19,6 +19,7 @@ using System.Configuration;
 using WebApiThrottle;
 using Resgrid.Config;
 using System.Reflection;
+using Microsoft.ApplicationInsights.Extensibility;
 
 [assembly: OwinStartup(typeof(Resgrid.Web.Services.Startup))]
 namespace Resgrid.Web.Services
@@ -112,24 +113,35 @@ namespace Resgrid.Web.Services
 				Repository = new CacheRepository()
 			});
 
-			StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.ProductionKey);
+			if (Resgrid.Config.PaymentProviderConfig.IsTestMode)
+				StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.TestKey);
+			else
+				StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.ProductionKey);
 
 			ConfigureAuth(app);
 		}
 
 		private static readonly Lazy<CorsOptions> SignalrCorsOptions = new Lazy<CorsOptions>(() =>
 		{
+			var policy = new CorsPolicy
+			{
+				AllowAnyHeader = true,
+				AllowAnyMethod = true,
+				AllowAnyOrigin = false,
+				SupportsCredentials = true
+			};
+
+			foreach (var hostname in ApiConfig.CorsAllowedHostnames.Split(char.Parse(",")))
+			{
+				policy.Origins.Add(hostname.Trim());
+			}
+
 			return new CorsOptions
 			{
 				PolicyProvider = new CorsPolicyProvider
 				{
 					PolicyResolver = context =>
 					{
-						var policy = new CorsPolicy();
-						policy.AllowAnyOrigin = true;
-						policy.AllowAnyMethod = true;
-						policy.AllowAnyHeader = true;
-						policy.SupportsCredentials = false;
 						return Task.FromResult(policy);
 					}
 				}

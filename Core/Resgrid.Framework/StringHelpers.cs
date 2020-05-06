@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -89,6 +90,7 @@ namespace Resgrid.Framework
 			sanitizer.Tag("h5").RemoveEmpty();
 			sanitizer.Tag("strong").RemoveEmpty();
 			sanitizer.Tag("b").Rename("strong").RemoveEmpty();
+			sanitizer.Tag("div").Rename("p").RemoveEmpty();
 			sanitizer.Tag("i").RemoveEmpty();
 			sanitizer.Tag("em");
 			sanitizer.Tag("br");
@@ -114,6 +116,20 @@ namespace Resgrid.Framework
 		public static string Truncate(this string value, int maxLength)
 		{
 			return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+		}
+
+		public static string GetSizeInMemory(this long bytesize)
+		{
+			string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+			double len = Convert.ToDouble(bytesize);
+			int order = 0;
+			while (len >= 1024D && order < sizes.Length - 1)
+			{
+				order++;
+				len /= 1024;
+			}
+
+			return string.Format(CultureInfo.CurrentCulture, "{0:0.##} {1}", len, sizes[order]);
 		}
 
 		public static bool IsValidDomainName(string name)

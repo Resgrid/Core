@@ -43,6 +43,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<AddressRepository>().As<IAddressRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<HealthRepository>().As<IHealthRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentGroupMembersRepository>().As<IDepartmentGroupMembersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentCallPruningRepository>().As<IDepartmentCallPruningRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftsRepository>().As<IShiftsRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

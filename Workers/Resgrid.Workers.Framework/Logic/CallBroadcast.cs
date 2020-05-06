@@ -19,6 +19,14 @@ namespace Resgrid.Workers.Framework.Logic
 		private IQueueService _queueService;
 		private QueueClient _client = null;
 
+		private static ICommunicationService _communicationService;
+		private static ICallsService _callsService;
+		private static IUserProfileService _userProfilesService;
+		private static IDepartmentGroupsService _departmentGroupsService;
+		private static IUnitsService _unitsService;
+		private static IPersonnelRolesService _rolesService;
+		private static IPrinterProvider _printerProvider;
+
 		public BroadcastCallLogic()
 		{
 			while (_client == null)
@@ -118,15 +126,15 @@ namespace Resgrid.Workers.Framework.Logic
 
 		public static void ProcessCallQueueItem(CallQueueItem cqi)
 		{
-			ICommunicationService _communicationService;
-			ICallsService _callsService;
-
 			try
 			{
 				if (cqi != null && cqi.Call != null && cqi.Call.HasAnyDispatches())
 				{
-					_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-					_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
+					if (_communicationService == null)
+						_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
+
+					if (_callsService == null)
+						_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
 
 					List<int> groupIds = new List<int>();
 
@@ -136,8 +144,10 @@ namespace Resgrid.Workers.Framework.Logic
 						 */
 					if (cqi.Profiles == null || !cqi.Profiles.Any())
 					{
-						var userProfilesService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-						cqi.Profiles = userProfilesService.GetAllProfilesForDepartment(cqi.Call.DepartmentId).Select(x => x.Value).ToList();
+						if (_userProfilesService == null)
+							_userProfilesService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+
+						cqi.Profiles = _userProfilesService.GetAllProfilesForDepartment(cqi.Call.DepartmentId).Select(x => x.Value).ToList();
 					}
 
 					if (cqi.CallDispatchAttachmentId > 0)
@@ -159,13 +169,10 @@ namespace Resgrid.Workers.Framework.Logic
 					// Dispatch Personnel
 					if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
 					{
-						foreach (var d in cqi.Call.Dispatches)
-						{
-							dispatchedUsers.Add(d.UserId);
-						}
-
 						Parallel.ForEach(cqi.Call.Dispatches, d =>
 						{
+							dispatchedUsers.Add(d.UserId);
+
 							try
 							{
 								var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == d.UserId);
@@ -181,7 +188,8 @@ namespace Resgrid.Workers.Framework.Logic
 						});
 					}
 
-					var departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
+					if (_departmentGroupsService == null)
+						_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
 
 					// Dispatch Groups
 					if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())
@@ -191,7 +199,7 @@ namespace Resgrid.Workers.Framework.Logic
 							if (!groupIds.Contains(d.DepartmentGroupId))
 								groupIds.Add(d.DepartmentGroupId);
 
-							var members = departmentGroupsService.GetAllMembersForGroup(d.DepartmentGroupId);
+							var members = _departmentGroupsService.GetAllMembersForGroup(d.DepartmentGroupId);
 
 							foreach (var member in members)
 							{
@@ -219,11 +227,12 @@ namespace Resgrid.Workers.Framework.Logic
 					// Dispatch Units
 					if (cqi.Call.UnitDispatches != null && cqi.Call.UnitDispatches.Any())
 					{
-						var unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+						if (_unitsService == null)
+							_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
 
 						foreach (var d in cqi.Call.UnitDispatches)
 						{
-							var unit = unitsService.GetUnitById(d.UnitId);
+							var unit = _unitsService.GetUnitById(d.UnitId);
 
 							if (unit != null && unit.StationGroupId.HasValue)
 								if (!groupIds.Contains(unit.StationGroupId.Value))
@@ -231,7 +240,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							_communicationService.SendUnitCall(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Address);
 
-							var unitAssignedMembers = unitsService.GetCurrentRolesForUnit(d.UnitId);
+							var unitAssignedMembers = _unitsService.GetCurrentRolesForUnit(d.UnitId);
 
 							if (unitAssignedMembers != null && unitAssignedMembers.Count() > 0)
 							{
@@ -260,7 +269,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								if (unit.StationGroupId.HasValue)
 								{
-									var members = departmentGroupsService.GetAllMembersForGroup(unit.StationGroupId.Value);
+									var members = _departmentGroupsService.GetAllMembersForGroup(unit.StationGroupId.Value);
 
 									foreach (var member in members)
 									{
@@ -290,11 +299,12 @@ namespace Resgrid.Workers.Framework.Logic
 					// Dispatch Roles
 					if (cqi.Call.RoleDispatches != null && cqi.Call.RoleDispatches.Any())
 					{
-						var rolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
+						if (_rolesService == null)
+							_rolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
 
 						foreach (var d in cqi.Call.RoleDispatches)
 						{
-							var members = rolesService.GetAllMembersOfRole(d.RoleId);
+							var members = _rolesService.GetAllMembersOfRole(d.RoleId);
 
 							foreach (var member in members)
 							{
@@ -320,14 +330,15 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 
 					// Send Call Print to Printer
-					var printerProvider = Bootstrapper.GetKernel().Resolve<IPrinterProvider>();
+					if (_printerProvider == null)
+						_printerProvider = Bootstrapper.GetKernel().Resolve<IPrinterProvider>();
 
 					Dictionary<int, DepartmentGroup> fetchedGroups = new Dictionary<int, DepartmentGroup>();
 					if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
 					{
 						foreach (var d in cqi.Call.Dispatches)
 						{
-							var group = departmentGroupsService.GetGroupForUser(d.UserId, cqi.Call.DepartmentId);
+							var group = _departmentGroupsService.GetGroupForUser(d.UserId, cqi.Call.DepartmentId);
 
 							if (group != null)
 							{
@@ -349,7 +360,7 @@ namespace Resgrid.Workers.Framework.Logic
 							if (fetchedGroups.ContainsKey(groupId))
 								group = fetchedGroups[groupId];
 							else
-								group = departmentGroupsService.GetGroupById(groupId);
+								group = _departmentGroupsService.GetGroupById(groupId);
 
 							if (!String.IsNullOrWhiteSpace(group.PrinterData) && group.DispatchToPrinter)
 							{
@@ -357,7 +368,7 @@ namespace Resgrid.Workers.Framework.Logic
 								var apiKey = SymmetricEncryption.Decrypt(printerData.ApiKey, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 								var callUrl = _callsService.GetShortenedCallPdfUrl(cqi.Call.CallId, true, groupId);
 
-								var printJob = printerProvider.SubmitPrintJob(apiKey, printerData.PrinterId, "CallPrint", callUrl);
+								var printJob = _printerProvider.SubmitPrintJob(apiKey, printerData.PrinterId, "CallPrint", callUrl);
 							}
 						}
 						catch (Exception ex)

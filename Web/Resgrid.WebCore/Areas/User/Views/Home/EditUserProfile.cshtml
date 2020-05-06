@@ -202,13 +202,17 @@
               <div class="form-group">
                 <label class="col-sm-2 control-label">User Type</label>
                 <div class="col-sm-10">
-                  <div class="radio radio-info radio-inline">
-                    <input type="radio" class="form-control" asp-for="IsDepartmentAdmin" value="false">
-                    <label for="inlineRadio1">  Normal User </label>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <label class="col-sm-2 control-label" style="padding-top:0px;">Normal User</label>
+                      <input type="radio" asp-for="IsDepartmentAdmin" value="false">
+                    </div>
                   </div>
-                  <div class="radio radio-inline">
-                    <input type="radio" class="form-control" asp-for="IsDepartmentAdmin" value="true">
-                    <label for="inlineRadio2"> Department Admin </label>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <label class="col-sm-2 control-label" style="padding-top:0px;">Department Admin</label>
+                      <input type="radio" asp-for="IsDepartmentAdmin" value="true">
+                    </div>
                   </div>
                 </div>
               </div>

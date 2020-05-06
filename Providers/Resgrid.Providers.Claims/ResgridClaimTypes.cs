@@ -44,6 +44,7 @@
 			public const string Inventory = "Inventory";
 			public const string Command = "Command";
 			public const string Connect = "Connect";
+			public const string Protocols = "Protocols";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

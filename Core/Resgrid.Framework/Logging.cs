@@ -158,7 +158,7 @@ namespace Resgrid.Framework
 				EmailSing = newline + "Thanks and Regards" + newline + "    " + "     " + "<b>Application Admin </b>" + "</br>";
 				Sub = "Exception occurred" + " " + "in [" + processName + "]";
 
-				string errortomail = EmailHead + "<b>Log Written Date: </b>" + " " + DateTime.Now.ToString() + newline + "<b>Error Line No :</b>" + " " + ErrorlineNo + "\t\n" + " " + newline + "<b>Error Message:</b>" + " " + Errormsg + newline + "<b>Exception Type:</b>" + " " + extype + newline + "<b> Error Details :</b>" + " " + ErrorLocation + newline + "<b> Inner Details :</b>" + " " + InnerException + newline + "<b>System:</b>" + " " + processName + newline + $"<b>DepartmentId: {departmentId}</b>" + newline + $"<b>Username: {userName}</b>" + newline + newline + EmailSing;
+				string errortomail = EmailHead + "<b>Log Written Date: </b>" + " " + DateTime.Now.ToString() + newline + "<b>Error Line No :</b>" + " " + ErrorlineNo + "\t\n" + " " + newline + "<b>Error Message:</b>" + " " + Errormsg + newline + "<b>Exception Type:</b>" + " " + extype + newline + "<b> Error Details :</b>" + " " + ErrorLocation + newline + "<b> Inner Details :</b>" + " " + InnerException + newline + "<b>System:</b>" + " " + processName + newline + $"<b>DepartmentId: {departmentId}</b>" + newline + $"<b>Username: {userName}</b>" + newline + newline + exmail.StackTrace + newline + newline + EmailSing;
 
 				using (MailMessage mailMessage = new MailMessage())
 				{

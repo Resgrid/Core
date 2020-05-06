@@ -37,12 +37,14 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IIdentityRepository _identityRepository;
+		private readonly IDepartmentCallPruningRepository _departmentCallPruningDapperRepository;
+
 
 		public DepartmentsService(IDepartmentsRepository departmentRepository, IDepartmentMembersRepository departmentMembersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentCallEmailsRepository departmentCallEmailsRepository,
 			IGenericDataRepository<DepartmentCallPruning> departmentCallPruningRepository, ICacheProvider cacheProvider, IUsersService usersService,
 			IDepartmentSettingsService departmentSettingsService, IGenericDataRepository<UserProfile> userProfileRepository,
-			IEventAggregator eventAggregator, IIdentityRepository identityRepository)
+			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository)
 		{
 			_departmentRepository = departmentRepository;
 			_departmentMembersRepository = departmentMembersRepository;
@@ -55,6 +57,7 @@ namespace Resgrid.Services
 			_userProfileRepository = userProfileRepository;
 			_eventAggregator = eventAggregator;
 			_identityRepository = identityRepository;
+			_departmentCallPruningDapperRepository = departmentCallPruningDapperRepository;
 		}
 		#endregion Private Members and Constructors
 
@@ -93,13 +96,6 @@ namespace Resgrid.Services
 		{
 			Func<Department> getDepartment = delegate ()
 			{
-				//var dep = _departmentRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId);
-
-				//if (dep != null)
-				//	dep = FillAdminUsers(dep);
-
-				//return dep;
-
 				var department = _departmentRepository.GetDepartmentWithMembersById(departmentId);
 
 				if (department == null && departmentId > 0)
@@ -858,19 +854,12 @@ namespace Resgrid.Services
 
 		public DepartmentCallPruning GetDepartmentCallPruningSettings(int departmentId)
 		{
-			var prune = from pruning in _departmentCallPruningRepository.GetAll()
-						where pruning.DepartmentId == departmentId
-						select pruning;
-
-			return prune.FirstOrDefault();
+			return _departmentCallPruningDapperRepository.GetDepartmentCallPruningSettings(departmentId);
 		}
 
 		public List<DepartmentCallPruning> GetAllDepartmentCallPrunings()
 		{
-			var pruning = from prune in _departmentCallPruningRepository.GetAll()
-						  select prune;
-
-			return pruning.ToList();
+			return _departmentCallPruningDapperRepository.GetAllDepartmentCallPrunings();
 		}
 
 		public DepartmentCallPruning SavelDepartmentCallPruning(DepartmentCallPruning callPruning)
@@ -878,7 +867,7 @@ namespace Resgrid.Services
 			_departmentCallPruningRepository.SaveOrUpdate(callPruning);
 
 
-			return GetDepartmentCallPruningSettings(callPruning.DepartmentId);
+			return callPruning;
 		}
 
 		public List<string> GetAllDisabledOrHiddenUsers(int departmentId)

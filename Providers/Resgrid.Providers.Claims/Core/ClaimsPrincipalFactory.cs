@@ -156,11 +156,9 @@ namespace Resgrid.Providers.Claims.Core
 							ClaimsLogic.AddGroupClaim(id, group.DepartmentGroupId, isGroupAdmin);
 					}
 
-					ClaimsLogic.AddCallClaims(id, departmentAdmin, permissions, isGroupAdmin,
-						roles);
+					ClaimsLogic.AddCallClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 					ClaimsLogic.AddActionClaims(id);
-					ClaimsLogic.AddLogClaims(id, departmentAdmin, permissions, isGroupAdmin,
-						roles);
+					ClaimsLogic.AddLogClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 					ClaimsLogic.AddStaffingClaims(id);
 					ClaimsLogic.AddPersonnelClaims(id, departmentAdmin, permissions, isGroupAdmin,roles);
 					ClaimsLogic.AddUnitClaims(id, departmentAdmin);
@@ -170,22 +168,16 @@ namespace Resgrid.Providers.Claims.Core
 					ClaimsLogic.AddProfileClaims(id);
 					ClaimsLogic.AddReportsClaims(id);
 					ClaimsLogic.AddGenericGroupClaims(id, departmentAdmin);
-					ClaimsLogic.AddDocumentsClaims(id, departmentAdmin, permissions,
-						isGroupAdmin, roles);
-					ClaimsLogic.AddNotesClaims(id, departmentAdmin, permissions, isGroupAdmin,
-						roles);
-					ClaimsLogic.AddScheduleClaims(id, departmentAdmin, permissions,
-						isGroupAdmin, roles);
-					ClaimsLogic.AddShiftClaims(id, departmentAdmin, permissions, isGroupAdmin,
-						roles);
-					ClaimsLogic.AddTrainingClaims(id, departmentAdmin, permissions,
-						isGroupAdmin, roles);
-					ClaimsLogic.AddPIIClaims(id, departmentAdmin, permissions, isGroupAdmin,
-						roles);
-					ClaimsLogic.AddInventoryClaims(id, departmentAdmin, permissions,
-						isGroupAdmin, roles);
+					ClaimsLogic.AddDocumentsClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+					ClaimsLogic.AddNotesClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+					ClaimsLogic.AddScheduleClaims(id, departmentAdmin, permissions,	isGroupAdmin, roles);
+					ClaimsLogic.AddShiftClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+					ClaimsLogic.AddTrainingClaims(id, departmentAdmin, permissions,	isGroupAdmin, roles);
+					ClaimsLogic.AddPIIClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+					ClaimsLogic.AddInventoryClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 					ClaimsLogic.AddConnectClaims(id, departmentAdmin);
 					ClaimsLogic.AddCommandClaims(id, departmentAdmin);
+					ClaimsLogic.AddProtocolClaims(id, departmentAdmin);
 				}
 			}
 

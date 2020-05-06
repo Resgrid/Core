@@ -107,5 +107,10 @@
 		public const string Connect_Update = "Connect_Update";
 		public const string Connect_Create = "Connect_Create";
 		public const string Connect_Delete = "Connect_Delete";
+
+		public const string Protocol_View = "Protocol_View";
+		public const string Protocol_Update = "Protocol_Update";
+		public const string Protocol_Create = "Protocol_Create";
+		public const string Protocol_Delete = "Protocol_Delete";
 	}
 }

@@ -7,7 +7,10 @@ var resgrid;
 		(function (newcall) {
 			$(document).ready(function () {
 				marker = null;
-				userSuppliedAddress = false;
+                userSuppliedAddress = false;
+                resgrid.dispatch.newcall.protocolCount = 0;
+                resgrid.dispatch.newcall.protocolData = {};
+
 				$("#NatureOfCall").kendoEditor();
 				$("#CallNotes").kendoEditor();
 				$("#Call_Address").bind("keypress", function (event) {
@@ -23,7 +26,18 @@ var resgrid;
 						$("#findw3wButton").click();
 						return false;
 					}
-				});
+                });
+
+                $("#CallPriority").change(function () {
+                    checkForProtocols();
+
+                });
+
+                $("#Call_Type").change(function () {
+                    checkForProtocols();
+
+                });
+
 				var mapCenter = new google.maps.LatLng(centerLat, centerLng);
 				var mapOptions = {
 					zoom: 11,
@@ -239,62 +253,6 @@ var resgrid;
 						}
 					]
 				});
-				$("#unitsGrid").kendoGrid({
-					dataSource: {
-						type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val()
-						},
-						schema: {
-							model: {
-								fields: {
-									UnitId: { type: "number" },
-									Name: { type: "string" },
-									Type: { type: "string" },
-									Station: { type: "string" },
-									StateId: { type: "number" },
-									State: { type: "string" },
-									StateColor: { type: "string" },
-									TextColor: { type: "string" },
-									Timestamp: { type: "string" },
-									Eta: { type: "string" }
-								}
-							}
-						},
-						//pageSize: 50,
-						serverPaging: false,
-						serverFiltering: false,
-						serverSorting: false
-					},
-					height: 600,
-					width: 210,
-					filterable: true,
-					sortable: true,
-					pageable: false,
-					columns: [
-						{
-							field: "UnitId",
-							title: "",
-							width: 28,
-							filterable: false,
-							sortable: false,
-							headerTemplate: '<label><input type="checkbox" id="checkAllUnits"/></label>',
-							template: "<input type=\"checkbox\" id=\"dispatchUnit_#=UnitId#\" name=\"dispatchUnit_#=UnitId#\" />"
-						},
-						"Name",
-						"Eta",
-						"Type",
-						{
-							field: "Type",
-							title: "Type"
-						},
-						{
-							field: "State",
-							title: "Status",
-							template: "<span style='color:#=StateColor#;'>#=State#</span>"
-						}
-					]
-				});
 				$("#rolesGrid").kendoGrid({
 					dataSource: {
 						type: "json",
@@ -336,7 +294,80 @@ var resgrid;
 							title: "Personnel Count"
 						}
 					]
-				});
+                });
+
+                $('#protocolQuestionWindow').on('show.bs.modal', function (event) {
+                    var protocolId = $(event.relatedTarget).data('protocolid');
+                    //var protocolId = button.data('protocolId');
+
+                    var protocol = null;
+
+                    for (var i = 0; i < resgrid.dispatch.newcall.protocolData.length; i++) {
+                        if (resgrid.dispatch.newcall.protocolData[i].Id === protocolId) {
+                            protocol = resgrid.dispatch.newcall.protocolData[i];
+                            break;
+                        }
+                    }
+
+                    var modal = $(this);
+                    modal.find('.modal-title').text(`Questions for ${protocol.Name}`);
+
+                    var questionHtml = "";
+                    for (var t = 0; t < protocol.Questions.length; t++) {
+                        var question = protocol.Questions[t];
+                        questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${question.Question}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
+
+                        for (var r = 0; r < protocol.Questions[t].Answers.length; r++) {
+                            var answer = protocol.Questions[t].Answers[r];
+
+                            if (r === 0) {
+                                questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${answer.Answer}</option>`;
+                            } else {
+                                questionHtml = questionHtml + `<option value="${answer.Weight}">${answer.Answer}</option>`;
+                            }
+                        }
+
+                        questionHtml = questionHtml + '</select></div></div>';
+                    }
+                    modal.find('.modal-body').empty();
+                    modal.find('.modal-body').append(questionHtml);
+
+                    $('#processQuestionAnswers').removeAttr("data-protocolid");
+                    $('#processQuestionAnswers').attr('data-protocolid', protocol.Id);
+                });
+
+                $('#processQuestionAnswers').click(function () {
+                    var buttonProtocolId = $('#processQuestionAnswers').attr('data-protocolid');
+                    $('#protocolQuestionWindow').modal('hide');
+
+                    var protocol = null;
+                    for (var i = 0; i < resgrid.dispatch.newcall.protocolData.length; i++) {
+                        if (resgrid.dispatch.newcall.protocolData[i].Id === Number(buttonProtocolId)) {
+                            protocol = resgrid.dispatch.newcall.protocolData[i];
+                            break;
+                        }
+                    }
+
+                    var totalAnswerWeight = 0;
+                    for (var t = 0; t < protocol.Questions.length; t++) {
+                        var question = protocol.Questions[t];
+
+                        var answerWeight = $(`#questionAnswer_${question.Id}`).val();
+
+                        if (answerWeight) {
+                            totalAnswerWeight = totalAnswerWeight + Number(answerWeight);
+                        }
+                    }
+
+                    $(`#answerProcotolQuestions_${protocol.Id}`).removeClass("btn-warning btn-success btn-inverse");
+
+                    if (totalAnswerWeight >= protocol.MinimumWeight) {
+                        $(`#pendingProtocol_${protocol.Id}`).val('1');
+                        $(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-success");
+                    } else {
+                        $(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-inverse");
+                    }
+                });
 
 				function fillCallTemplate() {
 					var templateId = $('#CallTemplateId').val();
@@ -375,9 +406,6 @@ var resgrid;
 				$('#checkAllGroups').on('click', function () {
 					$('#groupsGrid').find(':checkbox').prop('checked', this.checked);
 				});
-				$('#checkAllUnits').on('click', function () {
-					$('#unitsGrid').find(':checkbox').prop('checked', this.checked);
-				});
 				$('#checkAllRoles').on('click', function () {
 					$('#rolesGrid').find(':checkbox').prop('checked', this.checked);
 				});
@@ -393,12 +421,6 @@ var resgrid;
 						var groupsDataArea = groupsGrid.find('.k-grid-content');
 						groupsDataArea.height(556);
 						groupsGrid.height(600);
-					}
-					else if (e.target && e.target.textContent === "Units") {
-						var gridElement = $('#unitsGrid');
-						var dataArea = gridElement.find('.k-grid-content');
-						dataArea.height(556);
-						gridElement.height(600);
 					}
 					else if (e.target && e.target.textContent === "Roles") {
 						var rolesGrid = $('#rolesGrid');
@@ -444,19 +466,68 @@ var resgrid;
 			newcall.findLocation = findLocation;
 			function refreshPersonnelGrid() {
 				var personnelGrid = $('#personnelGrid').data('kendoGrid');
-				var unitsGrid = $('#unitsGrid').data('kendoGrid');
 				personnelGrid.dataSource.transport.options.read.url = resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val();
-				unitsGrid.dataSource.transport.options.read.url = resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val();
 				personnelGrid.dataSource.read();
 				personnelGrid.refresh();
-				unitsGrid.dataSource.read();
-				unitsGrid.refresh();
 			}
 			newcall.refreshPersonnelGrid = refreshPersonnelGrid;
 			function checkAllUnits(gridName, item) {
 				$('#' + gridName).find(':checkbox').trigger('click');//.prop('checked', item.value);
 			}
-			newcall.checkAllUnits = checkAllUnits;
+            newcall.checkAllUnits = checkAllUnits;
+            function checkForProtocols() {
+                var callPriorityVal = $('#CallPriority').val();
+                var callTypeVal = $('#Call_Type').val();
+
+                $("#protocols tr").remove();
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + `/User/Protocols/GetProtocolsForPrioType?priority=${callPriorityVal}&type=${callTypeVal}`,
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        resgrid.dispatch.newcall.protocolCount = 0;
+
+                        if (data) {
+                            resgrid.dispatch.newcall.protocolData = data;
+                            for (var i = 0; i < data.length; i++) {
+                                var pendingProtocol = data[i];
+
+                                if (pendingProtocol.State === 1 || pendingProtocol.State === 2) {
+                                    resgrid.dispatch.newcall.addProtocol(pendingProtocol.Id, pendingProtocol.Name, pendingProtocol.Code, pendingProtocol.State);
+                                }
+                                
+                            }
+                        }
+                    }
+                });
+            }
+            newcall.checkForProtocols = checkForProtocols;
+            function addProtocol(id, name, code, state) {
+                resgrid.dispatch.newcall.protocolCount++;
+                $('#protocols tbody').first().append(`<tr>
+                    <td style='max-width: 50px;'>${code}</td>
+                    <td>${name}</td>"
+                    <td>${resgrid.dispatch.newcall.getStatusField(id, state, code)}</td>"
+                </tr>`);
+            }
+            newcall.addProtocol = addProtocol;
+
+            function getStatusField(id, state, code) {
+                if (state === 0) {
+                    return "Inactive";
+                } else if (state === 1) {
+                    return `Active <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                } else if (state === 2) {
+                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">Answer Questions</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                } else {
+                    return "Unknown";
+                }
+            }
+            newcall.getStatusField = getStatusField;
+
+            checkForProtocols();
 		})(newcall = dispatch.newcall || (dispatch.newcall = {}));
 	})(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));
 })(resgrid || (resgrid = {}));

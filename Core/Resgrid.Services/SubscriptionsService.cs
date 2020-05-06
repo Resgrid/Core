@@ -12,7 +12,10 @@ namespace Resgrid.Services
 	public class SubscriptionsService : ISubscriptionsService
 	{
 		private static string CacheKey = "CurrentPayment_{0}";
+		private static string ExternalPlanCacheKey = "ExternalPlan_{0}";
+		private static string PlanCacheKey = "Plan_{0}";
 		private static TimeSpan CacheLength = TimeSpan.FromDays(1);
+		private static TimeSpan SixMonthCacheLength = TimeSpan.FromDays(180);
 
 		private readonly IPlansRepository _plansRepository;
 		private readonly IPaymentRepository _paymentsRepository;
@@ -124,14 +127,34 @@ namespace Resgrid.Services
 			return _paymentsRepository.GetPaymentByTransactionId(transactionId);
 		}
 
-		public Plan GetPlanById(int planId)
+		public Plan GetPlanById(int planId, bool byPassCache = false)
 		{
-			return _plansRepository.GetAll().FirstOrDefault(x => x.PlanId == planId);
+			Func<Plan> getPlan = delegate ()
+			{
+				return _plansRepository.GetAll().FirstOrDefault(x => x.PlanId == planId);
+			};
+
+			if (!byPassCache && Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				return _cacheProvider.Retrieve<Plan>(string.Format(PlanCacheKey, planId), getPlan, SixMonthCacheLength);
+			}
+
+			return getPlan();
 		}
 
-		public Plan GetPlanByExternalId(string externalId)
+		public Plan GetPlanByExternalId(string externalId, bool byPassCache = false)
 		{
-			return _plansRepository.GetPlanByExternalId(externalId);
+			Func<Plan> getPlan = delegate ()
+			{
+				return _plansRepository.GetPlanByExternalId(externalId);
+			};
+
+			if (!byPassCache && Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				return _cacheProvider.Retrieve<Plan>(string.Format(ExternalPlanCacheKey, externalId), getPlan, SixMonthCacheLength);
+			}
+
+			return getPlan();
 		}
 
 		public Payment GetPaymentById(int paymentId)

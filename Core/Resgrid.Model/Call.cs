@@ -132,6 +132,9 @@ namespace Resgrid.Model
 		[ProtoMember(29)]
 		public virtual ICollection<CallDispatchRole> RoleDispatches { get; set; }
 
+		[ProtoMember(30)]
+		public virtual ICollection<CallProtocol> Protocols { get; set; }
+
 		public string ContactName { get; set; }
 
 		public string ContactNumber { get; set; }

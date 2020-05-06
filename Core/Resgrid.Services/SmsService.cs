@@ -108,6 +108,24 @@ namespace Resgrid.Services
 					text = StringHelpers.StripHtmlTagsCharArray(text);
 					text = text + " " + address;
 
+					if (call.Protocols != null && call.Protocols.Any())
+					{
+						string protocols = String.Empty;
+						foreach (var protocol in call.Protocols)
+						{
+							if (!String.IsNullOrWhiteSpace(protocol.Data))
+							{
+								if (String.IsNullOrWhiteSpace(protocols))
+									protocols = protocol.Data;
+								else
+									protocols = protocol + "," + protocol.Data;
+							}
+						}
+
+						if (!String.IsNullOrWhiteSpace(protocols))
+							text = text + " (" + protocols + ")";
+					}
+
 					if (!String.IsNullOrWhiteSpace(call.ShortenedAudioUrl))
 					{
 						text = text + " " + call.ShortenedAudioUrl;
@@ -127,6 +145,24 @@ namespace Resgrid.Services
 					string text = HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
 					text = StringHelpers.StripHtmlTagsCharArray(text);
 					text = text + " " + address;
+
+					if (call.Protocols != null && call.Protocols.Any())
+					{
+						string protocols = String.Empty;
+						foreach (var protocol in call.Protocols)
+						{
+							if (!String.IsNullOrWhiteSpace(protocol.Data))
+							{
+								if (String.IsNullOrWhiteSpace(protocols))
+									protocols = protocol.Data;
+								else
+									protocols = protocol + "," + protocol.Data;
+							}
+						}
+
+						if (!String.IsNullOrWhiteSpace(protocols))
+							text = text + " (" + protocols + ")";
+					}
 
 					if (!String.IsNullOrWhiteSpace(call.ShortenedAudioUrl))
 					{
@@ -148,6 +184,7 @@ namespace Resgrid.Services
 				}
 			}
 		}
+
 		private void SendCallViaEmailSmsGateway(Call call, string address, UserProfile profile)
 		{
 			MailMessage email = new MailMessage();

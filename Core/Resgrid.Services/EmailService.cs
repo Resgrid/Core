@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using MimeKit;
 using Resgrid.Model.Events;
+using System.Linq;
 
 namespace Resgrid.Services
 {
@@ -137,7 +138,7 @@ namespace Resgrid.Services
 				user = profile.User;
 
 			if (user == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
-				user = _usersService.GetUserById(message.ReceivingUserId);
+				user = _usersService.GetUserById(message.ReceivingUserId, false);
 
 			var subject = string.Format("Resgrid Message from {0}", senderName);
 
@@ -219,7 +220,20 @@ namespace Resgrid.Services
 			else
 				dispatchedOn = call.LoggedOn.ToString("G") + " UTC";
 
+			if (call.Protocols != null && call.Protocols.Any())
+			{
+				string protocols = String.Empty;
+				foreach (var protocol in call.Protocols)
+				{
+					if (String.IsNullOrWhiteSpace(protocols))
+						protocols = protocol.Data;
+					else
+						protocols = protocol + "," + protocol.Data;
+				}
 
+				if (!String.IsNullOrWhiteSpace(protocols))
+					call.NatureOfCall = call.NatureOfCall + " (" + protocols + ")";
+			}
 
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
 				_emailProvider.SendCallMail(emailAddress, subject, call.Name, priority, call.NatureOfCall, call.MapPage,
@@ -296,7 +310,7 @@ namespace Resgrid.Services
 			if (department.ManagingUser != null)
 				user = department.ManagingUser;
 			else
-				user = _usersService.GetUserById(department.ManagingUserId);
+				user = _usersService.GetUserById(department.ManagingUserId, false);
 
 			var userProfile = _userProfileService.GetProfileByUserId(department.ManagingUserId);
 
@@ -314,7 +328,7 @@ namespace Resgrid.Services
 			if (department == null)
 				return;
 
-			var user = _usersService.GetUserById(department.ManagingUserId);
+			var user = _usersService.GetUserById(department.ManagingUserId, false);
 			var profile = _userProfileService.GetProfileByUserId(user.UserId);
 
 			if (user == null)
@@ -331,7 +345,7 @@ namespace Resgrid.Services
 		{
 			if (payment != null && department != null)
 			{
-				var user = _usersService.GetUserById(department.ManagingUserId);
+				var user = _usersService.GetUserById(department.ManagingUserId, false);
 				var profile = _userProfileService.GetProfileByUserId(user.UserId);
 				string planName = "";
 
@@ -347,7 +361,7 @@ namespace Resgrid.Services
 
 		public void SendCancellationWithRefundEmail(Payment payment, Charge charge, Department department)
 		{
-			var user = _usersService.GetUserById(department.ManagingUserId);
+			var user = _usersService.GetUserById(department.ManagingUserId, false);
 			var profile = _userProfileService.GetProfileByUserId(user.UserId);
 
 			_emailProvider.SendRefundReciept(profile.FirstName + " " + profile.LastName, user.Email, department.Name, DateTime.UtcNow.ToShortDateString(), (float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C"),
@@ -356,7 +370,7 @@ namespace Resgrid.Services
 
 		public void SendUserCancellationNotificationToTeam(Department department, Payment payment, string userId, string reason)
 		{
-			var user = _usersService.GetUserById(department.ManagingUserId);
+			var user = _usersService.GetUserById(department.ManagingUserId, false);
 			var profile = _userProfileService.GetProfileByUserId(user.UserId);
 
 			bool refundIssued = false;
@@ -377,7 +391,7 @@ namespace Resgrid.Services
 
 		public void SendUpgradePaymentRecieptEmail(Payment newPayment, Payment oldPayment, Department department)
 		{
-			var user = _usersService.GetUserById(department.ManagingUserId);
+			var user = _usersService.GetUserById(department.ManagingUserId, false);
 
 			_emailProvider.SendUpgradePaymentReciept(department.Name, newPayment.PurchaseOn.ToShortDateString() + " (UTC)", newPayment.Amount.ToString("C"), user.Email,
 					((PaymentMethods)newPayment.Method).ToString(), newPayment.TransactionId, oldPayment.Plan.Name, newPayment.Plan.Name, string.Format("{0} to {1}", newPayment.EffectiveOn.ToShortDateString(),

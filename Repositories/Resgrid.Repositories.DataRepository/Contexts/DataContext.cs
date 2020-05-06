@@ -135,6 +135,12 @@ namespace Resgrid.Repositories.DataRepository.Contexts
 		public DbSet<DepartmentCallPriority> DepartmentCallPriorities { get; set; }
 		public DbSet<Automation> Automations { get; set; }
 		public DbSet<CallQuickTemplate> CallQuickTemplates { get; set; }
+		public DbSet<DispatchProtocol> DispatchProtocols { get; set; }
+		public DbSet<DispatchProtocolTrigger> DispatchProtocolTriggers { get; set; }
+		public DbSet<DispatchProtocolAttachment> DispatchProtocolAttachments { get; set; }
+		public DbSet<DispatchProtocolQuestion> DispatchProtocolQuestions { get; set; }
+		public DbSet<CallProtocol> CallProtocols { get; set; }
+		
 
 		public DataContext()
 			: base(ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>().FirstOrDefault(x => x.Name == "ResgridContext").ConnectionString)
@@ -200,7 +206,6 @@ namespace Resgrid.Repositories.DataRepository.Contexts
 			modelBuilder.Configurations.Add(new ShiftStaffing_Mapping());
 			modelBuilder.Configurations.Add(new DepartmentProfileArticle_Mapping());
 			modelBuilder.Configurations.Add(new ResourceOrder_Mapping());
-
 			modelBuilder.Configurations.Add(new ApplicationUserToken_Mapping());
 			modelBuilder.Configurations.Add(new ApplicationUserRole_Mapping());
 			modelBuilder.Configurations.Add(new ApplicationUserLogin_Mapping());
@@ -209,6 +214,7 @@ namespace Resgrid.Repositories.DataRepository.Contexts
 			modelBuilder.Configurations.Add(new ApplicationRoleClaim_Mapping());
 			modelBuilder.Configurations.Add(new ApplicationRole_Mapping());
 			modelBuilder.Configurations.Add(new DepartmentLink_Mapping());
+			modelBuilder.Configurations.Add(new DispatchProtocol_Mapping());
 
 			//modelBuilder.Entity<IdentityUserRole>().HasKey(r => new { r.RoleId, r.UserId });
 

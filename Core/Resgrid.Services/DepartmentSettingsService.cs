@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -11,7 +12,9 @@ namespace Resgrid.Services
 	public class DepartmentSettingsService : IDepartmentSettingsService
 	{
 		private static string DisableAutoAvailableCacheKey = "DSetAutoAvailable_{0}";
+		private static string StripeCustomerCacheKey = "DSetStripeCus_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
+		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
 
 		private readonly IDepartmentSettingsRepository _departmentSettingsRepository;
 		private readonly IAddressService _addressService;
@@ -200,9 +203,24 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public int? GetDepartmentIdForStripeCustomerId(string stripeCustomerId)
+		public int? GetDepartmentIdForStripeCustomerId(string stripeCustomerId, bool bypassCache = false)
 		{
-			var key = _departmentSettingsRepository.GetDepartmentSettingBySettingType(stripeCustomerId, DepartmentSettingTypes.StripeCustomerId);
+			DepartmentSetting key;
+
+			Func<DepartmentSetting> getSetting = delegate ()
+			{
+				return _departmentSettingsRepository.GetDepartmentSettingBySettingType(stripeCustomerId, DepartmentSettingTypes.StripeCustomerId);
+			};
+
+			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				key = _cacheProvider.Retrieve<DepartmentSetting>(string.Format(StripeCustomerCacheKey, stripeCustomerId),
+					getSetting, TwoYearCacheLength);
+			}
+			else
+			{
+				key = getSetting();
+			}
 
 			if (key != null)
 				return key.DepartmentId;
@@ -519,6 +537,16 @@ namespace Resgrid.Services
 				return (CallSortOrders)int.Parse(settingValue.Setting);
 
 			return CallSortOrders.Default;
+		}
+
+		public List<DepartmentManagerInfo> GetAllDepartmentManagerInfo()
+		{
+			return _departmentSettingsRepository.GetAllDepartmentManagerInfo();
+		}
+
+		public DepartmentManagerInfo GetDepartmentManagerInfoByEmail(string emailAddress)
+		{
+			return _departmentSettingsRepository.GetDepartmentManagerInfoByEmail(emailAddress);
 		}
 	}
 }

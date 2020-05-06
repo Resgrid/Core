@@ -30,14 +30,15 @@ namespace Resgrid.Providers.EmailProvider
 						to.Append("," + t.Address);
 				}
 
-				var message = new PostmarkMessage(email.From.Address, to.ToString(), email.Subject, email.Body);
+				var message = new PostmarkMessage(email.From.Address, to.ToString(), email.Subject, StringHelpers.StripHtmlTagsCharArray(email.Body), email.Body);
 
 				var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 
 				message.From = null;
 
 				//var response = newClient.SendMessage(message);
-				var response = newClient.SendMessageAsync(email.From.Address, to.ToString(), email.Subject, email.Body).Result;
+				//var response = newClient.SendMessageAsync(email.From.Address, to.ToString(), email.Subject, email.Body).Result;
+				var response = newClient.SendMessageAsync(message).Result;
 
 				if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
 					!response.Message.Contains("You tried to send to a recipient that has been marked as inactive"))
@@ -75,14 +76,14 @@ namespace Resgrid.Providers.EmailProvider
 						}
 
 						//var message = new PostmarkMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
-						var message = new PostmarkMessage("", to.ToString(), email.Subject, email.HtmlBody);
+						var message = new PostmarkMessage("", to.ToString(), email.Subject, StringHelpers.StripHtmlTagsCharArray(email.HtmlBody), email.HtmlBody);
 						var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 
 						message.From = null;
 						//var response = newClient.SendMessage(message);
 
 						//var response = newClient.SendMessageAsync(email.From, to.ToString(), email.Subject, email.HtmlBody).Result;
-						var response = newClient.SendMessage(email.From, to.ToString(), email.Subject, email.HtmlBody);
+						var response = newClient.SendMessage(email.From, to.ToString(), email.Subject, StringHelpers.StripHtmlTagsCharArray(email.HtmlBody), email.HtmlBody);
 
 						if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
 								!response.Message.Contains("You tried to send to a recipient that has been marked as inactive"))

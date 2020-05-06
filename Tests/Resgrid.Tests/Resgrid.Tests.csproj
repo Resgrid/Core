@@ -368,11 +368,14 @@
     <Compile Include="Models\MockIdentity.cs" />
     <Compile Include="Models\ScheduledTaskTests.cs" />
     <Compile Include="Models\TimeZoneTests.cs" />
+    <Compile Include="Providers\GetSendingPhoneNumberTests.cs" />
+    <Compile Include="Providers\GetAreaCodeTests.cs" />
     <Compile Include="Providers\PhoneNumberValidatorProviderTests.cs" />
     <Compile Include="Services\ActionLogsServiceTests.cs" />
     <Compile Include="Services\AuthorizationServiceTests.cs" />
     <Compile Include="Services\CalendarServiceTests.cs" />
     <Compile Include="Services\CallEmailFactoryTests.cs" />
+    <Compile Include="Services\ProtocolsServiceTests.cs" />
     <Compile Include="Services\CallsServiceTests.cs" />
     <Compile Include="Services\CommunicationServiceTests.cs" />
     <Compile Include="Services\DeleteServiceTests.cs" />

@@ -195,13 +195,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Postmark, Version=2.0.127.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Postmark.2.1.5\lib\net45\Postmark.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Postmark.Convenience, Version=2.0.127.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Postmark.2.1.5\lib\net45\Postmark.Convenience.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Postmark, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Postmark.4.3.0\lib\netstandard2.0\Postmark.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.3.2.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\..\packages\protobuf-net.2.3.2\lib\net40\protobuf-net.dll</HintPath>
@@ -221,6 +216,7 @@
       <HintPath>..\..\packages\Stripe.net.33.3.0\lib\net45\Stripe.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
@@ -233,9 +229,16 @@
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.1.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.IdentityModel.Tokens.Jwt.5.1.4\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http">
+    <Reference Include="System.Net.Http, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -243,9 +246,34 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
@@ -500,6 +528,7 @@
     <Compile Include="Controllers\Version3\Models\Profile\ProfileResult.cs" />
     <Compile Include="Controllers\Version3\Models\Profile\TimeZoneResult.cs" />
     <Compile Include="Controllers\Version3\Models\Profile\UpdateProfileInput.cs" />
+    <Compile Include="Controllers\Version3\Models\Protocols\ProtocolResult.cs" />
     <Compile Include="Controllers\Version3\Models\Roles\RoleInfoResult.cs" />
     <Compile Include="Controllers\Version3\Models\Security\DepartmentRightsResult.cs" />
     <Compile Include="Controllers\Version3\Models\Shifts\ShiftDayResult.cs" />
@@ -525,6 +554,7 @@
     <Compile Include="Controllers\Version3\Models\Units\UnitStateInput.cs" />
     <Compile Include="Controllers\Version3\Models\Units\UnitStatusCoreResult.cs" />
     <Compile Include="Controllers\Version3\Models\Units\UnitStatusResult.cs" />
+    <Compile Include="Controllers\Version3\ProtocolsController.cs" />
     <Compile Include="Controllers\Version3\NotesController.cs" />
     <Compile Include="Controllers\Version3\PersonnelController.cs" />
     <Compile Include="Controllers\Version3\AvatarsController.cs" />
@@ -556,6 +586,7 @@
     <Compile Include="Hubs\SignalRWebEventPublisher.cs" />
     <Compile Include="Hubs\CommunicationHub.cs" />
     <Compile Include="Hubs\WebEvents.cs" />
+    <Compile Include="Middleware\AppInsightsTelemetryInitializer.cs" />
     <Compile Include="Middleware\OptionsHttpMessageHandler.cs" />
     <Compile Include="Middleware\SlowThingsDownForTestingMessageHandler.cs" />
     <Compile Include="ModelBinders\AliasAttribute.cs" />

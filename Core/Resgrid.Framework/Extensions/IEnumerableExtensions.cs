@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Resgrid
 {
@@ -18,5 +20,26 @@ namespace Resgrid
 			}
 			return col;
 		}
+
+		public static T Random<T>(this IEnumerable<T> input)
+		{
+			return EnumerableHelper<T>.Random(input);
+		}
+	}
+
+	public static class EnumerableHelper<E>
+	{
+		private static Random r;
+
+		static EnumerableHelper()
+		{
+			r = new Random(DateTime.Now.Millisecond);
+		}
+
+		public static T Random<T>(IEnumerable<T> input)
+		{
+			return input.ElementAt(r.Next(input.Count()));
+		}
+
 	}
 }

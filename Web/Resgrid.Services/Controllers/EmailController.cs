@@ -112,86 +112,109 @@ namespace Resgrid.Web.Services.Controllers
 					string name = String.Empty;
 
 					#region Trying to Find What type of email this is
-					foreach (var email in message.ToFull)
+					if (message.ToFull != null)
 					{
-						if (StringHelpers.ValidateEmail(email.Email))
+						foreach (var email in message.ToFull)
 						{
-							if (email.Email.Contains($"@{Config.InboundEmailConfig.DispatchDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.DispatchTestDomain}"))
+							if (StringHelpers.ValidateEmail(email.Email))
 							{
-								type = 1;
-
-								if (email.Email.Contains($"@{Config.InboundEmailConfig.DispatchDomain}"))
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.DispatchDomain}", "");
-								else
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.DispatchTestDomain}", "");
-
-								name = email.Name;
-								mailMessage.To.Clear();
-								mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
-
-								break;
-							}
-							else if (email.Email.Contains($"@{Config.InboundEmailConfig.ListsDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.ListsTestDomain}"))
-							{
-								type = 2;
-
-								if (email.Email.Contains($"@{Config.InboundEmailConfig.ListsDomain}"))
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.ListsDomain}", "");
-								else
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.ListsTestDomain}", "");
-
-								if (emailAddress.Contains("+") && emailAddress.Contains("="))
+								if (email.Email.Contains($"@{Config.InboundEmailConfig.DispatchDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.DispatchTestDomain}"))
 								{
-									var tempBounceEmail = emailAddress.Substring(emailAddress.IndexOf("+") + 1);
-									bounceEmail = tempBounceEmail.Replace("=", "@");
+									type = 1;
 
-									emailAddress = emailAddress.Replace(tempBounceEmail, "");
-									emailAddress = emailAddress.Replace("+", "");
+									if (email.Email.Contains($"@{Config.InboundEmailConfig.DispatchDomain}"))
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.DispatchDomain}", "");
+									else
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.DispatchTestDomain}", "");
+
+									name = email.Name;
+									mailMessage.To.Clear();
+									mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
+
+									break;
 								}
+								else if (email.Email.Contains($"@{Config.InboundEmailConfig.ListsDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.ListsTestDomain}"))
+								{
+									type = 2;
 
-								name = email.Name;
-								mailMessage.To.Clear();
-								mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
+									if (email.Email.Contains($"@{Config.InboundEmailConfig.ListsDomain}"))
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.ListsDomain}", "");
+									else
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.ListsTestDomain}", "");
 
-								break;
-							}
-							else if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupsDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.GroupsTestDomain}"))
-							{
-								type = 3;
+									if (emailAddress.Contains("+") && emailAddress.Contains("="))
+									{
+										var tempBounceEmail = emailAddress.Substring(emailAddress.IndexOf("+") + 1);
+										bounceEmail = tempBounceEmail.Replace("=", "@");
 
-								if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupsDomain}"))
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupsDomain}", "");
-								else
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupsTestDomain}", "");
+										emailAddress = emailAddress.Replace(tempBounceEmail, "");
+										emailAddress = emailAddress.Replace("+", "");
+									}
 
-								name = email.Name;
-								mailMessage.To.Clear();
-								mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
+									name = email.Name;
+									mailMessage.To.Clear();
+									mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
 
-								break;
-							}
-							else if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupMessageDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.GroupTestMessageDomain}"))
-							{
-								type = 4;
+									break;
+								}
+								else if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupsDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.GroupsTestDomain}"))
+								{
+									type = 3;
 
-								if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupMessageDomain}"))
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupMessageDomain}", "");
-								else
-									emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupTestMessageDomain}", "");
+									if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupsDomain}"))
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupsDomain}", "");
+									else
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupsTestDomain}", "");
 
-								name = email.Name;
-								mailMessage.To.Clear();
-								mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
+									name = email.Name;
+									mailMessage.To.Clear();
+									mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
 
-								break;
+									break;
+								}
+								else if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupMessageDomain}") || email.Email.Contains($"@{Config.InboundEmailConfig.GroupTestMessageDomain}"))
+								{
+									type = 4;
+
+									if (email.Email.Contains($"@{Config.InboundEmailConfig.GroupMessageDomain}"))
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupMessageDomain}", "");
+									else
+										emailAddress = email.Email.Replace($"@{Config.InboundEmailConfig.GroupTestMessageDomain}", "");
+
+									name = email.Name;
+									mailMessage.To.Clear();
+									mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
+
+									break;
+								}
 							}
 						}
 					}
 
 					// Some providers aren't putting email address in the To line, process the CC line
-					if (type == 0)
+					if (type == 0 && message.CcFull != null)
 					{
 						foreach (var email in message.CcFull)
+						{
+							if (StringHelpers.ValidateEmail(email.Email))
+							{
+								var proccedEmailInfo = ProcessEmailAddress(email.Email);
+
+								if (proccedEmailInfo.Item1 > 0)
+								{
+									type = proccedEmailInfo.Item1;
+									emailAddress = proccedEmailInfo.Item2;
+
+									mailMessage.To.Clear();
+									mailMessage.To.Add(new MailboxAddress(email.Name, email.Email));
+								}
+							}
+						}
+					}
+
+					if (type == 0 && message.BccFull != null)
+					{
+						foreach (var email in message.BccFull)
 						{
 							if (StringHelpers.ValidateEmail(email.Email))
 							{

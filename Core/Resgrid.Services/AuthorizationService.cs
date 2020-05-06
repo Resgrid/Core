@@ -20,11 +20,12 @@ namespace Resgrid.Services
 		private readonly IUnitsService _unitsService;
 		private readonly IPermissionsService _permissionsService;
 		private readonly ICalendarService _calendarService;
+		private readonly IProtocolsService _protocolsService;
 
 		public AuthorizationService(IPushUriService pushUriService, IDepartmentsService departmentsService, IInvitesService invitesService,
 			ICallsService callsService, IMessageService messageService, IWorkLogsService workLogsService, ISubscriptionsService subscriptionsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
-			IPermissionsService permissionsService, ICalendarService calendarService)
+			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService)
 		{
 			_pushUriService = pushUriService;
 			_departmentsService = departmentsService;
@@ -38,6 +39,7 @@ namespace Resgrid.Services
 			_unitsService = unitsService;
 			_permissionsService = permissionsService;
 			_calendarService = calendarService;
+			_protocolsService = protocolsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -444,6 +446,37 @@ namespace Resgrid.Services
 
 
 			return false;
+		}
+
+		public bool CanUserModifyProtocol(string userId, int protocolId)
+		{
+			var department = _departmentsService.GetDepartmentByUserId(userId);
+			var protocol = _protocolsService.GetProcotolById(protocolId);
+
+			if (department == null || protocol == null)
+				return false;
+
+			if (protocol.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public bool CanUserViewProtocol(string userId, int protocolId)
+		{
+			var department = _departmentsService.GetDepartmentByUserId(userId);
+			var protocol = _protocolsService.GetProcotolById(protocolId);
+
+			if (department == null || protocol == null)
+				return false;
+
+			if (protocol.DepartmentId != department.DepartmentId)
+				return false;
+
+			return true;
 		}
 	}
 }

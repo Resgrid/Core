@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Resgrid.Model.Services
 {
@@ -13,7 +14,7 @@ namespace Resgrid.Model.Services
 		int? GetDepartmentIdForRssKey(string key);
 		string GetRssKeyForDepartment(int departmentId);
 		string GetStripeCustomerIdForDepartment(int departmentId);
-		int? GetDepartmentIdForStripeCustomerId(string stripeCustomerId);
+		int? GetDepartmentIdForStripeCustomerId(string stripeCustomerId, bool bypassCache = false);
 		bool IsTestingEnabledForDepartment(int departmentId);
 		Coordinates GetMapCenterCoordinates(Department department);
 		bool GetDisableAutoAvailableForDepartment(int departmentId, bool bypassCache = true);
@@ -33,5 +34,7 @@ namespace Resgrid.Model.Services
 		PersonnelSortOrders GetDepartmentPersonnelSortOrder(int departmentId);
 		UnitSortOrders GetDepartmentUnitsSortOrder(int departmentId);
 		CallSortOrders GetDepartmentCallSortOrder(int departmentId);
+		List<DepartmentManagerInfo> GetAllDepartmentManagerInfo();
+		DepartmentManagerInfo GetDepartmentManagerInfoByEmail(string emailAddress);
 	}
 }

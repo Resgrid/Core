@@ -23,6 +23,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<UserGroupRole> UserGroupRoles { get; set; }
 		public List<Unit> Units { get; set; }
 		public List<DepartmentGroup> Stations { get; set; }
+		public List<DispatchProtocol> Protocols { get; set; }
 
 		public string IsMapTabActive()
 		{

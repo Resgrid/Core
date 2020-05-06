@@ -120,6 +120,7 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BusModule.cs" />
+    <Compile Include="PaymentProvider.cs" />
     <Compile Include="CqrsProvider.cs" />
     <Compile Include="EventAggregator.cs" />
     <Compile Include="InboundEventProvider.cs" />

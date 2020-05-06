@@ -3312,7 +3312,9 @@ body.body-small .footer.fixed {
 .nav-tabs > li > a {
   color: #A7B1C2;
   font-weight: 600;
-  padding: 10px 20px 10px 25px; }
+  padding: 10px 15px 10px 15px !important;
+
+}
 
 .nav-tabs > li > a:hover, .nav-tabs > li > a:focus {
   background-color: #e6e6e6;

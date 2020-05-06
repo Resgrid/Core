@@ -136,6 +136,7 @@
     <Compile Include="..\..\Common\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DepartmentCallPruningRepository.cs" />
     <Compile Include="DepartmentGroupsRepository.cs" />
     <Compile Include="HealthRepository.cs" />
     <Compile Include="AddressRepository.cs" />
@@ -193,6 +194,10 @@
     <Compile Include="Migrations\202001201728324_AddStartsOnForNote.Designer.cs">
       <DependentUpon>202001201728324_AddStartsOnForNote.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004111651542_AddingDispatchProcotolTables.cs" />
+    <Compile Include="Migrations\202004111651542_AddingDispatchProcotolTables.Designer.cs">
+      <DependentUpon>202004111651542_AddingDispatchProcotolTables.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlansRepository.cs" />
     <Compile Include="PushUriRepository.cs" />
     <Compile Include="MessageRepository.cs" />
@@ -202,6 +207,7 @@
     <Compile Include="Contexts\DataContext.cs" />
     <Compile Include="ActionLogsRepository.cs" />
     <Compile Include="DepartmentCallEmailsRepository.cs" />
+    <Compile Include="ShiftsRepository.cs" />
     <Compile Include="TrainingRepository.cs" />
     <Compile Include="Migrations\201612271539266_AddedFileTable.cs" />
     <Compile Include="Migrations\201612271539266_AddedFileTable.Designer.cs">
@@ -2215,6 +2221,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202001201728324_AddStartsOnForNote.resx">
       <DependentUpon>202001201728324_AddStartsOnForNote.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004111651542_AddingDispatchProcotolTables.resx">
+      <DependentUpon>202004111651542_AddingDispatchProcotolTables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

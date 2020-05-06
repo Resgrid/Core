@@ -202,7 +202,7 @@ namespace Resgrid.Model
 				case CalendarItemReminderTypes.TwoWeeks:
 					return 20160;
 				default:
-					throw new ArgumentOutOfRangeException();
+					return 1440;	// Default to 1 day
 			}
 		}
 	}

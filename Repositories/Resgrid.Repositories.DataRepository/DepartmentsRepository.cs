@@ -131,7 +131,7 @@ namespace Resgrid.Repositories.DataRepository
 
 					return dep;
 
-				}, new { userId = userId }, splitOn: "DepartmentId").FirstOrDefault();
+				}, new { userId = userId }, splitOn: "DepartmentId,DepartmentMemberId").FirstOrDefault();
 			}
 
 			if (department != null && department.Members != null)

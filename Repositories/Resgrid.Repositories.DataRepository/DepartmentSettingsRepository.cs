@@ -67,5 +67,27 @@ namespace Resgrid.Repositories.DataRepository
 						new { setting = setting, settingType = type }).FirstOrDefault();
 			}
 		}
+
+		public List<DepartmentManagerInfo> GetAllDepartmentManagerInfo()
+		{
+			using (IDbConnection db = new SqlConnection(connectionString))
+			{
+				return db.Query<DepartmentManagerInfo>(@"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email FROM Departments d
+													 INNER JOIN AspNetUsers u ON u.Id = d.ManagingUserId
+													 LEFT OUTER JOIN UserProfiles up ON up.UserId = d.ManagingUserId").ToList();
+			}
+		}
+
+		public DepartmentManagerInfo GetDepartmentManagerInfoByEmail(string emailAddress)
+		{
+			using (IDbConnection db = new SqlConnection(connectionString))
+			{
+				return db.Query<DepartmentManagerInfo>(@"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email FROM Departments d
+													 INNER JOIN AspNetUsers u ON u.Id = d.ManagingUserId
+													 LEFT OUTER JOIN UserProfiles up ON up.UserId = d.ManagingUserId
+													 WHERE u.Email = @emailAddress",
+						new { emailAddress = emailAddress}).FirstOrDefault();
+			}
+		}
 	}
 }

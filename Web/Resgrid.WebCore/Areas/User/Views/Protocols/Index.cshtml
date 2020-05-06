@@ -1,0 +1,93 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolIndexModel
+@{
+  ViewBag.Title = "Resgrid | Protocols";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Protocols</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Protocols</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a title="Create Protocol" class="btn btn-success" asp-controller="Protocols" asp-action="New" asp-route-area="User">New Protocol</a>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Type
+                  </th>
+                  <th>
+                    Created On
+                  </th>
+                  <th>
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var t in Model.Protocols)
+				{
+                  <tr>
+                    <td>
+                      @t.Name
+                    </td>
+                    <td>
+                      Dispatch Protocol
+                    </td>
+                    <td>
+                      @Html.Raw(t.CreatedOn.ToShortDateString())
+                    </td>
+                    <td>
+                      <a href="@Url.Action("View", "Protocols", new { area = "User", id = t.DispatchProtocolId })" class='btn btn-xs btn-info'>
+                        <i class="icon-eye-open">
+                        </i> View
+                      </a>
+                      @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                      {
+                        <a href="@Url.Action("Delete", "Protocols", new { area = "User", id = t.DispatchProtocolId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this protocol. Are you sure you want to delete the protocol @t.Name ?" rel="nofollow">
+                          <i class="icon-trash">
+                          </i> Delete
+                        </a>
+                      }
+                    </td>
+                  </tr>
+				}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/app/internal/protocols/resgrid.protocols.index.js"></script>
+}

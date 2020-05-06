@@ -1031,5 +1031,17 @@ namespace Resgrid.Providers.Claims.Core
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Connect, ResgridClaimTypes.Actions.Delete));
 			}
 		}
+
+		public static void AddProtocolClaims(ClaimsIdentity identity, bool isAdmin)
+		{
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.View));
+
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Delete));
+			}
+		}
 	}
 }

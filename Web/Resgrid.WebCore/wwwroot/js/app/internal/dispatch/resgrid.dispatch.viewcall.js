@@ -50,7 +50,25 @@ var resgrid;
 				viewcall.player = new Plyr('#player');
 
 				resgrid.common.signalr.init(notifyCallUpdated, null, null, null);
-				viewcall.getCallNotes(false);
+                viewcall.getCallNotes(false);
+
+                $('#protocolTextWindow').on('show.bs.modal', function (event) {
+                    var protocolId = $(event.relatedTarget).data('protocolid');
+
+                    var modal = $(this);
+
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Protocols/GetTextForProtocol?id=' + protocolId,
+                        contentType: 'application/json; charset=utf-8',
+                        type: 'GET'
+                    }).done(function (result) {
+                        if (result) {
+                            modal.find('.modal-title').text(`Protocol Text for ${result.Name}`);
+                            modal.find('.modal-body').empty();
+                            modal.find('.modal-body').append(result.Text);
+                        }
+                    });
+                });
 			});
 			function notifyCallUpdated(id) {
 				if (id == callId) {

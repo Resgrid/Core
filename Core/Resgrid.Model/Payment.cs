@@ -110,11 +110,11 @@ namespace Resgrid.Model
 					case PlanFrequency.Never:
 						return DateTime.MaxValue;
 					case PlanFrequency.Monthly:
-						return EffectiveOn.AddMonths(1).SetToEndOfDay();
+						return EffectiveOn.AddMonths(1).AddDays(7).SetToEndOfDay();
 					case PlanFrequency.Yearly:
-						return EffectiveOn.AddYears(1).SetToEndOfDay();
+						return EffectiveOn.AddYears(1).AddDays(14).SetToEndOfDay();
 					case PlanFrequency.BiYearly:
-						return EffectiveOn.AddYears(2).SetToEndOfDay();
+						return EffectiveOn.AddYears(2).AddDays(14).SetToEndOfDay();
 					default:
 						throw new ArgumentOutOfRangeException();
 				}

@@ -55,13 +55,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICustomStateService _customStateService;
 		private readonly ITemplatesService _templatesService;
 		private readonly IPdfProvider _pdfProvider;
+		private readonly IProtocolsService _protocolsService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IGeoLocationProvider geoLocationProvider,
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-						ITemplatesService templatesService, IPdfProvider pdfProvider)
+						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -81,6 +82,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_customStateService = customStateService;
 			_templatesService = templatesService;
 			_pdfProvider = pdfProvider;
+			_protocolsService = protocolsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -195,6 +197,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				List<int> dispatchingGroupIds = new List<int>();
 				List<int> dispatchingUnitIds = new List<int>();
 				List<int> dispatchingRoleIds = new List<int>();
+				List<int> activeProtocols = new List<int>();
+				List<int> pendingProtocols = new List<int>();
+
 				foreach (var key in collection.Keys)
 				{
 					if (key.ToString().StartsWith("dispatchUser_"))
@@ -216,6 +221,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var roleId = int.Parse(key.ToString().Replace("dispatchRole_", ""));
 						dispatchingRoleIds.Add(roleId);
+					}
+					else if (key.ToString().StartsWith("activeProtocol_"))
+					{
+						var activeProtocolId = int.Parse(key.ToString().Replace("activeProtocol_", ""));
+						activeProtocols.Add(activeProtocolId);
+					}
+					else if (key.ToString().StartsWith("pendingProtocol_"))
+					{
+						var pendingProtocolId = int.Parse(key.ToString().Replace("pendingProtocol_", ""));
+
+						if (collection[key] == "1")
+							pendingProtocols.Add(pendingProtocolId);
 					}
 				}
 
@@ -272,6 +289,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 						dispatch.RoleId = id;
 
 						model.Call.RoleDispatches.Add(dispatch);
+					}
+				}
+
+				model.Call.Protocols = new List<CallProtocol>();
+				if (activeProtocols.Any())
+				{
+					foreach (var id in activeProtocols)
+					{
+						CallProtocol protocol = new CallProtocol();
+						protocol.DispatchProtocolId = id;
+
+						if (collection.ContainsKey($"protocolCode_{id}"))
+							protocol.Data = collection[$"protocolCode_{id}"];
+
+						model.Call.Protocols.Add(protocol);
+					}
+				}
+
+				if (pendingProtocols.Any())
+				{
+					foreach (var id in pendingProtocols)
+					{
+						CallProtocol protocol = new CallProtocol();
+						protocol.DispatchProtocolId = id;
+
+						if(collection.ContainsKey($"protocolCode_{id}"))
+							protocol.Data = collection[$"protocolCode_{id}"];
+
+						model.Call.Protocols.Add(protocol);
 					}
 				}
 
@@ -523,6 +569,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model = FillViewCallView(model);
 			model.CallPriority = (CallPriority)model.Call.Priority;
 			model.Stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+			model.Protocols = _protocolsService.GetAllProtocolsForDepartment(DepartmentId);
 
 			if (model.Stations == null)
 				model.Stations = new List<DepartmentGroup>();

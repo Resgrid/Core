@@ -34,6 +34,14 @@ namespace Resgrid.Config
 		public static HashSet<string> NexemoNumbers = new HashSet<string>()
 		{
 		};
+
+		/// <summary>
+		/// SignalWire zones allow you to segment outbound numbers based on a zone id. For example this can allow you have outbound numbers per country, per state\province, etc.
+		/// </summary>
+		public static Dictionary<int, HashSet<string>> SignalWireZones = new Dictionary<int, HashSet<string>>()
+		{
+
+		};
 	}
 
 	/// <summary>

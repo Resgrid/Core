@@ -42,7 +42,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		{
 			var result = new DepartmentRightsResult();
 			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
-			var departmentMembership = _departmentsService.GetDepartmentMember(UserId, DepartmentId);
+			var departmentMembership = _departmentsService.GetDepartmentMember(UserId, DepartmentId, false);
 			var roles = _personnelRolesService.GetRolesForUser(UserId, DepartmentId);
 
 			if (departmentMembership == null)

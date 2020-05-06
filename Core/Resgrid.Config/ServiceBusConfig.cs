@@ -11,6 +11,7 @@
 		public static string ShiftNotificationsQueueName = "resgridshiftsnots";
 		public static string EmailBroadcastQueueName = "resgridemails";
 		public static string SystemQueueName = "resgridsys";
+		public static string PaymentQueueName = "payment";
 
 		#region Azure Service Bus Values
 		public static string SignalRServiceBusConnectionString = "";

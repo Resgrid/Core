@@ -70,7 +70,7 @@ namespace Resgrid.Services
 
 		public int GetDepartmentIdForType(NotificationItem ni)
 		{
-			switch((EventTypes)ni.Type)
+			switch ((EventTypes)ni.Type)
 			{
 				case EventTypes.PersonnelStaffingChanged:
 					var state = _userStateService.GetUserStateById(ni.StateId);
@@ -709,6 +709,35 @@ namespace Resgrid.Services
 			}
 
 			return false;
+		}
+
+		public bool AllowToSendViaSms(EventTypes type)
+		{
+			switch (type)
+			{
+				case EventTypes.UnitStatusChanged:
+					return false;
+				case EventTypes.PersonnelStaffingChanged:
+					return false;
+				case EventTypes.PersonnelStatusChanged:
+					return false;
+				case EventTypes.UserCreated:
+					return false;
+				case EventTypes.UserAssignedToGroup:
+					return false;
+				case EventTypes.DocumentAdded:
+					return false;
+				case EventTypes.NoteAdded:
+					return false;
+				case EventTypes.UnitAdded:
+					return false;
+				case EventTypes.LogAdded:
+					return false;
+				case EventTypes.DepartmentSettingsChanged:
+					return false;
+				default:
+					return true;
+			}
 		}
 
 		public string GetMessageForType(ProcessedNotification notification)

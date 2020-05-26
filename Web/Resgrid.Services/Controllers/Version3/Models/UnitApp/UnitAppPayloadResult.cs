@@ -22,7 +22,7 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.UnitApp
 		public List<UnitInfoResult> Units { get; set; }
 		public List<RoleInfoResult> Roles { get; set; }
 		public List<CustomStatusesResult> Statuses { get; set; }
-		public List<CallResult> Calls { get; set; }
+		public List<CallResultEx> Calls { get; set; }
 		public List<UnitStatusCoreResult> UnitStatuses { get; set; }
 		public List<UnitRoleResult> UnitRoles { get; set; }
 		public List<CallPriorityResult> Priorities { get; set; }

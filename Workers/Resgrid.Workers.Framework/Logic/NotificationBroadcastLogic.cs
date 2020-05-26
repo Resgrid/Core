@@ -138,9 +138,14 @@ namespace Resgrid.Workers.Framework.Logic
 							foreach (var user in notification.Users)
 							{
 								if (queueItem.Profiles.ContainsKey(user))
-									_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, "Notification", queueItem.Profiles[user]);
-								//else
-								//	_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber);
+								{
+									var profile = queueItem.Profiles[user];
+
+									if (!_notificationService.AllowToSendViaSms(notification.Type))
+										profile.SendNotificationSms = false;
+
+									_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, "Notification", profile);
+								}
 							}
 						}
 					}

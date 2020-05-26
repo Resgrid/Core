@@ -55,5 +55,6 @@ namespace Resgrid.Model.Services
 		string GetShortenedCallLinkUrl(int callId, bool pdf = false, int? stationId = null);
 		string GetShortenedCallPdfUrl(int callId, bool pdf = false, int? stationId = null);
 		string GetCallPdfUrl(int callId, bool pdf = false, int? stationId = null);
+		List<CallProtocol> GetCallProtocolsByCallId(int callId);
 	}
 }

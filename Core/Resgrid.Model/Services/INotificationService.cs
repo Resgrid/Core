@@ -14,5 +14,6 @@ namespace Resgrid.Model.Services
 		void DeleteDepartmentNotificationById(int notifiationId);
 		bool ValidateNotificationForProcessing(ProcessedNotification notification, DepartmentNotification setting);
 		int GetDepartmentIdForType(NotificationItem ni);
+		bool AllowToSendViaSms(EventTypes type);
 	}
 }

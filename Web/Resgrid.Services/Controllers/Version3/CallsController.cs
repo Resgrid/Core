@@ -141,6 +141,89 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		/// <summary>
+		/// Returns all the active calls for the department
+		/// </summary>
+		/// <returns>Array of CallResult objects for each active call in the department</returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		public List<CallResultEx> GetActiveCallsEx()
+		{
+			var result = new List<CallResultEx>();
+
+			var calls = _callsService.GetActiveCallsByDepartment(DepartmentId).OrderByDescending(x => x.LoggedOn);
+			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+
+			foreach (var c in calls)
+			{
+				var call = new CallResultEx();
+				call.Protocols = new List<CallProtocolResult>();
+
+				call.Cid = c.CallId;
+				call.Pri = c.Priority;
+				call.Ctl = c.IsCritical;
+				call.Nme = StringHelpers.SanitizeHtmlInString(c.Name);
+
+				if (!String.IsNullOrWhiteSpace(c.NatureOfCall))
+					call.Noc = StringHelpers.SanitizeHtmlInString(c.NatureOfCall);
+
+				call.Map = c.MapPage;
+
+				if (!String.IsNullOrWhiteSpace(c.Notes))
+					call.Not = StringHelpers.SanitizeHtmlInString(c.Notes);
+
+				if (c.CallNotes != null)
+					call.Nts = c.CallNotes.Count();
+				else
+					call.Nts = 0;
+
+				if (c.Attachments != null)
+				{
+					call.Aud = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
+					call.Img = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.Image);
+					call.Fls = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.File);
+				}
+				else
+				{
+					call.Aud = 0;
+					call.Img = 0;
+					call.Fls = 0;
+				}
+
+				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+				{
+					var geo = c.GeoLocationData.Split(char.Parse(","));
+
+					if (geo.Length == 2)
+						call.Add = _geoLocationProvider.GetAddressFromLatLong(double.Parse(geo[0]), double.Parse(geo[1]));
+				}
+				else
+					call.Add = c.Address;
+
+				call.Geo = c.GeoLocationData;
+				call.Lon = c.LoggedOn.TimeConverter(department);
+				call.Utc = c.LoggedOn;
+				call.Ste = c.State;
+				call.Num = c.Number;
+
+				if (c.Protocols != null && c.Protocols.Any())
+				{
+					foreach (var protocol in c.Protocols)
+					{
+						var p = new CallProtocolResult();
+						p.Id = protocol.DispatchProtocolId;
+						p.Code = protocol.Protocol.Code;
+						p.Name = protocol.Protocol.Name;
+
+						call.Protocols.Add(p);
+					}
+				}
+
+				result.Add(call);
+			}
+
+			return result;
+		}
+
+		/// <summary>
 		/// Returns all the active calls for the department (extended object result, more verbose then GetActiveCalls)
 		/// </summary>
 		/// <returns>Array of DepartmentCallResult objects for each active call in the department</returns>
@@ -1150,6 +1233,12 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			return Request.CreateResponse(HttpStatusCode.OK);
 		}
 
+
+		/// <summary>
+		/// Returns the call audio for a specific call (Allow Anonymous)
+		/// </summary>
+		/// <param name="query">Encrypted query string for the call</param>
+		/// <returns>Http response type matching call audio format with data</returns>
 		[System.Web.Http.AcceptVerbs("GET")]
 		[AllowAnonymous]
 		public HttpResponseMessage GetCallAudio(string query)

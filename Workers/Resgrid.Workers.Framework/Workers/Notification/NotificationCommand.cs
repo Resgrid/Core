@@ -36,8 +36,15 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 							foreach (var user in notification.Users)
 							{
 								if (item.Profiles.ContainsKey(user))
+								{
+									var profile = item.Profiles[user];
+
+									if (!_notificationService.AllowToSendViaSms(notification.Type))
+										profile.SendNotificationSms = false;
+
 									_communicationService.SendNotification(user, notification.DepartmentId, text, item.DepartmentTextNumber,
-										"Notification", item.Profiles[user]);
+										"Notification", profile);
+								}
 								else
 									_communicationService.SendNotification(user, notification.DepartmentId, text, item.DepartmentTextNumber);
 							}

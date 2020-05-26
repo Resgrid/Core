@@ -78,5 +78,37 @@ namespace Resgrid.Repositories.DataRepository
 					new { departmentId = departmentId}).ToList();
 			}
 		}
+
+		public List<CallProtocol> GetCallProtocolsByCallId(int callId)
+		{
+			Dictionary<int, CallProtocol> lookup = new Dictionary<int, CallProtocol>();
+
+			using (IDbConnection db = new SqlConnection(connectionString))
+			{
+
+				var query = @"SELECT * FROM CallProtocols c
+							  INNER JOIN DispatchProtocols dp ON dp.DispatchProtocolId = c.DispatchProtocolId
+							  WHERE c.CallId = @callId";
+
+
+				var plans = db.Query<CallProtocol, DispatchProtocol, CallProtocol>(query, (cp, p) =>
+				{
+					CallProtocol callProtocol;
+
+					if (!lookup.TryGetValue(cp.CallProtocolId, out callProtocol))
+					{
+						lookup.Add(cp.CallProtocolId, cp);
+						callProtocol = cp;
+					}
+
+					cp.Protocol = p;
+
+					return callProtocol;
+
+				}, new { callId = callId }, splitOn: "DispatchProtocolId");
+
+				return plans.ToList();
+			}
+		}
 	}
 }

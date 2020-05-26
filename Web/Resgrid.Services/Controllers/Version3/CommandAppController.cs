@@ -70,7 +70,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			results.Units = new List<UnitInfoResult>();
 			results.Roles = new List<RoleInfoResult>();
 			results.Statuses = new List<CustomStatusesResult>();
-			results.Calls = new List<CallResult>();
+			results.Calls = new List<CallResultEx>();
 			results.UnitStatuses = new List<UnitStatusCoreResult>();
 			results.UnitRoles = new List<UnitRoleResult>();
 
@@ -283,7 +283,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				foreach (var c in calls)
 				{
-					var call = new CallResult();
+					var call = new CallResultEx();
 
 					call.Cid = c.CallId;
 					call.Pri = c.Priority;
@@ -315,7 +315,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			else
 			{
 				// This is a hack due to a bug in the current units app! -SJ 1-31-2016
-				var call = new CallResult();
+				var call = new CallResultEx();
 				call.Cid = 0;
 				call.Pri = 0;
 				call.Ctl = false;

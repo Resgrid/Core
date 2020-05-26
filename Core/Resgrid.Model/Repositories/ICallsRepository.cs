@@ -8,5 +8,6 @@ namespace Resgrid.Model.Repositories
 		void MarkCallDispatchesAsSent(int callId, List<Guid> usersToMark);
 		void CleanUpCallDispatchAudio();
 		List<Call> GetActiveCallsByDepartment(int departmentId);
+		List<CallProtocol> GetCallProtocolsByCallId(int callId);
 	}
 }

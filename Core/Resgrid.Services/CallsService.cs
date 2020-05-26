@@ -494,6 +494,11 @@ namespace Resgrid.Services
 			return callPriority;
 		}
 
+		public List<CallProtocol> GetCallProtocolsByCallId(int callId)
+		{
+			return _callsRepository.GetCallProtocolsByCallId(callId);
+		}
+
 		public void InvalidateCallPrioritiesForDepartmentInCache(int departmentId)
 		{
 			_cacheProvider.Remove(string.Format(CallPrioritiesCacheKey, departmentId));

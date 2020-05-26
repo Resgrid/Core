@@ -83,7 +83,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			results.Units = new List<UnitInfoResult>();
 			results.Roles = new List<RoleInfoResult>();
 			results.Statuses = new List<CustomStatusesResult>();
-			results.Calls = new List<CallResult>();
+			results.Calls = new List<CallResultEx>();
 			results.UnitStatuses = new List<UnitStatusCoreResult>();
 			results.UnitRoles = new List<UnitRoleResult>();
 			results.Priorities = new List<CallPriorityResult>();
@@ -312,7 +312,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				foreach (var c in calls)
 				{
-					var call = new CallResult();
+					var call = new CallResultEx();
 
 					call.Cid = c.CallId;
 					call.Pri = c.Priority;
@@ -338,13 +338,28 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Ste = c.State;
 					call.Num = c.Number;
 
+					c.Protocols = _callsService.GetCallProtocolsByCallId(c.CallId);
+					call.Protocols = new List<CallProtocolResult>();
+					if (c.Protocols != null && c.Protocols.Any())
+					{
+						foreach (var protocol in c.Protocols)
+						{
+							var p = new CallProtocolResult();
+							p.Id = protocol.DispatchProtocolId;
+							p.Code = protocol.Protocol.Code;
+							p.Name = protocol.Protocol.Name;
+
+							call.Protocols.Add(p);
+						}
+					}
+
 					results.Calls.Add(call);
 				}
 			}
 			else
 			{
 				// This is a hack due to a bug in the current units app! -SJ 1-31-2016
-				var call = new CallResult();
+				var call = new CallResultEx();
 				call.Cid = 0;
 				call.Pri = 0;
 				call.Ctl = false;
@@ -411,7 +426,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		public UnitAppPayloadResult GetUnitAppCallDataOnly()
 		{
 			var results = new UnitAppPayloadResult();
-			results.Calls = new List<CallResult>();
+			results.Calls = new List<CallResultEx>();
 
 			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
 			var calls = _callsService.GetActiveCallsByDepartment(DepartmentId).OrderByDescending(x => x.LoggedOn);
@@ -420,7 +435,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				foreach (var c in calls)
 				{
-					var call = new CallResult();
+					var call = new CallResultEx();
 
 					call.Cid = c.CallId;
 					call.Pri = c.Priority;
@@ -446,13 +461,28 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Ste = c.State;
 					call.Num = c.Number;
 
+					c.Protocols = _callsService.GetCallProtocolsByCallId(c.CallId);
+					call.Protocols = new List<CallProtocolResult>();
+					if (c.Protocols != null && c.Protocols.Any())
+					{
+						foreach (var protocol in c.Protocols)
+						{
+							var p = new CallProtocolResult();
+							p.Id = protocol.DispatchProtocolId;
+							p.Code = protocol.Protocol.Code;
+							p.Name = protocol.Protocol.Name;
+
+							call.Protocols.Add(p);
+						}
+					}
+
 					results.Calls.Add(call);
 				}
 			}
 			else
 			{
 				// This is a hack due to a bug in the current units app! -SJ 1-31-2016
-				var call = new CallResult();
+				var call = new CallResultEx();
 				call.Cid = 0;
 				call.Pri = 0;
 				call.Ctl = false;

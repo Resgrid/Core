@@ -120,6 +120,11 @@ namespace Resgrid.Config
 		};
 
 		/// <summary>
+		/// For usage with DepartmentsToForceBackupSmsProvider, this will determine if we also want to send text messages to the primary provider as well
+		/// </summary>
+		public static bool AlsoSendToPrimarySmsProvider = false;
+
+		/// <summary>
 		/// To send push notifications with your on-prem Resgrid installation with our apps in the App Stores (Google and Apple)
 		/// you need to pay for a site key to send push notifications through our push infrastructure. To get a site key, which is
 		/// an annual payment, please contact team@resgrid.com. 

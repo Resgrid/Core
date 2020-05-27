@@ -24,7 +24,7 @@ namespace Resgrid.Providers.NumberProvider
 		private static int _maxZone = 4;
 		private static IEnumerable<AreaCodeCity> _areaCodes;
 
-		public void SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false)
+		public void SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false)
 		{
 			if (carrier == MobileCarriers.Telstra)
 				SendTextMessageViaNexmo(number, message, departmentNumber);
@@ -53,7 +53,18 @@ namespace Resgrid.Providers.NumberProvider
 				}
 				else
 				{
-					SendTextMessageViaTwillio(number, message, departmentNumber);
+					if (isCall)
+					{
+						SendTextMessageViaTwillio(number, message, departmentNumber);
+
+						if (Config.SystemBehaviorConfig.AlsoSendToPrimarySmsProvider)
+							SendTextMessageViaSignalWire(number, message, departmentNumber);
+					}
+					else
+					{
+						SendTextMessageViaSignalWire(number, message, departmentNumber);
+						//SendTextMessageViaTwillio(number, message, departmentNumber);
+					}
 				}
 			}
 			else
@@ -112,8 +123,12 @@ namespace Resgrid.Providers.NumberProvider
 				{
 					//textMessage = twilio.SendMessage(departmentNumber, number, message);
 
+					//messageResource = MessageResource.Create(
+					//	from: new PhoneNumber(departmentNumber),
+					//	to: new PhoneNumber(number),
+					//	body: message);
 					messageResource = MessageResource.Create(
-						from: new PhoneNumber(departmentNumber),
+						from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
 						to: new PhoneNumber(number),
 						body: message);
 

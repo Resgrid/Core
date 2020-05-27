@@ -365,7 +365,7 @@ namespace Resgrid.Providers.NumberProvider
 			}
 			catch (Exception ex)
 			{
-				
+
 			}
 
 			var rnd = new Random(DateTime.Now.Millisecond);

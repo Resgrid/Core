@@ -468,7 +468,9 @@
     <Compile Include="Controllers\Version3\Models\Calls\CallFileResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallNoteResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallPriorityDataResult.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\CallProtocolResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallResult.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\CallResultEx.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallTypeResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CloseCallInput.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\DepartmentCallDispatchGroupResult.cs" />

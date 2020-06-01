@@ -66,9 +66,8 @@
     <Reference Include="Autofac.Integration.WebApi, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.WebApi2.4.1.0\lib\net45\Autofac.Integration.WebApi.dll</HintPath>
     </Reference>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>..\..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.2.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\..\packages\BouncyCastle.1.8.2\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CommonServiceLocator.1.4.0\lib\net45\CommonServiceLocator.dll</HintPath>
@@ -182,8 +181,8 @@
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Private>False</Private>
     </Reference>
-    <Reference Include="MimeKit, Version=1.18.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MimeKit.1.18.1\lib\net451\MimeKit.dll</HintPath>
+    <Reference Include="MimeKit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MimeKit.2.0.4\lib\net45\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="NewRelic.Api.Agent, Version=6.16.178.0, Culture=neutral, PublicKeyToken=06552fced0b33d87, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NewRelicWindowsAzure.6.16.178.0\lib\NewRelic.Api.Agent.dll</HintPath>
@@ -469,8 +468,8 @@
     <Compile Include="Controllers\Version3\Models\Calls\CallNoteResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallPriorityDataResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallProtocolResult.cs" />
-    <Compile Include="Controllers\Version3\Models\Calls\CallResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallResultEx.cs" />
+    <Compile Include="Controllers\Version3\Models\Calls\CallResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CallTypeResult.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\CloseCallInput.cs" />
     <Compile Include="Controllers\Version3\Models\Calls\DepartmentCallDispatchGroupResult.cs" />

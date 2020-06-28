@@ -1,0 +1,81 @@
+﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentTypesView
+@{
+  ViewBag.Title = "Resgrid | List Ordering";
+}
+@section Styles
+  {
+
+}
+
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+      <h2>List Ordering</h2>
+      <ol class="breadcrumb">
+        <li>
+          <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        </li>
+        <li class="active">
+          <strong>List Ordering</strong>
+        </li>
+      </ol>
+    </div>
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a id="departmentWideTypesButton" class="btn btn-primary top-button" title="Manage Department Types" asp-controller="Department" asp-action="Types" asp-route-area="User">Department Wide Types</a>
+      </div>
+    </div>
+  </div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Personnel Status Ordering</h5>
+          <div class="ibox-tools">
+            <div class="buttons-actions">
+              <a title="Add a status to order" class="btn btn-success" data-target="#newCallTypeModal" data-toggle="modal">Add Status</a>
+            </div>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Weight</th>
+                  <th>Status Name</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr>
+                  <td>
+                    
+                  </td>
+
+                  <td>
+                  </td>
+
+                  <td>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+  {
+  <script>
+	$(document).ready(function () {
+	  resgrid.common.analytics.track('Department - List Ordering');
+	});
+  </script>
+}

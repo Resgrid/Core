@@ -1,5 +1,5 @@
 using Resgrid.Model;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Repositories.DataRepository.Migrations
 {

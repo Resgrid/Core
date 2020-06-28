@@ -1,19 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using System.Data.Entity.ModelConfiguration;
+using Resgrid.Model.Identity;
+
 namespace Resgrid.Model
 {
-	//[Table("AspNetUserLogins")]
-	//public class ApplicationUserLogin : IdentityUserLogin, IEntity
-	//{
-	//	[NotMapped]
-	//	public object Id
-	//	{
-	//		get { return Id; }
-	//		set { base.UserId = (string)value; }
-	//	}
-	//}
-
 	public class ApplicationUserLogin_Mapping : EntityTypeConfiguration<IdentityUserLogin>
 	{
 		public ApplicationUserLogin_Mapping()

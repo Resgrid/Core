@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework6;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Resgrid.Model.Identity;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Providers.Claims.Core
@@ -20,10 +21,11 @@ namespace Resgrid.Providers.Claims.Core
 		private IUserProfileService _userProfileService;
 		private IPermissionsService _permissionsService;
 		private IPersonnelRolesService _personnelRolesService;
+		private IClaimsRepository _claimsRepository;
 
 		public ClaimsPrincipalFactory(UserManager<TUser> userManager, RoleManager<TRole> roleManager, IOptions<IdentityOptions> optionsAccessor,
 			IUsersService usersService, IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, 
-			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService
+			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService, IClaimsRepository claimsRepository
 			) : base(userManager, roleManager, optionsAccessor)
 		{
 			_usersService = usersService;
@@ -32,6 +34,7 @@ namespace Resgrid.Providers.Claims.Core
 			_userProfileService = userProfileService;
 			_permissionsService = permissionsService;
 			_personnelRolesService = personnelRolesService;
+			_claimsRepository = claimsRepository;
 
 			options = optionsAccessor.Value;
 		}
@@ -65,7 +68,7 @@ namespace Resgrid.Providers.Claims.Core
 
 			if (UserManager.SupportsUserRole)
 			{
-				var roles = await UserManager.GetRolesAsync(user);
+				var roles = await _claimsRepository.GetRolesAsync(user);// UserManager.GetRolesAsync(user);
 				foreach (var roleName in roles)
 				{
 					id.AddClaim(new Claim(Options.ClaimsIdentity.RoleClaimType, roleName));

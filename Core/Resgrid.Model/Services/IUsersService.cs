@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Model.Services
 {

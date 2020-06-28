@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Autofac;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Workers.Framework.Logic
 {

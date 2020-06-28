@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using System.Data.Entity.ModelConfiguration;
 using ProtoBuf;
 using Resgrid.Framework;

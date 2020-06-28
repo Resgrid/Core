@@ -5,7 +5,7 @@ using Moq;
 using Resgrid.Framework.Testing;
 using Resgrid.Model;
 using Resgrid.Model.Services;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Tests.Helpers
 {

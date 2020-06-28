@@ -1,6 +1,4 @@
-﻿using Stripe;
-using Microsoft.AspNet.Identity.EntityFramework6;
-using PostmarkDotNet;
+﻿using Resgrid.Model.Identity;
 using MimeKit;
 using Resgrid.Model.Events;
 

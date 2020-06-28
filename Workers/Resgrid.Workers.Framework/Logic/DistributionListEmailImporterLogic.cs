@@ -2,7 +2,7 @@
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Workers.Framework.Workers.DistributionList;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using System;
 using Autofac;
 

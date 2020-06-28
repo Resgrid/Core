@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Model.Helpers;
 using Resgrid.Web.Areas.User.Models.BigBoardX;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -53,13 +54,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICustomStateService _customStateService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IOptions<AppOptions> _appOptionsAccessor;
-		private readonly UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _userManager;
+		private readonly UserManager<IdentityUser> _userManager;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, IPushUriService pushUriService, Resgrid.Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, ICallsService callsService, IGeoLocationProvider geoLocationProvider, IDepartmentSettingsService departmentSettingsService,
 			IUnitsService unitsService, IAddressService addressService, IPersonnelRolesService personnelRolesService, IPushService pushService, ILimitsService limitsService,
-			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> userManager)
+			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<IdentityUser> userManager)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;

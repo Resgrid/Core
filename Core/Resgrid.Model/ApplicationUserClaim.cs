@@ -1,20 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using System.Data.Entity.ModelConfiguration;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
 {
-	//[Table("AspNetUserClaims")]
-	//public class ApplicationUserClaim: IdentityUserClaim<string>//, IEntity
-	//{
-	//	//[NotMapped]
-	//	//public object Id
-	//	//{
-	//	//	get { return Id; }
-	//	//	set { base.Id = (int)value; }
-	//	//}
-	//}
-
 	public class ApplicationUserClaim_Mapping : EntityTypeConfiguration<IdentityUserClaim>
 	{
 		public ApplicationUserClaim_Mapping()

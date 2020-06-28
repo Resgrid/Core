@@ -5,7 +5,6 @@ using System.Data.Entity.Migrations;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNet.Identity.EntityFramework6;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +24,10 @@ using Configuration = Resgrid.Repositories.DataRepository.Migrations.Configurati
 using Stripe;
 using Microsoft.Practices.ServiceLocation;
 using Resgrid.Config;
+using Resgrid.Repositories.DataRepository;
+using Resgrid.Repositories.DataRepository.Stores;
+using Resgrid.Model.Identity;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
 
 namespace Resgrid.Web
 {
@@ -98,12 +101,12 @@ namespace Resgrid.Web
 			services.AddScoped<IPasswordHasher<IdentityUser>, SqlPasswordHasher>();
 
 			//Inject ApplicationDbContext in place of IdentityDbContext and use connection string
-			if (!configResult)
-				services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
-					new ApplicationDbContext(Configuration["ConnectionStrings:ResgridContext"]));
-			else
-				services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
-					new ApplicationDbContext(DataConfig.ConnectionString));
+			//if (!configResult)
+			//	services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
+			//		new ApplicationDbContext(Configuration["ConnectionStrings:ResgridContext"]));
+			//else
+			//	services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
+			//		new ApplicationDbContext(DataConfig.ConnectionString));
 
 			//Configure Identity middleware with ApplicationUser and the EF6 IdentityDbContext
 			services.AddIdentity<IdentityUser, IdentityRole>(config =>
@@ -115,9 +118,13 @@ namespace Resgrid.Web
 				config.Password.RequireUppercase = false;
 				config.Password.RequireNonAlphanumeric = false;
 				config.Password.RequiredLength = 6;
-			})
-			.AddEntityFrameworkStores<IdentityDbContext<IdentityUser>>()
-			.AddDefaultTokenProviders();
+			}).AddDefaultTokenProviders();
+
+			//services.AddScoped(typeof(IUserStore<>), typeof(IdentityUserStore));
+			services.AddScoped<IUserStore<IdentityUser>, IdentityUserStore>();
+			//services.AddScoped(typeof(IRoleStore<>), typeof(IdentityRoleStore));
+			services.AddScoped<IRoleStore<IdentityRole>, IdentityRoleStore>();
+			//.AddEntityFrameworkStores<IdentityDbContext<IdentityUser>>()
 
 			services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ClaimsPrincipalFactory<IdentityUser, IdentityRole>>();
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -359,6 +366,7 @@ namespace Resgrid.Web
 									name: "default",
 									template: "{controller=Home}/{action=Index}/{id?}");
 			});
+
 
 			//app.Use(async (context, next) =>
 			//{

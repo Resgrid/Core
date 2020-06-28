@@ -2,21 +2,21 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Results;
 using System;
 using Resgrid.Model;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Controllers
 {
 	public class CoreBridgeController : Controller
 	{
 		#region Private Members and Constructors
-		private readonly UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _userManager;
-		private readonly SignInManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _signInManager;
+		private readonly UserManager<IdentityUser> _userManager;
+		private readonly SignInManager<IdentityUser> _signInManager;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUsersService _usersService;
 		private readonly IEmailService _emailService;
@@ -28,7 +28,7 @@ namespace Resgrid.Web.Controllers
 		private readonly IEmailMarketingProvider _emailMarketingProvider;
 
 		public CoreBridgeController(
-						UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> userManager, SignInManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> signInManager,
+						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
 						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider)
 		{
@@ -65,7 +65,7 @@ namespace Resgrid.Web.Controllers
 		public async Task<DepartmentCreationResult> RegisterDepartment([FromBody]DepartmentCreationInput model)
 		{
 			DepartmentCreationResult creationResult = new DepartmentCreationResult();
-			var user = new Microsoft.AspNet.Identity.EntityFramework6.IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
+			var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
 			var result = await _userManager.CreateAsync(user, model.Password);
 			if (result.Succeeded)
 			{

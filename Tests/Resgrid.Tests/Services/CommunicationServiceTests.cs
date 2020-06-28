@@ -10,7 +10,7 @@ using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Services;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Tests.Services
 {

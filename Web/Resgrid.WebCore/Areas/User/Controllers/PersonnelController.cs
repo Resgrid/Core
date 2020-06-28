@@ -19,7 +19,7 @@ using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Resgrid.Web.Areas.User.Models.Profile;
+using Resgrid.Model.Identity;
 using Resgrid.WebCore.Areas.User.Models.Personnel;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -44,14 +44,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICertificationService _certificationService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IGeoService _geoService;
-		private readonly UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _userManager;
+		private readonly UserManager<IdentityUser> _userManager;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
-			IGeoService geoService, UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService)
+			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -284,7 +284,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var user = new Microsoft.AspNet.Identity.EntityFramework6.IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
+				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
 				var result = await _userManager.CreateAsync(user, model.NewPassword);
 				if (result.Succeeded)
 				{

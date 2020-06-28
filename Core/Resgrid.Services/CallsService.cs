@@ -6,7 +6,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using System.Text;
 using System.Threading.Tasks;
 using Resgrid.Framework;

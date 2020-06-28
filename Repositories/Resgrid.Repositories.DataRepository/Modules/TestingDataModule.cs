@@ -1,6 +1,12 @@
 ﻿using Autofac;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Repositories.Queries.Contracts;
+using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Contexts;
+using Resgrid.Repositories.DataRepository.Queries;
+using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 using Resgrid.Repositories.DataRepository.Transactions;
 
 namespace Resgrid.Repositories.DataRepository
@@ -45,6 +51,15 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentGroupMembersRepository>().As<IDepartmentGroupMembersRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentCallPruningRepository>().As<IDepartmentCallPruningRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ShiftsRepository>().As<IShiftsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ClaimsRepository>().As<IClaimsRepository>().InstancePerLifetimeScope();
+
+			builder.RegisterType<QueryList>().As<IQueryList>().InstancePerLifetimeScope();
+			builder.RegisterType<SqlServerConfiguration>().As<SqlConfiguration>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+			builder.RegisterType<QueryFactory>().As<IQueryFactory>().InstancePerLifetimeScope();
+			builder.RegisterType<SqlServerConnectionProvider>().As<IConnectionProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<IdentityRoleRepository>().As<IIdentityRoleRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IdentityUserRepository>().As<IIdentityUserRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

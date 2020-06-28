@@ -1,20 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using System.Data.Entity.ModelConfiguration;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
 {
-	//[Table("AspNetUserTokens")]
-	//public class ApplicationUserToken : IdentityUserToken, IEntity
-	//{
-	//	[NotMapped]
-	//	public object Id
-	//	{
-	//		get { return Id; }
-	//		set { base.UserId = (string)value; }
-	//	}
-	//}
-
 	public class ApplicationUserToken_Mapping : EntityTypeConfiguration<IdentityUserToken>
 	{
 		public ApplicationUserToken_Mapping()

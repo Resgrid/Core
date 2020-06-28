@@ -10,7 +10,7 @@ using Resgrid.Repositories.DataRepository.Transactions;
 using System.Configuration;
 using System.Threading.Tasks;
 using Dapper;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -107,10 +107,6 @@ namespace Resgrid.Repositories.DataRepository
 				var query = $@"SELECT up.*, u.Email as 'MembershipEmail', u.* FROM UserProfiles up
 												INNER JOIN AspNetusers u ON u.Id = up.UserId
 												WHERE u.Id IN ({usersToQuery})";
-
-				//return db.Query<UserProfile>($@"SELECT up.*, u.Email as 'MembershipEmail' FROM UserProfiles up
-				//								INNER JOIN AspNetusers u ON u.Id = up.UserId
-				//								WHERE u.Id IN ({usersToQuery})").ToList();
 
 				var multi = db.QueryMultiple(query);
 				var profiles = multi.Read<UserProfile, IdentityUser, UserProfile>((up, u) => { up.User = u; return up; }).ToList();

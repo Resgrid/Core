@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using Resgrid.Model.Identity;
 using Resgrid.Framework;
 using Resgrid.Framework.Testing;
 using Resgrid.Model;

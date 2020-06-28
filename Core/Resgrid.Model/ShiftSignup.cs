@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using Newtonsoft.Json;
 
 namespace Resgrid.Model
@@ -66,7 +66,7 @@ namespace Resgrid.Model
 	{
 		public ShiftSignup_Mapping()
 		{
-			//this.HasOptional(t => t.Trade).WithMany().Map(x => x.MapKey("SourceShiftSignupId"));
+
 		}
 	}
 }

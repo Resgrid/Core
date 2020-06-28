@@ -10,7 +10,7 @@ using Twilio.Auth;
 using System.Linq;
 using System;
 using Resgrid.Web.Services.Controllers.Version3.Models.Groups;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {

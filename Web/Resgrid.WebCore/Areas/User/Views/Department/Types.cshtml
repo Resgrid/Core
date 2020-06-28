@@ -7,19 +7,24 @@
 
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>Department Wide Types</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li class="active">
-        <strong>Department Wide Types</strong>
-      </li>
-    </ol>
-  </div> b
-</div>
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+      <h2>Department Wide Types</h2>
+      <ol class="breadcrumb">
+        <li>
+          <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        </li>
+        <li class="active">
+          <strong>Department Wide Types</strong>
+        </li>
+      </ol>
+    </div>
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a id="manageListOrderingButton" class="btn btn-primary top-button" title="Manage List Ordering" asp-controller="Types" asp-action="ListOrdering" asp-route-area="User">Manage List Ordering</a>
+      </div>
+    </div>
+  </div>
 
 <div class="row">
   <div class="col-xs-12">
@@ -241,6 +246,49 @@
                     </td>
                   </tr>
 				}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Personnel List Sorting</h5>
+          <div class="ibox-tools">
+            <div class="buttons-actions">
+              <a title="Add a new Certification type" class="btn btn-success" data-target="#newCertificationTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Certification Type</a>
+            </div>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Type Name</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var c in Model.CertificationTypes)
+                {
+                  <tr>
+                    <td>
+                      @c.Type
+                    </td>
+
+                    <td>
+                      <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Department", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="WARNING: This will permanently delete this Certification Type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                    </td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>

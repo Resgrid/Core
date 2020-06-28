@@ -27,15 +27,15 @@
           <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
         </div>
         <p>
-          Supply the information to the side to create a NEW department entry in the Resgrid system.
+          Supply the information to create your own Resgrid account and join @Model.DepartmentName.
         </p>
 
         <p>
-          If someone from your department has already signed up your department in Resgrid, contact them to have that user send you an invite to that existing department.
+          The information you are supplying is used to create your account in Resgrid. If you already have an account your existing account will be linked with the department as part of this invite.
         </p>
 
         <p>
-          If your department has not yet signed up for Resgrid you can create a new account here then invite your other department members from inside the system. Only the first user in a department needs to create their account from this screen.
+          If you are having trouble completing the invite or are running into issues, please reach out to the Administrator of the department for the invite you are trying to complete for assistance. They can manually add your account if necessary.
         </p>
 
         <div class='alert alert-info'>
@@ -97,7 +97,7 @@
         Resgrid, LLC.
       </div>
       <div class="col-md-6 text-right">
-        <small>© 2017</small>
+        <small>© @DateTime.Now.Year</small>
       </div>
     </div>
   </div>

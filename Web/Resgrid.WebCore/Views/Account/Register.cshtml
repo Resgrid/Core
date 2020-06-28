@@ -19,17 +19,18 @@
   @Html.Raw(JavaScriptSnippet.FullScript)
 
   <style>
-	.dropcap {
-	color: #1F8AC4;
-	float: left;
-	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 75px;
-	line-height: 60px;
-	padding-top: 4px;
-	padding-right: 8px;
-	padding-left: 3px;
-	}
+    .dropcap {
+      color: #1F8AC4;
+      float: left;
+      font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 75px;
+      line-height: 60px;
+      padding-top: 4px;
+      padding-right: 8px;
+      padding-left: 3px;
+    }
   </style>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="gray-bg">
 
@@ -111,6 +112,12 @@
               <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required="" />
               <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
+            <div class="form-group">
+              <div class="g-recaptcha" data-sitekey="@Model.SiteKey"></div>
+              <input asp-for="GoogleReCaptchaResponse" type="hidden" required="" />
+            </div>
+
+
             <button id="registerButton" type="submit" class="btn btn-primary block full-width m-b">Register</button>
 
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -131,8 +138,8 @@
       </div>
     </div>
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="~/lib/jquery/jquery.min.js"><\/script>')</script>
   <script src="~/clib/ujs/jquery-ujs.js"></script>
   <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
   <script src="~/lib/select2/js/select2.min.js"></script>
@@ -142,11 +149,16 @@
 
   <script>
 	$(document).ready(function () {
-	  $("#registrationForm").bind("submit", function (e) {
+	  $(document).on('submit', '#registrationForm', function () {
+		var crep = $('#g-recaptcha-response').val();
+		$('#GoogleReCaptchaResponse').val(crep);
+
 		if ($(this).valid()) {
 		  // On submit disable form submit button
 		  $('#registerButton').prop('disabled', true);
 		}
+
+		return true;
 	  });
 	});
   </script>

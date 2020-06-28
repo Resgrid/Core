@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -58,9 +58,6 @@ namespace Resgrid.Model
 		public CallDispatch_Mapping()
 		{
 			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-			//this.HasRequired(t => t.ActionLog).WithMany().HasForeignKey(t => t.ActionLogId).WillCascadeOnDelete(false);
-			//this.HasOptional<ActionLog>(u => u.ActionLog).WithOptionalPrincipal();
-			//this.HasRequired(i => i.Call).WithMany(u => u.Dispatches).HasForeignKey(i => i.CallId);
 		}
 	}
 }

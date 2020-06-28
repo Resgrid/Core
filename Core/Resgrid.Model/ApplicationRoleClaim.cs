@@ -1,21 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using System.Data.Entity.ModelConfiguration;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
-{
-	//[Table("AspNetRoleClaims")]
-	//public class ApplicationRoleClaim: IdentityRoleClaim//, IEntity
-	//{
-	//	//[NotMapped]
-	//	//public object Id
-	//	//{
-	//	//	get { return Id; }
-	//	//	set { base.Id = (int)value; }
-	//	//}
-	//}
-
-	public class ApplicationRoleClaim_Mapping : EntityTypeConfiguration<IdentityRoleClaim>
+{	public class ApplicationRoleClaim_Mapping : EntityTypeConfiguration<IdentityRoleClaim>
 	{
 		public ApplicationRoleClaim_Mapping()
 		{

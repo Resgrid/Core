@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using Resgrid.Model.Identity;
 using MimeKit;
 using Newtonsoft.Json;
 using Resgrid.Framework;

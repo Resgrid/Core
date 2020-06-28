@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Tests.Services
 {

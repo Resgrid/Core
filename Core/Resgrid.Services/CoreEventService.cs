@@ -1,12 +1,9 @@
 ﻿using System;
-using KellermanSoftware.CompareNetObjects;
 using Microsoft.Practices.ServiceLocation;
 using Resgrid.Model;
 using Resgrid.Model.Events;
-using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
-using Microsoft.AspNet.Identity.EntityFramework6;
 using Resgrid.Model.Providers;
 using Resgrid.Framework;
 

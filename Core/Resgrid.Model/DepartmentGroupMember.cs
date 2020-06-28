@@ -1,9 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
-using System.Text.RegularExpressions;
+using Resgrid.Model.Identity;
 using Newtonsoft.Json;
 
 namespace Resgrid.Model
@@ -46,7 +44,6 @@ namespace Resgrid.Model
 		public DepartmentGroupMember_Mapping()
 		{
 			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-			//this.HasRequired(i => i.DepartmentGroup).WithMany(u => u.Members).HasForeignKey(i => i.DepartmentGroupId);
 		}
 	}
 }

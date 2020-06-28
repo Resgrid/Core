@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 

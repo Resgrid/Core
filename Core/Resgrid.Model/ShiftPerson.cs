@@ -1,9 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Newtonsoft.Json;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
 {
@@ -42,12 +40,4 @@ namespace Resgrid.Model
 			set { ShiftPersonId = (int)value; }
 		}
 	}
-
-	//public class ShiftGroupPerson_Mapping : EntityTypeConfiguration<ShiftPerson>
-	//{
-	//	public ShiftGroupPerson_Mapping()
-	//	{
-	//		this.HasRequired(t => t.Shift).WithMany().HasForeignKey(t => t.ShiftId).WillCascadeOnDelete(false);
-	//	}
-	//}
 }

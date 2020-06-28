@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ProtoBuf;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Model.Queue
 {

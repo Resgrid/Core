@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using Resgrid.Model.Identity;
 
 namespace Resgrid.Model.Events
 {

@@ -1,21 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
+﻿using System.Data.Entity.ModelConfiguration;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
 {
-	//[Table("AspNetUsers")]
-	//public class ApplicationUser : IdentityUser//, IEntity
-	//{
-	//	//[NotMapped]
-	//	//public object Id
-	//	//{
-	//	//	get { return Id; }
-	//	//	set { base.Id = (string)value; }
-	//	//}
-	//}
-
-	public class ApplicationUser_Mapping : EntityTypeConfiguration<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser>
+	public class ApplicationUser_Mapping : EntityTypeConfiguration<IdentityUser>
 	{
 		public ApplicationUser_Mapping()
 		{

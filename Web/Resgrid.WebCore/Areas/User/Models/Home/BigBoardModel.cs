@@ -5,7 +5,7 @@ using Resgrid.Web.Areas.User.Models.Home;
 using System;
 using Resgrid.Model.Helpers;
 using Resgrid.Web.Helpers;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Areas.User.Models
 {

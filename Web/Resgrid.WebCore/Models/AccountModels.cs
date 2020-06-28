@@ -96,6 +96,8 @@ namespace Resgrid.Web.Models
 	{
 		public Invite Invite { get; set; }
 
+		public string DepartmentName { get; set; }
+
 		[Required]
 		[Display(Name = "User name")]
 		public string UserName { get; set; }

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
-using Microsoft.AspNet.Identity.EntityFramework6;
-using System.Data.Entity.ModelConfiguration.Configuration;
+using Resgrid.Model.Identity;
 using System.Linq;
-using System.Security.Cryptography;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -249,7 +247,6 @@ namespace Resgrid.Model
 		public Call_Mapping()
 		{
 			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-			//this.HasOptional<User>(u => u.ClosedByUser).WithOptionalPrincipal();
 		}
 	}
 }

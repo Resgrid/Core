@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Microsoft.AspNet.Identity.EntityFramework6;
 using MimeKit;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -16,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.EmailProcessor
 {

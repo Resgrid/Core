@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using Resgrid.WebCore.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Resgrid.Web.Models.AccountViewModels
 {
-	public class RegisterViewModel
+	public class RegisterViewModel: GoogleReCaptchaModelBase
 	{
+		public string CaptchaId { get; set; }
+		public string UserEnteredCaptchaCode { get; set; }
+
+		public string SiteKey { get; set; }
+
 		[Required]
 		[Display(Name = "FirstName")]
 		public string FirstName { get; set; }

@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using Resgrid.Web.Areas.User.Models.Personnel;
 using Microsoft.AspNetCore.Http.Authentication;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -40,13 +41,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IImageService _imageService;
 		private readonly IOptions<AppOptions> _appOptionsAccessor;
 		private readonly IEmailService _emailService;
-		private readonly UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _userManager;
-		private readonly SignInManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _signInManager;
+		private readonly UserManager<IdentityUser> _userManager;
+		private readonly SignInManager<IdentityUser> _signInManager;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, IPushUriService pushUriService, ICertificationService certificationService,
 			ICustomStateService customStateService, IImageService imageService, IOptions<AppOptions> appOptionsAccessor,
-			IEmailService emailService, UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> userManager, SignInManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> signInManager)
+			IEmailService emailService, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNet.Identity.EntityFramework6;
 using Microsoft.AspNetCore.Identity;
 using Resgrid.Model;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Helpers
 {

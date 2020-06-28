@@ -14,6 +14,9 @@ using Resgrid.Web.Models.AccountViewModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Resgrid.Model.Identity;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
+using Resgrid.Config;
 
 namespace Resgrid.Web.Controllers
 {
@@ -26,8 +29,8 @@ namespace Resgrid.Web.Controllers
 	public class AccountController : Controller
 	{
 		#region Private Members and Constructors
-		private readonly UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _userManager;
-		private readonly SignInManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> _signInManager;
+		private readonly UserManager<IdentityUser> _userManager;
+		private readonly SignInManager<IdentityUser> _signInManager;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUsersService _usersService;
 		private readonly IEmailService _emailService;
@@ -39,7 +42,7 @@ namespace Resgrid.Web.Controllers
 		private readonly IEmailMarketingProvider _emailMarketingProvider;
 
 		public AccountController(
-						UserManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> userManager, SignInManager<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> signInManager,
+						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
 						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider)
 		{
@@ -159,6 +162,7 @@ namespace Resgrid.Web.Controllers
 
 			RegisterViewModel model = new RegisterViewModel();
 			ViewBag.DepartmentTypes = new SelectList(model.DepartmentTypes);
+			model.SiteKey = WebConfig.RecaptchaPublicKey;
 			ViewData["ReturnUrl"] = returnUrl;
 
 			return View(model);
@@ -176,10 +180,11 @@ namespace Resgrid.Web.Controllers
 			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
 				return RedirectToAction("LogOn", "Account");
 
+
 			ViewData["ReturnUrl"] = returnUrl;
 			if (ModelState.IsValid)
 			{
-				var user = new Microsoft.AspNet.Identity.EntityFramework6.IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
+				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
 				var result = await _userManager.CreateAsync(user, model.Password);
 				if (result.Succeeded)
 				{
@@ -197,6 +202,10 @@ namespace Resgrid.Web.Controllers
 					Department department = _departmentsService.CreateDepartment(model.DepartmentName, user.Id, model.DepartmentType);
 					_departmentsService.AddUserToDepartment(department.DepartmentId, user.Id);
 					_subscriptionsService.CreateFreePlanPayment(department.DepartmentId, user.Id);
+
+					// Guard, in case testing has caching turned on for the shared redis cache there can be artifacts
+					_departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
+
 					_emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
 
 					_departmentsService.InvalidateDepartmentMembers();
@@ -248,9 +257,12 @@ namespace Resgrid.Web.Controllers
 		// GET: /Account/ForgotPassword
 		[HttpGet]
 		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
 		public IActionResult ForgotPassword()
 		{
-			return View();
+			ForgotPasswordViewModel model = new ForgotPasswordViewModel();
+			model.SiteKey = WebConfig.RecaptchaPublicKey;
+			return View(model);
 		}
 
 		//
@@ -337,6 +349,12 @@ namespace Resgrid.Web.Controllers
 			if (model.Invite.CompletedOn.HasValue)
 				return RedirectToAction("CompletedInvite");
 
+			var department = _departmentsService.GetDepartmentById(model.Invite.DepartmentId);
+
+			if (department == null)
+				return RedirectToAction("MissingInvite");
+
+			model.DepartmentName = department.Name;
 			model.Email = model.Invite.EmailAddress;
 			model.Code = inviteCode.ToString();
 
@@ -364,7 +382,7 @@ namespace Resgrid.Web.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var user = new Microsoft.AspNet.Identity.EntityFramework6.IdentityUser { UserName = model.UserName, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
+				var user = new IdentityUser { UserName = model.UserName, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
 				var result = await _userManager.CreateAsync(user, model.Password);
 				if (result.Succeeded)
 				{
@@ -437,7 +455,7 @@ namespace Resgrid.Web.Controllers
 			}
 		}
 
-		private Task<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> GetCurrentUserAsync()
+		private Task<IdentityUser> GetCurrentUserAsync()
 		{
 			return _userManager.GetUserAsync(HttpContext.User);
 		}

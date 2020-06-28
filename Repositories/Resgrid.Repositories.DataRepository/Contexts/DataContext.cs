@@ -4,7 +4,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using Resgrid.Model;
 using Resgrid.Repositories.DataRepository.Configurations;
 
@@ -117,7 +117,7 @@ namespace Resgrid.Repositories.DataRepository.Contexts
 		public DbSet<DepartmentProfileUserFollow> DepartmentProfileUserFollows { get; set; }
 		public DbSet<IncidentLog> IncidentLogs { get; set; }
 		public DbSet<Rank> Ranks { get; set; }
-		public DbSet<Microsoft.AspNet.Identity.EntityFramework6.IdentityUser> ApplicationUsers { get; set; }
+		public DbSet<IdentityUser> ApplicationUsers { get; set; }
 		public DbSet<IdentityUserRole> ApplicationUserRoles { get; set; }
 		public DbSet<IdentityUserClaim> ApplicationUserClaims { get; set; }
 		public DbSet<IdentityRole> ApplicationRoles { get; set; }

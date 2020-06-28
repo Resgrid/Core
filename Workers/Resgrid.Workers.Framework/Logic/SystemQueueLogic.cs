@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Autofac;
 using Microsoft.ServiceBus.Messaging;
 using Resgrid.Framework;
@@ -10,7 +9,7 @@ using Stripe;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Events;
 using KellermanSoftware.CompareNetObjects;
-using Microsoft.AspNet.Identity.EntityFramework6;
+using Resgrid.Model.Identity;
 using System.Linq;
 using System.Collections.Generic;
 using Resgrid.Model.Providers;

@@ -14,8 +14,8 @@ using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Resgrid.Providers.EmailProvider;
-using Microsoft.AspNet.Identity.EntityFramework6;
 using MimeKit;
+using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Services.Controllers
 {

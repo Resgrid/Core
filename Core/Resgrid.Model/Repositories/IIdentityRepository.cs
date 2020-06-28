@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Resgrid.Model.Identity;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework6;
 
 namespace Resgrid.Model.Repositories
 {

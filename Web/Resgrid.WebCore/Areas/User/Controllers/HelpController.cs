@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Help;
 
@@ -20,10 +21,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return PartialView();
 		}
 
-		public IActionResult SetupReport()
+		public async Task<IActionResult> SetupReport()
 		{
 			var model = new SetupReportView();
-			model.Report = _departmentsService.GetDepartmentSetupReport(DepartmentId);
+			model.Report = await _departmentsService.GetDepartmentSetupReportAsync(DepartmentId);
 			model.SetupScore = (int)_departmentsService.GenerateSetupScore(model.Report);
 
 			return View(model);

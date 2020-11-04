@@ -5,17 +5,18 @@ using Resgrid.Framework;
 using System;
 using RabbitMQ.Client;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
-	public class RabbitOutboundQueueProvider
+	public class RabbitOutboundQueueProvider: IRabbitOutboundQueueProvider
 	{
 		public RabbitOutboundQueueProvider()
 		{
 			VerifyAndCreateClients();
 		}
 
-		public void EnqueueCall(CallQueueItem callQueue)
+		public bool EnqueueCall(CallQueueItem callQueue)
 		{
 			string serializedObject = String.Empty;
 
@@ -40,10 +41,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 				serializedObject = ObjectSerialization.Serialize(callQueue);
 			}
 
-			SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
+			return SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
 		}
 
-		public void EnqueueMessage(MessageQueueItem messageQueue)
+		public bool EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			string serializedObject = String.Empty;
 
@@ -78,10 +79,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 				serializedObject = ObjectSerialization.Serialize(messageQueue);
 			}
 
-			SendMessage(ServiceBusConfig.MessageBroadcastQueueName, serializedObject);
+			return SendMessage(ServiceBusConfig.MessageBroadcastQueueName, serializedObject);
 		}
 
-		public void EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
+		public bool EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
 		{
 			string serializedObject = String.Empty;
 
@@ -114,42 +115,42 @@ namespace Resgrid.Providers.Bus.Rabbit
 				serializedObject = ObjectSerialization.Serialize(distributionListQueue);
 			}
 
-			SendMessage(ServiceBusConfig.EmailBroadcastQueueName, serializedObject);
+			return SendMessage(ServiceBusConfig.EmailBroadcastQueueName, serializedObject);
 		}
 
-		public void EnqueueNotification(NotificationItem notificationQueue)
+		public bool EnqueueNotification(NotificationItem notificationQueue)
 		{
 			string serializedObject = String.Empty;
 
 			serializedObject = ObjectSerialization.Serialize(notificationQueue);
 
-			SendMessage(ServiceBusConfig.NotificaitonBroadcastQueueName, serializedObject);
+			return SendMessage(ServiceBusConfig.NotificaitonBroadcastQueueName, serializedObject);
 		}
 
-		public void EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
+		public bool EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
 		{
 			string serializedObject = String.Empty;
 
 			serializedObject = ObjectSerialization.Serialize(shiftQueueItem);
 
-			SendMessage(ServiceBusConfig.ShiftNotificationsQueueName, serializedObject);
+			return SendMessage(ServiceBusConfig.ShiftNotificationsQueueName, serializedObject);
 		}
 
-		public void EnqueueCqrsEvent(CqrsEvent cqrsEvent)
+		public bool EnqueueCqrsEvent(CqrsEvent cqrsEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(cqrsEvent);
 
-			SendMessage(ServiceBusConfig.SystemQueueName, serializedObject);
+			return SendMessage(ServiceBusConfig.SystemQueueName, serializedObject);
 		}
 
-		public void EnqueuePaymentEvent(CqrsEvent cqrsEvent)
+		public bool EnqueuePaymentEvent(CqrsEvent cqrsEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(cqrsEvent);
 
-			SendMessage(ServiceBusConfig.PaymentQueueName, serializedObject);
+			return SendMessage(ServiceBusConfig.PaymentQueueName, serializedObject);
 		}
 
-		public static void VerifyAndCreateClients()
+		public bool VerifyAndCreateClients()
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			{
@@ -160,55 +161,60 @@ namespace Resgrid.Providers.Bus.Rabbit
 					{
 						using (var channel = connection.CreateModel())
 						{
-							channel.QueueDeclare(queue: ServiceBusConfig.SystemQueueName,
+							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,
 										 arguments: null);
 
-							channel.QueueDeclare(queue: ServiceBusConfig.CallBroadcastQueueName,
+							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,
 										 arguments: null);
 
-							channel.QueueDeclare(queue: ServiceBusConfig.MessageBroadcastQueueName,
+							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,
 										 arguments: null);
 
-							channel.QueueDeclare(queue: ServiceBusConfig.EmailBroadcastQueueName,
+							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,
 										 arguments: null);
 
-							channel.QueueDeclare(queue: ServiceBusConfig.NotificaitonBroadcastQueueName,
+							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,
 										 arguments: null);
 
-							channel.QueueDeclare(queue: ServiceBusConfig.ShiftNotificationsQueueName,
+							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,
 										 arguments: null);
 
-							channel.QueueDeclare(queue: ServiceBusConfig.PaymentQueueName,
+							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
 										 durable: true,
 										 exclusive: false,
 										 autoDelete: false,
 										 arguments: null);
 						}
 					}
+
+					return true;
 				}
 				catch (Exception ex)
 				{
 					Logging.LogException(ex);
+					return false;
 				}
 			}
+
+			return false;
 		}
 
 		private bool SendMessage(string queueName, string message)
@@ -217,13 +223,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				try
 				{
+					// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
 					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 					using (var connection = factory.CreateConnection())
 					{
 						using (var channel = connection.CreateModel())
 						{
 							channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
-										 routingKey: queueName,
+										 routingKey: SetQueueNameForEnv(queueName),
 										 basicProperties: null,
 										 body: Encoding.ASCII.GetBytes(message));
 						}
@@ -239,6 +246,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
+		}
+
+		private static string SetQueueNameForEnv(string cacheKey)
+		{
+			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
+				return $"DEV{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
+				return $"QA{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
+				return $"ST{cacheKey}";
+
+			return cacheKey;
 		}
 	}
 }

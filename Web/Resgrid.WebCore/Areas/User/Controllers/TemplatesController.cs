@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,35 +26,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new TemplateIndexModel();
-			model.CallQuickTemplates = _templatesService.GetAllCallQuickTemplatesForDepartment(DepartmentId);
+			model.CallQuickTemplates = await _templatesService.GetAllCallQuickTemplatesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			var model = new NewTemplateModel();
 			model.Template = new CallQuickTemplate();
 
-			var priorites = _callsService.GetCallPrioritesForDepartment(DepartmentId);
+			var priorites = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 
 
 			List<CallType> types = new List<CallType>();
 			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
-			types.AddRange(_callsService.GetCallTypesForDepartment(DepartmentId));
+			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
 			model.CallTypes = new SelectList(types, "Type", "Type");
 
 			return View(model);
 		}
 
 		[HttpPost]
-		public IActionResult New(NewTemplateModel model)
+		public async Task<IActionResult> New(NewTemplateModel model, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrWhiteSpace(model.Template.CallName) &&
 				String.IsNullOrWhiteSpace(model.Template.CallNature))
@@ -67,7 +69,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Template.CreatedOn = DateTime.UtcNow;
 				model.Template.CreatedByUserId = UserId;
 
-				_templatesService.SaveCallQuickTemplate(model.Template);
+				await _templatesService.SaveCallQuickTemplateAsync(model.Template, cancellationToken);
 				return RedirectToAction("Index");
 			}
 
@@ -75,22 +77,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Delete(int id)
+		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
 		{
-			var template = _templatesService.GetCallQuickTemplateById(id);
+			var template = await _templatesService.GetCallQuickTemplateByIdAsync(id);
 
 			if (template == null || template.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_templatesService.DeleteCallQuickTemplate(id);
+			await _templatesService.DeleteCallQuickTemplateAsync(id, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult GetTemplate(int id)
+		public async Task<IActionResult> GetTemplate(int id)
 		{
-			var template = _templatesService.GetCallQuickTemplateById(id);
+			var template = await _templatesService.GetCallQuickTemplateByIdAsync(id);
 
 			return Json(template);
 		}

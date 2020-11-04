@@ -1,4 +1,5 @@
-﻿using Resgrid.Model.Queue;
+﻿using System.Threading.Tasks;
+using Resgrid.Model.Queue;
 using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework
@@ -16,9 +17,10 @@ namespace Resgrid.Workers.Framework
 
 		public bool Continue { get; set; }
 
-		public void Run(CallQueueItem item)
+		public async Task<bool> Run(CallQueueItem item)
 		{
-			_broadcastCallLogic.Process(item);
+			await _broadcastCallLogic.Process(item);
+			return true;
 		}
 	}
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -35,13 +37,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Private Members and Constructors
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new NotificationIndexView();
-			model.Notifications = _notificationService.GetNotificationsByDepartment(DepartmentId);
-			var unitTypes = _unitsService.GetUnitTypesForDepartment(DepartmentId);
-			var allRoles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
-			model.CustomStates = _customStateService.GetAllActiveCustomStatesForDepartment(DepartmentId);
+			model.Notifications =  _notificationService.GetNotificationsByDepartmentAsync(DepartmentId);
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+			var allRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			model.CustomStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(DepartmentId);
 
 			foreach (var notification in model.Notifications)
 			{
@@ -60,7 +62,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var roles = notification.RolesToNotify.Split(char.Parse(","));
 						foreach (var roleId in roles)
 						{
-							var role = _personnelRolesService.GetRoleById(int.Parse(roleId));
+							var role = await _personnelRolesService.GetRoleByIdAsync(int.Parse(roleId));
 
 							if (role != null)
 							{
@@ -77,7 +79,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var groups = notification.GroupsToNotify.Split(char.Parse(","));
 						foreach (var groupId in groups)
 						{
-							var group = _departmentGroupsService.GetGroupById(int.Parse(groupId), false);
+							var group = await _departmentGroupsService.GetGroupByIdAsync(int.Parse(groupId), false);
 
 							if (group != null)
 							{
@@ -122,21 +124,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			var model = new NotificationNewView();
 			model.Notification = new DepartmentNotification();
 
 			ViewBag.Types = model.Type.ToSelectList();
 
-			model.PersonnelRoles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
-			model.UnitsTypes = _unitsService.GetUnitTypesForDepartment(DepartmentId);
+			model.PersonnelRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			model.UnitsTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpPost]
-		public IActionResult New(NotificationNewView model, IFormCollection collection)
+		public async Task<IActionResult> New(NotificationNewView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
 			ViewBag.Types = model.Type.ToSelectList();
 			model.Notification.DepartmentId = DepartmentId;
@@ -223,21 +225,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 						model.Notification.CurrentData = collection["currentStates"];
 				}
 
-				_notificationService.Save(model.Notification);
+				await _notificationService.SaveAsync(model.Notification, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
 
-			model.PersonnelRoles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
-			model.UnitsTypes = _unitsService.GetUnitTypesForDepartment(DepartmentId);
+			model.PersonnelRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			model.UnitsTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
-		public IActionResult Delete(int notificationId)
+		public async Task<IActionResult> Delete(int notificationId, CancellationToken cancellationToken)
 		{
-			_notificationService.DeleteDepartmentNotificationById(notificationId);
+			await _notificationService.DeleteDepartmentNotificationByIdAsync(notificationId, cancellationToken);
 
 			return RedirectToAction("Index");
 		}

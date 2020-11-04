@@ -100,7 +100,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int) CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.HancockCounty, email, mmId, _dispatchUsers, null, null, null, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.HancockCounty, email, mmId, _dispatchUsers, null, null, null, priority, null);
 
 				call.Should().NotBeNull();
 				call.ReportingUserId.Should().Be(mmId);
@@ -125,7 +125,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.HancockCounty, email, mmId, _dispatchUsers, null, null, null, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.HancockCounty, email, mmId, _dispatchUsers, null, null, null, priority, null);
 
 				call.Should().NotBeNull();
 				call.ReportingUserId.Should().Be(mmId);
@@ -150,7 +150,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.HancockCounty, email, mmId, _dispatchUsers, null, null, null, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.HancockCounty, email, mmId, _dispatchUsers, null, null, null, priority, null);
 
 				call.Should().NotBeNull();
 				call.ReportingUserId.Should().Be(mmId);
@@ -181,7 +181,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority, null);
 
 				call.Should().NotBeNull();
 				call.ReportingUserId.Should().Be(mmId);
@@ -208,7 +208,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority, null);
 
 				call.Should().NotBeNull();
 				call.ReportingUserId.Should().Be(mmId);
@@ -235,7 +235,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority, null);
 
 				call.Should().NotBeNull();
 				call.ReportingUserId.Should().Be(mmId);
@@ -262,7 +262,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority, null);
 
 				call.Should().BeNull();
 			}
@@ -290,7 +290,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.ParklandCounty2, email, mmId, _dispatchUsers, _department, _activeCalls, _dispatchedUnits, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.ParklandCounty2, email, mmId, _dispatchUsers, _department, _activeCalls, _dispatchedUnits, priority, null);
 
 				call.Should().NotBeNull();
 				call.ReportingUserId.Should().Be(mmId);
@@ -323,7 +323,7 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.ParklandCounty2, email, mmId, _dispatchUsers, _department, _activeCalls, _dispatchedUnits, priority);
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.ParklandCounty2, email, mmId, _dispatchUsers, _department, _activeCalls, _dispatchedUnits, priority, null);
 
 				call.Should().NotBeNull();
 				call.CallId.Should().Be(2);
@@ -335,6 +335,142 @@ namespace Resgrid.Tests.Services
 				call.LoggedOn.Should().BeCloseTo(new DateTime(2018, 5, 14, 15, 53, 16, DateTimeKind.Utc));
 				call.Name.Should().Be("72C01 - Water Rescue/ Sinking Vehicle/Vehicle in Floodwater");
 				call.GeoLocationData.Should().Be("54.1425, -115.687");
+			}
+		}
+
+		[TestFixture]
+		public class when_importing_an_active911_call : with_the_calls_email_factory
+		{
+			[Test]
+			public void should_work_with_normal_email()
+			{
+				CallEmail email = new CallEmail();
+				email.MessageId = "100";
+				email.TextBody =
+					@"CALL: Medical Unknown Problems                        
+				ADDR: -76.0254669,41.513334
+				ADDR1: 555 MAIN ST                                     
+				ID: 2020-000698745-MED
+				Date/Time:Date/Time: 1/1/2020 3:19:00 AM
+				MAP: http://www.google.com/maps/place/41.513334,-76.0254669
+				UNITS: MEDIC01, 
+				NARR: 55 YOM 
+				NARR: CONSCIOUS / WILL NOT RESPOND 
+				NARR: NO OTHER SYMPTOMS OF COVID
+				NARR: HAS COPD 
+				NARR: 1057 ENR TO SCENE 
+				NARR: 1057 ON SCENE 
+				NARR: DISCONTINUE TIME STAMPS";
+				email.Subject = "ACTIVE 9-1-1";
+
+				string mmId = Guid.NewGuid().ToString();
+				var priority = (int) CallPriority.High;
+
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Active911, email, mmId, _dispatchUsers, null, null, null, priority, null);
+
+				call.Should().NotBeNull();
+				call.ReportingUserId.Should().Be(mmId);
+				call.IncidentNumber.Should().Be("2020-000698745-MED");
+				call.SourceIdentifier.Should().Be("100");
+				call.CallSource.Should().Be((int)CallSources.EmailImport);
+				//call.Type.Should().Be("Medical/EMS");
+				call.Address.Should().Be("555 MAIN ST");
+				call.NatureOfCall.Should().NotBeNull();
+				call.Notes.Should().NotBeNull();
+				call.Name.Should().Be("Medical Unknown Problems");
+			}
+
+			[Test]
+			public void should_work_for_department_7966()
+			{
+				CallEmail email = new CallEmail();
+				email.MessageId = "100";
+				email.TextBody =
+					@"CALL: Medical Unknown Problems                        
+				ADDR: -76.0254669,41.513334
+				ADDR1: 555 MAIN ST                                     
+				ID: 2020-000698745-MED
+				Date/Time:Date/Time: 1/1/2020 3:19:00 AM
+				MAP: http://www.google.com/maps/place/41.513334,-76.0254669
+				UNITS: MEDIC01, 
+				NARR: 55 YOM 
+				NARR: CONSCIOUS / WILL NOT RESPOND 
+				NARR: NO OTHER SYMPTOMS OF COVID
+				NARR: HAS COPD 
+				NARR: 1057 ENR TO SCENE 
+				NARR: 1057 ON SCENE 
+				NARR: DISCONTINUE TIME STAMPS";
+				email.Subject = "ACTIVE 9-1-1";
+
+				string mmId = Guid.NewGuid().ToString();
+				var priority = (int) CallPriority.High;
+
+				var department = new Department();
+				department.DepartmentId = 7966;
+
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Active911, email, mmId, _dispatchUsers, department, null, null, priority, null);
+
+				call.Should().NotBeNull();
+				call.ReportingUserId.Should().Be(mmId);
+				call.IncidentNumber.Should().Be("2020-000698745-MED");
+				call.SourceIdentifier.Should().Be("100");
+				call.CallSource.Should().Be((int)CallSources.EmailImport);
+				//call.Type.Should().Be("Medical/EMS");
+				call.Address.Should().Be("555 MAIN ST");
+				call.NatureOfCall.Should().NotBeNull();
+				call.Notes.Should().BeNull();
+				call.Name.Should().Be("Medical Unknown Problems");
+				call.Type.Should().Be("Medical");
+				call.Priority.Should().Be(priority);
+			}
+
+			[Test]
+			public void should_work_for_department_7966_withprios()
+			{
+				CallEmail email = new CallEmail();
+				email.MessageId = "100";
+				email.TextBody =
+					@"CALL: Medical Unknown Problems                        
+				ADDR: -76.0254669,41.513334
+				ADDR1: 555 MAIN ST                                     
+				ID: 2020-000698745-MED
+				Date/Time:Date/Time: 1/1/2020 3:19:00 AM
+				MAP: http://www.google.com/maps/place/41.513334,-76.0254669
+				UNITS: MEDIC01, 
+				NARR: 55 YOM 
+				NARR: CONSCIOUS / WILL NOT RESPOND 
+				NARR: NO OTHER SYMPTOMS OF COVID
+				NARR: HAS COPD 
+				NARR: 1057 ENR TO SCENE 
+				NARR: 1057 ON SCENE 
+				NARR: DISCONTINUE TIME STAMPS";
+				email.Subject = "ACTIVE 9-1-1";
+
+				string mmId = Guid.NewGuid().ToString();
+				var priority = (int) CallPriority.High;
+
+				var department = new Department();
+				department.DepartmentId = 7966;
+
+				var prios = new List<DepartmentCallPriority>();
+				prios.Add(new DepartmentCallPriority{ DepartmentCallPriorityId = 500, Name = "MVA" });
+				prios.Add(new DepartmentCallPriority{ DepartmentCallPriorityId = 501, Name = "MEDICAL" });
+				prios.Add(new DepartmentCallPriority{ DepartmentCallPriorityId = 502, Name = "Unknown" });
+
+				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Active911, email, mmId, _dispatchUsers, department, null, null, priority, prios);
+
+				call.Should().NotBeNull();
+				call.ReportingUserId.Should().Be(mmId);
+				call.IncidentNumber.Should().Be("2020-000698745-MED");
+				call.SourceIdentifier.Should().Be("100");
+				call.CallSource.Should().Be((int)CallSources.EmailImport);
+				//call.Type.Should().Be("Medical/EMS");
+				call.Address.Should().Be("555 MAIN ST");
+				call.NatureOfCall.Should().NotBeNull();
+				call.Notes.Should().BeNull();
+				call.Name.Should().Be("Medical Unknown Problems");
+				call.Type.Should().Be("Medical");
+				call.Priority.Should().Be(501);
 			}
 		}
 	}

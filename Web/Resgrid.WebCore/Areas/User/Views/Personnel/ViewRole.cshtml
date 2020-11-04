@@ -42,8 +42,8 @@
 												@foreach (var u in Model.Role.Users)
 												{
 												<tr>
-													<td class="client-avatar"><a href=""><img alt="image" src="https://api.resgrid.com/api/v3/Avatars/Get?id=@u.UserId" onerror="this.src='https://resgrid.com/Images/defaultProfile.png'"></a> </td>
-													<td><a asp-controller="Personnel" asp-action="ViewPerson" asp-route-area="User" asp-route-userId="@u.UserId" class="client-link">@UserHelper.GetFullNameForUser(u.UserId)</a></td>
+													<td class="client-avatar"><a href=""><img alt="image" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@u.UserId" onerror="this.src='https://resgrid.com/images/defaultProfile.png'"></a> </td>
+													<td><a asp-controller="Personnel" asp-action="ViewPerson" asp-route-area="User" asp-route-userId="@u.UserId" class="client-link">@(await UserHelper.GetFullNameForUser(u.UserId))</a></td>
 												</tr>
 												}
 											</tbody>

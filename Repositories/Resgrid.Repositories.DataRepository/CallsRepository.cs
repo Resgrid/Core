@@ -1,114 +1,211 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
+using System.Data.Common;
+using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using Resgrid.Model.Identity;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Calls;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class CallsRepository : RepositoryBase<Call>, ICallsRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public CallsRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel)
-		{ }
-
-		public void MarkCallDispatchesAsSent(int callId, List<Guid> usersToMark)
+		public CallsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			var userIds = new StringBuilder();
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
+		}
 
-			foreach (var userId in usersToMark)
+		public async Task<IEnumerable<Call>> GetAllCallsByDepartmentDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
+		{
+			try
 			{
-				if (userIds.Length == 0)
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Call>>>(async x =>
 				{
-					userIds.Append($"|{userId}|");
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+
+					var query = _queryFactory.GetQuery<SelectAllCallsByDidDateQuery>();
+
+					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
 				}
 				else
 				{
-					userIds.Append($"{userId}|");
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
 				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			db.SqlQuery<IdentityUser>(@"DECLARE @CallId INT
-													DECLARE @UserIds VARCHAR(MAX)
+				throw;
+			}
+		}
 
-													UPDATE Calls
-													SET DispatchCount = (DispatchCount + 1),
-														  LastDispatchedOn = GETUTCDATE()
-													WHERE CallId = @CallId
+		public async Task<IEnumerable<Call>> GetAllClosedCallsByDepartmentAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Call>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
 
-													UPDATE CallDispatches
-													SET DispatchCount = (DispatchCount + 1),
-														  LastDispatchedOn = GETUTCDATE()
-													WHERE CallId = @CallId AND @UserIds LIKE '%|' +convert(varchar(max), UserId) + '|%'",
-					new SqlParameter("@CallId", callId),
-					new SqlParameter("@UserIds", userIds.ToString()));
+					var query = _queryFactory.GetQuery<SelectAllClosedCallsByDidDateQuery>();
 
+					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<Call>> GetAllOpenCallsByDepartmentAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Call>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectAllOpenCallsByDidDateQuery>();
+
+					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<Call>> GetAllCallsByDepartmentIdLoggedOnAsync(int departmentId, DateTime loggedOn)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Call>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("Date", loggedOn);
+
+					var query = _queryFactory.GetQuery<SelectAllCallsByDidLoggedOnQuery>();
+
+					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
 		}
 
 		public void CleanUpCallDispatchAudio()
 		{
-			var lastestDate = DateTime.UtcNow.AddDays(-14);
+			//var lastestDate = DateTime.UtcNow.AddDays(-14);
 
-			db.SqlQuery<IdentityUser>(@"DELETE FROM CallAttachments
-										WHERE CallAttachmentType = 1 AND
-										CallId IN (SELECT CallId FROM Calls
-										WHERE LoggedOn < @DeleteBeforeDate)",
-					new SqlParameter("@DeleteBeforeDate", lastestDate));
+			//db.SqlQuery<IdentityUser>(@"DELETE FROM CallAttachments
+			//							WHERE CallAttachmentType = 1 AND
+			//							CallId IN (SELECT CallId FROM Calls
+			//							WHERE LoggedOn < @DeleteBeforeDate)",
+			//		new SqlParameter("@DeleteBeforeDate", lastestDate));
 
-		}
-
-		public List<Call> GetActiveCallsByDepartment(int departmentId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				return db.Query<Call>($"SELECT * FROM Calls c WHERE c.State = 0 AND c.DepartmentId = @departmentId AND c.IsDeleted = 0",
-					new { departmentId = departmentId}).ToList();
-			}
-		}
-
-		public List<CallProtocol> GetCallProtocolsByCallId(int callId)
-		{
-			Dictionary<int, CallProtocol> lookup = new Dictionary<int, CallProtocol>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-
-				var query = @"SELECT * FROM CallProtocols c
-							  INNER JOIN DispatchProtocols dp ON dp.DispatchProtocolId = c.DispatchProtocolId
-							  WHERE c.CallId = @callId";
-
-
-				var plans = db.Query<CallProtocol, DispatchProtocol, CallProtocol>(query, (cp, p) =>
-				{
-					CallProtocol callProtocol;
-
-					if (!lookup.TryGetValue(cp.CallProtocolId, out callProtocol))
-					{
-						lookup.Add(cp.CallProtocolId, cp);
-						callProtocol = cp;
-					}
-
-					cp.Protocol = p;
-
-					return callProtocol;
-
-				}, new { callId = callId }, splitOn: "DispatchProtocolId");
-
-				return plans.ToList();
-			}
 		}
 	}
 }

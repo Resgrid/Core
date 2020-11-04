@@ -49,7 +49,7 @@
             </div>
 
             <div class="form-group">
-              <label class="col-sm-2 control-label">Type Name</label>
+              <label class="col-sm-2 control-label">Name</label>
               <div class="col-sm-6"><input type="text" class="form-control" placeholder="Title of the calendar entry" asp-for="Item.Title"></div>
             </div>
             <div class="form-group">
@@ -103,33 +103,103 @@
                 Days of the Week
               </label>
               <div class="col-sm-10">
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" asp-for="Item.Sunday" class="checkbox checkbox-primary">
-                  <label for="Sunday"> Sunday </label>
+                <div class="form-group">
+                  <label class="col-sm-1 control-label">Sunday</label>
+                  <div class="col-sm-8">
+                    <div class="switch">
+                      <div class="onoffswitch">
+                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Sunday">
+                        <label class="onoffswitch-label" for="Item_Sunday">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" asp-for="Item.Monday" class="checkbox checkbox-primary">
-                  <label for="Monday"> Monday </label>
+                <div class="form-group">
+                  <label class="col-sm-1 control-label">Monday</label>
+                  <div class="col-sm-8">
+                    <div class="switch">
+                      <div class="onoffswitch">
+                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Monday">
+                        <label class="onoffswitch-label" for="Item_Monday">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" asp-for="Item.Tuesday" class="checkbox checkbox-primary">
-                  <label for="Tuesday"> Tuesday </label>
+                <div class="form-group">
+                  <label class="col-sm-1 control-label">Tuesday</label>
+                  <div class="col-sm-8">
+                    <div class="switch">
+                      <div class="onoffswitch">
+                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Tuesday">
+                        <label class="onoffswitch-label" for="Item_Tuesday">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" asp-for="Item.Wednesday" class="checkbox checkbox-primary">
-                  <label for="Wednesday"> Wednesday </label>
+                <div class="form-group">
+                  <label class="col-sm-1 control-label">Wednesday</label>
+                  <div class="col-sm-8">
+                    <div class="switch">
+                      <div class="onoffswitch">
+                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Wednesday">
+                        <label class="onoffswitch-label" for="Item_Wednesday">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" asp-for="Item.Thursday" class="checkbox checkbox-primary">
-                  <label for="Thursday"> Thursday </label>
+                <div class="form-group">
+                  <label class="col-sm-1 control-label">Thursday</label>
+                  <div class="col-sm-8">
+                    <div class="switch">
+                      <div class="onoffswitch">
+                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Thursday">
+                        <label class="onoffswitch-label" for="Item_Thursday">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" asp-for="Item.Friday" class="checkbox checkbox-primary">
-                  <label for="Friday"> Friday </label>
+                <div class="form-group">
+                  <label class="col-sm-1 control-label">Friday</label>
+                  <div class="col-sm-8">
+                    <div class="switch">
+                      <div class="onoffswitch">
+                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Friday">
+                        <label class="onoffswitch-label" for="Item_Friday">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" asp-for="Item.Saturday" class="checkbox checkbox-primary">
-                  <label for="Saturday"> Saturday </label>
+                <div class="form-group">
+                  <label class="col-sm-1 control-label">Saturday</label>
+                  <div class="col-sm-8">
+                    <div class="switch">
+                      <div class="onoffswitch">
+                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Saturday">
+                        <label class="onoffswitch-label" for="Item_Saturday">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -140,12 +210,12 @@
               <div class="col-sm-4">
                 <ul style="list-style-type:none">
                   <li>
-                    <label>
-                      <input type="radio" name="month" value="monthday" title="Day ">Day
-                    </label>
+					<label>
+					  <input type="radio" name="month" value="monthday" title=" Day ">&nbsp;Day&nbsp;
+					</label>
                     <span>
                       <span>
-                        <input type="text" title="Day ">
+                        &nbsp;@Html.TextBoxFor(m => m.Item.RepeatOnDay, new { onkeydown = "javascript:return false;" })
                       </span>
                     </span>
                   </li>
@@ -153,6 +223,7 @@
                     <input type="radio" name="month" value="weekday" title="Repeat on: ">
                     <span title="Repeat on: ">
                       <span>
+                        &nbsp;
                         <select>
                           <option value="1">first</option>
                           <option value="2">second</option>
@@ -191,24 +262,24 @@
               <label class="col-sm-2 control-label">Location</label>
               <div class="col-sm-6"><input type="text" class="form-control" placeholder="Location of the Event" asp-for="Item.Location"></div>
             </div>
-          @*<div class="form-group">
-              <label class="col-sm-2 control-label">Restrict Editing</label>
-              <div class="col-sm-1">
-                <div class="checkbox checkbox-primary">
-                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.LockEditing">
-                  <label></label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-				<label class="col-sm-2 control-label">Public</label>
+            @*<div class="form-group">
+				<label class="col-sm-2 control-label">Restrict Editing</label>
 				<div class="col-sm-1">
 				  <div class="checkbox checkbox-primary">
-					<input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.Public">
+					<input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.LockEditing">
 					<label></label>
 				  </div>
 				</div>
-			  </div>*@
+			  </div>
+			  <div class="form-group">
+				  <label class="col-sm-2 control-label">Public</label>
+				  <div class="col-sm-1">
+					<div class="checkbox checkbox-primary">
+					  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.Public">
+					  <label></label>
+					</div>
+				  </div>
+				</div>*@
             <div class="form-group">
               <label class="col-sm-2 control-label">Signup</label>
               <div class="col-sm-1">

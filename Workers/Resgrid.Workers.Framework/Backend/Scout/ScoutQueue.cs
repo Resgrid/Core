@@ -47,11 +47,13 @@ namespace Resgrid.Workers.Framework.Backend.Scout
 				_queue = new Queue<ScoutQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public bool IsLocked
@@ -74,10 +76,10 @@ namespace Resgrid.Workers.Framework.Backend.Scout
 			return item;
 		}
 
-		public IEnumerable<ScoutQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<ScoutQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<ScoutQueueItem>();
-			_jobsService.SetJobAsChecked(JobTypes.Scout);
+			await _jobsService.SetJobAsCheckedAsync(JobTypes.Scout);
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

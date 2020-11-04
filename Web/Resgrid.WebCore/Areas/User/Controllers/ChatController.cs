@@ -5,10 +5,7 @@ using System.Collections.Generic;
 using Resgrid.Web.Services.Controllers.Version3.Models.Chat;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Options;
-using Twilio.IpMessaging.Model;
-using Twilio.Auth;
-using System.Linq;
-using System;
+using System.Threading.Tasks;
 using Resgrid.Web.Services.Controllers.Version3.Models.Groups;
 using Resgrid.Model.Identity;
 
@@ -39,52 +36,52 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Members and Constructors
 
 		[HttpGet]
-		public ChatDataResult GetResponderChatSettings()
+		public async Task<ChatDataResult> GetResponderChatSettings()
 		{
 			var result = new ChatDataResult();
 
-			// Load Twilio configuration from Web.config
-			var accountSid = _appOptionsAccessor.Value.TwilioAccountSid;
-			var apiKey = _appOptionsAccessor.Value.TwilioApiKey;
-			var apiSecret = _appOptionsAccessor.Value.TwilioApiSecret;
-			var ipmServiceSid = _appOptionsAccessor.Value.TwilioIpmServiceSid;
+			//// Load Twilio configuration from Web.config
+			//var accountSid = _appOptionsAccessor.Value.TwilioAccountSid;
+			//var apiKey = _appOptionsAccessor.Value.TwilioApiKey;
+			//var apiSecret = _appOptionsAccessor.Value.TwilioApiSecret;
+			//var ipmServiceSid = _appOptionsAccessor.Value.TwilioIpmServiceSid;
 
-			// Create an Access Token generator
-			var token = new AccessToken(accountSid, apiKey, apiSecret);
-			token.Identity = UserId.ToString();
+			//// Create an Access Token generator
+			//var token = new AccessToken(accountSid, apiKey, apiSecret);
+			//token.Identity = UserId.ToString();
 
-			// Create an IP messaging grant for this token
-			var grant = new IpMessagingGrant();
-			grant.EndpointId = $"ResponderDepChat:{UserId}:ResponderApp";
-			grant.ServiceSid = ipmServiceSid;
-			token.AddGrant(grant);
+			//// Create an IP messaging grant for this token
+			//var grant = new IpMessagingGrant();
+			//grant.EndpointId = $"ResponderDepChat:{UserId}:ResponderApp";
+			//grant.ServiceSid = ipmServiceSid;
+			//token.AddGrant(grant);
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			//var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			//var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
-			result.Channels = SetupTwilioChatForDepartment(department, groups);
+			//result.Channels = SetupTwilioChatForDepartment(department, groups);
 
-			result.Did = department.DepartmentId;
-			result.Name = department.Name;
+			//result.Did = department.DepartmentId;
+			//result.Name = department.Name;
 
-			result.Groups = new List<GroupInfoResult>();
-			if (department.IsUserAnAdmin(UserId))
-			{
-				foreach (var group in groups)
-				{
-					result.Groups.Add(new GroupInfoResult() { Gid = group.DepartmentGroupId, Nme = group.Name });
-				}
-			}
-			else
-			{
-				var group = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
-				if (group != null)
-				{
-					result.Groups.Add(new GroupInfoResult() { Gid = group.DepartmentGroupId, Nme = group.Name });
-				}
-			}
+			//result.Groups = new List<GroupInfoResult>();
+			//if (department.IsUserAnAdmin(UserId))
+			//{
+			//	foreach (var group in groups)
+			//	{
+			//		result.Groups.Add(new GroupInfoResult() { Gid = group.DepartmentGroupId, Nme = group.Name });
+			//	}
+			//}
+			//else
+			//{
+			//	var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+			//	if (group != null)
+			//	{
+			//		result.Groups.Add(new GroupInfoResult() { Gid = group.DepartmentGroupId, Nme = group.Name });
+			//	}
+			//}
 
-			result.Token = token.ToJWT();
+			////result.Token = token.ToJWT();
 
 			return result;
 		}
@@ -163,38 +160,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return result;
 		}
 
-		private Channel GetOrCreateChannel(Twilio.IpMessaging.IpMessagingClient client, string sid, string id, string name, List<IdentityUser> users, out bool isNew)
-		{
-			isNew = false;
-			//var channel = client.GetChannel(sid, id);
+		//private Channel GetOrCreateChannel(Twilio.IpMessaging.IpMessagingClient client, string sid, string id, string name, List<IdentityUser> users, out bool isNew)
+		//{
+		//	isNew = false;
+		//	//var channel = client.GetChannel(sid, id);
 
-			//if (channel != null && !String.IsNullOrWhiteSpace(channel.Sid))
-			//{
-			//	foreach (var user in users)
-			//	{
-			//		Member channelMember = client.GetMember(sid, channel.Sid, user.UserId);
+		//	//if (channel != null && !String.IsNullOrWhiteSpace(channel.Sid))
+		//	//{
+		//	//	foreach (var user in users)
+		//	//	{
+		//	//		Member channelMember = client.GetMember(sid, channel.Sid, user.UserId);
 
-			//		if (channelMember == null)
-			//			client.CreateMember(sid, channel.Sid, user.UserId, null);
-			//	}
+		//	//		if (channelMember == null)
+		//	//			client.CreateMember(sid, channel.Sid, user.UserId, null);
+		//	//	}
 
-			//	return channel;
-			//}
+		//	//	return channel;
+		//	//}
 
-			//channel = client.CreateChannel(sid, "private", name, id, "");
-			//isNew = true;
+		//	//channel = client.CreateChannel(sid, "private", name, id, "");
+		//	//isNew = true;
 
-			//if (users != null && users.Any())
-			//{
-			//	foreach (var user in users)
-			//	{
-			//		client.CreateMember(sid, channel.Sid, user.UserId, null);
-			//	}
-			//}
+		//	//if (users != null && users.Any())
+		//	//{
+		//	//	foreach (var user in users)
+		//	//	{
+		//	//		client.CreateMember(sid, channel.Sid, user.UserId, null);
+		//	//	}
+		//	//}
 
-			//return channel;
+		//	//return channel;
 
-			return null;
-		}
+		//	return null;
+		//}
 	}
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -40,19 +39,19 @@ namespace Resgrid.Model
 		public virtual ICollection<ShiftStaffingPerson> Personnel { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftStaffingId; }
 			set { ShiftStaffingId = (int)value; }
 		}
-	}
 
-	public class ShiftStaffing_Mapping : EntityTypeConfiguration<ShiftStaffing>
-	{
-		public ShiftStaffing_Mapping()
-		{
-			this.HasRequired(t => t.AddedBy).WithMany().HasForeignKey(t => t.AddedByUserId).WillCascadeOnDelete(false);
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "ShiftStaffings";
+
+		[NotMapped]
+		public string IdName => "ShiftStaffingId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Shift", "AddedBy", "Personnel" };
 	}
 }

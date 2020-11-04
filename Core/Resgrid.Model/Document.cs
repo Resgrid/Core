@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -46,11 +46,20 @@ namespace Resgrid.Model
 		public DateTime? RemoveOn { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DocumentId; }
 			set { DocumentId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Documents";
+
+		[NotMapped]
+		public string IdName => "DocumentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "User" };
 
 		public string GetIconType()
 		{
@@ -79,14 +88,6 @@ namespace Resgrid.Model
 				default:
 					return "fa fa-file";
 			}
-		}
-	}
-
-	public class Document_Mapping : EntityTypeConfiguration<Document>
-	{
-		public Document_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
 		}
 	}
 }

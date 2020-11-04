@@ -1,230 +1,230 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.DashboardModel
 @{
-	ViewBag.Title = "Resgrid | Dashboard";
-	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+  ViewBag.Title = "Resgrid | Dashboard";
+  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
 @section Styles
 {
-	<style>
-		#actionButtons {
-			text-align: center;
-		}
-	</style>
+  <style>
+	#actionButtons {
+	text-align: center;
+	}
+  </style>
 
-	<style>
-		.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
-			padding: 1px !important;
-		}
-	</style>
+  <style>
+	.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+	padding: 1px !important;
+	}
+  </style>
 }
 
 <script>
-	function collapseAll() {
-		$('.trheader:not(.userGroup)').each(function (i, obj) {
-			if (obj) {
-				$(obj).nextUntil('tr.trheader').slideToggle(100).promise().done(function () {
-					$(obj).find('span').text(function (_, value) {
-						return value == '-' ? '+' : '-';
-					});
-				});
-			}
+  function collapseAll() {
+	$('.trheader:not(.userGroup)').each(function (i, obj) {
+	  if (obj) {
+		$(obj).nextUntil('tr.trheader').slideToggle(100).promise().done(function () {
+		  $(obj).find('span').text(function (_, value) {
+			return value == '-' ? '+' : '-';
+		  });
 		});
-	}
+	  }
+	});
+  }
 </script>
 
 
 <div class="wrapper wrapper-content">
-	<div class="row">
-		<div class="col-xs-12 col-sm-9">
-			<div class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Personnel</h5>
-					<div class="ibox-tools">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-							<i class="fa fa-wrench"></i>
-						</a>
-						<ul class="dropdown-menu dropdown-user">
-							@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-							{
-							<li>
-								<a data-toggle="modal" data-target="#confirmSetAllToStandbyModal" class="btn btn-xs btn-default">Reset all to Available</a>
-							</li>
-							}
-							<li>
-								<a href="javascript:collapseAll();">Collapse Groups (Once)</a>
-							</li>
-							<li>
-								<a href="#">Toggle Collapse Groups (Saves)</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="ibox-content">
-					<div id="personnelGrid">
-						<div class="row">
-							<div class="col-sm-4">
-								&nbsp;
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-4">
+  <div class="row">
+    <div class="col-xs-12 col-sm-9">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Personnel</h5>
+          <div class="ibox-tools">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			  {
+                <li>
+                  <a data-toggle="modal" data-target="#confirmSetAllToStandbyModal" class="btn btn-xs btn-default">Reset all to Available</a>
+                </li>
+			  }
+              <li>
+                <a href="javascript:collapseAll();">Collapse Groups (Once)</a>
+              </li>
+              <li>
+                <a href="#">Toggle Collapse Groups (Saves)</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div id="personnelGrid">
+            <div class="row">
+              <div class="col-sm-4">
+                &nbsp;
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
 
-							</div>
-							<div class="col-sm-4" style="text-align: center;">
-								<div class="sk-spinner sk-spinner-wave">
-									<div class="sk-rect1"></div>
-									<div class="sk-rect2"></div>
-									<div class="sk-rect3"></div>
-									<div class="sk-rect4"></div>
-									<div class="sk-rect5"></div>
-								</div>
-							</div>
-							<div class="col-sm-4">
+              </div>
+              <div class="col-sm-4" style="text-align: center;">
+                <div class="sk-spinner sk-spinner-wave">
+                  <div class="sk-rect1"></div>
+                  <div class="sk-rect2"></div>
+                  <div class="sk-rect3"></div>
+                  <div class="sk-rect4"></div>
+                  <div class="sk-rect5"></div>
+                </div>
+              </div>
+              <div class="col-sm-4">
 
-							</div>
-						</div>
+              </div>
+            </div>
 
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-xs-12 col-sm-3">
-			<div id="actionsContainer" class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Actions</h5>
-				</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+      <div id="actionsContainer" class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Actions</h5>
+        </div>
 
-				@if (Model.States == null)
+        @if (Model.States == null)
+		{
+          <div>
+            <div class="ibox-content" style="text-align: center;">
+              <div style="padding-bottom: 35px; text-align: center;">
+                <div class="btn-group" style="display: inherit;">
+                  <a class="btn btn-large btn-block btn-success" style="width: 75%;" onclick=" resgrid.home.dashboard.actionResponding(); " href="#" style="color: #fff;">Responding</a>
+                  <button class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="resgrid.home.dashboard.showStations(); " href="#"><i class='icon-home'></i>&nbsp;Respond to a Station </a></li>
+                    <li><a onclick="resgrid.home.dashboard.showCalls(); " href="#"><i class='icon-bullhorn'></i>&nbsp;Respond to a Call </a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div style="padding-top: 4px; text-align: center;">
+                <a class="btn btn-large btn-block btn-danger" style="width: 85%;" onclick=" resgrid.home.dashboard.actionNotResponding(); " href="#" style="color: #fff;">Not Responding</a>
+              </div>
+
+              <div style="padding-top: 4px; padding-bottom: 35px; text-align: center;">
+                <div class="btn-group" style="display: inherit;">
+                  <a class="btn btn-large btn-block btn-info" style="width: 75%;" onclick=" resgrid.home.dashboard.actionAvailable(); " href="#" style="color: #fff;">Standing By</a>
+                  <button class="btn btn-large btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="resgrid.home.dashboard.actionAvailableStation(); " href="#"><i class='fa fa-minus-circle'></i>&nbsp;Standing By at Station</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div style="padding-top: 4px; padding-bottom: 10px; text-align: center;">
+                <a class="btn btn-large btn-block btn-inverse" style="width: 85%;" onclick=" resgrid.home.dashboard.actionOnScene();" href="#" style="color: #fff;">On Scene</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="respondToACallActionsWindow" id="respondToACallActionsWindow"></div>
+          <div class="respondToAStationActionsWindow" id="respondToAStationActionsWindow"></div>
+		}
+		else
+		{
+          <div>
+            <div class="ibox-content" style="text-align: center;">
+              <div style="padding-bottom: 4px; padding-top: 4px;">
+                <textarea id="actionNote" style="width: 80%;" placeholder="Action Note (Optional)"></textarea>
+              </div>
+              <div style="text-align: center;">
+                @foreach (var state in Model.States.GetActiveDetails())
 				{
-					<div>
-						<div class="ibox-content" style="text-align: center;">
-							<div style="padding-bottom: 35px; text-align: center;">
-								<div class="btn-group" style="display: inherit;">
-									<a class="btn btn-large btn-block btn-success" style="width: 75%;" onclick=" resgrid.home.dashboard.actionResponding(); " href="#" style="color: #fff;">Responding</a>
-									<button class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a onclick="resgrid.home.dashboard.showStations(); " href="#"><i class='icon-home'></i>&nbsp;Respond to a Station </a></li>
-										<li><a onclick="resgrid.home.dashboard.showCalls(); " href="#"><i class='icon-bullhorn'></i>&nbsp;Respond to a Call </a></li>
-									</ul>
-								</div>
-							</div>
-
-							<div style="padding-top: 4px; text-align: center;">
-								<a class="btn btn-large btn-block btn-danger" style="width: 85%;" onclick=" resgrid.home.dashboard.actionNotResponding(); " href="#" style="color: #fff;">Not Responding</a>
-							</div>
-
-							<div style="padding-top: 4px; padding-bottom: 35px; text-align: center;">
-								<div class="btn-group" style="display: inherit;">
-									<a class="btn btn-large btn-block btn-info" style="width: 75%;" onclick=" resgrid.home.dashboard.actionAvailable(); " href="#" style="color: #fff;">Standing By</a>
-									<button class="btn btn-large btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a onclick="resgrid.home.dashboard.actionAvailableStation(); " href="#"><i class='fa fa-minus-circle'></i>&nbsp;Standing By at Station</a></li>
-									</ul>
-								</div>
-							</div>
-
-							<div style="padding-top: 4px; padding-bottom: 10px; text-align: center;">
-								<a class="btn btn-large btn-block btn-inverse" style="width: 85%;" onclick=" resgrid.home.dashboard.actionOnScene();" href="#" style="color: #fff;">On Scene</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="respondToACallActionsWindow" id="respondToACallActionsWindow"></div>
-					<div class="respondToAStationActionsWindow" id="respondToAStationActionsWindow"></div>
+                  <div style="padding-top: 4px; text-align: center;">
+                    <a class="btn btn-large btn-block" style="width: 85%; color: @state.TextColor; background-color: @state.ButtonColor;" onclick="resgrid.home.dashboard.customAction(@state.CustomStateDetailId.ToString());" href="#">@state.ButtonText</a>
+                  </div>
 				}
-				else
-				{
-					<div>
-						<div class="ibox-content" style="text-align: center;">
-							<div style="padding-bottom: 4px; padding-top: 4px;">
-								<textarea id="actionNote" style="width: 80%;" placeholder="Action Note (Optional)"></textarea>
-							</div>
-							<div style="text-align: center;">
-								@foreach (var state in Model.States.GetActiveDetails())
-								{
-									<div style="padding-top: 4px; text-align: center;">
-										<a class="btn btn-large btn-block" style="width: 85%; color: @state.TextColor; background-color: @state.ButtonColor;" onclick="resgrid.home.dashboard.customAction(@state.CustomStateDetailId);" href="#">@state.ButtonText</a>
-									</div>
-								}
-							</div>
-						</div>
-					</div>
-				}
-			</div>
-			<div id="staffingContainer" class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Staffing Level</h5>
-				</div>
-				<div class="ibox-content" style="text-align: center;">
-					@using (Html.BeginForm("SetUserState", "Home", FormMethod.Post, new { Area = "User", style = "padding-bottom:0px;" }))
-					{
-						@Html.HiddenFor(m => m.CustomStaffingActive)
-						<div class="col-md-12" style="padding-bottom: 4px; padding-top: 4px;">
-							@Html.TextAreaFor(m => m.StateNote, new { placeholder = "Staffing Note (Optional)" })
-						</div>
-						if (!Model.CustomStaffingActive)
-						{
-							<div class="col-md-12" style="padding-bottom: 4px; padding-top: 4px;">
-								<select asp-for="UserStateEnum" asp-items="ViewBag.UserStateTypes" style="padding-left: 0; width: 100%;"></select>
-							</div>
-						}
-						else
-						{
-							<div class="col-md-12" style="padding-bottom: 4px; padding-top: 4px;">
-								<select asp-for="UserState" asp-items="ViewBag.UserStateTypes" style="padding-left: 0; width: 100%;"></select>
-							</div>
-						}
-						<div style="text-align: center;">
-							<input class="btn btn-primary" id="submit_status_action" name="commit" type="submit" value="Set Staffing Level" />
-						</div>
-					}
-				</div>
-			</div>
-			<div id="departmentInfoContainer" class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Department Info</h5>
-				</div>
-				<div class="ibox-content">
-					<ul style="list-style-type: none;">
-						<li>
-							Department Id: @ClaimsAuthorizationHelper.GetDepartmentId()
-						</li>
-						<li>
-							Department Code: @Model.Department.Code
-						</li>
+              </div>
+            </div>
+          </div>
+		}
+      </div>
+      <div id="staffingContainer" class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Staffing Level</h5>
+        </div>
+        <div class="ibox-content" style="text-align: center;">
+          @using (Html.BeginForm("SetUserState", "Home", FormMethod.Post, new { Area = "User", style = "padding-bottom:0px;" }))
+		  {
+            @Html.HiddenFor(m => m.CustomStaffingActive)
+            <div class="col-md-12" style="padding-bottom: 4px; padding-top: 4px;">
+              @Html.TextAreaFor(m => m.StateNote, new { placeholder = "Staffing Note (Optional)" })
+            </div>
+			if (!Model.CustomStaffingActive)
+			{
+              <div class="col-md-12" style="padding-bottom: 4px; padding-top: 4px;">
+                <select asp-for="UserStateEnum" asp-items="ViewBag.UserStateTypes" style="padding-left: 0; width: 100%;"></select>
+              </div>
+			}
+			else
+			{
+              <div class="col-md-12" style="padding-bottom: 4px; padding-top: 4px;">
+                <select asp-for="UserState" asp-items="ViewBag.UserStateTypes" style="padding-left: 0; width: 100%;"></select>
+              </div>
+			}
+            <div style="text-align: center;">
+              <input class="btn btn-primary" id="submit_status_action" name="commit" type="submit" value="Set Staffing Level" />
+            </div>
+		  }
+        </div>
+      </div>
+      <div id="departmentInfoContainer" class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Department Info</h5>
+        </div>
+        <div class="ibox-content">
+          <ul style="list-style-type: none;">
+            <li>
+              Department Id: @ClaimsAuthorizationHelper.GetDepartmentId().ToString()
+            </li>
+            <li>
+              Department Code: @Model.Department.Code
+            </li>
 
-						@if (!String.IsNullOrWhiteSpace(Model.Number))
-						{
-							<li>
-								Text Number: @Model.Number
-							</li>
-						}
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
+            @if (!String.IsNullOrWhiteSpace(Model.Number))
+			{
+              <li>
+                Text Number: @Model.Number
+              </li>
+			}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="confirmSetAllToStandbyModal">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Confirm Status Reset</h4>
-			</div>
-			<div class="modal-body">
-				<p>
-					Are you sure you want to reset all personnel status to Available?
-				</p>
-			</div>
-			<div class="modal-footer">
-				<a href="#" class="btn btn-default" data-dismiss="modal">Close</a> <a href="@Url.Action("ResetAllToStandingBy", "Home", new { area = "User" })" class="btn btn-primary">Reset Status</a>
-			</div>
-		</div>
-	</div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirm Status Reset</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          Are you sure you want to reset all personnel status to Available?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-default" data-dismiss="modal">Close</a> <a href="@Url.Action("ResetAllToStandingBy", "Home", new { area = "User" })" class="btn btn-primary">Reset Status</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="respondToACallWindow" id="respondToACallWindow"></div>
@@ -232,15 +232,15 @@
 
 @section Scripts
 {
-	<script>
+  <script>
 		var firstRun = '@(Model.FirstRun)';
 		var fullName = '@(ClaimsAuthorizationHelper.GetFullName())';
 		var email = '@(ClaimsAuthorizationHelper.GetEmailAddress())';
 		var departmentName = '@(ClaimsAuthorizationHelper.GetDepartmentName())';
 		var createdOn = '@(ClaimsAuthorizationHelper.GetDepartmentSignupDate())';
-	</script>
-	<script src="~/js/app/common/signalr/resgrid.common.signalr.js" type="text/javascript"></script>
-	<script src="~/js/app/internal/home/resgrid.home.dashboard.js" type="text/javascript"></script>
+  </script>
+  <script src="~/js/app/common/signalr/resgrid.common.signalr.js" type="text/javascript"></script>
+  <script src="~/js/app/internal/home/resgrid.home.dashboard.js" type="text/javascript"></script>
 
-	@await Html.PartialAsync("~/Areas/User/Views/Help/DashboardTutorial.cshtml")
+  @await Html.PartialAsync("~/Areas/User/Views/Help/DashboardTutorial.cshtml")
 }

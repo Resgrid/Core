@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Transactions;
 using Resgrid.Model;
 using Resgrid.Model.Services;
@@ -13,7 +14,6 @@ namespace Resgrid.Services
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IUsersService _usersService;
 		private readonly IUserProfileService _userProfileService;
-		private readonly IPushUriService _pushUriService;
 		private readonly IMessageService _messageService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IWorkLogsService _workLogsService;
@@ -27,7 +27,7 @@ namespace Resgrid.Services
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
-			IPushUriService pushUriService, IUserProfileService userProfileService, IMessageService messageService, IDepartmentGroupsService departmentGroupsService,
+			IUserProfileService userProfileService, IMessageService messageService, IDepartmentGroupsService departmentGroupsService,
 						IWorkLogsService workLogsService, IUserStateService userStateService, IPersonnelRolesService personnelRolesService, IDistributionListsService distributionListsService,
 			IShiftsService shiftsService, IUnitsService unitsService, ICertificationService certificationService, ILogService logService)
 		{
@@ -36,7 +36,6 @@ namespace Resgrid.Services
 			_callsService = callsService;
 			_actionLogsService = actionLogsService;
 			_usersService = usersService;
-			_pushUriService = pushUriService;
 			_userProfileService = userProfileService;
 			_messageService = messageService;
 			_departmentGroupsService = departmentGroupsService;
@@ -50,19 +49,19 @@ namespace Resgrid.Services
 			_logService = logService;
 		}
 
-		public DeleteUserResults DeleteUser(int departmentId, string authroizingUserId, string userIdToDelete)
+		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete)
 		{
-			if (!_authorizationService.CanUserDeleteUser(departmentId, authroizingUserId, userIdToDelete))
+			if (!await _authorizationService.CanUserDeleteUserAsync(departmentId, authorizingUserId, userIdToDelete))
 				return DeleteUserResults.UnAuthroized;
 
-			var department = _departmentsService.GetDepartmentByUserId(userIdToDelete);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userIdToDelete);
 
 			if (department.ManagingUserId == userIdToDelete)
 				return DeleteUserResults.UserIsManagingDepartmentAdmin;
 
-			var member = _departmentsService.GetDepartmentMember(userIdToDelete, departmentId);
+			var member = await  _departmentsService.GetDepartmentMemberAsync(userIdToDelete, departmentId);
 			member.IsDeleted = true;
-			_departmentsService.SaveDepartmentMember(member);
+			await _departmentsService.SaveDepartmentMemberAsync(member);
 
 			//_certificationService.DeleteAllCertificationsForUser(userIdToDelete);
 			//_distributionListsService.RemoveUserFromAllLists(userIdToDelete);
@@ -81,16 +80,16 @@ namespace Resgrid.Services
 			return DeleteUserResults.NoFailure;
 		}
 
-		public DeleteGroupResults DeleteGroup(int departmentGroupId, string currentUserId)
+		public async Task<DeleteGroupResults> DeleteGroupAsync(int departmentGroupId, string currentUserId)
 		{
-			if (!_authorizationService.CanUserEditDepartmentGroup(currentUserId, departmentGroupId))
+			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(currentUserId, departmentGroupId))
 				return DeleteGroupResults.UnAuthroized;
 
-			_callsService.ClearGroupForDispatches(departmentGroupId);
-			_workLogsService.ClearGroupForLogs(departmentGroupId);
-			_unitsService.ClearGroupForUnits(departmentGroupId);
-			_shiftsService.DeleteShiftGroupsByGroupId(departmentGroupId);
-			_departmentGroupsService.DeleteGroupById(departmentGroupId);
+			await _callsService.ClearGroupForDispatchesAsync(departmentGroupId);
+			await _workLogsService.ClearGroupForLogsAsync(departmentGroupId);
+			await _unitsService.ClearGroupForUnitsAsync(departmentGroupId);
+			await _shiftsService.DeleteShiftGroupsByGroupIdAsync(departmentGroupId);
+			await _departmentGroupsService.DeleteGroupByIdAsync(departmentGroupId);
 
 			return DeleteGroupResults.NoFailure;
 		}

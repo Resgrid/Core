@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -36,10 +37,19 @@ namespace Resgrid.Model
 		public DateTime? LoggedOn { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return AuditLogId; }
 			set { AuditLogId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "AuditLogs";
+
+		[NotMapped]
+		public string IdName => "AuditLogId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

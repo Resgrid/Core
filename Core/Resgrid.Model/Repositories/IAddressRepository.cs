@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
-
-namespace Resgrid.Model.Repositories
+﻿namespace Resgrid.Model.Repositories
 {
-	public interface IAddressRepository : IRepository<Address>
+	/// <summary>
+	/// Interface IAddressRepository
+	/// Implements the <see cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.Address}" />
+	/// </summary>
+	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.Address}" />
+	public interface IAddressRepository: IRepository<Address>
 	{
-		Task<Address> GetAddressByIdAsync(int addressId);
 	}
 }

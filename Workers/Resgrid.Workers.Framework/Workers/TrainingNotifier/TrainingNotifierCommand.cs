@@ -1,4 +1,5 @@
-﻿using Resgrid.Workers.Framework.Logic;
+﻿using System.Threading.Tasks;
+using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework.Workers.TrainingNotifier
 {
@@ -11,10 +12,11 @@ namespace Resgrid.Workers.Framework.Workers.TrainingNotifier
 
 		public bool Continue { get; set; }
 
-		public void Run(TrainingNotifierQueueItem item)
+		public async Task<bool> Run(TrainingNotifierQueueItem item)
 		{
 			var logic = new TrainingNotifierLogic();
-			logic.Process(item);
+			await logic.Process(item);
+			return true;
 		}
 	}
 }

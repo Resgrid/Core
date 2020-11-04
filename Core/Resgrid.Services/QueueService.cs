@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
@@ -11,13 +13,13 @@ namespace Resgrid.Services
 {
 	public class QueueService : IQueueService
 	{
-		private readonly IGenericDataRepository<QueueItem> _queueItemsRepository;
+		private readonly IQueueItemsRepository _queueItemsRepository;
 		private readonly IOutboundQueueProvider _outboundQueueProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 
-		public QueueService(IGenericDataRepository<QueueItem> queueItemsRepository, IOutboundQueueProvider outboundQueueProvider, IDepartmentSettingsService departmentSettingsService, 
+		public QueueService(IQueueItemsRepository queueItemsRepository, IOutboundQueueProvider outboundQueueProvider, IDepartmentSettingsService departmentSettingsService, 
 			IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider)
 		{
 			_queueItemsRepository = queueItemsRepository;
@@ -27,33 +29,31 @@ namespace Resgrid.Services
 			_geoLocationProvider = geoLocationProvider;
 		}
 
-		public QueueItem GetQueueItemById(int queueItemId)
+		public async Task<QueueItem> GetQueueItemByIdAsync(int queueItemId)
 		{
-			return _queueItemsRepository.GetAll().FirstOrDefault(x => x.QueueItemId == queueItemId);
+			return await _queueItemsRepository.GetByIdAsync(queueItemId);
 		}
 
-		public List<QueueItem> Dequeue(QueueTypes type)
+		public async Task<List<QueueItem>> DequeueAsync(QueueTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var items = (from q in _queueItemsRepository.GetAll()
-									 where q.QueueType == (int)type && q.PickedUp == null && q.CompletedOn == null
-									 select q).ToList();
+			var items = await _queueItemsRepository.GetPendingQueueItemsByTypeIdAsync((int) type);
 
 			foreach (var i in items)
 			{
-				i.PickedUp = DateTime.Now.ToUniversalTime();
-				_queueItemsRepository.SaveOrUpdate(i);
+				i.PickedUp = DateTime.UtcNow;
+				await _queueItemsRepository.SaveOrUpdateAsync(i, cancellationToken);
 			}
 
-			return items;
+			return items.ToList();
 		}
 
-		public void Requeue(QueueItem item)
+		public async Task<QueueItem> RequeueAsync(QueueItem item, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			item.PickedUp = null;
-			_queueItemsRepository.SaveOrUpdate(item);
+			return await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
 		}
 
-		public void RequeueAll(IEnumerable<QueueItem> items)
+		public async Task<bool> RequeueAllAsync(IEnumerable<QueueItem> items, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (items != null)
 			{
@@ -61,21 +61,24 @@ namespace Resgrid.Services
 				{
 					if (i.QueueItemId > 0)
 					{
-						i.PickedUp = null;
-						_queueItemsRepository.SaveOrUpdate(i);
+						await RequeueAsync(i, cancellationToken);
 					}
 				}
+
+				return true;
 			}
+
+			return false;
 		}
 
-		public void EnqueueMessageBroadcast(MessageQueueItem mqi)
+		public async Task<bool> EnqueueMessageBroadcastAsync(MessageQueueItem mqi, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (Config.SystemBehaviorConfig.IsAzure)
 			{
 				if (!String.IsNullOrWhiteSpace(mqi.Message.ReceivingUserId))
 				{
-					var dm = _departmentsService.GetDepartmentMember(mqi.Message.ReceivingUserId, mqi.DepartmentId);
-					string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(dm.DepartmentId);
+					var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.ReceivingUserId, mqi.DepartmentId);
+					string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
 					mqi.DepartmentTextNumber = departmentNumber;
 
 					if (mqi.Message.ReceivingUser == null)
@@ -88,12 +91,12 @@ namespace Resgrid.Services
 				}
 				else if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId))
 				{
-					var dm = _departmentsService.GetDepartmentMember(mqi.Message.SendingUserId, mqi.DepartmentId);
-					string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(dm.DepartmentId);
+					var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.SendingUserId, mqi.DepartmentId);
+					string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
 					mqi.DepartmentTextNumber = departmentNumber;
 				}
 
-				_outboundQueueProvider.EnqueueMessage(mqi);
+				return await _outboundQueueProvider.EnqueueMessage(mqi);
 			}
 			else
 			{
@@ -102,11 +105,13 @@ namespace Resgrid.Services
 				item.SourceId = mqi.Message.MessageId.ToString();
 				item.QueuedOn = DateTime.UtcNow;
 
-				_queueItemsRepository.SaveOrUpdate(item);
+				await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public void EnqueueCallBroadcast(CallQueueItem cqi)
+		public async Task<bool> EnqueueCallBroadcastAsync(CallQueueItem cqi, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (Config.SystemBehaviorConfig.IsAzure)
 			{
@@ -119,12 +124,10 @@ namespace Resgrid.Services
 
 						if (points != null && points.Length == 2)
 						{
-							cqi.Address = _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+							cqi.Address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 						}
 					}
-					catch
-					{
-					}
+					catch { /* Ignore */ }
 				}
 				else
 				{
@@ -155,7 +158,7 @@ namespace Resgrid.Services
 				// We can't queue up any attachment data as it'll be too large. 
 				cqi.Call.Attachments = null;
 
-				_outboundQueueProvider.EnqueueCall(cqi);
+				return await _outboundQueueProvider.EnqueueCall(cqi);
 			}
 			else
 			{
@@ -164,15 +167,17 @@ namespace Resgrid.Services
 				item.SourceId = cqi.Call.CallId.ToString();
 				item.QueuedOn = DateTime.UtcNow;
 
-				_queueItemsRepository.SaveOrUpdate(item);
+				await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public void EnqueueDistributionListBroadcast(DistributionListQueueItem dlqi)
+		public async Task<bool> EnqueueDistributionListBroadcastAsync(DistributionListQueueItem dlqi, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (Config.SystemBehaviorConfig.IsAzure)
 			{
-				_outboundQueueProvider.EnqueueDistributionList(dlqi);
+				return await _outboundQueueProvider.EnqueueDistributionList(dlqi);
 			}
 			else
 			{
@@ -181,17 +186,19 @@ namespace Resgrid.Services
 				item.SourceId = dlqi.Message.MessageID.ToString();
 				item.QueuedOn = DateTime.UtcNow;
 
-				_queueItemsRepository.SaveOrUpdate(item);
+				await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public void SetQueueItemCompleted(int queueItemId)
+		public async Task<QueueItem> SetQueueItemCompletedAsync(int queueItemId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var item = GetQueueItemById(queueItemId);
+			var item = await GetQueueItemByIdAsync(queueItemId);
 
-			item.CompletedOn = DateTime.Now.ToUniversalTime();
+			item.CompletedOn = DateTime.UtcNow;
 
-			_queueItemsRepository.SaveOrUpdate(item);
+			return await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
-using Microsoft.Practices.ServiceLocation;
+using System.Threading.Tasks;
+using CommonServiceLocator;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Services;
@@ -25,22 +26,27 @@ namespace Resgrid.Services
 
 		public class DepartmentSettingsUpdateHandler : IListener<DepartmentSettingsUpdateEvent>
 		{
-			public void Handle(DepartmentSettingsUpdateEvent message)
+			public async Task<bool> Handle(DepartmentSettingsUpdateEvent message)
 			{
 				var departmentSettingsService = ServiceLocator.Current.GetInstance<IDepartmentSettingsService>();
-				departmentSettingsService.SaveOrUpdateSetting(message.DepartmentId, DateTime.UtcNow.ToString("G"), DepartmentSettingTypes.UpdateTimestamp);
+				var result = await departmentSettingsService.SaveOrUpdateSettingAsync(message.DepartmentId, DateTime.UtcNow.ToString("G"), DepartmentSettingTypes.UpdateTimestamp);
+
+				if (result != null)
+					return true;
+
+				return false;
 			}
 		}
 
 		public class AuditEventHandler : IListener<AuditEvent>
 		{
-			public void Handle(AuditEvent message)
+			public async Task<bool> Handle(AuditEvent message)
 			{
 				CqrsEvent cqrsEvent = new CqrsEvent();
 				cqrsEvent.Type = (int)CqrsEventTypes.AuditLog;
 				cqrsEvent.Data = ObjectSerialization.Serialize(message);
 
-				_cqrsProvider.EnqueueCqrsEvent(cqrsEvent);
+				return await _cqrsProvider.EnqueueCqrsEventAsync(cqrsEvent);
 			}
 		}
 	}

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -14,7 +17,6 @@ using Resgrid.Providers.Bus;
 using Resgrid.Web.Areas.User.Models.Calendar;
 using Resgrid.Web.Areas.User.Models.Shifts;
 using Resgrid.Web.Helpers;
-using RestSharp.Extensions.MonoHttp;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models;
@@ -46,18 +48,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new ShiftsIndexModel();
-			model.Shifts = _shiftsService.GetAllShiftsByDepartment(DepartmentId);
+			model.Shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
 
-			var department = _departmentService.GetDepartmentById(DepartmentId);
+			var department = await _departmentService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (department.IsUserAnAdmin(UserId))
 				model.IsUserAdminOrGroupAdmin = true;
 			else
 			{
-				var groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 				foreach (var group in groups)
 				{
@@ -74,11 +76,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_Create)]
-		public IActionResult NewShift()
+		public async Task<IActionResult> NewShift()
 		{
 			var model = new NewShiftView();
 			model.Shift = new Shift();
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			ViewBag.ShiftAssignmentTypes = model.AssignmentType.ToSelectList();
 
 			return View(model);
@@ -86,28 +88,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_Update)]
-		public IActionResult EditShiftDetails(int shiftId)
+		public async Task<IActionResult> EditShiftDetails(int shiftId)
 		{
 			var model = new EditShiftView();
 
-			var shift = _shiftsService.GetShiftById(shiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
 			model.Shift = shift;
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Shift_Update)]
-		public IActionResult EditShiftDetails(EditShiftView model, IFormCollection form)
+		public async Task<IActionResult> EditShiftDetails(EditShiftView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
-				var shift = _shiftsService.GetShiftById(model.Shift.ShiftId);
+				var shift = await _shiftsService.GetShiftByIdAsync(model.Shift.ShiftId);
 				shift.Name = model.Shift.Name;
 				shift.Code = model.Shift.Code;
 				shift.Color = model.Shift.Color;
@@ -116,7 +118,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				ViewBag.ShiftAssignmentTypes = model.AssignmentType.ToSelectList();
 
-				shift = _shiftsService.SaveShift(shift);
+				shift = await _shiftsService.SaveShiftAsync(shift, cancellationToken);
 				var personnel = new List<ShiftPerson>();
 				if (model.AssignmentType == ShiftAssignmentTypes.Assigned)
 				{
@@ -153,10 +155,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				_shiftsService.UpdateShiftPersonnel(shift, personnel);
+				await _shiftsService.UpdateShiftPersonnel(shift, personnel, cancellationToken);
 
-				var number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
-				_eventAggregator.SendMessage<ShiftUpdatedEvent>(new ShiftUpdatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
+				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+				await _eventAggregator.SendMessage<ShiftUpdatedEvent>(new ShiftUpdatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
 
 				return RedirectToAction("Index");
 			}
@@ -167,7 +169,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Shift_Create)]
-		public IActionResult NewShift(NewShiftView model, IFormCollection form)
+		public async Task<IActionResult> NewShift(NewShiftView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			model.Shift.AssignmentType = (int)model.AssignmentType;
 			//model.Shift.AssignmentType = (int)ShiftAssignmentTypes.Assigned;
@@ -177,7 +179,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Shift.Code = form["Shift_Code"];
 			model.Shift.StartTime = form["Shift_StartTime"];
 			model.Shift.EndTime = form["Shift_EndTime"];
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			if (ModelState.IsValid)
 			{
@@ -252,7 +254,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					model.Shift.StartDay = DateTime.UtcNow.TimeConverter(_departmentService.GetDepartmentById(DepartmentId, false));
+					model.Shift.StartDay = DateTime.UtcNow.TimeConverter(await _departmentService.GetDepartmentByIdAsync(DepartmentId, false));
 				}
 
 				if (model.AssignmentType == ShiftAssignmentTypes.Assigned)
@@ -293,10 +295,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				//_shiftsService.CreateNewShift(model.Shift, shiftGroups, shiftDays, assignments);
-				var newShift = _shiftsService.SaveShift(model.Shift);
+				var newShift = await _shiftsService.SaveShiftAsync(model.Shift, cancellationToken);
 
-				var number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
-				_eventAggregator.SendMessage<ShiftCreatedEvent>(new ShiftCreatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = newShift });
+				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+				await _eventAggregator.SendMessage<ShiftCreatedEvent>(new ShiftCreatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = newShift });
 
 				return RedirectToAction("Index");
 			}
@@ -306,28 +308,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult RequestTrade(int shiftSignUpId)
+		public async Task<IActionResult> RequestTrade(int shiftSignUpId)
 		{
 			var model = new RequestTradeView();
-			model.Signup = _shiftsService.GetShiftSignupById(shiftSignUpId);
-			model.ShiftDay = _shiftsService.GetShiftDayForSignup(shiftSignUpId);
+			model.Signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignUpId);
+			model.ShiftDay = await _shiftsService.GetShiftDayForSignupAsync(shiftSignUpId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult ShiftCalendar(int shiftId)
+		public async Task<IActionResult> ShiftCalendar(int shiftId)
 		{
 			var model = new ShiftCalendarView();
-			model.Shift = _shiftsService.GetShiftById(shiftId);
+			model.Shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult RequestTrade(RequestTradeView model, IFormCollection form)
+		public async Task<IActionResult> RequestTrade(RequestTradeView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			string[] users = null;
 
@@ -337,8 +339,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (users == null || !users.Any())
 				ModelState.AddModelError("users", "You must specify users to request a trade from. Only qualified users will populate the list.");
 
-			model.Signup = _shiftsService.GetShiftSignupById(model.Signup.ShiftSignupId);
-			model.ShiftDay = _shiftsService.GetShiftDayForSignup(model.Signup.ShiftSignupId);
+			model.Signup = await _shiftsService.GetShiftSignupByIdAsync(model.Signup.ShiftSignupId);
+			model.ShiftDay = await _shiftsService.GetShiftDayForSignupAsync(model.Signup.ShiftSignupId);
 
 			if (ModelState.IsValid && users != null)
 			{
@@ -351,16 +353,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					trade.Users.Add(new ShiftSignupTradeUser() { UserId = user });
 				}
 
-				trade = _shiftsService.SaveTrade(trade);
+				trade = await _shiftsService.SaveTradeAsync(trade, cancellationToken);
 
 				var tradeRequestedEvent = new ShiftTradeRequestedEvent();
 				tradeRequestedEvent.DepartmentId = DepartmentId;
 				tradeRequestedEvent.ShiftSignupTradeId = trade.ShiftSignupTradeId;
 
-				var number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
+				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 				tradeRequestedEvent.DepartmentNumber = number;
 
-				_eventAggregator.SendMessage<ShiftTradeRequestedEvent>(tradeRequestedEvent);
+				await _eventAggregator.SendMessage<ShiftTradeRequestedEvent>(tradeRequestedEvent);
 
 				return RedirectToAction("YourShifts");
 			}
@@ -370,11 +372,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_Update)]
-		public IActionResult EditShiftDays(int shiftId)
+		public async Task<IActionResult> EditShiftDays(int shiftId)
 		{
 			var model = new EditShiftView();
 
-			var shift = _shiftsService.GetShiftById(shiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -386,9 +388,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Shift_Update)]
-		public IActionResult EditShiftDays(EditShiftView model)
+		public async Task<IActionResult> EditShiftDays(EditShiftView model, CancellationToken cancellationToken)
 		{
-			var shift = _shiftsService.GetShiftById(model.Shift.ShiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(model.Shift.ShiftId);
 
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -414,24 +416,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else
 			{
-				model.Shift.StartDay = DateTime.UtcNow.TimeConverter(_departmentService.GetDepartmentById(DepartmentId, false));
+				model.Shift.StartDay = DateTime.UtcNow.TimeConverter(await _departmentService.GetDepartmentByIdAsync(DepartmentId, false));
 			}
 
-			_shiftsService.UpdateShiftDates(shift, days);
+			await _shiftsService.UpdateShiftDatesAsync(shift, days, cancellationToken);
 
-			var number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
-			_eventAggregator.SendMessage<ShiftDaysAddedEvent>(new ShiftDaysAddedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
+			var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+			await _eventAggregator.SendMessage<ShiftDaysAddedEvent>(new ShiftDaysAddedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_Update)]
-		public IActionResult EditShiftGroups(int shiftId)
+		public async Task<IActionResult> EditShiftGroups(int shiftId)
 		{
 			var model = new EditShiftView();
 
-			var shift = _shiftsService.GetShiftById(shiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -443,9 +445,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Shift_Update)]
-		public IActionResult EditShiftGroups(EditShiftView model, IFormCollection form)
+		public async Task<IActionResult> EditShiftGroups(EditShiftView model, IFormCollection form, CancellationToken cancellationToken)
 		{
-			var shift = _shiftsService.GetShiftById(model.Shift.ShiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(model.Shift.ShiftId);
 
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -498,7 +500,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				_shiftsService.UpdateShiftGroups(model.Shift, groups);
+				await _shiftsService.UpdateShiftGroupsAsync(model.Shift, groups, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
@@ -508,121 +510,122 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_Delete)]
-		public IActionResult DeleteShift(int shiftId)
+		public async Task<IActionResult> DeleteShift(int shiftId, CancellationToken cancellationToken)
 		{
-			var shift = _shiftsService.GetShiftById(shiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_shiftsService.DeleteShift(shift);
+			await _shiftsService.DeleteShift(shift, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult Signup(int shiftDayId)
+		public async Task<IActionResult> Signup(int shiftDayId)
 		{
 			var model = new ShiftSignupView();
-			model.Day = _shiftsService.GetShiftDayById(shiftDayId);
+			model.Day = await _shiftsService.GetShiftDayByIdAsync(shiftDayId);
 
 			if (model.Day.Shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			model.Roles = _personnelRolesService.GetRolesForUser(UserId, DepartmentId);
-			model.Needs = _shiftsService.GetShiftDayNeeds(shiftDayId);
-			model.Signups = _shiftsService.GetShiftSignpsForShiftDay(shiftDayId);
-			model.UserSignedUp = _shiftsService.IsUserSignedUpForShiftDay(model.Day, UserId);
-			model.PersonnelRoles = _personnelRolesService.GetAllRolesForUsersInDepartment(DepartmentId);
-			model.UserProfiles = _userProfileService.GetAllProfilesForDepartment(DepartmentId);
+			model.Day.Shift = await _shiftsService.GetShiftByIdAsync(model.Day.ShiftId);
+			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
+			model.Needs = await _shiftsService.GetShiftDayNeedsAsync(shiftDayId);
+			model.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDayId);
+			model.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(model.Day, UserId);
+			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
+			model.UserProfiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult ViewShift(int shiftDayId)
+		public async Task<IActionResult> ViewShift(int shiftDayId)
 		{
 			var model = new ShiftSignupView();
-			model.Day = _shiftsService.GetShiftDayById(shiftDayId);
+			model.Day = await _shiftsService.GetShiftDayByIdAsync(shiftDayId);
 
 			if (model.Day.Shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			model.Roles = _personnelRolesService.GetRolesForUser(UserId, DepartmentId);
-			model.Needs = _shiftsService.GetShiftDayNeeds(shiftDayId);
-			model.Signups = _shiftsService.GetShiftSignpsForShiftDay(shiftDayId);
-			model.UserSignedUp = _shiftsService.IsUserSignedUpForShiftDay(model.Day, UserId);
-			model.PersonnelRoles = _personnelRolesService.GetAllRolesForUsersInDepartment(DepartmentId);
-			model.UserProfiles = _userProfileService.GetAllProfilesForDepartment(DepartmentId);
+			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
+			model.Needs = await _shiftsService.GetShiftDayNeedsAsync(shiftDayId);
+			model.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDayId);
+			model.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(model.Day, UserId);
+			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
+			model.UserProfiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult ShiftDaySignup(int shiftDayId, int groupId)
+		public async Task<IActionResult> ShiftDaySignup(int shiftDayId, int groupId, CancellationToken cancellationToken)
 		{
-			var day = _shiftsService.GetShiftDayById(shiftDayId);
+			var day = await _shiftsService.GetShiftDayByIdAsync(shiftDayId);
 
 			if (day.Shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			var signup = _shiftsService.SignupForShiftDay(day.ShiftId, day.Day, groupId, UserId);
+			var signup = await _shiftsService.SignupForShiftDayAsync(day.ShiftId, day.Day, groupId, UserId, cancellationToken);
 
 			return RedirectToAction("SignupSuccess", new { shiftSignupId = signup.ShiftSignupId });
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult SignupSuccess(int shiftSignupId)
+		public async Task<IActionResult> SignupSuccess(int shiftSignupId)
 		{
 			var model = new ShiftSignupView();
-			model.Signup = _shiftsService.GetShiftSignupById(shiftSignupId);
+			model.Signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignupId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult YourShifts()
+		public async Task<IActionResult> YourShifts()
 		{
 			var model = new YourShiftsView();
-			model.Signups = _shiftsService.GetShiftSignupsForUser(UserId);
-			model.Department = _departmentService.GetDepartmentById(DepartmentId, false);
-			model.Trades = _shiftsService.GetOpenTradeRequestsForUser(UserId);
+			model.Signups = await _shiftsService.GetShiftSignupsForUserAsync(UserId);
+			model.Department = await _departmentService.GetDepartmentByIdAsync(DepartmentId, false);
+			model.Trades = await _shiftsService.GetOpenTradeRequestsForUserAsync(UserId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult DeclineShiftDay(int shiftSignupId)
+		public async Task<IActionResult> DeclineShiftDay(int shiftSignupId, CancellationToken cancellationToken)
 		{
-			var signup = _shiftsService.GetShiftSignupById(shiftSignupId);
+			var signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignupId);
 
 			if (signup.Shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_shiftsService.DeleteShiftSignup(signup);
+			await _shiftsService.DeleteShiftSignupAsync(signup, cancellationToken);
 
 			return RedirectToAction("YourShifts");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult ProcessTrade(int shiftSignupTradeId)
+		public async Task<IActionResult> ProcessTrade(int shiftSignupTradeId)
 		{
 			var model = new ProcessTradeView();
-			model.Trade = _shiftsService.GetShiftTradeById(shiftSignupTradeId);
+			model.Trade = await _shiftsService.GetShiftTradeByIdAsync(shiftSignupTradeId);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult ProcessTrade(ProcessTradeView model, IFormCollection form)
+		public async Task<IActionResult> ProcessTrade(ProcessTradeView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			string[] dates = null;
 			string note = null;
@@ -633,22 +636,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (form.ContainsKey("note"))
 				note = form["note"];
 
-			var tradeRequest = _shiftsService.GetShiftTradeById(model.Trade.ShiftSignupTradeId);
+			var tradeRequest = await _shiftsService.GetShiftTradeByIdAsync(model.Trade.ShiftSignupTradeId);
 
 			if (dates != null && dates.Any())
-				_shiftsService.ProposeShiftDaysForTrade(tradeRequest.ShiftSignupTradeId, UserId, note, dates.Select(x => int.Parse(x)).ToList());
+				await _shiftsService.ProposeShiftDaysForTradeAsync(tradeRequest.ShiftSignupTradeId, UserId, note, dates.Select(x => int.Parse(x)).ToList(), cancellationToken);
 			else
-				_shiftsService.ProposeShiftDaysForTrade(tradeRequest.ShiftSignupTradeId, UserId, note, null);
+				await _shiftsService.ProposeShiftDaysForTradeAsync(tradeRequest.ShiftSignupTradeId, UserId, note, null, cancellationToken);
 
 			var shiftTradeProposed = new ShiftTradeProposedEvent();
 			shiftTradeProposed.DepartmentId = DepartmentId;
 			shiftTradeProposed.ShiftSignupTradeId = model.Trade.ShiftSignupTradeId;
 			shiftTradeProposed.UserId = UserId;
 
-			var number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
+			var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 			shiftTradeProposed.DepartmentNumber = number;
 
-			_eventAggregator.SendMessage<ShiftTradeProposedEvent>(shiftTradeProposed);
+			await _eventAggregator.SendMessage<ShiftTradeProposedEvent>(shiftTradeProposed);
 
 			return RedirectToAction("YourShifts");
 
@@ -660,45 +663,45 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult RejectTrade(int shiftTradeId, string reason)
+		public async Task<IActionResult> RejectTrade(int shiftTradeId, string reason, CancellationToken cancellationToken)
 		{
 			var decodedReason = HttpUtility.UrlDecode(reason);
 
-			_shiftsService.RejectTradeRequest(shiftTradeId, UserId, decodedReason);
+			await _shiftsService.RejectTradeRequestAsync(shiftTradeId, UserId, decodedReason, cancellationToken);
 
 			var shiftTradeRejected = new ShiftTradeRejectedEvent();
 			shiftTradeRejected.DepartmentId = DepartmentId;
 			shiftTradeRejected.ShiftSignupTradeId = shiftTradeId;
 			shiftTradeRejected.UserId = UserId;
 
-			var number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
+			var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 			shiftTradeRejected.DepartmentNumber = number;
 
-			_eventAggregator.SendMessage<ShiftTradeRejectedEvent>(shiftTradeRejected);
+			await _eventAggregator.SendMessage<ShiftTradeRejectedEvent>(shiftTradeRejected);
 
 			return RedirectToAction("YourShifts");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult FinishTrade(int shiftSignupTradeId)
+		public async Task<IActionResult> FinishTrade(int shiftSignupTradeId)
 		{
 			var model = new FinishTradeView();
-			model.Trade = _shiftsService.GetShiftTradeById(shiftSignupTradeId);
-			model.Profiles = _userProfileService.GetSelectedUserProfiles(model.Trade.Users.Select(x => x.UserId).ToList());
+			model.Trade = await _shiftsService.GetShiftTradeByIdAsync(shiftSignupTradeId);
+			model.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(model.Trade.Users.Select(x => x.UserId).ToList());
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult FinishTrade(FinishTradeView model, IFormCollection form)
+		public async Task<IActionResult> FinishTrade(FinishTradeView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			string selectedShift = null;
 			if (form.ContainsKey("selectedShift"))
 				selectedShift = form["selectedShift"];
 
-			var tradeRequest = _shiftsService.GetShiftTradeById(model.Trade.ShiftSignupTradeId);
+			var tradeRequest = await _shiftsService.GetShiftTradeByIdAsync(model.Trade.ShiftSignupTradeId);
 
 			if (selectedShift != null)
 			{
@@ -711,7 +714,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 				{
 					tradeRequest.TargetShiftSignupId = int.Parse(selectedShift);
-					var shiftSignup = _shiftsService.GetShiftSignupById(tradeRequest.TargetShiftSignupId.Value);
+					var shiftSignup = await _shiftsService.GetShiftSignupByIdAsync(tradeRequest.TargetShiftSignupId.Value);
 					userId = Guid.Parse(shiftSignup.UserId);
 				}
 
@@ -720,18 +723,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				shiftTradeFilled.ShiftSignupTradeId = model.Trade.ShiftSignupTradeId;
 				shiftTradeFilled.UserId = userId.ToString();
 
-				var number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
+				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 				shiftTradeFilled.DepartmentNumber = number;
 
-				_shiftsService.SaveTrade(tradeRequest);
+				await _shiftsService.SaveTradeAsync(tradeRequest, cancellationToken);
 
-				_eventAggregator.SendMessage<ShiftTradeFilledEvent>(shiftTradeFilled);
+				await _eventAggregator.SendMessage<ShiftTradeFilledEvent>(shiftTradeFilled);
 
 				return RedirectToAction("YourShifts");
 			}
 
 			model.Trade = tradeRequest;
-			model.Profiles = _userProfileService.GetSelectedUserProfiles(model.Trade.Users.Select(x => x.UserId).ToList());
+			model.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(model.Trade.Users.Select(x => x.UserId).ToList());
 			model.Message = "You must select a shift to trade for or accept an unbalanced trade";
 
 			return View(model);
@@ -739,7 +742,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult ShiftStaffing()
+		public async Task<IActionResult> ShiftStaffing()
 		{
 			var model = new ShiftStaffingView();
 
@@ -748,13 +751,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		private void SetShiftStaffingModel(ShiftStaffingView model)
+		private async Task<ShiftStaffingView> SetShiftStaffingModel(ShiftStaffingView model)
 		{
 			model.Shifts = new List<Shift>();
 
-			var department = _departmentService.GetDepartmentById(DepartmentId);
-			var group = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
-			var shifts = _shiftsService.GetAllShiftsByDepartment(DepartmentId);
+			var department = await _departmentService.GetDepartmentByIdAsync(DepartmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
 
 			if (department.IsUserAnAdmin(UserId))
 			{
@@ -771,11 +774,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						model.Shifts.Add(shift);
 				}
 			}
+
+			return model;
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult ShiftStaffing(ShiftStaffingView model, IFormCollection form)
+		public async Task<IActionResult> ShiftStaffing(ShiftStaffingView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrWhiteSpace(form["shiftDayPicker"]))
 			{
@@ -827,7 +832,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				var savedStaffing = _shiftsService.SaveShiftStaffing(staffing);
+				var savedStaffing = await _shiftsService.SaveShiftStaffingAsync(staffing, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
@@ -839,18 +844,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Async Calls
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftCalendarItems()
+		public async Task<IActionResult> GetShiftCalendarItems()
 		{
 			var calendarItems = new List<ShiftCalendarItemJson>();
-			var shifts = _shiftsService.GetAllShiftsByDepartment(DepartmentId);
-			var allGroups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-			var allRoles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
-			var allUserNames = _departmentService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
+			var allGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var allRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			var allUserNames = await _departmentService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			foreach (var shift in shifts)
 			{
 				foreach (var day in shift.Days)
 				{
+					day.Shift = shift;
+
 					var item = new ShiftCalendarItemJson();
 					item.CalendarItemId = day.ShiftDayId;
 
@@ -882,12 +889,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					item.Title = shift.Name;
 					item.Description = shift.Name;
 					item.ItemType = day.ShiftId; // The Color in the calendar
-					item.SignupType = day.Shift.AssignmentType;
+					item.SignupType = shift.AssignmentType;
 					item.ShiftId = day.ShiftId;
-					item.Filled = _shiftsService.IsShiftDayFilled(day.ShiftDayId);
-					item.UserSignedUp = _shiftsService.IsUserSignedUpForShiftDay(day, UserId);
+					item.Filled = await _shiftsService.IsShiftDayFilledAsync(day.ShiftDayId);
+					item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId);
 
-					var shiftGroups = _shiftsService.GetShiftDayNeeds(day.ShiftDayId);
+					var shiftGroups = await _shiftsService.GetShiftDayNeedsAsync(day.ShiftDayId);
 
 					if (shiftGroups != null)
 					{
@@ -952,18 +959,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftCalendarItemsForShift(int shiftId)
+		public async Task<IActionResult> GetShiftCalendarItemsForShift(int shiftId)
 		{
 			var calendarItems = new List<ShiftCalendarItemJson>();
-			var shift = _shiftsService.GetShiftById(shiftId);
-			var allGroups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-			var allRoles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
-			var allUserNames = _departmentService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
+			var allGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var allRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			var allUserNames = await _departmentService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			foreach (var day in shift.Days)
 			{
 				var item = new ShiftCalendarItemJson();
 				item.CalendarItemId = day.ShiftDayId;
+				day.Shift = shift;
 
 				if (String.IsNullOrWhiteSpace(shift.EndTime))
 					item.IsAllDay = true;
@@ -993,12 +1001,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				item.Title = shift.Name;
 				item.Description = shift.Name;
 				item.ItemType = day.ShiftId; // The Color in the calendar
-				item.SignupType = day.Shift.AssignmentType;
+				item.SignupType = shift.AssignmentType;
 				item.ShiftId = day.ShiftId;
-				item.Filled = _shiftsService.IsShiftDayFilled(day.ShiftDayId);
-				item.UserSignedUp = _shiftsService.IsUserSignedUpForShiftDay(day, UserId);
+				item.Filled = await _shiftsService.IsShiftDayFilledAsync(day.ShiftDayId);
+				item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId);
 
-				var shiftGroups = _shiftsService.GetShiftDayNeeds(day.ShiftDayId);
+				var shiftGroups = await _shiftsService.GetShiftDayNeedsAsync(day.ShiftDayId);
 
 				if (shiftGroups != null)
 				{
@@ -1062,10 +1070,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftCalendarItemTypes()
+		public async Task<IActionResult> GetShiftCalendarItemTypes()
 		{
 			var itemsJson = new List<CalendarItemTypeJson>();
-			var shifts = _shiftsService.GetAllShiftsByDepartment(DepartmentId);
+			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
 
 			foreach (var shift in shifts)
 			{
@@ -1085,11 +1093,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetPersonnelForShift(int shiftId, int? groupId)
+		public async Task<IActionResult> GetPersonnelForShift(int shiftId, int? groupId)
 		{
 			var usersJson = new List<UserJson>();
-			var shift = _shiftsService.GetShiftById(shiftId);
-			var group = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
+			var group = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			if (shift.DepartmentId != DepartmentId)
 				return null;
@@ -1098,7 +1106,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var userJson = new UserJson();
 				userJson.UserId = user.UserId;
-				userJson.Name = UserHelper.GetFullNameForUser(user.UserId);
+				userJson.Name = await UserHelper.GetFullNameForUser(user.UserId);
 
 				if (groupId.HasValue && groupId.Value > 0 && user.GroupId.HasValue)
 				{
@@ -1118,10 +1126,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftGroups(int shiftId)
+		public async Task<IActionResult> GetShiftGroups(int shiftId)
 		{
 			var groups = new List<dynamic>();
-			var shift = _shiftsService.GetShiftById(shiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			foreach (var group in shift.Groups)
 			{
@@ -1137,10 +1145,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftDays(int shiftId)
+		public async Task<IActionResult> GetShiftDays(int shiftId)
 		{
 			var days = new List<dynamic>();
-			var shift = _shiftsService.GetShiftById(shiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			foreach (var day in shift.Days)
 			{
@@ -1156,9 +1164,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftJson(int shiftId)
+		public async Task<IActionResult> GetShiftJson(int shiftId)
 		{
-			var shift = _shiftsService.GetShiftById(shiftId);
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
 				return null;
@@ -1170,10 +1178,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftsForDepartmentJson()
+		public async Task<IActionResult> GetShiftsForDepartmentJson()
 		{
 			var shiftsJson = new List<dynamic>();
-			var shifts = _shiftsService.GetAllShiftsByDepartment(DepartmentId);
+			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
 
 			foreach (var shift in shifts)
 			{
@@ -1189,13 +1197,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetPersonnelNotOnShiftDay(int shiftSignupId, int shiftDayId)
+		public async Task<IActionResult> GetPersonnelNotOnShiftDay(int shiftSignupId, int shiftDayId)
 		{
 			var usersJson = new List<UserJson>();
-			var signup = _shiftsService.GetShiftSignupById(shiftSignupId);
-			var signups = _shiftsService.GetShiftSignpsForShiftDay(shiftDayId);
-			var personnel = _departmentService.GetAllUsersForDepartment(DepartmentId);
-			var roles = _personnelRolesService.GetAllRolesForUsersInDepartment(DepartmentId);
+			var signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignupId);
+			var signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDayId);
+			var personnel = await _departmentService.GetAllUsersForDepartmentAsync(DepartmentId);
+			var roles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
 
 			var rolesForSignup = new List<ShiftGroupRole>();
 
@@ -1215,7 +1223,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					var userJson = new UserJson();
 					userJson.UserId = user;
-					userJson.Name = UserHelper.GetFullNameForUser(user);
+					userJson.Name = await UserHelper.GetFullNameForUser(user);
 
 					usersJson.Add(userJson);
 				}
@@ -1226,18 +1234,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public IActionResult GetShiftDaysUserIsOn(int shiftTradeId)
+		public async Task<IActionResult> GetShiftDaysUserIsOn(int shiftTradeId)
 		{
 			var shiftDayJson = new List<ShiftDayJson>();
-			var trade = _shiftsService.GetShiftTradeById(shiftTradeId);
-			var signups = _shiftsService.GetShiftSignupsForUser(UserId);
+			var trade = await _shiftsService.GetShiftTradeByIdAsync(shiftTradeId);
+			var signups = await _shiftsService.GetShiftSignupsForUserAsync(UserId);
 
-			var validShiftDays = from signup in signups
-													 let shiftDaySignups = _shiftsService.GetShiftSignpsForShiftDay(signup.ShiftSignupId)
-													 where !(from d in shiftDaySignups
-																	 select d.UserId)
-														 .Contains(trade.SourceShiftSignup.UserId)
-													 select signup;
+			//var validShiftDays = from signup in signups
+			//										 let shiftDaySignups = await _shiftsService.GetShiftSignpsForShiftDayAsync(signup.ShiftSignupId)
+			//										 where !(from d in shiftDaySignups
+			//														 select d.UserId)
+			//											 .Contains(trade.SourceShiftSignup.UserId)
+			//										 select signup;
+
+			var validShiftDays = new List<ShiftSignup>();
+			foreach (var signup in signups)
+			{
+				var shiftDaySignups = await _shiftsService.GetShiftSignpsForShiftDayAsync(signup.ShiftSignupId);
+
+				if (!(from d in shiftDaySignups select d.UserId).Contains(trade.SourceShiftSignup.UserId))
+					validShiftDays.Add(signup);
+			}
 
 			foreach (var day in validShiftDays)
 			{

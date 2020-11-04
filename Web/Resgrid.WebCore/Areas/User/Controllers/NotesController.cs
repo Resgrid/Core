@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
@@ -20,16 +22,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentsService = departmentsService;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			IndexView model = new IndexView();
-			model.Notes = _notesService.GetAllNotesForDepartment(DepartmentId);
+			model.Notes = await _notesService.GetAllNotesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
-		public IActionResult NewNote()
+		public async Task<IActionResult> NewNote()
 		{
 			NewNoteView model = new NewNoteView();
 
@@ -37,7 +39,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult NewNote(NewNoteView model)
+		public async Task<IActionResult> NewNote(NewNoteView model, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
@@ -55,7 +57,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				note.Category = model.Category;
 
-				_notesService.Save(note);
+				await _notesService.SaveAsync(note, cancellationToken);
 
 				return RedirectToAction("Index", "Notes", new { Area = "User" });
 			}
@@ -64,27 +66,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult View(int noteId)
+		public async Task<IActionResult> View(int noteId)
 		{
 			ViewNoteView model = new ViewNoteView();
 
-			var note = _notesService.GetNoteById(noteId);
+			var note = await _notesService.GetNoteByIdAsync(noteId);
 
 			if (note.DepartmentId != DepartmentId)
 				Unauthorized();
 
 			model.Note = note;
-			model.Department = _departmentsService.GetDepartmentById(note.DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(note.DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
-		public IActionResult Edit(int noteId)
+		public async Task<IActionResult> Edit(int noteId)
 		{
 			EditNoteView model = new EditNoteView();
 
-			var note = _notesService.GetNoteById(noteId);
+			var note = await _notesService.GetNoteByIdAsync(noteId);
 
 			if (note.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -100,11 +102,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Edit(EditNoteView model)
+		public async Task<IActionResult> Edit(EditNoteView model, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
-				var savedNote = _notesService.GetNoteById(model.NoteId);
+				var savedNote = await _notesService.GetNoteByIdAsync(model.NoteId);
 
 				if (savedNote.DepartmentId != DepartmentId)
 					Unauthorized();
@@ -122,7 +124,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				savedNote.Category = model.Category;
 
-				_notesService.Save(savedNote);
+				await _notesService.SaveAsync(savedNote, cancellationToken);
 
 				return RedirectToAction("Index", "Notes", new { Area = "User" });
 			}
@@ -131,22 +133,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Delete(int noteId)
+		public async Task<IActionResult> Delete(int noteId, CancellationToken cancellationToken)
 		{
-			var note = _notesService.GetNoteById(noteId);
+			var note = await _notesService.GetNoteByIdAsync(noteId);
 
 			if (note.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_notesService.Delete(note);
+			await _notesService.DeleteAsync(note, cancellationToken);
 
 			return RedirectToAction("Index", "Notes", new { Area = "User" });
 		}
 
 		[HttpGet]
-		public IActionResult GetDepartmentNotesCategories()
+		public async Task<IActionResult> GetDepartmentNotesCategories()
 		{
-			return Json(_notesService.GetDistinctCategoriesByDepartmentId(DepartmentId));
+			return Json(_notesService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId));
 		}
 	}
 }

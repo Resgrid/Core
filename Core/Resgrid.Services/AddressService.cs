@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -18,26 +18,19 @@ namespace Resgrid.Services
 			_addressVerificationProvider = addressVerificationProvider;
 		}
 
-		public Address GetAddressById(int addressId)
-		{
-			return _addressRepository.GetAll().FirstOrDefault(x => x.AddressId == addressId);
-		}
-
 		public async Task<Address> GetAddressByIdAsync(int addressId)
 		{
-			return await _addressRepository.GetAddressByIdAsync(addressId);
+			return await _addressRepository.GetByIdAsync(addressId);
 		}
 
-		public Address SaveAddress(Address address)
+		public async Task<Address> SaveAddressAsync(Address address, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_addressRepository.SaveOrUpdate(address);
-
-			return address;
+			return await _addressRepository.SaveOrUpdateAsync(address, cancellationToken);
 		}
 
-		public AddressVerificationResult IsAddressValid(Address address)
+		public async Task<AddressVerificationResult> IsAddressValidAsync(Address address)
 		{
-			return _addressVerificationProvider.VerifyAddress(address);
+			return await _addressVerificationProvider.VerifyAddressAsync(address);
 		}
 	}
 }

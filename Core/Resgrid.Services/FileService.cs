@@ -1,34 +1,33 @@
-﻿using Resgrid.Model;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
-using System.Linq;
 
 namespace Resgrid.Services
 {
 	public class FileService : IFileService
 	{
-		private readonly IGenericDataRepository<File> _fileRepository;
+		private readonly IFileRepository _fileRepository;
 
-		public FileService(IGenericDataRepository<File> fileRepository)
+		public FileService(IFileRepository fileRepository)
 		{
 			_fileRepository = fileRepository;
 		}
 
-		public File SaveFile(File file)
+		public async Task<File> SaveFileAsync(File file, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_fileRepository.SaveOrUpdate(file);
-
-			return file;
+			return await _fileRepository.SaveOrUpdateAsync(file, cancellationToken);
 		}
 
-		public File GetFileById(int fileId)
+		public async Task<File> GetFileByIdAsync(int fileId)
 		{
-			return _fileRepository.GetAll().Where(x => x.FileId == fileId).FirstOrDefault();
+			return await _fileRepository.GetByIdAsync(fileId);
 		}
 
-		public void DeleteFile(File file)
+		public async Task<bool> DeleteFileAsync(File file, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_fileRepository.DeleteOnSubmit(file);
+			return await _fileRepository.DeleteAsync(file, cancellationToken);
 		}
 	}
 }

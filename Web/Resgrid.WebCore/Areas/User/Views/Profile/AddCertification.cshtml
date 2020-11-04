@@ -21,7 +21,7 @@
 				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
 			</li>
 			<li>
-				<a asp-controller="Profile" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
+				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
 			</li>
 			<li>
 				<a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Certifications</a>

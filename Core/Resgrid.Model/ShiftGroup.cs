@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Newtonsoft.Json;
 
 namespace Resgrid.Model
@@ -22,7 +21,6 @@ namespace Resgrid.Model
 		public virtual Shift Shift { get; set; }
 
 		[Required]
-		//[ForeignKey("DepartmentGroup"), DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int DepartmentGroupId { get; set; }
 
 		[JsonIgnore]
@@ -33,18 +31,19 @@ namespace Resgrid.Model
 		public virtual ICollection<ShiftGroupAssignment> Assignments { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftGroupId; }
 			set { ShiftGroupId = (int)value; }
 		}
-	}
 
-	public class ShiftGroup_Mapping : EntityTypeConfiguration<ShiftGroup>
-	{
-		public ShiftGroup_Mapping()
-		{
-			this.HasRequired(t => t.DepartmentGroup).WithMany().HasForeignKey(t => t.DepartmentGroupId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "ShiftGroups";
+
+		[NotMapped]
+		public string IdName => "ShiftGroupId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Shift", "DepartmentGroup", "Roles", "Assignments" };
 	}
 }

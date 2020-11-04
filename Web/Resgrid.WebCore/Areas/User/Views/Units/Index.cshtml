@@ -156,7 +156,7 @@
 
 					  if (unitStatus != null)
 					  {
-						var state = CustomStatesHelper.GetCustomUnitState(unitStatus);
+						var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
 
 						if (state != null)
 						{
@@ -220,7 +220,7 @@
 
 						if (unitStatus != null)
 						{
-						  var state = CustomStatesHelper.GetCustomUnitState(unitStatus);
+						  var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
 
 						  if (state != null)
 						  {

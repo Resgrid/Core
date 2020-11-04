@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Services
 {
 	public interface IAuditService
 	{
-		AuditLog SaveAuditLog(AuditLog auditLog);
-		List<AuditLog> GetAllAuditLogsForDepartment(int departmentId);
+		Task<AuditLog> SaveAuditLogAsync(AuditLog auditLog, CancellationToken cancellationToken = default(CancellationToken));
+		Task<List<AuditLog>> GetAllAuditLogsForDepartmentAsync(int departmentId);
 		string GetAuditLogTypeString(AuditLogTypes logType);
-		AuditLog GetAuditLogById(int auditLogId);
-		void DeleteAuditLogById(int auditLogId);
-		void DeleteSelectedAuditLogs(int departmentId, List<int> auditLogIds);
+		Task<AuditLog> GetAuditLogByIdAsync(int auditLogId);
 	}
 }

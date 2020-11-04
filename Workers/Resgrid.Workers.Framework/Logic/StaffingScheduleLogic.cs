@@ -2,6 +2,7 @@
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using System;
+using System.Threading.Tasks;
 using Autofac;
 
 namespace Resgrid.Workers.Framework.Logic
@@ -21,7 +22,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_actionLogsService = Bootstrapper.GetKernel().Resolve<IActionLogsService>();
 		}
 
-		public Tuple<bool, string> Process(StaffingScheduleQueueItem item)
+		public async Task<Tuple<bool, string>> Process(StaffingScheduleQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -31,7 +32,7 @@ namespace Resgrid.Workers.Framework.Logic
 				try
 				{
 					if (item.ScheduledTask.TaskType == (int)TaskTypes.UserStaffingLevel)
-						_userStateService.CreateUserState(item.ScheduledTask.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data), item.ScheduledTask.Note);
+						await _userStateService.CreateUserState(item.ScheduledTask.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data), item.ScheduledTask.Note);
 					else if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStaffingReset)
 					{
 						//var department = _departmentsService.GetDepartmentByUserId(item.ScheduledTask.UserId);
@@ -40,13 +41,13 @@ namespace Resgrid.Workers.Framework.Logic
 
 						foreach (var user in users)
 						{
-							_userStateService.CreateUserState(user.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
+							await _userStateService.CreateUserState(user.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
 						}
 					}
 					else if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStatusReset)
 					{
 						//var department = _departmentsService.GetDepartmentByUserId(item.ScheduledTask.UserId);
-						_actionLogsService.SetActionForEntireDepartment(item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
+						await _actionLogsService.SetActionForEntireDepartmentAsync(item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
 					}
 				}
 				catch (Exception ex)
@@ -57,7 +58,7 @@ namespace Resgrid.Workers.Framework.Logic
 				}
 
 				if (success)
-					_scheduledTasksService.CreateScheduleTaskLog(item.ScheduledTask);
+					await _scheduledTasksService.CreateScheduleTaskLogAsync(item.ScheduledTask);
 			}
 
 			return new Tuple<bool, string>(success, result);

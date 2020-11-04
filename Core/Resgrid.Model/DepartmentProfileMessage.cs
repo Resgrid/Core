@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -64,10 +65,19 @@ namespace Resgrid.Model
 		public bool Deleted { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentProfileMessageId; }
 			set { DepartmentProfileMessageId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "DepartmentProfileMessages";
+
+		[NotMapped]
+		public string IdName => "DepartmentProfileMessageId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Profile", "ReplyToMessage", "Call" };
 	}
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -7,23 +9,16 @@ namespace Resgrid.Services
 {
 	public class PushLogsService : IPushLogsService
 	{
-		private readonly IGenericDataRepository<PushLog> _pushLogsRepository;
+		private readonly IPushLogsRepository _pushLogsRepository;
 
-		public PushLogsService(IGenericDataRepository<PushLog> pushLogsRepository)
+		public PushLogsService(IPushLogsRepository pushLogsRepository)
 		{
 			_pushLogsRepository = pushLogsRepository;
 		}
 
-		public PushLog LogPushResult(string deviceConnectionStatus, string httpStatusCode, string messageId, string notificationStatus, string subscriptionStatus, string channelUri)
-		{
-			PushLog log = new PushLog();
-			
-			_pushLogsRepository.SaveOrUpdate(log);
 
-			return log;
-		}
-
-		public PushLog LogPushResult(string deviceConnectionStatus, string httpStatusCode, string messageId, string notificationStatus, string subscriptionStatus, string channelUri, Exception exception)
+		public async Task<PushLog> LogPushResult(string deviceConnectionStatus, string httpStatusCode, string messageId, string notificationStatus,
+			string subscriptionStatus, string channelUri, Exception exception, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			PushLog log = new PushLog();
 			log.MessageId = messageId;
@@ -35,9 +30,7 @@ namespace Resgrid.Services
 			log.ChannelUri = channelUri;
 			log.Timestamp = DateTime.Now.ToUniversalTime();
 
-			_pushLogsRepository.SaveOrUpdate(log);
-
-			return log;
+			return await _pushLogsRepository.SaveOrUpdateAsync(log, cancellationToken);
 		}
 	}
 }

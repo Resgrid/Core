@@ -30,7 +30,7 @@
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
 					<div class="row">
-						<div class="col-md-3 col-lg-3 " align="center"><img style="width: 100px; height: 100px; text-align: center;" src="https://api.resgrid.com/api/v3/Avatars/Get?id=@Model.Profile.UserId" onerror="this.src = 'https://resgrid.com/Images/defaultProfile.png'" /><h3>@Model.Profile.FullName.AsFirstNameLastName</h3></div>
+						<div class="col-md-3 col-lg-3 " align="center"><img style="width: 100px; height: 100px; text-align: center;" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@Model.Profile.UserId" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'" /><h3>@Model.Profile.FullName.AsFirstNameLastName</h3></div>
 						<div class=" col-md-9 col-lg-9 ">
 							<table class="table table-user-information">
 								<tbody>
@@ -38,7 +38,7 @@
 										<td>Status:</td>
 										@if (Model.ActionLog != null)
 										{
-											var statusDef = CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, Model.ActionLog);
+											var statusDef = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, Model.ActionLog);
 
 											if (Model.ActionLog.ActionTypeId <= 25)
 											{
@@ -58,7 +58,7 @@
 										<td>Staffing:</td>
 										@if (Model.UserState != null)
 										{
-											var stateDef = CustomStatesHelper.GetCustomPersonnelStaffing(Model.Department.DepartmentId, Model.UserState);
+											var stateDef = await CustomStatesHelper.GetCustomPersonnelStaffing(Model.Department.DepartmentId, Model.UserState);
 
 											if (Model.UserState.State <= 25)
 											{

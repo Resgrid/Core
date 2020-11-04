@@ -1,5 +1,6 @@
 ﻿// From https://github.com/grandchamp/Identity.Dapper
 
+using Resgrid.Model;
 using Resgrid.Repositories.DataRepository.Configs;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,13 @@ namespace Resgrid.Repositories.DataRepository.Extensions
 			ignoreProperties = ignoreProperties ?? Enumerable.Empty<string>();
 
 			var roleProperties = Enumerable.Empty<string>();
-			var idProperty = entity.GetType().GetProperty("Id");
+			//var idProperty = entity.GetType().GetProperty("Id");
+			var idPropertyName = ((IEntity)entity).IdName;
+			var idProperty = entity.GetType().GetProperty(idPropertyName);
+
+			ignoreProperties = ignoreProperties.Append("IdValue");
+			ignoreProperties = ignoreProperties.Append("TableName");
+			ignoreProperties = ignoreProperties.Append("IdName");
 
 			if (idProperty != null && !ignoreIdProperty)
 			{
@@ -38,7 +45,7 @@ namespace Resgrid.Repositories.DataRepository.Extensions
 											.GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y))
 									: forInsert
 										? entity.GetType()
-												.GetPublicPropertiesNames(y => !y.Name.Equals("Id")
+												.GetPublicPropertiesNames(y => !y.Name.Equals(idPropertyName)
 																			   && !ignoreProperties.Any(x => x == y.Name))
 										: entity.GetType()
 												.GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y));
@@ -46,7 +53,7 @@ namespace Resgrid.Repositories.DataRepository.Extensions
 			else
 			{
 				roleProperties = entity.GetType()
-									   .GetPublicPropertiesNames(y => !y.Name.Equals("Id")
+									   .GetPublicPropertiesNames(y => !y.Name.Equals(idPropertyName)
 																	  && !ignoreProperties.Any(x => x == y.Name));
 			}
 

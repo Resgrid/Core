@@ -1,32 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using Dapper;
-using Resgrid.Model;
+﻿using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class DepartmentCallEmailsRepository : RepositoryBase<DepartmentCallEmail>, IDepartmentCallEmailsRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentCallEmailsRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public List<DepartmentCallEmail> GetAllDepartmentEmailSettings()
+		public DepartmentCallEmailsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				return db.Query<DepartmentCallEmail>(@"SELECT * FROM DepartmentCallEmails").ToList();
-			}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 	}
 }

@@ -8,6 +8,7 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Model.Identity;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 
@@ -23,29 +24,30 @@ namespace Resgrid.Services
 		private static List<DepartmentCallPriority> _callPriorities;
 
 		private readonly ICallsRepository _callsRepository;
-		private readonly IGenericDataRepository<CallDispatch> _callDispatchsRepository;
-		private readonly IGenericDataRepository<CallDispatchGroup> _callDispatchGroupRepository;
-		private readonly IGenericDataRepository<CallDispatchUnit> _callDispatchUnitRepository;
-		private readonly IGenericDataRepository<CallDispatchRole> _callDispatchRoleRepository;
+		private readonly ICallDispatchesRepository _callDispatchesRepository;
+		private readonly ICallDispatchGroupRepository _callDispatchGroupRepository;
+		private readonly ICallDispatchUnitRepository _callDispatchUnitRepository;
+		private readonly ICallDispatchRoleRepository _callDispatchRoleRepository;
 		private readonly ICommunicationService _communicationService;
 		private readonly ICallTypesRepository _callTypesRepository;
 		private readonly ICallEmailFactory _callEmailFactory;
 		private readonly ICacheProvider _cacheProvider;
-		private readonly IGenericDataRepository<CallNote> _callNotesRepository;
-		private readonly IGenericDataRepository<CallAttachment> _callAttachmentRepository;
-		private readonly IGenericDataRepository<DepartmentCallPriority> _departmentCallPriorityRepository;
+		private readonly ICallNotesRepository _callNotesRepository;
+		private readonly ICallAttachmentRepository _callAttachmentRepository;
+		private readonly IDepartmentCallPriorityRepository _departmentCallPriorityRepository;
 		private readonly IShortenUrlProvider _shortenUrlProvider;
+		private readonly ICallProtocolsRepository _callProtocolsRepository;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
-			IGenericDataRepository<CallDispatch> callDispatchsRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
-			ICacheProvider cacheProvider, IGenericDataRepository<CallNote> callNotesRepository,
-			IGenericDataRepository<CallAttachment> callAttachmentRepository, IGenericDataRepository<CallDispatchGroup> callDispatchGroupRepository,
-			IGenericDataRepository<CallDispatchUnit> callDispatchUnitRepository, IGenericDataRepository<CallDispatchRole> callDispatchRoleRepository,
-			IGenericDataRepository<DepartmentCallPriority> departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider)
+			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
+			ICacheProvider cacheProvider, ICallNotesRepository callNotesRepository,
+			ICallAttachmentRepository callAttachmentRepository, ICallDispatchGroupRepository callDispatchGroupRepository,
+			ICallDispatchUnitRepository callDispatchUnitRepository, ICallDispatchRoleRepository callDispatchRoleRepository,
+			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider, ICallProtocolsRepository callProtocolsRepository)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
-			_callDispatchsRepository = callDispatchsRepository;
+			_callDispatchesRepository = callDispatchesRepository;
 			_callTypesRepository = callTypesRepository;
 			_callEmailFactory = callEmailFactory;
 			_cacheProvider = cacheProvider;
@@ -56,355 +58,354 @@ namespace Resgrid.Services
 			_callDispatchRoleRepository = callDispatchRoleRepository;
 			_departmentCallPriorityRepository = departmentCallPriorityRepository;
 			_shortenUrlProvider = shortenUrlProvider;
+			_callProtocolsRepository = callProtocolsRepository;
 		}
 
-		public Call SaveCall(Call call)
+		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (String.IsNullOrWhiteSpace(call.Number))
-				call.Number = GetCurrentCallNumber(call.DepartmentId);
+				call.Number = await GetCurrentCallNumberAsync(call.DepartmentId);
 
 			if (String.IsNullOrWhiteSpace(call.Name))
 				call.Name = "New Call " + DateTime.UtcNow.ToShortDateString();
 
-			_callsRepository.SaveOrUpdate(call);
-
-			//return GetCallById(call.CallId);
-			return call;
+			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 		}
 
-		public void RegenerateCallNumbers(int departmentId)
+		public async Task<bool> RegenerateCallNumbersAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var calls = _callsRepository.GetAll().Where(x => x.DepartmentId == departmentId).OrderBy(x => x.LoggedOn);
+			var calls = (await _callsRepository.GetAllByDepartmentIdAsync(departmentId)).OrderBy(x => x.LoggedOn);
 			int year = DateTime.UtcNow.Year;
 			int count = 1;
 
 			foreach (var call in calls)
 			{
 				call.Number = string.Format("{0}-{1}", year % 100, count);
+
+				await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 			}
 
-			_callsRepository.SaveOrUpdateAll(calls);
+			return true;
 		}
 
-		public string GetCurrentCallNumber(int departmentId)
+		public async Task<string> GetCurrentCallNumberAsync(int departmentId)
 		{
 			int year = DateTime.UtcNow.Year;
 
-			var count = _callsRepository.GetAll().Count(x => x.DepartmentId == departmentId && x.LoggedOn.Year == year) + 1;
-			//var count = (from call in _callsRepository.GetAll()
-			//where call.DepartmentId == departmentId &&
-			//			call.LoggedOn.Year == year
-			//select call).Count() + 1;
+			var count = (await _callsRepository.GetAllByDepartmentIdAsync(departmentId)).Count(x => x.LoggedOn.Year == year) + 1;
 
 			return string.Format("{0}-{1}", year % 100, count);
 		}
 
-		public List<Call> GetAllCallsByDepartment(int departmentId)
+		public async Task<List<Call>> GetAllCallsByDepartmentAsync(int departmentId)
 		{
-			var calls = from c in _callsRepository.GetAll()
-						where c.DepartmentId == departmentId && c.IsDeleted == false
+			var calls = from c in (await _callsRepository.GetAllByDepartmentIdAsync(departmentId))
+						where c.IsDeleted == false
 						orderby c.State
 						select c;
 
 			return calls.ToList();
 		}
 
-		public List<Call> GetAllCallsByDepartmentDateRange(int departmentId, DateTime startDate, DateTime endDate)
+		public async Task<List<Call>> GetAllCallsByDepartmentDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
-			var calls = from c in _callsRepository.GetAll()
-						where c.DepartmentId == departmentId && c.IsDeleted == false && c.LoggedOn >= startDate && c.LoggedOn <= endDate
-						orderby c.State
-						select c;
+			var calls = (from c in (await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, startDate, endDate))
+											orderby c.State
+											select c).ToList();
+
+			foreach (var call in calls)
+			{
+				call.Dispatches = (await _callDispatchesRepository.GetCallDispatchesByCallIdAsync(call.CallId)).ToList();
+				call.GroupDispatches = (await _callDispatchGroupRepository.GetAllCallDispatchGroupByCallIdAsync(call.CallId)).ToList();
+				call.UnitDispatches = (await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(call.CallId)).ToList();
+				call.RoleDispatches = (await _callDispatchRoleRepository.GetCallRoleDispatchesByCallIdAsync(call.CallId)).ToList();
+			}
+
+			return calls;
+		}
+
+		public async Task<List<Call>> GetActiveCallsByDepartmentAsync(int departmentId)
+		{
+			var items = await _callsRepository.GetAllOpenCallsByDepartmentAsync(departmentId);
+			return items.ToList();
+		}
+
+		public async Task<List<Call>> GetLatest10ActiveCallsByDepartmentAsync(int departmentId)
+		{
+			var calls = (from c in await _callsRepository.GetAllOpenCallsByDepartmentAsync(departmentId)
+										orderby c.LoggedOn descending
+										select c).Take(10);
 
 			return calls.ToList();
 		}
 
-		public List<Call> GetActiveCallsByDepartment(int departmentId)
+		public async Task<List<Call>> GetClosedCallsByDepartmentAsync(int departmentId)
 		{
-			return _callsRepository.GetActiveCallsByDepartment(departmentId);
-		}
-
-		public List<Call> GetActiveCallsByDepartmentForUpdate(int departmentId)
-		{
-			return _callsRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.State == 0 && x.IsDeleted == false).ToList();
-		}
-
-		public List<Call> GetLatest10ActiveCallsByDepartment(int departmentId)
-		{
-			var calls = (from c in _callsRepository.GetAll()
-						 where c.State == 0 && c.DepartmentId == departmentId && c.IsDeleted == false
-						 orderby c.LoggedOn descending
-						 select c).Take(10);
+			var calls = await _callsRepository.GetAllClosedCallsByDepartmentAsync(departmentId);
 
 			return calls.ToList();
 		}
 
-		public List<Call> GetClosedCallsByDepartment(int departmentId)
+		public async Task<bool> DeleteCallByIdAsync(int callId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var calls = from c in _callsRepository.GetAll()
-						where c.State > 0 && c.DepartmentId == departmentId && c.IsDeleted == false
-						select c;
-
-			return calls.ToList();
+			var call = await GetCallByIdAsync(callId);
+			return await _callsRepository.DeleteAsync(call, cancellationToken);
 		}
 
-		public void DeleteCallById(int callId)
+		public async Task<Call> ReOpenCallByIdAsync(int callId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var call = GetCallById(callId);
-			_callsRepository.DeleteOnSubmit(call);
-		}
-
-		public void ReOpenCallById(int callId)
-		{
-			var call = GetCallById(callId);
+			var call = await GetCallByIdAsync(callId);
 			call.State = (int)CallStates.Active;
 			call.ClosedByUser = null;
 			call.ClosedByUserId = null;
 			call.ClosedOn = null;
 			call.CompletedNotes = null;
 
-			_callsRepository.SaveOrUpdate(call);
+			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 		}
 
-		public Call GetCallById(int callId, bool bypassCache = true)
+		public async Task<Call> GetCallByIdAsync(int callId, bool bypassCache = true)
 		{
+			async Task<Call> getCall()
+			{
+				return await _callsRepository.GetByIdAsync(callId);
+			}
+
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<Call> getCall = delegate ()
-				{
-					return _callsRepository.GetAll().FirstOrDefault(x => x.CallId == callId);
-				};
-
-				return _cacheProvider.Retrieve(string.Format(CacheKey, callId), getCall, CacheLength);
+				return await _cacheProvider.RetrieveAsync(string.Format(CacheKey, callId), getCall, CacheLength);
 			}
 
-			return _callsRepository.GetAll().FirstOrDefault(x => x.CallId == callId);
+			return await getCall();
 		}
 
-		public int GetTodayCallsCount(int departmentId)
+		public async Task<int> GetTodayCallsCountAsync(int departmentId)
 		{
 			var date = DateTime.UtcNow.Date;
-			return _callsRepository.GetAll().Count(x => x.LoggedOn >= date && x.DepartmentId == departmentId);
+			return (await _callsRepository.GetAllCallsByDepartmentIdLoggedOnAsync(departmentId, date)).Count();
 		}
 
-		public int GetActiveCallsForDepartment(int departmentId)
+		public async Task<int> GetActiveCallsForDepartmentAsync(int departmentId)
 		{
-			return _callsRepository.GetAll().Count(x => x.State == 0 && x.IsDeleted == false && x.DepartmentId == departmentId);
+			return (await GetActiveCallsByDepartmentAsync(departmentId)).Count();
 		}
 
-		public void DeleteDispatchesForUserAndRemapCalls(string remapToUserId, string userIdToDelete)
+		public async Task<bool> DeleteDispatchesAsync(List<CallDispatch> dispatches, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var dispatches = (from d in _callDispatchsRepository.GetAll()
-							  where d.UserId == userIdToDelete
-							  select d).ToList();
-
-			_callDispatchsRepository.DeleteAll(dispatches);
-
-			var reportingCalls = (from c in _callsRepository.GetAll()
-								  where c.ReportingUserId == userIdToDelete
-								  select c).ToList();
-
-			foreach (var c in reportingCalls)
+			foreach (var callDispatch in dispatches)
 			{
-				c.ReportingUserId = remapToUserId;
-				_callsRepository.SaveOrUpdate(c);
+				await _callDispatchesRepository.DeleteAsync(callDispatch, cancellationToken);
 			}
 
-			var closingCalls = (from c in _callsRepository.GetAll()
-								where c.ClosedByUserId == userIdToDelete
-								select c).ToList();
+			return true;
+		}
 
-			foreach (var c in closingCalls)
+		public async Task<bool> DeleteGroupDispatchesAsync(List<CallDispatchGroup> dispatches, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			foreach (var callDispatch in dispatches)
 			{
-				c.ClosedByUserId = remapToUserId;
-				_callsRepository.SaveOrUpdate(c);
+				await _callDispatchGroupRepository.DeleteAsync(callDispatch, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public void DeleteDispatches(List<CallDispatch> dispatches)
+		public async Task<bool> DeleteRoleDispatchesAsync(List<CallDispatchRole> dispatches, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_callDispatchsRepository.DeleteAll(dispatches);
+			foreach (var callDispatch in dispatches)
+			{
+				await _callDispatchRoleRepository.DeleteAsync(callDispatch, cancellationToken);
+			}
+
+			return true;
 		}
 
-		public void DeleteGroupDispatches(List<CallDispatchGroup> dispatches)
+		public async Task<bool> DeleteUnitDispatchesAsync(List<CallDispatchUnit> dispatches, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_callDispatchGroupRepository.DeleteAll(dispatches);
+			foreach (var callDispatch in dispatches)
+			{
+				await _callDispatchUnitRepository.DeleteAsync(callDispatch, cancellationToken);
+			}
+
+			return true;
 		}
 
-		public void DeleteRoleDispatches(List<CallDispatchRole> dispatches)
-		{
-			_callDispatchRoleRepository.DeleteAll(dispatches);
-		}
-
-		public void DeleteUnitDispatches(List<CallDispatchUnit> dispatches)
-		{
-			_callDispatchUnitRepository.DeleteAll(dispatches);
-		}
-
-		public List<Call> GetLast2MonthCallsByDepartment(int departmentId)
+		public async Task<List<Call>> GetLast2MonthCallsByDepartmentAsync(int departmentId)
 		{
 			var date = DateTime.Now.AddMonths(-2).ToUniversalTime();
-
-			var calls = from c in _callsRepository.GetAll()
-						where c.State == 0 && c.DepartmentId == departmentId && c.IsDeleted == false && c.LoggedOn >= date
-						select c;
+			var calls = await _callsRepository.GetAllCallsByDepartmentIdLoggedOnAsync(departmentId, date);
 
 			return calls.ToList();
 		}
 
-		public Dictionary<string, int> GetNewCallsCountForLast5Days()
+		public async Task<List<CallType>> GetCallTypesForDepartmentAsync(int departmentId)
 		{
-			Dictionary<string, int> data = new Dictionary<string, int>();
-
-			var startDate = DateTime.UtcNow.AddDays(-4);
-			var filteredRecords =
-				_callsRepository.GetAll()
-					.Where(
-						x => x.LoggedOn >= startDate).ToList();
-
-			data.Add(DateTime.UtcNow.ToShortDateString(), filteredRecords.Count(x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-1).ToShortDateString(), filteredRecords.Count(x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.AddDays(-1).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-2).ToShortDateString(), filteredRecords.Count(x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.AddDays(-2).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-3).ToShortDateString(), filteredRecords.Count(x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.AddDays(-3).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-4).ToShortDateString(), filteredRecords.Count(x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.AddDays(-4).ToShortDateString()));
-
-			return data;
-		}
-
-		public List<CallType> GetCallTypesForDepartment(int departmentId)
-		{
-			var callTypes = from type in _callTypesRepository.GetAll()
-							where type.DepartmentId == departmentId
-							select type;
+			var callTypes = await _callTypesRepository.GetAllByDepartmentIdAsync(departmentId);
 
 			return callTypes.ToList();
 		}
 
-		public async Task<List<CallType>> GetCallTypesForDepartmentAsync(int departmentId)
+		public async Task<bool> DeleteCallTypeAsync(int callTypeId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _callTypesRepository.GetCallTypesForDepartmentAsync(departmentId);
+			var callType = await _callTypesRepository.GetByIdAsync(callTypeId);
+
+			return await _callTypesRepository.DeleteAsync(callType, cancellationToken);
 		}
 
-		public void DeleteCallType(int callTypeId)
+		public async Task<CallType> GetCallTypeByIdAsync(int callTypeId)
 		{
-			var callTypes = from type in _callTypesRepository.GetAll()
-							where type.CallTypeId == callTypeId
-							select type;
-
-			if (callTypes.FirstOrDefault() != null)
-			{
-				_callTypesRepository.DeleteOnSubmit(callTypes.First());
-			}
+			return await _callTypesRepository.GetByIdAsync(callTypeId);
 		}
 
-		public CallType GetCallTypeById(int callTypeId)
-		{
-			return _callTypesRepository.GetAll().FirstOrDefault(x => x.CallTypeId == callTypeId);
-		}
-
-		public CallType SaveNewCallType(string callType, int departmentId)
+		public async Task<CallType> SaveNewCallTypeAsync(string callType, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CallType newCallType = new CallType();
 			newCallType.DepartmentId = departmentId;
 			newCallType.Type = callType;
 
-			_callTypesRepository.SaveOrUpdate(newCallType);
-
-			return GetCallTypeById(newCallType.CallTypeId);
+			return await _callTypesRepository.SaveOrUpdateAsync(newCallType, cancellationToken);
 		}
 
-		public Call GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority)
+		public Call GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
 		{
-			return _callEmailFactory.GenerateCallFromEmailText((CallEmailTypes)type, email, managingUser, users, department, activeCalls, units, priority);
+			return _callEmailFactory.GenerateCallFromEmailText((CallEmailTypes)type, email, managingUser, users, department, activeCalls, units, priority, activePriorities);
 		}
 
-		public List<int> GetCallsCountForLast7DaysForDepartment(int departmentId)
+		public async Task<CallNote> SaveCallNoteAsync(CallNote note, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			List<int> actions = new List<int>();
-			var startDate = DateTime.UtcNow.AddDays(-7);
-
-			var callsForLast7Days =
-				_callsRepository.GetAll()
-					.Where(
-						x =>
-							x.DepartmentId == departmentId &&
-							x.LoggedOn >= startDate).ToList();
-
-			for (int i = 0; i < 7; i++)
-			{
-				actions.Add(callsForLast7Days.Count(x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.AddDays(-i).ToShortDateString()));
-			}
-
-			return actions;
+			return await _callNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
 		}
 
-		public CallNote SaveCallNote(CallNote note)
+		public async Task<CallAttachment> GetCallAttachmentAsync(int callAttachmentId)
 		{
-			_callNotesRepository.SaveOrUpdate(note);
-
-			return note;
+			return await _callAttachmentRepository.GetByIdAsync(callAttachmentId);
 		}
 
-		public CallAttachment GetCallAttachment(int callAttachmentId)
+		public async Task<CallAttachment> SaveCallAttachmentAsync(CallAttachment attachment, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _callAttachmentRepository.GetAll().FirstOrDefault(x => x.CallAttachmentId == callAttachmentId);
+			return await _callAttachmentRepository.SaveOrUpdateAsync(attachment, cancellationToken);
 		}
 
-		public CallAttachment SaveCallAttachment(CallAttachment attachment)
+		public async Task<bool> MarkCallDispatchesAsSentAsync(int callId, List<Guid> usersToMark)
 		{
-			_callAttachmentRepository.SaveOrUpdate(attachment);
-
-			return attachment;
+			return await _callDispatchesRepository.MarkCallDispatchesAsSentByCallIdUsersAsync(callId, usersToMark);
 		}
 
-		public void MarkCallDispatchesAsSent(int callId, List<Guid> usersToMark)
+		public async Task<List<DepartmentCallPriority>> GetAllCallPrioritiesAsync()
 		{
-			_callsRepository.MarkCallDispatchesAsSent(callId, usersToMark);
+			var items = await _departmentCallPriorityRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public List<DepartmentCallPriority> GetAllCallPriorities()
-		{
-			return _departmentCallPriorityRepository.GetAll().ToList();
-		}
-
-		public DepartmentCallPriority GetCallPrioritesById(int departmentId, int priorityId, bool bypassCache = false)
+		public async Task<DepartmentCallPriority> GetCallPrioritiesByIdAsync(int departmentId, int priorityId, bool bypassCache = false)
 		{
 			if (priorityId > 3)
-				return GetCallPrioritesForDepartment(departmentId, bypassCache).Where(x => x.DepartmentCallPriorityId == priorityId).FirstOrDefault();
+				return (await GetCallPrioritiesForDepartmentAsync(departmentId, bypassCache)).FirstOrDefault(x => x.DepartmentCallPriorityId == priorityId);
 			else
-				return GetDefaultCallPriorites().Where(x => x.DepartmentCallPriorityId == priorityId).FirstOrDefault();
+				return GetDefaultCallPriorities().FirstOrDefault(x => x.DepartmentCallPriorityId == priorityId);
 		}
 
-		public List<DepartmentCallPriority> GetCallPrioritesForDepartment(int departmentId, bool bypassCache = false)
+		public async Task<List<DepartmentCallPriority>> GetCallPrioritiesForDepartmentAsync(int departmentId, bool bypassCache = false)
 		{
-			Func<List<DepartmentCallPriority>> getCallPriorites = delegate ()
+			async Task<List<DepartmentCallPriority>> getCallPriorities()
 			{
-				return _departmentCallPriorityRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
-			};
+				var items = await _departmentCallPriorityRepository.GetAllByDepartmentIdAsync(departmentId);
+				return items.ToList();
+			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				var departmentPriorities = _cacheProvider.Retrieve(string.Format(CallPrioritiesCacheKey, departmentId), getCallPriorites, Day30CacheLength);
+				var departmentPriorities = await _cacheProvider.RetrieveAsync(string.Format(CallPrioritiesCacheKey, departmentId), getCallPriorities, Day30CacheLength);
 
 				if (departmentPriorities == null || !departmentPriorities.Any())
-					return GetDefaultCallPriorites();
+					return GetDefaultCallPriorities();
 			}
 
-			var departmentPriorities2 = getCallPriorites();
+			var departmentPriorities2 = await getCallPriorities();
 			if (departmentPriorities2 == null || !departmentPriorities2.Any())
-				return GetDefaultCallPriorites();
+				return GetDefaultCallPriorities();
 
 			return departmentPriorities2;
 		}
 
-		public List<DepartmentCallPriority> GetActiveCallPrioritesForDepartment(int departmentId, bool bypassCache = false)
+		public async Task<List<DepartmentCallPriority>> GetActiveCallPrioritiesForDepartmentAsync(int departmentId, bool bypassCache = false)
 		{
-			var priorities = GetCallPrioritesForDepartment(departmentId, bypassCache);
+			var priorities = await GetCallPrioritiesForDepartmentAsync(departmentId, bypassCache);
 
 			return priorities.Where(x => x.IsDeleted == false).ToList();
 		}
 
-		public List<DepartmentCallPriority> GetDefaultCallPriorites()
+		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols)
+		{
+			if (getDispatches && call.Dispatches == null)
+			{
+				var items = await _callDispatchesRepository.GetCallDispatchesByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.Dispatches = items.ToList();
+				else
+					call.Dispatches = new List<CallDispatch>();
+			}
+
+			if (getAttachments && call.Attachments == null)
+			{
+				var items = await _callAttachmentRepository.GetCallDispatchesByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.Attachments = items.ToList();
+				else
+					call.Attachments = new List<CallAttachment>();
+			}
+			if (getNotes && call.CallNotes == null)
+			{
+				var items = await _callNotesRepository.GetCallNotesByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.CallNotes = items.ToList();
+				else
+					call.CallNotes = new List<CallNote>();
+			}
+			if (getGroupDispatches && call.GroupDispatches == null)
+			{
+				var items = await _callDispatchGroupRepository.GetAllCallDispatchGroupByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.GroupDispatches = items.ToList();
+				else
+					call.GroupDispatches = new List<CallDispatchGroup>();
+			}
+			if (getUnitDispatches && call.UnitDispatches == null)
+			{
+				var items = await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.UnitDispatches = items.ToList();
+				else
+					call.UnitDispatches = new List<CallDispatchUnit>();
+			}
+			if (getRoleDispatches && call.RoleDispatches == null)
+			{
+				var items = await _callDispatchRoleRepository.GetCallRoleDispatchesByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.RoleDispatches = items.ToList();
+				else
+					call.RoleDispatches = new List<CallDispatchRole>();
+			}
+			if (getProtocols && call.Protocols == null)
+			{
+				var items = await _callProtocolsRepository.GetCallProtocolsByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.Protocols = items.ToList();
+				else
+					call.Protocols = new List<CallProtocol>();
+			}
+
+			return call;
+		}
+
+		public List<DepartmentCallPriority> GetDefaultCallPriorities()
 		{
 			if (_callPriorities == null)
 			{
@@ -486,17 +487,18 @@ namespace Resgrid.Services
 			return _callPriorities;
 		}
 
-		public DepartmentCallPriority SaveCallPriority(DepartmentCallPriority callPriority)
+		public async Task<DepartmentCallPriority> SaveCallPriorityAsync(DepartmentCallPriority callPriority, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_departmentCallPriorityRepository.SaveOrUpdate(callPriority);
+			var saved = await _departmentCallPriorityRepository.SaveOrUpdateAsync(callPriority, cancellationToken);
 			InvalidateCallPrioritiesForDepartmentInCache(callPriority.DepartmentId);
 
-			return callPriority;
+			return saved;
 		}
 
-		public List<CallProtocol> GetCallProtocolsByCallId(int callId)
+		public async Task<List<CallProtocol>> GetCallProtocolsByCallIdAsync(int callId)
 		{
-			return _callsRepository.GetCallProtocolsByCallId(callId);
+			var items = await _callProtocolsRepository.GetCallProtocolsByCallIdAsync(callId);
+			return items.ToList();
 		}
 
 		public void InvalidateCallPrioritiesForDepartmentInCache(int departmentId)
@@ -506,42 +508,6 @@ namespace Resgrid.Services
 
 		public async Task<string> GetShortenedAudioUrlAsync(int callId, int callAttachmentId)
 		{
-			if (callAttachmentId > 0)
-			{
-				var attachment = _callAttachmentRepository.GetAll().FirstOrDefault(x =>
-					x.CallId == callId && x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
-
-				if (attachment == null)
-					return String.Empty;
-
-				var encryptedQuery =
-					WebUtility.UrlEncode(SymmetricEncryption.Encrypt(attachment.CallAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
-				string shortenedUrl =
-					await _shortenUrlProvider.ShortenAsync(
-						$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
-
-				if (String.IsNullOrWhiteSpace(shortenedUrl))
-					return String.Empty;
-
-				return shortenedUrl;
-			}
-			else
-			{
-				var encryptedQuery =
-					WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
-				string shortenedUrl =
-					await _shortenUrlProvider.ShortenAsync(
-						$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
-
-				if (String.IsNullOrWhiteSpace(shortenedUrl))
-					return String.Empty;
-
-				return shortenedUrl;
-			}
-		}
-
-		public string GetShortenedAudioUrl(int callId, int callAttachmentId)
-		{
 			try
 			{
 				if (callAttachmentId > 0)
@@ -549,7 +515,7 @@ namespace Resgrid.Services
 					var encryptedQuery =
 						WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
 					string shortenedUrl =
-						_shortenUrlProvider.Shorten(
+						await _shortenUrlProvider.Shorten(
 							$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
 
 					if (String.IsNullOrWhiteSpace(shortenedUrl))
@@ -559,8 +525,8 @@ namespace Resgrid.Services
 				}
 				else
 				{
-					var attachment = _callAttachmentRepository.GetAll().FirstOrDefault(x =>
-						x.CallId == callId && x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
+					var attachment = await 
+						_callAttachmentRepository.GetCallAttachmentByCallIdAndTypeAsync(callId, CallAttachmentTypes.DispatchAudio);
 
 					if (attachment == null)
 						return String.Empty;
@@ -568,7 +534,7 @@ namespace Resgrid.Services
 					var encryptedQuery =
 						WebUtility.UrlEncode(SymmetricEncryption.Encrypt(attachment.CallAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
 					string shortenedUrl =
-						_shortenUrlProvider.Shorten(
+						await _shortenUrlProvider.Shorten(
 							$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
 
 					if (String.IsNullOrWhiteSpace(shortenedUrl))
@@ -584,7 +550,7 @@ namespace Resgrid.Services
 			}
 		}
 
-		public string GetShortenedCallLinkUrl(int callId, bool pdf = false, int? stationId = null)
+		public async Task<string> GetShortenedCallLinkUrl(int callId, bool pdf = false, int? stationId = null)
 		{
 			try
 			{
@@ -604,7 +570,7 @@ namespace Resgrid.Services
 
 
 				string shortenedUrl =
-					_shortenUrlProvider.Shorten(
+					await _shortenUrlProvider.Shorten(
 						$"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/CallExportEx?query={encryptedQuery}");
 
 				if (String.IsNullOrWhiteSpace(shortenedUrl))
@@ -619,12 +585,12 @@ namespace Resgrid.Services
 			}
 		}
 
-		public string GetShortenedCallPdfUrl(int callId, bool pdf = false, int? stationId = null)
+		public async Task<string> GetShortenedCallPdfUrl(int callId, bool pdf = false, int? stationId = null)
 		{
 			try
 			{
 				string shortenedUrl =
-					_shortenUrlProvider.Shorten(GetCallPdfUrl(callId, pdf, stationId));
+					await _shortenUrlProvider.Shorten(GetCallPdfUrl(callId, pdf, stationId));
 
 				if (String.IsNullOrWhiteSpace(shortenedUrl))
 					return String.Empty;
@@ -668,10 +634,16 @@ namespace Resgrid.Services
 			}
 		}
 
-		public void ClearGroupForDispatches(int departmentGroupId)
+		public async Task<bool> ClearGroupForDispatchesAsync(int departmentGroupId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var groupDispatches = _callDispatchGroupRepository.GetAll().Where(x => x.DepartmentGroupId == departmentGroupId);
-			_callDispatchGroupRepository.DeleteAll(groupDispatches);
+			var groupDispatches = await _callDispatchGroupRepository.GetAllCallDispatchGroupByGroupIdAsync(departmentGroupId);
+
+			foreach (var groupDispatch in groupDispatches)
+			{
+				await _callDispatchGroupRepository.DeleteAsync(groupDispatch, cancellationToken);
+			}
+
+			return true;
 		}
 
 		public string CallStateToString(CallStates state)
@@ -708,7 +680,7 @@ namespace Resgrid.Services
 			}
 		}
 
-		public string CallPriorityToString(int priority, int departmentId)
+		public async Task<string> CallPriorityToStringAsync(int priority, int departmentId)
 		{
 			switch (priority)
 			{
@@ -721,7 +693,7 @@ namespace Resgrid.Services
 				case (int)CallPriority.Emergency:
 					return "Emergency";
 				default:
-					var priorities = GetCallPrioritesForDepartment(departmentId);
+					var priorities = await GetCallPrioritiesForDepartmentAsync(departmentId);
 
 					if (priorities != null && priorities.Any(x => x.DepartmentCallPriorityId == priority))
 						return priorities.First(x => x.DepartmentCallPriorityId == priority).Name;
@@ -730,7 +702,7 @@ namespace Resgrid.Services
 			}
 		}
 
-		public string CallPriorityToColor(int priority, int departmentId)
+		public async Task<string> CallPriorityToColorAsync(int priority, int departmentId)
 		{
 			switch (priority)
 			{
@@ -743,7 +715,7 @@ namespace Resgrid.Services
 				case (int)CallPriority.Emergency:
 					return "#FF0000";
 				default:
-					var priorities = GetCallPrioritesForDepartment(departmentId);
+					var priorities = await GetCallPrioritiesForDepartmentAsync(departmentId);
 
 					if (priorities != null && priorities.Any(x => x.DepartmentCallPriorityId == priority))
 						return priorities.First(x => x.DepartmentCallPriorityId == priority).Color;

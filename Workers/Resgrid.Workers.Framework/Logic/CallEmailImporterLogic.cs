@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Model.Identity;
 
@@ -22,7 +23,7 @@ namespace Resgrid.Workers.Framework.Logic
 		private IDepartmentSettingsService _departmentSettingsService;
 		private IUnitsService _unitsService;
 
-		public Tuple<bool, string> Process(CallEmailQueueItem item)
+		public async Task<Tuple<bool, string>> Process(CallEmailQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -45,23 +46,23 @@ namespace Resgrid.Workers.Framework.Logic
 
 					// Ran into an issue where the department users didn't come back. We can't put the email back in the POP
 					// email box so just added some simple retry logic here.
-					List<IdentityUser> departmentUsers = _departmentsService.GetAllUsersForDepartment(item.EmailSettings.DepartmentId, true);
-					var profiles = _userProfileService.GetAllProfilesForDepartment(item.EmailSettings.DepartmentId);
+					List<IdentityUser> departmentUsers = await _departmentsService.GetAllUsersForDepartmentAsync(item.EmailSettings.DepartmentId, true);
+					var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(item.EmailSettings.DepartmentId);
 
 					int retry = 0;
 					while (retry < 3 && departmentUsers == null)
 					{
 						Thread.Sleep(150);
-						departmentUsers = _departmentsService.GetAllUsersForDepartment(item.EmailSettings.DepartmentId, true);
+						departmentUsers =await  _departmentsService.GetAllUsersForDepartmentAsync(item.EmailSettings.DepartmentId, true);
 						retry++;
 					}
 
 					foreach (var email in emailResult.Emails)
 					{
-						var activeCalls = _callsService.GetActiveCallsByDepartment(item.EmailSettings.Department.DepartmentId);
-						var units = _unitsService.GetUnitsForDepartment(item.EmailSettings.Department.DepartmentId);
+						var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(item.EmailSettings.Department.DepartmentId);
+						var units = await _unitsService.GetUnitsForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
 
-						var priorities = _callsService.GetActiveCallPrioritesForDepartment(item.EmailSettings.Department.DepartmentId);
+						var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
 						int defaultPriority = (int)CallPriority.High;
 
 						if (priorities != null && priorities.Any())
@@ -73,7 +74,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 
 						var call = _callsService.GenerateCallFromEmail(item.EmailSettings.FormatType, email,
-							item.EmailSettings.Department.ManagingUserId, departmentUsers, item.EmailSettings.Department, activeCalls, units, defaultPriority);
+							item.EmailSettings.Department.ManagingUserId, departmentUsers, item.EmailSettings.Department, activeCalls, units, defaultPriority, priorities);
 
 						if (call != null)
 						{
@@ -86,7 +87,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 					if (calls.Any())
 					{
-						var departmentTextNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(item.EmailSettings.DepartmentId);
+						var departmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.EmailSettings.DepartmentId);
 						foreach (var call in calls)
 						{
 							try
@@ -99,14 +100,14 @@ namespace Resgrid.Workers.Framework.Logic
 									// We've been having this error here:
 									//      The relationship between the two objects cannot be defined because they are attached to different ObjectContext objects.
 									// So I'm wrapping this in a try catch to prevent all calls form being dropped.
-									var savedCall = _callsService.SaveCall(newCall);
+									var savedCall = await _callsService.SaveCallAsync(newCall);
 									var cqi = new CallQueueItem();
 									cqi.Call = savedCall;
 
 									cqi.Profiles = profiles.Values.ToList();
 									cqi.DepartmentTextNumber = departmentTextNumber;
 
-									_queueService.EnqueueCallBroadcast(cqi);
+									await _queueService.EnqueueCallBroadcastAsync(cqi);
 								}
 							}
 							catch (Exception ex)
@@ -118,7 +119,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 					}
 
-					_departmentsService.SaveDepartmentEmailSettings(emailResult.EmailSettings);
+					await _departmentsService.SaveDepartmentEmailSettingsAsync(emailResult.EmailSettings);
 
 					_callsService = null;
 					_queueService = null;

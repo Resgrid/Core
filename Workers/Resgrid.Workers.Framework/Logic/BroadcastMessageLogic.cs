@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Newtonsoft.Json;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -21,29 +25,39 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueMessageConnectionString, Config.ServiceBusConfig.MessageBroadcastQueueName);
+					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueMessageConnectionString, Config.ServiceBusConfig.MessageBroadcastQueueName);
 				}
 				catch (TimeoutException) { }
 			}
 		}
 
-		public void Process(MessageQueueItem item)
+		public async Task<bool> Process(MessageQueueItem item)
 		{
 			bool success = true;
 
 			if (Config.SystemBehaviorConfig.IsAzure)
 			{
-				ProcessQueueMessage(_client.Receive());
+				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+				{
+					MaxConcurrentCalls = 1,
+					AutoComplete = false
+				};
+
+				// Register the function that will process messages
+				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
+
+				//await ProcessQueueMessage(_client.ReceiveAsync());
 			}
 			else
 			{
-				ProcessMessageQueueItem(item);
+				return await ProcessMessageQueueItem(item);
 			}
 
 			_queueService = null;
+			return false;
 		}
 
-		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
+		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
 		{
 			bool success = true;
 			string result = "";
@@ -66,16 +80,18 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							success = false;
 							result = "Unable to parse message body Exception: " + ex.ToString();
-							message.Complete();
+							//message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
 						}
 
-						ProcessMessageQueueItem(mqi);
+						await ProcessMessageQueueItem(mqi);
 					}
 
 					try
 					{
 						if (success)
-							message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
+							//message.Complete();
 					}
 					catch (MessageLockLostException)
 					{
@@ -101,21 +117,22 @@ namespace Resgrid.Workers.Framework.Logic
 					ex.Data.Add("MQI", JsonConvert.SerializeObject(mqi));
 
 					Logging.LogException(ex);
-					message.Abandon();
+					await _client.AbandonAsync(message.SystemProperties.LockToken); 
+					//message.Abandon();
 				}
 			}
 
 			return new Tuple<bool, string>(success, result);
 		}
 
-		public static void ProcessMessageQueueItem(MessageQueueItem mqi)
+		public static async Task<bool> ProcessMessageQueueItem(MessageQueueItem mqi)
 		{
 			var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
 
 			if (mqi != null && mqi.Message == null && mqi.MessageId != 0)
 			{
 				var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
-				mqi.Message = messageService.GetMessageById(mqi.MessageId);
+				mqi.Message = await messageService.GetMessageByIdAsync(mqi.MessageId);
 			}
 
 			if (mqi != null && mqi.Message != null)
@@ -123,7 +140,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (mqi.Message.MessageRecipients == null || mqi.Message.MessageRecipients.Count <= 0)
 				{
 					var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
-					mqi.Message = messageService.GetMessageById(mqi.Message.MessageId);
+					mqi.Message = await messageService.GetMessageByIdAsync(mqi.Message.MessageId);
 				}
 
 				// If we didn't get any profiles chances are the message size was too big for Azure, get selected profiles now.
@@ -133,11 +150,11 @@ namespace Resgrid.Workers.Framework.Logic
 
 					if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
 					{
-						mqi.Profiles = userProfileService.GetSelectedUserProfiles(mqi.Message.MessageRecipients.Select(x => x.UserId).ToList());
+						mqi.Profiles = await userProfileService.GetSelectedUserProfilesAsync(mqi.Message.MessageRecipients.Select(x => x.UserId).ToList());
 					}
 					else
 					{
-						mqi.Profiles = userProfileService.GetAllProfilesForDepartment(mqi.DepartmentId).Select(x => x.Value).ToList();
+						mqi.Profiles = (await userProfileService.GetAllProfilesForDepartmentAsync(mqi.DepartmentId)).Select(x => x.Value).ToList();
 					}
 				}
 
@@ -158,12 +175,12 @@ namespace Resgrid.Workers.Framework.Logic
 
 						if (sendingToProfile != null)
 						{
-							_communicationService.SendMessage(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
+							await _communicationService.SendMessageAsync(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
 						}
 						else
 						{
 							var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-							var sender = userProfileService.GetProfileByUserId(mqi.Message.SendingUserId);
+							var sender = await userProfileService.GetProfileByUserIdAsync(mqi.Message.SendingUserId);
 
 							if (sender != null)
 								name = sender.FullName.AsFirstNameLastName;
@@ -179,13 +196,25 @@ namespace Resgrid.Workers.Framework.Logic
 
 						if (sendingToProfile != null)
 						{
-							_communicationService.SendMessage(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
+							await _communicationService.SendMessageAsync(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
 						}
 					}
 				}
 			}
 
 			_communicationService = null;
+			return true;
+		}
+
+		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+		{
+			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
+			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
+			//Console.WriteLine("Exception context for troubleshooting:");
+			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
+			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
+			//Console.WriteLine($"- Executing Action: {context.Action}");
+			return Task.CompletedTask;
 		}
 	}
 }

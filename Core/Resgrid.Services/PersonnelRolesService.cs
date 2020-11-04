@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
-using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -11,13 +10,13 @@ namespace Resgrid.Services
 {
 	public class PersonnelRolesService : IPersonnelRolesService
 	{
-		private readonly IGenericDataRepository<PersonnelRole> _personnelRolesRepository;
-		private readonly IGenericDataRepository<PersonnelRoleUser> _personnelRoleUsersRepository;
-		private readonly IGenericDataRepository<DepartmentMember> _departmentMemberRepository;
+		private readonly IPersonnelRolesRepository _personnelRolesRepository;
+		private readonly IPersonnelRoleUsersRepository _personnelRoleUsersRepository;
+		private readonly IDepartmentMembersRepository _departmentMemberRepository;
 		private readonly ISubscriptionsService _subscriptionsService;
 
-		public PersonnelRolesService(IGenericDataRepository<PersonnelRole> personnelRolesRepository, IGenericDataRepository<PersonnelRoleUser> personnelRoleUsersRepository,
-			ISubscriptionsService subscriptionsService, IGenericDataRepository<DepartmentMember> departmentMemberRepository)
+		public PersonnelRolesService(IPersonnelRolesRepository personnelRolesRepository, IPersonnelRoleUsersRepository personnelRoleUsersRepository,
+			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository)
 		{
 			_personnelRolesRepository = personnelRolesRepository;
 			_personnelRoleUsersRepository = personnelRoleUsersRepository;
@@ -25,82 +24,67 @@ namespace Resgrid.Services
 			_departmentMemberRepository = departmentMemberRepository;
 		}
 
-		public List<PersonnelRole> GetRolesForDepartment(int departmentId)
+		public async Task<List<PersonnelRole>> GetRolesForDepartmentAsync(int departmentId)
 		{
-			//List<PersonnelRole> personnelRoles = new List<PersonnelRole>();
-			//var roles = GetRolesForDepartmentUnlimited(departmentId);
-
-			//int limit = _subscriptionsService.GetCurrentPlanForDepartment(departmentId).GetLimitForTypeAsInt(PlanLimitTypes.Roles);
-			//int count = roles.Count < limit ? roles.Count : limit;
-
-			//// Only return roles up to the plans role limit
-			//for (int i = 0; i < count; i++)
-			//{
-			//	personnelRoles.Add(roles[i]);
-			//}
-
-			return GetRolesForDepartmentUnlimited(departmentId);
+			return await GetRolesForDepartmentUnlimitedAsync(departmentId);
 		}
 
-		public List<PersonnelRole> GetRolesForDepartmentUnlimited(int departmentId)
+		public async Task<List<PersonnelRole>> GetRolesForDepartmentUnlimitedAsync(int departmentId)
 		{
-			return _personnelRolesRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList(); ;
+			var items = await _personnelRolesRepository.GetPersonnelRolesByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public PersonnelRole GetRoleById(int roleId)
+		public async Task<PersonnelRole> GetRoleByIdAsync(int roleId)
 		{
-			return _personnelRolesRepository.GetAll().FirstOrDefault(x => x.PersonnelRoleId == roleId);
+			return await _personnelRolesRepository.GetRoleByRoleIdAsync(roleId);
 		}
 
-		public List<PersonnelRole> GetAllRolesForDepartment(int departmentId)
+		public async Task<List<PersonnelRole>> GetAllRolesForDepartmentAsync(int departmentId)
 		{
-			return _personnelRolesRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _personnelRolesRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public PersonnelRole SaveRole(PersonnelRole role)
+		public async Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_personnelRolesRepository.SaveOrUpdate(role);
-
-			return GetRoleById(role.PersonnelRoleId);
+			return await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
 		}
 
-		public PersonnelRole GetRoleByDepartmentAndName(int departmentId, string name)
+		public async Task<PersonnelRole> GetRoleByDepartmentAndNameAsync(int departmentId, string name)
 		{
-			return _personnelRolesRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId && x.Name.Trim().ToLower() == name.Trim().ToLower());
+			return await _personnelRolesRepository.GetRoleByDepartmentAndNameAsync(departmentId, name.Trim());
 		}
 
-		public void DeleteRoleById(int roleId)
+		public async Task<bool> DeleteRoleByIdAsync(int roleId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var role = GetRoleById(roleId);
+			var role = await GetRoleByIdAsync(roleId);
 
-			_personnelRolesRepository.DeleteOnSubmit(role);
+			return await _personnelRolesRepository.DeleteAsync(role, cancellationToken);
 		}
 
-		public void DeleteRoleUsers(List<PersonnelRoleUser> users)
+		public async Task<bool> DeleteRoleUsersAsync(List<PersonnelRoleUser> users, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			foreach (var user in users)
 			{
-				_personnelRoleUsersRepository.DeleteOnSubmit(user);
+				await _personnelRoleUsersRepository.DeleteAsync(user, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public List<PersonnelRole> GetRolesForUser(string userId, int departmentId)
+		public async Task<List<PersonnelRole>> GetRolesForUserAsync(string userId, int departmentId)
 		{
-			var personnelRoles = (from personRole in _personnelRoleUsersRepository.GetAll()
-								  where personRole.UserId == userId && personRole.DepartmentId == departmentId
-								  select personRole).ToList();
+			var personnelRoles = await _personnelRolesRepository.GetRolesForUserAsync(departmentId, userId);
 
-			if (personnelRoles != null && personnelRoles.Any())
-				return personnelRoles.Select(x => x.Role).ToList();
-
-			return new List<PersonnelRole>();
+			return personnelRoles.ToList();
 		}
 
-		public Dictionary<string, List<PersonnelRole>> GetAllRolesForUsersInDepartment(int departemntId)
+		public async Task<Dictionary<string, List<PersonnelRole>>> GetAllRolesForUsersInDepartmentAsync(int departmentId)
 		{
-			var users = _departmentMemberRepository.GetAll().Where(x => x.DepartmentId == departemntId);
-			var allRoles = _personnelRolesRepository.GetAll().ToList();
-			var roles = (from r in _personnelRoleUsersRepository.GetAll()
+			var users = await _departmentMemberRepository.GetAllByDepartmentIdAsync(departmentId);
+			var allRoles = await _personnelRolesRepository.GetAllByDepartmentIdAsync(departmentId);
+			var roles = (from r in await _personnelRoleUsersRepository.GetAllRoleUsersForDepartmentAsync(departmentId)
 						 group r by r.UserId into rolesGroup
 						 where users.Select(x => x.UserId).Contains(rolesGroup.Key)
 						 select rolesGroup);
@@ -112,22 +96,26 @@ namespace Resgrid.Services
 
 				userRoles.Add(role.Key, newRoles);
 			}
+
 			return userRoles;
 		}
 
-		public void RemoveUserFromAllRoles(string userId, int departmentId)
+		public async Task<bool> RemoveUserFromAllRolesAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var personnelRoles = from personRole in _personnelRoleUsersRepository.GetAll()
-								 where personRole.UserId == userId && personRole.DepartmentId == departmentId
-								 select personRole;
+			var personnelRoleUsers = await _personnelRoleUsersRepository.GetAllRoleUsersForUserAsync(departmentId, userId);
 
-			_personnelRoleUsersRepository.DeleteAll(personnelRoles);
+			foreach (var personnelRoleUser in personnelRoleUsers)
+			{
+				await _personnelRoleUsersRepository.DeleteAsync(personnelRoleUser, cancellationToken);
+			}
+
+			return true;
 		}
 
-		public void SetRolesForUser(int departmentId, string userId, string[] roleIds)
+		public async Task<bool> SetRolesForUserAsync(int departmentId, string userId, string[] roleIds, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			RemoveUserFromAllRoles(userId, departmentId);
-			var roles = GetAllRolesForDepartment(departmentId);
+			await RemoveUserFromAllRolesAsync(userId, departmentId, cancellationToken);
+			var roles = await GetAllRolesForDepartmentAsync(departmentId);
 
 			foreach (var roleId in roleIds)
 			{
@@ -140,16 +128,16 @@ namespace Resgrid.Services
 					roleUser.DepartmentId = departmentId;
 					roleUser.PersonnelRoleId = role.PersonnelRoleId;
 
-					_personnelRoleUsersRepository.SaveOrUpdate(roleUser);
+					await _personnelRoleUsersRepository.InsertAsync(roleUser, cancellationToken);
 				}
 			}
+
+			return true;
 		}
 
-		public List<PersonnelRoleUser> GetAllMembersOfRole(int roleId)
+		public async Task<List<PersonnelRoleUser>> GetAllMembersOfRoleAsync(int roleId)
 		{
-			var members = from role in _personnelRoleUsersRepository.GetAll()
-						  where role.PersonnelRoleId == roleId
-						  select role;
+			var members = await _personnelRoleUsersRepository.GetAllMembersOfRoleAsync(roleId);
 
 			return members.ToList();
 		}

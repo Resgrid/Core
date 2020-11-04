@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using ProtoBuf;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -31,18 +31,19 @@ namespace Resgrid.Model
 		public virtual IdentityUser User { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DistributionListMemberId; }
 			set { DistributionListMemberId = (int)value; }
 		}
-	}
 
-	public class DistributionListMember_Mapping : EntityTypeConfiguration<DistributionListMember>
-	{
-		public DistributionListMember_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "DistributionListMembers";
+
+		[NotMapped]
+		public string IdName => "DistributionListMemberId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "DistributionList", "User" };
 	}
 }

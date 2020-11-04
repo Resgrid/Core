@@ -1,4 +1,5 @@
-﻿using Resgrid.Workers.Framework.Logic;
+﻿using System.Threading.Tasks;
+using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework.Workers.Maintenance
 {
@@ -11,12 +12,14 @@ namespace Resgrid.Workers.Framework.Workers.Maintenance
 
 		public bool Continue { get; set; }
 
-		public void Run(MaintenanceQueueItem item)
+		public async Task<bool> Run(MaintenanceQueueItem item)
 		{
 			var logic = new MaintenanceLogic();
 			logic.FixMissingUserProfiles();
 			logic.FixMissingUserNames();
 			logic.CleanUpCallDispatchAudio();
+
+			return true;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-using Consolas.Core;
+using Consolas2.Core;
 using Resgrid.Console.Args;
 
 namespace Resgrid.Console.Commands

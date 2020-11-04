@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using System.Security.Claims;
+using CommonServiceLocator;
 using Microsoft.AspNetCore.Http;
 using Resgrid.Providers.Claims;
 
@@ -23,17 +24,17 @@ namespace Resgrid.Web.ServicesCore.Helpers
 		public static ClaimsPrincipal GetClaimsPrincipal()
 		{
 			if (_httpContextAccessor == null)
-				_httpContextAccessor = WebBootstrapper.GetKernel().Resolve<IHttpContextAccessor>();
+				_httpContextAccessor = ServiceLocator.Current.GetInstance<IHttpContextAccessor>();
 
 			return _httpContextAccessor.HttpContext.User;
 		}
 
 		public static string GetUsername()
 		{
-			if (GetClaimsPrincipal().HasClaim(ClaimTypes.Name, ""))
-			{
-				return GetClaimsPrincipal().FindFirst(ClaimTypes.Name).Value;
-			}
+			var claim = GetClaimsPrincipal().FindFirst(ClaimTypes.Name);
+
+			if (claim != null)
+				return claim.Value;
 
 			return String.Empty;
 		}

@@ -21,6 +21,7 @@
 		BrainTreeCustomerId = 17,
 		PersonnelSortOrder = 18,
 		UnitsSortOrder = 19,
-		CallsSortOrder = 20
+		CallsSortOrder = 20,
+		PersonnelListStatusSortOrder = 21
 	}
 }

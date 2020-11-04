@@ -37,6 +37,8 @@
                   </div>
 				}
                 @Html.AntiForgeryToken()
+                @Html.HiddenFor(x => x.Protocol.CreatedByUserId)
+                @Html.HiddenFor(x => x.Protocol.UpdatedByUserId)
                 <div asp-validation-summary="All" class="text-danger"></div>
               </div>
             </div>

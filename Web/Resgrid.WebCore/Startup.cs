@@ -1,40 +1,52 @@
 ﻿using System;
 using System.Configuration;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
+using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.CommonServiceLocator;
+using CommonServiceLocator;
+using FluentMigrator.Runner;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Resgrid.Model;
-using Newtonsoft.Json.Serialization;
-using Resgrid.Providers.Claims.Core;
-using Resgrid.Web.Data;
-using Resgrid.Web.Helpers;
-using Resgrid.Web.Options;
-using Resgrid.Providers.Claims;
-using Configuration = Resgrid.Repositories.DataRepository.Migrations.Configuration;
-using Stripe;
-using Microsoft.Practices.ServiceLocation;
 using Resgrid.Config;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Services;
+using Resgrid.Providers.AddressVerification;
+using Resgrid.Providers.Audio;
+using Resgrid.Providers.Bus;
+using Resgrid.Providers.Bus.Rabbit;
+using Resgrid.Providers.Cache;
+using Resgrid.Providers.Claims;
+using Resgrid.Providers.EmailProvider;
+using Resgrid.Providers.Firebase;
+using Resgrid.Providers.GeoLocationProvider;
+using Resgrid.Providers.Marketing;
+using Resgrid.Providers.NumberProvider;
+using Resgrid.Providers.PdfProvider;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Repositories.DataRepository.Stores;
-using Resgrid.Model.Identity;
-using PaulMiami.AspNetCore.Mvc.Recaptcha;
+using Resgrid.Services;
+using Resgrid.Web.Options;
+using StackExchange.Redis;
 
 namespace Resgrid.Web
 {
 	public class Startup
 	{
-		public IContainer ApplicationContainer { get; private set; }
 		public IConfigurationRoot Configuration { get; private set; }
+		public ILifetimeScope AutofacContainer { get; private set; }
+		public AutofacServiceLocator Locator { get; private set; }
+		public IServiceCollection Services { get; private set; }
 
 		public Startup(IHostingEnvironment env)
 		{
@@ -43,74 +55,39 @@ namespace Resgrid.Web
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 					.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 					.AddEnvironmentVariables();
-
-			if (env.IsDevelopment() || env.IsStaging())
-			{
-				// For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-				builder.AddUserSecrets();
-
-				// This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
-				builder.AddApplicationInsightsSettings(developerMode: true);
-			}
-
 			this.Configuration = builder.Build();
-			Configuration = builder.Build();
 		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
-		public IServiceProvider ConfigureServices(IServiceCollection services)
+		public void ConfigureServices(IServiceCollection services)
 		{
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
-
-			Framework.Logging.Initialize(Configuration["AppOptions:SentryKey"]);
-
-			var manager = new ApplicationPartManager();
-			manager.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
-
-			// Add framework services.
-			services.AddApplicationInsightsTelemetry(Configuration);
+			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
 			var settings = ConfigurationManager.ConnectionStrings;
-			var element = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
-			var collection = typeof(ConfigurationElementCollection).GetField("bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
 
 			element.SetValue(settings, false);
 			collection.SetValue(settings, false);
 
-			if (!configResult)
+			if (!configResult && !envConfigResult)
 				settings.Add(new ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
 			else
 				settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
 
-			// Repeat above line as necessary
-
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
 
-			Database.SetInitializer(new MigrateDatabaseToLatestVersion<Repositories.DataRepository.Contexts.DataContext, Configuration>()); 
-			var migrator = new DbMigrator(new Repositories.DataRepository.Migrations.Configuration());
-			migrator.Update();
+			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
+			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();
+			services.AddScoped<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>, ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
-			//services.AddDbContext<DataContext>(options =>
-			//		options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-			//services.AddIdentity<ApplicationUser, IdentityRole>()
-			//		.AddEntityFrameworkStores<DataContext>()
-			//		.AddDefaultTokenProviders();
-
-			services.AddScoped<IPasswordHasher<IdentityUser>, SqlPasswordHasher>();
-
-			//Inject ApplicationDbContext in place of IdentityDbContext and use connection string
-			//if (!configResult)
-			//	services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
-			//		new ApplicationDbContext(Configuration["ConnectionStrings:ResgridContext"]));
-			//else
-			//	services.AddScoped<IdentityDbContext<IdentityUser>>(context =>
-			//		new ApplicationDbContext(DataConfig.ConnectionString));
-
-			//Configure Identity middleware with ApplicationUser and the EF6 IdentityDbContext
-			services.AddIdentity<IdentityUser, IdentityRole>(config =>
+			services.AddIdentity<Model.Identity.IdentityUser, Model.Identity.IdentityRole>(config =>
 			{
+				config.SignIn.RequireConfirmedAccount = false;
+				config.SignIn.RequireConfirmedEmail = false;
+				config.SignIn.RequireConfirmedPhoneNumber = false;
 				config.User.RequireUniqueEmail = true;
 				config.User.AllowedUserNameCharacters = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@";
 				config.Password.RequireDigit = false;
@@ -118,59 +95,32 @@ namespace Resgrid.Web
 				config.Password.RequireUppercase = false;
 				config.Password.RequireNonAlphanumeric = false;
 				config.Password.RequiredLength = 6;
-			}).AddDefaultTokenProviders();
+			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
-			//services.AddScoped(typeof(IUserStore<>), typeof(IdentityUserStore));
-			services.AddScoped<IUserStore<IdentityUser>, IdentityUserStore>();
-			//services.AddScoped(typeof(IRoleStore<>), typeof(IdentityRoleStore));
-			services.AddScoped<IRoleStore<IdentityRole>, IdentityRoleStore>();
-			//.AddEntityFrameworkStores<IdentityDbContext<IdentityUser>>()
-
-			services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ClaimsPrincipalFactory<IdentityUser, IdentityRole>>();
-			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-			services.AddSingleton(manager);
-
-			services.AddCors(options =>
-			{
-				options.AddPolicy("_resgridWebsiteAllowSpecificOrigins",
-				builder =>
+			services.AddAuthentication(sharedOptions =>
 				{
-					builder.WithOrigins("http://resgrid.com",
-										"http://www.resgrid.com",
-										"https://resgrid.com",
-										"https://www.resgrid.com",
-										"https://s3.amazonaws.com",
-										"https://resgrid.freshdesk.com",
-										"https://www.google.com",
-										"https://js.stripe.com",
-										"https://wchat.freshchat.com",
-										"https://q.stripe.com",
-										"https://cdn.plyr.io",
-										"https://unit.resgrid.com",
-										"https://responder.resgrid.com",
-										"https://cdn.jsdelivr.net",
-										"https://ajax.googleapis.com",
-										"https://maps.googleapis.com",
-										"https://assetscdn-wchat.freshchat.com",
-										"https://assets.freshdesk.com",
-										"https://assets1.freshdesk.com",
-										"https://assets2.freshdesk.com",
-										"https://assets3.freshdesk.com",
-										"https://assets4.freshdesk.com",
-										"https://assets5.freshdesk.com",
-										"https://assets6.freshdesk.com",
-										"https://az416426.vo.msecnd.net");
+					sharedOptions.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+					sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+					sharedOptions.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+				})
+				.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+				{
+					options.LoginPath = "/Account/LogIn";
+					options.LogoutPath = "/Account/LogOff";
+					options.LoginPath = new PathString("/Account/LogOn/");
+					options.AccessDeniedPath = new PathString("/Public/Forbidden/");
+					options.Cookie.SecurePolicy = CookieSecurePolicy.None;//.SameAsRequest;
+					options.Cookie.SameSite = SameSiteMode.Strict;//.None;
+					options.Cookie.Name = "RGSITEAUTHCOOKIE";
 				});
-			});
 
-			services.AddMvc().AddJsonOptions(opt =>
+			services.ConfigureApplicationCookie(options =>
 			{
-				var resolver = opt.SerializerSettings.ContractResolver;
-				if (resolver != null)
+				options.Events.OnSignedIn = (context) =>
 				{
-					var res = resolver as DefaultContractResolver;
-					res.NamingStrategy = null;  // <<!-- this removes the camelcasing
-				}
+					context.HttpContext.User = context.Principal;
+					return Task.CompletedTask;
+				};
 			});
 
 			#region Auth Roles
@@ -289,98 +239,168 @@ namespace Resgrid.Web
 			});
 			#endregion Auth Roles
 
+			//var manager = new ApplicationPartManager();
+			//manager.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
+			//services.AddSingleton(manager);
+
 			var configOptions = Configuration.GetSection("AppOptions").Get<AppOptions>();
 			services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
 
-			WebBootstrapper.Initialize(services);
-			this.ApplicationContainer = WebBootstrapper.GetKernel();
+			services.AddApplicationInsightsTelemetry();
+			services.AddHttpContextAccessor();
+			services.AddRazorPages();
 
-			StripeConfiguration.SetApiKey(configOptions.StripeApiKey);
+			services.Configure<ForwardedHeadersOptions>(options =>
+			{
+				options.ForwardedHeaders =
+					ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
+			});
 
-			// Create and return the service provider.
-			return new AutofacServiceProvider(this.ApplicationContainer);
+			services.AddMvc().AddMvcOptions(options =>
+			{
+				options.EnableEndpointRouting = false;
+			}).AddJsonOptions(jsonOptions =>
+			{
+				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
+			}).AddRazorRuntimeCompilation();
+
+#if (!DEBUG)
+			var redis = ConnectionMultiplexer.Connect(CacheConfig.RedisConnectionString);
+			services.AddDataProtection().SetApplicationName($"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-web").PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
+
+			services.AddStackExchangeRedisCache(option =>
+			{
+				option.Configuration = Environment
+					.GetEnvironmentVariable("Redis-Session");
+				option.InstanceName = "RedisInstance";
+			});
+
+			services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(30);
+				options.Cookie.Name = "ResgridSessionCookie";
+			});
+#endif
+
+			//services.AddFluentMigratorCore()
+			//	.ConfigureRunner(
+			//		builder => builder
+			//			.AddSqlServer2014()
+			//			.WithGlobalConnectionString(DataConfig.ConnectionString)
+			//			.ScanIn(typeof(Providers.Migrations.Migrations.M0001_InitialMigration).Assembly).For
+			//			.Migrations());
+
+			this.Services = services;
+		}
+
+		public void ConfigureContainer(ContainerBuilder builder)
+		{
+			builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
+
+			builder.RegisterModule(new DataModule());
+			builder.RegisterModule(new ServicesModule());
+			builder.RegisterModule(new ProviderModule());
+			builder.RegisterModule(new EmailProviderModule());
+			builder.RegisterModule(new BusModule());
+			builder.RegisterModule(new RabbitBusModule());
+			builder.RegisterModule(new AddressVerificationModule());
+			builder.RegisterModule(new NumbersProviderModule());
+			builder.RegisterModule(new CacheProviderModule());
+			builder.RegisterModule(new MarketingModule());
+			builder.RegisterModule(new PdfProviderModule());
+			builder.RegisterModule(new AudioProviderModule());
+			builder.RegisterModule(new FirebaseProviderModule());
+
+			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
+			builder.RegisterType<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>().As<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+
+			builder.RegisterType<UserValidator<Model.Identity.IdentityUser>>().As<IUserValidator<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<PasswordValidator<Model.Identity.IdentityUser>>().As<IPasswordValidator<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<PasswordHasher<Model.Identity.IdentityUser>>().As<IPasswordHasher<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<UpperInvariantLookupNormalizer>().As<ILookupNormalizer>().InstancePerLifetimeScope();
+			builder.RegisterType<DefaultUserConfirmation<Model.Identity.IdentityUser>>().As<IUserConfirmation<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<UserManager<Model.Identity.IdentityUser>>().As<UserManager<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<SignInManager<Model.Identity.IdentityUser>>().As<SignInManager<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-			loggerFactory.AddDebug();
+			app.UseForwardedHeaders();
 
-			//Azure Support's note: need to invoke the middleware's method here to test whether it logs telemetry (the myUrl / request_Url from MyQueue) to App Insights when the 502s occur. If it does log telemetry when the 502s occur, this indicates that .NET Core framework is reached and that the issue is in the app.
-			//If it doesn't log telemtry when the 502s occur, it indicates an issue at the .NET Core platform level.
-			//app.UseMiddleware<AzureMiddleware>();
-			app.UseApplicationInsightsRequestTelemetry();
-
-			var sslPort = 0;
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				//app.UseDatabaseErrorPage();
-				//app.UseBrowserLink();
-
-				//var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
-				//	.SetBasePath(env.ContentRootPath)
-				//	.AddJsonFile(@"Properties/launchSettings.json", optional: false, reloadOnChange: true);
-				//var launchConfig = builder.Build();
-				//sslPort = launchConfig.GetValue<int>("iisSettings:iisExpress:sslPort");
 			}
 			else if (env.IsStaging())
 			{
 				app.UseDeveloperExceptionPage();
-				//app.UseDatabaseErrorPage();
 			}
 			else
 			{
 				app.UseExceptionHandler("/Home/Error");
+
+#if (DOCKER)
+				app.Use(async (context, next) => {
+					context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
+					context.Request.Scheme = "https";
+					await next.Invoke();
+				});
+
+				//app.Use((context, next) =>
+				//{
+				//	context.Request.Scheme = "https";
+				//	return next();
+				//});
+#endif
+
+				/* I'm disabling this for now. Ideally it would be configured, but HSTS won't validate
+				 * self-signed or QA certs from ACME or cert-manager. This will cause issues with
+				 * hybrid Kubernetes\Docker implementations that are using proper certificates on the
+				 * ingress ssl terminator and non-ssl or self signed certs on internal cluster
+				 * communication channels. -SJ
+				 */
+				//app.UseHsts();
 			}
 
-			app.UseApplicationInsightsExceptionTelemetry();
+
+
+			this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+			var eventAggregator = this.AutofacContainer.Resolve<IEventAggregator>();
+			var outbound = this.AutofacContainer.Resolve<IOutboundEventProvider>();
+			var eventService = this.AutofacContainer.Resolve<ICoreEventService>();
+
+			this.Locator = new AutofacServiceLocator(this.AutofacContainer);
+			ServiceLocator.SetLocatorProvider(() => this.Locator);
+
+			var cookiePolicyOptions = new CookiePolicyOptions
+			{
+				Secure = CookieSecurePolicy.None,//.SameAsRequest,
+				MinimumSameSitePolicy = SameSiteMode.Strict//.None,
+
+			};
+
+//#if (RELEASE)
+//			app.UseHttpsRedirection();
+//#endif
+			app.UseCookiePolicy(cookiePolicyOptions);
 
 			app.UseStaticFiles();
+			app.UseRouting();
 
-			app.UseIdentity();
-
-			// Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
-
-			//app.UseClaimsTransformation(new ClaimsTransformationOptions
-			//{
-			//	Transformer = new CoreClaimsTransformer()
-			//});
-
-			app.UseCookieAuthentication(new CookieAuthenticationOptions()
-			{
-				AuthenticationScheme = "ResgridCookieMiddlewareInstance",
-				LoginPath = new PathString("/Account/LogOn/"),
-				AccessDeniedPath = new PathString("/Public/Forbidden/"),
-				AutomaticAuthenticate = false,
-				AutomaticChallenge = false
-			});
+			app.UseAuthentication();
+			app.UseAuthorization();
 
 			app.UseMvc(routes =>
 			{
-				routes.MapRoute("Admin", "{area:exists}/{controller}/{action=Index}/{id?}");
 				routes.MapRoute("User", "{area:exists}/{controller}/{action=Index}/{id?}");
 
 				routes.MapRoute(
-									name: "default",
-									template: "{controller=Home}/{action=Index}/{id?}");
+					name: "default",
+					template: "{controller=Home}/{action=Index}/{id?}");
 			});
-
-
-			//app.Use(async (context, next) =>
-			//{
-			//	if (context.Request.IsHttps)
-			//	{
-			//		await next();
-			//	}
-			//	else
-			//	{
-			//		var sslPortStr = sslPort == 0 || sslPort == 443 ? string.Empty : $":{sslPort}";
-			//		var httpsUrl = $"https://{context.Request.Host.Host}{sslPortStr}{context.Request.Path}";
-			//		context.Response.Redirect(httpsUrl);
-			//	}
-			//});
 		}
 	}
 }

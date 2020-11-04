@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -39,10 +40,20 @@ namespace Resgrid.Model
 		public string Data { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CallProtocolId; }
 			set { CallProtocolId = (int)value; }
 		}
+
+		
+		[NotMapped]
+		public string TableName => "CallProtocols";
+
+		[NotMapped]
+		public string IdName => "CallProtocolId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Call", "Protocol" };
 	}
 }

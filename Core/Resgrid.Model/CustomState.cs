@@ -49,10 +49,19 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CustomStateId; }
 			set { CustomStateId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "CustomStates";
+
+		[NotMapped]
+		public string IdName => "CustomStateId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Details" };
 	}
 }

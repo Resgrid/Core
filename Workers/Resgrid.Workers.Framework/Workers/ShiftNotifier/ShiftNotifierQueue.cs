@@ -42,18 +42,18 @@ namespace Resgrid.Workers.Framework.Workers.ShiftNotifier
 				_shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
 				_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 				{
 					try
 					{
-						var shifts = _shiftsService.GetShiftsStartingNextDay(DateTime.UtcNow);
+						var shifts = await _shiftsService.GetShiftsStartingNextDayAsync(DateTime.UtcNow);
 
 						foreach (var shift in shifts)
 						{
 							var qi = new ShiftNotifierQueueItem();
 
 							if (shift.Personnel != null && shift.Personnel.Any())
-								qi.Profiles = _userProfileService.GetSelectedUserProfiles(shift.Personnel.Select(x => x.UserId).ToList());
+								qi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(shift.Personnel.Select(x => x.UserId).ToList());
 
 							qi.Day = shift.GetShiftDayforDateTime(DateTime.UtcNow.AddDays(1));
 							if (qi.Day != null)
@@ -61,11 +61,11 @@ namespace Resgrid.Workers.Framework.Workers.ShiftNotifier
 								if (qi.Profiles == null)
 									qi.Profiles = new List<UserProfile>();
 
-								qi.Signups = _shiftsService.GetShiftSignpsForShiftDay(qi.Day.ShiftDayId);
+								qi.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(qi.Day.ShiftDayId);
 
 								if (qi.Signups != null && qi.Signups.Any())
 								{
-									qi.Profiles.AddRange(_userProfileService.GetSelectedUserProfiles(qi.Signups.Select(x => x.UserId).ToList()));
+									qi.Profiles.AddRange(await _userProfileService.GetSelectedUserProfilesAsync(qi.Signups.Select(x => x.UserId).ToList()));
 
 									var users = new List<string>();
 									foreach (var signup in qi.Signups)
@@ -80,7 +80,7 @@ namespace Resgrid.Workers.Framework.Workers.ShiftNotifier
 									}
 
 									if (users.Any())
-										qi.Profiles.AddRange(_userProfileService.GetSelectedUserProfiles(users));
+										qi.Profiles.AddRange(await _userProfileService.GetSelectedUserProfilesAsync(users));
 								}
 							}
 
@@ -118,10 +118,12 @@ namespace Resgrid.Workers.Framework.Workers.ShiftNotifier
 				_queue = new Queue<ShiftNotifierQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public void AddItem(ShiftNotifierQueueItem item)
@@ -139,11 +141,11 @@ namespace Resgrid.Workers.Framework.Workers.ShiftNotifier
 			return item;
 		}
 
-		public IEnumerable<ShiftNotifierQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<ShiftNotifierQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<ShiftNotifierQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.ShiftNotifier, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.ShiftNotifier, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

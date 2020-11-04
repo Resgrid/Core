@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Http;
@@ -44,13 +45,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new OrdersIndexView();
 
 			model.YourOrders = new List<ResourceOrder>();
-			model.YourOrders.AddRange((await _resourceOrdersService.GetAllOrdersByDepartmentId(DepartmentId)).OrderByDescending(x => x.OpenDate));
+			model.YourOrders.AddRange((await _resourceOrdersService.GetAllOrdersByDepartmentIdAsync(DepartmentId)).OrderByDescending(x => x.OpenDate));
 
 			model.OthersOrders = new List<ResourceOrder>();
-			model.OthersOrders.AddRange(await _resourceOrdersService.GetOpenAvailableOrders(DepartmentId));
+			model.OthersOrders.AddRange(await _resourceOrdersService.GetOpenAvailableOrdersAsync(DepartmentId));
 
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.Coordinates = _departmentSettingsService.GetMapCenterCoordinates(model.Department);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Coordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 
 			return View(model);
 		}
@@ -60,8 +61,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new OrderSetttingsView();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var settings = await _resourceOrdersService.GetSettingsByDepartmentId(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var settings = await _resourceOrdersService.GetSettingsByDepartmentIdAsync(DepartmentId);
 
 			if (settings != null)
 				model.Settings = settings;
@@ -74,23 +75,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.OrderVisibilities = model.Visibility.ToSelectListInt();
 
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 				model.StaffingLevels = model.UserStateTypes.ToSelectListInt();
 			else
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 
-			model.SetUsers(_departmentsService.GetAllUsersForDepartment(DepartmentId, false, true), _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId));
+			model.SetUsers(await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, false, true), await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId));
 			ViewBag.Users = new SelectList(model.Users, "Key", "Value");
 
 			return View(model);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Settings(OrderSetttingsView model, IFormCollection form)
+		public async Task<IActionResult> Settings(OrderSetttingsView model, IFormCollection form, CancellationToken cancellationToken)
 		{
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var settings = await _resourceOrdersService.GetSettingsByDepartmentId(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var settings = await _resourceOrdersService.GetSettingsByDepartmentIdAsync(DepartmentId);
 
 			if (ModelState.IsValid)
 			{
@@ -122,20 +123,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 					settings.UserIdsToNotifyOnOrders = form["notifyRoles"].ToString();
 				}
 
-				await _resourceOrdersService.SaveSettings(settings);
+				await _resourceOrdersService.SaveSettingsAsync(settings, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
 
 			model.OrderVisibilities = model.Visibility.ToSelectListInt();
 
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 				model.StaffingLevels = model.UserStateTypes.ToSelectListInt();
 			else
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 
-			model.SetUsers(_departmentsService.GetAllUsersForDepartment(DepartmentId, false, true), _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId));
+			model.SetUsers(await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, false, true), await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId));
 
 
 			return View(model);
@@ -147,7 +148,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new NewOrderView();
 
 			model.Order = new ResourceOrder();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Order.NeededBy = DateTime.UtcNow.AddDays(30);
 			model.Order.NeededBy = new DateTime(model.Order.NeededBy.Year, model.Order.NeededBy.Month, model.Order.NeededBy.Day, model.Order.NeededBy.Hour, 0, 0, model.Order.NeededBy.Kind);
 
@@ -155,11 +156,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> New(NewOrderView model, IFormCollection form)
+		public async Task<IActionResult> New(NewOrderView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
-				var settings = await _resourceOrdersService.GetSettingsByDepartmentId(DepartmentId);
+				var settings = await _resourceOrdersService.GetSettingsByDepartmentIdAsync(DepartmentId);
 
 				List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("itemResource_") select int.Parse(key.ToString().Replace("itemResource_", ""))).ToList();
 
@@ -212,8 +213,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Order.DepartmentId = DepartmentId;
 				model.Order.OpenDate = DateTime.UtcNow;
 
-				var department = _departmentsService.GetDepartmentById(DepartmentId);
-				var mapCenterLocation = _departmentSettingsService.GetMapCenterCoordinates(department);
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+				var mapCenterLocation = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
 
 				model.Order.OriginLatitude = mapCenterLocation.Latitude;
 				model.Order.OriginLongitude = mapCenterLocation.Longitude;
@@ -228,7 +229,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Order.Visibility = 0;
 					model.Order.Range = 500;
 				}
-				await _resourceOrdersService.CreateOrder(model.Order);
+				await _resourceOrdersService.CreateOrderAsync(model.Order, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
@@ -239,8 +240,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> View(int orderId)
 		{
 			var model = new ViewOrderView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.Order = await _resourceOrdersService.GetOrderById(orderId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Order = await _resourceOrdersService.GetOrderByIdAsync(orderId);
 
 			return View(model);
 		}
@@ -248,10 +249,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AcceptFill(int fillId)
 		{
 			var model = new ViewOrderView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			var fill = await _resourceOrdersService.GetOrderFillById(fillId);
-			await _resourceOrdersService.SetFillStatus(fillId, UserId, true);
+			var fill = await _resourceOrdersService.GetOrderFillByIdAsync(fillId);
+			await _resourceOrdersService.SetFillStatusAsync(fillId, UserId, true);
 
 			return RedirectToAction("View", new {orderId = fill.OrderItem.Order.ResourceOrderId});
 		}
@@ -259,11 +260,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Fill(int orderId)
 		{
 			var model = new FillOrderView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.Order = await _resourceOrdersService.GetOrderById(orderId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Order = await _resourceOrdersService.GetOrderByIdAsync(orderId);
 			model.Fill = new ResourceOrderFill();
 
-			model.SetUsers(_departmentsService.GetAllUsersForDepartment(DepartmentId, false, true), _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId));
+			model.SetUsers(await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, false, true), await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId));
 			ViewBag.Users = new SelectList(model.Users, "Key", "Value");
 
 			return View(model);
@@ -275,13 +276,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new FillItemView();
 			model.Error = error;
 			model.ErrorMessage = HttpUtility.UrlDecode(errorMessage);
-			model.Fill = await _resourceOrdersService.GetOrderFillById(id);
+			model.Fill = await _resourceOrdersService.GetOrderFillByIdAsync(id);
 
 			return View(model);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> FillItem(FillItemInput data)
+		public async Task<IActionResult> FillItem(FillItemInput data, CancellationToken cancellationToken)
 		{
 			var model = new FillItemView();
 
@@ -293,7 +294,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			var item = await _resourceOrdersService.GetOrderItemById(data.Id);
+			var item = await _resourceOrdersService.GetOrderItemByIdAsync(data.Id);
 			if (item == null)
 			{
 				model.Error = true;
@@ -302,9 +303,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			var order = await _resourceOrdersService.GetOrderById(item.ResourceOrderId);
-			var settings = await _resourceOrdersService.GetSettingsByDepartmentId(order.DepartmentId);
-			var department = _departmentsService.GetDepartmentById(order.DepartmentId);
+			var order = await _resourceOrdersService.GetOrderByIdAsync(item.ResourceOrderId);
+			var settings = await _resourceOrdersService.GetSettingsByDepartmentIdAsync(order.DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(order.DepartmentId);
 
 			var fill = new ResourceOrderFill();
 			fill.ResourceOrderItemId = item.ResourceOrderItemId;
@@ -336,7 +337,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				fill.Units.Add(itemUnit);
 			}
 
-			var savedFill = await _resourceOrdersService.CreateFill(fill);
+			var savedFill = await _resourceOrdersService.CreateFillAsync(fill, cancellationToken);
 
 			return Json(new { id = savedFill.ResourceOrderFillId, error = model.Error, errorMessage = HttpUtility.UrlEncode(model.ErrorMessage) });
 		}
@@ -346,7 +347,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<ResourceOrderJson> ordersJson = new List<ResourceOrderJson>();
 
-			var yourOrders = await _resourceOrdersService.GetOpenOrdersByDepartmentId(DepartmentId);
+			var yourOrders = await _resourceOrdersService.GetOpenOrdersByDepartmentIdAsync(DepartmentId);
 
 			foreach (var order in yourOrders)
 			{
@@ -420,7 +421,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<ResourceOrderJson> ordersJson = new List<ResourceOrderJson>();
 
-			var yourOrders = await _resourceOrdersService.GetOpenAvailableOrders(DepartmentId);
+			var yourOrders = await _resourceOrdersService.GetOpenAvailableOrdersAsync(DepartmentId);
 
 			foreach (var order in yourOrders)
 			{

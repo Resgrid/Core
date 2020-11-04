@@ -23,10 +23,19 @@ namespace Resgrid.Model
 		public virtual ICollection<DispatchProtocolQuestionAnswer> Answers { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DispatchProtocolQuestionId; }
 			set { DispatchProtocolQuestionId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "DispatchProtocolQuestions";
+
+		[NotMapped]
+		public string IdName => "DispatchProtocolQuestionId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Protocol", "Answers" };
 	}
 }

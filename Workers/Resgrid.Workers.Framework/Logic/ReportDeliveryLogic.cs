@@ -7,6 +7,7 @@ using Resgrid.Workers.Framework.Workers.ReportDelivery;
 using RestSharp;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Autofac;
 
 namespace Resgrid.Workers.Framework.Logic
@@ -24,7 +25,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_pdfProvider = Bootstrapper.GetKernel().Resolve<IPdfProvider>();
 		}
 
-		public Tuple<bool, string> Process(ReportDeliveryQueueItem item)
+		public async Task<Tuple<bool, string>> Process(ReportDeliveryQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -74,7 +75,7 @@ namespace Resgrid.Workers.Framework.Logic
 				}
 
 				if (success)
-					_scheduledTasksService.CreateScheduleTaskLog(item.ScheduledTask);
+					await _scheduledTasksService.CreateScheduleTaskLogAsync(item.ScheduledTask);
 			}
 
 			return new Tuple<bool, string>(success, result);

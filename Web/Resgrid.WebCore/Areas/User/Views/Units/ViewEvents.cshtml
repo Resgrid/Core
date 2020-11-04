@@ -1,99 +1,107 @@
-﻿
-@using Resgrid.Web.Helpers
-@model Resgrid.Web.Areas.User.Models.Units.ViewLogsView
+﻿@model Resgrid.Web.Areas.User.Models.Units.ViewLogsView
 @{
-    ViewBag.Title = "Resgrid | View Unit Events";
-    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+  ViewBag.Title = "Resgrid | View Unit Events";
 }
 @section Styles
 {
 
 }
-<div id="content-header">
-    <h1>Unit Events</h1>
-</div>
-<div id="breadcrumb">
-    <a href="@Url.Action("Dashboard", "Home", new { Area = "User" })" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
-    <a href="@Url.Action("Index", "Units", new { Area = "User" })" title="Go to Units" class="tip-bottom"><i class="icon-truck"></i>Units</a>
-    <a href="#" class="current">Unit Events</a>
-</div>
 
-@using (Html.BeginForm("GenerateReport", "Units", FormMethod.Post, new {area = "User", @class = "form-horizontal"}))
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Events for @Model.Unit.Name</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
+      </li>
+      <li class="active">
+        <strong>Events for @Model.Unit.Name</strong>
+      </li>
+    </ol>
+  </div>
+  <div class="col-sm-8">
+    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+      
+    </div>
+  </div>
+</div>
+@using (Html.BeginForm("GenerateReport", "Units", FormMethod.Post, new { area = "User", @class = "form-horizontal" }))
 {
-	<div class="row">
-		<div class="col-xs-12">
-			<div class="widget-box">
-				<div class="widget-title">
-					<span class="icon">
-						<i class="icon-truck"></i>
-					</span>
-					<h5>Events for @Model.Unit.Name</h5>
-				</div>
-				<div class="widget-content nopadding">
-					<div class="row">
-						<div class="col-xs-7">
-							<div id="eventsGrid"></div>
-						</div>
-						<div class="col-xs-5 text-center">
-							<div id="eventsMap" name="eventsMap" style="position: relative; width: 100%; height: 500px;"></div>
-							<input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Generate Report" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-							{
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="wrapper wrapper-content">
+        <div class="ibox float-e-margins">
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-xs-7">
+                <div id="eventsGrid"></div>
+              </div>
+              <div class="col-xs-5 text-center">
+                <div id="eventsMap" name="eventsMap" style="position: relative; width: 100%; height: 500px;"></div>
+                <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Generate Report" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				{
 
-								<div class="well">
-									<span><a data-toggle="modal" data-target="#confirmClearAllActionLogsModal" class="btn btn-xs btn-danger">Clear out all Events For Unit</a> </span>
-								</div>
-							}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                  <div class="well">
+                    <span><a data-toggle="modal" data-target="#confirmClearAllActionLogsModal" class="btn btn-xs btn-danger">Clear out all Events For Unit</a> </span>
+                  </div>
+				}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 }
-
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="confirmClearAllActionLogsModal">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Delete All Unit Events</h4>
-			</div>
-			@using (Html.BeginForm("ClearAllUnitEvents", "Units", FormMethod.Post, new { area = "User", id = "clear_all" }))
-			{
-				<div class="modal-body">
-					<span class="alert alert-error">
-						@Html.ValidationSummary(false)
-						@Html.HiddenFor(m => m.Unit.UnitId)
-						@Html.AntiForgeryToken()
-					</span>
-					<div class="form-group">
-						<label class=" control-label">
-							Are you sure you want to permanently delete all events for this unit?
-						</label>
-						<div class="controls">
-							@Html.CheckBoxFor(m => m.ConfirmClearAll) Yes I'm sure
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<a href="#" class="btn" data-dismiss="modal">Close</a>
-					<input class="btn btn-primary" id="group_submit_action" name="commit" type="submit"
-								 value="Delete All" />
-				</div>
-			}
-		</div>
-	</div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Delete All Unit Events</h4>
+      </div>
+      @using (Html.BeginForm("ClearAllUnitEvents", "Units", FormMethod.Post, new { area = "User", id = "clear_all" }))
+	  {
+        <div class="modal-body">
+          <span class="alert alert-error">
+            @Html.ValidationSummary(false)
+            @Html.HiddenFor(m => m.Unit.UnitId)
+            @Html.AntiForgeryToken()
+          </span>
+          <div class="form-group">
+            <label class=" control-label">
+              Are you sure you want to permanently delete all events for this unit?
+            </label>
+            <div class="controls">
+              @Html.CheckBoxFor(m => m.ConfirmClearAll) Yes I'm sure
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn" data-dismiss="modal">Close</a>
+          <input class="btn btn-primary" id="group_submit_action" name="commit" type="submit"
+				 value="Delete All" />
+        </div>
+	  }
+    </div>
+  </div>
 </div>
-
-
 
 @section Scripts
 {
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvx5hAr4xmdQ9VAEm1P3iVn_HUm0Btw94&sensor=false"></script>
-    <script src="@Url.Content("~/js/app/internal/units/resgrid.units.viewevents.js")"></script>
+  <script>
+		var unitId = '@Model.Unit.UnitId';
+		var osmKey = '@Model.OSMKey';
+		var centerLat = '@Model.CenterLat';
+		var centerLon = '@Model.CenterLon';
+  </script>
+  <script src="@Url.Content("~/js/app/internal/units/resgrid.units.viewevents.js")"></script>
 }

@@ -63,13 +63,12 @@
 @section Scripts
 {
 	<script src="@Url.Content("~/Scripts/jquery.signalR-2.2.0.min.js")"></script>
-	<script src="https://api.resgrid.com/signalr/hubs"></script>
-	@*<script src="https://resgridapi.local/signalr/hubs"></script>*@
+	<script src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/signalr/hubs"></script>
 	<script>
 		$(function () {
 			// Reference the auto-generated proxy for the hub.
 			var chatHub = $.connection.communicationHub;
-			
+
 			registerClientMethods(chatHub);
 
 			// Start Hub
@@ -139,7 +138,7 @@
 
 				var ctrId = 'private_' + id;
 				$('#' + ctrId).remove();
-				
+
 				var disc = $('<div class="disconnect">"' + userName + '" logged off.</div>');
 
 				$(disc).hide();
@@ -168,14 +167,14 @@
 
 		function AddUser(chatHub, id, userId, name) {
 			var myId = $('#myConId').val();
-			var code = $('<li id="' + id + '" class="online"><a href="#"><img src="https://api.resgrid.com/api/v3/Avatars/Get?id=' + userId + '" onerror="this.src=&quot;https://resgrid.com/Images/defaultProfile.png&quot;"> <span>' + name + '</span></a><span class="msg-count badge badge-info">0</span></li>');
+		  var code = $('<li id="' + id + '" class="online"><a href="#"><img src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=' + userId + '" onerror="this.src=&quot;https://resgrid.com/images/defaultProfile.png&quot;"> <span>' + name + '</span></a><span class="msg-count badge badge-info">0</span></li>');
 
 			$(code).dblclick(function () {
 				var id = $(this).attr('id');
 				if (id != myId)
 					OpenPrivateChatWindow(chatHub, id, name);
 			});
-			
+
 			$("#userList").append(code);
 		}
 

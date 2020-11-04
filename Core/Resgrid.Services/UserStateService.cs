@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
@@ -29,18 +31,14 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 		}
 
-		public UserState GetUserStateById(int userStateId)
+		public async Task<UserState> GetUserStateByIdAsync(int userStateId)
 		{
-			//return _userStateRepository.GetAll().FirstOrDefault(x => x.UserStateId == userStateId);
-			return _userStateRepository.GetUserStateById(userStateId);
+			return await _userStateRepository.GetByIdAsync(userStateId);
 		}
 
-		public UserState GetLastUserStateByUserId(string userId)
+		public async Task<UserState> GetLastUserStateByUserIdAsync(string userId)
 		{
-			var userState = (from us in _userStateRepository.GetAll()
-				where us.UserId == userId
-				orderby us.UserStateId descending
-				select us).FirstOrDefault();
+			var userState = await _userStateRepository.GetLastUserStateByUserIdAsync(userId);
 
 			if (userState != null)
 				return userState;
@@ -54,12 +52,9 @@ namespace Resgrid.Services
 			return state;
 		}
 
-		public UserState GetPerviousUserState(string userId, int userStateId)
+		public async Task<UserState> GetPreviousUserStateAsync(string userId, int userStateId)
 		{
-			var userState = (from us in _userStateRepository.GetAll()
-							 where us.UserId == userId && us.UserStateId < userStateId
-							 orderby us.UserStateId descending
-							 select us).FirstOrDefault();
+			var userState = await _userStateRepository.GetPreviousUserStateByUserIdAsync(userId, userStateId);
 
 			if (userState != null)
 				return userState;
@@ -72,7 +67,7 @@ namespace Resgrid.Services
 			return state;
 		}
 
-		public UserState CreateUserState(string userId, int departmentId, int userStateType)
+		public async Task<UserState> CreateUserState(string userId, int departmentId, int userStateType, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var us = new UserState();
 			us.UserId = userId;
@@ -80,14 +75,14 @@ namespace Resgrid.Services
 			us.State = userStateType;
 			us.Timestamp = DateTime.Now.ToUniversalTime();
 
-			_userStateRepository.SaveOrUpdate(us);
-			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
+			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
+			await _eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
-			return us;
+			return saved;
 		}
 
-		public UserState CreateUserState(string userId, int departmentId, int userStateType, string note)
+		public async Task<UserState> CreateUserState(string userId, int departmentId, int userStateType, string note, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var us = new UserState();
 			us.UserId = userId;
@@ -96,14 +91,14 @@ namespace Resgrid.Services
 			us.Timestamp = DateTime.UtcNow;
 			us.Note = note;
 
-			_userStateRepository.SaveOrUpdate(us);
-			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
+			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
+			await _eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
-			return us;
+			return saved;
 		}
 
-		public UserState CreateUserState(string userId, int departmentId, int userStateType, string note, DateTime timeStamp)
+		public async Task<UserState> CreateUserStateAsync(string userId, int departmentId, int userStateType, string note, DateTime timeStamp, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var us = new UserState();
 			us.UserId = userId;
@@ -112,46 +107,43 @@ namespace Resgrid.Services
 			us.Timestamp = timeStamp;
 			us.Note = note;
 
-			_userStateRepository.SaveOrUpdate(us);
-			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
+			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
+			await _eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
-			return us;
+			return saved;
 		}
 
-		public List<UserState> GetStatesForDepartment(int departmentId)
+		public async Task<List<UserState>> GetStatesForDepartmentAsync(int departmentId)
 		{
 			var states = new List<UserState>();
-			var users = _departmentsService.GetAllUsersForDepartment(departmentId);
+			var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId);
 
 			foreach (var u in users)
 			{
-				states.Add(GetLastUserStateByUserId(u.UserId));
+				states.Add(await GetLastUserStateByUserIdAsync(u.UserId));
 			}
 
 			return states;
 		}
 
-		public List<UserState> GetSAlltatesForDepartmentInDateRange(int departmentId, DateTime startDate, DateTime endDate)
+		public async Task<List<UserState>> GetAllStatesForDepartmentInDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
-			//var allUsers = _departmentsService.GetAllUsersForDepartment(departmentId);
-			//var userIds = allUsers.Select(x => x.UserId);
-
-			var states = from s in _userStateRepository.GetAll()
-									// let users = userIds
-									 where s.Timestamp >= startDate && s.Timestamp <= endDate && s.DepartmentId == departmentId
-									 select s;
+			var states = await _userStateRepository.GetAllUserStatesByDepartmentIdInRangeAsync(departmentId, startDate, endDate);
 
 			return states.ToList();
 		}
 
-		public void DeleteStatesForUser(string userId)
+		public async Task<bool> DeleteStatesForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var states = from s in _userStateRepository.GetAll().AsEnumerable()
-			             where s.UserId == userId
-			             select s;
+			var states = await _userStateRepository.GetUserStatesByUserIdAsync(userId);
 
-			_userStateRepository.DeleteAll(states);
+			foreach (var state in states)
+			{
+				await _userStateRepository.DeleteAsync(state, cancellationToken);
+			}
+
+			return true;
 		}
 
 		public void InvalidateLatestStatesForDepartmentCache(int departmentId)
@@ -159,21 +151,21 @@ namespace Resgrid.Services
 			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
 		}
 
-		public List<UserState> GetLatestStatesForDepartment(int departmentId, bool bypassCache = false)
+		public async Task<List<UserState>> GetLatestStatesForDepartmentAsync(int departmentId, bool bypassCache = false)
 		{
-			Func<List<UserState>> getUserStates = delegate()
+			async Task<List<UserState>> getUserStates()
 			{
-				var states = _userStateRepository.GetLatestUserStatesForDepartment(departmentId);
+				var states = await _userStateRepository.GetLatestUserStatesByDepartmentIdAsync(departmentId);
 
 				return states.GroupBy(l => l.UserId)
 				.Select(g => g.OrderByDescending(l => l.UserStateId).First())
 				.ToList();
-			};
+			}
 
 			if (!bypassCache)
-				return _cacheProvider.Retrieve(string.Format(CacheKey, departmentId), getUserStates, CacheLength);
+				return await _cacheProvider.RetrieveAsync(string.Format(CacheKey, departmentId), getUserStates, CacheLength);
 
-			return getUserStates();
+			return await getUserStates();
 		}
 	}
 }

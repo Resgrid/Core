@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
-using System.Data.Entity.ModelConfiguration;
 using ProtoBuf;
 using Resgrid.Framework;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -54,18 +54,19 @@ namespace Resgrid.Model
 		public decimal? Longitude { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return MessageRecipientId; }
 			set { MessageRecipientId = (int)value; }
 		}
-	}
 
-	public class MessageRecipient_Mapping : EntityTypeConfiguration<MessageRecipient>
-	{
-		public MessageRecipient_Mapping()
-		{
-			this.HasRequired(t => t.Message).WithMany().HasForeignKey(t => t.MessageId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "MessageRecipients";
+
+		[NotMapped]
+		public string IdName => "MessageRecipientId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Message", "User"};
 	}
 }

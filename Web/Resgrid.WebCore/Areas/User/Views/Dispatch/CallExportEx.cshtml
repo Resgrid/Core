@@ -56,7 +56,7 @@
     </div>
     <div class="row">
       <div class="col-xs-6">
-        <a href="https://resgrid.com/Account/LogOn"><img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid" alt="Resgrid" style="margin-top: 10px; margin-bottom: 5px;"></a>
+        <a href="https://resgrid.com/Account/LogOn"><img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid" alt="Resgrid" style="margin-top: 10px; margin-bottom: 5px;"></a>
       </div>
       <div class="col-xs-6" style="text-align: right;">
         <h3 style="margin-top: 10px;">Call Export</h3>
@@ -69,7 +69,7 @@
             <tr>
               <td>
                 <strong><small>Id</small></strong>
-                <span style="display: block;">@Model.Call.Id</span>
+                <span style="display: block;">@Model.Call.CallId</span>
               </td>
               <td>
                 <strong><small>Number</small></strong>
@@ -293,7 +293,7 @@
           <tbody>
             @foreach (var us in Model.UnitStates)
 			{
-			  var customState = CustomStatesHelper.GetCustomUnitState(us);
+			  var customState = await CustomStatesHelper.GetCustomUnitState(us);
               <tr>
                 <td>@us.Unit.Name</td>
 
@@ -326,7 +326,7 @@
           <tbody>
             @foreach (var al in Model.ActionLogs)
 			{
-			  var customState = CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
+			  var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
               <tr>
                 <td>@UserHelper.GetFullNameForUser(al.UserId)</td>
 

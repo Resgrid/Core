@@ -1,0 +1,100 @@
+@model Resgrid.Web.Areas.User.Models.Security.ViewAuditLogView
+@{
+  ViewBag.Title = "Resgrid | View Audit Log";
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>View Audit Log</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Security" asp-action="Index" asp-route-area="User">Security and Permissions</a>
+      </li>
+      <li>
+        <a asp-controller="Security" asp-action="Audits" asp-route-area="User">Audit Logs</a>
+      </li>
+      <li class="active">
+        <strong>View Audit Log</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInUp">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Audit Log</h5>
+          <div class="ibox-tools">
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Audit Type:</dt>
+                <dd>@Model.Type.ToString()</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Logged By:</dt>
+                <dd>@(await UserHelper.GetFullNameForUser(Model.AuditLog.UserId))</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Logged On:</dt>
+                @if (Model.AuditLog.LoggedOn.HasValue)
+                {
+                  <dd>@Model.AuditLog.LoggedOn.Value.TimeConverterToString(Model.Department)</dd>
+                }
+                else
+                {
+                  <dd>Unknown</dd>
+                }
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Message:</dt>
+                <dd>
+                  @Model.AuditLog.Message
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Data:</dt>
+                <dd>
+                  @Model.AuditLog.Data
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+
+}

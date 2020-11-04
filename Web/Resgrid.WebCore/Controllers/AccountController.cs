@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,18 +13,16 @@ using Resgrid.Web.Models;
 using Resgrid.Web.Models.AccountViewModels;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Resgrid.Model.Identity;
-using PaulMiami.AspNetCore.Mvc.Recaptcha;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Config;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Web.Controllers
 {
-#if (DEBUG)
-	[Authorize]
-#else
-		[RequireHttps]
-		[Authorize]
+#if (!DEBUG || !DOCKER)
+	//[RequireHttps]
 #endif
 	public class AccountController : Controller
 	{
@@ -80,7 +78,7 @@ namespace Resgrid.Web.Controllers
 		public async Task<IActionResult> LogOn(LoginViewModel model, string returnUrl = null)
 		{
 			await _signInManager.SignOutAsync();
-			await HttpContext.Authentication.SignOutAsync("ResgridCookieMiddlewareInstance");
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
 			ViewData["ReturnUrl"] = returnUrl;
 			if (ModelState.IsValid)
@@ -90,13 +88,12 @@ namespace Resgrid.Web.Controllers
 
 				try
 				{
-					var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
+					var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
 					if (result.Succeeded)
 					{
-						if (_usersService.DoesUserHaveAnyActiveDepartments(model.Username))
+						if (await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
 						{
-
-							await HttpContext.Authentication.SignInAsync("ResgridCookieMiddlewareInstance", HttpContext.User,
+							await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, User,
 								new AuthenticationProperties
 								{
 									ExpiresUtc = DateTime.UtcNow.AddHours(8),
@@ -104,16 +101,14 @@ namespace Resgrid.Web.Controllers
 									AllowRefresh = false
 								});
 
+							Response.Cookies.Delete(".AspNetCore.Identity.Application");
+							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC1");
+							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC2");
 							if (!String.IsNullOrWhiteSpace(returnUrl))
 								return RedirectToLocal(returnUrl);
 							else
 							{
-								if (HttpContext.User.IsInRole("Admins"))
-									return RedirectToAction("Index", "Home", new { Area = "Admin" });
-								else
-								{
-									return RedirectToAction("Dashboard", "Home", new { Area = "User" });
-								}
+								return RedirectToAction("Dashboard", "Home", new { Area = "User" });
 							}
 						}
 						else
@@ -134,7 +129,9 @@ namespace Resgrid.Web.Controllers
 				}
 				catch (Exception ex)
 				{
-					if (!_usersService.DoesUserHaveAnyActiveDepartments(model.Username))
+					Logging.LogException(ex);
+
+					if (!await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
 					{
 						ModelState.AddModelError(string.Empty, "You do not have any active departments for this user. This usually happens when you only belong to one department and you have been removed (deleted) from that department. To log into Resgrid you need at least one active department. You can have a department add you by sending an email based invite to your Resgrid accounts email address.");
 						return View(model);
@@ -173,15 +170,16 @@ namespace Resgrid.Web.Controllers
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+		public async Task<IActionResult> Register(RegisterViewModel model, CancellationToken cancellationToken, string returnUrl = null)
 		{
-			ViewBag.DepartmentTypes = new SelectList(model.DepartmentTypes);
-
 			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
 				return RedirectToAction("LogOn", "Account");
 
 
+			ViewBag.DepartmentTypes = new SelectList(model.DepartmentTypes);
+			model.SiteKey = WebConfig.RecaptchaPublicKey;
 			ViewData["ReturnUrl"] = returnUrl;
+
 			if (ModelState.IsValid)
 			{
 				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
@@ -192,33 +190,26 @@ namespace Resgrid.Web.Controllers
 					up.UserId = user.Id;
 					up.FirstName = model.FirstName;
 					up.LastName = model.LastName;
-					_userProfileService.SaveProfile(0, up);
+					await _userProfileService.SaveProfileAsync(0, up, cancellationToken);
 
 					_usersService.AddUserToUserRole(user.Id);
 					_usersService.InitUserExtInfo(user.Id);
 
-					var savedUser = await _userManager.FindByIdAsync(user.Id);
-
-					Department department = _departmentsService.CreateDepartment(model.DepartmentName, user.Id, model.DepartmentType);
-					_departmentsService.AddUserToDepartment(department.DepartmentId, user.Id);
-					_subscriptionsService.CreateFreePlanPayment(department.DepartmentId, user.Id);
+					Department department = await _departmentsService.CreateDepartmentAsync(model.DepartmentName, user.Id, model.DepartmentType, null, cancellationToken);
+					await _departmentsService.AddUserToDepartmentAsync(department.DepartmentId, user.Id, true, cancellationToken);
+					await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
 
 					// Guard, in case testing has caching turned on for the shared redis cache there can be artifacts
 					_departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
-
-					_emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
-
 					_departmentsService.InvalidateDepartmentMembers();
 
+					_emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
 					_emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, model.Password, department.DepartmentId);
-
-					//await _signInManager.SignInAsync(savedUser, isPersistent: false);
-					//return RedirectToLocal(returnUrl);
 
 					var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
 					if (loginResult.Succeeded)
 					{
-						await HttpContext.Authentication.SignInAsync("ResgridCookieMiddlewareInstance", HttpContext.User, new AuthenticationProperties
+						await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, HttpContext.User, new AuthenticationProperties
 						{
 							ExpiresUtc = DateTime.UtcNow.AddHours(24),
 							IsPersistent = false,
@@ -248,7 +239,7 @@ namespace Resgrid.Web.Controllers
 		public async Task<IActionResult> LogOff()
 		{
 			await _signInManager.SignOutAsync();
-			await HttpContext.Authentication.SignOutAsync("ResgridCookieMiddlewareInstance");
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			RemoveCookies();
 			return RedirectToAction("LogOn", "Account", new { Area = "" });
 		}
@@ -270,7 +261,7 @@ namespace Resgrid.Web.Controllers
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+		public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
@@ -281,11 +272,11 @@ namespace Resgrid.Web.Controllers
 					return View("ForgotPasswordConfirmation");
 				}
 
-				var profile = _userProfileService.GetProfileByUserId(user.Id);
-				var department = _departmentsService.GetDepartmentForUser(user.UserName);
+				var profile = await _userProfileService.GetProfileByUserIdAsync(user.Id);
+				var department = await _departmentsService.GetDepartmentForUserAsync(user.UserName);
 
 				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-				var newPassword = RandomGenerator.GenerateRandomString(6, 10, false, false, true, true, false, true, null);
+				var newPassword = RandomGenerator.GenerateRandomString(6, 8, false, false, true, true, false, true, null);
 				var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
 
 				if (result.Succeeded)
@@ -333,7 +324,7 @@ namespace Resgrid.Web.Controllers
 
 		[AllowAnonymous]
 		[HttpGet]
-		public IActionResult CompleteInvite(string inviteCode)
+		public async Task<IActionResult> CompleteInvite(string inviteCode)
 		{
 			Guid code;
 
@@ -341,7 +332,7 @@ namespace Resgrid.Web.Controllers
 				return RedirectToAction("MissingInvite");
 
 			CompleteInviteModel model = new CompleteInviteModel();
-			model.Invite = _invitesService.GetInviteByCode(code);
+			model.Invite = await _invitesService.GetInviteByCodeAsync(code);
 
 			if (model.Invite == null)
 				return RedirectToAction("MissingInvite");
@@ -349,7 +340,7 @@ namespace Resgrid.Web.Controllers
 			if (model.Invite.CompletedOn.HasValue)
 				return RedirectToAction("CompletedInvite");
 
-			var department = _departmentsService.GetDepartmentById(model.Invite.DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId, true);
 
 			if (department == null)
 				return RedirectToAction("MissingInvite");
@@ -364,9 +355,9 @@ namespace Resgrid.Web.Controllers
 		[AllowAnonymous]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CompleteInvite(CompleteInviteModel model)
+		public async Task<IActionResult> CompleteInvite(CompleteInviteModel model, CancellationToken cancellationToken)
 		{
-			model.Invite = _invitesService.GetInviteByCode(Guid.Parse(model.Code));
+			model.Invite = await _invitesService.GetInviteByCodeAsync(Guid.Parse(model.Code));
 			model.Email = model.Invite.EmailAddress;
 
 			if (!StringHelpers.ValidateEmail(model.Email))
@@ -390,13 +381,13 @@ namespace Resgrid.Web.Controllers
 					up.UserId = user.Id;
 					up.FirstName = model.FirstName;
 					up.LastName = model.LastName;
-					_userProfileService.SaveProfile(model.Invite.DepartmentId, up);
+					await _userProfileService.SaveProfileAsync(model.Invite.DepartmentId, up, cancellationToken);
 
 					_usersService.AddUserToUserRole(user.Id);
 					_usersService.InitUserExtInfo(user.Id);
-					_departmentsService.AddUserToDepartment(model.Invite.DepartmentId, user.Id);
+					await _departmentsService.AddUserToDepartmentAsync(model.Invite.DepartmentId, user.Id, false, cancellationToken);
 
-					_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent()
+					await _eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent()
 					{
 						DepartmentId = model.Invite.Department.DepartmentId,
 						Name = $"{model.FirstName} {model.LastName}",
@@ -408,7 +399,7 @@ namespace Resgrid.Web.Controllers
 					_usersService.ClearCacheForDepartment(model.Invite.DepartmentId);
 					_departmentsService.InvalidateDepartmentMembers();
 
-					_invitesService.CompleteInvite(model.Invite.Code, user.UserId);
+					await _invitesService.CompleteInviteAsync(model.Invite.Code, user.UserId, cancellationToken);
 					_emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
 					_emailService.SendWelcomeEmail(model.Invite.Department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Password, model.Invite.DepartmentId);

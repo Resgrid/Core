@@ -1,40 +1,292 @@
-﻿using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Units;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class UnitStatesRepository : RepositoryBase<UnitState>, IUnitStatesRepository
 	{
-		public UnitStatesRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public List<UnitState> GetLatestUnitStatesForDepartment(int departmentId)
+		public UnitStatesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			var units = db.SqlQuery<UnitState>(@"SELECT  q.*
-												 FROM    (
-												 		SELECT *, ROW_NUMBER() OVER (PARTITION BY UnitId ORDER BY UnitStateId DESC) us
-												 		FROM UnitStates
-												 		) q
-												 INNER JOIN Units u ON u.UnitId = q.UnitId
-												 WHERE u.DepartmentId = @departmentId AND us = 1",
-												new SqlParameter("@departmentId", departmentId));
-
-			return units.ToList();
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public List<UnitStateRole> GetCurrentRolesForUnit(int unitId)
+		public async Task<IEnumerable<UnitState>> GetAllStatesByUnitIdAsync(int unitId)
 		{
-			var units = db.SqlQuery<UnitStateRole>(@"SELECT * FROM UnitStates us
-												INNER JOIN UnitStateRoles usr ON us.UnitStateId = usr.UnitStateId
-												WHERE us.UnitId = @unitId AND us.Timestamp >= DATEADD(day,-2,GETUTCDATE())",
-												new SqlParameter("@unitId", unitId));
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UnitState>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UnitId", unitId);
 
-			return units.ToList();
+					var query = _queryFactory.GetQuery<SelectUnitStatesByUnitIdQuery>();
+
+					return await x.QueryAsync<UnitState, Unit, UnitState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (us, u) => { us.Unit = u; return us; },
+						splitOn: "UnitId");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<UnitState> GetLastUnitStateByUnitIdAsync(int unitId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<UnitState>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UnitId", unitId);
+
+					var query = _queryFactory.GetQuery<SelectLastUnitStateByUnitIdQuery>();
+
+					return (await x.QueryAsync<UnitState, Unit, UnitState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (us, u) => { us.Unit = u; return us; },
+						splitOn: "UnitId")).FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<UnitState> GetLastUnitStateBeforeIdAsync(int unitId, int unitStateId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<UnitState>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UnitId", unitId);
+					dynamicParameters.Add("UnitStateId", unitStateId);
+
+					var query = _queryFactory.GetQuery<SelectLastUnitStateByUnitIdTimeQuery>();
+
+					return (await x.QueryAsync<UnitState, Unit, UnitState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (us, u) => { us.Unit = u; return us; },
+						splitOn: "UnitId")).FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<UnitState> GetUnitStateByUnitStateIdAsync(int unitStateId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<UnitState>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UnitStateId", unitStateId);
+
+					var query = _queryFactory.GetQuery<SelectUnitStateByUnitStateIdQuery>();
+
+					return (await x.QueryAsync<UnitState, Unit, UnitState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (us, u) => { us.Unit = u; return us; },
+						splitOn: "UnitId")).FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<UnitState>> GetAllStatesByCallIdAsync(int callId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UnitState>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("CallId", callId);
+
+					var query = _queryFactory.GetQuery<SelectUnitStatesByCallIdQuery>();
+
+					return await x.QueryAsync<UnitState, Unit, UnitState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (us, u) => { us.Unit = u; return us; },
+						splitOn: "UnitId");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<UnitState>> GetLatestUnitStatesForDepartmentAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UnitState>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectLastUnitStatesByDidQuery>();
+
+					return await x.QueryAsync<UnitState, Unit, UnitState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (us, u) => { us.Unit = u; return us; },
+						splitOn: "UnitId");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
 		}
 	}
 }

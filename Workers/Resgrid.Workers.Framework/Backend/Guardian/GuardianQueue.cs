@@ -33,11 +33,11 @@ namespace Resgrid.Workers.Framework.Backend
 				_isLocked = true;
 				Clear();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 					                   {
 						                   try
 						                   {
-							                   var items = _jobsService.GetAllBatchJobs();
+							                   var items = await _jobsService.GetAllBatchJobsAsync();
 
 							                   foreach (var i in items)
 							                   {
@@ -69,11 +69,13 @@ namespace Resgrid.Workers.Framework.Backend
 				_queue = new Queue<GuardianQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public bool IsLocked
@@ -96,10 +98,10 @@ namespace Resgrid.Workers.Framework.Backend
 			return item;
 		}
 
-		public IEnumerable<GuardianQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<GuardianQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<GuardianQueueItem>();
-			_jobsService.SetJobAsChecked(JobTypes.Guardian);
+			await _jobsService.SetJobAsCheckedAsync(JobTypes.Guardian);
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

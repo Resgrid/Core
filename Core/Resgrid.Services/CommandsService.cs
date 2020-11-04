@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -8,23 +10,22 @@ namespace Resgrid.Services
 {
 	public class CommandsService: ICommandsService
 	{
-		private readonly IGenericDataRepository<CommandDefinition> _commandDefinitionRepository;
+		private readonly ICommandDefinitionRepository _commandDefinitionRepository;
 
-		public CommandsService(IGenericDataRepository<CommandDefinition> commandDefinitionRepository)
+		public CommandsService(ICommandDefinitionRepository commandDefinitionRepository)
 		{
 			_commandDefinitionRepository = commandDefinitionRepository;
 		}
 
-		public List<CommandDefinition> GetAllCommandsForDepartment(int departmentId)
+		public async Task<List<CommandDefinition>> GetAllCommandsForDepartmentAsync(int departmentId)
 		{
-			return _commandDefinitionRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _commandDefinitionRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public CommandDefinition Save(CommandDefinition command)
+		public async Task<CommandDefinition> Save(CommandDefinition command, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_commandDefinitionRepository.SaveOrUpdate(command);
-
-			return command;
+			return await _commandDefinitionRepository.SaveOrUpdateAsync(command, cancellationToken);
 		}
 	}
 }

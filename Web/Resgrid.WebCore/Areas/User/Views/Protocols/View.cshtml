@@ -61,7 +61,7 @@
             <div class="col-lg-7" id="cluster_info">
               <dl class="dl-horizontal">
                 <dt>Created By:</dt>
-                <dd>@UserHelper.GetFullNameForUser(Model.Protocol.CreatedByUserId)</dd>
+                <dd>@(await UserHelper.GetFullNameForUser(Model.Protocol.CreatedByUserId))</dd>
                 <dt>Created On:</dt>
                 <dd>@Model.Protocol.CreatedOn.TimeConverterToString(Model.Department)</dd>
                 <dt>Weight:</dt>
@@ -155,7 +155,7 @@
                               <td>
                                 @if (t.Priority.HasValue && (t.Type == 2 || t.Type == 0))
 								{
-                                <span>@CallPriorityHelper.CallPriorityToString(Model.Department.DepartmentId, t.Priority.Value)</span>
+                                <span>@(await CallPriorityHelper.CallPriorityToString(Model.Department.DepartmentId, t.Priority.Value))</span>
 								}
 								else
 								{

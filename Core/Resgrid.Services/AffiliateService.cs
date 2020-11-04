@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -10,65 +12,62 @@ namespace Resgrid.Services
 {
 	public class AffiliateService : IAffiliateService
 	{
-		private readonly IGenericDataRepository<Affiliate> _affiliateRepository;
+		private readonly IAffiliateRepository _affiliateRepository;
 		private readonly IEmailService _emailService;
 
-		public AffiliateService(IGenericDataRepository<Affiliate> affiliateRepository, IEmailService emailService)
+		public AffiliateService(IAffiliateRepository affiliateRepository, IEmailService emailService)
 		{
 			_affiliateRepository = affiliateRepository;
 			_emailService = emailService;
 		}
 
-		public List<Affiliate> GetAll()
+		public async Task<List<Affiliate>> GetAllAsync()
 		{
-			return _affiliateRepository.GetAll().ToList();
+			var affiliates = await _affiliateRepository.GetAllAsync();
+			return affiliates.ToList();
 		}
 
-		public Affiliate GetAffiliateById(int affiliateId)
+		public async Task<Affiliate> GetAffiliateByIdAsync(int affiliateId)
 		{
-			return _affiliateRepository.GetAll().FirstOrDefault(x => x.AffiliateId == affiliateId);
+			var affiliates = await _affiliateRepository.GetAllAsync();
+
+			return affiliates.FirstOrDefault(x => x.AffiliateId == affiliateId);
 		}
 
-		public Affiliate GetAffiliateByCode(string affiliateCode)
+		public async Task<Affiliate> GetAffiliateByCodeAsync(string affiliateCode)
 		{
-			return _affiliateRepository.GetAll().FirstOrDefault(x => x.AffiliateCode == affiliateCode);
+			var affiliates = await _affiliateRepository.GetAllAsync();
+
+			return affiliates.FirstOrDefault(x => x.AffiliateCode == affiliateCode);
 		}
 
-		public Affiliate GetActiveAffiliateByCode(string affiliateCode)
+		public async Task<Affiliate> GetActiveAffiliateByCodeAsync(string affiliateCode)
 		{
-			return _affiliateRepository.GetAll().FirstOrDefault(x => x.AffiliateCode == affiliateCode && x.Active);
+			var affiliates = await _affiliateRepository.GetAllAsync();
+
+			return affiliates.FirstOrDefault(x => x.AffiliateCode == affiliateCode && x.Active);
 		}
 
-		public Affiliate SaveAffiliate(Affiliate affiliate)
+		public async Task<Affiliate> SaveAffiliateAsync(Affiliate affiliate, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_affiliateRepository.SaveOrUpdate(affiliate);
-
-			return affiliate;
+			return await _affiliateRepository.SaveOrUpdateAsync(affiliate, cancellationToken);
 		}
 
-		public Affiliate CreateNewAffiliate(Affiliate affiliate)
+		public async Task<Affiliate> CreateNewAffiliateAsync(Affiliate affiliate, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			affiliate.AffiliateCode = RandomGenerator.GenerateRandomString(6, 6, false, false, true, true, true, false, null, GetAllAffiliateCodes());
+			affiliate.AffiliateCode = RandomGenerator.GenerateRandomString(6, 6, false, false, true,
+				true, true, false, null, await GetAllAffiliateCodesAsync());
 			affiliate.CreatedOn = DateTime.UtcNow;
 			affiliate.Approved = false;
 			affiliate.Active = false;
 
-			return SaveAffiliate(affiliate);
+			return await SaveAffiliateAsync(affiliate, cancellationToken);
 		}
 
-		public HashSet<string> GetAllAffiliateCodes()
+		public async Task<HashSet<string>> GetAllAffiliateCodesAsync()
 		{
-			return new HashSet<string>(_affiliateRepository.GetAll().Select(x => x.AffiliateCode));
-		}
-
-		public void SendAffiliateApplicationRejection(Affiliate affiliate)
-		{
-			_emailService.SendAffiliateRejectionEmail(affiliate);
-		}
-
-		public void SendAffiliateApplicationApproval(Affiliate affiliate)
-		{
-			_emailService.SendAffiliateApprovalEmail(affiliate);
+			var affiliates = await _affiliateRepository.GetAllAsync();
+			return new HashSet<string>(affiliates.Select(x => x.AffiliateCode));
 		}
 	}
 }

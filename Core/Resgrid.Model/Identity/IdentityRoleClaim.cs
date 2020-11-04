@@ -1,15 +1,34 @@
 ﻿using ProtoBuf;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Resgrid.Model.Identity
 {
-	public class IdentityRoleClaim : IdentityRoleClaim<string>
+	public class IdentityRoleClaim : IdentityRoleClaim<string>, IEntity
 	{
 		public IdentityRoleClaim()
 		{
-			//Added to make the default constructor creates a new Id value
+			//Added to make the default constructor creates a new IdValue value
 			Id = Guid.NewGuid().ToString();
 		}
+
+		
+		[NotMapped]
+		public object IdValue
+		{
+			get { return Id; }
+			set { Id = (string)value; }
+		}
+
+		[NotMapped]
+		public string TableName => "AspNetRoleClaims";
+
+		[NotMapped]
+		public string IdName => "Id";
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 
 

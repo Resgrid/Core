@@ -1,11 +1,12 @@
 ﻿using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Providers
 {
 	public interface IEmailSender
 	{
-		void SendEmail(MailMessage email);
-		void Send(Email email);
+		Task<bool> SendEmail(MailMessage email);
+		Task<bool> Send(Email email);
 		MailMessage CreateMailMessageFromEmail(Email email);
 	}
 }

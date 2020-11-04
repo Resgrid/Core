@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 
@@ -13,9 +14,9 @@ namespace Resgrid.Services
 			_firebaseAuthProvider = firebaseAuthProvider;
 		}
 
-		public string CreateToken(string uid, Dictionary<string, object> claims = null)
+		public async Task<string> CreateTokenAsync(string uid, Dictionary<string, object> claims = null)
 		{
-			return _firebaseAuthProvider.CreateResponderCustomAuthToken(uid, claims).Result;
+			return await _firebaseAuthProvider.CreateResponderCustomAuthToken(uid, claims);
 		}
 	}
 }

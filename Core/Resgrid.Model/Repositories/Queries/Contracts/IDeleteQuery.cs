@@ -3,5 +3,6 @@
 	public interface IDeleteQuery : IQuery
 	{
 		string GetQuery();
+		string GetQuery<TEntity>(TEntity entity) where TEntity : class, IEntity;
 	}
 }

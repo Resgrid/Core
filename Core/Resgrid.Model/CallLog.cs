@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -35,19 +35,19 @@ namespace Resgrid.Model
 		public virtual IdentityUser LoggedBy { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CallLogId; }
 			set { CallLogId = (int)value; }
 		}
-	}
 
-	public class CallLog_Mapping : EntityTypeConfiguration<CallLog>
-	{
-		public CallLog_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-			this.HasRequired(t => t.LoggedBy).WithMany().HasForeignKey(t => t.LoggedByUserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "CallLogs";
+
+		[NotMapped]
+		public string IdName => "CallLogId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Call", "Department", "LoggedBy" };
 	}
 }

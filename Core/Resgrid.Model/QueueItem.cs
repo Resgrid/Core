@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -37,10 +38,19 @@ namespace Resgrid.Model
 		public int DequeueCount { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return QueueItemId; }
 			set { QueueItemId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "QueueItems";
+
+		[NotMapped]
+		public string IdName => "QueueItemId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

@@ -189,5 +189,17 @@ namespace Resgrid.Framework
 		{
 			return new string(input.Where(c => char.IsDigit(c)).ToArray());
 		}
+
+		public static string TrimLastCharacter(this String str)
+		{
+			if (String.IsNullOrEmpty(str))
+			{
+				return str;
+			}
+			else
+			{
+				return str.TrimEnd(str[str.Length - 1]);
+			}
+		}
 	}
 }

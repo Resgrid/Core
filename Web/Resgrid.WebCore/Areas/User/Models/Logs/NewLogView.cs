@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Web.Helpers;
@@ -29,12 +30,14 @@ namespace Resgrid.Web.Areas.User.Models.Logs
 			Users = new Dictionary<string, string>();
 		}
 
-		public void SetUsers(List<IdentityUser> users)
+		public async Task<List<IdentityUser>> SetUsers(List<IdentityUser> users)
 		{
 			foreach (var u in users)
 			{
-				Users.Add(u.UserId, UserHelper.GetFullNameForUser(u.UserId));
+				Users.Add(u.UserId, await UserHelper.GetFullNameForUser(u.UserId));
 			}
+
+			return users;
 		}
 	}
 }

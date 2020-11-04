@@ -30,11 +30,20 @@ namespace Resgrid.Model
 		public virtual ICollection<PersonnelRoleUser> Users { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PersonnelRoleId; }
 			set { PersonnelRoleId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "PersonnelRoles";
+
+		[NotMapped]
+		public string IdName => "PersonnelRoleId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Users" };
 
 		public bool IsUserInRole(string userId)
 		{

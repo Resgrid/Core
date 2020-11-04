@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
@@ -15,12 +17,12 @@ namespace Resgrid.Services
 		private readonly ICommunicationService _communicationService;
 		private readonly IQueueService _queueService;
 		private readonly IUserProfileService _userProfileService;
-		private readonly IGenericDataRepository<MessageRecipient> _messageRecipientRepository;
+		private readonly IMessageRecipientRepository _messageRecipientRepository;
 
 		public MessageService(IMessageRepository messageRepository, IPushService pushService,
 			ICommunicationService communicationService,
 			IQueueService queueService, IUserProfileService userProfileService,
-			IGenericDataRepository<MessageRecipient> messageRecipientRepository)
+			IMessageRecipientRepository messageRecipientRepository)
 		{
 			_messageRepository = messageRepository;
 			_pushService = pushService;
@@ -30,67 +32,62 @@ namespace Resgrid.Services
 			_messageRecipientRepository = messageRecipientRepository;
 		}
 
-		public Message GetMessageByIdForEditing(int messageId)
+		public async Task<Message> GetMessageByIdAsync(int messageId)
 		{
-			return _messageRepository.GetAll().FirstOrDefault(x => x.MessageId == messageId);
+			return await _messageRepository.GetMessagesByMessageIdAsync(messageId);
 		}
 
-		public Message GetMessageById(int messageId)
-		{
-			return _messageRepository.GetMessageById(messageId);
-		}
-
-		public Message SaveMessage(Message message)
+		public async Task<Message> SaveMessageAsync(Message message, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			message.SentOn = message.SentOn.ToUniversalTime();
 
 			if (message.ReadOn.HasValue)
 				message.ReadOn = message.ReadOn.Value.ToUniversalTime();
 
-			_messageRepository.SaveOrUpdate(message);
-
-			return message;
+			return await _messageRepository.SaveOrUpdateAsync(message, cancellationToken);
 		}
 
-		public List<Message> GetInboxMessagesByUserId(string userId)
+		public async Task<List<Message>> GetInboxMessagesByUserIdAsync(string userId)
 		{
-			return _messageRepository.GetInboxMessagesByUserId(userId);
+			var list = await _messageRepository.GetInboxMessagesByUserIdAsync(userId);
+			return list.ToList();
 		}
 
-		public List<Message> GetUnreadInboxMessagesByUserId(string userId)
+		public async Task<List<Message>> GetUnreadInboxMessagesByUserIdAsync(string userId)
 		{
-			var messages = _messageRepository.GetInboxMessagesByUserId(userId);
+			var messages = await _messageRepository.GetInboxMessagesByUserIdAsync(userId);
 
 			return messages.Where(m => !m.HasUserRead(userId)).OrderByDescending(x => x.SentOn).ToList();
 		}
 
-		public List<Message> GetSentMessagesByUserId(string userId)
+		public async Task<List<Message>> GetSentMessagesByUserIdAsync(string userId)
 		{
-			return _messageRepository.GetSentMessagesByUserId(userId);
+			var items = await _messageRepository.GetSentMessagesByUserIdAsync(userId);
+			return items.ToList();
 		}
 
-		public int GetUnreadMessagesCountByUserId(string userId)
+		public async Task<int> GetUnreadMessagesCountByUserIdAsync(string userId)
 		{
-			return _messageRepository.GetUnreadMessageCount(userId);
+			return await _messageRepository.GetUnreadMessageCountAsync(userId);
 		}
 
-		public void MarkMessageAsDeleted(int messageId)
+		public async Task<Message> MarkMessageAsDeletedAsync(int messageId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var message = GetMessageByIdForEditing(messageId);
+			var message = await GetMessageByIdAsync(messageId);
 			message.IsDeleted = true;
 
-			SaveMessage(message);
+			return await SaveMessageAsync(message, cancellationToken);
 		}
 
-		public void MarkMessageAsDeleted(int messageId, string userId)
+		public async Task<MessageRecipient> MarkMessageRecipientAsDeletedAsync(int messageId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var message = GetMessageRecipientByMessageAndUser(messageId, userId);
+			var message = await GetMessageRecipientByMessageAndUserAsync(messageId, userId);
 			message.IsDeleted = true;
 
-			SaveMessageRecipient(message);
+			return await SaveMessageRecipientAsync(message, cancellationToken);
 		}
 
-		public void SendMessage(Message message, string sendersName, int departmentId, bool broadcastSingle = true)
+		public async Task<bool> SendMessageAsync(Message message, string sendersName, int departmentId, bool broadcastSingle = true, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (broadcastSingle)
 			{
@@ -103,7 +100,7 @@ namespace Resgrid.Services
 					m.ReceivingUserId = recip;
 					m.SentOn = message.SentOn;
 
-					var savedMessage = SaveMessage(m);
+					var savedMessage = await SaveMessageAsync(m, cancellationToken);
 
 					var mqi = new MessageQueueItem();
 					mqi.Message = savedMessage;
@@ -116,10 +113,10 @@ namespace Resgrid.Services
 					if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId))
 						users.Add(mqi.Message.SendingUserId);
 
-					mqi.Profiles = _userProfileService.GetSelectedUserProfiles(users);
+					mqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(users);
 					mqi.DepartmentId = departmentId;
 
-					_queueService.EnqueueMessageBroadcast(mqi);
+					await _queueService.EnqueueMessageBroadcastAsync(mqi, cancellationToken);
 				}
 			}
 			else
@@ -137,103 +134,66 @@ namespace Resgrid.Services
 				if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId) && mqi.Message.SendingUserId != mqi.Message.ReceivingUserId)
 					users.Add(mqi.Message.SendingUserId);
 
-				mqi.Profiles = _userProfileService.GetSelectedUserProfiles(users);
+				mqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(users);
 				mqi.DepartmentId = departmentId;
 				mqi.MessageId = message.MessageId;
 
-				_queueService.EnqueueMessageBroadcast(mqi);
+				await _queueService.EnqueueMessageBroadcastAsync(mqi, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public void DeleteMessagesForUser(string userId)
+		public async Task<bool> DeleteMessagesForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var messages = (from m in _messageRepository.GetAll()
-											where m.ReceivingUserId == userId || m.SendingUserId == userId
-											select m).ToList();
+			var messages = await _messageRepository.GetMessagesByUserSendRecIdAsync(userId);
 
 			foreach (var m in messages)
 			{
 				foreach (var mr in m.MessageRecipients.ToList())
 				{
-					_messageRecipientRepository.DeleteOnSubmit(mr);
+					await _messageRecipientRepository.DeleteAsync(mr, cancellationToken);
 				}
 
-				_messageRepository.DeleteOnSubmit(m);
+				await _messageRepository.DeleteAsync(m, cancellationToken);
 			}
 
-			var messageRecipients = (from m in _messageRecipientRepository.GetAll()
-															 where m.UserId == userId
-															 select m).ToList();
+			var messageRecipients = await _messageRecipientRepository.GetMessageRecipientByUserAsync(userId);
 
 			foreach (var m in messageRecipients)
 			{
-				_messageRecipientRepository.DeleteOnSubmit(m);
+				await _messageRecipientRepository.DeleteAsync(m, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public Dictionary<string, int> GetNewMessagesCountForLast5Days()
+		public async Task<MessageRecipient> ReadMessageRecipientAsync(int messageId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Dictionary<string, int> data = new Dictionary<string, int>();
-
-			var startDate = DateTime.UtcNow.AddDays(-4);
-			var filteredRecords =
-				_messageRepository.GetAll()
-					.Where(
-						x => x.SentOn >= startDate).ToList();
-
-			data.Add(DateTime.UtcNow.ToShortDateString(),
-				filteredRecords.Count(x => x.SentOn.ToShortDateString() == DateTime.UtcNow.ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-1).ToShortDateString(),
-				filteredRecords.Count(x => x.SentOn.ToShortDateString() == DateTime.UtcNow.AddDays(-1).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-2).ToShortDateString(),
-				filteredRecords.Count(x => x.SentOn.ToShortDateString() == DateTime.UtcNow.AddDays(-2).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-3).ToShortDateString(),
-				filteredRecords.Count(x => x.SentOn.ToShortDateString() == DateTime.UtcNow.AddDays(-3).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-4).ToShortDateString(),
-				filteredRecords.Count(x => x.SentOn.ToShortDateString() == DateTime.UtcNow.AddDays(-4).ToShortDateString()));
-
-			return data;
-		}
-
-		[Obsolete("ReadMessage is deprecated, please use ReadMessageRecipient instead.")]
-		public Message ReadMessage(int messageId)
-		{
-			var message = GetMessageById(messageId);
-
-			message.ReadOn = DateTime.UtcNow;
-			SaveMessage(message);
-
-			return message;
-		}
-
-		public MessageRecipient ReadMessageRecipient(int messageId, string userId)
-		{
-			var messageRecipent = GetMessageRecipientByMessageAndUser(messageId, userId);
+			var messageRecipent = await GetMessageRecipientByMessageAndUserAsync(messageId, userId);
 
 			if (messageRecipent != null && !messageRecipent.ReadOn.HasValue)
 			{
 				messageRecipent.ReadOn = DateTime.UtcNow;
-				SaveMessageRecipient(messageRecipent);
+				return await SaveMessageRecipientAsync(messageRecipent, cancellationToken);
 			}
 
 			return messageRecipent;
 		}
 
-		public MessageRecipient GetMessageRecipientById(int messageRecipientId)
+		public async Task<MessageRecipient> GetMessageRecipientByIdAsync(int messageRecipientId)
 		{
-			return _messageRecipientRepository.GetAll().FirstOrDefault(x => x.MessageRecipientId == messageRecipientId);
+			return await _messageRecipientRepository.GetByIdAsync(messageRecipientId);
 		}
 
-		public MessageRecipient GetMessageRecipientByMessageAndUser(int messageId, string userId)
+		public async Task<MessageRecipient> GetMessageRecipientByMessageAndUserAsync(int messageId, string userId)
 		{
-			return _messageRecipientRepository.GetAll().FirstOrDefault(x => x.MessageId == messageId && x.UserId == userId);
+			return await _messageRecipientRepository.GetMessageRecipientByMessageAndUserAsync(messageId, userId);
 		}
 
-		public MessageRecipient SaveMessageRecipient(MessageRecipient messageRecipient)
+		public async Task<MessageRecipient> SaveMessageRecipientAsync(MessageRecipient messageRecipient, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_messageRecipientRepository.SaveOrUpdate(messageRecipient);
-
-			return messageRecipient;
+			return await _messageRecipientRepository.SaveOrUpdateAsync(messageRecipient, cancellationToken);
 		}
 	}
 }

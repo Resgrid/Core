@@ -12,6 +12,10 @@
 		UnitRemoved,
 		UnitChanged,
 		ProfileUpdated,
-		PermissionsChanged
+		PermissionsChanged,
+		SubscriptionUpdated,
+		SubscriptionCreated,
+		SubscriptionCancelled,
+		SubscriptionBillingInfoUpdated
 	}
 }

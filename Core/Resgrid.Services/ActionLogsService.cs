@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model.Providers;
-using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
@@ -19,7 +20,7 @@ namespace Resgrid.Services
 
 		private readonly IActionLogsRepository _actionLogsRepository;
 		private readonly IUsersService _usersService;
-		private readonly IGenericDataRepository<DepartmentMember> _departmentMembersRepository;
+		private readonly IDepartmentMembersRepository _departmentMembersRepository;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
@@ -29,7 +30,7 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 
 		public ActionLogsService(IActionLogsRepository actionLogsRepository, IUsersService usersService,
-			IGenericDataRepository<DepartmentMember> departmentMembersRepository, IDepartmentGroupsService departmentGroupsService,
+			IDepartmentMembersRepository departmentMembersRepository, IDepartmentGroupsService departmentGroupsService,
 			IDepartmentsService departmentsService, IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator,
 			IGeoService geoService, ICustomStateService customStateService, ICacheProvider cacheProvider)
 		{
@@ -47,20 +48,19 @@ namespace Resgrid.Services
 
 		#endregion Private Members and Constructors
 
-		public List<ActionLog> GetAllActionLogsForDepartment(int departmentId)
+		public async Task<List<ActionLog>> GetAllActionLogsForDepartmentAsync(int departmentId)
 		{
-			var logs = from al in _actionLogsRepository.GetAll()
-								 where al.DepartmentId == departmentId
-								 select al;
+			var logs = await _actionLogsRepository.GetAllActionLogsForDepartmentAsync(departmentId);
 
 			foreach (var actionLog in logs)
 			{
+				// TODO: Not let this sit till here, return it from dapper with User object populated. -SJ
 				if (actionLog.User == null)
 					actionLog.User = _usersService.GetUserById(actionLog.UserId, false);
 
 				if (actionLog.DestinationType.GetValueOrDefault() == 1 || actionLog.DestinationType.GetValueOrDefault() == 2 ||
 					actionLog.ActionTypeId == (int)ActionTypes.RespondingToScene || actionLog.ActionTypeId == (int)ActionTypes.RespondingToStation)
-					actionLog.Eta = _geoService.GetPersonnelEtaInSeconds(actionLog);
+					actionLog.Eta = await _geoService.GetPersonnelEtaInSecondsAsync(actionLog);
 			}
 
 			return logs.ToList();
@@ -71,9 +71,9 @@ namespace Resgrid.Services
 			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
 		}
 
-		public List<ActionLog> GetActionLogsForDepartment(int departmentId, bool forceDisableAutoAvailable = false, bool bypassCache = false)
+		public async Task<List<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool forceDisableAutoAvailable = false, bool bypassCache = false)
 		{
-			Func<List<ActionLog>> getActionLogs = delegate ()
+			async Task<List<ActionLog>> getActionLogs()
 			{
 				var time = DateTime.UtcNow.AddHours(-1);
 				bool disableAutoAvailable = false;
@@ -81,22 +81,21 @@ namespace Resgrid.Services
 				if (forceDisableAutoAvailable)
 					disableAutoAvailable = true;
 				else
-					disableAutoAvailable = _departmentSettingsService.GetDisableAutoAvailableForDepartment(departmentId, false);
+					disableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(departmentId, false);
 
-				var statuses = _actionLogsRepository.GetLastActionLogsForDepartment(departmentId, disableAutoAvailable, time);
+				var statuses = await _actionLogsRepository.GetLastActionLogsForDepartmentAsync(departmentId, disableAutoAvailable, time);
 
 				var values = statuses.GroupBy(l => l.UserId)
-				.Select(g => g.OrderByDescending(l => l.ActionLogId).First())
-				.ToList();
+					.Select(g => g.OrderByDescending(l => l.ActionLogId).First())
+					.ToList();
 
 				var logs = new List<ActionLog>();
 
 				foreach (var v in values)
 				{
-					if (v.DestinationId.HasValue && (v.DestinationType.GetValueOrDefault() == 1 || v.DestinationType.GetValueOrDefault() == 2 ||
-						v.ActionTypeId == (int)ActionTypes.RespondingToScene || v.ActionTypeId == (int)ActionTypes.RespondingToStation))
+					if (v.DestinationId.HasValue && (v.DestinationType.GetValueOrDefault() == 1 || v.DestinationType.GetValueOrDefault() == 2 || v.ActionTypeId == (int) ActionTypes.RespondingToScene || v.ActionTypeId == (int) ActionTypes.RespondingToStation))
 					{
-						v.Eta = _geoService.GetPersonnelEtaInSeconds(v);
+						v.Eta = await _geoService.GetPersonnelEtaInSecondsAsync(v);
 						v.EtaPulledOn = DateTime.UtcNow;
 					}
 
@@ -104,24 +103,22 @@ namespace Resgrid.Services
 				}
 
 				return logs;
-			};
+			}
 
 			// Forcing this to bypass as some users are reporting that the data is incorrect. -SJ
 			bypassCache = true;
 
 			if (!bypassCache)
 			{
-				return _cacheProvider.Retrieve(string.Format(CacheKey, departmentId), getActionLogs, CacheLength);
+				return await _cacheProvider.RetrieveAsync(string.Format(CacheKey, departmentId), (Func<Task<List<ActionLog>>>) getActionLogs, CacheLength);
 			}
 
-			return getActionLogs();
+			return await getActionLogs();
 		}
 
-		public List<ActionLog> GetAllActionLogsForUser(string userId)
+		public async Task<List<ActionLog>> GetAllActionLogsForUser(string userId)
 		{
-			var logs = from al in _actionLogsRepository.GetAll()
-								 where al.UserId == userId
-								 select al;
+			var logs = await _actionLogsRepository.GetAllByUserIdAsync(userId);
 
 			foreach (var actionLog in logs)
 			{
@@ -132,67 +129,33 @@ namespace Resgrid.Services
 			return logs.ToList();
 		}
 
-		public List<ActionLog> GetAllActionLogsForUserInDateRange(string userId, DateTime startDate, DateTime endDate)
+		public async Task<List<ActionLog>> GetAllActionLogsForUserInDateRangeAsync(string userId, DateTime startDate, DateTime endDate)
 		{
-			var logs = from al in _actionLogsRepository.GetAll()
-								 where al.UserId == userId && al.Timestamp >= startDate && al.Timestamp <= endDate
-								 select al;
-
-			foreach (var actionLog in logs)
-			{
-				if (actionLog.User == null)
-					actionLog.User = _usersService.GetUserById(actionLog.UserId, false);
-			}
-
+			var logs = await _actionLogsRepository.GetAllActionLogsForUserInDateRangeAsync(userId, startDate, endDate);
 			return logs.ToList();
 		}
 
-		public ActionLog GetLastActionLogForUser(string userId, int? departmentId = null)
+		public async Task<ActionLog> GetLastActionLogForUserAsync(string userId, int? departmentId = null)
 		{
 			var time = DateTime.UtcNow.AddHours(-1);
 			bool disableAutoAvailable = false;
 
 			if (departmentId.HasValue)
-				disableAutoAvailable = _departmentSettingsService.GetDisableAutoAvailableForDepartment(departmentId.Value, false);
+				disableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(departmentId.Value, false);
 			else
-				disableAutoAvailable = _departmentSettingsService.GetDisableAutoAvailableForDepartmentByUserId(userId);
+				disableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentByUserIdAsync(userId);
 
-			var values = from al in _actionLogsRepository.GetAll()
-									 where al.UserId == userId && (disableAutoAvailable || al.Timestamp >= time)
-									 orderby al.Timestamp descending
-									 select al;
-
-			var actionLog = values.FirstOrDefault();
-
-			if (actionLog != null && actionLog.User == null)
-				actionLog.User = _usersService.GetUserById(actionLog.UserId, false);
-
-			return actionLog;
+			return await _actionLogsRepository.GetLastActionLogsForUserAsync(userId, disableAutoAvailable, time);
 		}
 
-		public ActionLog GetLastActionLogForUserNoLimit(string userId)
+		public async Task<ActionLog> GetLastActionLogForUserNoLimitAsync(string userId)
 		{
-			var values = from al in _actionLogsRepository.GetAll()
-									 where al.UserId == userId
-									 orderby al.Timestamp descending
-									 select al;
-
-			var actionLog = values.FirstOrDefault();
-
-			if (actionLog != null && actionLog.User == null)
-				actionLog.User = _usersService.GetUserById(actionLog.UserId, false);
-
-			return actionLog;
+			return await _actionLogsRepository.GetLastActionLogForUserAsync(userId);
 		}
 
-		public ActionLog GetPreviousActionLog(string userId, int actionLogId)
+		public async Task<ActionLog> GetPreviousActionLogAsync(string userId, int actionLogId)
 		{
-			var values = from al in _actionLogsRepository.GetAll()
-									 where al.UserId == userId && al.ActionLogId < actionLogId
-									 orderby al.Timestamp descending
-									 select al;
-
-			var actionLog = values.FirstOrDefault();
+			var actionLog = await _actionLogsRepository.GetPreviousActionLogAsync(userId, actionLogId);
 
 			if (actionLog == null)
 			{
@@ -212,32 +175,38 @@ namespace Resgrid.Services
 			return actionLog;
 		}
 
-		public ActionLog SaveActionLog(ActionLog actionLog)
+		public async Task<ActionLog> SaveActionLogAsync(ActionLog actionLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			actionLog.Timestamp = actionLog.Timestamp.ToUniversalTime();
-			_actionLogsRepository.SaveOrUpdate(actionLog);
+			var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
 
 			InvalidateActionLogs(actionLog.DepartmentId);
 			
-			_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { Status = actionLog });
+			await _eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { Status = actionLog });
 
 			return actionLog;
 		}
 
-		public void SaveAllActionLogs(List<ActionLog> actionLogs)
+		public async Task<bool> SaveAllActionLogsAsync(List<ActionLog> actionLogs, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_actionLogsRepository.SaveOrUpdateAll(actionLogs);
-
 			if (actionLogs != null && actionLogs.Count() > 0)
+			{
 				InvalidateActionLogs(actionLogs[0].DepartmentId);
 
-			foreach (var actionLog in actionLogs)
-			{
-				_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { Status = actionLog });
+				foreach (var actionLog in actionLogs)
+				{
+					var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
+					InvalidateActionLogs(actionLog.DepartmentId);
+					await _eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() {Status = saved});
+				}
+
+				return true;
 			}
+
+			return false;
 		}
 
-		public ActionLog SetUserAction(string userId, int departmentId, int actionType)
+		public async Task<ActionLog> SetUserActionAsync(string userId, int departmentId, int actionType, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var al = new ActionLog();
 			al.ActionTypeId = (int)actionType;
@@ -245,12 +214,10 @@ namespace Resgrid.Services
 			al.UserId = userId;
 			al.Timestamp = DateTime.UtcNow;
 
-			al = SaveActionLog(al);
-
-			return al;
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public ActionLog SetUserAction(string userId, int departmentId, int actionType, string location)
+		public async Task<ActionLog> SetUserActionAsync(string userId, int departmentId, int actionType, string location, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var al = new ActionLog();
 			al.ActionTypeId = actionType;
@@ -259,12 +226,10 @@ namespace Resgrid.Services
 			al.Timestamp = DateTime.UtcNow;
 			al.GeoLocationData = location;
 
-			al = SaveActionLog(al);
-
-			return al;
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public ActionLog SetUserAction(string userId, int departmentId, int actionType, string location, string note)
+		public async Task<ActionLog> SetUserActionAsync(string userId, int departmentId, int actionType, string location, string note, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var al = new ActionLog();
 			al.ActionTypeId = actionType;
@@ -274,12 +239,10 @@ namespace Resgrid.Services
 			al.GeoLocationData = location;
 			al.Note = note;
 
-			al = SaveActionLog(al);
-
-			return al;
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public ActionLog SetUserAction(string userId, int departmentId, int actionType, string location, int destinationId)
+		public async Task<ActionLog> SetUserActionAsync(string userId, int departmentId, int actionType, string location, int destinationId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var al = new ActionLog();
 			al.ActionTypeId = actionType;
@@ -289,12 +252,10 @@ namespace Resgrid.Services
 			al.GeoLocationData = location;
 			al.DestinationId = destinationId;
 
-			al = SaveActionLog(al);
-
-			return al;
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public ActionLog SetUserAction(string userId, int departmentId, int actionType, string location, int destinationId, string note)
+		public async Task<ActionLog> SetUserActionAsync(string userId, int departmentId, int actionType, string location, int destinationId, string note, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var al = new ActionLog();
 			al.ActionTypeId = actionType;
@@ -305,12 +266,10 @@ namespace Resgrid.Services
 			al.DestinationId = destinationId;
 			al.Note = note;
 
-			al = SaveActionLog(al);
-
-			return al;
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public ActionLog SetUserAction(string userId, int departmentId, int actionType, string location, int destinationId, int destinationType)
+		public async Task<ActionLog> SetUserActionAsync(string userId, int departmentId, int actionType, string location, int destinationId, int destinationType, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var al = new ActionLog();
 			al.ActionTypeId = actionType;
@@ -321,12 +280,10 @@ namespace Resgrid.Services
 			al.DestinationId = destinationId;
 			al.DestinationType = destinationType;
 
-			al = SaveActionLog(al);
-
-			return al;
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public ActionLog SetUserAction(string userId, int departmentId, int actionType, string location, int destinationId, int destinationType, string note)
+		public async Task<ActionLog> SetUserActionAsync(string userId, int departmentId, int actionType, string location, int destinationId, int destinationType, string note, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var al = new ActionLog();
 			al.ActionTypeId = actionType;
@@ -338,16 +295,12 @@ namespace Resgrid.Services
 			al.DestinationType = destinationType;
 			al.Note = note;
 
-			al = SaveActionLog(al);
-
-			return al;
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public void SetActionForEntireDepartment(int departmentId, int actionType)
+		public async Task<bool> SetActionForEntireDepartmentAsync(int departmentId, int actionType)
 		{
-			var members = (from dm in _departmentMembersRepository.GetAll()
-										 where dm.DepartmentId == departmentId
-										 select dm).ToList();
+			var members = await _departmentMembersRepository.GetAllByDepartmentIdAsync(departmentId);
 
 			var logs = new List<ActionLog>();
 			foreach (var member in members)
@@ -361,12 +314,12 @@ namespace Resgrid.Services
 				logs.Add(al);
 			}
 
-			SaveAllActionLogs(logs);
+			return await SaveAllActionLogsAsync(logs);
 		}
 
-		public void SetActionForDepartmentGroup(int departmentGroupId, int actionType)
+		public async Task<bool> SetActionForDepartmentGroupAsync(int departmentGroupId, int actionType)
 		{
-			var group = _departmentGroupsService.GetGroupById(departmentGroupId);
+			var group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
 
 			if (group != null)
 			{
@@ -382,77 +335,55 @@ namespace Resgrid.Services
 					logs.Add(al);
 				}
 
-				SaveAllActionLogs(logs);
+				return await SaveAllActionLogsAsync(logs);
 			}
+
+			return false;
 		}
 
-		public void DeleteActionLogsForUser(string userId)
+		public async Task<bool> DeleteActionLogsForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var logs = (from al in _actionLogsRepository.GetAll()
-									where al.UserId == userId
-									select al).ToList();
+			var logs = await _actionLogsRepository.GetAllActionLogsForUser(userId);
 
-			_actionLogsRepository.DeleteAll(logs);
-		}
-
-		public void DeleteAllActionLogsForDepartment(int departmentId)
-		{
-			var actionLogs = (from al in _actionLogsRepository.GetAll()
-												where al.DepartmentId == departmentId
-												select al).ToList();
-
-			_actionLogsRepository.DeleteAll(actionLogs);
-		}
-
-		public List<int> GetActionsCountForLast7DaysForDepartment(int departmentId)
-		{
-			List<int> actions = new List<int>();
-			var startDate = DateTime.UtcNow.AddDays(-7);
-
-			var logsForLast7Days =
-				_actionLogsRepository.GetAll()
-					.Where(
-						x =>
-							x.DepartmentId == departmentId &&
-							x.Timestamp >= startDate).ToList();
-
-			for (int i = 0; i < 7; i++)
+			if (logs != null && logs.Any())
 			{
-				actions.Add(logsForLast7Days.Count(x => x.Timestamp.ToShortDateString() == DateTime.UtcNow.AddDays(-i).ToShortDateString()));
+				foreach (var log in logs)
+				{
+					await _actionLogsRepository.DeleteAsync(log, cancellationToken);
+				}
+				
+				return true;
 			}
 
-			return actions;
+			return false;
 		}
 
-		public ActionLog GetActionlogById(int actionLogId)
+		public async Task<bool> DeleteAllActionLogsForDepartmentAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _actionLogsRepository.GetActionlogById(actionLogId);
+			var logs = await _actionLogsRepository.GetAllActionLogsForDepartmentAsync(departmentId);
+
+			if (logs != null && logs.Any())
+			{
+				foreach (var log in logs)
+				{
+					await _actionLogsRepository.DeleteAsync(log, cancellationToken);
+				}
+				
+				return true;
+			}
+
+			return false;
 		}
 
-		[CoverageIgnore]
-		public Dictionary<string, int> GetNewActionsCountForLast5Days()
+		public async Task<ActionLog> GetActionLogByIdAsync(int actionLogId)
 		{
-			Dictionary<string, int> data = new Dictionary<string, int>();
-			var startDate = DateTime.UtcNow.AddDays(-4);
-
-			var logsForLast7Days =
-				_actionLogsRepository.GetAll()
-					.Where(
-						x => x.Timestamp >= startDate).ToList();
-
-			data.Add(DateTime.UtcNow.ToShortDateString(), logsForLast7Days.Count(x => x.Timestamp.ToShortDateString() == DateTime.UtcNow.ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-1).ToShortDateString(), logsForLast7Days.Count(x => x.Timestamp.ToShortDateString() == DateTime.UtcNow.AddDays(-1).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-2).ToShortDateString(), logsForLast7Days.Count(x => x.Timestamp.ToShortDateString() == DateTime.UtcNow.AddDays(-2).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-3).ToShortDateString(), logsForLast7Days.Count(x => x.Timestamp.ToShortDateString() == DateTime.UtcNow.AddDays(-3).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-4).ToShortDateString(), logsForLast7Days.Count(x => x.Timestamp.ToShortDateString() == DateTime.UtcNow.AddDays(-4).ToShortDateString()));
-
-			return data;
+			return await _actionLogsRepository.GetByIdAsync(actionLogId);
 		}
 
-		public List<ActionLog> GetActionLogsForCall(int departmentId, int callId)
+		public async Task<List<ActionLog>> GetActionLogsForCallAsync(int departmentId, int callId)
 		{
 			List<int> callEnabledStates = new List<int>();
-			var states = _customStateService.GetAllCustomStatesForDepartment(departmentId);
+			var states = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			callEnabledStates.Add((int)ActionTypes.OnScene);
 			callEnabledStates.Add((int)ActionTypes.RespondingToScene);
@@ -463,11 +394,8 @@ namespace Resgrid.Services
 
 			callEnabledStates.AddRange(from state in nonNullStates from detail in state.Details where detail.DetailType == (int)CustomStateDetailTypes.Calls || detail.DetailType == (int)CustomStateDetailTypes.CallsAndStations select detail.DetailType);
 
-			var unitStates = (from us in _actionLogsRepository.GetAll()
-												where callEnabledStates.Contains(us.ActionTypeId) && us.DestinationId == callId
-												select us).ToList();
-
-			return unitStates;
+			var items = await _actionLogsRepository.GetActionLogsForCallAndTypesAsync(callId, callEnabledStates);
+			return items.ToList();
 		}
 	}
 }

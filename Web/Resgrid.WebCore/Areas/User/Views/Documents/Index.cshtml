@@ -1,116 +1,119 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Documents.IndexView
 @{
-	ViewBag.Title = "Resgrid | Documents";
+  ViewBag.Title = "Resgrid | Documents";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Documents</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li class="active">
-				<strong>Documents</strong>
-			</li>
-		</ol>
-	</div>
+  <div class="col-sm-4">
+    <h2>Documents</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Documents</strong>
+      </li>
+    </ol>
+  </div>
 </div>
 
 <div class="wrapper wrapper-content">
-	<div class="row">
-		<div class="col-lg-3">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div class="file-manager">
-						<h5>Show:</h5>
-						<a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="" asp-route-category="@Model.SelectedCategory" class="file-control">All</a>
-						<a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Documents" asp-route-category="@Model.SelectedCategory" class="file-control">Documents</a>
-						<a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Spreadsheets" asp-route-category="@Model.SelectedCategory" class="file-control">Spreadsheets</a>
-						<a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Presentations" asp-route-category="@Model.SelectedCategory" class="file-control">Presentations</a>
-						<a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Images" asp-route-category="@Model.SelectedCategory" class="file-control">Images</a>
-						<div class="hr-line-dashed"></div>
-@if (ClaimsAuthorizationHelper.CanCreateDocument())
-{
-						<a title="Add a new document" class="btn btn-success btn-block" href="@Url.Action("NewDocument", "Documents", new { area = "User" })"><i class="icon-plus"></i> New Document</a>
-}
-						<div class="hr-line-dashed"></div>
-						<h5>Categories</h5>
-						<ul class="folder-list" style="padding: 0">
-							<li><a href=""><i class="fa fa-folder"></i>All</a></li>
-							@foreach (var category in Model.Categories)
-							{
-								<li><a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="@Model.SelectedType" asp-route-category="@category"><i class="fa fa-folder"></i>@category</a></li>
-							}
-						</ul>
-						<div class="clearfix"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-9 animated fadeInRight">
-			<div class="row">
-				<div class="col-lg-12">
-					@foreach (var doc in Model.Documents)
-					{
-						<div class="file-box">
-							<div class="file">
-								<a asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">
-									<span class="corner"></span>
-									<div class="icon">
-										<i class="@doc.GetIconType()"></i>
-									</div>
-									<div class="file-name">
-										<a asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
-										<br />
-										<small>Added: @doc.AddedOn.TimeConverterToString(Model.Department)</small>
-									</div>
-								</a>
-							</div>
-						</div>
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="file-manager">
+            <h5>Show:</h5>
+            <a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="" asp-route-category="@Model.SelectedCategory" class="file-control">All</a>
+            <a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Documents" asp-route-category="@Model.SelectedCategory" class="file-control">Documents</a>
+            <a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Spreadsheets" asp-route-category="@Model.SelectedCategory" class="file-control">Spreadsheets</a>
+            <a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Presentations" asp-route-category="@Model.SelectedCategory" class="file-control">Presentations</a>
+            <a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="Images" asp-route-category="@Model.SelectedCategory" class="file-control">Images</a>
+            <div class="hr-line-dashed"></div>
+            @if (ClaimsAuthorizationHelper.CanCreateDocument())
+			{
+              <a title="Add a new document" class="btn btn-success btn-block" href="@Url.Action("NewDocument", "Documents", new { area = "User" })"><i class="icon-plus"></i> New Document</a>
+			}
+            <div class="hr-line-dashed"></div>
+            <h5>Categories</h5>
+            <ul class="folder-list" style="padding: 0">
+              <li><a asp-controller="Documents" asp-action="Index" asp-route-area="User"><i class="fa fa-folder"></i>All</a></li>
+              @foreach (var category in Model.Categories)
+			  {
+                @if (!String.IsNullOrWhiteSpace(category))
+				{
+                  <li><a asp-controller="Documents" asp-action="Index" asp-route-area="User" asp-route-type="@Model.SelectedType" asp-route-category="@category"><i class="fa fa-folder"></i>@category</a></li>
+				}
+			  }
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-9 animated fadeInRight">
+      <div class="row">
+        <div class="col-lg-12">
+          @foreach (var doc in Model.Documents)
+		  {
+            <div class="file-box">
+              <div class="file">
+                <a asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">
+                  <span class="corner"></span>
+                  <div class="icon">
+                    <i class="@doc.GetIconType()"></i>
+                  </div>
+                  <div class="file-name">
+                    <a asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
+                    <br />
+                    <small>Added: @doc.AddedOn.TimeConverterToString(Model.Department)</small>
+                  </div>
+                </a>
+              </div>
+            </div>
 
-						@*<tr>
-							<td>
-								<a href="@Url.Action("GetDocument", "Documents", new {Area="User", documentId = doc.DocumentId})">@doc.Name</a>
-							</td>
-							<td>
-								@doc.Category
-							</td>
-							<td>
-								@Html.TimeConverterToString(doc.AddedOn, Model.Department)
-							</td>
-							<td>
-								<div class='btn-group'>
-									<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-cog'></i> <span class='caret'></span></a>
-									<ul class='dropdown-menu pull-right'>
-										<li>
-											<a href="@Url.Action("GetDocument", "Documents", new { area = "User", documentId = doc.DocumentId })">
-												<i class='icon-download'></i> Download
-											</a>
-										</li>
-										@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId != Model.UserId)
-										{
-											<li>
-												<a href="@Url.Action("EditDocument", "Documents", new {area = "User", documentId = doc.DocumentId})">
-													<i class='icon-edit'></i> Edit
-												</a>
-											</li>
-												<li>
-													<a href="@Url.Action("DeleteDocument", "Documents", new {area = "User", documentId = doc.DocumentId})" data-confirm="WARNING: This will permanently delete this document. Are you sure you want to delete the document @doc.Name?" rel="nofollow"><i class="icon-trash"></i>&nbsp;Delete</a>
-												</li>
-										}
-									</ul>
-								</div>
+            @*<tr>
+				  <td>
+					  <a href="@Url.Action("GetDocument", "Documents", new {Area="User", documentId = doc.DocumentId})">@doc.Name</a>
+				  </td>
+				  <td>
+					  @doc.Category
+				  </td>
+				  <td>
+					  @Html.TimeConverterToString(doc.AddedOn, Model.Department)
+				  </td>
+				  <td>
+					  <div class='btn-group'>
+						  <a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-cog'></i> <span class='caret'></span></a>
+						  <ul class='dropdown-menu pull-right'>
+							  <li>
+								  <a href="@Url.Action("GetDocument", "Documents", new { area = "User", documentId = doc.DocumentId })">
+									  <i class='icon-download'></i> Download
+								  </a>
+							  </li>
+							  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId != Model.UserId)
+							  {
+								  <li>
+									  <a href="@Url.Action("EditDocument", "Documents", new {area = "User", documentId = doc.DocumentId})">
+										  <i class='icon-edit'></i> Edit
+									  </a>
+								  </li>
+									  <li>
+										  <a href="@Url.Action("DeleteDocument", "Documents", new {area = "User", documentId = doc.DocumentId})" data-confirm="WARNING: This will permanently delete this document. Are you sure you want to delete the document @doc.Name?" rel="nofollow"><i class="icon-trash"></i>&nbsp;Delete</a>
+									  </li>
+							  }
+						  </ul>
+					  </div>
 
-							</td>
-						</tr>*@
-					}
+				  </td>
+			  </tr>*@
+		  }
 
-					
 
-				</div>
-			</div>
-		</div>
-	</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

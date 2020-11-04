@@ -3,14 +3,39 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	public interface IPaymentRepository : IRepository<Payment>
+	/// <summary>
+	/// Interface IPaymentRepository
+	/// Implements the <see cref="Payment" />
+	/// </summary>
+	/// <seealso cref="Payment" />
+	public interface IPaymentRepository: IRepository<Payment>
 	{
-		DepartmentPlanCount GetDepartmentPlanCounts(int deparmentId);
-		void InsertPayment(Payment payment);
-		Payment GetLatestPaymentForDepartment(int departmentId);
-		Payment GetPaymentByTransactionId(string transactionId);
-		void UpdatePayment(Payment payment);
-		Task<Payment> GetLatestPaymentForDepartmentAsync(int departmentId);
-		Task<Plan> GetLatestPlanForDepartmentAsync(int departmentId);
+		/// <summary>
+		/// Gets the department plan counts by department identifier asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;DepartmentPlanCount&gt;.</returns>
+		Task<DepartmentPlanCount> GetDepartmentPlanCountsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the payment by transaction identifier asynchronous.
+		/// </summary>
+		/// <param name="transactionId">The transaction identifier.</param>
+		/// <returns>Task&lt;Payment&gt;.</returns>
+		Task<Payment> GetPaymentByTransactionIdAsync(string transactionId);
+
+		/// <summary>
+		/// Gets all payments by department identifier asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Payment&gt;&gt;.</returns>
+		Task<IEnumerable<Payment>> GetAllPaymentsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the payment by identifier identifier asynchronous.
+		/// </summary>
+		/// <param name="paymentId">The payment identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Payment&gt;&gt;.</returns>
+		Task<Payment> GetPaymentByIdIdAsync(int paymentId);
 	}
 }

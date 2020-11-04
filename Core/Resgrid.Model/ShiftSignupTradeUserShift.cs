@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Resgrid.Model
@@ -23,10 +24,19 @@ namespace Resgrid.Model
 		public virtual ShiftSignup ShiftSignup { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftSignupTradeUserShiftId; }
 			set { ShiftSignupTradeUserShiftId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ShiftSignupTradeUserShifts";
+
+		[NotMapped]
+		public string IdName => "ShiftSignupTradeUserShiftId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ShiftSignupTradeUser", "ShiftSignup" };
 	}
 }

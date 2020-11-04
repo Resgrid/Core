@@ -1,22 +1,23 @@
-﻿using Autofac;
+﻿using System.Threading.Tasks;
+using CommonServiceLocator;
 using Resgrid.Model.Services;
 
-namespace Resgrid.Web.ServicesCore.Helpers
+namespace Resgrid.Web.Helpers
 {
 	public static class CallPriorityHelper
 	{
-		public static string CallPriorityToString(int departmentId, int priority)
+		public static async Task<string> CallPriorityToString(int departmentId, int priority)
 		{
-			var callsService = WebBootstrapper.GetKernel().Resolve<ICallsService>();
+			var callsService = ServiceLocator.Current.GetInstance<ICallsService>(); // WebBootstrapper.GetKernel().Resolve<ICallsService>();
 
-			return callsService.CallPriorityToString(priority, departmentId);
+			return await callsService.CallPriorityToStringAsync(priority, departmentId);
 		}
 
-		public static string CallPriorityToColor(int departmentId, int priority)
+		public static async Task<string> CallPriorityToColor(int departmentId, int priority)
 		{
-			var callsService = WebBootstrapper.GetKernel().Resolve<ICallsService>();
+			var callsService = ServiceLocator.Current.GetInstance<ICallsService>(); //WebBootstrapper.GetKernel().Resolve<ICallsService>();
 
-			return callsService.CallPriorityToColor(priority, departmentId);
+			return await callsService.CallPriorityToColorAsync(priority, departmentId);
 		}
 	}
 }

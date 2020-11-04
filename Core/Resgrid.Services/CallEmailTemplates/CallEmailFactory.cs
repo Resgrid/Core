@@ -31,15 +31,17 @@ namespace Resgrid.Services.CallEmailTemplates
 			_templates.Add((int)CallEmailTypes.Yellowhead, new YellowHeadTemplate());
 			_templates.Add((int)CallEmailTypes.ParklandCounty2, new ParklandCounty2Template());
 			_templates.Add((int)CallEmailTypes.FourPartPipe, new FourPartPipeTemplate());
+			_templates.Add((int)CallEmailTypes.RandR, new RandRTemplate());
+			_templates.Add((int)CallEmailTypes.Active911, new Active911lTemplate());
 		}
 
-		public Call GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority)
+		public Call GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
 		{
 			Call call = null;
 
 			try
 			{
-				call = _templates[(int)type].GenerateCall(email, managingUser, users, department, activeCalls, units, priority);
+				call = _templates[(int)type].GenerateCall(email, managingUser, users, department, activeCalls, units, priority, activePriorities);
 			}
 			catch (Exception ex)
 			{

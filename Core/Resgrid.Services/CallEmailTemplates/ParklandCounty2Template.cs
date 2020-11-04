@@ -10,7 +10,7 @@ namespace Resgrid.Services.CallEmailTemplates
 {
 	public class ParklandCounty2Template : ICallEmailTemplate
 	{
-		public Call GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority)
+		public Call GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
 		{
 			if (email == null)
 				return null;
@@ -122,7 +122,7 @@ namespace Resgrid.Services.CallEmailTemplates
 					activeCall.Priority = c.Priority;
 					activeCall.Notes = c.Notes;
 					activeCall.LastDispatchedOn = DateTime.UtcNow;
-					activeCall.DispatchCount++;
+					activeCall.IncreaseDispatchCount();
 
 					return activeCall;
 				}

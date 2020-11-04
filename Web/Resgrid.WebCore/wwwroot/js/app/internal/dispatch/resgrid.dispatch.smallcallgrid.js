@@ -10,7 +10,7 @@ var resgrid;
                     dataSource: {
                         type: "json",
                         transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Dispatch/GetActiveCallsForGrid'
+                            read: '/User/Dispatch/GetActiveCallsForGrid'
                         },
                         schema: {
                             model: {

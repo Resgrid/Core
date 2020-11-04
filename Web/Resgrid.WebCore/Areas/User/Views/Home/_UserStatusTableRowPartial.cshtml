@@ -61,7 +61,7 @@
 	}
 	else
 	{
-		var customState = CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), us.State);
+		var customState = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), us.State);
 
 		if (customState != null)
 		{
@@ -148,7 +148,7 @@
 		}
 		else
 		{
-			var customAction = CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), al.ActionTypeId);
+			var customAction = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), al.ActionTypeId);
 
 			if (customAction != null)
 			{

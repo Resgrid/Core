@@ -1,94 +1,60 @@
 ﻿@model Resgrid.Web.Areas.User.Models.DepartmentSettingsModel
 @{
-	ViewBag.Title = "Resgrid | API Settings";
+  ViewBag.Title = "Resgrid | API Settings";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>API Settings</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li class="active">
-				<strong>API Settings</strong>
-			</li>
-		</ol>
-	</div>
+  <div class="col-sm-4">
+    <h2>API Settings</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>API Settings</strong>
+      </li>
+    </ol>
+  </div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div class="form-horizontal">
-						<p>
-							Your Api Key is a password that other systems and software can use to access Resgrid. Resgrid uses a REST based web Api that can easily be integrated with a
-							wide variety of software platforms; from eDispatch systems, to automation software and even your own custom software platforms. Using the form below you can
-							provision your Api Key or change it. If you change your existing Api Key all software that uses your old key will need to be updated to use the new key.
-						</p>
-						<p>
-							Your can view our public API documentation at <a href="http://api.resgrid.com/Help" target="_blank">http://api.resgrid.com/Help</a>.
-						</p>
-						<div class="alert alert-error">
-							Your Api key is like a username and password for Resgrid. You must treat it like you would your login information. If someone were to
-							gain access to the departments Api Key they could cause serious issues (Removing and adding personnel, changing statuses, sending messages, etc). If
-							you elect to enable the Api key, protect it.
-						</div>
-						@if (String.IsNullOrEmpty(Model.Department.ApiKey))
-						{
-							<p>
-								Your department does not have an Api Key provisioned. Click the button below to provision your Api Key. Only provision an Api Key when your department needs it.
-							</p>
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="form-horizontal">
+            <h5>RSS Active Call Feed</h5>
+            <p>
+              Resgrid allows your department’s active calls to be accessed via a RSS feed. This allows any feed reader (like a blog reader, or even Microsoft Outlook) to actively display and notify of new calls. For maximum compatible Resgrid will generate a unique URL for RSS 2.0 readers. This URL has no other protection (username\password, etc) so it’s important that it’s not publicly shared if you which not to have active calls data public.
+            </p>
+            @if (String.IsNullOrEmpty(Model.ActiveCallRssKey))
+			{
+              <p>
+                Your department does not have RSS feed Urls provisioned. Click the button below to provision your RSS Urls. Only provision RSS\Atom Urls when your department needs it.
+              </p>
 
-							<fieldset class="form-actions">
-								<a class="btn btn-large btn-inverse" href="@Url.Action("ProvisionApiKey", "Department", new { area = "User" })">Provision Api Key</a>
-							</fieldset>
-						}
-						else
-						{
-							<h4>Your Api key is</h4>
-							<dl class="dl-horizontal">
-								<dt>API Key</dt>
-								<dd>@Model.Department.ApiKey</dd>
-							</dl>
-										<fieldset class="form-actions">
-											<a class="btn btn-mini btn-danger" data-confirm="WARNING: Regenerating your Api Key will require all calling systems to be updated the new key. Are you sure you want to regenerate?" href="@Url.Action("ProvisionApiKey", "Department", new { area = "User" })">Regenerate Api Key</a>
-										</fieldset>
-						}
-						<h5>RSS\ATOM Active Call Feed</h5>
-						<p>
-							Resgrid allows your department’s active calls to be accessed via a RSS or Atom feed. This allows any feed reader (like a blog reader, or even Microsoft Outlook) to actively display and notify of new calls. For maximum compatible Resgrid will generate a unique URL for both Atom 1.0 and RSS 2.0 readers. This URL has no other protection (username\password, etc) so it’s important that it’s not publicly accessible if you which not to have active calls data public.
-						</p>
-						@if (String.IsNullOrEmpty(Model.ActiveCallRssKey))
-						{
-							<p>
-								Your department does not have RSS\Atom feed Urls provisioned. Click the button below to provision your RSS\Atom Urls. Only provision RSS\Atom Urls when your department needs it.
-							</p>
-
-							<fieldset class="form-actions">
-								<a class="btn btn-large btn-inverse" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">Provision Rss\Atm Urls</a>
-							</fieldset>
-						}
-						else
-						{
-							<h4>Your Active Call Feed Urls are</h4>
-							<dl class="dl-horizontal">
-								<dt>RSS 2.0</dt>
-								<dd><a href="http://api.resgrid.com/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey">http://api.resgrid.com/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey</a></dd>
-								@*<dt>Atom 1.0</dt>
-									<dd><a href="http://api.resgrid.com/Feeds/GetActiveCallsAsAtom/@Model.ActiveCallRssKey">http://api.resgrid.com/Feeds/GetActiveCallsAsAtom/@Model.ActiveCallRssKey</a></dd>*@
-							</dl>
-										<fieldset class="form-actions">
-											<a class="btn btn-mini btn-danger" data-confirm="WARNING: Regenerating your Rss\Atom Urls will require all readers\consumers to update to the a new Url. Are you sure you want to regenerate?" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">Regenerate Rss\Atm Urls</a>
-										</fieldset>
-						}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+              <fieldset class="form-actions">
+                <a class="btn btn-large btn-inverse" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">Provision Rss\Atm Urls</a>
+              </fieldset>
+			}
+			else
+			{
+              <h4>Your Active Call Feed Urls are</h4>
+              <dl class="dl-horizontal">
+                <dt>RSS 2.0</dt>
+                <dd><a href="https://api.resgrid.com/api/v3/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey">https://api.resgrid.com/api/v3/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey</a></dd>
+                @*<dt>Atom 1.0</dt>
+				  <dd><a href="http://api.resgrid.com/Feeds/GetActiveCallsAsAtom/@Model.ActiveCallRssKey">http://api.resgrid.com/Feeds/GetActiveCallsAsAtom/@Model.ActiveCallRssKey</a></dd>*@
+              </dl>
+              <fieldset class="form-actions">
+                <a class="btn btn-mini btn-danger" data-confirm="WARNING: Regenerating your Rss\Atom Urls will require all readers\consumers to update to the a new Url. Are you sure you want to regenerate?" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">Regenerate RSS Urls</a>
+              </fieldset>
+			}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 @section Scripts
 {

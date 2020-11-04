@@ -84,11 +84,20 @@ namespace Resgrid.Model
 		public string DepartmentTimeZone { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ScheduledTaskId; }
 			set { ScheduledTaskId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ScheduledTasks";
+
+		[NotMapped]
+		public string IdName => "ScheduledTaskId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "User", "DepartmentTimeZone" };
 
 		public List<DayOfWeek> GetDaysOfWeek()
 		{

@@ -1,4 +1,4 @@
-﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentTypesView
+﻿@model Resgrid.WebCore.Areas.User.Models.Types.ListOrderingView
 @{
   ViewBag.Title = "Resgrid | List Ordering";
 }
@@ -7,24 +7,24 @@
 
 }
 
-  <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-4">
-      <h2>List Ordering</h2>
-      <ol class="breadcrumb">
-        <li>
-          <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-        </li>
-        <li class="active">
-          <strong>List Ordering</strong>
-        </li>
-      </ol>
-    </div>
-    <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <a id="departmentWideTypesButton" class="btn btn-primary top-button" title="Manage Department Types" asp-controller="Department" asp-action="Types" asp-route-area="User">Department Wide Types</a>
-      </div>
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>List Ordering</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>List Ordering</strong>
+      </li>
+    </ol>
+  </div>
+  <div class="col-sm-8">
+    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+      <a id="departmentWideTypesButton" class="btn btn-info top-button" title="Manage Department Types" asp-controller="Department" asp-action="Types" asp-route-area="User">Department Wide Types</a>
     </div>
   </div>
+</div>
 
 <div class="row">
   <div class="col-xs-12">
@@ -34,36 +34,50 @@
           <h5>Personnel Status Ordering</h5>
           <div class="ibox-tools">
             <div class="buttons-actions">
-              <a title="Add a status to order" class="btn btn-success" data-target="#newCallTypeModal" data-toggle="modal">Add Status</a>
+              <a title="Add a status to order" class="btn btn-success" data-target="#addStatusOrderingModal" data-toggle="modal">Add Status</a>
             </div>
           </div>
         </div>
         <div class="ibox-content">
           <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Weight</th>
-                  <th>Status Name</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
+            @using (Html.BeginForm("SavePersonnelStatusListOrdering", "Types", FormMethod.Post, new { area = "User", id = "personnelStatusOrderingForm", @class = "form-horizontal" }))
+			{
+              <table id="personnelStatusOrdering" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Weight</th>
+                    <th>Status Name</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @{ int count = 0; }
+                  @foreach (var detail in Model.PersonnelStatusOrders)
+				  {
+					count++;
+					var status = Model.AllPersonnelStatuses.FirstOrDefault(x => x.CustomStateDetailId == detail.StatusId);
 
-                <tr>
-                  <td>
-                    
-                  </td>
+					if (status != null)
+					{
+                      <tr>
+                        <td><input type='number' min='0' id='personnelStatus_@count' name='personnelStatus_@count' value='@detail.Weight.ToString()' onkeypress='return resgrid.types.listordering.isNumber(event)'></td>
+                        <td>@status.ButtonText<input type='hidden' id='personnelStatusValue_@count' name='personnelStatusValue_@count' value='@status.CustomStateDetailId'></td>
+                        <td style='text-align: center;'>
+                          <a class="btn btn-primary btn-xs" href="@Url.Action("DeletePersonnelListStatus", "Types", new {Area = "User", statusId = detail.StatusId})" data-original-title='Delete this option'>Delete</a>
+                        </td>
+                      </tr>
+					}
+				  }
+                </tbody>
+              </table>
+              <div>
+                <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Save Ordering List" />
+              </div>
+			}
 
-                  <td>
-                  </td>
-
-                  <td>
-                  </td>
-                </tr>
-
-              </tbody>
-            </table>
+            <div class="alert alert-info">
+              Personnel Statuses are ordered from the lowest number to the largest. When the ordering is changed personnel will need to get the latest setting on their applications to pick up the new order.
+            </div>
           </div>
         </div>
       </div>
@@ -71,11 +85,37 @@
   </div>
 </div>
 
+<div class="modal fade" id="addStatusOrderingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">Select Status To Add</h4>
+      </div>
+      <div class="modal-body">
+        <div id="addOptionErrors" style="display:none;" class="alert alert-danger"></div>
+        <div class="form-group">
+          <label for="newPersonnelStatus" class="control-label">Available Statuses:</label>
+          <select id="newPersonnelStatus">
+            @foreach (var status in Model.AvailablePersonnelStatuses)
+			{
+              <option value="@status.IdValue">@status.ButtonText</option>
+			}
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="resgrid.types.listordering.addStatus();">Add Status</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @section Scripts
-  {
+{
+  <script src="~/js/app/internal/types/resgrid.types.listordering.js"></script>
   <script>
-	$(document).ready(function () {
-	  resgrid.common.analytics.track('Department - List Ordering');
-	});
+		resgrid.types.listordering.statusCount = @Model.PersonnelStatusOrders.Count.ToString()
   </script>
 }

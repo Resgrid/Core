@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 
 namespace Resgrid.Model
 {
@@ -57,18 +56,19 @@ namespace Resgrid.Model
 		public ProtocolStates State { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DispatchProtocolId; }
 			set { DispatchProtocolId = (int)value; }
 		}
-	}
 
-	public class DispatchProtocol_Mapping : EntityTypeConfiguration<DispatchProtocol>
-	{
-		public DispatchProtocol_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "DispatchProtocols";
+
+		[NotMapped]
+		public string IdName => "DispatchProtocolId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Triggers", "Attachments", "Questions", "State" };
 	}
 }

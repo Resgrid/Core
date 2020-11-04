@@ -1,16 +1,15 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Identity.Dapper.Queries.Role
+namespace Resgrid.Repositories.DataRepository.Queries.Identity.Role
 {
-    public class InsertRoleQuery : IInsertQuery
+    public class InsertQuery : IInsertQuery
     {
         private readonly SqlConfiguration _sqlConfiguration;
-        public InsertRoleQuery(SqlConfiguration sqlConfiguration)
+        public InsertQuery(SqlConfiguration sqlConfiguration)
         {
             _sqlConfiguration = sqlConfiguration;
         }
@@ -25,6 +24,7 @@ namespace Identity.Dapper.Queries.Role
             var query = _sqlConfiguration.InsertRoleQuery
                                          .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.RoleTable,
+                                                                       _sqlConfiguration.InsertGetReturnIdCommand,
                                                                        columns.GetCommaSeparatedColumns(),
                                                                        string.Join(", ", valuesArray));
 

@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CommonServiceLocator;
 
 namespace Resgrid.Repositories.DataRepository.Queries
 {
@@ -14,11 +15,9 @@ namespace Resgrid.Repositories.DataRepository.Queries
 	{
 		private readonly ConcurrentDictionary<Type, IQuery> _dictionary;
 
-		private readonly IServiceProvider _serviceProvider;
-		public QueryList(IServiceProvider serviceProvider)
+		public QueryList()
 		{
 			_dictionary = new ConcurrentDictionary<Type, IQuery>();
-			_serviceProvider = serviceProvider;
 		}
 
 		public ConcurrentDictionary<Type, IQuery> RetrieveQueryList()
@@ -43,7 +42,8 @@ namespace Resgrid.Repositories.DataRepository.Queries
 
 						var parameterList = new List<object>();
 						foreach (var parameter in constructorParameters)
-							parameterList.Add(_serviceProvider.GetService(parameter.ParameterType));
+							//parameterList.Add(_serviceProvider.GetService(parameter.ParameterType));
+							parameterList.Add(ServiceLocator.Current.GetInstance(parameter.ParameterType));
 
 						return parameterList;
 					});

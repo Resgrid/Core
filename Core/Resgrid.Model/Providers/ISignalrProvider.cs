@@ -1,10 +1,12 @@
-﻿namespace Resgrid.Model.Providers
+﻿using System.Threading.Tasks;
+
+namespace Resgrid.Model.Providers
 {
 	public interface ISignalrProvider
 	{
-		void PersonnelStatusUpdated(int departmentId, ActionLog actionLog);
-		void UnitStatusUpdated(int departmentId, UnitState unitState);
-		void CallsUpdated(int departmentId, Call call);
-		void PersonnelStaffingUpdated(int departmentId, UserState userState);
+		Task<bool> PersonnelStatusUpdated(int departmentId, ActionLog actionLog);
+		Task<bool> UnitStatusUpdated(int departmentId, UnitState unitState);
+		Task<bool> CallsUpdated(int departmentId, Call call);
+		Task<bool> PersonnelStaffingUpdated(int departmentId, UserState userState);
 	}
 }

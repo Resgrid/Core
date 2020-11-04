@@ -1,81 +1,116 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using System.Configuration;
-using System.Data;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Plans;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class PlansRepository : RepositoryBase<Plan>, IPlansRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public PlansRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public Plan GetPlanByExternalId(string externalId)
+		public PlansRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				return db.Query<Plan>($"SELECT TOP 1 * FROM Plans WHERE ExternalId = @externalId", new { externalId = externalId }).FirstOrDefault();
-			}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<Plan> GetPlanByExternalIdAsync(string externalId)
+		public async Task<Plan> GetPlanByPlanIdAsync(int planId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var plan = await db.QueryAsync<Plan>($"SELECT TOP 1 * FROM Plans WHERE ExternalId = @externalId", new {externalId = externalId});
-
-				return plan.FirstOrDefault();
-			}
-		}
-
-		public async Task<Plan> GetPlanByIdAsync(int planId)
-		{
-			Dictionary<int, Plan> lookup = new Dictionary<int, Plan>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var query = @"SELECT pl.*, lim.* FROM Plans pl
-							  LEFT OUTER JOIN PlanLimits lim ON lim.PlanId = pl.PlanId
-							  WHERE pl.PlanId = @planId";
-
-				var plans = await db.QueryAsync<Plan, PlanLimit, Plan>(query, (p, pl) =>
+				var selectFunction = new Func<DbConnection, Task<Plan>>(async x =>
 				{
-					Plan newPlan;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("PlanId", planId);
 
-					if (!lookup.TryGetValue(p.PlanId, out newPlan))
+					var query = _queryFactory.GetQuery<SelectPlanByPlanIdQuery>();
+
+					var dictionary = new Dictionary<int, Plan>();
+					var result = await x.QueryAsync<Plan, PlanLimit, Plan>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: PlanLimitMapping(dictionary),
+						splitOn: "PlanLimitId");
+
+					if (dictionary.Count > 0)
+						return dictionary.Select(y => y.Value).FirstOrDefault();
+
+					return result.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						lookup.Add(p.PlanId, p);
-						newPlan = p;
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
-
-					if (p.PlanLimits == null)
-						p.PlanLimits = new List<PlanLimit>();
-
-					if (pl != null && !newPlan.PlanLimits.Contains(pl))
-					{
-						pl.Plan = newPlan;
-						newPlan.PlanLimits.Add(pl);
-					}
-
-					return newPlan;
-
-				}, new { planId = planId }, splitOn: "PlanLimitId");
-
-				return plans.FirstOrDefault();
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		private static Func<Plan, PlanLimit, Plan> PlanLimitMapping(Dictionary<int, Plan> dictionary)
+		{
+			return new Func<Plan, PlanLimit, Plan>((plan, planLimit) =>
+			{
+				var dictionaryPlan = default(Plan);
+
+				if (planLimit != null)
+				{
+					if (dictionary.TryGetValue(plan.PlanId, out dictionaryPlan))
+					{
+						if (dictionaryPlan.PlanLimits.All(x => x.PlanLimitId != planLimit.PlanLimitId))
+							dictionaryPlan.PlanLimits.Add(planLimit);
+					}
+					else
+					{
+						if (plan.PlanLimits == null)
+							plan.PlanLimits = new List<PlanLimit>();
+
+						plan.PlanLimits.Add(planLimit);
+						dictionary.Add(plan.PlanId, plan);
+
+						dictionaryPlan = plan;
+					}
+				}
+				else
+				{
+					plan.PlanLimits = new List<PlanLimit>();
+					dictionaryPlan = plan;
+					dictionary.Add(plan.PlanId, plan);
+				}
+
+				return dictionaryPlan;
+			});
 		}
 	}
 }

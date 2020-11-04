@@ -217,6 +217,7 @@ namespace Resgrid.Repositories.DataRepository
 				else
 				{
 					dictionaryUser = user;
+					userDictionary.Add(user.Id, user);
 				}
 
 				return dictionaryUser;
@@ -335,15 +336,15 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						dynamic userLogin = new
+						IdentityUserLoginInfo userLogin = new IdentityUserLoginInfo()
 						{
 							UserId = id,
-							loginInfo.LoginProvider,
-							loginInfo.ProviderKey,
-							Name = loginInfo.ProviderDisplayName
+							LoginProvider = loginInfo.LoginProvider,
+							ProviderKey = loginInfo.ProviderKey,
+							ProviderDisplayName = loginInfo.ProviderDisplayName
 						};
 
-						var query = (string)_queryFactory.GetInsertQuery<InsertUserLoginQuery, dynamic>(userLogin);
+						var query = (string)_queryFactory.GetInsertQuery<InsertUserLoginQuery, IdentityUserLoginInfo>(userLogin);
 
 						var result = await x.ExecuteAsync(query, (object)userLogin, _unitOfWork.Transaction);
 
@@ -542,9 +543,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						var defaultUser = Activator.CreateInstance<IdentityUser>();
-
-						var query = _queryFactory.GetQuery<GetUserLoginByLoginProviderAndProviderKeyQuery, IdentityUser>(defaultUser);
+						var query = _queryFactory.GetQuery<GetUserLoginByLoginProviderAndProviderKeyQuery, IdentityUser>();
 
 						var userDictionary = new Dictionary<string, IdentityUser>();
 						var result = await x.QueryAsync(sql: query,
@@ -714,8 +713,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IList<IdentityUser>>>(async x =>
 				{
-					var defaultUser = Activator.CreateInstance<IdentityUser>();
-					var query = _queryFactory.GetQuery<GetUsersByClaimQuery, IdentityUser>(defaultUser);
+					var query = _queryFactory.GetQuery<GetUsersByClaimQuery, IdentityUser>();
 
 					var result = await x.QueryAsync<IdentityUser>(sql: query,
 														   param: new
@@ -758,9 +756,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IList<IdentityUser>>>(async x =>
 				{
-					var defaultUser = Activator.CreateInstance<IdentityUser>();
-
-					var query = _queryFactory.GetQuery<GetUsersInRoleQuery, IdentityUser>(defaultUser);
+					var query = _queryFactory.GetQuery<GetUsersInRoleQuery, IdentityUser>();
 
 					var result = await x.QueryAsync<IdentityUser>(sql: query,
 														   param: new
@@ -802,9 +798,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
-					var defaultUser = Activator.CreateInstance<IdentityUser>();
-
-					var query = _queryFactory.GetQuery<IsInRoleQuery, IdentityUser>(defaultUser);
+					var query = _queryFactory.GetQuery<IsInRoleQuery, IdentityUser>();
 
 					var result = await x.QueryAsync(sql: query,
 													param: new

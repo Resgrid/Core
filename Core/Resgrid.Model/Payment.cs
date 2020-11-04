@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using ProtoBuf;
 using Resgrid.Framework;
 using Resgrid.Model.Identity;
@@ -95,11 +95,21 @@ namespace Resgrid.Model
 		public string SubscriptionId { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PaymentId; }
 			set { PaymentId = (int)value; }
 		}
+
+				
+		[NotMapped]
+		public string TableName => "Payments";
+
+		[NotMapped]
+		public string IdName => "PaymentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Plan", "UpgradedPayment" , "PurchasingUser"  };
 
 		public DateTime GetEndDate()
 		{
@@ -121,15 +131,6 @@ namespace Resgrid.Model
 			}
 
 			return DateTime.MinValue;
-		}
-	}
-
-	public class Payment_Mapping : EntityTypeConfiguration<Payment>
-	{
-		public Payment_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-			this.HasOptional<Payment>(u => u.UpgradedPayment).WithOptionalPrincipal();
 		}
 	}
 }

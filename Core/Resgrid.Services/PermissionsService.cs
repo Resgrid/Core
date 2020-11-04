@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -10,27 +12,29 @@ namespace Resgrid.Services
 	public class PermissionsService: IPermissionsService
 	{
 		private readonly IUsersService _usersService;
-		private readonly IGenericDataRepository<Permission> _permissionsRepository;
+		private readonly IPermissionsRepository _permissionsRepository;
 
-		public PermissionsService(IGenericDataRepository<Permission> permissionsRepository, IUsersService usersService)
+		public PermissionsService(IPermissionsRepository permissionsRepository, IUsersService usersService)
 		{
 			_permissionsRepository = permissionsRepository;
 			_usersService = usersService;
 		}
 
-		public List<Permission> GetAllPermissionsForDepartment(int departmentId)
+		public async Task<List<Permission>> GetAllPermissionsForDepartmentAsync(int departmentId)
 		{
-			return _permissionsRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _permissionsRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public Permission GetPermisionByDepartmentType(int departmentId, PermissionTypes type)
+		public async Task<Permission> GetPermissionByDepartmentTypeAsync(int departmentId, PermissionTypes type)
 		{
-			return _permissionsRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId && x.PermissionType == (int)type);
+			return await _permissionsRepository.GetPermissionByDepartmentTypeAsync(departmentId, (int) type);
 		}
 
-		public Permission SetPermissionForDepartment(int departmentId, string userId, PermissionTypes type, PermissionActions action, string data, bool lockToGroup)
+		public async Task<Permission> SetPermissionForDepartmentAsync(int departmentId, string userId, PermissionTypes type, PermissionActions action,
+			string data, bool lockToGroup, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var permission = GetPermisionByDepartmentType(departmentId, type) ?? new Permission();
+			var permission = await GetPermissionByDepartmentTypeAsync(departmentId, type) ?? new Permission();
 
 			permission.DepartmentId = departmentId;
 			permission.PermissionType = (int) type;
@@ -40,9 +44,7 @@ namespace Resgrid.Services
 			permission.UpdatedBy = userId;
 			permission.UpdatedOn = DateTime.UtcNow;
 
-			_permissionsRepository.SaveOrUpdate(permission);
-
-			return permission;
+			return await _permissionsRepository.SaveOrUpdateAsync(permission, cancellationToken);
 		}
 
 		public bool IsUserAllowed(Permission permission, bool isUserDepartmentAdmin, bool isUserGroupAdmin, List<PersonnelRole> roles)

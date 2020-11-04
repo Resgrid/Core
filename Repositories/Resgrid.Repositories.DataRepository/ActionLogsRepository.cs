@@ -1,90 +1,441 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using System.Configuration;
-using System.Data;
+using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model.Identity;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.ActionLogs;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class ActionLogsRepository : RepositoryBase<ActionLog>, IActionLogsRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public ActionLogsRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public ActionLog GetActionlogById(int actionLogId)
+		public ActionLogsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+		: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
+		}
+
+		public async Task<IEnumerable<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool disableAutoAvailable, DateTime timeStamp)
+		{
+			try
 			{
-				return db.Query<ActionLog>($"SELECT * FROM ActionLogs WHERE ActionLogId = @actionLogId", new { actionLogId = actionLogId }).FirstOrDefault();
+				var latestTimestamp = DateTime.UtcNow.AddYears(-1);
+
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("DisableAutoAvailable", disableAutoAvailable);
+					dynamicParameters.Add("Timestamp", timeStamp);
+					dynamicParameters.Add("LatestTimestamp", latestTimestamp);
+
+					var query = _queryFactory.GetQuery<SelectLastActionLogsForDepartmentQuery>();
+
+					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public List<ActionLog> GetLastActionLogsForDepartment(int departmentId, bool disableAutoAvailable, DateTime timeStamp)
+		public async Task<IEnumerable<ActionLog>> GetAllActionLogsForUser(string userId)
 		{
-			//var data = db.SqlQuery<ActionLog>(@"
-			//							SELECT a1.*
-			//							FROM ActionLogs a1 
-			//							INNER JOIN DepartmentMembers dm ON dm.UserId = a1.UserId
-			//							WHERE a1.DepartmentId = @DepartmentId AND dm.IsDeleted = 0 AND (@DisableAutoAvailable = 1 OR a1.Timestamp >= @Timestamp) AND dm.IsDisabled = 0 AND dm.IsHidden = 0 AND a1.ActionLogId IN (
-			//									SELECT MAX(a2.ActionLogId)
-			//									FROM ActionLogs a2 
-			//									GROUP BY a2.UserId)
-			//	",
-			//	new SqlParameter("@DepartmentId", departmentId),
-			//	new SqlParameter("@DisableAutoAvailable", disableAutoAvailable),
-			//	new SqlParameter("@Timestamp", timeStamp));
-
-
-			////var data = db.SqlQuery<ActionLog>(@"
-			////							SELECT al.*
-			////							FROM ActionLogs al
-			////							INNER JOIN DepartmentMembers dm ON dm.UserId = al.UserId
-			////							WHERE al.DepartmentId = @DepartmentId AND (@DisableAutoAvailable = 1 OR al.Timestamp >= @Timestamp) AND dm.IsDisabled = 0 AND dm.IsHidden = 0 AND
-			////								al.ActionLogId IN (
-			////									SELECT MAX(al1.ActionLogId)
-			////									FROM ActionLogs al1
-			////									GROUP BY al1.UserId)",
-			////	new SqlParameter("@DepartmentId", departmentId),
-			////	new SqlParameter("@DisableAutoAvailable", disableAutoAvailable),
-			////	new SqlParameter("@Timestamp", timeStamp));
-
-
-			//return data.ToList();
-
-
-
-			//using (IDbConnection db = new SqlConnection(connectionString))
-			//{
-			//	return db.Query<ActionLog>(@"
-			//							SELECT a1.*
-			//							FROM ActionLogs a1 
-			//							INNER JOIN DepartmentMembers dm ON dm.UserId = a1.UserId
-			//							WHERE a1.DepartmentId = @DepartmentId AND dm.IsDeleted = 0 AND (@DisableAutoAvailable = 1 OR a1.Timestamp >= @Timestamp) AND dm.IsDisabled = 0 AND dm.IsHidden = 0 AND a1.ActionLogId IN (
-			//									SELECT MAX(a2.ActionLogId)
-			//									FROM ActionLogs a2 
-			//									GROUP BY a2.UserId)
-			//	", new { DepartmentId = departmentId, DisableAutoAvailable = disableAutoAvailable, Timestamp = timeStamp }).ToList();
-			//}
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				return db.Query<ActionLog>(@"
-										SELECT a1.*
-										FROM ActionLogs a1 
-										INNER JOIN DepartmentMembers dm ON dm.UserId = a1.UserId
-										WHERE a1.DepartmentId = @DepartmentId AND dm.IsDeleted = 0 AND (@DisableAutoAvailable = 1 OR a1.Timestamp >= @Timestamp) AND dm.IsDisabled = 0 AND dm.IsHidden = 0 AND a1.Timestamp >= @latestTimeStamp
-				", new { DepartmentId = departmentId, DisableAutoAvailable = disableAutoAvailable, Timestamp = timeStamp, latestTimeStamp = DateTime.UtcNow.AddYears(-1) }).ToList();
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectActionLogsByUserIdQuery>();
+
+					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<ActionLog>> GetAllActionLogsForUserInDateRangeAsync(string userId, DateTime startDate, DateTime endDate)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+
+					var query = _queryFactory.GetQuery<SelectALogsByUserInDateRangQuery>();
+
+					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		public async Task<IEnumerable<ActionLog>> GetAllActionLogsForDepartmentAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectALogsByDidQuery>();
+
+					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		public async Task<ActionLog> GetLastActionLogsForUserAsync(string userId, bool disableAutoAvailable, DateTime timeStamp)
+		{
+			try
+			{
+				var latestTimestamp = DateTime.UtcNow.AddYears(-1);
+
+				var selectFunction = new Func<DbConnection, Task<ActionLog>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("DisableAutoAvailable", disableAutoAvailable);
+					dynamicParameters.Add("Timestamp", timeStamp);
+					dynamicParameters.Add("LatestTimestamp", latestTimestamp);
+
+					var query = _queryFactory.GetQuery<SelectLastActionLogForUserQuery>();
+
+					var result = await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+
+					return result.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<ActionLog>> GetActionLogsForCallAsync(int callId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("CallId", callId);
+
+					var query = _queryFactory.GetQuery<SelectActionLogsByCallIdQuery>();
+
+					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<ActionLog>> GetActionLogsForCallAndTypesAsync(int destinationId, List<int> types)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("CallId", destinationId);
+
+					var usersToQuery = String.Join(",", types.Select(p => $"{p.ToString()}").ToArray());
+					//dynamicParameters.Add("Types", usersToQuery);
+
+					var query = _queryFactory.GetQuery<SelectActionLogsByCallIdTypeQuery>();
+					query = query.Replace("%TYPES%", usersToQuery);
+
+					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<ActionLog> GetPreviousActionLogAsync(string userId, int actionLogId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<ActionLog>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("ActionLogId", actionLogId);
+
+					var query = _queryFactory.GetQuery<SelectPerviousActionLogsByUserQuery>();
+
+					var items = await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+
+					return items.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<ActionLog> GetLastActionLogForUserAsync(string userId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<ActionLog>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectLastActionLogByUserIdQuery>();
+
+					var items = await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; },
+						splitOn: "Id");
+
+					return items.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 	}

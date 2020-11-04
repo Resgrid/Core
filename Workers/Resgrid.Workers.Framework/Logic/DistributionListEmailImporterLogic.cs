@@ -4,6 +4,7 @@ using Resgrid.Model.Services;
 using Resgrid.Workers.Framework.Workers.DistributionList;
 using Resgrid.Model.Identity;
 using System;
+using System.Threading.Tasks;
 using Autofac;
 
 namespace Resgrid.Workers.Framework.Logic
@@ -23,7 +24,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_distributionListsService = Bootstrapper.GetKernel().Resolve<IDistributionListsService>();
 		}
 
-		public Tuple<bool, string> Process(DistributionListQueueItem item)
+		public async Task<Tuple<bool, string>> Process(DistributionListQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -38,7 +39,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 						if (emails != null && emails.Count > 0)
 						{
-							var listMembers = _distributionListsService.GetAllListMembersByListId(item.List.DistributionListId);
+							var listMembers = await _distributionListsService.GetAllListMembersByListIdAsync(item.List.DistributionListId);
 							foreach (var email in emails)
 							{
 								foreach (var member in listMembers)

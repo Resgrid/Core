@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System.Linq;
+using Resgrid.Providers.Claims;
 
 namespace Resgrid.Web.ServicesCore.Middleware
 {
@@ -40,7 +41,7 @@ namespace Resgrid.Web.ServicesCore.Middleware
 			_logger.LogInformation("Handling API key for: " + context.Request.Path);
 
 			if (!context.Request.Path.Value.ToLower().Contains("v3/auth/validate"))
-				AuthAndSetPrinciple(_cacheProvider, _departmentRepository, context, context.Request.Path.Value.Contains("v3"));
+				await AuthAndSetPrinciple(_cacheProvider, _departmentRepository, context, context.Request.Path.Value.Contains("v3"));
 
 
 			await _next.Invoke(context);
@@ -48,7 +49,7 @@ namespace Resgrid.Web.ServicesCore.Middleware
 			_logger.LogInformation("Finished handling api key.");
 		}
 
-		public static bool AuthAndSetPrinciple(ICacheProvider cacheProvider, IDepartmentsRepository departmentsRepository, HttpContext context, bool v3)
+		public static async Task<bool> AuthAndSetPrinciple(ICacheProvider cacheProvider, IDepartmentsRepository departmentsRepository, HttpContext context, bool v3)
 		{
 			StringValues authHeader;
 			if (context.Request.Headers.TryGetValue("Authorization", out authHeader))
@@ -59,13 +60,13 @@ namespace Resgrid.Web.ServicesCore.Middleware
 				if (!authHeader[0].Contains("Basic"))
 					return false;
 
-				return AuthAndSetPrinciple(cacheProvider, departmentsRepository, authHeader[0].Replace("Basic", "").Trim(), context, v3);
+				return await AuthAndSetPrinciple(cacheProvider, departmentsRepository, authHeader[0].Replace("Basic", "").Trim(), context, v3);
 			}
 
 			return false;
 		}
 
-		public static bool AuthAndSetPrinciple(ICacheProvider cacheProvider, IDepartmentsRepository departmentsRepository, string authTokenString, HttpContext context, bool v3)
+		public static async Task<bool> AuthAndSetPrinciple(ICacheProvider cacheProvider, IDepartmentsRepository departmentsRepository, string authTokenString, HttpContext context, bool v3)
 		{
 			if (string.IsNullOrWhiteSpace(authTokenString))
 				return false;
@@ -74,7 +75,7 @@ namespace Resgrid.Web.ServicesCore.Middleware
 
 			if (v3)
 			{
-				var authToken = V3AuthToken.Decode(encodedUserPass, context);
+				var authToken = V3AuthToken.Decode(encodedUserPass);
 
 				if (authToken != null)
 				{
@@ -89,10 +90,11 @@ namespace Resgrid.Web.ServicesCore.Middleware
 					}
 					else
 					{
-						if (!ValidateUserAndDepartmentByUser(cacheProvider, departmentsRepository, authToken.UserName, authToken.DepartmentId, null, out userId))
+						var result = await ValidateUserAndDepartmentByUser(cacheProvider, departmentsRepository, authToken.UserName, authToken.DepartmentId, null);
+						if (!result.IsValid)
 							return false;
 
-						authToken.UserId = userId;
+						authToken.UserId = result.UserId;
 					}
 
 					var principal = new ResgridPrincipleV3(authToken);
@@ -107,47 +109,49 @@ namespace Resgrid.Web.ServicesCore.Middleware
 			return true;
 		}
 
-		private static bool ValidateUserAndDepartmentByUser(ICacheProvider cacheProvider, IDepartmentsRepository departmentRepository, string userName, int departmentId, string departmentCode, out string userId)
+		private static async Task<AuthValidationResult> ValidateUserAndDepartmentByUser(ICacheProvider cacheProvider, IDepartmentsRepository departmentRepository, string userName, int departmentId, string departmentCode)
 		{
-			var data = GetValidateUserForDepartmentInfo(cacheProvider, departmentRepository, userName, false);
-			userId = string.Empty;
+			var result = new AuthValidationResult();
+
+			var data = await GetValidateUserForDepartmentInfo(cacheProvider, departmentRepository, userName, false);
+			result.UserId = string.Empty;
+
+			result.IsValid = true;
 
 			if (data == null)
-				return false;
+				result.IsValid = false;
 
-			userId = data.UserId;
+			result.UserId = data.UserId;
 
 			if (data.DepartmentId != departmentId)
-				return false;
+				result.IsValid = false;
 
 			if (data.IsDisabled.GetValueOrDefault())
-				return false;
+				result.IsValid = false;
 
 			if (data.IsDeleted.GetValueOrDefault())
-				return false;
+				result.IsValid = false;
 
 			if (departmentCode != null)
 				if (!data.Code.Equals(departmentCode, StringComparison.InvariantCultureIgnoreCase))
-					return false;
+					result.IsValid = false;
 
-			return true;
+			return result;
 		}
 
-		private static ValidateUserForDepartmentResult GetValidateUserForDepartmentInfo(ICacheProvider cacheProvider, IDepartmentsRepository departmentRepository, string userName, bool bypassCache = true)
+		private static async Task<ValidateUserForDepartmentResult> GetValidateUserForDepartmentInfo(ICacheProvider cacheProvider, IDepartmentsRepository departmentRepository, string userName, bool bypassCache = true)
 		{
+			async Task<ValidateUserForDepartmentResult> validateForDepartment()
+			{
+				return await departmentRepository.GetValidateUserForDepartmentDataAsync(userName);
+			}
+
 			if (!bypassCache)
 			{
-				Func<ValidateUserForDepartmentResult> validateForDepartment = delegate ()
-				{
-					return departmentRepository.GetValidateUserForDepartmentData(userName);
-				};
+				return await cacheProvider.RetrieveAsync(string.Format(ValidateUserInfoCacheKey, userName), validateForDepartment, CacheLength);
+			}
 
-				return cacheProvider.Retrieve(string.Format(ValidateUserInfoCacheKey, userName), validateForDepartment, CacheLength);
-			}
-			else
-			{
-				return departmentRepository.GetValidateUserForDepartmentData(userName);
-			}
+			return await validateForDepartment();
 		}
 	}
 
@@ -165,7 +169,7 @@ namespace Resgrid.Web.ServicesCore.Middleware
 			TokenExpiry = tokenExpiry;
 		}
 
-		public static V3AuthToken Decode(string authHeader, HttpContext context)
+		public static V3AuthToken Decode(string authHeader)
 		{
 			if (string.IsNullOrEmpty(authHeader))
 				throw new ArgumentException("value cannot be null or empty", "authHeader");
@@ -183,17 +187,11 @@ namespace Resgrid.Web.ServicesCore.Middleware
 			catch (Exception ex)
 			{
 				//TODO: log exception here? with metada used in authHeader?
-				//throw new HttpResponseException(HttpStatusCode.Unauthorized);
-				context.Response.StatusCode = 401;
-				context.Response.Headers.Clear();
 				return null;
 			}
 
 			if (rows.Length != 3)
 			{
-				//throw new HttpResponseException(HttpStatusCode.Unauthorized);
-				context.Response.StatusCode = 401;
-				context.Response.Headers.Clear();
 				return null;
 			}
 
@@ -203,33 +201,21 @@ namespace Resgrid.Web.ServicesCore.Middleware
 
 			if (string.IsNullOrEmpty(username))
 			{
-				//throw new HttpResponseException(HttpStatusCode.Unauthorized);
-				context.Response.StatusCode = 401;
-				context.Response.Headers.Clear();
 				return null;
 			}
 
 			if (!int.TryParse(rows[1], out departmentId))
 			{
-				//throw new HttpResponseException(HttpStatusCode.Unauthorized);
-				context.Response.StatusCode = 401;
-				context.Response.Headers.Clear();
 				return null;
 			}
 
 			if (!DateTime.TryParse(rows[2], out tokenExpiry))
 			{
-				//throw new HttpResponseException(HttpStatusCode.Unauthorized);
-				context.Response.StatusCode = 401;
-				context.Response.Headers.Clear();
 				return null;
 			}
 
 			if (tokenExpiry <= DateTime.UtcNow)
 			{
-				//throw new HttpResponseException(HttpStatusCode.UpgradeRequired);
-				context.Response.StatusCode = 426;
-				context.Response.Headers.Clear();
 				return null;
 			}
 

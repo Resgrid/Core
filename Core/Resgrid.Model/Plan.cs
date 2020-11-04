@@ -55,10 +55,19 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PlanId; }
 			set { PlanId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Plans";
+
+		[NotMapped]
+		public string IdName => "PlanId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Role", "User" };
 	}
 }

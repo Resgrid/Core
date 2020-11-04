@@ -5,6 +5,7 @@ using Resgrid.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Services
@@ -16,46 +17,20 @@ namespace Resgrid.Services
 		private static TimeSpan CacheLength = TimeSpan.FromDays(14);
 
 		private readonly IUserProfilesRepository _userProfileRepository;
-		private readonly IDepartmentsService _departmentsService;
 		private readonly ICacheProvider _cacheProvider;
-		private readonly IGenericDataRepository<DepartmentMember> _departmentMemberRepository;
 
-		public UserProfileService(IUserProfilesRepository userProfileRepository, IDepartmentsService departmentsService, ICacheProvider cacheProvider,
-			IGenericDataRepository<DepartmentMember> departmentMemberRepository)
+		public UserProfileService(IUserProfilesRepository userProfileRepository, ICacheProvider cacheProvider)
 		{
 			_userProfileRepository = userProfileRepository;
-			_departmentsService = departmentsService;
 			_cacheProvider = cacheProvider;
-			_departmentMemberRepository = departmentMemberRepository;
-		}
-
-		public UserProfile GetProfileByUserId(string userId, bool bypassCache = false)
-		{
-			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
-			{
-				Func<UserProfile> getProfile = delegate ()
-				{
-					//return _userProfileRepository.GetAll().FirstOrDefault(x => x.UserId == userId);
-					return _userProfileRepository.GetProfileByUserId(userId);
-				};
-
-				return _cacheProvider.Retrieve(string.Format(CacheKey, userId), getProfile, CacheLength);
-			}
-
-			//var profile = from p in _userProfileRepository.GetAll()
-			//				where p.UserId == userId
-			//					select p;
-
-			//return profile.FirstOrDefault();
-			return _userProfileRepository.GetProfileByUserId(userId);
 		}
 
 		public async Task<UserProfile> GetProfileByUserIdAsync(string userId, bool bypassCache = false)
 		{
-			Func<Task<UserProfile>> getProfileAsync = async () =>
+			async Task<UserProfile> getProfileAsync()
 			{
 				return await _userProfileRepository.GetProfileByUserIdAsync(userId);
-			};
+			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
@@ -65,51 +40,40 @@ namespace Resgrid.Services
 			return await getProfileAsync();
 		}
 
-		public UserProfile GetUserProfileForEditing(string userId)
+		public async Task<Dictionary<string, UserProfile>> GetAllProfilesForDepartmentAsync(int departmentId, bool bypassCache = false)
 		{
-			return _userProfileRepository.GetAll().FirstOrDefault(x => x.UserId == userId);
-		}
-
-		public Dictionary<string, UserProfile> GetAllProfilesForDepartment(int departmentId, bool bypassCache = false)
-		{
-			//var users = _departmentMemberRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
-			//var userIds = users.Select(x => x.UserId);
-
-			//var profile = (from p in _userProfileRepository.GetAll()
-			//							 where userIds.Contains(p.UserId)
-			//				select p).ToList();
+			async Task<List<UserProfile>> getAllUserProfilesAsync()
+			{
+				var items = await _userProfileRepository.GetAllUserProfilesForDepartmentAsync(departmentId);
+				return items.ToList();
+			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<List<UserProfile>> getAllUserProfiles = delegate ()
-				{
-					return _userProfileRepository.GetAllUserProfilesForDepartment(departmentId);
-				};
-
-				return _cacheProvider.Retrieve(string.Format(AllUserProfilesCacheKey, departmentId), getAllUserProfiles, CacheLength)
+				return (await _cacheProvider.RetrieveAsync(string.Format(AllUserProfilesCacheKey, departmentId), getAllUserProfilesAsync, CacheLength))
 							.ToDictionary(userProfile => userProfile.UserId);
 			}
 			else
 			{
-				var profile = _userProfileRepository.GetAllUserProfilesForDepartment(departmentId);
+				var profile = await getAllUserProfilesAsync();
 				return profile.ToDictionary(userProfile => userProfile.UserId);
 			}
 		}
 
-		public Dictionary<string, UserProfile> GetAllProfilesForDepartmentIncDisabledDeleted(int departmentId)
+		public async Task<Dictionary<string, UserProfile>> GetAllProfilesForDepartmentIncDisabledDeletedAsync(int departmentId)
 		{
-			var profile = _userProfileRepository.GetAllUserProfilesForDepartmentIncDisabledDeleted(departmentId);
+			var profile = await _userProfileRepository.GetAllUserProfilesForDepartmentIncDisabledDeletedAsync(departmentId);
 			return profile.ToDictionary(userProfile => userProfile.UserId);
 		}
 
-		public UserProfile SaveProfile(int DepartmentId, UserProfile profile)
+		public async Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_userProfileRepository.SaveOrUpdate(profile);
+			var savedProfile = await _userProfileRepository.SaveOrUpdateAsync(profile, cancellationToken);
 
-			ClearUserProfileFromCache(profile.UserId);
+			ClearUserProfileFromCache(savedProfile.UserId);
 			ClearAllUserProfilesFromCache(DepartmentId);
 
-			return profile;
+			return savedProfile;
 		}
 
 		public void ClearUserProfileFromCache(string userId)
@@ -122,107 +86,88 @@ namespace Resgrid.Services
 			_cacheProvider.Remove(string.Format(AllUserProfilesCacheKey, departmentId));
 		}
 
-		public void DeletProfileForUser(string userId)
+		public async Task<UserProfile> DisableTextMessagesForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var profile = GetProfileByUserId(userId);
-
-			if (profile != null)
-				_userProfileRepository.DeleteOnSubmit(profile);
-		}
-
-		public void DisableTextMessagesForUser(string userId)
-		{
-			var profile = GetUserProfileForEditing(userId);
+			var profile = await GetProfileByUserIdAsync(userId);
 			profile.SendMessageSms = false;
 			profile.SendSms = false;
 			profile.SendNotificationSms = false;
 
-			SaveProfile(0, profile);
+			return await SaveProfileAsync(0, profile, cancellationToken);
 		}
 
-		public UserProfile FindProfileByMobileNumber(string number)
+		public async Task<UserProfile> GetProfileByMobileNumberAsync(string number)
 		{
 			string numberToTest =
 				number.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
 
-			var profiles = _userProfileRepository.GetAll().Where(x => x.MobileNumber != null).ToList();
-			var profile = from p in profiles
-						  where
-							  p.MobileNumber != null &&
-							  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-						  select p;
+			//var profiles = _userProfileRepository.GetProfileByMobileNumberAsync().Where(x => x.MobileNumber != null).ToList();
+			//var profile = from p in profiles
+			//			  where
+			//				  p.MobileNumber != null &&
+			//				  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
+			//			  select p;
 
-			if (profile.Count() == 1)
-				return profile.First();
-			else
-			{
-				if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
-				{
-					numberToTest = numberToTest.Remove(0, 1);
+			//if (profile.Count() == 1)
+			//	return profile.First();
+			//else
+			//{
+			//	if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
+			//	{
+			//		numberToTest = numberToTest.Remove(0, 1);
 
-					profile = from p in profiles
-							  where
-								  p.MobileNumber != null &&
-								  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-							  select p;
+			//		profile = from p in profiles
+			//				  where
+			//					  p.MobileNumber != null &&
+			//					  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
+			//				  select p;
 
-					return profile.FirstOrDefault();
-				}
-			}
+			//		return profile.FirstOrDefault();
+			//	}
+			//}
 
-			return null;
+			//return null;
+
+			return await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
 		}
 
-		public UserProfile FindProfileByHomeNumber(string number)
+		public async Task<UserProfile> GetProfileByHomeNumberAsync(string number)
 		{
 			string numberToTest =
 				number.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
 
-			var profiles = _userProfileRepository.GetAll().Where(x => x.HomeNumber != null).ToList();
-			var profile = from p in profiles
-						  where
-							  p.HomeNumber != null &&
-							  p.HomeNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-						  select p;
+			//var profiles = _userProfileRepository.GetAll().Where(x => x.HomeNumber != null).ToList();
+			//var profile = from p in profiles
+			//			  where
+			//				  p.HomeNumber != null &&
+			//				  p.HomeNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
+			//			  select p;
 
-			if (profile.Count() == 1)
-				return profile.First();
-			else
-			{
-				if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
-				{
-					numberToTest = numberToTest.Remove(0, 1);
+			//if (profile.Count() == 1)
+			//	return profile.First();
+			//else
+			//{
+			//	if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
+			//	{
+			//		numberToTest = numberToTest.Remove(0, 1);
 
-					profile = from p in profiles
-							  where
-								  p.HomeNumber != null &&
-								  p.HomeNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-							  select p;
+			//		profile = from p in profiles
+			//				  where
+			//					  p.HomeNumber != null &&
+			//					  p.HomeNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
+			//				  select p;
 
-					return profile.FirstOrDefault();
-				}
-			}
+			//		return profile.FirstOrDefault();
+			//	}
+			//}
 
-			return null;
-		}
-
-		public List<UserProfile> GetSelectedUserProfiles(List<string> userIds)
-		{
-			//return _userProfileRepository.GetAll().Where(x => userIds.Contains(x.UserId)).ToList();
-			return _userProfileRepository.GetSelectedUserProfiles(userIds);
+			return await _userProfileRepository.GetProfileByHomeNumberAsync(numberToTest);
 		}
 
 		public async Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds)
 		{
-			//return _userProfileRepository.GetAll().Where(x => userIds.Contains(x.UserId)).ToList();
-			return await _userProfileRepository.GetSelectedUserProfilesAsync(userIds);
+			var items = await _userProfileRepository.GetSelectedUserProfilesAsync(userIds);
+			return items.ToList();
 		}
-
-		//public List<UserProfile> GetAllUserProfilesForDepartment(int departmentId)
-		//{
-		//	var users = _departmentsService.GetAllUsersForDepartment(departmentId);
-
-		//	return users.Select(user => GetProfileByUserId(user.UserId)).ToList();
-		//}
 	}
 }

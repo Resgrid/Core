@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 
 namespace Resgrid.Model
 {
@@ -14,7 +14,6 @@ namespace Resgrid.Model
 		public int DepartmentLinkId { get; set; }
 
 		[Required]
-		//[ForeignKey("Department"), DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int DepartmentId { get; set; }
 
 		public virtual Department Department { get; set; }
@@ -30,7 +29,6 @@ namespace Resgrid.Model
 		public bool DepartmentShareOrders { get; set; }
 
 		[Required]
-		//[ForeignKey("LinkedDepartment"), DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int LinkedDepartmentId { get; set; } // Linked Department color for the Department
 
 		public virtual Department LinkedDepartment { get; set; }
@@ -52,19 +50,19 @@ namespace Resgrid.Model
 		public DateTime? LinkAccepted { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentLinkId; }
 			set { DepartmentLinkId = (int)value; }
 		}
-	}
 
-	public class DepartmentLink_Mapping : EntityTypeConfiguration<DepartmentLink>
-	{
-		public DepartmentLink_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-			this.HasRequired(t => t.LinkedDepartment).WithMany().HasForeignKey(t => t.LinkedDepartmentId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "DepartmentLinks";
+
+		[NotMapped]
+		public string IdName => "DepartmentLinkId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "LinkedDepartment" };
 	}
 }

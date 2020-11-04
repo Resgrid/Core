@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -40,10 +41,19 @@ namespace Resgrid.Model
 		public bool LockToGroup { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PermissionId; }
 			set { PermissionId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Permissions";
+
+		[NotMapped]
+		public string IdName => "PermissionId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department" };
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Resgrid.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -66,7 +67,7 @@ namespace Resgrid.Providers.Bus
 		/// <summary>
 		/// This will be called every time a TMessage is published through the event aggregator
 		/// </summary>
-		void Handle(TMessage message);
+		Task<bool> Handle(TMessage message);
 	}
 
 	/// <summary>
@@ -103,11 +104,11 @@ namespace Resgrid.Providers.Bus
 	public interface IEventPublisher
 	{
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-		void SendMessage<TMessage>(TMessage message, Action<Action> marshal = null);
+		Task<bool> SendMessage<TMessage>(TMessage message, Action<Action> marshal = null);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter"),
 		 System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-		void SendMessage<TMessage>(Action<Action> marshal = null)
+		Task<bool> SendMessage<TMessage>(Action<Action> marshal = null)
 			where TMessage : new();
 	}
 
@@ -138,19 +139,21 @@ namespace Resgrid.Providers.Bus
 		/// <param name="message">The message instance</param>
 		/// <param name="marshal">You can optionally override how the message publication action is marshalled</param>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-		public void SendMessage<TMessage>(TMessage message, Action<Action> marshal = null)
+		public async Task<bool> SendMessage<TMessage>(TMessage message, Action<Action> marshal = null)
 		{
 			try
 			{
 				if (marshal == null)
 					marshal = _config.DefaultThreadMarshaler;
 
-				Call<IListener<TMessage>>(message, marshal);
+				return await Call<IListener<TMessage>>(message, marshal);
 			}
 			catch (Exception e)
 			{
 				Logging.LogException(e);
 			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -159,35 +162,37 @@ namespace Resgrid.Providers.Bus
 		/// <typeparam name="TMessage">The type of message being sent</typeparam>
 		/// <param name="marshal">You can optionally override how the message publication action is marshalled</param>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed"),
-		 System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
-			 "CA1004:GenericMethodsShouldProvideTypeParameter")]
-		public void SendMessage<TMessage>(Action<Action> marshal = null)
+		 System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		public async Task<bool> SendMessage<TMessage>(Action<Action> marshal = null)
 			where TMessage : new()
 		{
-			SendMessage(new TMessage(), marshal);
+			return await SendMessage(new TMessage(), marshal);
 		}
 
-		private void Call<TListener>(object message, Action<Action> marshaller)
-			where TListener : class
+		private async Task<bool> Call<TListener>(object message, Action<Action> marshaller) where TListener : class
 		{
 			int listenerCalledCount = 0;
-			marshaller(() =>
-			{
+
+			// TODO: No clue if this even makes sense. -SJ
+			//marshaller(() =>
+			//{
 				foreach (ListenerWrapper o in _listeners.Where(o => o.Handles<TListener>() || o.HandlesMessage(message)))
 				{
-					bool wasThisOneCalled;
-					o.TryHandle<TListener>(message, out wasThisOneCalled);
+					bool wasThisOneCalled =	await o.TryHandle<TListener>(message);
 					if (wasThisOneCalled)
 						listenerCalledCount++;
 				}
-			});
+			//});
 
 			var wasAnyListenerCalled = listenerCalledCount > 0;
 
 			if (!wasAnyListenerCalled)
 			{
 				_config.OnMessageNotPublishedBecauseZeroListeners(message);
+				return false;
 			}
+
+			return true;
 		}
 
 		public IEventSubscriptionManager AddListener(object listener)
@@ -369,23 +374,24 @@ namespace Resgrid.Providers.Bus
 				return message != null && _handlers.Aggregate(false, (current, handler) => current | handler.HandlesMessage(message));
 			}
 
-			public void TryHandle<TListener>(object message, out bool wasHandled)
+			public async Task<bool> TryHandle<TListener>(object message)
 				where TListener : class
 			{
 				var target = _reference.Target;
-				wasHandled = false;
+				bool wasHandled = false;
 				if (target == null)
 				{
 					_onRemoveCallback(this);
-					return;
+					return false;
 				}
 
 				foreach (var handler in _handlers)
 				{
-					bool thisOneHandled = false;
-					handler.TryHandle<TListener>(target, message, out thisOneHandled);
+					bool thisOneHandled = await handler.TryHandle<TListener>(target, message);
 					wasHandled |= thisOneHandled;
 				}
+
+				return wasHandled;
 			}
 
 			public int Count
@@ -434,19 +440,19 @@ namespace Resgrid.Providers.Bus
 				return handled;
 			}
 
-			public void TryHandle<TListener>(object target, object message, out bool wasHandled)
+			public async Task<bool> TryHandle<TListener>(object target, object message)
 				where TListener : class
 			{
-				wasHandled = false;
 				if (target == null)
-				{
-					return;
-				}
+					return false;
 
-				if (!Handles<TListener>() && !HandlesMessage(message)) return;
+				if (!Handles<TListener>() && !HandlesMessage(message)) return false;
 
-				_handlerMethod.Invoke(target, new[] { message });
-				wasHandled = true;
+
+				Task<bool> result = (Task<bool>)_handlerMethod.Invoke(target, new[] { message });
+				await result;
+
+				return true;
 			}
 		}
 

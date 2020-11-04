@@ -3,12 +3,13 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using ProtoBuf;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
 	[ProtoContract]
 	[Table("UserProfiles")]
-	public class UserProfile:IEntity
+	public class UserProfile: IEntity
 	{
 		[Key]
 		[Required]
@@ -132,11 +133,20 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return UserProfileId; }
 			set { UserProfileId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "UserProfiles";
+
+		[NotMapped]
+		public string IdName => "UserProfileId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "User", "MembershipEmail" };
 
 		[NotMapped]
 		public FullNameFormat FullName

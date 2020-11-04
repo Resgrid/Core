@@ -429,7 +429,7 @@
 						  {
                             <tr>
                               <td>
-                                @UserHelper.GetFullNameForUser(attendee.UserId)
+                                @(await UserHelper.GetFullNameForUser(attendee.UserId))
                               </td>
                               <td>
                                 @attendee.Timestamp.TimeConverterToString(Model.Department)

@@ -53,7 +53,7 @@
 	<div id="workLog" class="container" style="display: none;">
 		<div class="row">
 			<div class="col-xs-5 col-xs-offset-1">
-				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-xs-5" style="text-align: right;">
 				<h3 style="margin-top: 10px;">Resgrid Log</h3>
@@ -105,7 +105,7 @@
 
 							<td>
 								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@UserHelper.GetFullNameForUser(Model.Log.LoggedBy.UserId)</span>
+								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
 							</td>
 						</tr>
 						<tr>
@@ -167,7 +167,7 @@
 									<td></td>
 								}
 								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 							</tr>
 						}
 					</tbody>
@@ -191,7 +191,7 @@
 	<div id="runLog" class="container" style="display: none;">
 		<div class="row">
 			<div class="col-xs-5 col-xs-offset-2">
-				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-xs-5" style="text-align: right;">
 				<h3 style="margin-top: 10px;">Resgrid Log</h3>
@@ -243,7 +243,7 @@
 
 							<td>
 								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@UserHelper.GetFullNameForUser(Model.Log.LoggedBy.UserId)</span>
+								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
 							</td>
 						</tr>
 						<tr>
@@ -390,7 +390,7 @@
 												<td></td>
 											}
 											<td>@Model.UserData[user.UserId].Item1</td>
-											<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+											<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 										</tr>
 									}
 								</tbody>
@@ -425,7 +425,7 @@
 									<td></td>
 								}
 								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 							</tr>
 						}
 					</tbody>
@@ -455,7 +455,7 @@
 	<div id="trainingLog" class="container" style="display: none;">
 		<div class="row">
 			<div class="col-xs-5 col-xs-offset-2">
-				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-xs-5" style="text-align: right;">
 				<h3 style="margin-top: 10px;">Resgrid Log</h3>
@@ -507,7 +507,7 @@
 
 							<td>
 								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@UserHelper.GetFullNameForUser(Model.Log.LoggedBy.UserId)</span>
+								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
 							</td>
 
 							<td>
@@ -593,7 +593,7 @@
 								{
 									<td></td>
 								}
-								<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 								<td>@Model.UserData[user.UserId].Item1</td>
 								<td style="width: 250px;"></td>
 							</tr>
@@ -634,7 +634,7 @@
 											{
 												<td></td>
 											}
-											<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+											<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 											<td>@Model.UserData[user.UserId].Item1</td>
 											<td style="width: 250px;"></td>
 										</tr>
@@ -663,7 +663,7 @@
 	<div id="meetingLog" class="container" style="display: none;">
 		<div class="row">
 			<div class="col-xs-5 col-xs-offset-1">
-				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-xs-5" style="text-align: right;">
 				<h3 style="margin-top: 10px;">Resgrid Log</h3>
@@ -715,7 +715,7 @@
 
 							<td>
 								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@UserHelper.GetFullNameForUser(Model.Log.LoggedBy.UserId)</span>
+								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
 							</td>
 						</tr>
 						<tr>
@@ -791,7 +791,7 @@
 									<td></td>
 								}
 								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 							</tr>
 						}
 					</tbody>
@@ -815,7 +815,7 @@
 	<div id="coronerLog" class="container" style="display: none;">
 		<div class="row">
 			<div class="col-xs-5 col-xs-offset-1">
-				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-xs-5" style="text-align: right;">
 				<h3 style="margin-top: 10px;">Resgrid Log</h3>
@@ -866,7 +866,7 @@
 						</td>
 						<td>
 							<strong><small>Logged By</small></strong>
-							<span style="display: block;">@UserHelper.GetFullNameForUser(Model.Log.LoggedBy.UserId)</span>
+							<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
 						</td>
 						<td>
 							<strong><small>OIC</small></strong>
@@ -999,7 +999,7 @@
 												<td></td>
 											}
 											<td>@Model.UserData[user.UserId].Item1</td>
-											<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+											<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 										</tr>
 									}
 								</tbody>
@@ -1034,7 +1034,7 @@
 									<td></td>
 								}
 								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@UserHelper.GetFullNameForUser(user.User.UserId)</td>
+								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
 							</tr>
 						}
 					</tbody>

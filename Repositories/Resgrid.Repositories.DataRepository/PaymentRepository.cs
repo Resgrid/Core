@@ -1,317 +1,201 @@
-﻿using System.Data;
-using System.Data.SqlClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using System.Configuration;
-using Dapper;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Departments;
+using Resgrid.Repositories.DataRepository.Queries.Payments;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class PaymentRepository : RepositoryBase<Payment>, IPaymentRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public PaymentRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public DepartmentPlanCount GetDepartmentPlanCounts(int departmentId)
+		public PaymentRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			var data = db.SqlQuery<DepartmentPlanCount>(@"SELECT 
-										(SELECT COUNT(*) FROM DepartmentMembers dm WHERE dm.DepartmentId = @departmentId AND IsDisabled = 1) AS 'UsersCount',
-										(SELECT COUNT(*) FROM DepartmentGroups dg WHERE dg.DepartmentId = @departmentId) AS 'GroupsCount',
-										(SELECT COUNT(*) FROM Units u WHERE u.DepartmentId = @departmentId) AS 'UnitsCount'",
-				new SqlParameter("@departmentId", departmentId));
-
-			return data.FirstOrDefault();
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public Payment GetLatestPaymentForDepartment(int departmentId)
+		public async Task<DepartmentPlanCount> GetDepartmentPlanCountsByDepartmentIdAsync(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var data = db.Query<Payment>(@"SELECT TOP 1 * FROM Payments
-											  WHERE DepartmentId = @departmentId AND EffectiveOn <= @currentUtcDate AND EndingOn >= @currentUtcDate
-											  ORDER BY PlanId DESC, PaymentId DESC",
-					new
-					{
-						departmentId = departmentId,
-						currentUtcDate = DateTime.UtcNow
-					});
-
-				return data.FirstOrDefault();
-			}
-		}
-
-		public async Task<Payment> GetLatestPaymentForDepartmentAsync(int departmentId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var data = await db.QueryAsync<Payment>(@"SELECT TOP 1 * FROM Payments
-											  WHERE DepartmentId = @departmentId AND EffectiveOn <= @currentUtcDate AND EndingOn >= @currentUtcDate
-											  ORDER BY PlanId DESC, PaymentId DESC",
-					new
-					{
-						departmentId = departmentId,
-						currentUtcDate = DateTime.UtcNow
-					});
-
-				return data.FirstOrDefault();
-			}
-		}
-
-		public async Task<Plan> GetLatestPlanForDepartmentAsync(int departmentId)
-		{
-			Dictionary<int, Plan> lookup = new Dictionary<int, Plan>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var query = @"SELECT pl.*, lim.* FROM Plans pl
-								INNER JOIN Payments pay ON pay.PaymentId = 
-														(
-															 SELECT TOP 1 pay1.PaymentId
-															 FROM Payments pay1
-															 WHERE pay1.DepartmentId = @departmentId AND pay1.EffectiveOn <= @currentUtcDate AND pay1.EndingOn >= @currentUtcDate
-															 ORDER BY pay1.PlanId DESC, pay1.PaymentId DESC
-														 )
-								LEFT OUTER JOIN PlanLimits lim ON lim.PlanId = pl.PlanId
-								WHERE pl.PlanId = pay.PlanId";
-
-				var plans = await db.QueryAsync<Plan, PlanLimit, Plan>(query, (p, pl) =>
+				var selectFunction = new Func<DbConnection, Task<DepartmentPlanCount>>(async x =>
 				{
-					Plan newPlan;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
 
-					if (!lookup.TryGetValue(p.PlanId, out newPlan))
+					var query = _queryFactory.GetQuery<SelectGetDepartmentPlanCountsQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<DepartmentPlanCount>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						lookup.Add(p.PlanId, p);
-						newPlan = p;
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
 
-					if (p.PlanLimits == null)
-						p.PlanLimits = new List<PlanLimit>();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-					if (pl != null && !newPlan.PlanLimits.Contains(pl))
+				throw;
+			}
+		}
+
+		public async Task<Payment> GetPaymentByTransactionIdAsync(string transactionId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<Payment>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("TransactionId", transactionId);
+
+					var query = _queryFactory.GetQuery<SelectPaymentByTransactionIdQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<Payment>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						pl.Plan = newPlan;
-						newPlan.PlanLimits.Add(pl);
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
 
-					return newPlan;
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-				}, new { departmentId = departmentId, currentUtcDate = DateTime.UtcNow}, splitOn: "PlanLimitId");
-
-				return plans.FirstOrDefault();
+				throw;
 			}
 		}
 
-		public Payment GetPaymentByTransactionId(string transactionId)
+		public async Task<IEnumerable<Payment>> GetAllPaymentsByDepartmentIdAsync(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var data = db.Query<Payment>(@"SELECT TOP 1 * FROM Payments
-											  WHERE TransactionId = @transactionId",
-				new
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Payment>>>(async x =>
 				{
-					transactionId = transactionId
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectPaymentsByDIdQuery>();
+
+					return await x.QueryAsync<Payment, Plan, Payment>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (pay, pl) => { pay.Plan = pl; return pay; },
+						splitOn: "PlanId");
 				});
 
-				return data.FirstOrDefault();
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public void InsertFreePayment(Payment payment)
+		public async Task<Payment> GetPaymentByIdIdAsync(int paymentId)
 		{
-			if (payment == null || payment.PaymentId != 0)
-				return;
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				db.Execute(@"INSERT INTO INSERT INTO [dbo].[Payments]
-								   ([DepartmentId]
-								   ,[PlanId]
-								   ,[Method]
-								   ,[IsTrial]
-								   ,[PurchaseOn]
-								   ,[PurchasingUserId]
-								   ,[TransactionId]
-								   ,[Successful]
-								   ,[Data]
-								   ,[IsUpgrade]
-								   ,[Description]
-								   ,[EffectiveOn]
-								   ,[Amount]
-								   ,[Payment_PaymentId]
-								   ,[EndingOn]
-								   ,[Cancelled]
-								   ,[CancelledOn]
-								   ,[CancelledData]
-								   ,[UpgradedPaymentId]
-								   ,[SubscriptionId]) 
-									VALUES (@departmentId
-											,@planId
-											,@method
-											,@isTrial
-											,@purchaseOn
-											,@purchasingUserId
-											,@transactionId
-											,1
-											,NULL
-											,0
-											,@description
-											,@effectiveOn
-											,0
-											,NULL
-											,@endingOn
-											,0
-											,NULL
-											,NULL
-											,NULL
-											,NULL)", new
+				var selectFunction = new Func<DbConnection, Task<Payment>>(async x =>
 				{
-					departmentId = payment.DepartmentId,
-					planId = payment.PaymentId,
-					method = payment.Method,
-					isTrial = payment.IsTrial,
-					purchaseOn = payment.PurchaseOn,
-					purchasingUserId = payment.PurchasingUserId,
-					transactionId = payment.TransactionId,
-					description = payment.Description,
-					effectiveOn = payment.EffectiveOn,
-					endingOn = payment.EndingOn
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("PaymentId", paymentId);
+
+					var query = _queryFactory.GetQuery<SelectPaymentByIdQuery>();
+
+					return (await x.QueryAsync<Payment, Plan, Payment>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (pay, pl) => { pay.Plan = pl; return pay; },
+						splitOn: "PlanId")).FirstOrDefault();
 				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
 			}
-		}
-
-		public void InsertPayment(Payment payment)
-		{
-			if (payment == null || payment.PaymentId != 0)
-				return;
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			catch (Exception ex)
 			{
-				db.Execute(@"INSERT INTO [Payments]
-								   ([DepartmentId]
-								   ,[PlanId]
-								   ,[Method]
-								   ,[IsTrial]
-								   ,[PurchaseOn]
-								   ,[PurchasingUserId]
-								   ,[TransactionId]
-								   ,[Successful]
-								   ,[Data]
-								   ,[IsUpgrade]
-								   ,[Description]
-								   ,[EffectiveOn]
-								   ,[Amount]
-								   ,[Payment_PaymentId]
-								   ,[EndingOn]
-								   ,[Cancelled]
-								   ,[CancelledOn]
-								   ,[CancelledData]
-								   ,[UpgradedPaymentId]
-								   ,[SubscriptionId]) 
-									VALUES (@departmentId
-											,@planId
-											,@method
-											,@isTrial
-											,@purchaseOn
-											,@purchasingUserId
-											,@transactionId
-											,@successful
-											,@data
-											,@isUpgrade
-											,@description
-											,@effectiveOn
-											,@ammount
-											,NULL
-											,@endingOn
-											,@cancelled
-											,@cancelledOn
-											,@cancelledData
-											,@upgradedPaymentId
-											,@subscriptionId)", new
-				{
-					departmentId = payment.DepartmentId,
-					planId = payment.PlanId,
-					method = payment.Method,
-					isTrial = payment.IsTrial,
-					purchaseOn = payment.PurchaseOn,
-					purchasingUserId = payment.PurchasingUserId,
-					transactionId = payment.TransactionId,
-					successful = payment.Successful,
-					data = payment.Data,
-					isUpgrade = payment.IsUpgrade,
-					description = payment.Description,
-					effectiveOn = payment.EffectiveOn,
-					ammount = payment.Amount,
-					endingOn = payment.EndingOn,
-					cancelled = payment.Cancelled,
-					cancelledOn = payment.CancelledOn,
-					cancelledData = payment.CancelledData,
-					upgradedPaymentId = payment.UpgradedPaymentId,
-					subscriptionId = payment.SubscriptionId
-				});
-			}
-		}
+				Logging.LogException(ex);
 
-		public void UpdatePayment(Payment payment)
-		{
-			if (payment == null || payment.PaymentId != 0)
-				return;
-
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				db.Execute(@"UPDATE [dbo].[Payments]
-						   SET [DepartmentId] = @departmentId
-							  ,[PlanId] = @planId
-							  ,[Method] = @method
-							  ,[IsTrial] = @isTrial
-							  ,[PurchaseOn] = @purchaseOn
-							  ,[PurchasingUserId] = @purchasingUserId
-							  ,[TransactionId] = @transactionId
-							  ,[Successful] = @successful
-							  ,[Data] = @data
-							  ,[IsUpgrade] = @isUpgrade
-							  ,[Description] = @description
-							  ,[EffectiveOn] = @effectiveOn
-							  ,[Amount] = @ammount
-							  ,[EndingOn] = @endingOn
-							  ,[Cancelled] = @cancelled
-							  ,[CancelledOn] = @cancelledOn
-							  ,[CancelledData] = @cancelledData
-							  ,[UpgradedPaymentId] = @upgradedPaymentId
-							  ,[SubscriptionId] = @subscriptionId
-						 WHERE PaymentId = @paymentId", new
-				{
-					departmentId = payment.DepartmentId,
-					planId = payment.PlanId,
-					method = payment.Method,
-					isTrial = payment.IsTrial,
-					purchaseOn = payment.PurchaseOn,
-					purchasingUserId = payment.PurchasingUserId,
-					transactionId = payment.TransactionId,
-					successful = payment.Successful,
-					data = payment.Data,
-					isUpgrade = payment.IsUpgrade,
-					description = payment.Description,
-					effectiveOn = payment.EffectiveOn,
-					ammount = payment.Amount,
-					endingOn = payment.EndingOn,
-					cancelled = payment.Cancelled,
-					cancelledOn = payment.CancelledOn,
-					cancelledData = payment.CancelledData,
-					upgradedPaymentId = payment.UpgradedPaymentId,
-					subscriptionId = payment.SubscriptionId,
-					paymentId = payment.PaymentId
-				});
+				throw;
 			}
 		}
 	}

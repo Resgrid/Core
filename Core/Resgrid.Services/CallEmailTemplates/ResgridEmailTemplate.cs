@@ -10,7 +10,7 @@ namespace Resgrid.Services.CallEmailTemplates
 {
 	public class ResgridEmailTemplate : ICallEmailTemplate
 	{
-		public Call GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority)
+		public Call GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
 		{
 			//ID | TYPE | PRIORITY | ADDRESS | MAPPAGE | NATURE | NOTES
 

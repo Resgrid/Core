@@ -12,16 +12,25 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "RESGRID__SystemBehaviorConfig__ResgridBaseUrl": "https://localhost:44319",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Resgrid.WebCore": {
-      "commandName": "Project",
+      "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000",
+      "launchUrl": "https://localhost:44319/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "nativeDebugging": false
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/",
+      "publishAllPorts": true,
+      "useSSL": true
     }
   }
 }

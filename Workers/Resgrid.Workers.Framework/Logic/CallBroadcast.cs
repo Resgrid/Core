@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -33,29 +36,42 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueConnectionString, Config.ServiceBusConfig.CallBroadcastQueueName);
+					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueConnectionString, Config.ServiceBusConfig.CallBroadcastQueueName);
+
+					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueConnectionString, Config.ServiceBusConfig.CallBroadcastQueueName);
 				}
 				catch (TimeoutException) { }
 			}
 		}
 
-		public void Process(CallQueueItem item)
+		public async Task<bool> Process(CallQueueItem item)
 		{
 			bool success = true;
 
 			if (Config.SystemBehaviorConfig.IsAzure)
 			{
-				ProcessQueueMessage(_client.Receive());
+				//ProcessQueueMessage(_client.Receive());
+
+				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+				{
+					MaxConcurrentCalls = 1,
+					AutoComplete = false
+				};
+
+				// Register the function that will process messages
+				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
 			}
 			else
 			{
-				ProcessCallQueueItem(item);
+				return await ProcessCallQueueItem(item);
 			}
 
 			_queueService = null;
+
+			return false;
 		}
 
-		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
+		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
 		{
 			bool success = true;
 			string result = "";
@@ -77,19 +93,21 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							success = false;
 							result = "Unable to parse message body Exception: " + ex.ToString();
-							message.DeadLetter();
+							//message.DeadLetter();
+							await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
 						}
 
 						if (cqi != null && cqi.Call != null && cqi.Call.HasAnyDispatches())
 						{
 							try
 							{
-								ProcessCallQueueItem(cqi);
+								await ProcessCallQueueItem(cqi);
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								message.Abandon();
+								//message.Abandon();
+								await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
 
 								success = false;
 								result = ex.ToString();
@@ -104,7 +122,8 @@ namespace Resgrid.Workers.Framework.Logic
 
 					try
 					{
-						message.Complete();
+						//message.Complete();
+						await _client.CompleteAsync(message.SystemProperties.LockToken);
 					}
 					catch (MessageLockLostException)
 					{
@@ -117,14 +136,15 @@ namespace Resgrid.Workers.Framework.Logic
 					result = ex.ToString();
 
 					Logging.LogException(ex);
-					message.Abandon();
+					//message.Abandon();
+					await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
 				}
 			}
 
 			return new Tuple<bool, string>(success, result);
 		}
 
-		public static void ProcessCallQueueItem(CallQueueItem cqi)
+		public static async Task<bool> ProcessCallQueueItem(CallQueueItem cqi)
 		{
 			try
 			{
@@ -147,20 +167,20 @@ namespace Resgrid.Workers.Framework.Logic
 						if (_userProfilesService == null)
 							_userProfilesService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 
-						cqi.Profiles = _userProfilesService.GetAllProfilesForDepartment(cqi.Call.DepartmentId).Select(x => x.Value).ToList();
+						cqi.Profiles = (await _userProfilesService.GetAllProfilesForDepartmentAsync(cqi.Call.DepartmentId)).Select(x => x.Value).ToList();
 					}
 
 					if (cqi.CallDispatchAttachmentId > 0)
 					{
 						//var callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-						cqi.Call.ShortenedAudioUrl = _callsService.GetShortenedAudioUrl(cqi.Call.CallId, cqi.CallDispatchAttachmentId);
+						cqi.Call.ShortenedAudioUrl = await _callsService.GetShortenedAudioUrlAsync(cqi.Call.CallId, cqi.CallDispatchAttachmentId);
 					}
 
-					cqi.Call.ShortenedCallUrl = _callsService.GetShortenedCallLinkUrl(cqi.Call.CallId);
+					cqi.Call.ShortenedCallUrl = await _callsService.GetShortenedCallLinkUrl(cqi.Call.CallId);
 
 					try
 					{
-						cqi.Call.CallPriority = _callsService.GetCallPrioritesById(cqi.Call.DepartmentId, cqi.Call.Priority, false);
+						cqi.Call.CallPriority = await _callsService.GetCallPrioritiesByIdAsync(cqi.Call.DepartmentId, cqi.Call.Priority, false);
 					}
 					catch {/* Doesn't matter */}
 
@@ -179,7 +199,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 								if (profile != null)
 								{
-									_communicationService.SendCall(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+									_communicationService.SendCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 								}
 							}
 							catch (SocketException sex)
@@ -199,7 +219,7 @@ namespace Resgrid.Workers.Framework.Logic
 							if (!groupIds.Contains(d.DepartmentGroupId))
 								groupIds.Add(d.DepartmentGroupId);
 
-							var members = _departmentGroupsService.GetAllMembersForGroup(d.DepartmentGroupId);
+							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(d.DepartmentGroupId);
 
 							foreach (var member in members)
 							{
@@ -209,7 +229,7 @@ namespace Resgrid.Workers.Framework.Logic
 									try
 									{
 										var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-										_communicationService.SendCall(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+										await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 									}
 									catch (SocketException sex)
 									{
@@ -232,15 +252,15 @@ namespace Resgrid.Workers.Framework.Logic
 
 						foreach (var d in cqi.Call.UnitDispatches)
 						{
-							var unit = _unitsService.GetUnitById(d.UnitId);
+							var unit = await _unitsService.GetUnitByIdAsync(d.UnitId);
 
 							if (unit != null && unit.StationGroupId.HasValue)
 								if (!groupIds.Contains(unit.StationGroupId.Value))
 									groupIds.Add(unit.StationGroupId.Value);
 
-							_communicationService.SendUnitCall(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Address);
+							await _communicationService.SendUnitCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Address);
 
-							var unitAssignedMembers = _unitsService.GetCurrentRolesForUnit(d.UnitId);
+							var unitAssignedMembers = await _unitsService.GetCurrentRolesForUnitAsync(d.UnitId);
 
 							if (unitAssignedMembers != null && unitAssignedMembers.Count() > 0)
 							{
@@ -252,7 +272,7 @@ namespace Resgrid.Workers.Framework.Logic
 										try
 										{
 											var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-											_communicationService.SendCall(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+											await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 										}
 										catch (SocketException sex)
 										{
@@ -269,7 +289,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								if (unit.StationGroupId.HasValue)
 								{
-									var members = _departmentGroupsService.GetAllMembersForGroup(unit.StationGroupId.Value);
+									var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value);
 
 									foreach (var member in members)
 									{
@@ -279,7 +299,7 @@ namespace Resgrid.Workers.Framework.Logic
 											try
 											{
 												var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-												_communicationService.SendCall(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+												await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 											}
 											catch (SocketException sex)
 											{
@@ -304,7 +324,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 						foreach (var d in cqi.Call.RoleDispatches)
 						{
-							var members = _rolesService.GetAllMembersOfRole(d.RoleId);
+							var members = await _rolesService.GetAllMembersOfRoleAsync(d.RoleId);
 
 							foreach (var member in members)
 							{
@@ -314,7 +334,7 @@ namespace Resgrid.Workers.Framework.Logic
 									try
 									{
 										var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-										_communicationService.SendCall(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+										await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 									}
 									catch (SocketException sex)
 									{
@@ -338,7 +358,7 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						foreach (var d in cqi.Call.Dispatches)
 						{
-							var group = _departmentGroupsService.GetGroupForUser(d.UserId, cqi.Call.DepartmentId);
+							var group = await _departmentGroupsService.GetGroupForUserAsync(d.UserId, cqi.Call.DepartmentId);
 
 							if (group != null)
 							{
@@ -360,13 +380,13 @@ namespace Resgrid.Workers.Framework.Logic
 							if (fetchedGroups.ContainsKey(groupId))
 								group = fetchedGroups[groupId];
 							else
-								group = _departmentGroupsService.GetGroupById(groupId);
+								group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
 
 							if (!String.IsNullOrWhiteSpace(group.PrinterData) && group.DispatchToPrinter)
 							{
 								var printerData = JsonConvert.DeserializeObject<DepartmentGroupPrinter>(group.PrinterData);
 								var apiKey = SymmetricEncryption.Decrypt(printerData.ApiKey, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
-								var callUrl = _callsService.GetShortenedCallPdfUrl(cqi.Call.CallId, true, groupId);
+								var callUrl = await _callsService.GetShortenedCallPdfUrl(cqi.Call.CallId, true, groupId);
 
 								var printJob = _printerProvider.SubmitPrintJob(apiKey, printerData.PrinterId, "CallPrint", callUrl);
 							}
@@ -382,6 +402,19 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				_communicationService = null;
 			}
+
+			return true;
+		}
+
+		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+		{
+			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
+			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
+			//Console.WriteLine("Exception context for troubleshooting:");
+			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
+			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
+			//Console.WriteLine($"- Executing Action: {context.Action}");
+			return Task.CompletedTask;
 		}
 	}
 }

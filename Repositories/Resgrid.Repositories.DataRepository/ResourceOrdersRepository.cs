@@ -1,301 +1,342 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.ResourceOrders;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class ResourceOrdersRepository: IResourceOrdersRepository
+	public class ResourceOrdersRepository : RepositoryBase<ResourceOrder>, IResourceOrdersRepository
 	{
-		public string connectionString = ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>().FirstOrDefault(x => x.Name == "ResgridContext").ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly IResourceOrderItemRepository _resourceOrderItemRepository;
+		private readonly IResourceOrderFillRepository _resourceOrderFillRepository;
+		private readonly IResourceOrderFillUnitRepository _resourceOrderFillUnitRepository;
 
-		public async Task<List<ResourceOrder>> GetAll()
+		public ResourceOrdersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork,
+			IQueryFactory queryFactory, IResourceOrderItemRepository resourceOrderItemRepository, IResourceOrderFillRepository resourceOrderFillRepository, IResourceOrderFillUnitRepository resourceOrderFillUnitRepository)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders");
-				return result.ToList();
-			}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_unitOfWork = unitOfWork;
+			_queryFactory = queryFactory;
+			_resourceOrderItemRepository = resourceOrderItemRepository;
+			_resourceOrderFillRepository = resourceOrderFillRepository;
+			_resourceOrderFillUnitRepository = resourceOrderFillUnitRepository;
 		}
 
-		public async Task<List<ResourceOrder>> GetAllOpen()
+		public async Task<IEnumerable<ResourceOrder>> GetAllOpenOrdersAsync()
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders WHERE CloseDate IS NULL");
-				return result.ToList();
+
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrder>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+
+
+					var query = _queryFactory.GetQuery<SelectAllOpenOrdersQuery>();
+
+					return await x.QueryAsync<ResourceOrder>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+
+		}
+
+		public async Task<IEnumerable<ResourceOrder>> GetAllNonDepartmentOpenVisibleOrdersAsync(int departmentId)
+		{
+			try
+			{
+
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrder>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectAllOpenNonDVisibleOrdersQuery>();
+
+					return await x.QueryAsync<ResourceOrder>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+
 		}
 
 		public async Task<ResourceOrder> GetOrderById(int id)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				//var orderResult = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders WHERE ResourceOrderId = @id", new { id = id });
+			//using (IDbConnection db = new SqlConnection(connectionString))
+			//{
+			//	var query = @"SELECT * FROM ResourceOrders ro 
+			//								INNER JOIN Departments d ON d.DepartmentId = ro.DepartmentId
+			//							WHERE ResourceOrderId = @id
 
-				//return await db.GetAsync<ResourceOrder>(id);
+			//							SELECT * FROM ResourceOrderItems roi
+			//								LEFT OUTER JOIN ResourceOrderFills rof ON rof.ResourceOrderItemId = roi.ResourceOrderItemId
+			//								INNER JOIN Departments d ON d.DepartmentId = rof.DepartmentId
+			//								LEFT OUTER JOIN ResourceOrderFillUnits rou ON rou.ResourceOrderFillId = rof.ResourceOrderFillId
+			//							WHERE ResourceOrderId = @id";
 
-				//return orderResult.FirstOrDefault();
+			//	var multi = await db.QueryMultipleAsync(query, new { id = id });
 
-				//var query = @"SELECT ro.*,
-				//				   d.*,
-				//				   roi.*,
-				//				   rof.*,
-				//				   rou.*
-				//			FROM ResourceOrders ro
-				//			JOIN Departments d ON ro.DepartmentId = d.DepartmentId
-				//			LEFT OUTER JOIN ResourceOrderItems roi ON ro.ResourceOrderId = roi.ResourceOrderId
-				//			LEFT OUTER JOIN ResourceOrderFills rof ON roi.ResourceOrderItemId = rof.ResourceOrderItemId
-				//			LEFT OUTER JOIN ResourceOrderFillUnits rou ON rou.ResourceOrderFillId = rof.ResourceOrderFillId
-				//			WHERE ro.ResourceOrderId = @id";
+			//	var order = multi.Read<ResourceOrder, Department, ResourceOrder>((o, d) => { o.Department = d; return o; }, splitOn: "DepartmentId").FirstOrDefault();
+
+			//	if (order != null)
+			//	{
+			//		var lookupFills = new Dictionary<int, ResourceOrderFill>();
+			//		var lookupUnits = new Dictionary<int, ResourceOrderFillUnit>();
+
+			//		var items = multi.Read<ResourceOrderItem, ResourceOrderFill, Department, ResourceOrderFillUnit, ResourceOrderItem>(
+			//			(item, fill, d, unit) =>
+			//			{
+			//				Func<ResourceOrderFill, Department, ResourceOrderFillUnit, ResourceOrderFill> processFill =
+			//					(childOrderFill, childFillDepartment, childOrderUnit) =>
+			//					{
+			//						ResourceOrderFillUnit orderFillUnit;
+			//						if (!lookupUnits.ContainsKey(childOrderUnit.ResourceOrderFillUnitId))
+			//						{
+			//							lookupUnits.Add(childOrderUnit.ResourceOrderFillUnitId, childOrderUnit);
+			//							orderFillUnit = childOrderUnit;
+			//							childOrderFill.Units = new List<ResourceOrderFillUnit>();
+			//						}
+			//						else
+			//						{
+			//							orderFillUnit = lookupUnits[childOrderUnit.ResourceOrderFillUnitId];
+			//						}
+			//						childOrderFill.Units.Add(orderFillUnit);
+
+			//						childOrderFill.Department = childFillDepartment;
+
+			//						return fill;
+			//					};
+
+			//				item.Fills = new List<ResourceOrderFill>();
+
+			//				if (fill != null)
+			//				{
+			//					ResourceOrderFill orderFill;
+			//					if (!lookupFills.ContainsKey(fill.ResourceOrderFillId))
+			//					{
+			//						lookupFills.Add(fill.ResourceOrderFillId, fill);
+			//						orderFill = processFill(fill, d, unit);
+			//					}
+			//					else
+			//					{
+			//						orderFill = processFill(lookupFills[fill.ResourceOrderFillId], d, unit);
+			//					}
+
+			//					item.Fills.Add(orderFill);
+			//				}
+
+			//				return item;
+
+			//			}, splitOn: "ResourceOrderItemId, DepartmentId, ResourceOrderFillId").Distinct();
 
 
+			//		if (items != null)
+			//			order.Items = items.ToList();
 
+			//		return order;
+			//	}
 
-				//var orderResult = await db.QueryAsync<ResourceOrder, Department, ResourceOrderItem, ResourceOrderFill, ResourceOrderFillUnit, ResourceOrder>(query, (order, d, item, fill, unit) =>
-				//{
-				//	order.Department = d;
-				//	order.Items = item.T
-				//	return order;
-				//}, new { id = id });
+			//	return null;
+			//}
 
-
-
-				var query = @"SELECT * FROM ResourceOrders ro 
-											INNER JOIN Departments d ON d.DepartmentId = ro.DepartmentId
-										WHERE ResourceOrderId = @id
-
-										SELECT * FROM ResourceOrderItems roi
-											LEFT OUTER JOIN ResourceOrderFills rof ON rof.ResourceOrderItemId = roi.ResourceOrderItemId
-											INNER JOIN Departments d ON d.DepartmentId = rof.DepartmentId
-											LEFT OUTER JOIN ResourceOrderFillUnits rou ON rou.ResourceOrderFillId = rof.ResourceOrderFillId
-										WHERE ResourceOrderId = @id";
-
-				var multi = await db.QueryMultipleAsync(query, new { id = id });
-
-				var order = multi.Read<ResourceOrder, Department, ResourceOrder>((o, d) => { o.Department = d; return o; }, splitOn: "DepartmentId").FirstOrDefault();
-
-				if (order != null)
-				{
-					var lookupFills = new Dictionary<int, ResourceOrderFill>();
-					var lookupUnits = new Dictionary<int, ResourceOrderFillUnit>();
-
-					var items = multi.Read<ResourceOrderItem, ResourceOrderFill, Department, ResourceOrderFillUnit, ResourceOrderItem>(
-						(item, fill, d, unit) =>
-						{
-							Func<ResourceOrderFill, Department, ResourceOrderFillUnit, ResourceOrderFill> processFill =
-								(childOrderFill, childFillDepartment, childOrderUnit) =>
-								{
-									ResourceOrderFillUnit orderFillUnit;
-									if (!lookupUnits.ContainsKey(childOrderUnit.ResourceOrderFillUnitId))
-									{
-										lookupUnits.Add(childOrderUnit.ResourceOrderFillUnitId, childOrderUnit);
-										orderFillUnit = childOrderUnit;
-										childOrderFill.Units = new List<ResourceOrderFillUnit>();
-									}
-									else
-									{
-										orderFillUnit = lookupUnits[childOrderUnit.ResourceOrderFillUnitId];
-									}
-									childOrderFill.Units.Add(orderFillUnit);
-
-									childOrderFill.Department = childFillDepartment;
-
-									return fill;
-								};
-
-							item.Fills = new List<ResourceOrderFill>();
-
-							if (fill != null)
-							{
-								ResourceOrderFill orderFill;
-								if (!lookupFills.ContainsKey(fill.ResourceOrderFillId))
-								{
-									lookupFills.Add(fill.ResourceOrderFillId, fill);
-									orderFill = processFill(fill, d, unit);
-								}
-								else
-								{
-									orderFill = processFill(lookupFills[fill.ResourceOrderFillId], d, unit);
-								}
-
-								item.Fills.Add(orderFill);
-							}
-
-							return item;
-
-						}, splitOn: "ResourceOrderItemId, DepartmentId, ResourceOrderFillId").Distinct();
-
-					//order.Department = department;
-
-					if (items != null)
-						order.Items = items.ToList();
-
-					return order;
-				}
-
-				return null;
-			}
+			return null;
 		}
 
-		public async Task<List<ResourceOrder>> GetOrdersByDepartmentId(int departmentId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders WHERE DepartmentId = @departmentId", new { departmentId = departmentId });
-				return result.ToList();
-			}
-		}
-
-		public async Task<List<ResourceOrder>> GetOpenOrdersByDepartmentId(int departmentId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders WHERE DepartmentId = @departmentId AND CloseDate IS NULL", new { departmentId = departmentId });
-				return result.ToList();
-			}
-		}
-
-		public async Task<ResourceOrderSetting> GetOrderSettingById(int id)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrderSetting>($"SELECT * FROM ResourceOrderSettings WHERE ResourceOrderSettingId = @id", new { id = id });
-				return result.FirstOrDefault();
-			}
-		}
-
-		public async Task<ResourceOrderSetting> GetOrderSettingByDepartmentId(int departmentId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrderSetting>($"SELECT * FROM ResourceOrderSettings WHERE DepartmentId = @departmentId", new { departmentId = departmentId });
-				return result.FirstOrDefault();
-			}
-		}
 
 		public async Task<List<ResourceOrder>> GetAllOpenOrdersByRange(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders ro WHERE ro.CloseDate IS NULL AND ro.Visibility = 0 AND ro.DepartmentId != @departmentId", new { departmentId = departmentId });
-				return result.ToList();
-			}
+			//using (IDbConnection db = new SqlConnection(connectionString))
+			//{
+			//	var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders ro WHERE ro.CloseDate IS NULL AND ro.Visibility = 0 AND ro.DepartmentId != @departmentId", new { departmentId = departmentId });
+			//	return result.ToList();
+			//}
+
+			return null;
 		}
 
 		public async Task<List<ResourceOrder>> GetAllOpenOrdersUnrestricted(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders ro WHERE ro.CloseDate IS NULL AND ro.Visibility = 3 AND ro.DepartmentId != @departmentId", new { departmentId = departmentId });
-				return result.ToList();
-			}
+			//using (IDbConnection db = new SqlConnection(connectionString))
+			//{
+			//	var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders ro WHERE ro.CloseDate IS NULL AND ro.Visibility = 3 AND ro.DepartmentId != @departmentId", new { departmentId = departmentId });
+			//	return result.ToList();
+			//}
+
+			return null;
 		}
 
 		public async Task<List<ResourceOrder>> GetAllOpenOrdersLinked(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders ro WHERE ro.CloseDate IS NULL AND ro.DepartmentId != @departmentId AND ro.Visibility = 2 AND ro.DepartmentId IN (SELECT dl.DepartmentId FROM DepartmentLinks dl WHERE dl.LinkedDepartmentId = @departmentId AND dl.LinkEnabled = 1 AND dl.DepartmentShareOrders = 1)", new { departmentId = departmentId });
-				return result.ToList();
-			}
-		}
-		public async Task UpdateFillStatus(int fillId, string userId, bool accepted)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				await db.ExecuteAsync($"UPDATE [ResourceOrderFills] SET [Accepted] = @accepted, [AcceptedOn] = @acceptedOn, [AcceptedUserId] = @userId WHERE ResourceOrderFillId = @fillId", 
-					new { fillId = fillId, userId = userId, accepted = accepted, acceptedOn = DateTime.UtcNow });
-			}
+			//using (IDbConnection db = new SqlConnection(connectionString))
+			//{
+			//	var result = await db.QueryAsync<ResourceOrder>($"SELECT * FROM ResourceOrders ro WHERE ro.CloseDate IS NULL AND ro.DepartmentId != @departmentId AND ro.Visibility = 2 AND ro.DepartmentId IN (SELECT dl.DepartmentId FROM DepartmentLinks dl WHERE dl.LinkedDepartmentId = @departmentId AND dl.LinkEnabled = 1 AND dl.DepartmentShareOrders = 1)", new { departmentId = departmentId });
+			//	return result.ToList();
+			//}
+
+			return null;
 		}
 
-		public async Task<ResourceOrderSetting> SaveSettings(ResourceOrderSetting settings)
+		public async Task<ResourceOrder> SaveOrderAsync(ResourceOrder order, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				if (settings.ResourceOrderSettingId == 0)
-					await db.InsertAsync<ResourceOrderSetting>(settings);
-				else
-					await db.UpdateAsync(settings);
-			}
 
-			return settings;
-		}
-
-		public async Task<ResourceOrder> SaveOrder(ResourceOrder order)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			if (order.ResourceOrderId == 0)
 			{
-				if (order.ResourceOrderId == 0)
+				var resourceOrder = await InsertAsync(order, cancellationToken);
+
+				if (resourceOrder != null)
 				{
-					var id = await db.InsertAsync<ResourceOrder>(order);
-
-					if (id != null)
-					{
-						order.ResourceOrderId = id.Value;
-						foreach (var item in order.Items)
-						{
-							item.ResourceOrderId = id.Value;
-							var itemId = await db.InsertAsync<ResourceOrderItem>(item);
-
-							if (itemId != null)
-								item.ResourceOrderItemId = itemId.Value;
-						}
-					}
-				}
-				else
-				{
-					await db.UpdateAsync(order);
-
 					foreach (var item in order.Items)
 					{
-						await db.UpdateAsync(item);
+						item.ResourceOrderId = resourceOrder.ResourceOrderId;
+						var itemId = await _resourceOrderItemRepository.InsertAsync(item, cancellationToken);
+
+						if (itemId != null)
+							item.ResourceOrderItemId = itemId.ResourceOrderItemId;
 					}
+				}
+			}
+			else
+			{
+				await UpdateAsync(order, cancellationToken);
+
+				foreach (var item in order.Items)
+				{
+					await _resourceOrderItemRepository.UpdateAsync(item, cancellationToken);
 				}
 			}
 
 			return order;
 		}
 
-		public async Task<ResourceOrderFill> SaveFill(ResourceOrderFill fill)
+		public async Task<ResourceOrderFill> SaveFillAsync(ResourceOrderFill fill, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+
+			if (fill.ResourceOrderFillId == 0)
 			{
-				if (fill.ResourceOrderFillId == 0)
+				var orderFill = await _resourceOrderFillRepository.InsertAsync(fill, cancellationToken);
+
+				if (orderFill != null)
 				{
-					var id = await db.InsertAsync<ResourceOrderFill>(fill);
-
-					if (id != null)
-					{
-						fill.ResourceOrderFillId = id.Value;
-						foreach (var unit in fill.Units)
-						{
-							unit.ResourceOrderFillId = id.Value;
-							var itemId = await db.InsertAsync<ResourceOrderFillUnit>(unit);
-
-							if (itemId != null)
-								unit.ResourceOrderFillUnitId = itemId.Value;
-						}
-					}
-				}
-				else
-				{
-					await db.UpdateAsync(fill);
-
+					fill.ResourceOrderFillId = orderFill.ResourceOrderFillId;
 					foreach (var unit in fill.Units)
 					{
-						await db.UpdateAsync(unit);
+						unit.ResourceOrderFillId = orderFill.ResourceOrderFillId;
+						var fillUnit = await _resourceOrderFillUnitRepository.InsertAsync(unit, cancellationToken);
+
+						if (fillUnit != null)
+							unit.ResourceOrderFillUnitId = fillUnit.ResourceOrderFillUnitId;
 					}
 				}
 			}
+			else
+			{
+				await _resourceOrderFillRepository.UpdateAsync(fill, cancellationToken);
+
+				foreach (var unit in fill.Units)
+				{
+					await _resourceOrderFillUnitRepository.SaveOrUpdateAsync(unit, cancellationToken);
+				}
+			}
+
 
 			return fill;
 		}
+
+		//private static Func<Message, MessageRecipient, Message> ResourceOrderMapping(Dictionary<int, Message> dictionary)
+		//{
+		//	return new Func<Message, MessageRecipient, Message>((message, messageRecipient) =>
+		//	{
+		//		var dictionaryMessage = default(Message);
+
+		//		if (messageRecipient != null)
+		//		{
+		//			if (dictionary.TryGetValue(message.MessageId, out dictionaryMessage))
+		//			{
+		//				if (dictionaryMessage.MessageRecipients.All(x => x.MessageRecipientId != messageRecipient.MessageRecipientId))
+		//					dictionaryMessage.MessageRecipients.Add(messageRecipient);
+		//			}
+		//			else
+		//			{
+		//				if (message.MessageRecipients == null)
+		//					message.MessageRecipients = new List<MessageRecipient>();
+
+		//				message.MessageRecipients.Add(messageRecipient);
+		//				dictionary.Add(message.MessageId, message);
+
+		//				dictionaryMessage = message;
+		//			}
+		//		}
+		//		else
+		//		{
+		//			dictionaryMessage = message;
+		//		}
+
+		//		return dictionaryMessage;
+		//	});
+		//}
 	}
 }

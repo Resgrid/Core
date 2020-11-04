@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
-using System.Data.Entity.ModelConfiguration;
 using ProtoBuf;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -58,19 +58,21 @@ namespace Resgrid.Model
 
 		public virtual Rank Rank { get; set; }
 
+		
 		[NotMapped]
-		public object Id
+		public string TableName => "DepartmentMembers";
+
+		[NotMapped]
+		public string IdName => "DepartmentMemberId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "User", "Rank" };
+
+		[NotMapped]
+		public object IdValue
 		{
 			get { return DepartmentMemberId; }
 			set { DepartmentMemberId = (int)value; }
-		}
-	}
-
-	public class DepartmentMember_Mapping : EntityTypeConfiguration<DepartmentMember>
-	{
-		public DepartmentMember_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
 		}
 	}
 }

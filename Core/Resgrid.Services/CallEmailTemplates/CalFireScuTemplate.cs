@@ -9,7 +9,7 @@ namespace Resgrid.Services.CallEmailTemplates
 {
 	public class CalFireSCUTemplate : ICallEmailTemplate
 	{
-		public Call GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority)
+		public Call GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
 		{
 			if (email == null)
 				return null;

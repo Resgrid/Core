@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -70,7 +72,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			return View();
 		}
@@ -78,10 +80,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Action Logs
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
-		public IActionResult ActionLogs()
+		public async Task<IActionResult> ActionLogs()
 		{
 			var model = new ActionLogModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 
 			return View(model);
@@ -89,13 +91,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
-		public IActionResult GetActionLogs()
+		public async Task<IActionResult> GetActionLogs()
 		{
 			var actionLogs = new List<ActionLogForJson>();
-			var dep = _departmentsService.GetDepartmentById(DepartmentId);
-			var logs = _actionLogsService.GetAllActionLogsForDepartment(DepartmentId);
+			var dep = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var logs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(DepartmentId);
 
-			var names = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			foreach (var l in logs)
 			{
@@ -105,7 +107,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (name != null)
 					actionLog.Name = name.Name;
 				else
-					actionLog.Name = UserHelper.GetFullNameForUser(l.UserId);
+					actionLog.Name = await UserHelper.GetFullNameForUser(l.UserId);
 
 				actionLog.Timestamp = TimeConverterHelper.TimeConverterToString(l.Timestamp, dep);
 				actionLog.ActionType = l.ActionTypeId;
@@ -132,7 +134,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						if (l.DestinationId.HasValue)
 						{
-							var group = _departmentGroupsService.GetGroupById(l.DestinationId.Value);
+							var group = await _departmentGroupsService.GetGroupByIdAsync(l.DestinationId.Value);
 							actionLog.Action = string.Format("Available at {0}", group.Name);
 						}
 						else
@@ -142,7 +144,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						if (l.DestinationId.HasValue)
 						{
-							var group = _departmentGroupsService.GetGroupById(l.DestinationId.Value);
+							var group = await _departmentGroupsService.GetGroupByIdAsync(l.DestinationId.Value);
 							actionLog.Action = string.Format("Responding To Station {0}", group.Name);
 						}
 						else
@@ -158,7 +160,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					var customStatus = CustomStatesHelper.GetCustomState(DepartmentId, l.ActionTypeId);
+					var customStatus = await CustomStatesHelper.GetCustomState(DepartmentId, l.ActionTypeId);
 
 					if (customStatus != null)
 					{
@@ -179,16 +181,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		//[AuthorizeUpdate(ResgridClaimTypes.Resources.Department)]
-		public IActionResult ClearAllActionLogs(ActionLogModel model)
+		public async Task<IActionResult> ClearAllActionLogs(ActionLogModel model, CancellationToken cancellationToken)
 		{
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 
 
 			if (ModelState.IsValid)
 			{
 				if (model.ConfirmClearAll && model.Department.IsUserAnAdmin(UserId))
 				{
-					_actionLogsService.DeleteAllActionLogsForDepartment(model.Department.DepartmentId);
+					await _actionLogsService.DeleteAllActionLogsForDepartmentAsync(model.Department.DepartmentId, cancellationToken);
 				}
 			}
 
@@ -200,91 +202,91 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult PersonnelReport()
+		public async Task<IActionResult> PersonnelReport()
 		{
-			return View(CreatePersonnelReportModel(DepartmentId));
+			return View(await CreatePersonnelReportModel(DepartmentId));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult StaffingReport()
+		public async Task<IActionResult> StaffingReport()
 		{
-			return View(CreateStaffingReportModel(DepartmentId));
+			return View(await CreateStaffingReportModel(DepartmentId));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult CertificationsReport()
+		public async Task<IActionResult> CertificationsReport()
 		{
-			return View(CreateCertificationsReportModel(DepartmentId));
+			return View(await CreateCertificationsReportModel(DepartmentId));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult LogReport(int logId)
+		public async Task<IActionResult> LogReport(int logId)
 		{
-			return View(CreateLogReportModel(logId));
+			return View(await CreateLogReportModel(logId));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult UpcomingShiftReadinessReport()
+		public async Task<IActionResult> UpcomingShiftReadinessReport()
 		{
-			return View(UpcomingShiftReadinessReportModel(DepartmentId));
+			return View(await UpcomingShiftReadinessReportModel(DepartmentId));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult DepartmentActivityReport()
+		public async Task<IActionResult> DepartmentActivityReport()
 		{
-			return View(DepartmentActivityReportModel(DepartmentId));
+			return View(await DepartmentActivityReportModel(DepartmentId));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult PersonnelHoursReport(DateTime start, DateTime end)
+		public async Task<IActionResult> PersonnelHoursReport(DateTime start, DateTime end)
 		{
-			return View(PersonnelHoursReportModel(DepartmentId, start, end));
+			return View(await PersonnelHoursReportModel(DepartmentId, start, end));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult PersonnelHoursDetailReport(string userId, DateTime start, DateTime end)
+		public async Task<IActionResult> PersonnelHoursDetailReport(string userId, DateTime start, DateTime end)
 		{
-			return View(PersonnelHoursDetailReportModel(DepartmentId, userId, start, end));
+			return View(await PersonnelHoursDetailReportModel(DepartmentId, userId, start, end));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult PersonnelStaffingHistoryReport(bool groupSelect, int groupId, string userId, DateTime start, DateTime end)
+		public async Task<IActionResult> PersonnelStaffingHistoryReport(bool groupSelect, int groupId, string userId, DateTime start, DateTime end)
 		{
-			return View(PersonnelStaffingHistoryReportModel(DepartmentId, groupSelect, groupId, userId, start, end));
+			return View(await PersonnelStaffingHistoryReportModel(DepartmentId, groupSelect, groupId, userId, start, end));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult CallSummaryReport(DateTime start, DateTime end)
+		public async Task<IActionResult> CallSummaryReport(DateTime start, DateTime end)
 		{
-			return View(CallSummaryReportModel(DepartmentId, start, end));
+			return View(await CallSummaryReportModel(DepartmentId, start, end));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult PersonnelHoursReportParams()
+		public async Task<IActionResult> PersonnelHoursReportParams()
 		{
 			var model = new PersonnelHoursReportParams();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			model.Start = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), department);
 			model.End = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59), department);
@@ -292,14 +294,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var profiles = new List<UserProfile>();
 			profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
-			profiles.AddRange(_userProfileService.GetAllProfilesForDepartment(DepartmentId).Select(x => x.Value));
+			profiles.AddRange((await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value));
 			model.Users = new SelectList(profiles, "UserId", "FullName.AsFirstNameLastName", Guid.Empty);
 
 			return View(model);
 		}
 
 		[HttpPost]
-		public IActionResult PersonnelHoursReportParams(PersonnelHoursReportParams model)
+		public async Task<IActionResult> PersonnelHoursReportParams(PersonnelHoursReportParams model)
 		{
 			if (string.IsNullOrWhiteSpace(model.UserId))
 				return RedirectToAction("PersonnelHoursReport", new { start = model.Start, end = model.End });
@@ -310,11 +312,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult PersonnelStaffingHistoryReportParams()
+		public async Task<IActionResult> PersonnelStaffingHistoryReportParams()
 		{
 			var model = new PersonnelStaffingHistoryReportParams();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			model.Start = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), department);
 			model.End = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59), department);
@@ -322,17 +324,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var profiles = new List<UserProfile>();
 			profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
-			profiles.AddRange(_userProfileService.GetAllProfilesForDepartment(DepartmentId).Select(x => x.Value));
+			profiles.AddRange((await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value));
 			model.Users = new SelectList(profiles, "UserId", "FullName.AsFirstNameLastName", Guid.Empty);
 
-			var groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name", 0);
 
 			return View(model);
 		}
 
 		[HttpPost]
-		public IActionResult PersonnelStaffingHistoryReportParams(PersonnelStaffingHistoryReportParams model)
+		public async Task<IActionResult> PersonnelStaffingHistoryReportParams(PersonnelStaffingHistoryReportParams model)
 		{
 			return RedirectToAction("PersonnelStaffingHistoryReport", new { groupSelect = model.GroupSelect, groupId = model.GroupId, userId = model.UserId, start = model.Start, end = model.End });
 		}
@@ -340,11 +342,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		
-		public IActionResult CallSummaryReportParams()
+		public async Task<IActionResult> CallSummaryReportParams()
 		{
 			var model = new PersonnelHoursReportParams();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			model.Start = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), department);
 			model.End = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59), department);
@@ -353,7 +355,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult CallSummaryReportParams(PersonnelHoursReportParams model)
+		public async Task<IActionResult> CallSummaryReportParams(PersonnelHoursReportParams model)
 		{
 			return RedirectToAction("CallSummaryReport", new { start = model.Start, end = model.End });
 		}
@@ -362,55 +364,55 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		
 		[AllowAnonymous]
-		public IActionResult InternalRunReport(int type, int departmentId)
+		public async Task<IActionResult> InternalRunReport(int type, int departmentId)
 		{
 			if (((ReportTypes)type) == ReportTypes.Staffing)
 			{
-				return View("StaffingReport", CreateStaffingReportModel(departmentId));
+				return View("StaffingReport", await CreateStaffingReportModel(departmentId));
 			}
 			else if (((ReportTypes)type) == ReportTypes.Personnel)
 			{
-				return View("PersonnelReport", CreatePersonnelReportModel(departmentId));
+				return View("PersonnelReport", await CreatePersonnelReportModel(departmentId));
 			}
 			else if (((ReportTypes)type) == ReportTypes.Certifications)
 			{
-				return View("CertificationsReport", CreateCertificationsReportModel(departmentId));
+				return View("CertificationsReport", await CreateCertificationsReportModel(departmentId));
 			}
 			else if (((ReportTypes)type) == ReportTypes.ShiftReadiness)
 			{
-				return View("UpcomingShiftReadinessReport", UpcomingShiftReadinessReportModel(departmentId));
+				return View("UpcomingShiftReadinessReport", await UpcomingShiftReadinessReportModel(departmentId));
 			}
 
 			return new EmptyResult();
 		}
 
-		private StaffingReportView CreateStaffingReportModel(int departmentId)
+		private async Task<StaffingReportView> CreateStaffingReportModel(int departmentId)
 		{
 			var model = new StaffingReportView();
 			model.Rows = new List<StaffingReportRow>();
 			//model.StaffingBreakdown = new StaffingBreakdown();
 			model.GroupBreakdowns = new List<GroupBreakdown>();
 
-			var users = _departmentsService.GetAllUsersForDepartment(departmentId, false);
-			model.Department = _departmentsService.GetDepartmentById(departmentId, false);
+			var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
-			model.CustomStaffing = _customStateService.GetActiveStaffingLevelsForDepartment(departmentId);
+			model.CustomStaffing = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(departmentId);
 
 			foreach (var user in users)
 			{
 				var person = new StaffingReportRow();
-				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
-				var staffing = _userStateService.GetLastUserStateByUserId(user.UserId);
-				var staffingChanges = _scheduledTasksService.GetUpcomingScheduledTasksByUserIdTaskType(user.UserId, TaskTypes.UserStaffingLevel);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+				var staffing = await _userStateService.GetLastUserStateByUserIdAsync(user.UserId);
+				var staffingChanges = await _scheduledTasksService.GetUpcomingScheduledTasksByUserIdTaskTypeAsync(user.UserId, TaskTypes.UserStaffingLevel);
 
-				person.Name = UserHelper.GetFullNameForUser(user.UserId);
+				person.Name = await UserHelper.GetFullNameForUser(user.UserId);
 
 				if (group != null)
 					person.Group = group.Name;
 
 				var sb = new StringBuilder();
-				var roles = _personnelRolesService.GetRolesForUser(user.UserId, DepartmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
 				foreach (var role in roles)
 				{
 					if (sb.Length > 0)
@@ -511,21 +513,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private PersonnelReportView CreatePersonnelReportModel(int departmentId)
+		private async Task<PersonnelReportView> CreatePersonnelReportModel(int departmentId)
 		{
 			var model = new PersonnelReportView();
 			model.Rows = new List<PersonnelReportRow>();
-			var users = _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabled(departmentId);
-			model.Department = _departmentsService.GetDepartmentById(departmentId, false);
+			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(departmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
 			foreach (var user in users)
 			{
-				var departmentUser = _departmentsService.GetDepartmentMember(user.UserId, DepartmentId);
+				var departmentUser = await _departmentsService.GetDepartmentMemberAsync(user.UserId, DepartmentId);
 				var person = new PersonnelReportRow();
-				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
-				var savedProfile = _userProfileService.GetProfileByUserId(user.UserId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+				var savedProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
 				if (departmentUser.IsAdmin.HasValue && departmentUser.IsAdmin.Value || model.Department.ManagingUserId == user.UserId)
 					person.DepartmentRole = "Admin";
@@ -539,7 +541,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				person.Username = user.UserName;
 
 				var sb = new StringBuilder();
-				var roles = _personnelRolesService.GetRolesForUser(user.UserId, DepartmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
 				foreach (var role in roles)
 				{
 					if (sb.Length > 0)
@@ -558,7 +560,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (savedProfile.MailingAddressId.HasValue)
 					{
-						var mailingAddress = _addressService.GetAddressById(savedProfile.MailingAddressId.Value);
+						var mailingAddress = await _addressService.GetAddressByIdAsync(savedProfile.MailingAddressId.Value);
 
 						StringBuilder address = new StringBuilder();
 						address.Append("<address>");
@@ -577,7 +579,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					var userProfile = _userProfileService.GetProfileByUserId(user.UserId);
+					var userProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 					person.Name = userProfile.FullName.AsFirstNameLastName;
 				}
 
@@ -587,13 +589,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private CertificationsReportView CreateCertificationsReportModel(int departmentId)
+		private async Task<CertificationsReportView> CreateCertificationsReportModel(int departmentId)
 		{
 			var model = new CertificationsReportView();
 			model.Rows = new List<CertificationsReportRow>();
 
-			var users = _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabled(departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId, false);
+			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
 			model.RunOn = DateTime.UtcNow.TimeConverter(department);
 
@@ -602,11 +604,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var person = new CertificationsReportRow();
 				person.SubRows = new List<CertificationsReportSubRow>();
 
-				var certifications = _certificationService.GetCertificationsByUserId(user.UserId);
+				var certifications = await _certificationService.GetCertificationsByUserIdAsync(user.UserId);
 
 				if (certifications != null && certifications.Count > 0)
 				{
-					var savedProfile = _userProfileService.GetProfileByUserId(user.UserId);
+					var savedProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
 					if (savedProfile != null)
 					{
@@ -615,7 +617,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					else
 					{
-						var userProfile = _userProfileService.GetProfileByUserId(user.UserId);
+						var userProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 						person.Name = userProfile.FullName.AsFirstNameLastName;
 					}
 
@@ -643,17 +645,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private LogReportView CreateLogReportModel(int logId)
+		private async Task<LogReportView> CreateLogReportModel(int logId)
 		{
 			var model = new LogReportView();
-			model.Log = _logService.GetWorkLogById(logId);
-			model.RunOn = DateTime.UtcNow.TimeConverter(model.Log.Department);
+			model.Log = await _logService.GetWorkLogByIdAsync(logId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(model.Log.DepartmentId);
+			model.RunOn = DateTime.UtcNow.TimeConverter(department);
 
 
 			foreach (var user in model.Log.Users)
 			{
-				var profile = _userProfileService.GetProfileByUserId(user.UserId);
-				var station = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
+				var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
+				var station = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 
 				var stationName = "";
 
@@ -671,20 +674,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else
 			{
-				var members = _departmentsService.GetAllMembersForDepartment(DepartmentId);
+				var members = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId);
 				model.Attendance = (model.Log.Users.Count * 100f) / members.Count;
 			}
 
 			return model;
 		}
 
-		private UpcomingShiftReadinessView UpcomingShiftReadinessReportModel(int departmentId)
+		private async Task<UpcomingShiftReadinessView> UpcomingShiftReadinessReportModel(int departmentId)
 		{
 			var model = new UpcomingShiftReadinessView();
 			model.Rows = new List<UpcomingShiftReadinessReportRow>();
 
-			var shifts = _shiftsService.GetAllShiftsByDepartment(departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId, false);
+			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(department);
 
 			foreach (var shift in shifts)
@@ -698,7 +701,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (nextShiftDay != null)
 				{
-					var shiftRoleDeltas = _shiftsService.GetShiftDayNeeds(nextShiftDay.ShiftDayId);
+					var shiftRoleDeltas = await _shiftsService.GetShiftDayNeedsAsync(nextShiftDay.ShiftDayId);
 
 					shiftRow.ShiftName = shift.Name;
 					shiftRow.ShiftDate = nextShiftDay.Day.ToShortDateString();
@@ -737,20 +740,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 						foreach (var person in shift.Personnel)
 						{
 							var subRowPerson = new UpcomingShiftReadinessPersonnel();
-							subRowPerson.Name = UserHelper.GetFullNameForUser(person.UserId);
-							subRowPerson.Roles = _personnelRolesService.GetRolesForUser(person.UserId, DepartmentId).Select(x => x.Name).ToList();
+							subRowPerson.Name = await UserHelper.GetFullNameForUser(person.UserId);
+							subRowPerson.Roles = (await _personnelRolesService.GetRolesForUserAsync(person.UserId, DepartmentId)).Select(x => x.Name).ToList();
 
 							shiftSubRow.Personnel.Add(subRowPerson);
 						}
 
-						var shiftSignupsForDay = _shiftsService.GetShiftSignpsForShiftDay(nextShiftDay.ShiftDayId);
+						var shiftSignupsForDay = await _shiftsService.GetShiftSignpsForShiftDayAsync(nextShiftDay.ShiftDayId);
 						if (shiftSignupsForDay != null)
 						{
 							foreach (var signup in shiftSignupsForDay.Where(x => x.DepartmentGroupId.Value == group.DepartmentGroupId))
 							{
 								var subRowPerson = new UpcomingShiftReadinessPersonnel();
-								subRowPerson.Name = UserHelper.GetFullNameForUser(signup.UserId);
-								subRowPerson.Roles = _personnelRolesService.GetRolesForUser(signup.UserId, DepartmentId).Select(x => x.Name).ToList();
+								subRowPerson.Name = await UserHelper.GetFullNameForUser(signup.UserId);
+								subRowPerson.Roles = (await _personnelRolesService.GetRolesForUserAsync(signup.UserId, DepartmentId)).Select(x => x.Name).ToList();
 
 								shiftSubRow.Personnel.Add(subRowPerson);
 							}
@@ -770,16 +773,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private DepartmentActivityView DepartmentActivityReportModel(int departmentId)
+		private async Task<DepartmentActivityView> DepartmentActivityReportModel(int departmentId)
 		{
 			var model = new DepartmentActivityView();
 
-			model.Department = _departmentsService.GetDepartmentById(departmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
-			var calls = _callsService.GetAllCallsByDepartmentDateRange(DepartmentId, new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59));
+			var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59));
 			var logs =
-			_workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Training,
+			await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Training,
 				new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59));
 
 			model.TotalCalls = calls.Count;
@@ -800,8 +803,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallTypeCount.Add(new Tuple<string, int>("Total", calls.Count));
 
 			model.Responses = new List<PersonnelResponse>();
-			var personnel = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			var profiles = _userProfileService.GetAllProfilesForDepartment(DepartmentId);
+			var personnel = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
 
 			CultureInfo culture = new CultureInfo("en-us");
 			Calendar calendar = culture.Calendar;
@@ -826,7 +829,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (profile != null)
 				{
-					var group = _departmentGroupsService.GetGroupForUser(profile.UserId, DepartmentId);
+					var group = await _departmentGroupsService.GetGroupForUserAsync(profile.UserId, DepartmentId);
 
 					response.ID = profile.IdentificationNumber;
 					training.ID = profile.IdentificationNumber;
@@ -850,10 +853,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var tonedCalls = calls.Where(x => x.Dispatches.Select(y => y.UserId).Contains(person.UserId));
 					response.TotalCalls = tonedCalls.Count();
 
-					var attendedTrainings = logs.Where(x => x.Users.Select(y => y.UserId).Contains(person.UserId));
+					var attendedTrainings = logs.Where(x => x.Users != null && x.Users.Select(y => y.UserId).Contains(person.UserId));
 					training.Attended = attendedTrainings.Count();
 
-					var actionLogs = _actionLogsService.GetAllActionLogsForUserInDateRange(person.UserId,
+					var actionLogs = await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(person.UserId,
 						new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59));
 
 					response.CallTypeCount = new List<Tuple<string, int>>();
@@ -863,10 +866,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						foreach (var tonnedCall in call.ToList())
 						{
-							var callLog = _logService.GetLogsForCall(tonnedCall.CallId);
+							var callLog = await _logService.GetLogsForCallAsync(tonnedCall.CallId);
 							if (callLog != null && callLog.Any())
 							{
-								var userLogs = callLog.Where(x => x.Users.Select(y => y.UserId).Contains(person.UserId));
+								var userLogs = callLog.Where(x => x.Users != null && x.Users.Select(y => y.UserId).Contains(person.UserId));
 								if (userLogs != null && userLogs.Any())
 								{
 									count += userLogs.Count();
@@ -896,11 +899,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private PersonnelHoursView PersonnelHoursReportModel(int departmentId, DateTime? start, DateTime? end)
+		private async Task<PersonnelHoursView> PersonnelHoursReportModel(int departmentId, DateTime? start, DateTime? end)
 		{
 			var model = new PersonnelHoursView();
 
-			model.Department = _departmentsService.GetDepartmentById(departmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 			List<Call> calls = new List<Call>();
 
@@ -909,26 +912,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Start = start.Value;
 				model.End = end.Value;
 
-				calls = _callsService.GetAllCallsByDepartmentDateRange(DepartmentId, start.Value, end.Value);
+				calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, start.Value, end.Value);
 			}
 			else
 			{
 				model.Start = new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1);
 				model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
 
-				calls = _callsService.GetAllCallsByDepartmentDateRange(DepartmentId, model.Start, model.End);
+				calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, model.Start, model.End);
 			}
 
-			var workLogs = _workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Work, model.Start, model.End);
-			var trainingLogs = _workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Training, model.Start, model.End);
-			var callLogs = _workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Run, model.Start, model.End);
+			var workLogs = await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Work, model.Start, model.End);
+			var trainingLogs = await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Training, model.Start, model.End);
+			var callLogs = await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Run, model.Start, model.End);
 
 			model.CallsHours = new List<PersonnelCallHours>();
 			model.WorkHours = new List<PersonnelWorkHours>();
 			model.TrainingHours = new List<PersonnelTrainingHours>();
 
-			var personnel = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			var profiles = _userProfileService.GetAllProfilesForDepartment(DepartmentId);
+			var personnel = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
 
 			foreach (var person in personnel)
 			{
@@ -940,7 +943,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (profile != null)
 				{
-					var group = _departmentGroupsService.GetGroupForUser(profile.UserId, DepartmentId);
+					var group = await _departmentGroupsService.GetGroupForUserAsync(profile.UserId, DepartmentId);
 
 					callHours.ID = profile.IdentificationNumber;
 					workHours.ID = profile.IdentificationNumber;
@@ -1005,11 +1008,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private PersonnelHoursDetailView PersonnelHoursDetailReportModel(int departmentId, string userId, DateTime? start, DateTime? end)
+		private async Task<PersonnelHoursDetailView> PersonnelHoursDetailReportModel(int departmentId, string userId, DateTime? start, DateTime? end)
 		{
 			var model = new PersonnelHoursDetailView();
 
-			model.Department = _departmentsService.GetDepartmentById(departmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 			List<Call> calls = new List<Call>();
 
@@ -1018,37 +1021,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Start = start.Value;
 				model.End = end.Value;
 
-				calls = _callsService.GetAllCallsByDepartmentDateRange(DepartmentId, start.Value, end.Value);
+				calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, start.Value, end.Value);
 			}
 			else
 			{
 				model.Start = new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1);
 				model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
 
-				calls = _callsService.GetAllCallsByDepartmentDateRange(DepartmentId, model.Start, model.End);
+				calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, model.Start, model.End);
 			}
 
 			var workLogs =
-			_workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Work,
+				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Work,
 				model.Start, model.End);
 
 			var trainingLogs =
-			_workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Training,
+				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Training,
 				model.Start, model.End);
 
 			var callLogs =
-			_workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Run,
+			await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Run,
 				model.Start, model.End);
 
 			model.CallDetails = new List<CallDetail>();
 			model.WorkDetails = new List<WorkDetail>();
 			model.TrainingDetails = new List<TrainingDetail>();
 
-			var profile = _userProfileService.GetProfileByUserId(userId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 			model.ID = profile.IdentificationNumber;
 			model.Name = profile.FullName.AsFirstNameLastName;
 
-			var group = _departmentGroupsService.GetGroupForUser(profile.UserId, DepartmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(profile.UserId, DepartmentId);
 
 			if (group != null)
 				model.Group = group.Name;
@@ -1105,7 +1108,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (log.StartedOn.HasValue && log.EndedOn.HasValue)
 				{
-					var loggedByProfile = _userProfileService.GetProfileByUserId(log.LoggedByUserId);
+					var loggedByProfile = await _userProfileService.GetProfileByUserIdAsync(log.LoggedByUserId);
 
 					workDetail.Name = string.Format("{0}-{1}", log.LoggedOn.ToString("G"), loggedByProfile.FullName.AsFirstNameLastName);
 					workDetail.Start = log.StartedOn.Value;
@@ -1133,11 +1136,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private PersonnelStaffingHistoryView PersonnelStaffingHistoryReportModel(int departmentId, bool groupSelect, int groupId, string userId, DateTime? start, DateTime? end)
+		private async Task<PersonnelStaffingHistoryView> PersonnelStaffingHistoryReportModel(int departmentId, bool groupSelect, int groupId, string userId, DateTime? start, DateTime? end)
 		{
 			var model = new PersonnelStaffingHistoryView();
 
-			model.Department = _departmentsService.GetDepartmentById(departmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
 			if (start.HasValue && end.HasValue)
@@ -1151,15 +1154,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
 			}
 
-			var profiles = _userProfileService.GetAllProfilesForDepartment(departmentId);
-			var allStates = _userStateService.GetSAlltatesForDepartmentInDateRange(departmentId, model.Start, model.End);
-			var groups = _departmentGroupsService.GetAllDepartmentGroupsForDepartment(departmentId);
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+			var allStates = await _userStateService.GetAllStatesForDepartmentInDateRangeAsync(departmentId, model.Start, model.End);
+			var groups = await _departmentGroupsService.GetAllDepartmentGroupsForDepartmentAsync(departmentId);
 
 			var states = new List<UserState>();
 
 			if (groupSelect && groupId > 0)
 			{
-				var group = _departmentGroupsService.GetGroupById(groupId);
+				var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
 				var usersInGroup = group.Members.Select(x => x.UserId);
 
 				states.AddRange(allStates.Where(x => usersInGroup.Contains(x.UserId)));
@@ -1192,7 +1195,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					summary.Name = profile.FullName.AsFirstNameLastName;
 					summary.TotalStaffingChanges = group.States.Count;
 
-					var scheduledTasks = _scheduledTasksService.GetScheduledTasksByUserType(group.UserId, (int)TaskTypes.UserStaffingLevel);
+					var scheduledTasks = await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(group.UserId, (int)TaskTypes.UserStaffingLevel);
 					if (scheduledTasks != null)
 						summary.TotalActiveScheduledChanges = scheduledTasks.Count;
 					else
@@ -1210,7 +1213,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						detail.Timestamp = state.Timestamp.TimeConverterToString(model.Department);
 						detail.Note = state.Note;
 
-						var customState = CustomStatesHelper.GetCustomPersonnelStaffing(departmentId, state);
+						var customState = await CustomStatesHelper.GetCustomPersonnelStaffing(departmentId, state);
 						detail.State = customState.ButtonText;
 						detail.StateColor = customState.ButtonColor;
 
@@ -1224,11 +1227,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private CallSummaryView CallSummaryReportModel(int departmentId, DateTime? start, DateTime? end)
+		private async Task<CallSummaryView> CallSummaryReportModel(int departmentId, DateTime? start, DateTime? end)
 		{
 			var model = new CallSummaryView();
 
-			model.Department = _departmentsService.GetDepartmentById(departmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
 			if (start.HasValue && end.HasValue)
@@ -1242,8 +1245,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
 			}
 
-			var calls = _callsService.GetAllCallsByDepartmentDateRange(DepartmentId, start.Value, end.Value);
-			var logs = _logService.GetAllLogsByDepartmentDateRange(departmentId, LogTypes.Run, model.Start, model.End);
+			var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, start.Value, end.Value);
+			var logs = await _logService.GetAllLogsByDepartmentDateRangeAsync(departmentId, LogTypes.Run, model.Start, model.End);
 
 			model.TotalCalls = calls.Count;
 			model.CallTypeCount = new List<Tuple<string, int>>();

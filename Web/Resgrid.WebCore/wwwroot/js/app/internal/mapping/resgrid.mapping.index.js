@@ -116,7 +116,7 @@ var resgrid;
                                     raiseOnDrag: false,
                                     map: map,
                                     title: marker.Title,
-                                    icon: "/Images/Mapping/" + marker.ImagePath + ".png",
+                                    icon: "/images/Mapping/" + marker.ImagePath + ".png",
                                     labelContent: marker.Title,
                                     labelAnchor: new google.maps.Point(35, 0),
                                     labelClass: "labels",

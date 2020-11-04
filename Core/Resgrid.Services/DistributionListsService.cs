@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -9,86 +10,86 @@ namespace Resgrid.Services
 {
 	public class DistributionListsService : IDistributionListsService
 	{
-		private readonly IGenericDataRepository<DistributionList> _distributionListRepository;
-		private readonly IGenericDataRepository<DistributionListMember> _distributionListMemberRepository;
+		private readonly IDistributionListRepository _distributionListRepository;
+		private readonly IDistributionListMemberRepository _distributionListMemberRepository;
 
-		public DistributionListsService(IGenericDataRepository<DistributionList> distributionListRepository, IGenericDataRepository<DistributionListMember> distributionListMemberRepository)
+		public DistributionListsService(IDistributionListRepository distributionListRepository, IDistributionListMemberRepository distributionListMemberRepository)
 		{
 			_distributionListRepository = distributionListRepository;
 			_distributionListMemberRepository = distributionListMemberRepository;
 		}
 
-		public List<DistributionList> GetAll()
+		public async Task<List<DistributionList>> GetAllAsync()
 		{
-			return _distributionListRepository.GetAll().ToList();
+			var items = await _distributionListRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public DistributionList GetDistributionListById(int distributionListId)
+		public async Task<DistributionList> GetDistributionListByIdAsync(int distributionListId)
 		{
-			return _distributionListRepository.GetAll().FirstOrDefault(x => x.DistributionListId == distributionListId);
+			return await _distributionListRepository.GetDistributionListByIdAsync(distributionListId);
 		}
 
-		public List<DistributionList> GetDistributionListsByDepartmentId(int departmentId)
+		public async Task<List<DistributionList>> GetDistributionListsByDepartmentIdAsync(int departmentId)
 		{
-			return _distributionListRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _distributionListRepository.GetDispatchProtocolsByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public DistributionList GetDistributionListByAddress(string emailAddress)
+		public async Task<DistributionList> GetDistributionListByAddressAsync(string emailAddress)
 		{
-			return _distributionListRepository.GetAll().FirstOrDefault(x => x.EmailAddress == emailAddress);
+			return await _distributionListRepository.GetDistributionListByEmailAddressAsync(emailAddress);
 		}
 
-		public void DeleteDistributionListsById(int distributionListId)
+		public async Task<bool> DeleteDistributionListsByIdAsync(int distributionListId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var list = GetDistributionListById(distributionListId);
-			_distributionListRepository.DeleteOnSubmit(list);
+			var list = await GetDistributionListByIdAsync(distributionListId);
+			return await _distributionListRepository.DeleteAsync(list, cancellationToken);
 		}
 
-		public DistributionList SaveDistributionList(DistributionList distributionList)
+		public async Task<DistributionList> SaveDistributionListAsync(DistributionList distributionList, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if (distributionList.DistributionListId == 0)
+			var savedList = await _distributionListRepository.SaveOrUpdateAsync(distributionList, cancellationToken);
+
+			if (distributionList.Members != null && distributionList.Members.Any())
 			{
-				_distributionListRepository.SaveOrUpdate(distributionList);
-			}
-			else
-			{
-				var members = (from m in _distributionListMemberRepository.GetAll()
-											 where m.DistributionListId == distributionList.DistributionListId
-											 select m).AsEnumerable();
-
-				_distributionListMemberRepository.DeleteAll(members);
-
-				_distributionListRepository.SaveOrUpdate(distributionList);
+				foreach (var distributionListMember in distributionList.Members)
+				{
+					distributionListMember.DistributionListId = savedList.DistributionListId;
+					await _distributionListMemberRepository.SaveOrUpdateAsync(distributionListMember, cancellationToken);
+				}
 			}
 
-			return distributionList;
+			return savedList;
 		}
 
-		public DistributionList SaveDistributionListOnly(DistributionList distributionList)
+		public async Task<DistributionList> SaveDistributionListOnlyAsync(DistributionList distributionList, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_distributionListRepository.SaveOrUpdate(distributionList);
-
-			return distributionList;
+			return await _distributionListRepository.SaveOrUpdateAsync(distributionList, cancellationToken);
 		}
 
-		public List<DistributionList> GetAllActiveDistributionLists()
+		public async Task<List<DistributionList>> GetAllActiveDistributionListsAsync()
 		{
-			return _distributionListRepository.GetAll().Where(x => x.IsDisabled == false).ToList();
+			var items = await _distributionListRepository.GetAllActiveDistributionListsAsync();
+			return items.ToList();
 		}
 
-		public List<DistributionListMember> GetAllListMembersByListId(int listId)
+		public async Task<List<DistributionListMember>> GetAllListMembersByListIdAsync(int listId)
 		{
-			return _distributionListMemberRepository.GetAll().Where(x => x.DistributionListId == listId).ToList();
+			var items = await _distributionListMemberRepository.GetDistributionListMemberByListIdAsync(listId);
+			return items.ToList();
 		}
 
-		public void RemoveUserFromAllLists(string userId)
+		public async Task<bool> RemoveUserFromAllListsAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var members = _distributionListMemberRepository.GetAll().Where(x => x.UserId == userId).ToList();
+			var members = await _distributionListMemberRepository.GetDistributionListMemberByUserIdAsync(userId);
 
 			foreach (var member in members)
 			{
-				_distributionListMemberRepository.DeleteOnSubmit(member);
+				await _distributionListMemberRepository.DeleteAsync(member, cancellationToken);
 			}
+
+			return true;
 		}
 	}
 }

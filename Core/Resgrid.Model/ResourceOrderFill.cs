@@ -11,7 +11,6 @@ namespace Resgrid.Model
 	{
 		[Key]
 		[Required]
-		[Dapper.IgnoreInsert]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int ResourceOrderFillId { get; set; }
 
@@ -57,10 +56,20 @@ namespace Resgrid.Model
 		public virtual ICollection<ResourceOrderFillUnit> Units { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ResourceOrderFillId; }
 			set { ResourceOrderFillId = (int)value; }
 		}
+
+		
+		[NotMapped]
+		public string TableName => "ResourceOrderFills";
+
+		[NotMapped]
+		public string IdName => "ResourceOrderFillId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "OrderItem", "FillingUser", "LeadUser", "AcceptedUser", "Units" };
 	}
 }

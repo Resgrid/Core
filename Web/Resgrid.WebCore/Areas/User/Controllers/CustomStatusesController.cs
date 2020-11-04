@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -24,12 +26,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Private Members and Constructors
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new CustomStatusesIndexView();
 			model.UnitStates = new List<CustomState>();
 
-			var allStatuses = _customStateService.GetAllActiveCustomStatesForDepartment(DepartmentId);
+			var allStatuses = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(DepartmentId);
 
 			if (allStatuses != null && allStatuses.Count > 0)
 			{
@@ -41,7 +43,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		public IActionResult New(int type)
+		public async Task<IActionResult> New(int type)
 		{
 			var model = new NewCustomStateView();
 			model.Type = (CustomStateTypes)type;
@@ -52,7 +54,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult New(NewCustomStateView model, IFormCollection form)
+		public async Task<IActionResult> New(NewCustomStateView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			List<int> options = (from object key in form.Keys
 													 where key.ToString().StartsWith("buttonText_")
@@ -100,7 +102,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				_customStateService.Save(model.State);
+				await _customStateService.SaveAsync(model.State, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
@@ -109,32 +111,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Delete(int id)
+		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
 		{
-			var state = _customStateService.GetCustomSateById(id);
+			var state = await _customStateService.GetCustomSateByIdAsync(id);
 
 			if (state.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_customStateService.Delete(state);
+			await _customStateService.DeleteAsync(state, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult Edit(int id)
+		public async Task<IActionResult> Edit(int id)
 		{
 			var model = new EditStatusView();
-			model.State = _customStateService.GetCustomSateById(id);
+			model.State = await _customStateService.GetCustomSateByIdAsync(id);
 
 			return View(model);
 		}
 
 		[HttpGet]
-		public IActionResult EditDetail(int stateDetailId)
+		public async Task<IActionResult> EditDetail(int stateDetailId)
 		{
 			var model = new EditDetailView();
-			model.Detail = _customStateService.GetCustomDetailById(stateDetailId);
+			model.Detail = await _customStateService.GetCustomDetailByIdAsync(stateDetailId);
+			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
 
@@ -148,14 +151,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult EditDetail(EditDetailView model)
+		public async Task<IActionResult> EditDetail(EditDetailView model, CancellationToken cancellationToken)
 		{
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
 
 			if (ModelState.IsValid)
 			{
-				var detail = _customStateService.GetCustomDetailById(model.Detail.CustomStateDetailId);
+				var detail = await _customStateService.GetCustomDetailByIdAsync(model.Detail.CustomStateDetailId);
 				detail.ButtonColor = model.Detail.ButtonColor;
 				detail.ButtonText = model.Detail.ButtonText;
 				detail.TextColor = model.Detail.TextColor;
@@ -168,16 +171,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 					detail.DetailType = (int)model.DetailType;
 				//}
 
-				_customStateService.SaveDetail(detail);
+				await _customStateService.SaveDetailAsync(detail, cancellationToken);
 
 				return RedirectToAction("Edit", new { id = detail.CustomStateId });
 			}
+
+			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
 
 			return View(model);
 		}
 
 		[HttpPost]
-		public IActionResult Edit(EditStatusView model, IFormCollection form)
+		public async Task<IActionResult> Edit(EditStatusView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
@@ -186,7 +191,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 														 select int.Parse(key.ToString().Replace("buttonText_", ""))).ToList();
 
 				var details = new List<CustomStateDetail>();
-				var state = _customStateService.GetCustomSateById(model.State.CustomStateId);
+				var state = await _customStateService.GetCustomSateByIdAsync(model.State.CustomStateId);
 
 				state.Name = model.State.Name;
 				state.Description = model.State.Description;
@@ -222,7 +227,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				_customStateService.Update(state, details);
+				await _customStateService.UpdateAsync(state, details, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
@@ -232,10 +237,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region Async Methods
 		[HttpGet]
-		public IActionResult GetPersonnelStatusesForDepartment(bool includeAny)
+		public async Task<IActionResult> GetPersonnelStatusesForDepartment(bool includeAny)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
-			var customStauses = _customStateService.GetActivePersonnelStateForDepartment(DepartmentId);
+			var customStauses = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 
 			if (includeAny)
 				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });
@@ -266,10 +271,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetPersonnelStaffingLevelsForDepartment(bool includeAny)
+		public async Task<IActionResult> GetPersonnelStaffingLevelsForDepartment(bool includeAny)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
-			var customStaffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var customStaffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 
 			if (includeAny)
 				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });
@@ -298,15 +303,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetUnitStatusesLevelsForDepartment(bool includeAny, int unitTypeId)
+		public async Task<IActionResult> GetUnitStatusesLevelsForDepartment(bool includeAny, int unitTypeId)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
 			CustomState customState = null;
 
-			var unitType = _unitsService.GetUnitTypeById(unitTypeId);
+			var unitType = await _unitsService.GetUnitTypeByIdAsync(unitTypeId);
 
 			if (unitType.CustomStatesId.HasValue && unitType.CustomStatesId.Value > 0)
-				customState = _customStateService.GetCustomSateById(unitType.CustomStatesId.Value);
+				customState = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
 
 			if (includeAny)
 				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });
@@ -343,10 +348,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetUnitStatusesLevelsForDepartmentCombined(bool includeAny)
+		public async Task<IActionResult> GetUnitStatusesLevelsForDepartmentCombined(bool includeAny)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
-			var customStates = _customStateService.GetAllActiveUnitStatesForDepartment(DepartmentId);
+			var customStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
 
 			if (includeAny)
 				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });

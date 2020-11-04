@@ -1,4 +1,5 @@
-﻿using Resgrid.Workers.Framework.Logic;
+﻿using System.Threading.Tasks;
+using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework.Workers.DistributionList
 {
@@ -11,10 +12,11 @@ namespace Resgrid.Workers.Framework.Workers.DistributionList
 
 		public bool Continue { get; set; }
 
-		public void Run(DistributionListQueueItem item)
+		public async Task<bool> Run(DistributionListQueueItem item)
 		{
 			var logic = new DistributionListEmailImporterLogic();
-			logic.Process(item);
+			await logic.Process(item);
+			return true;
 		}
 	}
 }

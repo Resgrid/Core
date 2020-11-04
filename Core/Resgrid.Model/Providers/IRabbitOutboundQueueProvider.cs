@@ -4,11 +4,12 @@ namespace Resgrid.Model.Providers
 {
 	public interface IRabbitOutboundQueueProvider
 	{
-		void EnqueueCall(CallQueueItem callQueue);
-		void EnqueueMessage(MessageQueueItem messageQueue);
-		void EnqueueDistributionList(DistributionListQueueItem distributionListQueue);
-		void EnqueueNotification(NotificationItem notificationQueue);
-		void EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
-		void EnqueueCqrsEvent(CqrsEvent cqrsEvent);
+		bool EnqueueCall(CallQueueItem callQueue);
+		bool EnqueueMessage(MessageQueueItem messageQueue);
+		bool EnqueueDistributionList(DistributionListQueueItem distributionListQueue);
+		bool EnqueueNotification(NotificationItem notificationQueue);
+		bool EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
+		bool EnqueueCqrsEvent(CqrsEvent cqrsEvent);
+		bool VerifyAndCreateClients();
 	}
 }

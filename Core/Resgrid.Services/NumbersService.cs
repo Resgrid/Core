@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -11,10 +13,10 @@ namespace Resgrid.Services
 	{
 		private readonly INumberProvider _numberProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
-		private readonly IGenericDataRepository<InboundMessageEvent> _inboundMessageEventRepository;
+		private readonly IInboundMessageEventRepository _inboundMessageEventRepository;
 
 		public NumbersService(INumberProvider numberProvider, IDepartmentSettingsService departmentSettingsService,
-			IGenericDataRepository<InboundMessageEvent> inboundMessageEventRepository)
+			IInboundMessageEventRepository inboundMessageEventRepository)
 		{
 			_numberProvider = numberProvider;
 			_departmentSettingsService = departmentSettingsService;
@@ -26,24 +28,22 @@ namespace Resgrid.Services
 			return _numberProvider.GetAvailableNumbers(country, areaCode);
 		}
 
-		public bool ProvisionNumber(int departmentId, string number, string country)
+		public async Task<bool> ProvisionNumberAsync(int departmentId, string number, string country)
 		{
 			var numberProvisioned = _numberProvider.ProvisionNumber(country, number);
 
 			if (numberProvisioned)
 			{
 				var provisionedNumber = number.Replace("+", "").Replace("-", "").Replace(".", "").Replace(" ", "").Trim();
-				_departmentSettingsService.SaveOrUpdateSetting(departmentId, provisionedNumber, DepartmentSettingTypes.TextToCallNumber);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(departmentId, provisionedNumber, DepartmentSettingTypes.TextToCallNumber);
 			}
 
 			return numberProvisioned;
 		}
 
-		public InboundMessageEvent SaveInboundMessageEvent(InboundMessageEvent messageEvent)
+		public async Task<InboundMessageEvent> SaveInboundMessageEventAsync(InboundMessageEvent messageEvent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_inboundMessageEventRepository.SaveOrUpdate(messageEvent);
-
-			return messageEvent;
+			return await _inboundMessageEventRepository.SaveOrUpdateAsync(messageEvent, cancellationToken);
 		}
 
 		public bool DoesNumberMatchAnyPattern(List<string> patterns, string number)

@@ -8,7 +8,7 @@ namespace Resgrid.Model.Identity
 	/// The default implementation of <see cref="IdentityUser{TKey}"/> which uses a string as a primary key.
 	/// </summary>
 	[ProtoContract]
-	public class IdentityUser : IdentityUser<string>
+	public class IdentityUser : IdentityUser<string>, IEntity
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="IdentityUser"/>.
@@ -154,6 +154,22 @@ namespace Resgrid.Model.Identity
 
 		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
 		public DateTime CreateDate { get; set; }
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public object IdValue
+		{
+			get { return Id; }
+			set { Id = (string)value; }
+		}
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public string TableName => "AspNetUsers";
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public string IdName => "Id";
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 
 

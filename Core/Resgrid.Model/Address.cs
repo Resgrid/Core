@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
 
@@ -39,16 +40,25 @@ namespace Resgrid.Model
 		[ProtoMember(6)]
 		public string Country { get; set; }
 
+		[NotMapped]
+		public string TableName => "Addresses";
+
+		[NotMapped]
+		public string IdName => "AddressId";
+
 		public string FormatAddress()
 		{
 			return string.Format("{0} {1} {2} {3} {4}", Address1, City, State, PostalCode, Country);
 		}
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return AddressId; }
 			set { AddressId = (int)value; }
 		}
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

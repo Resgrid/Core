@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -93,18 +92,19 @@ namespace Resgrid.Model
 		public virtual ICollection<LogUser> Users { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return LogId; }
 			set { LogId = (int)value; }
 		}
-	}
 
-	public class Log_Mapping : EntityTypeConfiguration<Log>
-	{
-		public Log_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "Logs";
+
+		[NotMapped]
+		public string IdName => "LogId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "StationGroup", "InvestigatedBy", "LoggedBy", "Officer", "Call", "Units", "Users" };
 	}
 }

@@ -1,9 +1,27 @@
 ﻿using ProtoBuf;
 using System;
+using System.Collections.Generic;
 
 namespace Resgrid.Model.Identity
 {
-	public class IdentityUserRole : IdentityUserRole<string> { }
+	public class IdentityUserRole : IdentityUserRole<string>, IEntity
+	{
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public object IdValue
+		{
+			get { return Id; }
+			set { Id = (int)value; }
+		}
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public string TableName => "AspNetUserRoles";
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public string IdName => "Id";
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
+	}
 
 	[ProtoContract]
 	public class IdentityUserRole<TKey> where TKey : IEquatable<TKey>
@@ -22,5 +40,6 @@ namespace Resgrid.Model.Identity
 		/// </summary> 
 		[ProtoMember(2)]
 		public virtual TKey RoleId { get; set; }
+
 	}
 }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Data.Entity.Spatial;
 using Resgrid.Framework;
 
 namespace Resgrid.Model
@@ -68,11 +66,20 @@ namespace Resgrid.Model
 		public virtual ICollection<UnitStateRole> Roles { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return UnitStateId; }
 			set { UnitStateId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "UnitStates";
+
+		[NotMapped]
+		public string IdName => "UnitStateId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Roles", "Unit" };
 
 		public string GetStatusText()
 		{
@@ -136,21 +143,6 @@ namespace Resgrid.Model
 				return "label-enroute";
 
 			return "";
-		}
-	}
-
-	public class UnitState_Mapping : EntityTypeConfiguration<UnitState>
-	{
-		public UnitState_Mapping()
-		{
-			this.Property(m => m.Latitude).HasPrecision(10, 7);
-			this.Property(m => m.Longitude).HasPrecision(10, 7);
-			this.Property(m => m.Heading).HasPrecision(5, 2);
-			this.Property(m => m.Accuracy).HasPrecision(6, 2);
-			this.Property(m => m.Altitude).HasPrecision(7, 2);
-			this.Property(m => m.AltitudeAccuracy).HasPrecision(6, 2);
-			this.Property(m => m.Speed).HasPrecision(5, 2);
-			this.Property(m => m.Heading).HasPrecision(5, 2);
 		}
 	}
 }

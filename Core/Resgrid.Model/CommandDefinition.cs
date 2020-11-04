@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 
 namespace Resgrid.Model
 {
@@ -33,19 +32,19 @@ namespace Resgrid.Model
 		public virtual ICollection<CommandDefinitionRole> Assignments { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CommandDefinitionId; }
 			set { CommandDefinitionId = (int)value; }
 		}
-	}
 
-	public class CommandDefinition_Mapping : EntityTypeConfiguration<CommandDefinition>
-	{
-		public CommandDefinition_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-			this.HasOptional(t => t.CallType).WithMany().HasForeignKey(t => t.CallTypeId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "CommandDefinitions";
+
+		[NotMapped]
+		public string IdName => "CommandDefinitionId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "CallType", "Assignments" };
 	}
 }

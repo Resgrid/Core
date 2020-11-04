@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using ProtoBuf;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -68,10 +69,19 @@ namespace Resgrid.Model
 		public DateTime CreatedOn { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PushUriId; }
 			set { PushUriId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "PushUris";
+
+		[NotMapped]
+		public string IdName => "PushUriId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "User", "ChannelUri", "Uuid", "DepartmentId" };
 	}
 }

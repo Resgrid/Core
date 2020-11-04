@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -28,18 +28,19 @@ namespace Resgrid.Model
 		public int LimitValue { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PlanLimitId; }
 			set { PlanLimitId = (int)value; }
 		}
-	}
 
-	public class PlanLimit_Mapping : EntityTypeConfiguration<PlanLimit>
-	{
-		public PlanLimit_Mapping()
-		{
-			this.HasRequired(t => t.Plan).WithMany(t => t.PlanLimits).HasForeignKey(t => t.PlanId);
-		}
+		[NotMapped]
+		public string TableName => "PlanLimits";
+
+		[NotMapped]
+		public string IdName => "PlanLimitId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Plan" };
 	}
 }

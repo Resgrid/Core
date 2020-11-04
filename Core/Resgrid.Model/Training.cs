@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 
 namespace Resgrid.Model
 {
@@ -52,18 +51,19 @@ namespace Resgrid.Model
 		public virtual ICollection<TrainingUser> Users { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return TrainingId; }
 			set { TrainingId = (int)value; }
 		}
-	}
 
-	public class Training_Mapping : EntityTypeConfiguration<Training>
-	{
-		public Training_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "Trainings";
+
+		[NotMapped]
+		public string IdName => "TrainingId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Questions", "Attachments", "Users" };
 	}
 }

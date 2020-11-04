@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -49,20 +49,19 @@ namespace Resgrid.Model
 		public virtual Unit Unit { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return InventoryId; }
 			set { InventoryId = (int)value; }
 		}
-	}
 
-	public class Inventory_Mapping : EntityTypeConfiguration<Inventory>
-	{
-		public Inventory_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-			this.HasRequired(t => t.Group).WithMany().HasForeignKey(t => t.GroupId).WillCascadeOnDelete(false);
-			this.HasRequired(t => t.Type).WithMany().HasForeignKey(t => t.TypeId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "Inventories";
+
+		[NotMapped]
+		public string IdName => "InventoryId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Group", "AddedBy", "Unit", "Type" };
 	}
 }

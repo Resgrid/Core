@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -28,18 +28,20 @@ namespace Resgrid.Model
 		public IdentityUser User { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PersonnelRoleUserId; }
 			set { PersonnelRoleUserId = (int)value; }
 		}
-	}
 
-	public class PersonnelRoleUser_Mapping : EntityTypeConfiguration<PersonnelRoleUser>
-	{
-		public PersonnelRoleUser_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		
+		[NotMapped]
+		public string TableName => "PersonnelRoleUsers";
+
+		[NotMapped]
+		public string IdName => "PersonnelRoleUserId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Role", "User" };
 	}
 }

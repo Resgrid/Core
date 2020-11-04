@@ -1,9 +1,10 @@
-﻿using MimeKit;
+﻿using System.Threading.Tasks;
+using MimeKit;
 
 namespace Resgrid.Model.Providers
 {
 	public interface IAmazonEmailSender
 	{
-		void SendDistributionListEmail(MimeMessage message);
+		Task<bool> SendDistributionListEmail(MimeMessage message);
 	}
 }

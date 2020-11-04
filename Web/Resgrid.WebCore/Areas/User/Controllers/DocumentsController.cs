@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -29,12 +31,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Documents_View)]
-		public IActionResult Index(string type, string category)
+		public async Task<IActionResult> Index(string type, string category)
 		{
 			var model = new IndexView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
-			model.Documents = _documentsService.GetFilteredDocumentsByDepartmentId(DepartmentId, type, category);
-			model.Categories = _documentsService.GetDistinctCategoriesByDepartmentId(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			model.Documents = await _documentsService.GetFilteredDocumentsByDepartmentIdAsync(DepartmentId, type, category);
+			model.Categories = await _documentsService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId);
 
 			model.SelectedCategory = category;
 			model.SelectedType = type;
@@ -46,7 +48,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Documents_Create)]
-		public IActionResult NewDocument()
+		public async Task<IActionResult> NewDocument()
 		{
 			NewDocumentView model = new NewDocumentView();
 
@@ -55,15 +57,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Documents_View)]
-		public IActionResult GetDepartmentDocumentCategories()
+		public async Task<IActionResult> GetDepartmentDocumentCategories()
 		{
-			return Json(_documentsService.GetDistinctCategoriesByDepartmentId(DepartmentId));
+			return Json(_documentsService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId));
 		}
 
 		[Authorize(Policy = ResgridResources.Documents_View)]
-		public FileResult GetDocument(int documentId)
+		public async Task<FileResult> GetDocument(int documentId)
 		{
-			var document = _documentsService.GetDocumentById(documentId);
+			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
 			if (document.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -79,9 +81,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Documents_Delete)]
-		public IActionResult DeleteDocument(int documentId)
+		public async Task<IActionResult> DeleteDocument(int documentId, CancellationToken cancellationToken)
 		{
-			var document = _documentsService.GetDocumentById(documentId);
+			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
 			if (document.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -89,7 +91,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || document.UserId != UserId)
 				Unauthorized();
 
-			_documentsService.DeleteDocument(document);
+			await _documentsService.DeleteDocumentAsync(document, cancellationToken);
 
 			return RedirectToAction("Index", "Documents", new { Area = "User" });
 		}
@@ -97,7 +99,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Documents_Create)]
-		public IActionResult NewDocument(NewDocumentView model, IFormFile fileToUpload)
+		public async Task<IActionResult> NewDocument(NewDocumentView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			//file = Request.Files["fileToUpload"];
 
@@ -144,9 +146,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				doc.Data = uploadedFile;
 
-				_documentsService.SaveDocument(doc);
+				await _documentsService.SaveDocumentAsync(doc, cancellationToken);
 
-				_eventAggregator.SendMessage<DocumentAddedEvent>(new DocumentAddedEvent() { DepartmentId = DepartmentId, Document = doc });
+				await _eventAggregator.SendMessage<DocumentAddedEvent>(new DocumentAddedEvent() { DepartmentId = DepartmentId, Document = doc });
 
 				return RedirectToAction("Index", "Documents", new { Area = "User" });
 			}
@@ -156,11 +158,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Documents_Update)]
-		public IActionResult EditDocument(int documentId)
+		public async Task<IActionResult> EditDocument(int documentId)
 		{
 			EditDocumentView model = new EditDocumentView();
 
-			var document = _documentsService.GetDocumentById(documentId);
+			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
 			if (document.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -181,9 +183,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Documents_Update)]
-		public IActionResult EditDocument(EditDocumentView model, IFormFile fileToUpload)
+		public async Task<IActionResult> EditDocument(EditDocumentView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
-			var document = _documentsService.GetDocumentById(model.DocumentId);
+			var document = await _documentsService.GetDocumentByIdAsync(model.DocumentId);
 
 			if (document.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -232,7 +234,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					document.Data = uploadedFile;
 				}
 
-				_documentsService.SaveDocument(document);
+				await _documentsService.SaveDocumentAsync(document, cancellationToken);
 
 				return RedirectToAction("Index", "Documents", new { Area = "User" });
 			}

@@ -2,6 +2,7 @@
 using Resgrid.Workers.Framework.Workers.TrainingNotifier;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Autofac;
 
 namespace Resgrid.Workers.Framework.Logic
@@ -21,7 +22,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
 		}
 
-		public Tuple<bool, string> Process(TrainingNotifierQueueItem item)
+		public async Task<Tuple<bool, string>> Process(TrainingNotifierQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -30,8 +31,8 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				var message = String.Empty;
 				var title = String.Empty;
-				var profiles = _userProfileService.GetSelectedUserProfiles(item.Training.Users.Select(x => x.UserId).ToList());
-				var departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(item.Training.DepartmentId);
+				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(item.Training.Users.Select(x => x.UserId).ToList());
+				var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
 
 				if (!item.Training.Notified.HasValue)
 				{
@@ -53,12 +54,12 @@ namespace Resgrid.Workers.Framework.Logic
 					var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
 
 					if (!item.Training.Notified.HasValue || !person.Complete)
-						_communicationService.SendNotification(person.UserId, item.Training.DepartmentId, message, departmentNumber, title, profile);
+						await _communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, title, profile);
 
 					title = "Training Due Notice";
 				}
 
-				_trainingService.MarkAsNotified(item.Training.TrainingId);
+				await _trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);
 			}
 
 			return new Tuple<bool, string>(success, result);

@@ -103,5 +103,7 @@ namespace Resgrid.Web.Areas.User.Models
 
 		[MaxLength(100)]
 		public string MailingCountry { get; set; }
+
+		public bool EnableSms { get; set; }
 	}
 }

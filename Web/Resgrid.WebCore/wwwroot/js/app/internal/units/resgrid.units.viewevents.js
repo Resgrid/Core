@@ -6,18 +6,29 @@ var resgrid;
         var viewevents;
         (function (viewevents) {
             $(document).ready(function () {
-                var mapOptions = {
-                    center: new google.maps.LatLng(43, 16),
-                    zoom: 11,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                };
-                map = new google.maps.Map(document.getElementById('eventsMap'), mapOptions);
+
+
+
+
+                //var mapOptions = {
+                //    center: new google.maps.LatLng(43, 16),
+                //    zoom: 11,
+                //    mapTypeId: google.maps.MapTypeId.ROADMAP
+                //};
+                //map = new google.maps.Map(document.getElementById('eventsMap'), mapOptions);
+
+                viewevents.markers = [];
+                viewevents.map = L.map('eventsMap').setView([centerLat, centerLon], 13);
+                L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' + osmKey, {
+                    attribution: ''
+                }).addTo(viewevents.map);
+
                 markers = [];
                 $("#eventsGrid").kendoGrid({
                     dataSource: {
                         type: "json",
                         transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Units/GetUnitEvents?UnitId=' + purl().param('unitId')
+                            read: resgrid.absoluteBaseUrl + '/User/Units/GetUnitEvents?UnitId=' + unitId
                         },
                         schema: {
                             model: {
@@ -83,30 +94,61 @@ var resgrid;
                     //var allData = ds.data();
                     var query = new kendo.data.Query(ds.data());
                     var filteredData = query.filter(ds.filter()).data;
-                    $.each(markers, function (index, item) {
+                    $.each(viewevents.markers, function (index, item) {
                         item.setMap(null);
                     });
-                    markers = [];
+                    viewevents.markers = [];
+
+
+
+
                     $.each(filteredData, function (index, item) {
                         if (item.Latitude && item.Latitude.length > 0 && item.Longitude && item.Longitude.length > 0) {
-                            var latLng = new google.maps.LatLng(item.Latitude, item.Longitude);
-                            var marker = new google.maps.Marker({
-                                position: latLng,
-                                map: map,
-                                title: item.State + ' ' + item.Timestamp,
-                                //title: "",
-                                icon: "/Images/Mapping/Event.png"
-                            });
-                            markers.push(marker);
+
+                           var marker = L.marker([item.Latitude, item.Longitude], {
+                               icon: new L.icon({
+                                   iconUrl: "/images/Mapping/Event.png",
+                                   iconSize: [32, 37],
+                                   iconAnchor: [16, 37]
+                               }),
+                               draggable: false,
+                               title: item.State + ' ' + item.Timestamp,
+                               tooltip: item.State + ' ' + item.Timestamp
+                           }).bindTooltip(item.State + ' ' + item.Timestamp,
+                               {
+                                   permanent: true,
+                                   direction: 'bottom'
+                               }).addTo(viewevents.map);
+
+                           viewevents.markers.push(marker);
+
+
+
+
+                            //var latLng = new google.maps.LatLng(item.Latitude, item.Longitude);
+                            //var marker = new google.maps.Marker({
+                            //    position: latLng,
+                            //    map: map,
+                            //    title: item.State + ' ' + item.Timestamp,
+                            //    //title: "",
+                            //    icon: "/images/Mapping/Event.png"
+                            //});
+                            //markers.push(marker);
                         }
                     });
-                    var latlngbounds = new google.maps.LatLngBounds();
-                    $.each(markers, function (index, item) {
-                        var latLng = new google.maps.LatLng(item.getPosition().lat(), item.getPosition().lng());
-                        latlngbounds.extend(latLng);
-                    });
-                    map.setCenter(latlngbounds.getCenter());
-                    map.fitBounds(latlngbounds);
+
+                    if (viewevents.markers && viewevents.markers.length > 0) {
+                        var group = new L.featureGroup(viewevents.markers);
+                        viewevents.map.fitBounds(group.getBounds());
+                    }
+
+                    //var latlngbounds = new google.maps.LatLngBounds();
+                    //$.each(markers, function (index, item) {
+                    //    var latLng = new google.maps.LatLng(item.getPosition().lat(), item.getPosition().lng());
+                    //    latlngbounds.extend(latLng);
+                    //});
+                    //map.setCenter(latlngbounds.getCenter());
+                    //map.fitBounds(latlngbounds);
                     //var zoom = map.getZoom();
                     //map.setZoom(zoom > zoomLevel ? that.zoomLevel : zoom);
                 }

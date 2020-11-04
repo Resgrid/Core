@@ -4,7 +4,7 @@
 			<li class="nav-header">
 				<div class="dropdown profile-element">
 					<span>
-						<img class="img-circle" style="width: 48px; height: 48px; text-align: center;" src="https://api.resgrid.com/api/v3/Avatars/Get?id=@ClaimsAuthorizationHelper.GetUserId()" onerror="this.src = 'https://resgrid.com/Images/defaultProfile.png'" />
+						<img class="img-circle" style="width: 48px; height: 48px; text-align: center;" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@ClaimsAuthorizationHelper.GetUserId()" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'" />
 					</span>
 					<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 						<span class="clear">

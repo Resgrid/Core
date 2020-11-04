@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.IO;
 using Autofac;
 using NUnit.Framework;
-using Resgrid.Repositories.DataRepository.Configurations;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Initialization;
 
 namespace Resgrid.Tests
 {
@@ -35,8 +30,8 @@ namespace Resgrid.Tests
 
 			//Database.SetInitializer<DataContext>(new ResgridTestDbInitializer());
 
-			var migrator = new DbMigrator(new ResgridTestConfiguration());
-			migrator.Update();
+			//var migrator = new DbMigrator(new ResgridTestConfiguration());
+			//migrator.Update();
 
 			Bootstrapper.Initialize();
 		}

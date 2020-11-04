@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
@@ -36,10 +37,19 @@ namespace Resgrid.Model
 		public double Score { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return TrainingUserId; }
 			set { TrainingUserId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "TrainingUsers";
+
+		[NotMapped]
+		public string IdName => "TrainingUserId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Training", "User" };
 	}
 }

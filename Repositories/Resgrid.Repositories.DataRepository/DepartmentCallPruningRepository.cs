@@ -1,43 +1,72 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Departments;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class DepartmentCallPruningRepository : RepositoryBase<DepartmentCallPruning>, IDepartmentCallPruningRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentCallPruningRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public List<DepartmentCallPruning> GetAllDepartmentCallPrunings()
+		public DepartmentCallPruningRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				return db.Query<DepartmentCallPruning>(@"SELECT * FROM DepartmentCallPruning").ToList();
-			}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public DepartmentCallPruning GetDepartmentCallPruningSettings(int departmentId)
+		public async Task<DepartmentCallPruning> GetDepartmentCallPruningSettingsAsync(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var result = db.Query<DepartmentCallPruning>(@"SELECT * FROM DepartmentCallPruning
-															WHERE DepartmentId = @departmentId",
-						new { departmentId = departmentId });
+				var selectFunction = new Func<DbConnection, Task<DepartmentCallPruning>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
 
-				return result.FirstOrDefault();
+					var query = _queryFactory.GetQuery<SelectCallPruningByDidQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<DepartmentCallPruning>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 	}

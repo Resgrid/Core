@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using System.Threading.Tasks;
+using Autofac;
+using CommonServiceLocator;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models;
@@ -7,16 +9,16 @@ namespace Resgrid.Web.Helpers
 {
 	public static class CustomStatesHelper
 	{
-		public static CustomStateDetail GetCustomState(int departmentId, int detailId)
+		public static async Task<CustomStateDetail> GetCustomState(int departmentId, int detailId)
 		{
-			var customStateService = WebBootstrapper.GetKernel().Resolve<ICustomStateService>();
+			var customStateService = ServiceLocator.Current.GetInstance<ICustomStateService>(); //WebBootstrapper.GetKernel().Resolve<ICustomStateService>();
 
-			var stateDetail = customStateService.GetCustomDetailForDepartment(departmentId, detailId);
+			var stateDetail = await customStateService.GetCustomDetailForDepartmentAsync(departmentId, detailId);
 
 			return stateDetail;
 		}
 
-		public static CustomStateDetail GetCustomPersonnelStaffing(int departmentId, UserState state)
+		public static async Task<CustomStateDetail> GetCustomPersonnelStaffing(int departmentId, UserState state)
 		{
 			if (state.State <= 25)
 			{
@@ -32,14 +34,14 @@ namespace Resgrid.Web.Helpers
 			}
 			else
 			{
-				var customStateService = WebBootstrapper.GetKernel().Resolve<ICustomStateService>();
-				var stateDetail = customStateService.GetCustomDetailForDepartment(departmentId, state.State);
+				var customStateService = ServiceLocator.Current.GetInstance<ICustomStateService>();
+				var stateDetail = await customStateService.GetCustomDetailForDepartmentAsync(departmentId, state.State);
 
 				return stateDetail;
 			}
 		}
 
-		public static CustomStateDetail GetCustomPersonnelStatus(int departmentId, ActionLog state)
+		public static async Task<CustomStateDetail> GetCustomPersonnelStatus(int departmentId, ActionLog state)
 		{
 			if (state.ActionTypeId <= 25)
 			{
@@ -55,14 +57,14 @@ namespace Resgrid.Web.Helpers
 			}
 			else
 			{
-				var customStateService = WebBootstrapper.GetKernel().Resolve<ICustomStateService>();
-				var stateDetail = customStateService.GetCustomDetailForDepartment(departmentId, state.ActionTypeId);
+				var customStateService = ServiceLocator.Current.GetInstance<ICustomStateService>();
+				var stateDetail = await customStateService.GetCustomDetailForDepartmentAsync(departmentId, state.ActionTypeId);
 
 				return stateDetail;
 			}
 		}
 
-		public static CustomStateDetail GetCustomUnitState(UnitState state)
+		public static async Task<CustomStateDetail> GetCustomUnitState(UnitState state)
 		{
 			if (state.State <= 25)
 			{
@@ -78,8 +80,8 @@ namespace Resgrid.Web.Helpers
 			}
 			else
 			{
-				var customStateService = WebBootstrapper.GetKernel().Resolve<ICustomStateService>();
-				var stateDetail = customStateService.GetCustomDetailForDepartment(state.Unit.DepartmentId, state.State);
+				var customStateService = ServiceLocator.Current.GetInstance<ICustomStateService>();
+				var stateDetail = await customStateService.GetCustomDetailForDepartmentAsync(state.Unit.DepartmentId, state.State);
 
 				return stateDetail;
 			}

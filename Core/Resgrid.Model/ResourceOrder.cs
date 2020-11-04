@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Device.Location;
 using System.Linq;
+using GeoCoordinatePortable;
 using Resgrid.Framework;
 
 namespace Resgrid.Model
@@ -14,7 +13,6 @@ namespace Resgrid.Model
 	{
 		[Key]
 		[Required]
-		[Dapper.IgnoreInsert]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int ResourceOrderId { get; set; }
 
@@ -96,11 +94,20 @@ namespace Resgrid.Model
 		public virtual ICollection<ResourceOrderItem> Items { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ResourceOrderId; }
 			set { ResourceOrderId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ResourceOrders";
+
+		[NotMapped]
+		public string IdName => "ResourceOrderId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "OriginLocation" };
 
 		public bool IsFilled()
 		{
@@ -124,14 +131,6 @@ namespace Resgrid.Model
 			var result = (totalFills.Value / totalUnits) * 100;
 
 			return result;
-		}
-	}
-
-	public class ResourceOrder_Mapping : EntityTypeConfiguration<ResourceOrder>
-	{
-		public ResourceOrder_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
 		}
 	}
 

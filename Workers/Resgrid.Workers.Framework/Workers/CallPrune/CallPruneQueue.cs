@@ -38,11 +38,11 @@ namespace Resgrid.Workers.Framework
 
 				_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 					                   {
 						                   try
 						                   {
-							                   var items = _departmentsService.GetAllDepartmentCallPrunings();
+							                   var items = await _departmentsService.GetAllDepartmentCallPruningsAsync();
 
 							                   foreach (var i in items)
 							                   {
@@ -75,12 +75,14 @@ namespace Resgrid.Workers.Framework
 				_queue = new Queue<CallPruneQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 
 			var items = _queue.AsEnumerable();
 			_queue.Clear();
+
+			return _cleared;
 		}
 		
 		public bool IsLocked
@@ -103,10 +105,10 @@ namespace Resgrid.Workers.Framework
 			return item;
 		}
 
-		public IEnumerable<CallPruneQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<CallPruneQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<CallPruneQueueItem>();
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CallPrune, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CallPrune, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

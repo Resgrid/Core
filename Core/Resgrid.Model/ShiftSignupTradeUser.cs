@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Newtonsoft.Json;
 using Resgrid.Model.Identity;
 
@@ -37,18 +36,19 @@ namespace Resgrid.Model
 		public virtual ICollection<ShiftSignupTradeUserShift> Shifts { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftSignupTradeUserId; }
 			set { ShiftSignupTradeUserId = (int)value; }
 		}
-	}
 
-	public class ShiftSignupTradeUser_Mapping : EntityTypeConfiguration<ShiftSignupTradeUser>
-	{
-		public ShiftSignupTradeUser_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "ShiftSignupTradeUsers";
+
+		[NotMapped]
+		public string IdName => "ShiftSignupTradeUserId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ShiftSignupTrade", "User", "Shifts" };
 	}
 }

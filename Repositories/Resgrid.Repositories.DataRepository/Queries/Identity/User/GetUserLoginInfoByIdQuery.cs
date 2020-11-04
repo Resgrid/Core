@@ -2,6 +2,7 @@
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
 using System;
+using Resgrid.Model;
 
 namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
 {
@@ -25,7 +26,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
             return query;
         }
 
-        public string GetQuery<TEntity>(TEntity entity)
+        public string GetQuery<TEntity>() where TEntity : class, IEntity
         {
             throw new NotImplementedException();
         }

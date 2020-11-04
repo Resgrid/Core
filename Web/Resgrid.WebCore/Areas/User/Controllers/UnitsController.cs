@@ -15,6 +15,9 @@ using Resgrid.Web.Areas.User.Models.Units;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -32,10 +35,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICustomStateService _customStateService;
 		private readonly IGeoService _geoService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IGeoLocationProvider _geoLocationProvider;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-			IGeoService geoService)
+			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -47,27 +52,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 			_customStateService = customStateService;
 			_geoService = geoService;
+			_departmentSettingsService = departmentSettingsService;
+			_geoLocationProvider = geoLocationProvider;
 		}
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new UnitsIndexView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.CanUserAddUnit = _limitsService.CanDepartentAddNewUnit(DepartmentId);
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-			model.Units = _unitsService.GetUnitsForDepartment(DepartmentId);
-			model.States = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(DepartmentId);
-			model.UnitStatuses = _customStateService.GetAllActiveUnitStatesForDepartment(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CanUserAddUnit = await _limitsService.CanDepartmentAddNewUnit(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			model.States = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
+			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
 			model.UnitCustomStates = new Dictionary<int, CustomState>();
 
 			foreach (var unit in model.Units)
 			{
-				var type = _unitsService.GetUnitTypeByName(DepartmentId, unit.Type);
+				var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
 				if (type != null && type.CustomStatesId.HasValue)
 				{
-					var customStates = _customStateService.GetCustomSateById(type.CustomStatesId.Value);
+					var customStates = await _customStateService.GetCustomSateByIdAsync(type.CustomStatesId.Value);
 
 					if (customStates != null)
 					{
@@ -81,18 +88,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_Create)]
-		public IActionResult NewUnit()
+		public async Task<IActionResult> NewUnit()
 		{
 			var model = new NewUnitView();
 			model.Unit = new Unit();
-			model.Types = _unitsService.GetUnitTypesForDepartment(DepartmentId);
+			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
 			{
 				Name = "Standard Actions"
 			});
-			states.AddRange(_customStateService.GetAllActiveUnitStatesForDepartment(DepartmentId));
+			states.AddRange(await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId));
 			model.States = states;
 
 			var groups = new List<DepartmentGroup>();
@@ -100,7 +107,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Name = "No Station"
 			});
-			groups.AddRange(_departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId));
+			groups.AddRange(await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId));
 			model.Stations = groups;
 
 			return View(model);
@@ -109,12 +116,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_Create)]
-		public IActionResult NewUnit(NewUnitView model, IFormCollection form)
+		public async Task<IActionResult> NewUnit(NewUnitView model, IFormCollection form, CancellationToken cancellationToken)
 		{
-			model.Types = _unitsService.GetUnitTypesForDepartment(DepartmentId);
-			model.Stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
-			if (_unitsService.GetUnitByNameDepartmentId(DepartmentId, model.Unit.Name) != null)
+			if ((await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name)) != null)
 				ModelState.AddModelError("Name", "Unit with that name already exists.");
 
 			var unitRoleNames = (from object key in form.Keys where key.ToString().StartsWith("unitRole_") select form[key.ToString()]).ToList();
@@ -126,7 +133,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.Unit.StationGroupId.HasValue && model.Unit.StationGroupId.Value == 0)
 					model.Unit.StationGroupId = null;
 
-				model.Unit = _unitsService.SaveUnit(model.Unit);
+				model.Unit = await _unitsService.SaveUnitAsync(model.Unit, cancellationToken);
 
 				var roles = new List<UnitRole>();
 				if (unitRoleNames.Count > 0)
@@ -142,16 +149,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				if (roles.Count > 0)
-					_unitsService.SetRolesForUnit(model.Unit.UnitId, roles);
+					await _unitsService.SetRolesForUnitAsync(model.Unit.UnitId, roles, cancellationToken);
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.UnitAdded;
 				auditEvent.After = model.Unit.CloneJson();
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				_eventAggregator.SendMessage<UnitAddedEvent>(new UnitAddedEvent() { DepartmentId = DepartmentId, Unit = model.Unit });
+				await _eventAggregator.SendMessage<UnitAddedEvent>(new UnitAddedEvent() { DepartmentId = DepartmentId, Unit = model.Unit });
 
 				return RedirectToAction("Index");
 			}
@@ -161,25 +168,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_Update)]
-		public IActionResult EditUnit(int unitId)
+		public async Task<IActionResult> EditUnit(int unitId)
 		{
 			var model = new NewUnitView();
-			model.Unit = _unitsService.GetUnitById(unitId);
+			model.Unit = await _unitsService.GetUnitByIdAsync(unitId);
 
-			if (!_authorizationService.CanUserModifyUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, unitId))
 				Unauthorized();
 
-			model.Types = _unitsService.GetUnitTypesForDepartment(DepartmentId);
+			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 			var groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup
 			{
 				Name = "No Station"
 			});
-			groups.AddRange(_departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId));
+			groups.AddRange(await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId));
 			model.Stations = groups;
 
-			model.UnitRoles = _unitsService.GetRolesForUnit(unitId);
+			model.UnitRoles = await _unitsService.GetRolesForUnitAsync(unitId);
 
 			return View(model);
 		}
@@ -187,20 +194,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_Update)]
-		public IActionResult EditUnit(NewUnitView model, IFormCollection form)
+		public async Task<IActionResult> EditUnit(NewUnitView model, IFormCollection form, CancellationToken cancellationToken)
 		{
-			model.Types = _unitsService.GetUnitTypesForDepartment(DepartmentId);
-			model.Stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
-			if (!_authorizationService.CanUserModifyUnit(UserId, model.Unit.UnitId))
+			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, model.Unit.UnitId))
 				Unauthorized();
 
-			if (_unitsService.GetUnitByNameDepartmentId(DepartmentId, model.Unit.Name) != null && _unitsService.GetUnitByNameDepartmentId(DepartmentId, model.Unit.Name).UnitId != model.Unit.UnitId)
+			var unitCheck = await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name);
+			if (unitCheck != null && unitCheck.UnitId != model.Unit.UnitId)
 				ModelState.AddModelError("Name", "Unit with that name already exists.");
 
 			var unitRoleNames = (from object key in form.Keys where key.ToString().StartsWith("unitRole_") select form[key.ToString()]).ToList();
 
-			var unit = _unitsService.GetUnitById(model.Unit.UnitId);
+			var unit = await _unitsService.GetUnitByIdAsync(model.Unit.UnitId);
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
@@ -218,7 +226,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				_unitsService.SaveUnit(unit);
+				await _unitsService.SaveUnitAsync(unit, cancellationToken);
 
 				var roles = new List<UnitRole>();
 				if (unitRoleNames.Count > 0)
@@ -234,12 +242,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				if (roles.Count > 0)
-					_unitsService.SetRolesForUnit(unit.UnitId, roles);
+					await _unitsService.SetRolesForUnitAsync(unit.UnitId, roles, cancellationToken);
 				else
-					_unitsService.ClearRolesForUnit(unit.UnitId);
+					await _unitsService.ClearRolesForUnitAsync(unit.UnitId, cancellationToken);
 
 				auditEvent.After = unit.CloneJson();
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index");
 			}
@@ -249,21 +257,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult SetUnitState(int unitId, int stateType)
+		public async Task<IActionResult> SetUnitState(int unitId, int stateType, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserViewUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
 				Unauthorized();
 
-			_unitsService.SetUnitState(unitId, stateType);
+			await _unitsService.SetUnitStateAsync(unitId, stateType, DepartmentId, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult SetUnitStateWithDest(int unitId, int stateType, int type, int destination)
+		public async Task<IActionResult> SetUnitStateWithDest(int unitId, int stateType, int type, int destination, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserViewUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
 				Unauthorized();
 
 			var state = new UnitState();
@@ -275,7 +283,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var savedState = _unitsService.SetUnitState(state, DepartmentId);
+				var savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId, cancellationToken);
 			}
 			catch (Exception ex)
 			{
@@ -287,18 +295,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult SetUnitStateForMultiple(string unitIds, int stateType)
+		public async Task<IActionResult> SetUnitStateForMultiple(string unitIds, int stateType, CancellationToken cancellationToken)
 		{
 			if (!String.IsNullOrWhiteSpace(unitIds) && unitIds.Split(char.Parse("|")).Any())
 			{
 				foreach (var unitId in unitIds.Split(char.Parse("|")))
 				{
-					var unit = _unitsService.GetUnitById(int.Parse(unitId));
+					var unit = await _unitsService.GetUnitByIdAsync(int.Parse(unitId));
 
-					if (!_authorizationService.CanUserViewUnit(UserId, unit.UnitId))
+					if (await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
 						Unauthorized();
 
-					_unitsService.SetUnitState(unit.UnitId, stateType);
+					await _unitsService.SetUnitStateAsync(unit.UnitId, stateType, DepartmentId, cancellationToken);
 				}
 			}
 
@@ -307,15 +315,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult SetUnitStateWithDestForMultiple(string unitIds, int stateType, int type, int destination)
+		public async Task<IActionResult> SetUnitStateWithDestForMultiple(string unitIds, int stateType, int type, int destination, CancellationToken cancellationToken)
 		{
 			if (!String.IsNullOrWhiteSpace(unitIds) && unitIds.Split(char.Parse("|")).Any())
 			{
 				foreach (var unitId in unitIds.Split(char.Parse("|")))
 				{
-					var unit = _unitsService.GetUnitById(int.Parse(unitId));
+					var unit = await _unitsService.GetUnitByIdAsync(int.Parse(unitId));
 
-					if (!_authorizationService.CanUserViewUnit(UserId, unit.UnitId))
+					if (!await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
 						Unauthorized();
 
 					var state = new UnitState();
@@ -327,7 +335,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					try
 					{
-						var savedState = _unitsService.SetUnitState(state, DepartmentId);
+						var savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId, cancellationToken);
 					}
 					catch (Exception ex)
 					{
@@ -341,36 +349,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_Delete)]
-		public IActionResult DeleteUnit(int unitId)
+		public async Task<IActionResult> DeleteUnit(int unitId, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserModifyUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, unitId))
 				Unauthorized();
 
-			var unit = _unitsService.GetUnitById(unitId);
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
 			auditEvent.UserId = UserId;
 			auditEvent.Type = AuditLogTypes.UnitRemoved;
 			auditEvent.Before = unit.CloneJson();
-			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-			_unitsService.DeleteUnit(unitId);
+			await _unitsService.DeleteUnitAsync(unitId, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.UnitLog_Create)]
-		public IActionResult AddLog(int unitId)
+		public async Task<IActionResult> AddLog(int unitId)
 		{
 			var model = new AddLogView();
-			var unit = _unitsService.GetUnitById(unitId);
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
 			if (unit == null)
 				Unauthorized();
 
-			if (!_authorizationService.CanUserViewUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
 				Unauthorized();
 
 			model.Log = new UnitLog();
@@ -384,15 +392,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.UnitLog_Create)]
-		public IActionResult AddLog(AddLogView model)
+		public async Task<IActionResult> AddLog(AddLogView model, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserViewUnit(UserId, model.Log.UnitId))
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, model.Log.UnitId))
 				Unauthorized();
 
 			if (ModelState.IsValid)
 			{
 				model.Log.Narrative = System.Net.WebUtility.HtmlDecode(model.Log.Narrative);
-				_unitsService.SaveUnitLog(model.Log);
+				await _unitsService.SaveUnitLogAsync(model.Log, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
@@ -402,39 +410,108 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.UnitLog_View)]
-		public IActionResult ViewLogs(int unitId)
+		public async Task<IActionResult> ViewLogs(int unitId)
 		{
-			if (!_authorizationService.CanUserViewUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
 				Unauthorized();
 
 			var model = new ViewLogsView();
-			model.Unit = _unitsService.GetUnitById(unitId);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.Unit = await _unitsService.GetUnitByIdAsync(unitId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (model.Unit == null)
 				Unauthorized();
 
-			model.Logs = _unitsService.GetLogsForUnit(model.Unit.UnitId);
+			model.Logs = await _unitsService.GetLogsForUnitAsync(model.Unit.UnitId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult ViewEvents(int unitId)
+		public async Task<IActionResult> ViewEvents(int unitId)
 		{
-			if (!_authorizationService.CanUserViewUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
 				Unauthorized();
 
 			var model = new ViewLogsView();
-			model.Unit = _unitsService.GetUnitById(unitId);
+			model.Unit = await _unitsService.GetUnitByIdAsync(unitId);
+			model.OSMKey = Config.MappingConfig.OSMKey;
+			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
+			var gpsCoordinates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			double? centerLat = null;
+			double? centerLon = null;
+
+			if (!String.IsNullOrWhiteSpace(gpsCoordinates))
+			{
+				string[] coordinates = gpsCoordinates.Split(char.Parse(","));
+
+				if (coordinates.Count() == 2)
+				{
+					double newLat;
+					double newLon;
+					if (double.TryParse(coordinates[0], out newLat) && double.TryParse(coordinates[1], out newLon))
+					{
+						centerLat = newLat;
+						centerLon = newLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue && !centerLon.HasValue && address != null)
+			{
+				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", address.Address1,
+					address.City, address.State, address.PostalCode));
+
+				if (!String.IsNullOrEmpty(coordinates))
+				{
+					double newLat;
+					double newLon;
+					var coordinatesArr = coordinates.Split(char.Parse(","));
+					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
+					{
+						centerLat = newLat;
+						centerLon = newLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue && !centerLon.HasValue && department.Address != null)
+			{
+				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", department.Address.Address1,
+					department.Address.City,
+					department.Address.State,
+					department.Address.PostalCode));
+
+				if (!String.IsNullOrEmpty(coordinates))
+				{
+					double newLat;
+					double newLon;
+					var coordinatesArr = coordinates.Split(char.Parse(","));
+					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
+					{
+						centerLat = newLat;
+						centerLon = newLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue || !centerLon.HasValue)
+			{
+				centerLat = 39.14086268299356;
+				centerLon = -119.7583809782715;
+			}
+
+			model.CenterLat = centerLat.Value;
+			model.CenterLon = centerLon.Value;
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Unit_Update)]
-		public IActionResult GenerateReport(IFormCollection form)
+		public async Task<IActionResult> GenerateReport(IFormCollection form)
 		{
 			var eventIds = new List<int>();
 			foreach (var key in form.Keys)
@@ -448,12 +525,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new UnitEventsReportView();
 			model.Rows = new List<UnitEventJson>();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			foreach (var eventId in eventIds)
 			{
 				var eventJson = new UnitEventJson();
-				var eventRecord = _unitsService.GetUnitStateById(eventId);
+				var eventRecord = await _unitsService.GetUnitStateByIdAsync(eventId);
 
 				model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
@@ -466,7 +543,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (eventRecord.DestinationId.HasValue)
 					{
-						var station = _departmentGroupsService.GetGroupById(eventRecord.DestinationId.Value, false);
+						var station = await _departmentGroupsService.GetGroupByIdAsync(eventRecord.DestinationId.Value, false);
 
 						if (station != null)
 							eventJson.DestinationName = station.Name;
@@ -484,7 +561,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (eventRecord.DestinationId.HasValue)
 					{
-						var call = _callsService.GetCallById(eventRecord.DestinationId.Value, false);
+						var call = await _callsService.GetCallByIdAsync(eventRecord.DestinationId.Value, false);
 
 						if (call != null)
 							eventJson.DestinationName = call.Name;
@@ -510,25 +587,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Unit_Update)]
-		public IActionResult ClearAllUnitEvents(ViewLogsView model)
+		public async Task<IActionResult> ClearAllUnitEvents(ViewLogsView model, CancellationToken cancellationToken)
 		{
 			if (model.ConfirmClearAll)
-				_unitsService.DeleteStatesForUnit(model.Unit.UnitId);
+				await _unitsService.DeleteStatesForUnitAsync(model.Unit.UnitId, cancellationToken);
 
 			return RedirectToAction("ViewEvents", new { unitId = model.Unit.UnitId });
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult GetUnitEvents(int unitId)
+		public async Task<IActionResult> GetUnitEvents(int unitId)
 		{
 			var unitEvents = new List<UnitEventJson>();
 
-			if (!_authorizationService.CanUserViewUnit(UserId, unitId))
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
 				Unauthorized();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
-			var events = _unitsService.GetAllStatesForUnit(unitId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var events = await _unitsService.GetAllStatesForUnitAsync(unitId);
 
 			foreach (var e in events)
 			{
@@ -544,7 +621,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (e.DestinationId.HasValue)
 					{
-						var station = _departmentGroupsService.GetGroupById(e.DestinationId.Value, false);
+						var station = await _departmentGroupsService.GetGroupByIdAsync(e.DestinationId.Value, false);
 
 						if (station != null)
 							unitEvent.DestinationName = station.Name;
@@ -562,7 +639,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (e.DestinationId.HasValue)
 					{
-						var call = _callsService.GetCallById(e.DestinationId.Value, false);
+						var call = await _callsService.GetCallByIdAsync(e.DestinationId.Value, false);
 
 						if (call != null)
 							unitEvent.DestinationName = call.Name;
@@ -611,10 +688,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 
-		public IActionResult GetUnits()
+		public async Task<IActionResult> GetUnits()
 		{
 			var units = new List<UnitJson>();
-			var savedUnits = _unitsService.GetUnitsForDepartment(DepartmentId);
+			var savedUnits = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 
 			foreach (var unit in savedUnits)
 			{
@@ -635,15 +712,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 
-		public IActionResult GetUnitsForGroup(int groupId)
+		public async Task<IActionResult> GetUnitsForGroup(int groupId)
 		{
 			var units = new List<UnitJson>();
-			var group = _departmentGroupsService.GetGroupById(groupId);
+			var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
 
 			if (group == null || group.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			var savedUnits = _unitsService.GetAllUnitsForGroup(groupId);
+			var savedUnits = await _unitsService.GetAllUnitsForGroupAsync(groupId);
 
 			foreach (var unit in savedUnits)
 			{
@@ -663,10 +740,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult GetUnitTypes()
+		public async Task<IActionResult> GetUnitTypes()
 		{
 			var unitTypes = new List<UnitTypeJson>();
-			var types = _unitsService.GetUnitTypesForDepartment(DepartmentId);
+			var types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 			foreach (var type in types)
 			{
@@ -683,13 +760,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 
-		public IActionResult GetUnitsList()
+		public async Task<IActionResult> GetUnitsList()
 		{
 			List<UnitForListJson> unitsJson = new List<UnitForListJson>();
 
-			var units = _unitsService.GetUnitsForDepartment(DepartmentId);
-			var states = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(DepartmentId);
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			foreach (var unit in units)
 			{
@@ -705,7 +782,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (state != null)
 				{
-					var customState = CustomStatesHelper.GetCustomUnitState(state);
+					var customState = await CustomStatesHelper.GetCustomUnitState(state);
 
 					unitJson.StateId = state.State;
 					unitJson.State = customState.ButtonText;
@@ -723,13 +800,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 
-		public IActionResult GetUnitsForCallGrid(string callLat, string callLong)
+		public async Task<IActionResult> GetUnitsForCallGrid(string callLat, string callLong)
 		{
 			List<UnitForListJson> unitsJson = new List<UnitForListJson>();
 
-			var units = _unitsService.GetUnitsForDepartment(DepartmentId);
-			var states = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(DepartmentId);
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			foreach (var unit in units)
 			{
@@ -745,7 +822,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (state != null)
 				{
-					var customState = CustomStatesHelper.GetCustomUnitState(state);
+					var customState = await CustomStatesHelper.GetCustomUnitState(state);
 
 					unitJson.StateId = state.State;
 					unitJson.State = customState.ButtonText;
@@ -758,11 +835,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						unitJson.Eta = "N/A";
 					else
 					{
-						var location = _unitsService.GetLatestUnitLocation(state.UnitId, state.Timestamp);
+						var location = await _unitsService.GetLatestUnitLocationAsync(state.UnitId, state.Timestamp);
 
 						if (location != null)
 						{
-							var eta = _geoService.GetEtaInSeconds($"{location.Latitude},{location.Longitude}", String.Format("{0},{1}", callLat, callLong));
+							var eta = await _geoService.GetEtaInSecondsAsync($"{location.Latitude},{location.Longitude}", String.Format("{0},{1}", callLat, callLong));
 
 							if (eta > 0)
 								unitJson.Eta = $"{Math.Round(eta / 60, MidpointRounding.AwayFromZero)}m";
@@ -771,7 +848,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						}
 						else if (!String.IsNullOrWhiteSpace(state.GeoLocationData))
 						{
-							var eta = _geoService.GetEtaInSeconds(state.GeoLocationData, String.Format("{0},{1}", callLat, callLong));
+							var eta = await _geoService.GetEtaInSecondsAsync(state.GeoLocationData, String.Format("{0},{1}", callLat, callLong));
 
 							if (eta > 0)
 								unitJson.Eta = $"{Math.Round(eta / 60, MidpointRounding.AwayFromZero)}m";
@@ -791,19 +868,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult GetUnitOptionsDropdown(int unitId)
+		public async Task<IActionResult> GetUnitOptionsDropdown(int unitId)
 		{
 			string buttonHtml = string.Empty;
 
 
-			var unit = _unitsService.GetUnitById(unitId);
-			var type = _unitsService.GetUnitTypeByName(DepartmentId, unit.Type);
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+			var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
 
 			if (type != null && type.CustomStatesId.HasValue)
 			{
-				var customStates = _customStateService.GetCustomSateById(type.CustomStatesId.Value);
-				var activeCalls = _callsService.GetActiveCallsByDepartment(DepartmentId);
-				var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+				var customStates = await _customStateService.GetCustomSateByIdAsync(type.CustomStatesId.Value);
+				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
 				StringBuilder sb = new StringBuilder();
 				sb.Append($"<ul class='dropdown-menu multi-level unitStateList_{unitId}'>");
@@ -893,15 +970,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public IActionResult GetUnitOptionsDropdownForStates(int stateId, string units)
+		public async Task<IActionResult> GetUnitOptionsDropdownForStates(int stateId, string units)
 		{
 			string buttonHtml = string.Empty;
 
 			if (stateId > 1)
 			{
-				var customStates = _customStateService.GetCustomSateById(stateId);
-				var activeCalls = _callsService.GetActiveCallsByDepartment(DepartmentId);
-				var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+				var customStates = await _customStateService.GetCustomSateByIdAsync(stateId);
+				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
 				StringBuilder sb = new StringBuilder();
 				sb.Append($"<ul class='dropdown-menu multi-level unitStateList_{stateId}'>");

@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -47,18 +47,19 @@ namespace Resgrid.Model
 		public virtual Department Department { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return UnitId; }
 			set { UnitId = (int)value; }
 		}
-	}
 
-	public class Unit_Mapping : EntityTypeConfiguration<Unit>
-	{
-		public Unit_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "Units";
+
+		[NotMapped]
+		public string IdName => "UnitId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "StationGroup", "Department" };
 	}
 }

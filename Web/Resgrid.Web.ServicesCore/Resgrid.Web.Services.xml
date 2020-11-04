@@ -1,0 +1,3114 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Resgrid.Web.Services</name>
+    </assembly>
+    <members>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.Receive(PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
+            <summary>
+            The receiver API method call
+            </summary>
+            <param name="message">A Postmark Inbound message http://developer.postmarkapp.com/developer-inbound-parse.html#example-hook</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns><br /></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.AuthController">
+            <summary>
+            Service to generate an authentication token that is required to communicate with all other v3 services
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.AuthController.Validate(Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateInput)">
+            <summary>
+            Generates a token that is then used for subsquent requests to the API.
+            </summary>
+            <param name="authInput">ValidateInput object with values populated</param>
+            <returns>ValidateResult object, with IsValid set if the settings are correct</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.AvatarsController">
+            <summary>
+            Used to interact with the user avatars (profile pictures) in the Resgrid system. The authentication header isn't required to access this method.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.AvatarsController.Get(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Get a users avatar from the Resgrid system based on their ID
+            </summary>
+            <param name="id">ID of the user</param>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.BigBoardController">
+            <summary>
+            Calls to get information specific for displaying data on a dashboard or big board application. Data returned
+            is formatted and optimized for these scenarios to be outputted directly into a web application.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.CalendarController">
+            <summary>
+            Used to interact with the calendar system
+            Implements the <see cref="T:Resgrid.Web.Services.Controllers.Version3.V3AuthenticatedApiControllerbase" />
+            </summary>
+            <seealso cref="T:Resgrid.Web.Services.Controllers.Version3.V3AuthenticatedApiControllerbase" />
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetDepartmentCalendarItems">
+            <summary>
+            Gets the department calendar items.
+            </summary>
+            <returns>ActionResult&lt;List&lt;CalendarItem&gt;&gt;.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetDepartmentCalendarItemsInRange(System.DateTime,System.DateTime)">
+            <summary>
+            Gets the department calendar items in range.
+            </summary>
+            <param name="start">The start.</param>
+            <param name="end">The end.</param>
+            <returns>ActionResult&lt;List&lt;CalendarItem&gt;&gt;.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetAllDepartmentCalendarItemsInRange(System.String,System.String)">
+            <summary>
+            Gets the calendar items specified in the date range.
+            </summary>
+            <param name="startDate">Must be in MM/dd/yyyy HH:mm:ss zzz format</param>
+            <param name="endDate">Must be in MM/dd/yyyy HH:mm:ss zzz format</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetCalendarItem(System.Int32)">
+            <summary>
+            Gets the calendar item.
+            </summary>
+            <param name="id">The identifier.</param>
+            <returns>ActionResult&lt;CalendarItem&gt;.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetDepartmentCalendarItemTypes">
+            <summary>
+            Gets the department calendar item types.
+            </summary>
+            <returns>ActionResult&lt;List&lt;CalendarItemType&gt;&gt;.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController">
+            <summary>
+            Operations to be performed against calls
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetAllCallPriorites">
+            <summary>
+            Returns all the call priorities (including deleted ones) for a department
+            </summary>
+            <returns>Array of CallPriorityResult objects for each call priority in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetAllCallPrioritesForDepartment(System.Int32)">
+            <summary>
+            Returns all the call priorities (including deleted ones) for a selected department
+            </summary>
+            <returns>Array of CallPriorityResult objects for each call priority in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetPushAudioForPriority(System.Int32)">
+            <summary>
+            Return the audio file for push notifications for a specific call priority
+            </summary>
+            <returns>File download result for push dispatch audio for a call priority</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetIOSPushAudioForPriority(System.Int32)">
+            <summary>
+            Return the ios audio file for push notifications for a specific call priority
+            </summary>
+            <returns>File download result for push dispatch audio for a call priority</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.CallsController">
+            <summary>
+            Operations to be performed against calls
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCalls">
+            <summary>
+            Returns all the active calls for the department
+            </summary>
+            <returns>Array of CallResult objects for each active call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCallsEx">
+            <summary>
+            Returns all the active calls for the department
+            </summary>
+            <returns>Array of CallResult objects for each active call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCallsForDepartment(System.Int32)">
+            <summary>
+            Returns all the active calls for the department (extended object result, more verbose then GetActiveCalls)
+            </summary>
+            <returns>Array of DepartmentCallResult objects for each active call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCall(System.Int32)">
+            <summary>
+            Returns a specific call from the Resgrid System
+            </summary>
+            <returns>CallResult of the call in the Resgrid system</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallExtraData(System.Int32)">
+            <summary>
+            Gets all the meta-data around a call, dispatched personnel, units, groups and responses
+            </summary>
+            <param name="callId">CallId to get data for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.SaveCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.NewCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a call in the Resgrid system
+            </summary>
+            <param name="newCallInput"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.AddCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Adds a new call into Resgrid and Dispatches the call
+            </summary>
+            <param name="callInput">Call data to add into the system</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>AddCallInput.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.CloseCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.CloseCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Closes a Resgrid call
+            </summary>
+            <param name="closeCallInput">Data to close a call</param>
+            <returns>OK status code if successful</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.EditCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.EditCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates an existing Active Call in the Resgrid system
+            </summary>
+            <param name="editCallInput">Data to updated the call</param>
+            <returns>OK status code if successful</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallNotes(System.Int32)">
+            <summary>
+            Get notes for a call
+            </summary>
+            <param name="callId">CallId of the call you want to get notes for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetFilesForCall(System.Int32,System.Boolean,System.Int32)">
+            <summary>
+            Get the files for a call in the Resgrid System
+            </summary>
+            <param name="callId">CallId to get the files for</param>
+            <param name="includeData">Include the data in the result</param>
+            <param name="type">Type of file to get (Any = 0, Audio = 1, Images = 2, Files = 3, Videos = 4)</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetFile(System.Int32,System.Int32)">
+            <summary>
+            Get a users avatar from the Resgrid system based on their ID
+            </summary>
+            <param name="id">ID of the user</param>
+            <param name="departmentId">The department id of the file your requesting</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.UploadFile(Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput,System.Threading.CancellationToken)">
+            <summary>
+            Attaches a file to a call
+            </summary>
+            <param name="input">ID of the user</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.AddCallNote(Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput,System.Threading.CancellationToken)">
+            <summary>
+            Get notes for a call
+            </summary>
+            <param name="input">CallId of the call you want to get notes for</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallAudio(System.String)">
+            <summary>
+            Returns the call audio for a specific call (Allow Anonymous)
+            </summary>
+            <param name="query">Encrypted query string for the call</param>
+            <returns>Http response type matching call audio format with data</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCallPrioritiesForDepartment(System.Int32)">
+            <summary>
+            Get notes for a call
+            </summary>
+            <param name="departmentId">CallId of the call you want to get notes for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallTypes">
+            <summary>
+            Get all the call types for a department
+            </summary>
+            <returns>An array of call types</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.ChatController">
+            <summary>
+            Operations to be performed against the chat system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ChatController.GetResponderChatInfo">
+            <summary>
+            Gets the department and group information needed to seed the initial standard groups for chat
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ChatController.GetPersonnelForChat">
+            <summary>
+            Gets personnel information for the department to utilize within a chat system
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ChatController.NotifyNewChat(Resgrid.Web.Services.Controllers.Version3.Models.Chat.NotifyChatInput)">
+            <summary>
+            Send a Push Notification out to the personnel involved in a chat
+            </summary>
+            <param name="notifyChatInput"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CommandAppController.GetCommandAppCoreData">
+            <summary>
+            Gets the command application core data.
+            </summary>
+            <returns>ActionResult&lt;UnitAppPayloadResult&gt;.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.CommandsController">
+            <summary>
+            Operations to perform against the security sub-system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CommandsController.#ctor(Resgrid.Model.Services.ICommandsService)">
+            <summary>
+            Operations to perform against the security sub-system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CommandsController.GetAllCommands">
+            <summary>
+            Gets all the command definitions for the department
+            </summary>
+            <returns>AllCommandsResult object with a list of CommandResult's for each command</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.CoreDataController.GetCoreData">
+            <summary>
+            Gets the core data.
+            </summary>
+            <returns>CoreDataResult.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.DepartmentController">
+            <summary>
+            General department level options
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DepartmentController.GetRespondingOptions">
+            <summary>
+            Returns all the available responding options (Calls/Stations) for the department
+            </summary>
+            <returns>Array of RespondingOptionResult objects for each responding option in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DepartmentController.Get(System.Int32)">
+            <summary>
+            Returns basic high level department information for the request department
+            </summary>
+            <param name="departmentId"></param>
+            <returns>Array of DepartmentResult objects with the department data populated</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DepartmentController.GetDepartmentOptions(System.Int32)">
+            <summary>
+            Returns basic high level department information for the request department
+            </summary>
+            <param name="departmentId"></param>
+            <returns>Array of DepartmentResult objects with the department data populated</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.DevicesController">
+            <summary>
+            Operations to perform against devices for personnel
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.#ctor(Resgrid.Model.Services.IUsersService,Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IAuthorizationService,Resgrid.Model.Services.IPushService,Resgrid.Model.Providers.ICqrsProvider)">
+            <summary>
+            Default Constructor
+            </summary>
+            <param name="usersService"></param>
+            <param name="membershipProvider"></param>
+            <param name="departmentsService"></param>
+            <param name="authorizationService"></param>
+            <param name="pushUriService"></param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.RegisterDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput,System.Threading.CancellationToken)">
+            <summary>
+            Register a device to receive push notification from the Resgrid system
+            </summary>
+            <param name="registrationInput">Input to create the registration for</param>
+            <returns>Result for the registration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.UnRegisterDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceUnRegistrationInput)">
+            <summary>
+            Removed a Push Notification support by PushUriId.
+            </summary>
+            <param name="input">Input to de-register the device for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.RegisterUnitDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput)">
+            <summary>
+            Register a unit device to receive push notification from the Resgrid system
+            </summary>
+            <param name="registrationInput">Input to create the registration for</param>
+            <returns>Result for the registration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.UnRegisterUnitDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceUnRegistrationInput)">
+            <summary>
+            Removed a Unit Push Notification support by PushUriId.
+            </summary>
+            <param name="input">Input to deregister the device for</param>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
+            <summary>
+            Operations to support Dispatch operations
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.GeoController">
+            <summary>
+            Geolocation API methods for gps and other functions (like what3words)
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.GeoController.GetLocationForWhatThreeWords(System.String)">
+            <summary>
+            Gets coordinates (Latitude and Longitude) for a what3words address
+            </summary>
+            <param name="w3w">Full 3 part what 3 words string</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.GeoController.GetCoordinatesForAddress(System.String)">
+            <summary>
+            Gets coordinates (Latitude and Longitude) for an address
+            </summary>
+            <param name="address">URL Encoded address</param>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.LinksController">
+            <summary>
+            Operations to perform against the security sub-system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentLinksService,Resgrid.Model.Services.ILimitsService,Resgrid.Model.Services.ICallsService,Resgrid.Model.Services.IUserProfileService,Resgrid.Model.Providers.IGeoLocationProvider,Resgrid.Model.Services.IUnitsService,Resgrid.Model.Services.IActionLogsService,Resgrid.Model.Services.IUserStateService)">
+            <summary>
+            Operations to perform against the department links system. Department Links allow departments to 
+            share data to other departments, for example calls or resource orders.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetActiveDepartmentLinks">
+            <summary>
+            Gets the current active department links for this department where data is bring shared to it
+            </summary>
+            <returns>List of DepartmentLinkResult objects with the information about the links</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetActiveCallsForLink(System.Int32)">
+            <summary>
+            Returns all the active calls for a specific department link
+            </summary>
+            <returns>Array of CallResult objects for each active call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetUnitStatusesForLink(System.Int32)">
+            <summary>
+            Get's all the units for a department link and their current status information
+            </summary>
+            <returns>List of UnitStatusResult objects, with status information for each unit.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetPersonnelStatusesForLink(System.Int32)">
+            <summary>
+            Get's all the personnel in a department link and their current status and staffing information
+            </summary>
+            <returns>List of PersonnelStatusResult objects, with status and staffing information for each user.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetAllLinkedCallMapMarkers">
+            <summary>
+            Returns all the map markers for all active links
+            </summary>
+            <returns>Array of MapMakerInfo objects for each active call in all linked departments</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetAllActiveCallsForLinks">
+            <summary>
+            Returns all the active calls for a specific department link
+            </summary>
+            <returns>Array of CallResult objects for each active call in the department</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.MessagesController">
+            <summary>
+            Collection of methods to perform operations against messages
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetMessages">
+            <summary>
+            Returns all inbox messages for a user.
+            </summary>
+            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetMessagesPaged(System.Int32)">
+            <summary>
+            Returns all inbox messages for a user.
+            </summary>
+            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetOutboxMessages">
+            <summary>
+            Returns all the outbox messages for a user.
+            </summary>
+            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetOutboxMessagesPaged(System.Int32)">
+            <summary>
+            Returns all the outbox messages for a user.
+            </summary>
+            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetMessage(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Gets a specific message by it's Id.
+            </summary>
+            <param name="messageId">Integer message Identifier</param>
+            <returns>MessageResult object populated with message information from the system.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.SendMessage(Resgrid.Web.Services.Controllers.Version3.Models.Messages.NewMessageInput,System.Threading.CancellationToken)">
+            <summary>
+            Sends a new message to users in the system
+            </summary>
+            <param name="newMessageInput">Input data to send a new message</param>
+            <returns>Created result if the message was sent</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.RespondToMessage(Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResponseInput,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a messsage from the system
+            </summary>
+            <returns>Returns OK status code if successful</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.DeleteMessage(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a messsage from the system
+            </summary>
+            <param name="messageId">MessageId of the message to delete</param>
+            <returns>Returns OK status code if successful</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.NotesController">
+            <summary>
+            Operations to perform against a departments notes
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetAllNotes">
+            <summary>
+            Get's all the notes in a department
+            </summary>
+            <returns>List of NotesResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetAllUnexpiredNotesByCategory(System.String,System.Boolean)">
+            <summary>
+            Get's all the notes in a department
+            </summary>
+            <returns>List of NotesResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetNote(System.Int32)">
+            <summary>
+            Gets a specific note by it's Id.
+            </summary>
+            <param name="noteId">Integer note Identifier</param>
+            <returns>NotesResult object populated with note information from the system.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.SaveNote(Resgrid.Web.Services.Controllers.Version3.Models.Notes.NewNoteInput,System.Threading.CancellationToken)">
+            <summary>
+            Get's all the notes in a department
+            </summary>
+            <returns>List of NotesResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetNoteCategories">
+            <summary>
+            Get's all the note Categories for a Department
+            </summary>
+            <returns>List of string of distinct note category.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.PersonnelController">
+            <summary>
+            Operations to perform against personnel in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.PersonnelController.GetPersonnelStatuses(System.String)">
+            <summary>
+            Get's all the personnel in a department and their current status and staffing information with a filter
+            </summary>
+            <example>
+            $ curl https://api.resgrid.com/api/v2/Personnel/GetPersonnelStatuses -u VXNlck5hbWV8MXxBQkNE:
+            </example>
+            <returns>List of PersonnelStatusResult objects, with status and staffing information for each user.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.PersonnelController.GetPersonnelInfo(System.String)">
+            <summary>
+            Gets information about a specific person
+            </summary>
+            <param name="userId">UserId of the person to get info for</param>
+            <returns>PersonnelInfoResult with information pertaining to that user</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.ProfileController">
+            <summary>
+            Operations to perform against a logged in users (determined via the token) profile
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.GetMobileCarriers">
+            <summary>
+            Gets the mobile carriers in the Resgrid system. If you need a mobile carrier added contact team@resgrid.com.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.GetTimeZones">
+            <summary>
+            Gets the time zones in the Resgrid system. If you need a time zone added or corrected contact team@resgrid.com.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.GetProfile">
+            <summary>
+            Gets the Resgrid user profile for the user
+            </summary>
+            <returns>ProfileResult object with the users profile data</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.ToggleCustomPushSounds(System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Toggles a users profile to enable/disable custom push sounds when the app is backgrounded.
+            </summary>
+            <returns>An HTTP Result</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.UpdateProfile(Resgrid.Web.Services.Controllers.Version3.Models.Profile.UpdateProfileInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates a users profile
+            </summary>
+            <returns>An HTTP Result</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.ProtocolsController">
+            <summary>
+            Operations to perform against dispatch protocols that are established in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProtocolsController.GetAllProtocols">
+            <summary>
+            Get's all the protocols for a department
+            </summary>
+            <returns>List of ProtocolResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProtocolsController.GetProtocol(System.Int32)">
+            <summary>
+            Get's all the protocols for a department
+            </summary>
+            <returns>List of ProtocolResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProtocolsController.GetFile(System.Int32)">
+            <summary>
+            Gets a protocol attachment by it's id
+            </summary>
+            <param name="protocolAttachmentId">ID of the protocol attachment</param>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.SecurityController">
+            <summary>
+            Operations to perform against the security sub-system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IFirebaseService)">
+            <summary>
+            Operations to perform against the security sub-system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.SecurityController.GetCurrentUsersRights">
+            <summary>
+            Gets the current users department rights
+            </summary>
+            <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.ShiftsController">
+            <summary>
+            Operations to perform against shifts in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetShifts">
+            <summary>
+            Get's all the shifts in a department
+            </summary>
+            <returns>List of ShiftResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetShift(System.Int32)">
+            <summary>
+            Get's all the shifts in a department
+            </summary>
+            <returns>List of ShiftResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetTodaysShifts">
+            <summary>
+            Get's all the shift days for today
+            </summary>
+            <returns>List of ShiftDayResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetShiftDay(System.Int32)">
+            <summary>
+            Get's all the shifts in a department
+            </summary>
+            <returns>List of ShiftResult objects.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.StaffingController">
+            <summary>
+            Operations to perform against user statuses and their actions
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingController.GetCurrentStaffing">
+            <summary>
+            Gets the current staffing level (state) for the user
+            </summary>
+            <returns>StateResult object with the users current staffing level</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingController.SetStaffing(Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput,System.Threading.CancellationToken)">
+            <summary>
+            Sets the staffing level (state) for the current user.
+            </summary>
+            <param name="staffingInput">StateInput object with the State to set.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingController.SetStaffingForUser(Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput,System.Threading.CancellationToken)">
+            <summary>
+            Sets the staffing level (state) for the UserId specificed in the input data.
+            </summary>
+            <param name="staffingInput">StateInput object with the State to set.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController">
+            <summary>
+            Operations to perform against user statuses and their actions
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController.GetStaffingSchedules">
+            <summary>
+            Gets the current staffing level (state) for the user
+            </summary>
+            <returns>StateResult object with the users current staffing level</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController.ToggleStaffingSchedule(Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.ToggleStaffingScheduleInput,System.Threading.CancellationToken)">
+            <summary>
+            Toggles and Scheduled Staffing Level Change (Enabling or Disabling It)
+            </summary>
+            <param name="toggleInput">StateInput object with the Staffing to toggle and it's value.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController.CreateStaffingSchedule(Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput,System.Threading.CancellationToken)">
+            <summary>
+            Toggles and Scheduled Staffing Level Change (Enabling or Disabling It)
+            </summary>
+            <param name="toggleInput">StateInput object with the Staffing to toggle and it's value.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.StationsController">
+            <summary>
+            Operations that can be performed against resgrid recipients, usually for sending messages
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StationsController.GetStationResources">
+            <summary>
+            Returns all the available responding options (Calls/Stations) for the department
+            </summary>
+            <returns>Array of RecipientResult objects for each responding option in the department</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.StatusController">
+            <summary>
+            Operations to perform against user statuses and their actions
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StatusController.GetCurrentUserStatus">
+            <summary>
+            Gets the status/action for the current user. User credentials are supplied via the Auth header.
+            </summary>
+            <returns>StatusResult object with the users current status</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Resgrid.Web.Services.Controllers.Version3.StatusController.SetCurrentStatus(Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput,System.Threading.CancellationToken)" -->
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StatusController.SetStatusForUser(Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput,System.Threading.CancellationToken)">
+            <summary>
+            Sets the status/action for the UserId passed into the data posted
+            </summary>
+            <param name="statusInput">StatusInput object with the Status/Action to set.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.StatusController.PostStatusForUser(Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput)">
+            <summary>
+            Sets the status/action for the UserId passed into the data posted
+            </summary>
+            <param name="statusInput">StatusInput object with the Status/Action to set.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.UnitLocationController">
+            <summary>
+            Operations to perform against units in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitLocationController.SetUnitLocation(Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput,System.Threading.CancellationToken)">
+            <summary>
+            Sets the location of a unit
+            </summary>
+            <param name="locationInput">UnitLocationInput object with the gps information.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.UnitsController">
+            <summary>
+            Operations to perform against units in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitsController.GetUnitStatuses(System.String)">
+            <summary>
+            Get's all the units in a department and their current status information
+            </summary>
+            <returns>List of UnitStatusResult objects, with status information for each unit.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitsController.GetUnitsForDepartment(System.Int32)">
+            <summary>
+            Get's all the units in a department and their basic info
+            </summary>
+            <returns>List of UnitResult objects, with basic information for each unit.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.UnitStateController">
+            <summary>
+            Operations to perform against unit statuses
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitStateController.SetUnitState(Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput)">
+            <summary>
+            Sets the status/action for the current user.
+            </summary>
+            <param name="stateInput">StatusInput object with the Status/Action to set.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitStateController.CommitUnitStates(System.Collections.Generic.List{Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput})">
+            <summary>
+            Sets the status/action for the current user.
+            </summary>
+            <param name="stateInputs">StatusInput object with the Status/Action to set.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult">
+            <summary>
+            Object that verifies that the user's credentials
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Tkn">
+            <summary>
+            Auth token if authentication and validation was successful
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Txd">
+            <summary>
+            Timestamp of when this token expires
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Nme">
+            <summary>
+            If the user settings are successful validated this will be populated by their full name 
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Eml">
+            <summary>
+            If the user settings are successful validated this will be populated by their email address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Uid">
+            <summary>
+            UserId of the current user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Dcd">
+            <summary>
+            Timestamp (in Unix time) of when the department was created
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Dnm">
+            <summary>
+            Name of the department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult.Did">
+            <summary>
+            Department Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.SetActiveComapnyInput.Did">
+            <summary>
+            New Active Department Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.SetActiveComapnyInput.Usr">
+            <summary>
+            User name of the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.SetActiveComapnyInput.Pass">
+            <summary>
+            The password of the user
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateInput">
+            <summary>
+            Object that verifies that the user's credentials
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateInput.Usr">
+            <summary>
+            User name of the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateInput.Pass">
+            <summary>
+            The password of the user
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult">
+            <summary>
+            The Response from the server regarding a token generation request.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Tkn">
+            <summary>
+            Auth token if authentication and validation was successful
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Txd">
+            <summary>
+            Timestamp of when this token expires
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Nme">
+            <summary>
+            If the user settings are successful validated this will be populated by their full name 
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Eml">
+            <summary>
+            If the user settings are successful validated this will be populated by their email address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Uid">
+            <summary>
+            UserId of the current user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Dcd">
+            <summary>
+            Timestamp (in Unix time) of when the department was created
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Dnm">
+            <summary>
+            Name of the department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateResult.Did">
+            <summary>
+            Department Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput.CalId">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput.Note">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput.Type">
+            <summary>
+            1 = Attending, 4 = Not Attending
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities.CallPriorityResult">
+            <summary>
+            Definition of a call Priority for a department, including the system defaults 
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities.CallPriorityResult.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput">
+            <summary>
+            Input to attach a note to call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput.CallId">
+            <summary>
+            Id of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput.UserId">
+            <summary>
+            UserId of the user adding the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput.Note">
+            <summary>
+            Note text to add
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput.Lat">
+            <summary>
+            Latitude of when the note was taken
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput.Lon">
+            <summary>
+            Longitude of when the note was taken
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput">
+            <summary>
+            Input to attach a file to a call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput.Cid">
+            <summary>
+            Id of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput.Uid">
+            <summary>
+            User Id of the user attaching the file
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput.Typ">
+            <summary>
+            Type of the file (Audio = 1, Image = 2, File = 3, Video	= 4)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput.Nme">
+            <summary>
+            Name of the file
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput.Data">
+            <summary>
+            Base64 encoded string of the file being uploaded
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult">
+            <summary>
+            Object representing a file for a call in the Resgrid system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Id">
+            <summary>
+            Id of the call file
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Cid">
+            <summary>
+            Id of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Typ">
+            <summary>
+            Type of the file (Audio = 1, Image= 2, File	= 3, Video = 4)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Fln">
+            <summary>
+            Name of the File
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Data">
+            <summary>
+            Base64 File Data (may be null)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Nme">
+            <summary>
+            User friendly name of the file
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Sze">
+            <summary>
+            Size of the file in bytes
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Url">
+            <summary>
+            The Url to get the file instead of using the Data value
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Uid">
+            <summary>
+            User Id of the person who uploaded the file
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Tme">
+            <summary>
+            Timestamp of when the file was added
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileResult.Mime">
+            <summary>
+            Mime Type for the file
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Cid">
+            <summary>
+            Call Id of the Note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Cnd">
+            <summary>
+            Call Note Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Uid">
+            <summary>
+            UserId of the user who added the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Src">
+            <summary>
+            Note source
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Tme">
+            <summary>
+            Formatted Timestamp
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Tsp">
+            <summary>
+            Timestamp of when the note as added
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.TUtc">
+            <summary>
+            Timestamp of when the note as added in Utc
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Not">
+            <summary>
+            Note content
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Lat">
+            <summary>
+            (Optional) Note Latitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallNoteResult.Lng">
+            <summary>
+            (Optional) Note Longitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallProtocolResult.Id">
+            <summary>
+            Identifier for this Protocol
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallProtocolResult.Code">
+            <summary>
+            Code for the Protocol
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallProtocolResult.Name">
+            <summary>
+            The Protocols Name
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult">
+            <summary>
+            Depicts a call in the Resgrid system.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Cid">
+            <summary>
+            Id of the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Pri">
+            <summary>
+            Priority of the call (Low		= 0, Medium = 1, High	= 2, Emergency = 3)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Ctl">
+            <summary>
+            Is Call Critical
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Nme">
+            <summary>
+            Name of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Noc">
+            <summary>
+            Nature of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Map">
+            <summary>
+            Map Location of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Not">
+            <summary>
+            High level note for the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Add">
+            <summary>
+            Call Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Geo">
+            <summary>
+            Geo location Coordinates
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Lon">
+            <summary>
+            When was the call Logged On
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Ste">
+            <summary>
+            State of the call (Active	= 0, Closed = 1, Cancelled = 2, Unfounded = 3)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Num">
+            <summary>
+            Call Number, will be the 2 digit year (i.e. 15 for 2015) and an auto incrementing number for the call in the year. So 15-43 is the 43'rd call in 2015.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Nts">
+            <summary>
+            The amount of notes the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Aud">
+            <summary>
+            The amount of audio the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Img">
+            <summary>
+            The amount of images the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Fls">
+            <summary>
+            The amount of files the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.w3w">
+            <summary>
+            What 3 Words Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Rnm">
+            <summary>
+            Reporter Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Rci">
+            <summary>
+            Reporter Contact Info
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Rid">
+            <summary>
+            Reference Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Eid">
+            <summary>
+            External Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Aid">
+            <summary>
+            Audio File Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Typ">
+            <summary>
+            Call Type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResult.Utc">
+            <summary>
+            When was the call Logged On in UTC time
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx">
+            <summary>
+            Depicts a call in the Resgrid system.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Cid">
+            <summary>
+            Id of the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Pri">
+            <summary>
+            Priority of the call (Low		= 0, Medium = 1, High	= 2, Emergency = 3)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Ctl">
+            <summary>
+            Is Call Critical
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Nme">
+            <summary>
+            Name of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Noc">
+            <summary>
+            Nature of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Map">
+            <summary>
+            Map Location of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Not">
+            <summary>
+            High level note for the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Add">
+            <summary>
+            Call Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Geo">
+            <summary>
+            Geo location Coordinates
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Lon">
+            <summary>
+            When was the call Logged On
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Ste">
+            <summary>
+            State of the call (Active	= 0, Closed = 1, Cancelled = 2, Unfounded = 3)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Num">
+            <summary>
+            Call Number, will be the 2 digit year (i.e. 15 for 2015) and an auto incrementing number for the call in the year. So 15-43 is the 43'rd call in 2015.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Nts">
+            <summary>
+            The amount of notes the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Aud">
+            <summary>
+            The amount of audio the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Img">
+            <summary>
+            The amount of images the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Fls">
+            <summary>
+            The amount of files the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.w3w">
+            <summary>
+            What 3 Words Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Rnm">
+            <summary>
+            Reporter Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Rci">
+            <summary>
+            Reporter Contact Info
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Rid">
+            <summary>
+            Reference Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Eid">
+            <summary>
+            External Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Aid">
+            <summary>
+            Audio File Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Typ">
+            <summary>
+            Call Type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Utc">
+            <summary>
+            When was the call Logged On in UTC time
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallResultEx.Protocols">
+            <summary>
+            Active Protocols for this call
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallTypeResult">
+            <summary>
+            A call type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallTypeResult.Id">
+            <summary>
+            Id of the call type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallTypeResult.Name">
+            <summary>
+            Name of the call type
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CloseCallInput">
+            <summary>
+            Input information to close a call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CloseCallInput.Id">
+            <summary>
+            Call Id of the call to close
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CloseCallInput.Msg">
+            <summary>
+            Message of the call to close
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.CloseCallInput.Typ">
+            <summary>
+            Type of call closure that is used
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calls.EditCallInput">
+            <summary>
+            Input into the API to update an existing call. Only specific information can be updated. 
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.EditCallInput.Cid">
+            <summary>
+            Id of the call being updated
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.EditCallInput.Nme">
+            <summary>
+            Updated name of the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.EditCallInput.Noc">
+            <summary>
+            Updated Nature of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calls.EditCallInput.Add">
+            <summary>
+            Updated Call Address
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentOptionResult">
+            <summary>
+            Represents department options set in other parts of the system, for example email and text messaging call format options
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentOptionResult.DepartmentId">
+            <summary>
+            Department Id for the options
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentOptionResult.EmailFormatType">
+            <summary>
+            Format type used for import call emails
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult">
+            <summary>
+            Basic high level information for a department in the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.Id">
+            <summary>
+            Id of the Department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.Name">
+            <summary>
+            The Departments name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.ManagingUserId">
+            <summary>
+            The UserId of the main Admin or Managing Member
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.AddressId">
+            <summary>
+            (Optional) Id of the departments main location or map center address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.DepartmentType">
+            <summary>
+            The type of department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.TimeZone">
+            <summary>
+            Time zone of the department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.CreatedOn">
+            <summary>
+            When was the department created
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.UpdatedOn">
+            <summary>
+            When were the departments high level settings last updated
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.Use24HourTime">
+            <summary>
+            Is the department using 24 hour time?
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.EmailCode">
+            <summary>
+            The Code used to import Department Wide (All-Call) dispatches
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.AdminUsers">
+            <summary>
+            List of UserId's that are Department Admins
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Departments.DepartmentResult.Members">
+            <summary>
+            List of UserId's for all members in the Deaprtment
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput">
+            <summary>
+            Object that contains the device specific information needed to register the device for push notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput.Plt">
+            <summary>
+            The platform this device registration is going against
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput.Did">
+            <summary>
+            The DeviceId to register with Resgrid for Push Notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput.Uri">
+            <summary>
+            The PushUri (if needed by the target platform) for the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput.Uid">
+            <summary>
+            The UnitId of the device being registered if it's from the Unit App
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput.Id">
+            <summary>
+            Device UDID
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationResult">
+            <summary>
+            The result object for device registration requires, or deregistration requests.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationResult.Id">
+            <summary>
+            Id of the device registration created
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationResult.Typ">
+            <summary>
+            Platform type of the registration
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationResult.Sfl">
+            <summary>
+            Was the operational successful
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceUnRegistrationInput">
+            <summary>
+            Unput to deregister a device from Resgrid to stop pushing messages
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceUnRegistrationInput.Did">
+            <summary>
+            The Device Id for push registration
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceUnRegistrationInput.Pid">
+            <summary>
+            The Push Id (originally from Resgrid) for the registration
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Health.HealthResult">
+            <summary>
+            Response for getting the health of the Resgrid API.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Health.HealthResult.SiteId">
+            <summary>
+            Site\Location of this API
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Health.HealthResult.ServicesVersion">
+            <summary>
+            The Version of the Services
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Health.HealthResult.ApiVersion">
+            <summary>
+            Gets the current API version
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Health.HealthResult.DatabaseOnline">
+            <summary>
+            Can the API services talk to the database
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Health.HealthResult.CacheOnline">
+            <summary>
+            Can the API services talk to the cache
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Cid">
+            <summary>
+            Id of the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Pri">
+            <summary>
+            Priority of the call (Low		= 0, Medium = 1, High	= 2, Emergency = 3)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Ctl">
+            <summary>
+            Is Call Critical
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Nme">
+            <summary>
+            Name of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Noc">
+            <summary>
+            Nature of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Map">
+            <summary>
+            Map Location of the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Not">
+            <summary>
+            High level note for the Call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Add">
+            <summary>
+            Call Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Geo">
+            <summary>
+            Gelocation Coordinates
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Lon">
+            <summary>
+            When was the call Logged On
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Ste">
+            <summary>
+            State of the call (Active	= 0, Closed = 1, Cancelled = 2, Unfounded = 3)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Num">
+            <summary>
+            Call Number, will be the 2 digit year (i.e. 15 for 2015) and an auto incrementing number for the call in the year. So 15-43 is the 43'rd call in 2015.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Nts">
+            <summary>
+            The amount of notes the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Aud">
+            <summary>
+            The amount of audio the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Img">
+            <summary>
+            The amount of images the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.Fls">
+            <summary>
+            The amount of files the call has
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Links.LinkedCallResult.w3w">
+            <summary>
+            What 3 Words Address
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResponseInput">
+            <summary>
+            Responding to a message that is a Poll or Callback
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResponseInput.Id">
+            <summary>
+            Id of the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResponseInput.Typ">
+            <summary>
+            Type of response (1 = Yes, 2 = Maybe, 3 = No)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResponseInput.Not">
+            <summary>
+            Note for the response
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult">
+            <summary>
+            Holds Resgrid message data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Mid">
+            <summary>
+            Message Identifier for this message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Sub">
+            <summary>
+            Subject of the Message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Uid">
+            <summary>
+            UserId of the sending user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Bdy">
+            <summary>
+            Body of the message (may contain html)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Son">
+            <summary>
+            When the message was sent on
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.SUtc">
+            <summary>
+            When the message was sent on (UTC Time)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Typ">
+            <summary>
+            Message Type (0 = Normal, 1 = Callback, 2 = Poll)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Exp">
+            <summary>
+            When does the message expire (used for Polls and Callbacks)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Rsp">
+            <summary>
+            Has the user responded to the message (For Callback and Poll)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Not">
+            <summary>
+            Note for Response (for Callback and Poll)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Ron">
+            <summary>
+            Responded/Read on (for Callback and Poll)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Rty">
+            <summary>
+            Response Type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResult.Sys">
+            <summary>
+            Was this message system generated (i.e. email import)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageRecipientResult">
+            <summary>
+            Holds Resgrid message recipient information for a specifc message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageRecipientResult.Mid">
+            <summary>
+            Message Identifier for this message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageRecipientResult.Uid">
+            <summary>
+            UserId of the receiving user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageRecipientResult.Ron">
+            <summary>
+            Responded/Read on (for Callback and Poll)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageRecipientResult.Rty">
+            <summary>
+            Users Response to the message (for Callback and Poll)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageRecipientResult.Not">
+            <summary>
+            Note for Response (for Callback and Poll)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Messages.NewMessageInput">
+            <summary>
+            Creates a new message to send to other users in the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.NewMessageInput.Ttl">
+            <summary>
+            The title/subject of the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.NewMessageInput.Bdy">
+            <summary>
+            The body/content of the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.NewMessageInput.Typ">
+            <summary>
+            Type type of the message (0 = Normal\Message, 1 = Callback, 2 = Poll)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.NewMessageInput.Rcps">
+            <summary>
+            Who to send the message to
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Messages.RecipientResult">
+            <summary>
+            The result of getting all recipients for the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.RecipientResult.Id">
+            <summary>
+            The Id value of the recipient, it will be a Guid value for Users and an Int for all others
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.RecipientResult.Typ">
+            <summary>
+            The type of the Recipient
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Messages.RecipientResult.Nme">
+            <summary>
+            The recipient's display name
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NewNoteInput">
+            <summary>
+            Input to save a new note in the Resgrid system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NewNoteInput.Ttl">
+            <summary>
+            Title of the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NewNoteInput.Bdy">
+            <summary>
+            Body of the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NewNoteInput.Cat">
+            <summary>
+            The Category of the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NewNoteInput.Ado">
+            <summary>
+            Admins Only
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult">
+            <summary>
+            Data about a note in the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Nid">
+            <summary>
+            Note Identificaiton number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Uid">
+            <summary>
+            UserId of the user who added the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Ttl">
+            <summary>
+            The Title of the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Bdy">
+            <summary>
+            The Body of the Note (may contain HTML)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Clr">
+            <summary>
+            The category color of the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Cat">
+            <summary>
+            The notes category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Exp">
+            <summary>
+            When the note may expire
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Notes.NotesResult.Adn">
+            <summary>
+            When the note was added on
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.FilterResult">
+            <summary>
+            The result of getting all personnel filters for the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.FilterResult.Id">
+            <summary>
+            The Id value of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.FilterResult.Type">
+            <summary>
+            The type of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.FilterResult.Name">
+            <summary>
+            The filters name
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult">
+            <summary>
+            Information about a User
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Uid">
+            <summary>
+            The UserId GUID/UUID for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Did">
+            <summary>
+            DepartmentId of the deparment the user belongs to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Id">
+            <summary>
+            Department specificed ID number for this user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Fnm">
+            <summary>
+            The Users First Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Lnm">
+            <summary>
+            The Users Last Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Eml">
+            <summary>
+            The Users Email Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Mnu">
+            <summary>
+            The Users Mobile Telephone Number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Gid">
+            <summary>
+            GroupId the user is assigned to (0 for no group)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Gnm">
+            <summary>
+            Name of the group the user is assigned to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Roles">
+            <summary>
+            Enumeration/List of roles the user currently holds
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Ats">
+            <summary>
+            The current action/status type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Atm">
+            <summary>
+            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Dsi">
+            <summary>
+            The current action/status destination id for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Dsn">
+            <summary>
+            The current action/status destination name for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Stf">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelInfoResult.Stm">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult">
+            <summary>
+            A Personnel status result object
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Uid">
+            <summary>
+            The UserId GUID/UUID for the user state/staffing level being return
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Atp">
+            <summary>
+            The current action/status type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Atm">
+            <summary>
+            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Did">
+            <summary>
+            The current action/status destination id for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Ste">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Stm">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.AUtc">
+            <summary>
+            The timestamp of the last state level in UTC.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.SUtc">
+            <summary>
+            The timestamp of the last staffing level in UTC.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Profile.MobileCarriersResult">
+            <summary>
+            Information about mobile carriers in the Resgrid system. If you need mobile carriers added contact team@resgrid.com.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.MobileCarriersResult.Cid">
+            <summary>
+            Mobile Carrier Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.MobileCarriersResult.Nme">
+            <summary>
+            Mobile Carrier Name
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult">
+            <summary>
+            The representation of a users profile in the Resgrid system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Uid">
+            <summary>
+            User Id the profile is for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Adm">
+            <summary>
+            Is the user a Department Admin
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Hid">
+            <summary>
+            Is this user Hidden
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Dis">
+            <summary>
+            Is this user Disabled
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Lkd">
+            <summary>
+            Is the user locked out
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Fnm">
+            <summary>
+            First Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Lnm">
+            <summary>
+            Last Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Eml">
+            <summary>
+            Email Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Tz">
+            <summary>
+            Time Zone
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Mob">
+            <summary>
+            Mobile Number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Moc">
+            <summary>
+            Mobile Carrier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Hmn">
+            <summary>
+            Home Number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Sce">
+            <summary>
+            Send Call Emails
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Scp">
+            <summary>
+            Send Call Push Notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Scs">
+            <summary>
+            Send Call SMS/Text Messages
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Sme">
+            <summary>
+            Send Message Email
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Smp">
+            <summary>
+            Send Message Push Notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Sms">
+            <summary>
+            Send Message SMS/Text Messages
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Sne">
+            <summary>
+            Send Notification Email
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Snp">
+            <summary>
+            Send Notification Push Notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Sns">
+            <summary>
+            Send Notification SMS/Text Messages
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Id">
+            <summary>
+            Department Issued Identification Number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Val">
+            <summary>
+            Is the user allowed to set voice call data (based on the departments plan)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Voc">
+            <summary>
+            Enable Voice/Telephone Dispatch/Notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Vcm">
+            <summary>
+            Voice Call your Mobile Phone
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Vch">
+            <summary>
+            Voice Call your Home Phone
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Lup">
+            <summary>
+            Last Updated
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Hme">
+            <summary>
+            Home Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.ProfileResult.Mal">
+            <summary>
+            Mailing Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.AddressResult.Aid">
+            <summary>
+            Address Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.AddressResult.Str">
+            <summary>
+            Street Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.AddressResult.Cty">
+            <summary>
+            City
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.AddressResult.Ste">
+            <summary>
+            State or Province
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.AddressResult.Zip">
+            <summary>
+            Zip or Postal Code
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.AddressResult.Cnt">
+            <summary>
+            Country
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Profile.TimeZoneResult">
+            <summary>
+            Represents a Time Zone entry in the Resgrid system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.TimeZoneResult.Id">
+            <summary>
+            String based id for the time zone
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Profile.TimeZoneResult.Nme">
+            <summary>
+            Display name of the time zone
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Security.DepartmentRightsResult">
+            <summary>
+            Object that denotes the right assignments for a user in a department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.DepartmentRightsResult.Adm">
+            <summary>
+            Is the user a department admin
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.DepartmentRightsResult.VPii">
+            <summary>
+            Can the user view PII
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.DepartmentRightsResult.CCls">
+            <summary>
+            Can the user create calls
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.DepartmentRightsResult.ANot">
+            <summary>
+            Can the user add a note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.DepartmentRightsResult.CMsg">
+            <summary>
+            Can the user create messages
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.DepartmentRightsResult.Grps">
+            <summary>
+            Groups in the department the user is a member of
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Security.GroupRight">
+            <summary>
+            Object containting a group right assignemnt
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.GroupRight.Gid">
+            <summary>
+            Id of the group this right assignement is for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Security.GroupRight.Adm">
+            <summary>
+            Is the user a group admin
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput">
+            <summary>
+            Input data to add a staffing schedule in the Resgrid system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Typ">
+            <summary>
+            Type of staffing schedule (Date = 1, Weekly = 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Spd">
+            <summary>
+            Specific Date to trigger (if Type = 1)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Spt">
+            <summary>
+            Specific time to trigger
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Ste">
+            <summary>
+            State the staffing level will get set to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Sun">
+            <summary>
+            Trigger on Sunday (if Type - 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Mon">
+            <summary>
+            Trigger on Monday (if Type - 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Tue">
+            <summary>
+            Trigger on Tuesday (if Type - 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Wed">
+            <summary>
+            Trigger on Wednesday (if Type - 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Thu">
+            <summary>
+            Trigger on Thursday (if Type - 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Fri">
+            <summary>
+            Trigger on Friday (if Type - 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Sat">
+            <summary>
+            Trigger on Saturday (if Type - 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput.Not">
+            <summary>
+            Note for this staffing schedule
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult">
+            <summary>
+            Describes a staffing schedule (automated staffing change) for a user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Id">
+            <summary>
+            Id value of the staffing schedule
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Typ">
+            <summary>
+            Type of the Staffing Schedule (Date = 1, Weekly = 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Act">
+            <summary>
+            Is the staffing schedule currently active
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Spc">
+            <summary>
+            Specific date time the schedule triggers (if Typ = 1)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Dow">
+            <summary>
+            Days of the Week the Staffing Schedule triggers (if Type = 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Data">
+            <summary>
+            What the staffing schedule will change to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Not">
+            <summary>
+            Note for this staffing schedule
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Uid">
+            <summary>
+            UserId (GUID/UUID) of the User to set. This field will be ignored if the input is used on a 
+            function that is setting status for the current user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Typ">
+            <summary>
+            The state/staffing level of the user to set for the user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Not">
+            <summary>
+            Note for the staffing level
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult">
+            <summary>
+            The result object for a state/staffing level request.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Uid">
+            <summary>
+            The UserId GUID/UUID for the user state/staffing level being return
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Nme">
+            <summary>
+            The full name of the user for the state/staffing level being returned
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Typ">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Tms">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Not">
+            <summary>
+            Staffing note for the User's staffing
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult">
+            <summary>
+            A resrouce in the system this could be a user or unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Id">
+            <summary>
+            The Id value of the resource, it will be a Guid value for Users and an Int for all others
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Typ">
+            <summary>
+            The type of the Resource (User or Unit)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Sts">
+            <summary>
+            The current action/status type for the resrouce
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Stm">
+            <summary>
+            The timestamp of the last status. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Did">
+            <summary>
+            The current action/status destination id for the resrouce
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Dnm">
+            <summary>
+            The current action/status destination name for the resrouce
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Ste">
+            <summary>
+            The current staffing level (state) type for the user (if the resrouce is a user)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult.Stt">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput">
+            <summary>
+            Object inputs for setting a users Status/Action. If this object is used in an operation that sets
+            a status for the current user the UserId value in this object will be ignored.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput.Uid">
+            <summary>
+            UserId (GUID/UUID) of the User to set. This field will be ignored if the input is used on a 
+            function that is setting status for the current user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput.Typ">
+            <summary>
+            The ActionType/Status of the user to set for the user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput.Rto">
+            <summary>
+            Responding to Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput.Geo">
+            <summary>
+            Geolocation coordinates
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput.Dtp">
+            <summary>
+            Destination type (Station = 1 or Call = 2)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput.Not">
+            <summary>
+            Note
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult">
+            <summary>
+            The result object for a status request for V3 requests
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult.Uid">
+            <summary>
+            The UserId GUID/UUID for the user status being return
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult.Act">
+            <summary>
+            The current action/status type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult.Ats">
+            <summary>
+            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult.Ste">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult.Sts">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult.Did">
+            <summary>
+            The current action/status destination id for the user
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput">
+            <summary>
+            A GPS location for a point in time of a specificed unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Uid">
+            <summary>
+            UnitId of the apparatus that the location is for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Tms">
+            <summary>
+            The timestamp of the location in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Lat">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Lon">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Acc">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Alt">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Alc">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Spd">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput.Hdn">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult">
+            <summary>
+            The information about a specific unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Uid">
+            <summary>
+            Id of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Did">
+            <summary>
+            The Id of the department the unit is under
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Nme">
+            <summary>
+            Name of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Typ">
+            <summary>
+            Department assigned type for the unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Cid">
+            <summary>
+            Custom Statuses Set Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Sid">
+            <summary>
+            Station Id of the station housing the unit (0 means no station)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Snm">
+            <summary>
+            Name of the station the unit is under
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Vin">
+            <summary>
+            Vehicle Identification Number for the unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Pnm">
+            <summary>
+            Plate Number for the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Fwl">
+            <summary>
+            Is the unit 4-Wheel drive
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Spm">
+            <summary>
+            Does the unit require a special permit to drive
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Cdi">
+            <summary>
+            Id number of the units current destionation (0 means no destination)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Ste">
+            <summary>
+            The current status/state of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Tms">
+            <summary>
+            The Timestamp of the status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Lat">
+            <summary>
+            The units current Latitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Lon">
+            <summary>
+            The units current Longitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitInfoResult.Not">
+            <summary>
+            Current user provide status note
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult">
+            <summary>
+             Basic information on a Unit (Apparatus or piece of equipment of groups of personnel) in the System
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.Id">
+            <summary>
+            Id For the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.DepartmentId">
+            <summary>
+            Department Id the unit is under
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.Name">
+            <summary>
+            Name of the unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.Type">
+            <summary>
+            Type of unit (department defined)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.StationId">
+            <summary>
+            The station id the group is housed at
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.VIN">
+            <summary>
+            Vehicle Identifcation Number for the Unit (if applicable) 
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.PlateNumber">
+            <summary>
+            The Plate numbber for the Unit (if applicable) 
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.FourWheel">
+            <summary>
+            Can the unit go off-road
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitResult.SpecialPermit">
+            <summary>
+            Is a special permit or certification required to drive the unit (if applicable) 
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitRoleResult">
+            <summary>
+            Contains a role for a unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitRoleResult.UnitId">
+            <summary>
+            Unit Identification number this role belongs to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitRoleResult.UnitRoleId">
+            <summary>
+            Unit Roles Identification number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitRoleResult.Name">
+            <summary>
+            Name of the Unit Role
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput">
+            <summary>
+            Object inputs for setting a users Status/Action. If this object is used in an operation that sets
+            a status for the current user the UserId value in this object will be ignored.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Uid">
+            <summary>
+            UnitId of the apparatus that the state is being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Typ">
+            <summary>
+            The UnitStateType of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Rto">
+            <summary>
+            The Call/Station the unit is responding to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Tms">
+            <summary>
+            The timestamp of the status event in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Lts">
+            <summary>
+            The timestamp of the status event in the local time of the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Not">
+            <summary>
+            User provided note for this event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Lat">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Lon">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Acc">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Alt">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Alc">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Spd">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Hdn">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Eid">
+            <summary>
+            The event id used for queuing on mobile applications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput.Roles">
+            <summary>
+            The accountability roles filed for this event
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Units.Role">
+            <summary>
+            Role filled by a User on a Unit for an event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.Role.Id">
+            <summary>
+            Id of the locally stored event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.Role.Eid">
+            <summary>
+            Local Event Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.Role.Uid">
+            <summary>
+            UserId of the user filling the role
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.Role.Rid">
+            <summary>
+            RoleId of the role being filled
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.Role.Nme">
+            <summary>
+             The name of the Role
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult">
+            <summary>
+            A Status result for a Unit in a department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult.UnitId">
+            <summary>
+            The integer based Unit Identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult.Name">
+            <summary>
+            The Name of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult.Type">
+            <summary>
+            The Type of the unit as defined in the department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult.Station">
+            <summary>
+            The Station Department Group name for the unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult.DestinationId">
+            <summary>
+            The Id of the Destination for the Unit (could be a Call or a Station)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult.StateType">
+            <summary>
+            The current status/state of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusCoreResult.Timestamp">
+            <summary>
+            The Timestamp of the status
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusResult">
+            <summary>
+            A Status result for a Unit in a department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusResult.Uid">
+            <summary>
+            The integer based Unit Identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusResult.Did">
+            <summary>
+            The Id of the Destination for the Unit (could be a Call or a Station)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusResult.Typ">
+            <summary>
+            The current status/state of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusResult.Tmp">
+            <summary>
+            The Timestamp of the status
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v3.DepartmentStatusController">
+            <summary>
+            General department level options
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v3.DepartmentStatusController.GetDepartmentStatus">
+            <summary>
+            Gets the department status.
+            </summary>
+            <returns>DepartmentStatusResult.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v3.HealthController">
+            <summary>
+            Health Check system to get information and health status of the services
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v3.HealthController.GetCurrent">
+            <summary>
+            Returns all the call priorities (including deleted ones) for a department
+            </summary>
+            <returns>Array of CallPriorityResult objects for each call priority in the department</returns>
+        </member>
+        <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
+            <summary>
+            Gets or sets the on authentication failed.
+            </summary>
+            <value>The on authentication failed.</value>
+        </member>
+        <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnValidateCredentials">
+            <summary>
+            Gets or sets the on validate credentials.
+            </summary>
+            <value>The on validate credentials.</value>
+        </member>
+        <member name="M:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.AuthenticationFailed(Resgrid.Web.Services.Middleware.AuthenticationFailedContext)">
+            <summary>
+            Authentications the failed.
+            </summary>
+            <param name="context">The context.</param>
+            <returns>Task.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.ValidateCredentials(Resgrid.Web.Services.Middleware.ValidateCredentialsContext)">
+            <summary>
+            Validates the credentials.
+            </summary>
+            <param name="context">The context.</param>
+            <returns>Task.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Middleware.ValidateCredentialsContext">
+            <summary>
+            Class ValidateCredentialsContext.
+            Implements the <see cref="!:Microsoft.AspNetCore.Authentication.ResultContext&lt;Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions&gt;" />
+            </summary>
+            <seealso cref="!:Microsoft.AspNetCore.Authentication.ResultContext&lt;Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions&gt;" />
+        </member>
+        <member name="P:Resgrid.Web.Services.Middleware.ValidateCredentialsContext.Principal">
+            <summary>
+            Gets or sets the <see cref="T:System.Security.Claims.ClaimsPrincipal" /> containing the user claims.
+            </summary>
+            <value>The principal.</value>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.imgUrl">
+            <summary>
+            your image path (the one we recieved after successfull upload)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.imgInitW">
+            <summary>
+            your image original width (the one we recieved after upload)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.imgInitH">
+            <summary>
+            your image original height (the one we recieved after upload)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.imgW">
+            <summary>
+            your new scaled image width
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.imgH">
+            <summary>
+            your new scaled image height
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.imgX1">
+            <summary>
+            top left corner of the cropped image in relation to scaled image
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.imgY1">
+            <summary>
+            top left corner of the cropped image in relation to scaled image
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.cropW">
+            <summary>
+            cropped image width
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.CropRequest.cropH">
+            <summary>
+            cropped image height
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+    </members>
+</doc>

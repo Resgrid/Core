@@ -1,138 +1,249 @@
 ﻿using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using System.Configuration;
-using Dapper;
 using System;
+using System.Data.Common;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Calendar;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class CalendarItemsRepository : RepositoryBase<CalendarItem>, ICalendarItemsRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public CalendarItemsRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public List<CalendarItem> GetAllCalendarItemsToNotify()
+		public CalendarItemsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
+		}
+
+		public async Task<IEnumerable<CalendarItem>> GetCalendarItemsByRecurrenceIdAsync(int id)
+		{
+			try
 			{
-				return db.Query<CalendarItem>($"SELECT * FROM CalendarItems WHERE ReminderSent = 0 AND Reminder > 0 AND IsV2Schedule = 0").ToList();
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<CalendarItem>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("CalendarItemId", id);
+
+					var query = _queryFactory.GetQuery<SelectCalendarItemByRecurrenceIdQuery>();
+
+					return await x.QueryAsync<CalendarItem>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public async Task<List<CalendarItem>> GetAllCalendarItemsToNotifyAsync()
+		public async Task<bool> DeleteCalendarItemAndRecurrencesAsync(int id, CancellationToken cancellationToken)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var items = await db.QueryAsync<CalendarItem>($"SELECT * FROM CalendarItems WHERE ReminderSent = 0 AND Reminder > 0 AND IsV2Schedule = 0");
+				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					try
+					{
+						var dynamicParameters = new DynamicParameters();
+						dynamicParameters.Add("CalendarItemId", id);
 
-				return items.ToList();
+						var query = _queryFactory.GetDeleteQuery<DeleteCalendarItemQuery>();
+
+						var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+						return result > 0;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+
+						throw;
+					}
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						return await removeFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await removeFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public List<CalendarItem> GetAllV2CalendarItemsForDepartment(int departmentId, DateTime startDate)
+		public async Task<IEnumerable<CalendarItem>> GetAllCalendarItemsToNotifyAsync(DateTime startDate)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				return db.Query<CalendarItem>(@"SELECT * FROM CalendarItems
-					WHERE DepartmentId = @departmentId
-					AND IsV2Schedule = 1
-					AND (Start >= @startDate OR (RecurrenceType > 0 AND (RecurrenceEnd IS NULL OR RecurrenceEnd > @startDate)))",
-					new { departmentId = departmentId, startDate = startDate }).ToList();
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<CalendarItem>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("StartDate", startDate);
+
+					var query = _queryFactory.GetQuery<SelectCalendarItemsByDateQuery>();
+
+					return await x.QueryAsync<CalendarItem>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public async Task<List<CalendarItem>> GetAllV2CalendarItemsForDepartmentAsync(int departmentId, DateTime startDate)
+		public async Task<CalendarItem> GetCalendarItemByIdAsync(int calendarItemId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var items = await db.QueryAsync<CalendarItem>(@"SELECT * FROM CalendarItems
-					WHERE DepartmentId = @departmentId
-					AND IsV2Schedule = 1
-					AND (Start >= @startDate OR (RecurrenceType > 0 AND (RecurrenceEnd IS NULL OR RecurrenceEnd > @startDate)))",
-					new { departmentId = departmentId, startDate = startDate });
+				var selectFunction = new Func<DbConnection, Task<CalendarItem>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("CalendarItemId", calendarItemId);
 
-				return items.ToList();
+					var query = _queryFactory.GetQuery<SelectCalendarItemByIdQuery>();
+
+					var messageDictionary = new Dictionary<int, CalendarItem>();
+					var result = await x.QueryAsync<CalendarItem, CalendarItemAttendee, CalendarItem>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: CalendarItemRecipientMapping(messageDictionary),
+						splitOn: "CalendarItemAttendeeId");
+
+					if (messageDictionary.Count > 0)
+						return messageDictionary.Select(y => y.Value).FirstOrDefault();
+
+					return result.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
 			}
 		}
 
-		public List<CalendarItem> GetAllV2CalendarItemRecurrences(string calendarItemId)
+		private static Func<CalendarItem, CalendarItemAttendee, CalendarItem> CalendarItemRecipientMapping(Dictionary<int, CalendarItem> dictionary)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			return new Func<CalendarItem, CalendarItemAttendee, CalendarItem>((calendarItem, calendarItemAttendee) =>
 			{
-				return db.Query<CalendarItem>(@"SELECT * FROM CalendarItems
-					WHERE RecurrenceId = @calendarItemId",
-					new { calendarItemId = calendarItemId }).ToList();
-			}
-		}
+				var dictionaryItem = default(CalendarItem);
 
-		public async Task<List<CalendarItem>> GetAllV2CalendarItemRecurrencesAsync(string calendarItemId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var items = await db.QueryAsync<CalendarItem>(@"SELECT * FROM CalendarItems
-					WHERE RecurrenceId = @calendarItemId",
-					new { calendarItemId = calendarItemId });
+				if (calendarItemAttendee != null)
+				{
+					if (dictionary.TryGetValue(calendarItem.CalendarItemId, out dictionaryItem))
+					{
+						if (dictionaryItem.Attendees.All(x => x.CalendarItemAttendeeId != calendarItemAttendee.CalendarItemAttendeeId))
+							dictionaryItem.Attendees.Add(calendarItemAttendee);
+					}
+					else
+					{
+						if (calendarItem.Attendees == null)
+							calendarItem.Attendees = new List<CalendarItemAttendee>();
 
-				return items.ToList();
-			}
-		}
+						calendarItem.Attendees.Add(calendarItemAttendee);
+						dictionary.Add(calendarItem.CalendarItemId, calendarItem);
 
-		public List<CalendarItem> GetAllV2CalendarItemsToNotify(DateTime startDate)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				return db.Query<CalendarItem>(@"SELECT * FROM CalendarItems
-					WHERE IsV2Schedule = 1 AND ReminderSent = 0 AND Reminder > 0 
-					AND (Start >= @startDate OR (RecurrenceType > 0 AND (RecurrenceEnd IS NULL OR RecurrenceEnd > @startDate)))",
-					new { startDate = startDate }).ToList();
-			}
-		}
+						dictionaryItem = calendarItem;
+					}
+				}
+				else
+				{
+					calendarItem.Attendees = new List<CalendarItemAttendee>();
+					dictionaryItem = calendarItem;
+					dictionary.Add(calendarItem.CalendarItemId, calendarItem);
+				}
 
-		public async Task<List<CalendarItem>> GetAllV2CalendarItemsToNotifyAsync(DateTime startDate)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var items = await db.QueryAsync<CalendarItem>(@"SELECT * FROM CalendarItems
-					WHERE IsV2Schedule = 1 AND ReminderSent = 0 AND Reminder > 0 
-					AND (Start >= @startDate OR (RecurrenceType > 0 AND (RecurrenceEnd IS NULL OR RecurrenceEnd > @startDate)))",
-					new { startDate = startDate });
-
-				return items.ToList();
-			}
-		}
-
-		public bool DeleteCalendarItemAndRecurrences(int calendarItemId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				db.Query($"DELETE FROM CalendarItems WHERE CalendarItemId = @itemId OR RecurrenceId = @itemId",
-					new { itemId = calendarItemId });
-			}
-
-			return true;
-		}
-
-		public async Task<bool> DeleteCalendarItemAndRecurrencesAsync(int calendarItemId)
-		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				await db.QueryAsync($"DELETE FROM CalendarItems WHERE CalendarItemId = @itemId OR RecurrenceId = @itemId",
-					new { itemId = calendarItemId });
-			}
-
-			return true;
+				return dictionaryItem;
+			});
 		}
 	}
 }

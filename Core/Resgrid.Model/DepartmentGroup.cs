@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using Newtonsoft.Json;
 using ProtoBuf;
@@ -80,11 +79,20 @@ namespace Resgrid.Model
 		public string FaxNumber { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentGroupId; }
 			set { DepartmentGroupId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "DepartmentGroups";
+
+		[NotMapped]
+		public string IdName => "DepartmentGroupId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Parent", "Members", "Children", "Address" };
 
 		public bool IsUserGroupAdmin(string userId)
 		{
@@ -116,14 +124,6 @@ namespace Resgrid.Model
 			}
 
 			return false;
-		}
-	}
-
-	public class DepartmentGroup_Mapping : EntityTypeConfiguration<DepartmentGroup>
-	{
-		public DepartmentGroup_Mapping()
-		{
-			//this.HasRequired(t => t.Members).WithMany().HasForeignKey(t => t.DepartmentGroupId).WillCascadeOnDelete(false);
 		}
 	}
 }

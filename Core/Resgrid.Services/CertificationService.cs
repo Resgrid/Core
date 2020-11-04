@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -9,79 +10,84 @@ namespace Resgrid.Services
 {
 	public class CertificationService : ICertificationService
 	{
-		private readonly IGenericDataRepository<DepartmentCertificationType> _departmentCertificationTypeRepository;
-		private readonly IGenericDataRepository<PersonnelCertification> _personnelCertificationRepository;
+		private readonly IDepartmentCertificationTypeRepository _departmentCertificationTypeRepository;
+		private readonly IPersonnelCertificationRepository _personnelCertificationRepository;
 
-		public CertificationService(IGenericDataRepository<DepartmentCertificationType> departmentCertificationTypeRepository, IGenericDataRepository<PersonnelCertification> personnelCertificationRepository)
+		public CertificationService(IDepartmentCertificationTypeRepository departmentCertificationTypeRepository, IPersonnelCertificationRepository personnelCertificationRepository)
 		{
 			_departmentCertificationTypeRepository = departmentCertificationTypeRepository;
 			_personnelCertificationRepository = personnelCertificationRepository;
 		}
 
-		public List<DepartmentCertificationType> GetAllCertificationTypesByDepartment(int departmentId)
+		public async Task<List<DepartmentCertificationType>> GetAllCertificationTypesByDepartmentAsync(int departmentId)
 		{
-			return _departmentCertificationTypeRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _departmentCertificationTypeRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public DepartmentCertificationType GetCertificationTypeById(int certificationTypeId)
+		public async Task<DepartmentCertificationType> GetCertificationTypeByIdAsync(int certificationTypeId)
 		{
-			return _departmentCertificationTypeRepository.GetAll().SingleOrDefault(x => x.DepartmentCertificationTypeId == certificationTypeId);
+			return await _departmentCertificationTypeRepository.GetByIdAsync(certificationTypeId);
 		}
 
-		public void DeleteCertificationTypeById(int certificationTypeId)
+		public async Task<bool> DeleteCertificationTypeByIdAsync(int certificationTypeId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var type = GetCertificationTypeById(certificationTypeId);
+			var type = await GetCertificationTypeByIdAsync(certificationTypeId);
 
 			if (type != null)
-				_departmentCertificationTypeRepository.DeleteOnSubmit(type);
+				return await _departmentCertificationTypeRepository.DeleteAsync(type, cancellationToken);
+
+			return false;
 		}
 
-		public DepartmentCertificationType SaveNewCertificationType(string certificationType, int departmentId)
+		public async Task<DepartmentCertificationType> SaveNewCertificationTypeAsync(string certificationType, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			DepartmentCertificationType newCertType = new DepartmentCertificationType();
 			newCertType.DepartmentId = departmentId;
 			newCertType.Type = certificationType;
 
-			_departmentCertificationTypeRepository.SaveOrUpdate(newCertType);
-
-			return GetCertificationTypeById(newCertType.DepartmentCertificationTypeId);
+			return await _departmentCertificationTypeRepository.SaveOrUpdateAsync(newCertType, cancellationToken);
 		}
 
-		public List<PersonnelCertification> GetCertificationsByUserId(string userId)
+		public async Task<List<PersonnelCertification>> GetCertificationsByUserIdAsync(string userId)
 		{
-			return _personnelCertificationRepository.GetAll().Where(x => x.UserId == userId).ToList();
+			var items = await _personnelCertificationRepository.GetCertificationsByUserAsync(userId);
+			return items.ToList();
 		}
 
-		public List<string> GetDepartmentCertificationTypes(int departmentId)
+		public async Task<List<string>> GetDepartmentCertificationTypesAsync(int departmentId)
 		{
-			var types = (from doc in _departmentCertificationTypeRepository.GetAll()
-							  where doc.DepartmentId == departmentId
+			var types = (from doc in await GetAllCertificationTypesByDepartmentAsync(departmentId)
 							  select doc.Type).Distinct().ToList();
 
 			return types;
 		}
 
-		public PersonnelCertification SaveCertification(PersonnelCertification certification)
+		public async Task<PersonnelCertification> SaveCertificationAsync(PersonnelCertification certification, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_personnelCertificationRepository.SaveOrUpdate(certification);
-
-			return certification;
+			return await _personnelCertificationRepository.SaveOrUpdateAsync(certification, cancellationToken);
 		}
 
-		public PersonnelCertification GetCertificationById(int certificationId)
+		public async Task<PersonnelCertification> GetCertificationByIdAsync(int certificationId)
 		{
-			return _personnelCertificationRepository.GetAll().SingleOrDefault(x => x.PersonnelCertificationId == certificationId);
+			return await _personnelCertificationRepository.GetByIdAsync(certificationId);
 		}
 
-		public void DeleteCertification(PersonnelCertification certification)
+		public async Task<bool> DeleteCertification(PersonnelCertification certification, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_personnelCertificationRepository.DeleteOnSubmit(certification);
+			return await _personnelCertificationRepository.DeleteAsync(certification, cancellationToken);
 		}
 
-		public void DeleteAllCertificationsForUser(string userId)
+		public async Task<bool> DeleteAllCertificationsForUser(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var certs = GetCertificationsByUserId(userId);
-			_personnelCertificationRepository.DeleteAll(certs);
+			var certs = await GetCertificationsByUserIdAsync(userId);
+
+			foreach (var cert in certs)
+			{
+				await _personnelCertificationRepository.DeleteAsync(cert, cancellationToken);
+			}
+
+			return true;
 		}
 	}
 }

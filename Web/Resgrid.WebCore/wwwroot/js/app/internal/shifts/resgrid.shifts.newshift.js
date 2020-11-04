@@ -69,20 +69,44 @@ var resgrid;
             }
             newshift.removeRole = removeRole;
             function generateGroupDropdown(count) {
-                var groupSelect = '<select id="groupSelection_' + count + '" name="groupSelection_' + count + '" class="sl2">';
+              if (newshift && newshift.groupData) {
+                var groupSelect = '<select id="groupSelection_' +
+                  count +
+                  '" name="groupSelection_' +
+                  count +
+                  '" class="sl2">';
                 for (var i = 0; i < newshift.groupData.length; i++) {
-                    groupSelect += '<option value="' + newshift.groupData[i].GroupId + '">' + newshift.groupData[i].Name + '</option>';
+                  groupSelect += '<option value="' +
+                    newshift.groupData[i].GroupId +
+                    '">' +
+                    newshift.groupData[i].Name +
+                    '</option>';
                 }
                 return groupSelect;
+              }
             }
             newshift.generateGroupDropdown = generateGroupDropdown;
             function generateRoleDropdown(count) {
+              if (newshift && newshift.roleData) {
                 var timestamp = new Date();
-                var groupSelect = '<select id="roleSelection_' + count + '_' + timestamp.getUTCMilliseconds() + '" name="roleSelection_' + count + '_' + timestamp.getUTCMilliseconds() + '" class="sl2">';
+                var groupSelect = '<select id="roleSelection_' +
+                  count +
+                  '_' +
+                  timestamp.getUTCMilliseconds() +
+                  '" name="roleSelection_' +
+                  count +
+                  '_' +
+                  timestamp.getUTCMilliseconds() +
+                  '" class="sl2">';
                 for (var i = 0; i < newshift.roleData.length; i++) {
-                    groupSelect += '<option value="' + newshift.roleData[i].RoleId + '">' + newshift.roleData[i].Name + '</option>';
+                  groupSelect += '<option value="' +
+                    newshift.roleData[i].RoleId +
+                    '">' +
+                    newshift.roleData[i].Name +
+                    '</option>';
                 }
                 return groupSelect;
+              }
             }
             newshift.generateRoleDropdown = generateRoleDropdown;
             function generateRolesTables(count) {

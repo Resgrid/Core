@@ -31,10 +31,19 @@ namespace Resgrid.Model
 		public virtual ICollection<Inventory> Inventories { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return InventoryTypeId; }
 			set { InventoryTypeId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "InventoryTypes";
+
+		[NotMapped]
+		public string IdName => "InventoryTypeId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Inventories" };
 	}
 }

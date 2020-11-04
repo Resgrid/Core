@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.UI;
 using FluentAssertions;
 using Moq;
@@ -23,7 +24,7 @@ namespace Resgrid.Tests.Services
 			protected IActionLogsService _actionLogsServiceMocked;
 
 			private Mock<IActionLogsRepository> _actionLogsRepositoryMock;
-			private Mock<IGenericDataRepository<DepartmentMember>> _departmentMembersRepositoryMock;
+			private Mock<IDepartmentMembersRepository> _departmentMembersRepositoryMock;
 			private Mock<IUsersService> _usersServiceMock;
 			private Mock<IDepartmentGroupsService> _departmentGroupsServiceMock;
 			private Mock<IDepartmentsService> _departmentsServiceMock;
@@ -36,7 +37,7 @@ namespace Resgrid.Tests.Services
 			protected with_the_actionLogs_service()
 			{
 				_actionLogsRepositoryMock = new Mock<IActionLogsRepository>();
-				_departmentMembersRepositoryMock = new Mock<IGenericDataRepository<DepartmentMember>>();
+				_departmentMembersRepositoryMock = new Mock<IDepartmentMembersRepository>();
 				_usersServiceMock = new Mock<IUsersService>();
 				_departmentGroupsServiceMock = new Mock<IDepartmentGroupsService>();
 				_departmentsServiceMock = new Mock<IDepartmentsService>();
@@ -47,9 +48,9 @@ namespace Resgrid.Tests.Services
 				_cacheProviderMock = new Mock<ICacheProvider>();
 
 				DepartmentMembershipHelpers.SetupDisabledAndHiddenUsers(_departmentsServiceMock);
-				_actionLogsRepositoryMock.Setup(m => m.GetAll()).Returns(ActionLogsHelpers.CreateActionLogsForDepartment4());
-				_departmentMembersRepositoryMock.Setup(m => m.GetAll()).Returns(DepartmentMembershipHelpers.CreateDepartmentMembershipsForDepartment4());
-				_departmentsServiceMock.Setup(m => m.GetAllMembersForDepartment(4)).Returns(DepartmentMembershipHelpers.CreateDepartmentMembershipsForDepartment4().ToList());
+				_actionLogsRepositoryMock.Setup(m => m.GetAllAsync()).ReturnsAsync(ActionLogsHelpers.CreateActionLogsForDepartment4());
+				_departmentMembersRepositoryMock.Setup(m => m.GetAllAsync()).ReturnsAsync(DepartmentMembershipHelpers.CreateDepartmentMembershipsForDepartment4());
+				_departmentsServiceMock.Setup(m => m.GetAllMembersForDepartmentAsync(4)).ReturnsAsync(DepartmentMembershipHelpers.CreateDepartmentMembershipsForDepartment4().ToList());
 				_usersServiceMock.Setup(m => m.GetUserById(It.IsAny<string>(), true)).Returns((string v) => UsersHelpers.CreateUser(v));
 
 				_actionLogsService = Resolve<IActionLogsService>();
@@ -62,9 +63,9 @@ namespace Resgrid.Tests.Services
 		public class when_creating_a_new_actionLog : with_the_actionLogs_service
 		{
 			[Test]
-			public void should_return_valid_log_on_save()
+			public async Task should_return_valid_log_on_save()
 			{
-				ActionLog log = _actionLogsService.SetUserAction(TestData.Users.TestUser1Id, 1, (int)ActionTypes.AvailableStation);
+				ActionLog log = await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser1Id, 1, (int)ActionTypes.AvailableStation);
 
 				log.Should().NotBeNull();
 				log.ActionTypeId.Should().Be(4);
@@ -74,10 +75,10 @@ namespace Resgrid.Tests.Services
 
 			[Test]
 			[Ignore("")]
-			public void should_get_valid_log()
+			public async Task should_get_valid_log()
 			{
-				_actionLogsService.SetUserAction(TestData.Users.TestUser1Id, 1, (int)ActionTypes.AvailableStation);
-				var log = _actionLogsService.GetLastActionLogForUser(TestData.Users.TestUser1Id);
+				await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser1Id, 1, (int)ActionTypes.AvailableStation);
+				var log = await _actionLogsService.GetLastActionLogForUserAsync(TestData.Users.TestUser1Id);
 
 				log.Should().NotBeNull();
 				log.ActionTypeId.Should().Be(4);
@@ -87,11 +88,11 @@ namespace Resgrid.Tests.Services
 
 			[Test]
 			[Ignore("")]
-			public void should_get_valid_log_with_location()
+			public async Task should_get_valid_log_with_location()
 			{
 				string coordniates = "47.64483,-122.141197";
-				_actionLogsService.SetUserAction(TestData.Users.TestUser2Id, 1, (int)ActionTypes.AvailableStation, coordniates);
-				var log = _actionLogsService.GetLastActionLogForUser(TestData.Users.TestUser2Id);
+				await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser2Id, 1, (int)ActionTypes.AvailableStation, coordniates);
+				var log = await _actionLogsService.GetLastActionLogForUserAsync(TestData.Users.TestUser2Id);
 
 				log.Should().NotBeNull();
 				log.ActionTypeId.Should().Be(4);
@@ -104,13 +105,13 @@ namespace Resgrid.Tests.Services
 
 			[Test]
 			[Ignore("")]
-			public void should_get_valid_log_with_location_and_destination()
+			public async Task should_get_valid_log_with_location_and_destination()
 			{
 				string coordniates = "47.64483,-122.141197";
 				int destination = 55;
 
-				_actionLogsService.SetUserAction(TestData.Users.TestUser3Id, 1, (int)ActionTypes.AvailableStation, coordniates, destination);
-				var log = _actionLogsService.GetLastActionLogForUser(TestData.Users.TestUser3Id);
+				await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser3Id, 1, (int)ActionTypes.AvailableStation, coordniates, destination);
+				var log = await _actionLogsService.GetLastActionLogForUserAsync(TestData.Users.TestUser3Id);
 
 				log.Should().NotBeNull();
 				log.ActionTypeId.Should().Be(4);
@@ -127,7 +128,7 @@ namespace Resgrid.Tests.Services
 
 			[Test]
 			[Ignore("")]
-			public void should_get_no_log_after_hour()
+			public async Task should_get_no_log_after_hour()
 			{
 				ActionLog log = new ActionLog();
 				log.ActionTypeId = (int)ActionTypes.Responding;
@@ -135,12 +136,12 @@ namespace Resgrid.Tests.Services
 				log.Timestamp = DateTime.Now.AddHours(-1).AddMinutes(-5);
 				log.UserId = TestData.Users.TestUser5Id;
 
-				var savedLog = _actionLogsService.SaveActionLog(log);
+				var savedLog = await _actionLogsService.SaveActionLogAsync(log);
 
 				savedLog.ActionLogId.Should().NotBe(0);
 
-				var fetchLog = _actionLogsService.GetLastActionLogForUser(TestData.Users.TestUser5Id);
-				var fetchLogs = _actionLogsService.GetActionLogsForDepartment(2);
+				var fetchLog = await _actionLogsService.GetLastActionLogForUserAsync(TestData.Users.TestUser5Id);
+				var fetchLogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(2);
 
 				fetchLog.Should().BeNull();
 				fetchLogs.Where(x => x.UserId == TestData.Users.TestUser2Id).FirstOrDefault().Should().BeNull();
@@ -148,11 +149,11 @@ namespace Resgrid.Tests.Services
 
 			[Test]
 			[Ignore("")]
-			public void should_set_all_logs_for_department()
+			public async Task should_set_all_logs_for_department()
 			{
-				_actionLogsService.SetActionForEntireDepartment(2, (int)ActionTypes.Responding);
+				await _actionLogsService.SetActionForEntireDepartmentAsync(2, (int)ActionTypes.Responding);
 
-				var fetchLogs = _actionLogsService.GetActionLogsForDepartment(2);
+				var fetchLogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(2);
 
 				fetchLogs.Should().NotBeNull();
 				fetchLogs.Count.Should().Be(4);
@@ -167,11 +168,11 @@ namespace Resgrid.Tests.Services
 
 			[Test]
 			[Ignore("")]
-			public void should_set_all_logs_for_department_group()
+			public async Task should_set_all_logs_for_department_group()
 			{
-				_actionLogsService.SetActionForDepartmentGroup(1, (int)ActionTypes.RespondingToScene);
+				await _actionLogsService.SetActionForDepartmentGroupAsync(1, (int)ActionTypes.RespondingToScene);
 
-				var fetchLogs = _actionLogsService.GetActionLogsForDepartment(1);
+				var fetchLogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(1);
 
 				fetchLogs.Should().NotBeNull();
 				fetchLogs.Count.Should().Be(2);
@@ -189,9 +190,9 @@ namespace Resgrid.Tests.Services
 		public class when_retrieving_actionLogs : with_the_actionLogs_service
 		{
 			[Test]
-			public void should_return_all_logs_for_a_department()
+			public async Task should_return_all_logs_for_a_department()
 			{
-				var deplogs = _actionLogsServiceMocked.GetAllActionLogsForDepartment(4);
+				var deplogs = await _actionLogsServiceMocked.GetAllActionLogsForDepartmentAsync(4);
 
 				deplogs.Should().NotBeNull();
 				deplogs.Should().NotBeEmpty();
@@ -210,9 +211,9 @@ namespace Resgrid.Tests.Services
 			//}
 
 			[Test]
-			public void should_get_old_action_log_for_user()
+			public async Task should_get_old_action_log_for_user()
 			{
-				var deplogs = _actionLogsServiceMocked.GetLastActionLogForUserNoLimit(TestData.Users.TestUser9Id);
+				var deplogs = await _actionLogsServiceMocked.GetLastActionLogForUserNoLimitAsync(TestData.Users.TestUser9Id);
 
 				deplogs.Should().NotBeNull();
 			}
@@ -224,12 +225,12 @@ namespace Resgrid.Tests.Services
 		{
 			[Test]
 			[Ignore("")]
-			public void should_delete_all_logs_for_a_user()
+			public async Task should_delete_all_logs_for_a_user()
 			{
-				ActionLog log1 = _actionLogsService.SetUserAction(TestData.Users.TestUser6Id, 2, (int)ActionTypes.AvailableStation);
-				ActionLog log2 = _actionLogsService.SetUserAction(TestData.Users.TestUser6Id, 2, (int)ActionTypes.NotResponding);
+				ActionLog log1 = await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser6Id, 2, (int)ActionTypes.AvailableStation);
+				ActionLog log2 = await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser6Id, 2, (int)ActionTypes.NotResponding);
 
-				var logs1 = _actionLogsService.GetAllActionLogsForUser(TestData.Users.TestUser6Id);
+				var logs1 = await _actionLogsService.GetAllActionLogsForUser(TestData.Users.TestUser6Id);
 
 				logs1.Should().NotBeNull();
 				logs1.Count.Should().Be(2);
@@ -241,27 +242,27 @@ namespace Resgrid.Tests.Services
 					//l.Department.Should().NotBeNull();
 				}
 
-				_actionLogsService.DeleteActionLogsForUser(TestData.Users.TestUser6Id);
-				var logs2 = _actionLogsService.GetAllActionLogsForUser(TestData.Users.TestUser6Id);
+				await _actionLogsService.DeleteActionLogsForUserAsync(TestData.Users.TestUser6Id);
+				var logs2 = await _actionLogsService.GetAllActionLogsForUser(TestData.Users.TestUser6Id);
 
 				logs2.Should().BeEmpty();
 			}
 
 			[Test]
 			[Ignore("")]
-			public void should_delete_all_logs_for_a_department()
+			public async Task should_delete_all_logs_for_a_department()
 			{
-				ActionLog log1 = _actionLogsService.SetUserAction(TestData.Users.TestUser7Id, 3, (int)ActionTypes.AvailableStation);
-				ActionLog log2 = _actionLogsService.SetUserAction(TestData.Users.TestUser8Id, 3, (int)ActionTypes.NotResponding);
+				ActionLog log1 = await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser7Id, 3, (int)ActionTypes.AvailableStation);
+				ActionLog log2 = await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser8Id, 3, (int)ActionTypes.NotResponding);
 
-				var logs1 = _actionLogsService.GetAllActionLogsForDepartment(3);
+				var logs1 = await _actionLogsService.GetAllActionLogsForDepartmentAsync(3);
 
 				logs1.Should().NotBeNull();
 				logs1.Count.Should().Be(2);
 
-				_actionLogsService.DeleteAllActionLogsForDepartment(3);
+				await _actionLogsService.DeleteAllActionLogsForDepartmentAsync(3);
 
-				var logs2 = _actionLogsService.GetAllActionLogsForDepartment(3);
+				var logs2 = await _actionLogsService.GetAllActionLogsForDepartmentAsync(3);
 				logs2.Should().BeEmpty();
 			}
 		}

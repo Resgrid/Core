@@ -3,6 +3,7 @@ using Resgrid.Model.Services;
 using Resgrid.Workers.Framework.Workers.CalendarNotifier;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Model.Helpers;
 
@@ -27,7 +28,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 		}
 
-		public Tuple<bool,string> Process(CalendarNotifierQueueItem item)
+		public async Task<Tuple<bool,string>> Process(CalendarNotifierQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -38,9 +39,9 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					var message = String.Empty;
 					var title = String.Empty;
-					var profiles = _userProfileService.GetSelectedUserProfiles(item.CalendarItem.Attendees.Select(x => x.UserId).ToList());
-					var departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(item.CalendarItem.DepartmentId);
-					var department = _departmentsService.GetDepartmentById(item.CalendarItem.DepartmentId, false);
+					var profiles = await _userProfileService.GetSelectedUserProfilesAsync(item.CalendarItem.Attendees.Select(x => x.UserId).ToList());
+					var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.CalendarItem.DepartmentId);
+					var department = await _departmentsService.GetDepartmentByIdAsync(item.CalendarItem.DepartmentId, false);
 
 					var adjustedDateTime = item.CalendarItem.Start.TimeConverter(department);
 
@@ -54,7 +55,7 @@ namespace Resgrid.Workers.Framework.Logic
 					foreach (var person in item.CalendarItem.Attendees)
 					{
 						var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
-						_communicationService.SendNotification(person.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile);
+						await _communicationService.SendNotificationAsync(person.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile);
 					}
 				}
 				catch (Exception ex)
@@ -65,7 +66,7 @@ namespace Resgrid.Workers.Framework.Logic
 					Logging.LogException(ex);
 				}
 
-				_calendarService.MarkAsNotified(item.CalendarItem.CalendarItemId);
+				await _calendarService.MarkAsNotifiedAsync(item.CalendarItem.CalendarItemId);
 			}
 			else if (!String.IsNullOrWhiteSpace(item?.CalendarItem?.Entities))
 			{
@@ -73,9 +74,9 @@ namespace Resgrid.Workers.Framework.Logic
 
 				var message = String.Empty;
 				var title = String.Empty;
-				var profiles = _userProfileService.GetAllProfilesForDepartment(item.CalendarItem.DepartmentId);
-				var departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(item.CalendarItem.DepartmentId);
-				var department = _departmentsService.GetDepartmentById(item.CalendarItem.DepartmentId, false);
+				var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(item.CalendarItem.DepartmentId);
+				var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.CalendarItem.DepartmentId);
+				var department = await _departmentsService.GetDepartmentByIdAsync(item.CalendarItem.DepartmentId, false);
 
 				var adjustedDateTime = item.CalendarItem.Start.TimeConverter(department);
 				title = $"Upcoming: {item.CalendarItem.Title}";
@@ -90,12 +91,12 @@ namespace Resgrid.Workers.Framework.Logic
 					// Notify the entire department
 					foreach (var profile in profiles)
 					{
-						_communicationService.SendNotification(profile.Key, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile.Value);
+						await _communicationService.SendNotificationAsync(profile.Key, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile.Value);
 					}
 				}
 				else
 				{
-					var groups = _departmentGroupsService.GetAllGroupsForDepartment(item.CalendarItem.DepartmentId);
+					var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(item.CalendarItem.DepartmentId);
 					foreach (var val in items)
 					{
 						int groupId = 0;
@@ -108,16 +109,16 @@ namespace Resgrid.Workers.Framework.Logic
 								foreach (var member in group.Members)
 								{
 									if (profiles.ContainsKey(member.UserId))
-										_communicationService.SendNotification(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId]);
+										await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId]);
 									else
-										_communicationService.SendNotification(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, null);
+										await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, null);
 								}
 							}
 						}
 					}
 				}
 
-				_calendarService.MarkAsNotified(item.CalendarItem.CalendarItemId);
+				await _calendarService.MarkAsNotifiedAsync(item.CalendarItem.CalendarItemId);
 			}
 
 			return new Tuple<bool, string>(success, result);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -37,12 +38,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Connect_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new IndexView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Profile = _departmentProfileService.GetOrInitializeDepartmentProfile(DepartmentId);
-			model.ImageUrl = $"{_appOptionsAccessor.Value.ResgridApiUrl}/api/v3/Avatars/Get?id={model.Profile.DepartmentId}&type=1";
+			model.ImageUrl = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/Avatars/Get?id={model.Profile.DepartmentId}&type=1";
 
 			var posts = _departmentProfileService.GetArticlesForDepartment(model.Profile.DepartmentProfileId);
 			var visiblePosts = _departmentProfileService.GetVisibleArticlesForDepartment(model.Profile.DepartmentProfileId);
@@ -60,12 +61,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Connect_Update)]
-		public IActionResult Profile()
+		public async Task<IActionResult> Profile()
 		{
 			var model = new ProfileView();
 
-			model.ApiUrl = _appOptionsAccessor.Value.ResgridApiUrl;
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.ApiUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.ImageUrl = $"{model.ApiUrl}/api/v3/Avatars/Get?id={model.Department.DepartmentId}&type=1";
 
 
@@ -93,10 +94,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Connect_Update)]
-		public IActionResult Profile(ProfileView model)
+		public async Task<IActionResult> Profile(ProfileView model)
 		{
-			model.ApiUrl = _appOptionsAccessor.Value.ResgridApiUrl;
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.ApiUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.ImageUrl = $"{model.ApiUrl}/api/v3/Avatars/Get?id={model.Department.DepartmentId}&type=1";
 
 			if (ModelState.IsValid)
@@ -127,14 +128,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (profile.AddressId.HasValue)
 				{
-					var address = _addressService.GetAddressById(profile.AddressId.Value);
+					var address = await _addressService.GetAddressByIdAsync(profile.AddressId.Value);
 					address.Address1 = model.Address1;
 					address.City = model.City;
 					address.Country = model.Country;
 					address.PostalCode = model.PostalCode;
 					address.State = model.State;
 
-					_addressService.SaveAddress(address);
+					await _addressService.SaveAddressAsync(address);
 				}
 				else if (!String.IsNullOrWhiteSpace(model.Address1) && !String.IsNullOrWhiteSpace(model.City) &&
 								 !String.IsNullOrWhiteSpace(model.PostalCode) && !String.IsNullOrWhiteSpace(model.State) &&
@@ -147,7 +148,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					address.PostalCode = model.PostalCode;
 					address.State = model.State;
 
-					var savedAddress = _addressService.SaveAddress(address);
+					var savedAddress = await _addressService.SaveAddressAsync(address);
 					profile.AddressId = savedAddress.AddressId;
 				}
 
@@ -166,9 +167,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (profile.AddressId.HasValue)
 					{
-						var address = _addressService.GetAddressById(profile.AddressId.Value);
+						var address = await _addressService.GetAddressByIdAsync(profile.AddressId.Value);
 						var location =
-							_geoLocationProvider.GetLatLonFromAddress(
+							await _geoLocationProvider.GetLatLonFromAddress(
 								$"{address.Address1} {address.City} {address.State} {address.PostalCode} {address.Country}");
 
 						if (!string.IsNullOrWhiteSpace(location))
@@ -190,10 +191,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Connect_View)]
-		public IActionResult Messages()
+		public async Task<IActionResult> Messages()
 		{
 			var model = new MessagesView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Profile = _departmentProfileService.GetOrInitializeDepartmentProfile(DepartmentId);
 
 			var messages = _departmentProfileService.GetVisibleMessagesForDepartment(model.Profile.DepartmentProfileId);
@@ -225,7 +226,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Connect_View)]
-		public IActionResult Posts()
+		public async Task<IActionResult> Posts()
 		{
 			var model = new PostsView();
 			var profile = _departmentProfileService.GetOrInitializeDepartmentProfile(DepartmentId);
@@ -236,13 +237,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Connect_Create)]
-		public IActionResult AddPost()
+		public async Task<IActionResult> AddPost()
 		{
 			var model = new AddPostView();
 			model.Profile = _departmentProfileService.GetOrInitializeDepartmentProfile(DepartmentId);
 			model.Article = new DepartmentProfileArticle();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Article.StartOn = DateTime.UtcNow.TimeConverter(department);
 
 			return View(model);
@@ -250,7 +251,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Connect_Create)]
-		public IActionResult AddPost(AddPostView model, IFormCollection form)
+		public async Task<IActionResult> AddPost(AddPostView model, IFormCollection form)
 		{
 			model.Profile = _departmentProfileService.GetOrInitializeDepartmentProfile(DepartmentId);
 
@@ -270,11 +271,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Connect_View)]
-		public IActionResult GetPostsList(int departmentProfileId)
+		public async Task<IActionResult> GetPostsList(int departmentProfileId)
 		{
 			List<PostJson> postJson = new List<PostJson>();
 			var posts = _departmentProfileService.GetArticlesForDepartment(departmentProfileId);
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			foreach (var article in posts)
 			{
@@ -291,7 +292,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					post.ExpiresOn = "Never";
 
-				post.CreatedBy = UserHelper.GetFullNameForUser(article.CreatedByUserId);
+				post.CreatedBy = await UserHelper.GetFullNameForUser(article.CreatedByUserId);
 
 				postJson.Add(post);
 			}

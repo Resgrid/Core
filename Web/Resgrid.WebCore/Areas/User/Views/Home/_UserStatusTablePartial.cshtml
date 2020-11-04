@@ -6,35 +6,22 @@
 <div class="table-responsive">
 	<table class='table table-striped'>
 		<tbody>
-			@foreach (var g in Model.DepartmentGroups.Where(x => x.Parent == null))
+			@foreach (var g in Model.UserStatusGroups.Where(x => x.Group != null && x.Group.Parent == null))
 			{
 				var groupClass = "";
-				if (Model.UsersGroup != null && g.Name == Model.UsersGroup.Name)
+				if (Model.UsersGroup != null && g.Group.Name == Model.UsersGroup.Name)
 				{
 					groupClass = "userGroup";
 				}
 
-				var filteredUsers = from u in g.Members
-														where !(Model.ExcludedUsers.Any(item2 => item2 == u.UserId))
-														select u;
-
-				var sortedUsers = from u in filteredUsers
-													let name = Model.Names[u.UserId]
-													orderby name ascending
-													select new
-													{
-														Name = name,
-														User = u
-													};
-
 				<tr class="info trheader @groupClass hidden-xs">
 					<td colspan="3">
-						<b>@g.Name</b> <span class="sign"></span>
+						<b>@g.Group.Name</b> <span class="sign"></span>
 					</td>
 					<td colspan="3" style="text-align: right;">
-						@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g.DepartmentGroupId) && Model.States == null)
+						@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g.Group.DepartmentGroupId) && Model.States == null)
 						{
-							<a class="btn btn-xs btn-default" data-confirm="CONFIRM: Are you sure you want to reset all the users in the @g.Name group to the Standing By state?" href="@Url.Action("ResetGroupToStandingBy", "Home", new {area = "User", groupId = g.DepartmentGroupId})">Reset group to Standing By</a>
+							<a class="btn btn-xs btn-default" data-confirm="CONFIRM: Are you sure you want to reset all the users in the @g.Group.Name group to the Standing By state?" href="@Url.Action("ResetGroupToStandingBy", "Home", new {area = "User", groupId = g.Group.DepartmentGroupId})">Reset group to Standing By</a>
 						}
 					</td>
 				</tr>
@@ -49,40 +36,27 @@
 					<td class="hidden-xs"></td>
 				</tr>
 
-				if (sortedUsers.Any())
+				if (g.UserStatuses.Any())
 				{
-					foreach (var u in sortedUsers)
+					foreach (var u in g.UserStatuses)
 					{
-						//var mu = Membership.GetUser(u.User.UserId);
-						var al = Model.LastUserActionlogs.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
-						var us = Model.UserStates.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
 						<tr>
-							@Html.Partial("_UserStatusTableRowPartial", Tuple.Create(u.User.User.UserId, g, al, us, Model.Names[u.User.UserId], Model.Roles[u.User.UserId], Model))
+							@Html.Partial("_UserStatusTableRowPartial", Tuple.Create(u.UserInfo.UserId, g.Group, u.CurrentStatus, u.CurrentStaffing, u.UserInfo.Name, u.UserInfo.RoleNames, Model))
 						</tr>
 
 					}
 				}
 
-				foreach (var g1 in Model.DepartmentGroups.Where(x => x.ParentDepartmentGroupId == g.DepartmentGroupId))
+				foreach (var g1 in Model.UserStatusGroups.Where(x => x.Group != null && x.Group.ParentDepartmentGroupId == g.Group.DepartmentGroupId))
 				{
-					var sortedUsers1 = from u in g1.Members
-														 let name = Model.Names[u.UserId]
-														 where !(Model.ExcludedUsers.Any(item2 => item2 == u.UserId))
-														 orderby name ascending
-														 select new
-														 {
-															 Name = name,
-															 User = u
-														 };
-
 					<tr class="success">
 						<td colspan="3" style="padding-left: 20px;">
-							<b>@g1.Name</b>
+							<b>@g1.Group.Name</b>
 						</td>
 						<td class="hidden-xs" colspan="3" style="text-align: right;">
-							@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g1.DepartmentGroupId) && Model.States == null)
+							@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g1.Group.DepartmentGroupId) && Model.States == null)
 							{
-								<a class="btn btn-xs btn-default" data-confirm="CONFIRM: Are you sure you want to reset all the users in the @g1.Name group to the Standing By state?" href="@Url.Action("ResetGroupToStandingBy", "Home", new { area = "User", groupId = g1.DepartmentGroupId })">Reset group to Standing By</a>
+								<a class="btn btn-xs btn-default" data-confirm="CONFIRM: Are you sure you want to reset all the users in the @g1.Group.Name group to the Standing By state?" href="@Url.Action("ResetGroupToStandingBy", "Home", new { area = "User", groupId = g1.Group.DepartmentGroupId })">Reset group to Standing By</a>
 							}
 						</td>
 					</tr>
@@ -95,15 +69,12 @@
 						<td class="hidden-xs"></td>
 					</tr>
 
-					if (sortedUsers1.Count() > 0)
+					if (g1.UserStatuses.Any())
 					{
-						foreach (var u in sortedUsers1)
+						foreach (var u in g1.UserStatuses)
 						{
-							//var mu = Membership.GetUser(u.User.UserId);
-							var al = Model.LastUserActionlogs.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
-							var us = Model.UserStates.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
 							<tr>
-								@Html.Partial("_UserStatusTableRowPartial", Tuple.Create(u.User.User.UserId, g1, al, us, Model.Names[u.User.UserId], Model.Roles[u.User.UserId], Model))
+								@Html.Partial("_UserStatusTableRowPartial", Tuple.Create(u.UserInfo.UserId, g1.Group, u.CurrentStatus, u.CurrentStaffing, u.UserInfo.Name, u.UserInfo.RoleNames, Model))
 							</tr>
 
 						}
@@ -112,18 +83,10 @@
 			}
 
 			@{
-			var sortedUngroupedUsers = from u in Model.UnGroupedUsers
-																 let name = Model.Names[u]
-																 where !(Model.ExcludedUsers.Any(item2 => item2 == u))
-																 orderby name ascending
-																 select new
-																 {
-																	 Name = name,
-																	 UserId = u
-																 };
+			var unGroupedUsersGroup = Model.UserStatusGroups.FirstOrDefault(x => x.Group == null);
 			}
 
-			@if (sortedUngroupedUsers != null && sortedUngroupedUsers.Count() > 0)
+			@if (unGroupedUsersGroup != null && unGroupedUsersGroup.UserStatuses.Any())
 			{
 				<tr class="info">
 					<td colspan="5">
@@ -139,15 +102,12 @@
 					<td class="hidden-xs"></td>
 				</tr>
 
-				foreach (var u in sortedUngroupedUsers)
+				foreach (var u in unGroupedUsersGroup.UserStatuses)
 				{
-					// mu = Membership.GetUser(u.User.UserId);
-					var al = Model.LastUserActionlogs.Where(x => x.UserId == u.UserId).FirstOrDefault();
-					var us = Model.UserStates.Where(x => x.UserId == u.UserId).FirstOrDefault();
 					var dg = new DepartmentGroup();
 
 					<tr>
-						@Html.Partial("_UserStatusTableRowPartial", Tuple.Create(u.UserId, dg, al, us, Model.Names[u.UserId], Model.Roles[u.UserId], Model))
+						@Html.Partial("_UserStatusTableRowPartial", Tuple.Create(u.UserInfo.UserId, dg, u.CurrentStatus, u.CurrentStaffing, u.UserInfo.Name, u.UserInfo.RoleNames, Model))
 					</tr>
 				}
 			}

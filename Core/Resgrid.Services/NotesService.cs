@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -11,18 +13,18 @@ namespace Resgrid.Services
 {
 	public class NotesService : INotesService
 	{
-		private readonly IGenericDataRepository<Note> _notesRepository;
+		private readonly INotesRepository _notesRepository;
 		private readonly IEventAggregator _eventAggregator;
 
-		public NotesService(IGenericDataRepository<Note> notesRepository, IEventAggregator eventAggregator)
+		public NotesService(INotesRepository notesRepository, IEventAggregator eventAggregator)
 		{
 			_notesRepository = notesRepository;
 			_eventAggregator = eventAggregator;
 		}
 
-		public List<Note> GetAllNotesForDepartment(int departmentId)
+		public async Task<List<Note>> GetAllNotesForDepartmentAsync(int departmentId)
 		{
-			var notes = _notesRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var notes = await _notesRepository.GetNotesByDepartmentIdAsync(departmentId);
 
 			// Temp fix for the Notes screen in the Core web app and it's sticky notes display. -SJ
 			foreach (var note in notes)
@@ -30,47 +32,48 @@ namespace Resgrid.Services
 				note.Body = StringHelpers.SanitizeHtmlInString(note.Body);
 			}
 
-			return notes;
+			return notes.ToList();
 		}
 
-		public Note Save(Note note)
+		public async Task<Note> SaveAsync(Note note, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_notesRepository.SaveOrUpdate(note);
-			_eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent() { DepartmentId = note.DepartmentId, Note = note });
+			var saved = await _notesRepository.SaveOrUpdateAsync(note, cancellationToken);
+			await _eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent() { DepartmentId = note.DepartmentId, Note = note });
 
-			return note;
+			return saved;
 		}
 
-		public List<string> GetDistinctCategoriesByDepartmentId(int departmentId)
+		public async Task<List<string>> GetDistinctCategoriesByDepartmentIdAsync(int departmentId)
 		{
-			var categories = (from doc in _notesRepository.GetAll()
-							  where doc.DepartmentId == departmentId && doc.Category != null && doc.Category != ""
+			var allCategories = await _notesRepository.GetAllByDepartmentIdAsync(departmentId);
+			var categories = (from doc in allCategories
+							  where !string.IsNullOrEmpty(doc.Category)
 							  select doc.Category).Distinct().ToList();
 
 			return categories;
 		}
 
-		public Note GetNoteById(int noteId)
+		public async Task<Note> GetNoteByIdAsync(int noteId)
 		{
-			return _notesRepository.GetAll().FirstOrDefault(x => x.NoteId == noteId);
+			return await _notesRepository.GetByIdAsync(noteId);
 		}
 
-		public void Delete(Note note)
+		public async Task<bool> DeleteAsync(Note note, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_notesRepository.DeleteOnSubmit(note);
+			return await _notesRepository.DeleteAsync(note, cancellationToken);
 		}
 
-		public List<Note> GetNotesForDepartmentFiltered(int departmentId, bool isAdmin)
+		public async Task<List<Note>> GetNotesForDepartmentFilteredAsync(int departmentId, bool isAdmin)
 		{
+			var notes = await _notesRepository.GetAllByDepartmentIdAsync(departmentId);
+
 			if (isAdmin)
 			{
-				return (from note in _notesRepository.GetAll()
-						where note.DepartmentId == departmentId
-						select note).ToList();
+				return notes.ToList();
 			}
 
-			return (from note in _notesRepository.GetAll()
-					where note.DepartmentId == departmentId && note.IsAdminOnly == false
+			return (from note in notes
+					where note.IsAdminOnly == false
 					select note).ToList();
 		}
 	}

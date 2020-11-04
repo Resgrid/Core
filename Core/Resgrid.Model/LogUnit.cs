@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,10 +36,19 @@ namespace Resgrid.Model
 		public DateTime? InQuarters { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return LogUnitId; }
 			set { LogUnitId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "LogUnits";
+
+		[NotMapped]
+		public string IdName => "LogUnitId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Log", "Unit" };
 	}
 }

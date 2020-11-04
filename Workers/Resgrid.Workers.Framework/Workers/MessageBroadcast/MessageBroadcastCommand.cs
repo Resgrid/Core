@@ -1,4 +1,5 @@
-﻿using Resgrid.Model.Queue;
+﻿using System.Threading.Tasks;
+using Resgrid.Model.Queue;
 using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
@@ -16,9 +17,10 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 
 		public bool Continue { get; set; }
 
-		public void Run(MessageQueueItem item)
+		public async Task<bool> Run(MessageQueueItem item)
 		{
-			_roadcastMessageLogic.Process(item);
+			await _roadcastMessageLogic.Process(item);
+			return true;
 		}
 	}
 }

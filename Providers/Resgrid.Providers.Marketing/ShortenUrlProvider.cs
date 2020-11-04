@@ -25,7 +25,7 @@ namespace Resgrid.Providers.Marketing
 		/// Check Access Token using synchronous method
 		/// </summary>
 		/// <returns></returns>
-		public bool CheckAccessToken()
+		public async Task<bool> CheckAccessToken()
 		{
 			if (string.IsNullOrEmpty(ACCESS_TOKEN))
 				return false;
@@ -33,7 +33,7 @@ namespace Resgrid.Providers.Marketing
 			string temp = string.Format(Config.LinksConfig.BitlyApi, ACCESS_TOKEN, "google.com");
 			using (HttpClient client = new HttpClient())
 			{
-				HttpResponseMessage res = client.GetAsync(temp).Result;
+				HttpResponseMessage res = await client.GetAsync(temp);
 				return res.IsSuccessStatusCode;
 			}
 		}
@@ -44,7 +44,7 @@ namespace Resgrid.Providers.Marketing
 		/// <returns></returns>
 		public async Task<bool> CheckAccessTokenAsync()
 		{
-			return await Task.Run(() => CheckAccessToken());
+			return await CheckAccessToken();
 		}
 
 		/// <summary>
@@ -52,19 +52,19 @@ namespace Resgrid.Providers.Marketing
 		/// </summary>
 		/// <param name="long_url"></param>
 		/// <returns></returns>
-		public string Shorten(string long_url)
+		public async Task<string> Shorten(string long_url)
 		{
 			if (Config.SystemBehaviorConfig.LinkProviderType == Config.LinksProviderTypes.Bitly)
 			{
-				if (CheckAccessToken())
+				if (await CheckAccessToken())
 				{
 					using (HttpClient client = new HttpClient())
 					{
 						string temp = string.Format(Config.LinksConfig.BitlyApi, ACCESS_TOKEN, WebUtility.UrlEncode(long_url));
-						var res = client.GetAsync(temp).Result;
+						var res = await client.GetAsync(temp);
 						if (res.IsSuccessStatusCode)
 						{
-							var message = res.Content.ReadAsStringAsync().Result;
+							var message = await res.Content.ReadAsStringAsync();
 							dynamic obj = JsonConvert.DeserializeObject(message);
 							return obj.results[long_url].shortUrl;
 						}
@@ -84,10 +84,10 @@ namespace Resgrid.Providers.Marketing
 				using (HttpClient client = new HttpClient())
 				{
 					string temp = string.Format(Config.LinksConfig.PolrApi, Config.LinksConfig.PolrAccessToken, WebUtility.UrlEncode(long_url));
-					var res = client.GetAsync(temp).Result;
+					var res = await client.GetAsync(temp);
 					if (res.IsSuccessStatusCode)
 					{
-						var message = res.Content.ReadAsStringAsync().Result;
+						var message = await res.Content.ReadAsStringAsync();
 						return message.Trim();
 					}
 					else
@@ -107,7 +107,7 @@ namespace Resgrid.Providers.Marketing
 		/// <returns></returns>
 		public async Task<string> ShortenAsync(string long_url)
 		{
-			return await Task.Run(() => Shorten(long_url));
+			return await Shorten(long_url);
 		}
 	}
 }

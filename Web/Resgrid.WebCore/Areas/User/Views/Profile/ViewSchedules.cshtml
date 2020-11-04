@@ -64,13 +64,13 @@
 {
 	<script id="command-template" type="text/x-kendo-template">
 		# if(IsActive == 1) { #
-		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#"><span class="k-icon k-edit"></span>Edit</a>
-		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" onclick="resgrid.profile.schedule.deactivateSchedule(#=ScheduleId#);"><span class="k-icon k-cancel"></span>Deactivate</a>
-		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);"><span class="k-icon k-delete"></span>Delete</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#">Edit</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.schedule.deactivateSchedule(#=ScheduleId#);">Deactivate</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);">Delete</a>
 		# } else { #
-		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#"><span class="k-icon k-edit"></span>Edit</a>
-		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Edit" onclick="resgrid.profile.schedule.activateSchedule(#=ScheduleId#);"><span class="k-icon k-i-tick"></span>Activate</a>
-		<a style="text-decoration:none;" class="k-button k-button-icontext k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);"><span class="k-icon k-delete"></span>Delete</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#">Edit</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.schedule.activateSchedule(#=ScheduleId#);">Activate</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);">Delete</a>
 		# } #
 	</script>
 

@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Providers
 {
 	public interface IInboundEventProvider
 	{
-		void RegisterForEvents(Action<int, int> personnelStatusChanged, Action<int, int> unitStatusChanged,
-			Action<int, int> callStatusChanged, Action<int, int> personnelStaffingChanged);
+		void RegisterForEvents(Func<int, int, Task> personnelStatusChanged, Func<int, int, Task> unitStatusChanged, Func<int, int, Task> callStatusChanged, Func<int, int, Task> personnelStaffingChanged);
 	}
 }

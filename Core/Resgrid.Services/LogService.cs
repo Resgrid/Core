@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -9,37 +11,36 @@ namespace Resgrid.Services
 {
 	public class LogService : ILogService
 	{
-		private readonly IGenericDataRepository<LogEntry> _logEntriesRepository;
-		private readonly IGenericDataRepository<ProcessLog> _processLogRepository;
+		private readonly ILogEntriesRepository _logEntriesRepository;
+		private readonly IProcessLogRepository _processLogRepository;
 
-		public LogService(IGenericDataRepository<LogEntry> logEntriesRepository,
-			IGenericDataRepository<ProcessLog> processLogRepository)
+		public LogService(ILogEntriesRepository logEntriesRepository, IProcessLogRepository processLogRepository)
 		{
 			_logEntriesRepository = logEntriesRepository;
 			_processLogRepository = processLogRepository;
 		}
 
-		public List<LogEntry> GetAll()
+		public async Task<List<LogEntry>> GetAllAsync()
 		{
-			return _logEntriesRepository.GetAll().ToList();
+			var items = await _logEntriesRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public LogEntry GetLogById(int logId)
+		public async Task<LogEntry> GetLogByIdAsync(int logId)
 		{
-			return _logEntriesRepository.GetAll().FirstOrDefault(x => x.id == logId);
+			return await _logEntriesRepository.GetByIdAsync(logId);
 		}
 
-		public Dictionary<string, int> GetNewLogsCountForLast5Days()
+		public async Task<Dictionary<string, int>> GetNewLogsCountForLast5DaysAsync()
 		{
 			Dictionary<string, int> data = new Dictionary<string, int>();
 
 			var startDate = DateTime.UtcNow.AddDays(-4);
-			var filteredRecords =
-				_logEntriesRepository.GetAll()
-					.Where(
-						x => x.TimeStamp >= startDate).ToList();
+			var filteredRecords = from l in await GetAllAsync()
+													where l.TimeStamp >= startDate
+													select l;
 
-			data.Add(DateTime.UtcNow.ToShortDateString(),
+					data.Add(DateTime.UtcNow.ToShortDateString(),
 				filteredRecords.Count(x => x.TimeStamp.ToShortDateString() == DateTime.UtcNow.ToShortDateString()));
 			data.Add(DateTime.UtcNow.AddDays(-1).ToShortDateString(),
 				filteredRecords.Count(x => x.TimeStamp.ToShortDateString() == DateTime.UtcNow.AddDays(-1).ToShortDateString()));
@@ -53,21 +54,21 @@ namespace Resgrid.Services
 			return data;
 		}
 
-		public ProcessLog SaveProcessLog(ProcessLog log)
+		public async Task<ProcessLog> SaveProcessLogAsync(ProcessLog log, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_processLogRepository.SaveOrUpdate(log);
-
-			return log;
+			return await _processLogRepository.SaveOrUpdateAsync(log, cancellationToken);
 		}
 
-		public ProcessLog GetProcessLogForTypeTime(ProcessLogTypes type, int id, DateTime time)
+		public async Task<ProcessLog> GetProcessLogForTypeTimeAsync(ProcessLogTypes type, int id, DateTime time)
 		{
-			return
-				_processLogRepository.GetAll()
-					.FirstOrDefault(x => x.Type == (int) type && x.SourceId == id && x.TargetRunTime == time);
+			var items = from l in await _processLogRepository.GetAllAsync()
+				where l.Type == (int) type && l.SourceId == id && l.TargetRunTime == time
+						select l;
+
+			return items.FirstOrDefault();
 		}
 
-		public ProcessLog SetProcessLog(ProcessLogTypes type, int id, DateTime time)
+		public async Task<ProcessLog> SetProcessLogAsync(ProcessLogTypes type, int id, DateTime time, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var log = new ProcessLog();
 			log.Type = (int) type;
@@ -75,7 +76,7 @@ namespace Resgrid.Services
 			log.TargetRunTime = time;
 			log.Timestamp = DateTime.UtcNow;
 
-			return SaveProcessLog(log);
+			return await SaveProcessLogAsync(log, cancellationToken);
 		}
 	}
 }

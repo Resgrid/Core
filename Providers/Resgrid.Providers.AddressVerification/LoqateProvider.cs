@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
+using System.Web;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using RestSharp;
-using RestSharp.Extensions.MonoHttp;
 
 namespace Resgrid.Providers.AddressVerification
 {
 	public class LoqateProvider : IAddressVerificationProvider
 	{
-		public AddressVerificationResult VerifyAddress(Address address)
+		public async Task<AddressVerificationResult> VerifyAddressAsync(Address address)
 		{
 			var result = new AddressVerificationResult();
 
@@ -20,7 +21,7 @@ namespace Resgrid.Providers.AddressVerification
 				var client = new RestClient(Config.MappingConfig.LoqateApiUrl);
 				var request = new RestRequest(String.Format("rest/?lqtkey={0}&p=v&addr={1}", Config.MappingConfig.LoqateApiKey, HttpUtility.UrlEncode(addressString)), Method.GET);
 
-				var response = client.Execute<LoqateAddressVerificationResult>(request);
+				var response = await client.ExecuteAsync<LoqateAddressVerificationResult>(request);
 
 				if (response.StatusCode != HttpStatusCode.OK)
 					result.ServiceSuccess = false;

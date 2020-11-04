@@ -31,7 +31,7 @@ namespace Resgrid.Providers.Bus
 				CollectionQueryResult<RegistrationDescription> registrations = null;
 				try
 				{
-					registrations = hubClient.GetRegistrationsByTagAsync(string.Format("deviceId:{0}", pushUri.DeviceId.GetHashCode()), 50).Result;
+					registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("deviceId:{0}", pushUri.DeviceId.GetHashCode()), 50);
 				}
 				catch
 				{
@@ -68,7 +68,7 @@ namespace Resgrid.Providers.Bus
 				{
 					try
 					{
-						var result = await hubClient.CreateGcmNativeRegistrationAsync(pushUri.DeviceId, unitTags);
+						var result = await hubClient.CreateFcmNativeRegistrationAsync(pushUri.DeviceId, unitTags);
 					}
 					catch (ArgumentException ex)
 					{
@@ -318,7 +318,7 @@ namespace Resgrid.Providers.Bus
 																				 enableCustomSounds)) + "\"}}";
 				}
 
-				var androidOutcome = await hubClient.SendGcmNativeNotificationAsync(androidNotification, string.Format("unitId:{0}", unitId));
+				var androidOutcome = await hubClient.SendFcmNativeNotificationAsync(androidNotification, string.Format("unitId:{0}", unitId));
 
 				return androidOutcome.State;
 			}
@@ -363,18 +363,18 @@ namespace Resgrid.Providers.Bus
 			return NotificationOutcomeState.Unknown;
 		}
 
-		public NotificationOutcomeState SendWindowsNotification(string title, string subTitle, string userId, bool enableCustomSounds)
+		public async Task<NotificationOutcomeState> SendWindowsNotification(string title, string subTitle, string userId, bool enableCustomSounds)
 		{
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 
 			var windowsMessage = string.Format(@"<toast><visual><binding template=""ToastText01""><text id=""1"">{0}</text></binding></visual></toast>", title);
 
-			var messageOutcome = hubClient.SendWindowsNativeNotificationAsync(windowsMessage, string.Format("userId:{0}", userId)).Result;
+			var messageOutcome = await hubClient.SendWindowsNativeNotificationAsync(windowsMessage, string.Format("userId:{0}", userId));
 
 			return messageOutcome.State;
 		}
 
-		public NotificationOutcomeState SendWindowsPhoneNotification(string title, string subTitle, string userId, bool enableCustomSounds)
+		public async Task<NotificationOutcomeState> SendWindowsPhoneNotification(string title, string subTitle, string userId, bool enableCustomSounds)
 		{
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 
@@ -387,7 +387,7 @@ namespace Resgrid.Providers.Bus
 					 "</wp:Toast> " +
 				"</wp:Notification>";
 
-			var messageOutcome = hubClient.SendMpnsNativeNotificationAsync(winPhoneMessage, string.Format("userId:{0}", userId)).Result;
+			var messageOutcome = await hubClient.SendMpnsNativeNotificationAsync(winPhoneMessage, string.Format("userId:{0}", userId));
 
 			return messageOutcome.State;
 		}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -40,18 +41,19 @@ namespace Resgrid.Model
 		public int Size { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return LogAttachmentId; }
 			set { LogAttachmentId = (int)value; }
 		}
-	}
 
-	//public class CallAttachment_Mapping : EntityTypeConfiguration<CallAttachment>
-	//{
-	//	public CallAttachment_Mapping()
-	//	{
-	//		this.HasRequired(i => i.Call).WithMany(u => u.Attachments).HasForeignKey(i => i.CallId);
-	//	}
-	//}
+		[NotMapped]
+		public string TableName => "LogAttachments";
+
+		[NotMapped]
+		public string IdName => "LogAttachmentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Log" };
+	}	
 }

@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using CommonServiceLocator;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 
@@ -16,20 +18,20 @@ namespace Resgrid.Web.Helpers
 			get
 			{
 				if (_userProfileService == null)
-					_userProfileService = WebBootstrapper.GetKernel().Resolve<IUserProfileService>();
+					_userProfileService = ServiceLocator.Current.GetInstance<IUserProfileService>(); // WebBootstrapper.GetKernel().Resolve<IUserProfileService>();
 
 				return _userProfileService;
 			}
 		}
 
-		public static string GetFullNameForUser(string userId)
+		public static async Task<string> GetFullNameForUser(string userId)
 		{
 
 			UserProfile profile = null;
 
 			try
 			{
-				profile = UserProfileService.GetProfileByUserId(userId, false);
+				profile = await UserProfileService.GetProfileByUserIdAsync(userId, false);
 			}
 			catch { }
 			
@@ -41,7 +43,7 @@ namespace Resgrid.Web.Helpers
 			return name;
 		}
 
-		public static string GetFullNameForUser(List<PersonName> names, string userName, string userId)
+		public static async Task<string> GetFullNameForUser(List<PersonName> names, string userName, string userId)
 		{
 			var cachedName = names.FirstOrDefault(x => x.UserId == userId);
 
@@ -52,7 +54,7 @@ namespace Resgrid.Web.Helpers
 
 			try
 			{
-				profile = UserProfileService.GetProfileByUserId(userId, false);
+				profile = await UserProfileService.GetProfileByUserIdAsync(userId, false);
 			}
 			catch { }
 

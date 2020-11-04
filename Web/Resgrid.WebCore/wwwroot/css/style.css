@@ -6542,16 +6542,18 @@ body.landing-page {
     padding-top: 80px;
     padding-bottom: 90px;
     background-color: #228BCB;
-    background-image: url("../Images/landing/avatar_all.png"); }
+    background-image: url("../images/landing/avatar_all.png");
+  }
   .landing-page .big-icon {
     font-size: 56px !important; }
   .landing-page .features .big-icon {
     color: #228BCB !important; }
   .landing-page .contact {
-    background-image: url("../Images/landing/word_map.png");
+    background-image: url("../images/landing/word_map.png");
     background-position: 50% 50%;
     background-repeat: no-repeat;
-    margin-top: 60px; }
+    margin-top: 60px;
+  }
   .landing-page section.timeline {
     padding-bottom: 30px; }
   .landing-page section.comments {

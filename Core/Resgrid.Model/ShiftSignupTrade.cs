@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using System.Linq;
 using Newtonsoft.Json;
@@ -41,11 +40,20 @@ namespace Resgrid.Model
 		public string Note { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftSignupTradeId; }
 			set { ShiftSignupTradeId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ShiftSignupTrades";
+
+		[NotMapped]
+		public string IdName => "ShiftSignupTradeId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "SourceShiftSignup", "TargetShiftSignup", "User", "Users" };
 
 		public bool IsTradeComplete()
 		{
@@ -78,14 +86,6 @@ namespace Resgrid.Model
 				return ShiftSignupTradeStates.Proposed;
 			
 			return ShiftSignupTradeStates.Open;
-		}
-	}
-
-	public class ShiftSignupTrade_Mapping : EntityTypeConfiguration<ShiftSignupTrade>
-	{
-		public ShiftSignupTrade_Mapping()
-		{
-			this.HasOptional(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
 		}
 	}
 }

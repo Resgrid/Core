@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "Resgrid.Workers.Events.Console": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "RESGRID__DataConfig__ConnectionString": "Server=192.168.1.71;Database=Resgrid;User Id=resgrid_app;Password=resgrid123;MultipleActiveResultSets=True;"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "environmentVariables": {
+        "RESGRID__ServiceBusConfig__RabbitHostname": "192.168.1.72",
+        "RESGRID__DataConfig__ConnectionString": "Server=192.168.1.71;Database=Resgrid;User Id=resgrid_app;Password=resgrid123;MultipleActiveResultSets=True;"
+      }
+    }
+  }
+}

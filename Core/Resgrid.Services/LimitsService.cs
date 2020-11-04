@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 
@@ -17,67 +18,67 @@ namespace Resgrid.Services
 		/// </summary>
 		/// <param name="departmentId">DepartmentId to check the limits for</param>
 		/// <returns>Return true if the department is within limits and false if they have exceeded them</returns>
-		public bool ValidateDepartmentIsWithinLimits(int departmentId)
+		public async Task<bool> ValidateDepartmentIsWithinLimitsAsync(int departmentId)
 		{
 			return true;
 		}
 
-		public bool CanDepartentAddNewUser(int departmentId)
+		public async Task<bool> CanDepartmentAddNewUserAsync(int departmentId)
 		{
 			return true;
 		}
 
-		public bool CanDepartentAddNewGroup(int departmentId)
+		public async Task<bool> CanDepartmentAddNewGroup(int departmentId)
 		{
 			return true;
 		}
 
-		public bool CanDepartentAddNewRole(int departmentId)
+		public bool CanDepartmentAddNewRole(int departmentId)
 		{
 			return true;
 		}
 
-		public bool CanDepartentAddNewUnit(int departmentId)
+		public async Task<bool> CanDepartmentAddNewUnit(int departmentId)
 		{
 			return true;
 		}
 
-		public int GetPersonnelLimitForDepartment(int departmentId, Plan plan = null)
+		public async Task<int> GetPersonnelLimitForDepartmentAsync(int departmentId, Plan plan = null)
 		{
 			return int.MaxValue;
 		}
 
-		public int GetGroupslLimitForDepartment(int departmentId, Plan plan = null)
+		public async Task<int> GetGroupsLimitForDepartmentAsync(int departmentId, Plan plan = null)
 		{
 			return int.MaxValue;
 		}
 
-		public int GetRoleslLimitForDepartment(int departmentId)
+		public int GetRolesLimitForDepartment(int departmentId)
 		{
 			return int.MaxValue;
 		}
 
-		public int GetUnitslLimitForDepartment(int departmentId, Plan plan = null)
+		public async Task<int> GetUnitsLimitForDepartmentAsync(int departmentId, Plan plan = null)
 		{
 			return int.MaxValue;
 		}
 
-		public bool CanDepartmentProvisionNumber(int departmentId)
+		public async Task<bool> CanDepartmentProvisionNumberAsync(int departmentId)
 		{
 			return true;
 		}
 
-		public bool CanDepartmentUseVoice(int departmentId)
+		public async Task<bool> CanDepartmentUseVoiceAsync(int departmentId)
 		{
 			return true;
 		}
 
-		public bool CanDepartmentUseLinks(int departmentId)
+		public async Task<bool> CanDepartmentUseLinksAsync(int departmentId)
 		{
 			return true;
 		}
 
-		public bool CanDepartmentCreateOrders(int departmentId)
+		public async Task<bool> CanDepartmentCreateOrdersAsync(int departmentId)
 		{
 			return true;
 		}

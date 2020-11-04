@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using NodaTime;
 using Resgrid.Framework;
+using TimeZoneConverter;
 
 namespace Resgrid.Model.Helpers
 {
@@ -16,9 +18,12 @@ namespace Resgrid.Model.Helpers
 			try
 			{
 				if (!String.IsNullOrEmpty(department.TimeZone))
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
+					timeZoneInfo =
+						TZConvert.GetTimeZoneInfo(
+							DateTimeHelpers.ConvertTimeZoneString(department
+								.TimeZone)); // TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
 				else
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");	// Default to Pacific as it's better then UTC
+					timeZoneInfo = TZConvert.GetTimeZoneInfo("Pacific Standard Time");// TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");	// Default to Pacific as it's better then UTC
 
 				if (timeZoneInfo != null)
 				{
@@ -37,22 +42,34 @@ namespace Resgrid.Model.Helpers
 
 		public static string TimeConverterToString(this DateTime timestamp, Department department)
 		{
-			DateTime newTime = timestamp;
-			TimeZoneInfo timeZoneInfo = null;
+			//DateTime newTime = timestamp;
+			//TimeZoneInfo timeZoneInfo = null;
 
 			try
 			{
+				//if (!String.IsNullOrEmpty(department.TimeZone))
+				//	timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
+				//else
+				//	timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");	// Default to Pacific as it's better then UTC
+
+				//if (timeZoneInfo != null)
+				//{
+				//	newTime = TimeZoneInfo.ConvertTimeFromUtc(timestamp, timeZoneInfo);
+				//}
+
+				//return newTime.FormatForDepartment(department);
+
+				string timeZone = "Pacific Standard Time";
+
 				if (!String.IsNullOrEmpty(department.TimeZone))
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
-				else
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");	// Default to Pacific as it's better then UTC
+					timeZone = department.TimeZone;
 
-				if (timeZoneInfo != null)
-				{
-					newTime = TimeZoneInfo.ConvertTimeFromUtc(timestamp, timeZoneInfo);
-				}
+				var ianaTz = TZConvert.WindowsToIana(timeZone);
 
-				return newTime.FormatForDepartment(department);
+				var localTime = LocalDateTime.FromDateTime(timestamp);
+				var zonedDateTime = localTime.InZoneLeniently(DateTimeZoneProviders.Tzdb[ianaTz]);
+
+				return zonedDateTime.ToDateTimeUtc().FormatForDepartment(department);
 			}
 			catch (Exception ex)
 			{
@@ -72,9 +89,9 @@ namespace Resgrid.Model.Helpers
 					return timestamp.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 			else
 				if (dropSeconds)
-					return timestamp.ToString("MM/dd/yyyy h:mm tt", CultureInfo.InvariantCulture);
-				else
-					return timestamp.ToString("MM/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+				return timestamp.ToString("MM/dd/yyyy h:mm tt", CultureInfo.InvariantCulture);
+			else
+				return timestamp.ToString("MM/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
 		}
 
 		public static TimeSpan GetOffsetForDepartment(Department department)
@@ -87,7 +104,7 @@ namespace Resgrid.Model.Helpers
 				if (!String.IsNullOrEmpty(department.TimeZone))
 					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
 				else
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");	// Default to Pacific as it's better then UTC
+					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");    // Default to Pacific as it's better then UTC
 
 				timeSpan = timeZoneInfo.BaseUtcOffset;
 				var currentDateTime = DateTime.UtcNow.TimeConverter(department);
@@ -98,7 +115,7 @@ namespace Resgrid.Model.Helpers
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
-				timeSpan = new TimeSpan(-7,0,0);
+				timeSpan = new TimeSpan(-7, 0, 0);
 			}
 
 			return timeSpan;

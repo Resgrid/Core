@@ -2,6 +2,7 @@
 using Resgrid.Model.Repositories.Queries.Contracts;
 using System;
 using System.Collections.Concurrent;
+using Resgrid.Model;
 
 namespace Resgrid.Repositories.DataRepository.Queries
 {
@@ -26,7 +27,20 @@ namespace Resgrid.Repositories.DataRepository.Queries
 			}
 		}
 
-		public string GetInsertQuery<TQuery, TEntity>(TEntity entity) where TQuery : IInsertQuery
+		public string GetDeleteQuery<TQuery, TEntity>(TEntity entity) where TQuery : IDeleteQuery where TEntity : class, IEntity
+		{
+			try
+			{
+				var query = _queryList[typeof(TQuery)] as IDeleteQuery;
+				return (query).GetQuery(entity);
+			}
+			catch (Exception)
+			{
+				throw new NotImplementedException($"Query {typeof(TQuery)} not found.");
+			}
+		}
+
+		public string GetInsertQuery<TQuery, TEntity>(TEntity entity) where TQuery : IInsertQuery where TEntity : class, IEntity
 		{
 			try
 			{
@@ -52,12 +66,12 @@ namespace Resgrid.Repositories.DataRepository.Queries
 			}
 		}
 
-		public string GetQuery<TQuery, TEntity>(TEntity entity) where TQuery : ISelectQuery
+		public string GetQuery<TQuery, TEntity>() where TQuery : ISelectQuery where TEntity : class, IEntity
 		{
 			try
 			{
 				var query = _queryList[typeof(TQuery)] as ISelectQuery;
-				return (query).GetQuery(entity);
+				return (query).GetQuery<TEntity>();
 			}
 			catch (Exception)
 			{
@@ -65,7 +79,7 @@ namespace Resgrid.Repositories.DataRepository.Queries
 			}
 		}
 
-		public string GetUpdateQuery<TQuery, TEntity>(TEntity entity) where TQuery : IUpdateQuery
+		public string GetUpdateQuery<TQuery, TEntity>(TEntity entity) where TQuery : IUpdateQuery where TEntity : class, IEntity
 		{
 			try
 			{

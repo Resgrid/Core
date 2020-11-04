@@ -1,13 +1,14 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
+using CommonServiceLocator;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Practices.ServiceLocation;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
 using Resgrid.Providers.Audio;
 using Resgrid.Providers.Bus;
+using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
 using Resgrid.Providers.EmailProvider;
 using Resgrid.Providers.Firebase;
@@ -36,6 +37,7 @@ namespace Resgrid.Web
 				builder.RegisterModule(new ProviderModule());
 				builder.RegisterModule(new EmailProviderModule());
 				builder.RegisterModule(new BusModule());
+				builder.RegisterModule(new RabbitBusModule());
 				builder.RegisterModule(new AddressVerificationModule());
 				builder.RegisterModule(new NumbersProviderModule());
 				builder.RegisterModule(new CacheProviderModule());

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,10 +28,19 @@ namespace Resgrid.Model
 		public DateTime? LastResetTimestamp { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return JobId; }
 			set { JobId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Jobs";
+
+		[NotMapped]
+		public string IdName => "JobId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

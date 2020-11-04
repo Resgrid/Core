@@ -32,20 +32,21 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			progress.Report(1, $"Starting the {Name} Task");
 
-			await Task.Factory.StartNew(() =>
+			await Task.Run(async () =>
 			{
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var _scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
 				var _usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
 				var logic = new ReportDeliveryLogic();
 
-				var allItems = _scheduledTasksService.GetUpcomingScheduledTaks();
+				var allItems = await _scheduledTasksService.GetUpcomingScheduledTasksAsync();
 
 				if (allItems != null)
 				{
+					// TODO: Ehhh, maybe .Result will work?
 					// Filter only the past items and ones that are 5 minutes 30 seconds in the future
 					var items = from st in allItems
-								let department = _departmentsService.GetDepartmentByUserId(st.UserId)
+								let department = _departmentsService.GetDepartmentByUserIdAsync(st.UserId).Result
 								let email = _usersService.GetMembershipByUserId(st.UserId).Email
 								let runTime = st.WhenShouldJobBeRun(TimeConverterHelper.TimeConverter(DateTime.UtcNow, department))
 								where
@@ -72,7 +73,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 							_logger.LogInformation("ReportDelivery::Processing Report:" + qi.ScheduledTask.ScheduledTaskId);
 
-							var result = logic.Process(qi);
+							var result = await logic.Process(qi);
 
 							if (result.Item1)
 							{
@@ -86,7 +87,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 					}
 				}
-			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			}, cancellationToken);
 
 			progress.Report(100, $"Finishing the {Name} Task");
 		}

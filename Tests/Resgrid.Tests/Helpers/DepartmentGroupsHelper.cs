@@ -38,13 +38,13 @@ namespace Resgrid.Tests.Helpers
 			users.Add(Guid.NewGuid().ToString());
 			users.Add(Guid.NewGuid().ToString());
 
-			departmentGroupsServiceMock.Setup(x => x.GetGroupById(groupId, true)).Returns(new DepartmentGroup()
+			departmentGroupsServiceMock.Setup(x => x.GetGroupByIdAsync(groupId, true)).ReturnsAsync(new DepartmentGroup()
 			{
 				DepartmentGroupId = groupId,
 				Name = "Test Group"
 			});
 
-			departmentGroupsServiceMock.Setup(x => x.GetAllAdminsForGroup(groupId)).Returns(new List<DepartmentGroupMember>()
+			departmentGroupsServiceMock.Setup(x => x.GetAllAdminsForGroupAsync(groupId)).ReturnsAsync(new List<DepartmentGroupMember>()
 				{
 					new DepartmentGroupMember()
 					{
@@ -62,7 +62,7 @@ namespace Resgrid.Tests.Helpers
 					}
 				});
 
-			departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroup(groupId)).Returns(new List<DepartmentGroupMember>()
+			departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(groupId)).ReturnsAsync(new List<DepartmentGroupMember>()
 				{
 					new DepartmentGroupMember()
 					{
@@ -108,7 +108,7 @@ namespace Resgrid.Tests.Helpers
 					}
 				});
 
-			personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRole(1)).Returns(new List<PersonnelRoleUser>()
+			personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRoleAsync(1)).ReturnsAsync(new List<PersonnelRoleUser>()
 				{
 					new PersonnelRoleUser()
 					{
@@ -124,7 +124,7 @@ namespace Resgrid.Tests.Helpers
 					}
 				});
 
-			personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRole(2)).Returns(new List<PersonnelRoleUser>()
+			personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRoleAsync(2)).ReturnsAsync(new List<PersonnelRoleUser>()
 				{
 					new PersonnelRoleUser()
 					{
@@ -161,13 +161,13 @@ namespace Resgrid.Tests.Helpers
 			users.Add(Guid.NewGuid().ToString());
 			users.Add(Guid.NewGuid().ToString());
 
-			departmentGroupsServiceMock.Setup(x => x.GetGroupById(groupId, true)).Returns(new DepartmentGroup()
+			departmentGroupsServiceMock.Setup(x => x.GetGroupByIdAsync(groupId, true)).ReturnsAsync(new DepartmentGroup()
 			{
 				DepartmentGroupId = groupId,
 				Name = "Test Group"
 			});
 
-			departmentGroupsServiceMock.Setup(x => x.GetAllAdminsForGroup(groupId)).Returns(new List<DepartmentGroupMember>()
+			departmentGroupsServiceMock.Setup(x => x.GetAllAdminsForGroupAsync(groupId)).ReturnsAsync(new List<DepartmentGroupMember>()
 				{
 					new DepartmentGroupMember()
 					{
@@ -185,7 +185,7 @@ namespace Resgrid.Tests.Helpers
 					}
 				});
 
-			departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroup(groupId)).Returns(new List<DepartmentGroupMember>()
+			departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(groupId)).ReturnsAsync(new List<DepartmentGroupMember>()
 				{
 					new DepartmentGroupMember()
 					{

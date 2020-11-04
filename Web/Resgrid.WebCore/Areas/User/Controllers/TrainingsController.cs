@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -28,17 +30,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new TrainingIndexModel();
-			model.Trainings = _trainingService.GetAllTrainingsForDepartment(DepartmentId);
+			model.Trainings = await _trainingService.GetAllTrainingsForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			var model = new NewTrainingModel();
 			model.Training = new Training();
@@ -49,7 +51,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult New(NewTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
+		public async Task<IActionResult> New(NewTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
 			model.Training.CreatedByUserId = UserId;
 
@@ -107,7 +109,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.SendToAll)
 			{
-				var allUsers = _departmentsService.GetAllUsersForDepartment(DepartmentId);
+				var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 				foreach (var user in allUsers)
 				{
 					var trainingUser = new TrainingUser();
@@ -128,7 +130,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var group in groups)
 				{
-					var members = _departmentGroupsService.GetAllMembersForGroup(int.Parse(group));
+					var members = await _departmentGroupsService.GetAllMembersForGroupAsync(int.Parse(group));
 
 					foreach (var member in members)
 					{
@@ -142,7 +144,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var role in roles)
 				{
-					var roleMembers = _personnelRolesService.GetAllMembersOfRole(int.Parse(role));
+					var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(role));
 
 					foreach (var member in roleMembers)
 					{
@@ -209,7 +211,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				_trainingService.Save(model.Training);
+				_trainingService.SaveAsync(model.Training);
 
 				return RedirectToAction("Index");
 			}
@@ -218,24 +220,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult View(int trainingId)
+		public async Task<IActionResult> View(int trainingId)
 		{
 			var model = new ViewTrainingModel();
-			model.Training = _trainingService.GetTrainingById(trainingId);
-			model.CreatorUserName = UserHelper.GetFullNameForUser(model.Training.CreatedByUserId);
+			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
+			model.CreatorUserName = await UserHelper.GetFullNameForUser(model.Training.CreatedByUserId);
 
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_trainingService.SetTrainingAsViewed(trainingId, UserId);
+			_trainingService.SetTrainingAsViewedAsync(trainingId, UserId);
 
 			return View(model);
 		}
 
 		[HttpGet]
-		public FileResult GetTrainingAttachment(int trainingAttachmentId)
+		public async Task<FileResult> GetTrainingAttachment(int trainingAttachmentId)
 		{
-			var attachment = _trainingService.GetTrainingAttachmentById(trainingAttachmentId);
+			var attachment = await _trainingService.GetTrainingAttachmentByIdAsync(trainingAttachmentId);
 
 			return new FileContentResult(attachment.Data, attachment.FileType)
 			{
@@ -244,25 +246,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Quiz(int trainingId)
+		public async Task<IActionResult> Quiz(int trainingId, CancellationToken cancellationToken)
 		{
 			var model = new ViewTrainingModel();
-			model.Training = _trainingService.GetTrainingById(trainingId);
+			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_trainingService.SetTrainingAsViewed(trainingId, UserId);
+			await _trainingService.SetTrainingAsViewedAsync(trainingId, UserId, cancellationToken);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Quiz(ViewTrainingModel model, IFormCollection form)
+		public async Task<IActionResult> Quiz(ViewTrainingModel model, IFormCollection form)
 		{
 			int correctAnswers = 0;
-			var training = _trainingService.GetTrainingById(model.Training.TrainingId);
+			var training = await _trainingService.GetTrainingByIdAsync(model.Training.TrainingId);
 			
 			List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("question_") select int.Parse(key.ToString().Replace("question_", ""))).ToList();
 
@@ -282,53 +284,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
-			_trainingService.RecordTrainingQuizResult(training.TrainingId, UserId, correctAnswers);
+			_trainingService.RecordTrainingQuizResultAsync(training.TrainingId, UserId, correctAnswers);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult DeleteTraining(int trainingId)
+		public async Task<IActionResult> DeleteTraining(int trainingId)
 		{
 			var model = new ViewTrainingModel();
-			model.Training = _trainingService.GetTrainingById(trainingId);
+			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_trainingService.DeleteTraining(trainingId);
+			_trainingService.DeleteTrainingAsync(trainingId);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult ResetUserTraining(int trainingId, string userId)
+		public async Task<IActionResult> ResetUserTraining(int trainingId, string userId)
 		{
 			var model = new ViewTrainingModel();
-			model.Training = _trainingService.GetTrainingById(trainingId);
+			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_trainingService.ResetUser(trainingId, userId);
+			_trainingService.ResetUserAsync(trainingId, userId);
 
 			return RedirectToAction("Report", new { trainingId = model.Training.TrainingId});
 		}
 
 		[HttpGet]
-		public IActionResult Report(int trainingId)
+		public async Task<IActionResult> Report(int trainingId)
 		{
 			var model = new TrainingReportView();
-			model.Training = _trainingService.GetTrainingById(trainingId);
+			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 			model.UserGroups = new Dictionary<string, string>();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
 			foreach (var user in model.Training.Users)
 			{
-				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 
 				if (group != null)
 					model.UserGroups.Add(user.UserId, group.Name);

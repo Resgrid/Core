@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Net;
-using Microsoft.AspNet.SignalR.Client;
-using Resgrid.Framework;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR.Client;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 
@@ -10,84 +9,101 @@ namespace Resgrid.Providers.Bus
 	public class SignalrProvider : ISignalrProvider
 	{
 		private static HubConnection _hubConnection;
-		private static IHubProxy _eventingHubProxy;
+		//private static IHubProxy _eventingHubProxy;
 
 		public SignalrProvider()
 		{
 			Create();
 		}
 
-		public void PersonnelStatusUpdated(int departmentId, ActionLog actionLog)
+		public async Task<bool> PersonnelStatusUpdated(int departmentId, ActionLog actionLog)
 		{
 			try
 			{
-				Connect();
-				_eventingHubProxy.Invoke("PersonnelStatusUpdated", departmentId, actionLog.ActionLogId);
+				await Connect();
+				await _hubConnection.InvokeAsync("PersonnelStatusUpdated", departmentId, actionLog.ActionLogId);
+				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
 				//Logging.LogException(e);
 			}
+
+			return false;
 		}
 
-		public void PersonnelStaffingUpdated(int departmentId, UserState userState)
+		public async Task<bool> PersonnelStaffingUpdated(int departmentId, UserState userState)
 		{
 			try
 			{
-				Connect();
-				_eventingHubProxy.Invoke("PersonnelStaffingUpdated", departmentId, userState.UserStateId);
+				await Connect();
+				await _hubConnection.InvokeAsync("PersonnelStaffingUpdated", departmentId, userState.UserStateId);
+				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
 				//Logging.LogException(e);
 			}
+
+			return false;
 		}
 
-		public void UnitStatusUpdated(int departmentId, UnitState unitState)
+		public async Task<bool> UnitStatusUpdated(int departmentId, UnitState unitState)
 		{
 			try
 			{
-				Connect();
-				_eventingHubProxy.Invoke("UnitStatusUpdated", departmentId, unitState.UnitStateId);
+				await Connect();
+				await _hubConnection.InvokeAsync("UnitStatusUpdated", departmentId, unitState.UnitStateId);
+				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
 				//Logging.LogException(e);
 			}
+
+			return false;
 		}
 
-		public void CallsUpdated(int departmentId, Call call)
+		public async Task<bool> CallsUpdated(int departmentId, Call call)
 		{
 			try
 			{
-				Connect();
-				_eventingHubProxy.Invoke("CallsUpdated", departmentId, call.CallId);
+				await Connect();
+				await _hubConnection.InvokeAsync("CallsUpdated", departmentId, call.CallId);
+				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
 				//Logging.LogException(e);
 			}
+
+			return false;
 		}
 
 		private void Create()
 		{
-			_hubConnection = new HubConnection(Config.SystemBehaviorConfig.ResgridApiBaseUrl);
-			_eventingHubProxy = _hubConnection.CreateHubProxy("eventingHub");
+			_hubConnection = new HubConnectionBuilder()
+				.WithUrl($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/eventingHub")
+				.WithAutomaticReconnect()
+				.Build();
 
-			_hubConnection.Closed += () => { _hubConnection.Start().Wait(); };
-			_hubConnection.Error += ex => Logging.LogException(ex);
+			//_hubConnection.Closed += async (error) =>
+			//{
+			//	await Task.Delay(new Random().Next(0,5) * 1000);
+			//	await _hubConnection.StartAsync();
+			//};
 		}
 
-		private void Connect()
+		private async Task Connect()
 		{
 			try
 			{
-				if (_hubConnection.State == ConnectionState.Disconnected)
-					_hubConnection.Start().Wait();
+				if (_hubConnection.State == HubConnectionState.Disconnected)
+					await _hubConnection.StartAsync();
 			}
 			catch
 			{

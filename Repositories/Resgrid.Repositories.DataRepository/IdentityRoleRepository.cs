@@ -7,7 +7,6 @@ using Dapper;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Model.Repositories.Queries;
-using Identity.Dapper.Queries.Role;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Identity;
 using System.Security.Claims;
@@ -38,9 +37,9 @@ namespace Resgrid.Repositories.DataRepository
 				var selectFunction = new Func<DbConnection, Task<IdentityRole>>(async x =>
 				{
 					var dynamicParameters = new DynamicParameters();
-					dynamicParameters.Add("Id", id);
+					dynamicParameters.Add("IdValue", id);
 
-					var query = _queryFactory.GetQuery<SelectRoleByIdQuery>();
+					var query = _queryFactory.GetQuery<SelectByIdQuery>();
 
 					return await x.QueryFirstOrDefaultAsync<IdentityRole>(sql: query,
 																   param: dynamicParameters,
@@ -133,7 +132,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					using (conn = _connectionProvider.Create())
 					{
-						await conn.OpenAsync();
+						await conn.OpenAsync(cancellationToken);
 
 						return await selectFunction(conn);
 					}
@@ -160,7 +159,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParameters(role);
 
-					var query = _queryFactory.GetInsertQuery<InsertRoleQuery, IdentityRole>(role);
+					var query = _queryFactory.GetInsertQuery<InsertQuery, IdentityRole>(role);
 
 					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -242,9 +241,9 @@ namespace Resgrid.Repositories.DataRepository
 				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
 					var dynamicParameters = new DynamicParameters();
-					dynamicParameters.Add("Id", id);
+					dynamicParameters.Add("IdValue", id);
 
-					var query = _queryFactory.GetDeleteQuery<DeleteRoleQuery>();
+					var query = _queryFactory.GetDeleteQuery<DeleteQuery>();
 
 					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -325,7 +324,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParameters(role);
 
-					var query = _queryFactory.GetUpdateQuery<UpdateRoleQuery, IdentityRole>(role);
+					var query = _queryFactory.GetUpdateQuery<UpdateQuery, IdentityRole>(role);
 
 					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 

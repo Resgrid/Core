@@ -39,11 +39,11 @@ namespace Resgrid.Workers.Framework.Workers.TrainingNotifier
 
 				_trainingService = Bootstrapper.GetKernel().Resolve<ITrainingService>();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 				{
 					try
 					{
-						var trainings = _trainingService.GetTrainingsToNotify(DateTime.UtcNow);
+						var trainings = await _trainingService.GetTrainingsToNotifyAsync(DateTime.UtcNow);
 
 						if (trainings != null)
 						{
@@ -84,10 +84,12 @@ namespace Resgrid.Workers.Framework.Workers.TrainingNotifier
 				_queue = new Queue<TrainingNotifierQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public void AddItem(TrainingNotifierQueueItem item)
@@ -105,11 +107,11 @@ namespace Resgrid.Workers.Framework.Workers.TrainingNotifier
 			return item;
 		}
 
-		public IEnumerable<TrainingNotifierQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<TrainingNotifierQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<TrainingNotifierQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.TrainingNotifier, Timestamp = DateTime.UtcNow});
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.TrainingNotifier, Timestamp = DateTime.UtcNow});
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

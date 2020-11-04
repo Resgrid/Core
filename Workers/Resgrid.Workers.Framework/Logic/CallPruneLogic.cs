@@ -2,6 +2,7 @@
 using Resgrid.Model.Services;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Autofac;
 
 namespace Resgrid.Workers.Framework.Logic
@@ -15,7 +16,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
 		}
 
-		public Tuple<bool, string> Process(CallPruneQueueItem item)
+		public async Task<Tuple<bool, string>> Process(CallPruneQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -24,7 +25,7 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					var calls = _callsService.GetActiveCallsByDepartmentForUpdate(item.PruneSettings.DepartmentId);
+					var calls = await _callsService.GetActiveCallsByDepartmentAsync(item.PruneSettings.DepartmentId);
 
 					if (calls != null && calls.Count > 0)
 					{
@@ -45,7 +46,7 @@ namespace Resgrid.Workers.Framework.Logic
 										call.CompletedNotes = "Call automatically closed by the system.";
 										call.ClosedByUserId = item.PruneSettings.Department.ManagingUserId;
 
-										_callsService.SaveCall(call);
+										await _callsService.SaveCallAsync(call);
 									}
 								}
 							}
@@ -65,7 +66,7 @@ namespace Resgrid.Workers.Framework.Logic
 										call.CompletedNotes = "Call automatically closed by the system.";
 										call.ClosedByUserId = item.PruneSettings.Department.ManagingUserId;
 
-										_callsService.SaveCall(call);
+										await _callsService.SaveCallAsync(call);
 									}
 								}
 							}

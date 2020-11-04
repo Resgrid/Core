@@ -102,24 +102,26 @@
             </div>
             <div class="col-lg-7" id="cluster_info">
               <dl class="dl-horizontal">
+                <dt>Incident Id:</dt>
+                <dd>@Model.Call.IncidentNumber</dd>
                 <dt>Logged By:</dt>
-                <dd>@UserHelper.GetFullNameForUser(Model.Call.ReportingUserId)</dd>
+                <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</dd>
                 <dt>Logged On:</dt>
                 <dd>@Model.Call.LoggedOn.TimeConverterToString(Model.Department)</dd>
                 @if (Model.Call.ClosedOn.HasValue)
-				{
+                {
                   <dt>Closed By:</dt>
-                  <dd>@UserHelper.GetFullNameForUser(Model.Call.ClosedByUserId)</dd>
+                  <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ClosedByUserId))</dd>
                   <dt>Closed On:</dt>
                   <dd>@Model.Call.ClosedOn.Value.TimeConverterToString(Model.Department)</dd>
-				}
-				else
-				{
+                }
+                else
+                {
                   <dt>Closed By:</dt>
                   <dd>N/A</dd>
                   <dt>Closed On:</dt>
                   <dd>N/A</dd>
-				}
+                }
               </dl>
             </div>
           </div>
@@ -191,10 +193,10 @@
                           @foreach (var g in Model.Groups)
 						  {
 							var unitsForGroup = Model.Units.Where(x => x.StationGroupId == g.DepartmentGroupId);
-
+                            
 
 							var sortedUsers = from u in g.Members
-											  let name = UserHelper.GetFullNameForUser(u.UserId)
+											  let name = Model.UserGroupRoles.FirstOrDefault(x => x.UserId == u.UserId).Name
 											  orderby name ascending
 											  select new
 											  {
@@ -236,7 +238,7 @@
 
 
 							var sortedUngroupedUsers = from u in Model.UnGroupedUsers
-													   let name = UserHelper.GetFullNameForUser(u.UserId)
+													   let name = Model.UserGroupRoles.FirstOrDefault(x => x.UserId == u.UserId).Name
 													   orderby name ascending
 													   select new
 													   {
@@ -292,7 +294,7 @@
                         <tbody>
                           @foreach (var al in Model.ActionLogs)
 						  {
-							var customState = CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
+							var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
 							var userInfo = Model.UserGroupRoles.FirstOrDefault(x => x.UserId == al.UserId);
 
                             <tr>
@@ -353,7 +355,7 @@
                         <tbody>
                           @foreach (var us in Model.UnitStates)
 						  {
-							var customState = CustomStatesHelper.GetCustomUnitState(us);
+							var customState = await CustomStatesHelper.GetCustomUnitState(us);
 
                             <tr>
                               <td>@us.Timestamp.TimeConverterToString(Model.Department)</td>
@@ -392,7 +394,7 @@
                             <th>File Name</th>
                             <th>File Type</th>
                             <th>Timestamp</th>
-                            <th>View</th>
+                            <th><a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 1, resourceId = Model.Call.CallId})">Add File</a></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -424,9 +426,16 @@
 								}
                               </td>
                               <td>
-                                <audio id="player" controls>
-                                  <source src="@Url.Action("GetCallDispatchAudio", "Dispatch", new { Area = "User", callId = Model.Call.CallId })" type="audio/mp3">
-                                </audio>
+                                @if (file.CallAttachmentType == 1)
+								{
+                                  <audio id="player" controls>
+                                    <source src="@Url.Action("GetCallDispatchAudio", "Dispatch", new { Area = "User", callId = Model.Call.CallId })" type="audio/mp3">
+                                  </audio>
+								}
+								else if (file.CallAttachmentType == 3)
+								{
+                                  <span><a style="text-decoration:none;" class="btn btn-xs btn-success" asp-controller="Dispatch" asp-action="GetCallFile" asp-route-area="User" asp-route-callAttachmentId="@file.CallAttachmentId">Download</a></span>
+								}
                               </td>
                             </tr>
 						  }
@@ -506,23 +515,23 @@
                                   <span>@protocol.Name</span>
                                 </td>
                                 <td>
-                                  <a data-toggle="modal" data-target="#protocolTextWindow" data-protocolId="@protocol.Id">View Text</a>
+                                  <a data-toggle="modal" data-target="#protocolTextWindow" data-protocolId="@protocol.DispatchProtocolId">View Text</a>
                                 </td>
                                 <td>
                                   @if (protocol.Attachments != null && protocol.Attachments.Any())
-                                  {
-                                    foreach (var attachment in protocol.Attachments)
-                                    {
+								  {
+									foreach (var attachment in protocol.Attachments)
+									{
                                       <dl>
                                         <dt>@attachment.FileName</dt>
                                         <dd> <a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@attachment.DispatchProtocolAttachmentId">View</a></dd>
                                       </dl>
-                                    }
-                                  }
-                                  else
-                                  {
+									}
+								  }
+								  else
+								  {
                                     <span>No Attachments</span>
-                                  }
+								  }
                                 </td>
                               </tr>
 							}

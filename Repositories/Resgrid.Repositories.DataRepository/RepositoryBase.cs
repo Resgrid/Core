@@ -1,169 +1,513 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
-using Resgrid.Repositories.DataRepository.Transactions;
-using EntityFramework.BulkInsert.Extensions;
+using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Common;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class RepositoryBase<T> : IDisposable, IRepository<T> where T : class, IEntity
 	{
-		/* 
-		 * <KeithStyleNovella> 
-		 * 
-		 * Originally this repo used IDbContext
-		 * and IDbSet for entity and context control. This worked great, until
-		 * multiple long lasting contexts and other systems all were changing the
-		 * same underlying database. There was no way using IDbContext and IDbSet
-		 * to force a refresh of the L2 ORM cache that EntityFramework's context
-		 * or DbSet were holding on to.
-		 * 
-		 * So changing to ObjectContext and ObjectSet allowed the setting of the
-		 * MergeOption.OverwriteChanges on the set, which will always pick up 
-		 * changes from the backing store.
-		 * 
-		 * Again even with multiple systems the contexts should be short lived
-		 * enough in the Unit of Work pattern that the websites use that it didn't
-		 * seem to be an issue for them, but it was a problem for the now 2 backend
-		 * workers on different systems modifying and looking at the same table.
-		 * 
-		 * Additionally ObjectSet doesn't support the Find() method that DbSet has,
-		 * seems like ObjectSet is at a lower level then DbSet. Because of that
-		 * GetById has to die, currently I've pushed that up one level into the
-		 * actual repo implementations, but f-it the services can just use GetAll()
-		 * and Linq off of that.
-		 * 
-		 * </KeithStyleNovella>
-		 */
-		private static readonly object _syncRoot;
-		protected ObjectContext context;
-		protected DbContext dbContext;
-		protected ObjectSet<T> entities;
-		protected readonly bool IsSqlCe;
-		protected Database db;
-		private readonly IISolationLevel _isolationLevel;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public RepositoryBase(IDbContext context, IISolationLevel isolationLevel)
+		public RepositoryBase(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 		{
-			_isolationLevel = isolationLevel;
-
-			this.context = ((IObjectContextAdapter)context).ObjectContext;
-			ObjectSet<T> set = this.context.CreateObjectSet<T>();
-			set.MergeOption = MergeOption.OverwriteChanges;
-			IsSqlCe = context.IsSqlCe();
-
-			if (!IsSqlCe)
-				this.context.CommandTimeout = 300;
-
-
-			db = ((DbContext)context).Database;
-			dbContext = ((DbContext) context);
-
-			entities = set;
-
-			// Uncomment the below if you want to see all hell break loose! Do not deploy to prod. -SJ
-			//this.context.ObjectStateManager.ObjectStateManagerChanged += (sender, e) =>
-			//{
-			//	Trace.WriteLine(string.Format("{0}, {1}", e.Action, e.Element));
-			//};
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public virtual IQueryable<T> GetAll()
+		public virtual async Task<IEnumerable<T>> GetAllAsync()
 		{
-			return entities;
-		}
-
-		public virtual void SaveOrUpdate(T entity)
-		{
-			if ((entity.Id is Guid && ((Guid)entity.Id) == Guid.Empty) ||
-				(entity.Id is int && ((int)entity.Id) == 0))
+			try
 			{
-				entities.AddObject(entity);
-			}
-
-			context.SaveChanges();
-		}
-
-		public virtual async void SaveOrUpdateAsync(T entity, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			if ((entity.Id is Guid && ((Guid)entity.Id) == Guid.Empty) ||
-				(entity.Id is int && ((int)entity.Id) == 0))
-			{
-				entities.AddObject(entity);
-			}
-
-			await context.SaveChangesAsync(cancellationToken);
-		}
-
-		public virtual void DeleteOnSubmit(T entity)
-		{
-			entities.DeleteObject(entity);
-			context.SaveChanges();
-		}
-
-		public virtual async void DeleteOnSubmitAsync(T entity, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			entities.DeleteObject(entity);
-			await context.SaveChangesAsync(cancellationToken);
-		}
-
-		public virtual void DeleteAll(IEnumerable<T> entitesToDelete)
-		{
-			foreach (var entity in entitesToDelete)
-				entities.DeleteObject(entity);
-
-			context.SaveChanges();
-		}
-
-		public virtual async void DeleteAllAsync(IEnumerable<T> entitesToDelete, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			foreach (var entity in entitesToDelete)
-				entities.DeleteObject(entity);
-
-			await context.SaveChangesAsync(cancellationToken);
-		}
-
-		public virtual void SaveOrUpdateAll(IEnumerable<T> entitiesToAdd)
-		{
-			foreach (var entity in entitiesToAdd)
-			{
-				if ((entity.Id is Guid && ((Guid)entity.Id) == Guid.Empty) ||
-				(entity.Id is int && ((int)entity.Id) == 0))
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<T>>>(async x =>
 				{
-					entities.AddObject(entity);
+					var dynamicParameters = new DynamicParameters();
+
+					var query = _queryFactory.GetQuery<SelectAllQuery, T>();
+
+					return await x.QueryAsync<T>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
 				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			context.SaveChanges();
+				throw;
+			}
 		}
 
-		/// <summary>
-		/// Still trying to get this to work
-		/// </summary>
-		/// <param name="entitiesToAdd"></param>
-		public virtual void BulkInsert(IEnumerable<T> entitiesToAdd)
+		public virtual async Task<T> GetByIdAsync(object id)
 		{
-			EntityFramework.BulkInsert.ProviderFactory.Register<EntityFramework.BulkInsert.Providers.EfSqlBulkInsertProviderWithMappedDataReader>("System.Data.SqlClient.SqlConnection");
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<T>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Id", id);
 
-			dbContext.BulkInsert(entities);
-			dbContext.SaveChanges();
+					var query = _queryFactory.GetQuery<SelectByIdQuery, T>();
+
+					return await x.QueryFirstOrDefaultAsync<T>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public virtual async Task<IEnumerable<T>> GetAllByDepartmentIdAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<T>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectByDepartmentIdQuery, T>();
+
+					return await x.QueryAsync<T>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public virtual async Task<T> InsertAsync(T entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			try
+			{
+				var insertFunction = new Func<DbConnection, Task<T>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters(entity);
+
+					var query = _queryFactory.GetInsertQuery<InsertQuery, T>(entity);
+
+					var result = await x.QuerySingleAsync<int>(query, dynamicParameters, _unitOfWork.Transaction);
+
+					((IEntity)entity).IdValue = result;
+
+					if (!firstLevelOnly)
+						await HandleChildObjects(entity, cancellationToken);
+
+					return entity;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						return await insertFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await insertFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public virtual async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			try
+			{
+				var updateFunction = new Func<DbConnection, Task<T>>(async x =>
+				{
+
+
+					var dynamicParameters = new DynamicParameters(entity);
+
+					var query = _queryFactory.GetUpdateQuery<UpdateQuery, T>(entity);
+
+					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+					if (!firstLevelOnly)
+					{
+						await SyncChildArrayUpdates(entity, cancellationToken);
+						await HandleChildObjects(entity, cancellationToken);
+					}
+
+					return entity;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+						return await updateFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await updateFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public virtual async Task<bool> DeleteAsync(T entity, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Id", ((IEntity)entity).IdValue);
+
+					var query = _queryFactory.GetDeleteQuery<DeleteQuery, T>(entity);
+
+					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+					return result > 0;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						return await removeFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await removeFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public virtual async Task<T> SaveOrUpdateAsync(T entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			bool didParse = false;
+			int idValue = 0;
+			if (((IEntity)entity).IdValue != null)
+				didParse = int.TryParse(entity.IdValue.ToString(), out idValue);
+
+			if (((IEntity)entity).IdValue == null || (didParse && idValue == 0))
+				return await InsertAsync(entity, cancellationToken, firstLevelOnly);
+
+			return await UpdateAsync(entity, cancellationToken, firstLevelOnly);
+		}
+
+		public virtual async Task<IEnumerable<T>> GetAllByUserIdAsync(string userId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<T>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectByUserIdQuery, T>();
+
+					return await x.QueryAsync<T>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public virtual async Task<bool> DeleteMultipleAsync(T entity, string parentKeyName, object parentKeyId, List<object> ids, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					var usersToQuery = String.Join(",", ids.Select(p => $"{p.ToString()}").ToArray());
+					dynamicParameters.Add("ParentId", parentKeyId);
+
+					var query = _queryFactory.GetDeleteQuery<DeleteMultipleQuery, T>(entity);
+					query = query.Replace("%IDS%", usersToQuery);
+					query = query.Replace("%PARENTKEYNAME%", parentKeyName);
+
+					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+					return result > 0;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						return await removeFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await removeFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		private async Task HandleChildObjects(T entity, CancellationToken cancellationToken)
+		{
+			var properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+			var idName = ((IEntity)entity).IdName;
+			var idValue = ((IEntity)entity).IdValue;
+
+			if (properties != null)
+			{
+				foreach (var property in properties)
+				{
+					if (Attribute.IsDefined(property, typeof(System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute)))
+						continue;
+
+					if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(ICollection<>))
+					{
+						var collection = (IEnumerable)property.GetValue(entity, null);
+
+						if (collection != null)
+						{
+							MethodInfo genericSave = null;
+							object baseRepo = null;
+
+							foreach (var item in collection)
+							{
+								if (item.GetType().GetInterfaces().Contains(typeof(IEntity)))
+								{
+									var objectProperties = item.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+									var idFields = objectProperties.Where(x => x.Name.Contains(idName));
+
+									if (genericSave == null || baseRepo == null)
+									{
+										var d1 = typeof(RepositoryBase<>);
+										Type[] typeArgs = { item.GetType() };
+										var makeme = d1.MakeGenericType(typeArgs);
+										genericSave = makeme.GetMethod("SaveOrUpdateAsync");
+										baseRepo = Activator.CreateInstance(makeme, new object[] { _connectionProvider, _sqlConfiguration, _unitOfWork, _queryFactory });
+									}
+
+									if (idFields != null && idFields.Any())
+									{
+										if (idFields.Count() == 1)
+										{
+											idFields.First().SetValue(item, idValue, null);
+											await genericSave.InvokeAsync(baseRepo, new[] { item, cancellationToken, false });
+										}
+
+									}
+								}
+							}
+						}
+					}
+					else if (property.PropertyType.GetInterfaces().Contains(typeof(IEntity)))
+					{
+						var objectProperties = property.PropertyType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.GetProperty);
+						var idFields = objectProperties.Where(x => x.Name.Contains(idName));
+
+						if (idFields != null && idFields.Any())
+						{
+							var d1 = typeof(RepositoryBase<>);
+							Type[] typeArgs = { property.PropertyType };
+							var makeme = d1.MakeGenericType(typeArgs);
+							MethodInfo genericSave = makeme.GetMethod("SaveOrUpdateAsync");
+							var baseRepo = Activator.CreateInstance(makeme, new object[] { _connectionProvider, _sqlConfiguration, _unitOfWork, _queryFactory });
+
+							if (idFields.Count() == 1)
+							{
+								ReflectionHelpers.SetProperty($"{property.Name}.{idFields.First().Name}", entity, idValue);
+								var subObj = property.GetValue(entity, null);
+
+								await genericSave.InvokeAsync(baseRepo, new[] { subObj, cancellationToken, false });
+							}
+
+						}
+
+					}
+				}
+			}
+		}
+
+		private async Task SyncChildArrayUpdates(T entity, CancellationToken cancellationToken)
+		{
+			var properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+			var parentIdName = ((IEntity)entity).IdName;
+			var parentIdValue = ((IEntity)entity).IdValue;
+
+			if (properties != null)
+			{
+				foreach (var property in properties)
+				{
+					if (Attribute.IsDefined(property, typeof(System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute)))
+						continue;
+
+					if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(ICollection<>))
+					{
+						var collection = (IEnumerable)property.GetValue(entity, null);
+						object obj = null;
+
+						if (collection != null)
+						{
+							var ids = new List<object>();
+
+							foreach (var item in collection)
+							{
+								obj = item;
+
+								int idValue = 0;
+								if (((IEntity)item).IdValue != null)
+									if (int.TryParse(((IEntity)item).IdValue.ToString(), out idValue))
+										if (idValue > 0 && !ids.Contains(idValue))
+											ids.Add(idValue);
+							}
+
+							if (ids.Any())
+							{
+								var d1 = typeof(RepositoryBase<>);
+								Type[] typeArgs = { property.PropertyType.GetGenericArguments()[0] };
+								var makeme = d1.MakeGenericType(typeArgs);
+								MethodInfo genericDeleteMulti = makeme.GetMethod("DeleteMultipleAsync");
+								var baseRepo = Activator.CreateInstance(makeme, new object[] { _connectionProvider, _sqlConfiguration, _unitOfWork, _queryFactory });
+
+								await genericDeleteMulti.InvokeAsync(baseRepo, new object[] { obj, parentIdName, parentIdValue, ids, cancellationToken });
+							}
+						}
+					}
+				}
+			}
 		}
 
 		public void Dispose()
 		{
-			if (context != null)
-			{
-				context.Dispose();
-				context = null;
-			}
-
-			entities = null;
-			db = null;
+			_unitOfWork?.Dispose();
 		}
 	}
 }

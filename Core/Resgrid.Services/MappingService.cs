@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -9,47 +11,49 @@ namespace Resgrid.Services
 {
 	public class MappingService : IMappingService
 	{
-		private readonly IGenericDataRepository<PoiType> _poiTypesRepository;
-		private readonly IGenericDataRepository<Poi> _poisRepository;
+		private readonly IPoiTypesRepository _poiTypesRepository;
+		private readonly IPoisRepository _poisRepository;
 
-		public MappingService(IGenericDataRepository<PoiType> poiTypesRepository, IGenericDataRepository<Poi> poisRepository)
+		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository)
 		{
 			_poiTypesRepository = poiTypesRepository;
 			_poisRepository = poisRepository;
 		}
 
-		public PoiType SavePOIType(PoiType type)
+		public async Task<PoiType> SavePOITypeAsync(PoiType type, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_poiTypesRepository.SaveOrUpdate(type);
+			return await _poiTypesRepository.SaveOrUpdateAsync(type, cancellationToken);
 
-			return type;
 		}
 
-		public Poi SavePOI(Poi poi)
+		public async Task<Poi> SavePOIAsync(Poi poi, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_poisRepository.SaveOrUpdate(poi);
+			return await _poisRepository.SaveOrUpdateAsync(poi, cancellationToken);
 
-			return poi;
 		}
 
-		public List<PoiType> GetPOITypesForDepartment(int departmentId)
+		public async Task<List<PoiType>> GetPOITypesForDepartmentAsync(int departmentId)
 		{
-			return _poiTypesRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var types = await _poiTypesRepository.GetPoiTypesByDepartmentIdAsync(departmentId);
+
+			return types.ToList();
 		}
 
-		public PoiType GetTypeById(int poiTypeId)
+		public async Task<PoiType> GetTypeByIdAsync(int poiTypeId)
 		{
-			return _poiTypesRepository.GetAll().FirstOrDefault(x => x.PoiTypeId == poiTypeId);
+			return await _poiTypesRepository.GetPoiTypeByTypeIdAsync(poiTypeId);
 		}
 
-		public void DeletePOIType(int poiTypeId)
+		public async Task<bool> DeletePOITypeAsync(int poiTypeId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var type = _poiTypesRepository.GetAll().FirstOrDefault(x => x.PoiTypeId == poiTypeId);
+			var type = await GetTypeByIdAsync(poiTypeId);
 
 			if (type != null)
 			{
-				_poiTypesRepository.DeleteOnSubmit(type);
+				return await _poiTypesRepository.DeleteAsync(type, cancellationToken);
 			}
+
+			return false;
 		}
 	}
 }

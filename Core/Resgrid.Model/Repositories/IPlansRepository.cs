@@ -1,12 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	public interface IPlansRepository : IRepository<Plan>
+	/// <summary>
+	/// Interface IPlansRepository
+	/// Implements the <see cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.Plan}" />
+	/// </summary>
+	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.Plan}" />
+	public interface IPlansRepository: IRepository<Plan>
 	{
-		Plan GetPlanByExternalId(string externalId);
-		Task<Plan> GetPlanByExternalIdAsync(string externalId);
-		Task<Plan> GetPlanByIdAsync(int planId);
+		/// <summary>
+		/// Gets the plan by plan identifier asynchronous.
+		/// </summary>
+		/// <param name="planId">The plan identifier.</param>
+		/// <returns>Task&lt;Plan&gt;.</returns>
+		Task<Plan> GetPlanByPlanIdAsync(int planId);
 	}
 }

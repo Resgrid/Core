@@ -86,11 +86,20 @@ namespace Resgrid.Model
 		public string LinkCode { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentId; }
 			set { DepartmentId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Departments";
+
+		[NotMapped]
+		public string IdName => "DepartmentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ManagingUser", "Address", "Members", "AdminUsers" };
 
 		[ProtoMember(18)]
 		[NotMapped]

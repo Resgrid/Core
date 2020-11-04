@@ -4,8 +4,9 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
-namespace Resgrid.Web.ServicesCore.Helpers
+namespace Resgrid.Web.Helpers
 {
 	public class SqlPasswordHasher : PasswordHasher<IdentityUser>
 	{

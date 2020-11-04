@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -35,10 +36,19 @@ namespace Resgrid.Model
 		public byte[] Data { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentFileId; }
 			set { DepartmentFileId = (Guid)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "DepartmentFiles";
+
+		[NotMapped]
+		public string IdName => "DepartmentFileId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department" };
 	}
 }

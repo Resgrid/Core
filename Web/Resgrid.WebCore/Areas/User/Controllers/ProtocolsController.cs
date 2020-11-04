@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,37 +33,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new ProtocolIndexModel();
-			model.Protocols = _protocolsService.GetAllProtocolsForDepartment(DepartmentId);
+			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_Create)]
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			var model = new NewProtocolModel();
 			model.Protocol = new DispatchProtocol();
 
-			var priorites = _callsService.GetCallPrioritesForDepartment(DepartmentId);
+			var priorites = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 
 			List<CallType> types = new List<CallType>();
 			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
-			types.AddRange(_callsService.GetCallTypesForDepartment(DepartmentId));
+			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
 			model.CallTypes = new SelectList(types, "Type", "Type");
 
 			model.TriggerTypes = model.TriggerTypesEnum.ToSelectList();
+			model.Protocol.CreatedByUserId = UserId;
+			model.Protocol.UpdatedByUserId = UserId;
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Protocol_Create)]
-		public IActionResult New(NewProtocolModel model, IFormCollection form, ICollection<IFormFile> attachments)
+		public async Task<IActionResult> New(NewProtocolModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
 			if (attachments != null)
 			{
@@ -100,6 +103,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 			}
+
+			model.Protocol.CreatedByUserId = UserId;
+			model.Protocol.UpdatedByUserId = UserId;
 
 			if (ModelState.IsValid)
 			{
@@ -182,7 +188,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 
-				_protocolsService.SaveProtocol(model.Protocol);
+				_protocolsService.SaveProtocolAsync(model.Protocol);
 
 				return RedirectToAction("Index");
 			}
@@ -192,44 +198,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_Delete)]
-		public IActionResult Delete(int id)
+		public async Task<IActionResult> Delete(int id)
 		{
-			if (!_authorizationService.CanUserModifyProtocol(UserId, id))
+			if (!await _authorizationService.CanUserModifyProtocolAsync(UserId, id))
 				Unauthorized();
 
-			_protocolsService.DeleteProtocol(id);
+			await _protocolsService.DeleteProtocol(id);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public IActionResult GetProtocol(int id)
+		public async Task<IActionResult> GetProtocol(int id)
 		{
-			var template = _protocolsService.GetProcotolById(id);
+			var template = await _protocolsService.GetProtocolByIdAsync(id);
 
 			return Json(template);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public IActionResult View(int id)
+		public async Task<IActionResult> View(int id)
 		{
-			if (!_authorizationService.CanUserViewProtocol(UserId, id))
+			if (!await _authorizationService.CanUserViewProtocolAsync(UserId, id))
 				Unauthorized();
 
 			var model = new ViewProtocolModel();
-			model.Protocol = _protocolsService.GetProcotolById(id);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.Protocol = await _protocolsService.GetProtocolByIdAsync(id);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public IActionResult GetProtocolsForPrioType(int priority, string type)
+		public async Task<IActionResult> GetProtocolsForPrioType(int priority, string type)
 		{
-			var protocols = _protocolsService.GetAllProtocolsForDepartment(DepartmentId);
+			var protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 
 			var call = new Call();
 			call.Type = type;
@@ -243,13 +249,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public FileResult GetProtocolAttachment(int protocolAttachmentId)
+		public async Task<FileResult> GetProtocolAttachment(int protocolAttachmentId)
 		{
-			var attachment = _protocolsService.GetAttachmentById(protocolAttachmentId);
+			var attachment = await _protocolsService.GetAttachmentByIdAsync(protocolAttachmentId);
 
 			if (attachment != null)
 			{
-				if (!_authorizationService.CanUserViewProtocol(UserId, attachment.DispatchProtocolId))
+				if (!await _authorizationService.CanUserViewProtocolAsync(UserId, attachment.DispatchProtocolId))
 					Unauthorized();
 
 				return new FileContentResult(attachment.Data, attachment.FileType)
@@ -263,13 +269,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public IActionResult GetTextForProtocol(int id)
+		public async Task<IActionResult> GetTextForProtocol(int id)
 		{
-			if (!_authorizationService.CanUserViewProtocol(UserId, id))
+			if (!await _authorizationService.CanUserViewProtocolAsync(UserId, id))
 				Unauthorized();
 
 
-			var protocol = _protocolsService.GetProcotolById(id);
+			var protocol = await _protocolsService.GetProtocolByIdAsync(id);
 
 			var protocolText = "No Protocol Text Present";
 

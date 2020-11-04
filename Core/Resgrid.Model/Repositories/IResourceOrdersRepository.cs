@@ -1,23 +1,43 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	public interface IResourceOrdersRepository
+	/// <summary>
+	/// Interface IResourceOrdersRepository
+	/// Implements the <see cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.ResourceOrder}" />
+	/// </summary>
+	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.ResourceOrder}" />
+	public interface IResourceOrdersRepository: IRepository<ResourceOrder>
 	{
-		Task<List<ResourceOrder>> GetAll();
-		Task<List<ResourceOrder>> GetAllOpen();
-		Task<ResourceOrder> GetOrderById(int id);
-		Task<List<ResourceOrder>> GetOrdersByDepartmentId(int departmentId);
-		Task<List<ResourceOrder>> GetOpenOrdersByDepartmentId(int departmentId);
-		Task<ResourceOrderSetting> GetOrderSettingById(int id);
-		Task<ResourceOrderSetting> GetOrderSettingByDepartmentId(int departmentId);
-		Task<List<ResourceOrder>> GetAllOpenOrdersByRange(int departmentId);
-		Task<List<ResourceOrder>> GetAllOpenOrdersUnrestricted(int departmentId);
-		Task<List<ResourceOrder>> GetAllOpenOrdersLinked(int departmentId);
-		Task<ResourceOrderSetting> SaveSettings(ResourceOrderSetting settings);
-		Task<ResourceOrder> SaveOrder(ResourceOrder order);
-		Task<ResourceOrderFill> SaveFill(ResourceOrderFill fill);
-		Task UpdateFillStatus(int fillId, string userId, bool accepted);
+		/// <summary>
+		/// Gets all open orders asynchronous.
+		/// </summary>
+		/// <returns>Task&lt;IEnumerable&lt;ResourceOrder&gt;&gt;.</returns>
+		Task<IEnumerable<ResourceOrder>> GetAllOpenOrdersAsync();
+
+		/// <summary>
+		/// Saves the order.
+		/// </summary>
+		/// <param name="order">The order.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;ResourceOrder&gt;.</returns>
+		Task<ResourceOrder> SaveOrderAsync(ResourceOrder order, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Saves the fill asynchronous.
+		/// </summary>
+		/// <param name="fill">The fill.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;ResourceOrderFill&gt;.</returns>
+		Task<ResourceOrderFill> SaveFillAsync(ResourceOrderFill fill, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Gets all non department open visible orders asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;ResourceOrder&gt;&gt;.</returns>
+		Task<IEnumerable<ResourceOrder>> GetAllNonDepartmentOpenVisibleOrdersAsync(int departmentId);
 	}
 }

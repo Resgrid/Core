@@ -1,81 +1,240 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using System.Configuration;
 using System;
 using Dapper;
-using System.Data;
+using System.Data.Common;
+using System.Threading.Tasks;
+using Resgrid.Framework;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.UserStates;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class UserStatesRepository : RepositoryBase<UserState>, IUserStatesRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public UserStatesRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public List<UserState> GetLatestUserStatesForDepartment(int departmentId)
+		public UserStatesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			// The query below was flagged by Azure SQL as using 25% of the Resgrid database DTU's. -SJ
-			//var users = db.SqlQuery<UserState>(@"SELECT  q.UserStateId, q.UserId, q.State, q.Timestamp, q.Note
-			//									FROM    (
-			//											SELECT *, ROW_NUMBER() OVER (PARTITION BY UserId ORDER BY UserStateId DESC) us
-			//											FROM UserStates
-			//											) q
-			//									INNER JOIN DepartmentMembers dm ON dm.UserId = q.UserId
-			//									WHERE dm.DepartmentId = @departmentId AND us = 1",
-			//									new SqlParameter("@departmentId", departmentId));
-
-			/* UPDATE 6-1-2017 so it appears this single query, even with some caching is taking about 10% of the DTU's on SQL server. I think this 
-			 * is beacuse of the MAX function and the CPU cycles it needs, so trying a crossapply to see if that works better.
-			 */
-			//var users = db.SqlQuery<UserState>(@"SELECT us.UserStateId, us.UserId, us.State, us.Timestamp, us.Note, us.DepartmentId
-			//																			FROM UserStates us 
-			//																			WHERE us.DepartmentId = @departmentId AND
-			//																				us.UserStateId IN (
-			//																					SELECT MAX(us1.UserStateId)
-			//																					FROM UserStates us1 
-			//																					GROUP BY us1.UserId)",
-			//									new SqlParameter("@departmentId", departmentId));
-
-			//return users.ToList();
-
-
-			//var query = $@"SELECT UserStateId, p.UserId, State, Timestamp, Note, DepartmentId
-			//				FROM (
-			//					SELECT DISTINCT UserId
-			//					FROM UserStates WHERE DepartmentId = @departmentId) AS p
-			//				CROSS APPLY (
-			//					SELECT TOP 1 d.*
-			//					FROM UserStates AS d
-			//					WHERE d.UserId=p.UserId
-			//					ORDER BY d.UserStateId DESC) AS x;";
-
-			var query = $@"SELECT * FROM UserStates 
-							WHERE DepartmentId = @departmentId AND Timestamp >= @timestamp";
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
+		}
+		
+		public async Task<IEnumerable<UserState>> GetLatestUserStatesByDepartmentIdAsync(int departmentId)
+		{
+			try
 			{
-				return db.Query<UserState>(query, new { departmentId = departmentId, timestamp = DateTime.UtcNow.AddMonths(-3) }).ToList();
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UserState>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("Timestamp", DateTime.UtcNow.AddMonths(-3));
+
+					var query = _queryFactory.GetQuery<SelectLatestUserStatesByDidQuery>();
+
+					return await x.QueryAsync<UserState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public UserState GetUserStateById(int userStateId)
+		public async Task<IEnumerable<UserState>> GetUserStatesByUserIdAsync(string userId)
 		{
-			var query = $@"SELECT * FROM UserStates 
-							WHERE UserStateId = @userStateId";
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				return db.Query<UserState>(query, new { userStateId = userStateId}).FirstOrDefault();
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UserState>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectUserStatesByUserIdQuery>();
+
+					return await x.QueryAsync<UserState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<UserState> GetLastUserStateByUserIdAsync(string userId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<UserState>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectLastUserStatesByUserIdQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<UserState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<UserState> GetPreviousUserStateByUserIdAsync(string userId, int userStateId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<UserState>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("UserStateId", userStateId);
+
+					var query = _queryFactory.GetQuery<SelectPreviousUserStatesByUserIdQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<UserState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<UserState>> GetAllUserStatesByDepartmentIdInRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UserState>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+
+					var query = _queryFactory.GetQuery<SelectUserStatesByDIdDateRangeQuery>();
+
+					return await x.QueryAsync<UserState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 	}

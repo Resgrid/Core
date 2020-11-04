@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Model.Services;
 
@@ -16,20 +17,20 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 
 		public bool Continue { get; set; }
 
-		public void Run(NotificationQueueItem item)
+		public async Task<bool> Run(NotificationQueueItem item)
 		{
 			if (item != null && item.Department != null && item.Notifications.Count > 0 && item.NotificationSettings.Count > 0)
 			{
 				_notificationService = Bootstrapper.GetKernel().Resolve<INotificationService>();
 				_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
 
-				var notificaitons = _notificationService.ProcessNotifications(item.Notifications, item.NotificationSettings);
+				var notificaitons = await _notificationService.ProcessNotificationsAsync(item.Notifications, item.NotificationSettings);
 
 				if (notificaitons != null)
 				{
 					foreach (var notification in notificaitons)
 					{
-						var text = _notificationService.GetMessageForType(notification);
+						var text = await _notificationService.GetMessageForTypeAsync(notification);
 
 						if (!String.IsNullOrWhiteSpace(text))
 						{
@@ -42,11 +43,11 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 									if (!_notificationService.AllowToSendViaSms(notification.Type))
 										profile.SendNotificationSms = false;
 
-									_communicationService.SendNotification(user, notification.DepartmentId, text, item.DepartmentTextNumber,
+									await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, item.DepartmentTextNumber,
 										"Notification", profile);
 								}
 								else
-									_communicationService.SendNotification(user, notification.DepartmentId, text, item.DepartmentTextNumber);
+									await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, item.DepartmentTextNumber);
 							}
 						}
 					}
@@ -55,6 +56,8 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 
 			_notificationService = null;
 			_communicationService = null;
+
+			return true;
 		}
 	}
 }

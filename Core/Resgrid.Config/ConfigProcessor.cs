@@ -69,5 +69,60 @@ namespace Resgrid.Config
 
 			return false;
 		}
+
+		public static bool LoadAndProcessEnvVariables(IEnumerable<KeyValuePair<string, string>> values)
+		{
+			bool hasSetAtLeastOneVariable = false;
+
+			try
+			{
+				foreach (var configValue in values)
+				{
+					if (!String.IsNullOrWhiteSpace(configValue.Value) && configValue.Key.StartsWith("RESGRID"))
+					{
+						var parts = configValue.Key.Split(char.Parse(":"));
+
+						if (parts.Length == 3)
+						{
+							Type configObj = Type.GetType($"Resgrid.Config.{parts[1]}");
+
+							if (configObj != null)
+							{
+								hasSetAtLeastOneVariable = true;
+
+								FieldInfo prop = configObj.GetField(parts[2]);
+								if (null != prop)
+								{
+									Console.WriteLine($"Resgrid.Config: Setting Value for {prop.ToString()}");
+									if (prop.FieldType.BaseType == typeof(Enum))
+									{
+										Type t = Nullable.GetUnderlyingType(prop.FieldType) ?? prop.FieldType;
+
+										String name = Enum.GetName(t, int.Parse(configValue.Value));
+										Object enumValue = Enum.Parse(t, name, false);
+
+										object safeValue = Convert.ChangeType(enumValue, t);
+										prop.SetValue(configObj, safeValue);
+									}
+									else
+									{
+										Type t = Nullable.GetUnderlyingType(prop.FieldType) ?? prop.FieldType;
+										object safeValue = Convert.ChangeType(configValue.Value, t);
+										prop.SetValue(configObj, safeValue);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				return hasSetAtLeastOneVariable;
+
+			}
+			catch (Exception ex)
+			{
+				return false;
+			}
+		}
 	}
 }

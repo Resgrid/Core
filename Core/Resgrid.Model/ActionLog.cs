@@ -1,13 +1,18 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using System.ComponentModel.DataAnnotations;
 using Resgrid.Model.Identity;
 using System.Linq;
 using ProtoBuf;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
+	/// <summary>
+	/// Class ActionLog.
+	/// Implements the <see cref="Resgrid.Model.IEntity" />
+	/// </summary>
+	/// <seealso cref="Resgrid.Model.IEntity" />
 	[Table("ActionLogs")]
 	[ProtoContract]
 	public class ActionLog : IEntity
@@ -60,11 +65,20 @@ namespace Resgrid.Model
 		public virtual Department Department { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ActionLogId; }
 			set { ActionLogId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ActionLogs";
+
+		[NotMapped]
+		public string IdName => "ActionLogId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "User", "EtaPulledOn", "Eta" };
 
 		public string GetActionText()
 		{
@@ -131,15 +145,6 @@ namespace Resgrid.Model
 			return null;
 		}
 	}
-
-	public class ActionLog_Mapping : EntityTypeConfiguration<ActionLog>
-	{
-		public ActionLog_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-		}
-	}
-
 
 	public static class ActionLogExtensions
 	{

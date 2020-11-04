@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Resgrid.Model;
 using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
 
-namespace Identity.Dapper.Queries.Role
+namespace Resgrid.Repositories.DataRepository.Queries.Identity.Role
 {
     public class SelectRoleByNameQuery : ISelectQuery
     {
@@ -25,7 +25,7 @@ namespace Identity.Dapper.Queries.Role
             return query;
         }
 
-        public string GetQuery<TEntity>(TEntity entity)
+        public string GetQuery<TEntity>() where TEntity : class, IEntity
         {
             throw new System.NotImplementedException();
         }

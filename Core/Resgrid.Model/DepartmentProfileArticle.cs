@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -45,18 +45,19 @@ namespace Resgrid.Model
 		public bool Deleted { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentProfileArticleId; }
 			set { DepartmentProfileArticleId = (int)value; }
 		}
-	}
 
-	public class DepartmentProfileArticle_Mapping : EntityTypeConfiguration<DepartmentProfileArticle>
-	{
-		public DepartmentProfileArticle_Mapping()
-		{
-			this.HasRequired(t => t.CreatedByUser).WithMany().HasForeignKey(t => t.CreatedByUserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "DepartmentProfileArticles";
+
+		[NotMapped]
+		public string IdName => "DepartmentProfileArticleId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Profile", "CreatedByUser" };
 	}
 }

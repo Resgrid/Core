@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Autofac;
 using Newtonsoft.Json;
 using Resgrid.Model;
@@ -21,10 +22,10 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 
 		public bool Continue { get; set; }
 
-		public void Run(HeartbeatQueueItem item)
+		public async Task<bool> Run(HeartbeatQueueItem item)
 		{
 			_jobsService = Bootstrapper.GetKernel().Resolve<IJobsService>();
-			_jobsService.SetJobAsChecked(JobTypes.Heartbeat);
+			await _jobsService.SetJobAsCheckedAsync(JobTypes.Heartbeat);
 
 			if (item != null)
 			{
@@ -34,24 +35,26 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 				{
 					dynamic dynamicData = JsonConvert.DeserializeObject(item.Data);
 
-					_jobsService.SetJobAsChecked((JobTypes)int.Parse(dynamicData.WorkerType.ToString()), DateTime.Parse(dynamicData.TimeStamp.ToString()));
+					await _jobsService.SetJobAsCheckedAsync((JobTypes)int.Parse(dynamicData.WorkerType.ToString()), DateTime.Parse(dynamicData.TimeStamp.ToString()));
 				}
 				else if (item.Type == HeartbeatTypes.DListCheck)
 				{
 					dynamic dynamicData = JsonConvert.DeserializeObject(item.Data);
 
-					var dlist = _distributionListsService.GetDistributionListById(int.Parse(dynamicData.ListId.ToString()));
+					var dlist = await _distributionListsService.GetDistributionListByIdAsync(int.Parse(dynamicData.ListId.ToString()));
 
 					dlist.IsFailure = bool.Parse(dynamicData.IsFailure.ToString());
 					dlist.ErrorMessage = dynamicData.ErrorMessage.ToString();
 					dlist.LastCheck = DateTime.Parse(dynamicData.TimeStamp.ToString());
 
-					_distributionListsService.SaveDistributionListOnly(dlist);
+					await _distributionListsService.SaveDistributionListOnlyAsync(dlist);
 				}
 			}
 
 			_jobsService = null;
 			_distributionListsService = null;
+
+			return true;
 		}
 	}
 }

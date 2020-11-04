@@ -4,7 +4,6 @@ using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
-using Resgrid.Repositories.DataRepository.Contexts;
 using Resgrid.Repositories.DataRepository.Queries;
 using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 using Resgrid.Repositories.DataRepository.Transactions;
@@ -15,8 +14,6 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterGeneric(typeof(GenericDataRepository<>)).As(typeof(IGenericDataRepository<>)).InstancePerLifetimeScope();
-			builder.RegisterType<DataContext>().As<DataContext>().InstancePerLifetimeScope();
 			builder.RegisterType<StandardIsolation>().As<IISolationLevel>().InstancePerLifetimeScope();
 
 			// Custom Repositories
@@ -60,6 +57,78 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<SqlServerConnectionProvider>().As<IConnectionProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleRepository>().As<IIdentityRoleRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityUserRepository>().As<IIdentityUserRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AffiliateRepository>().As<IAffiliateRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AuditLogsRepository>().As<IAuditLogsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<NotesRepository>().As<INotesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FileRepository>().As<IFileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PushLogsRepository>().As<IPushLogsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<JobsRepository>().As<IJobsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DocumentRepository>().As<IDocumentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InvitesRepository>().As<IInvitesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InventoryRepository>().As<IInventoryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InventoryTypesRepository>().As<IInventoryTypesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PoisRepository>().As<IPoisRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PoiTypesRepository>().As<IPoiTypesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<QueueItemsRepository>().As<IQueueItemsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallQuickTemplateRepository>().As<ICallQuickTemplateRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InboundMessageEventRepository>().As<IInboundMessageEventRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PersonnelCertificationRepository>().As<IPersonnelCertificationRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentCertificationTypeRepository>().As<IDepartmentCertificationTypeRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PermissionsRepository>().As<IPermissionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentLinksRepository>().As<IDepartmentLinksRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PaymentProviderEventsRepository>().As<IPaymentProviderEventsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LogEntriesRepository>().As<ILogEntriesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ProcessLogRepository>().As<IProcessLogRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchProtocolRepository>().As<IDispatchProtocolRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchProtocolAttachmentRepository>().As<IDispatchProtocolAttachmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PersonnelRolesRepository>().As<IPersonnelRolesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PersonnelRoleUsersRepository>().As<IPersonnelRoleUsersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<MessageRecipientRepository>().As<IMessageRecipientRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceOrderSettingsRepository>().As<IResourceOrderSettingsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceOrderFillRepository>().As<IResourceOrderFillRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceOrderItemRepository>().As<IResourceOrderItemRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceOrderFillUnitRepository>().As<IResourceOrderFillUnitRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommandDefinitionRepository>().As<ICommandDefinitionRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DistributionListRepository>().As<IDistributionListRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DistributionListMemberRepository>().As<IDistributionListMemberRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomStateRepository>().As<ICustomStateRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomStateDetailRepository>().As<ICustomStateDetailRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingUserRepository>().As<ITrainingUserRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingAttachmentRepository>().As<ITrainingAttachmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalendarItemTypeRepository>().As<ICalendarItemTypeRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalendarItemAttendeeRepository>().As<ICalendarItemAttendeeRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LogsRepository>().As<ILogsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LogUsersRepository>().As<ILogUsersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallLogsRepository>().As<ICallLogsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LogAttachmentRepository>().As<ILogAttachmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitsRepository>().As<IUnitsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitLogsRepository>().As<IUnitLogsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitRolesRepository>().As<IUnitRolesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTypesRepository>().As<IUnitTypesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitStateRoleRepository>().As<IUnitStateRoleRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftPersonRepository>().As<IShiftPersonRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftDaysRepository>().As<IShiftDaysRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftGroupsRepository>().As<IShiftGroupsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftSignupRepository>().As<IShiftSignupRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftSignupTradeRepository>().As<IShiftSignupTradeRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftSignupTradeUserRepository>().As<IShiftSignupTradeUserRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftSignupTradeUserShiftsRepository>().As<IShiftSignupTradeUserShiftsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftStaffingRepository>().As<IShiftStaffingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftStaffingPersonRepository>().As<IShiftStaffingPersonRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftGroupAssignmentsRepository>().As<IShiftGroupAssignmentsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallDispatchesRepository>().As<ICallDispatchesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallAttachmentRepository>().As<ICallAttachmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallDispatchGroupRepository>().As<ICallDispatchGroupRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallDispatchUnitRepository>().As<ICallDispatchUnitRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallDispatchRoleRepository>().As<ICallDispatchRoleRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallNotesRepository>().As<ICallNotesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentCallPriorityRepository>().As<IDepartmentCallPriorityRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallProtocolsRepository>().As<ICallProtocolsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingQuestionRepository>().As<ITrainingQuestionRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LogUnitsRepository>().As<ILogUnitsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftGroupRolesRepository>().As<IShiftGroupRolesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchProtocolQuestionsRepository>().As<IDispatchProtocolQuestionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchProtocolTriggersRepository>().As<IDispatchProtocolTriggersRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

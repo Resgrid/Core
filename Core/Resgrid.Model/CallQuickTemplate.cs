@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
@@ -37,10 +38,19 @@ namespace Resgrid.Model
 		public DateTime CreatedOn { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CallQuickTemplateId; }
 			set { CallQuickTemplateId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "CallQuickTemplates";
+
+		[NotMapped]
+		public string IdName => "CallQuickTemplateId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "CreatedByUser" };
 	}
 }

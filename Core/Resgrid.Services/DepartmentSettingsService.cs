@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
-using Resgrid.Providers.Bus;
 
 namespace Resgrid.Services
 {
@@ -30,11 +32,9 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 		}
 
-		public void SaveOrUpdateSetting(int departmentId, string setting, DepartmentSettingTypes type)
+		public async Task<DepartmentSetting> SaveOrUpdateSettingAsync(int departmentId, string setting, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var savedSetting = (from set in _departmentSettingsRepository.GetAll()
-								where set.DepartmentId == departmentId && set.SettingType == (int)type
-								select set).FirstOrDefault();
+			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
 
 			if (savedSetting == null)
 			{
@@ -43,70 +43,60 @@ namespace Resgrid.Services
 				newSetting.Setting = setting;
 				newSetting.SettingType = (int)type;
 
-				_departmentSettingsRepository.SaveOrUpdate(newSetting);
+				return await _departmentSettingsRepository.SaveOrUpdateAsync(newSetting, cancellationToken);
 			}
 			else
 			{
 				savedSetting.Setting = setting;
-				_departmentSettingsRepository.SaveOrUpdate(savedSetting);
+				return await _departmentSettingsRepository.SaveOrUpdateAsync(savedSetting, cancellationToken);
 			}
+
+			return null;
 		}
 
-		public void DeleteSetting(int departmentId, DepartmentSettingTypes type)
+		public async Task<bool> DeleteSettingAsync(int departmentId, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var savedSetting = (from set in _departmentSettingsRepository.GetAll()
-								where set.DepartmentId == departmentId && set.SettingType == (int)type
-								select set).FirstOrDefault();
+			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
 
 			if (savedSetting != null)
-				_departmentSettingsRepository.DeleteOnSubmit(savedSetting);
+				return await _departmentSettingsRepository.DeleteAsync(savedSetting, cancellationToken);
+
+			return false;
 		}
 
-		public int? GetBigBoardMapZoomLevelForDepartment(int departmentId)
+		public async Task<int?> GetBigBoardMapZoomLevelForDepartmentAsync(int departmentId)
 		{
-			var zoomLevel = (from setting in _departmentSettingsRepository.GetAll()
-							 where setting.DepartmentId == departmentId &&
-									setting.SettingType == (int)DepartmentSettingTypes.BigBoardMapZoomLevel
-							 select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BigBoardMapZoomLevel);
 
-			if (zoomLevel != null)
-				return int.Parse(zoomLevel.Setting);
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
 
 			return null;
 		}
 
-		public int? GetBigBoardRefreshTimeForDepartment(int departmentId)
+		public async Task<int?> GetBigBoardRefreshTimeForDepartmentAsync(int departmentId)
 		{
-			var refresh = (from setting in _departmentSettingsRepository.GetAll()
-						   where setting.DepartmentId == departmentId &&
-							   setting.SettingType == (int)DepartmentSettingTypes.BigBoardPageRefresh
-						   select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BigBoardPageRefresh);
 
-			if (refresh != null)
-				return int.Parse(refresh.Setting);
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
 
 			return null;
 		}
 
-		public Address GetBigBoardCenterAddressDepartment(int departmentId)
+		public async Task<Address> GetBigBoardCenterAddressDepartmentAsync(int departmentId)
 		{
-			var center = (from setting in _departmentSettingsRepository.GetAll()
-						  where setting.DepartmentId == departmentId &&
-							  setting.SettingType == (int)DepartmentSettingTypes.BigBoardMapCenterAddress
-						  select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BigBoardMapCenterAddress);
 
-			if (center != null)
-				return _addressService.GetAddressById(int.Parse(center.Setting));
+			if (settingValue != null)
+				return await _addressService.GetAddressByIdAsync(int.Parse(settingValue.Setting));
 
 			return null;
 		}
 
-		public string GetBigBoardCenterGpsCoordinatesDepartment(int departmentId)
+		public async Task<string> GetBigBoardCenterGpsCoordinatesDepartmentAsync(int departmentId)
 		{
-			var center = (from setting in _departmentSettingsRepository.GetAll()
-						  where setting.DepartmentId == departmentId &&
-							  setting.SettingType == (int)DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates
-						  select setting).FirstOrDefault();
+			var center = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates);
 
 			if (center != null)
 			{
@@ -151,75 +141,63 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public bool? GetBigBoardHideUnavailableDepartment(int departmentId)
+		public async Task<bool?> GetBigBoardHideUnavailableDepartmentAsync(int departmentId)
 		{
-			var center = (from setting in _departmentSettingsRepository.GetAll()
-						  where setting.DepartmentId == departmentId &&
-							  setting.SettingType == (int)DepartmentSettingTypes.BigBoardHideUnavailable
-						  select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BigBoardHideUnavailable);
 
-			if (center != null)
-				return bool.Parse(center.Setting);
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
 
 			return null;
 		}
 
-		public string GetRssKeyForDepartment(int departmentId)
+		public async Task<string> GetRssKeyForDepartmentAsync(int departmentId)
 		{
-			var key = (from setting in _departmentSettingsRepository.GetAll()
-					   where setting.DepartmentId == departmentId &&
-						   setting.SettingType == (int)DepartmentSettingTypes.RssFeedKeyForActiveCalls
-					   select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.RssFeedKeyForActiveCalls);
 
-			if (key != null)
-				return key.Setting;
+			if (settingValue != null)
+				return settingValue.Setting;
 
 			return null;
 		}
 
-		public int? GetDepartmentIdForRssKey(string key)
+		public async Task<int?> GetDepartmentIdForRssKeyAsync(string key)
 		{
-			var department = (from setting in _departmentSettingsRepository.GetAll()
-							  where setting.Setting == key &&
-								  setting.SettingType == (int)DepartmentSettingTypes.RssFeedKeyForActiveCalls
-							  select setting).FirstOrDefault();
-
+			var department = await GetSettingBySettingTypeAsync(key, DepartmentSettingTypes.RssFeedKeyForActiveCalls);
+			
 			if (department != null)
 				return department.DepartmentId;
 
 			return null;
 		}
 
-		public string GetStripeCustomerIdForDepartment(int departmentId)
+		public async Task<string> GetStripeCustomerIdForDepartmentAsync(int departmentId)
 		{
-			var key = (from setting in _departmentSettingsRepository.GetAll()
-					   where setting.DepartmentId == departmentId &&
-						   setting.SettingType == (int)DepartmentSettingTypes.StripeCustomerId
-					   select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.StripeCustomerId);
 
-			if (key != null)
-				return key.Setting;
+			if (settingValue != null)
+				return settingValue.Setting;
 
 			return null;
 		}
 
-		public int? GetDepartmentIdForStripeCustomerId(string stripeCustomerId, bool bypassCache = false)
+		public async Task<int?> GetDepartmentIdForStripeCustomerIdAsync(string stripeCustomerId, bool bypassCache = false)
 		{
 			DepartmentSetting key;
 
-			Func<DepartmentSetting> getSetting = delegate ()
+			async Task<DepartmentSetting> getSetting()
 			{
-				return _departmentSettingsRepository.GetDepartmentSettingBySettingType(stripeCustomerId, DepartmentSettingTypes.StripeCustomerId);
-			};
+				return await _departmentSettingsRepository.GetDepartmentSettingBySettingTypeAsync(stripeCustomerId, DepartmentSettingTypes.StripeCustomerId);
+			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				key = _cacheProvider.Retrieve<DepartmentSetting>(string.Format(StripeCustomerCacheKey, stripeCustomerId),
+				key = await _cacheProvider.RetrieveAsync<DepartmentSetting>(string.Format(StripeCustomerCacheKey, stripeCustomerId),
 					getSetting, TwoYearCacheLength);
 			}
 			else
 			{
-				key = getSetting();
+				key = await getSetting();
 			}
 
 			if (key != null)
@@ -228,25 +206,19 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public string GetBrainTreeCustomerIdForDepartment(int departmentId)
+		public async Task<string> GetBrainTreeCustomerIdForDepartmentAsync(int departmentId)
 		{
-			var key = (from setting in _departmentSettingsRepository.GetAll()
-					   where setting.DepartmentId == departmentId &&
-						   setting.SettingType == (int)DepartmentSettingTypes.BrainTreeCustomerId
-					   select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BrainTreeCustomerId);
 
-			if (key != null)
-				return key.Setting;
+			if (settingValue != null)
+				return settingValue.Setting;
 
 			return null;
 		}
 
-		public int? GetDepartmentIdForBrainTreeCustomerId(string stripeCustomerId)
+		public async Task<int?> GetDepartmentIdForBrainTreeCustomerIdAsync(string stripeCustomerId)
 		{
-			var key = (from setting in _departmentSettingsRepository.GetAll()
-					   where setting.Setting == stripeCustomerId &&
-						   setting.SettingType == (int)DepartmentSettingTypes.BrainTreeCustomerId
-					   select setting).FirstOrDefault();
+			var key = await _departmentSettingsRepository.GetDepartmentSettingBySettingTypeAsync(stripeCustomerId, DepartmentSettingTypes.BrainTreeCustomerId);
 
 			if (key != null)
 				return key.DepartmentId;
@@ -254,23 +226,20 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public bool IsTestingEnabledForDepartment(int departmentId)
+		public async Task<bool> IsTestingEnabledForDepartmentAsync(int departmentId)
 		{
-			var testingEnabled = (from setting in _departmentSettingsRepository.GetAll()
-								  where setting.DepartmentId == departmentId &&
-									  setting.SettingType == (int)DepartmentSettingTypes.TestEnabled
-								  select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.TestEnabled);
 
-			if (testingEnabled != null)
-				return bool.Parse(testingEnabled.Setting);
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
 
 			return false;
 		}
 
-		public Coordinates GetMapCenterCoordinates(Department department)
+		public async Task<Coordinates> GetMapCenterCoordinatesAsync(Department department)
 		{
-			var address = GetBigBoardCenterAddressDepartment(department.DepartmentId);
-			var gpsCoordinates = GetBigBoardCenterGpsCoordinatesDepartment(department.DepartmentId);
+			var address = await GetBigBoardCenterAddressDepartmentAsync(department.DepartmentId);
+			var gpsCoordinates = await GetBigBoardCenterGpsCoordinatesDepartmentAsync(department.DepartmentId);
 
 			var coordinates = new Coordinates();
 
@@ -292,7 +261,7 @@ namespace Resgrid.Services
 
 			if (!coordinates.Latitude.HasValue && !coordinates.Longitude.HasValue && address != null)
 			{
-				string coords = _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", address.Address1,
+				string coords = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", address.Address1,
 																																address.City, address.State, address.PostalCode));
 
 				if (!String.IsNullOrEmpty(coords))
@@ -310,7 +279,7 @@ namespace Resgrid.Services
 
 			if (!coordinates.Latitude.HasValue && !coordinates.Longitude.HasValue && department.Address != null)
 			{
-				string coords = _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", department.Address.Address1,
+				string coords = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", department.Address.Address1,
 																																department.Address.City,
 																																department.Address.State,
 																																department.Address.PostalCode));
@@ -337,33 +306,32 @@ namespace Resgrid.Services
 			return coordinates;
 		}
 
-		public bool GetDisableAutoAvailableForDepartment(int departmentId, bool bypassCache = true)
+		public async Task<bool> GetDisableAutoAvailableForDepartmentAsync(int departmentId, bool bypassCache = true)
 		{
+			async Task<string> getSetting()
+			{
+				var actualSetting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DisabledAutoAvailable);
+
+				if (actualSetting != null)
+					return actualSetting.Setting;
+				else
+					return "false";
+			}
+
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<string> getSetting = delegate ()
-				{
-					var actualSetting = (from setting in _departmentSettingsRepository.GetAll()
-										 where setting.DepartmentId == departmentId &&
-												 setting.SettingType == (int)DepartmentSettingTypes.DisabledAutoAvailable
-										 select setting).FirstOrDefault();
-
-					if (actualSetting != null)
-						return actualSetting.Setting;
-					else
-						return "false";
-				};
-
-				var cachedValue = _cacheProvider.Retrieve<string>(string.Format(DisableAutoAvailableCacheKey, departmentId),
+				var cachedValue = await _cacheProvider.RetrieveAsync<string>(string.Format(DisableAutoAvailableCacheKey, departmentId),
 					getSetting, LongCacheLength);
 
 				return bool.Parse(cachedValue);
 			}
 
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-										setting.SettingType == (int)DepartmentSettingTypes.DisabledAutoAvailable
-								select setting).FirstOrDefault();
+			return bool.Parse(await getSetting());
+		}
+
+		public async Task<bool> GetDisableAutoAvailableForDepartmentByUserIdAsync(string userId)
+		{
+			var settingValue = await GetSettingBySettingTypeAsync(userId, DepartmentSettingTypes.DisabledAutoAvailable);
 
 			if (settingValue != null)
 				return bool.Parse(settingValue.Setting);
@@ -371,24 +339,9 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool GetDisableAutoAvailableForDepartmentByUserId(string userId)
+		public async Task<string> GetTextToCallNumberForDepartmentAsync(int departmentId)
 		{
-			var settingValue = _departmentSettingsRepository.GetDepartmentSettingByUserIdType(userId, DepartmentSettingTypes.DisabledAutoAvailable);
-
-			if (settingValue != null)
-				return bool.Parse(settingValue.Setting);
-
-			return false;
-		}
-
-		public string GetTextToCallNumberForDepartment(int departmentId)
-		{
-			//var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-			//										where setting.DepartmentId == departmentId &&
-			//												setting.SettingType == (int)DepartmentSettingTypes.TextToCallNumber
-			//										select setting).FirstOrDefault();
-
-			var settingValue = _departmentSettingsRepository.GetDepartmentSettingByIdType(departmentId, DepartmentSettingTypes.TextToCallNumber);
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.TextToCallNumber);
 
 			if (settingValue != null)
 				return settingValue.Setting;
@@ -396,12 +349,9 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public int? GetTextToCallImportFormatForDepartment(int departmentId)
+		public async Task<int?> GetTextToCallImportFormatForDepartmentAsync(int departmentId)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-										setting.SettingType == (int)DepartmentSettingTypes.TextToCallImportFormat
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.TextToCallImportFormat);
 
 			if (settingValue != null)
 				return int.Parse(settingValue.Setting);
@@ -409,12 +359,9 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public string GetTextToCallSourceNumbersForDepartment(int departmentId)
+		public async Task<string> GetTextToCallSourceNumbersForDepartmentAsync(int departmentId)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-									setting.SettingType == (int)DepartmentSettingTypes.TextToCallSourceNumbers
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.TextToCallSourceNumbers);
 
 			if (settingValue != null)
 				return settingValue.Setting;
@@ -422,12 +369,9 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public int? GetDepartmentIdByTextToCallNumber(string phoneNumber)
+		public async Task<int?> GetDepartmentIdByTextToCallNumberAsync(string phoneNumber)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.Setting.Trim() == phoneNumber &&
-										setting.SettingType == (int)DepartmentSettingTypes.TextToCallNumber
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingBySettingTypeAsync(phoneNumber, DepartmentSettingTypes.TextToCallNumber);
 
 			if (settingValue != null)
 				return settingValue.DepartmentId;
@@ -435,12 +379,9 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public bool GetDepartmentIsTextCallImportEnabled(int departmentId)
+		public async Task<bool> GetDepartmentIsTextCallImportEnabledAsync(int departmentId)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-									setting.SettingType == (int)DepartmentSettingTypes.EnableTextToCall
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EnableTextToCall);
 
 			if (settingValue != null)
 				return bool.Parse(settingValue.Setting);
@@ -448,12 +389,9 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool GetDepartmentIsTextCommandEnabled(int departmentId)
+		public async Task<bool> GetDepartmentIsTextCommandEnabledAsync(int departmentId)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-										setting.SettingType == (int)DepartmentSettingTypes.EnableTextCommand
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EnableTextCommand);
 
 			if (settingValue != null)
 				return bool.Parse(settingValue.Setting);
@@ -461,51 +399,39 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public int? GetDepartmentIdForDispatchEmail(string emailAddress)
+		public async Task<int?> GetDepartmentIdForDispatchEmailAsync(string emailAddress)
 		{
-			var key = (from setting in _departmentSettingsRepository.GetAll()
-					   where setting.Setting == emailAddress &&
-						   setting.SettingType == (int)DepartmentSettingTypes.InternalDispatchEmail
-					   select setting).FirstOrDefault();
+			var settingValue = await GetSettingBySettingTypeAsync(emailAddress, DepartmentSettingTypes.InternalDispatchEmail);
 
-			if (key != null)
-				return key.DepartmentId;
+			if (settingValue != null)
+				return settingValue.DepartmentId;
 
 			return null;
 		}
 
-		public string GetDispatchEmailForDepartment(int departmentId)
+		public async Task<string> GetDispatchEmailForDepartmentAsync(int departmentId)
 		{
-			var key = (from setting in _departmentSettingsRepository.GetAll()
-					   where setting.DepartmentId == departmentId &&
-						   setting.SettingType == (int)DepartmentSettingTypes.InternalDispatchEmail
-					   select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.InternalDispatchEmail);
 
-			if (key != null)
-				return key.Setting;
+			if (settingValue != null)
+				return settingValue.Setting;
 
 			return null;
 		}
 
-		public DateTime GetDepartmentUpdateTimestamp(int departmentId)
+		public async Task<DateTime> GetDepartmentUpdateTimestampAsync(int departmentId)
 		{
-			var key = (from setting in _departmentSettingsRepository.GetAll()
-					   where setting.DepartmentId == departmentId &&
-						   setting.SettingType == (int)DepartmentSettingTypes.UpdateTimestamp
-					   select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UpdateTimestamp);
 
-			if (key != null)
-				return DateTime.Parse(key.Setting);
+			if (settingValue != null)
+				return DateTime.Parse(settingValue.Setting);
 
 			return DateTime.MinValue;
 		}
 
-		public PersonnelSortOrders GetDepartmentPersonnelSortOrder(int departmentId)
+		public async Task<PersonnelSortOrders> GetDepartmentPersonnelSortOrderAsync(int departmentId)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-										setting.SettingType == (int)DepartmentSettingTypes.PersonnelSortOrder
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.PersonnelSortOrder);
 
 			if (settingValue != null)
 				return (PersonnelSortOrders)int.Parse(settingValue.Setting);
@@ -513,12 +439,9 @@ namespace Resgrid.Services
 			return PersonnelSortOrders.Default;
 		}
 
-		public UnitSortOrders GetDepartmentUnitsSortOrder(int departmentId)
+		public async Task<UnitSortOrders> GetDepartmentUnitsSortOrderAsync(int departmentId)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-										setting.SettingType == (int)DepartmentSettingTypes.UnitsSortOrder
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitsSortOrder);
 
 			if (settingValue != null)
 				return (UnitSortOrders)int.Parse(settingValue.Setting);
@@ -526,12 +449,9 @@ namespace Resgrid.Services
 			return UnitSortOrders.Default;
 		}
 
-		public CallSortOrders GetDepartmentCallSortOrder(int departmentId)
+		public async Task<CallSortOrders> GetDepartmentCallSortOrderAsync(int departmentId)
 		{
-			var settingValue = (from setting in _departmentSettingsRepository.GetAll()
-								where setting.DepartmentId == departmentId &&
-										setting.SettingType == (int)DepartmentSettingTypes.CallsSortOrder
-								select setting).FirstOrDefault();
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.CallsSortOrder);
 
 			if (settingValue != null)
 				return (CallSortOrders)int.Parse(settingValue.Setting);
@@ -539,14 +459,47 @@ namespace Resgrid.Services
 			return CallSortOrders.Default;
 		}
 
-		public List<DepartmentManagerInfo> GetAllDepartmentManagerInfo()
+		public async Task<List<DepartmentManagerInfo>> GetAllDepartmentManagerInfoAsync()
 		{
-			return _departmentSettingsRepository.GetAllDepartmentManagerInfo();
+			return await _departmentSettingsRepository.GetAllDepartmentManagerInfoAsync();
 		}
 
-		public DepartmentManagerInfo GetDepartmentManagerInfoByEmail(string emailAddress)
+		public async Task<DepartmentManagerInfo> GetDepartmentManagerInfoByEmailAsync(string emailAddress)
 		{
-			return _departmentSettingsRepository.GetDepartmentManagerInfoByEmail(emailAddress);
+			return await _departmentSettingsRepository.GetDepartmentManagerInfoByEmailAsync(emailAddress);
+		}
+
+		public async Task<List<PersonnelListStatusOrder>> GetDepartmentPersonnelListStatusSortOrderAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.PersonnelListStatusSortOrder);
+
+			if (settingValue != null)
+			{
+				var setting = ObjectSerialization.Deserialize<PersonnelListStatusOrderSetting>(settingValue.Setting);
+
+				if (setting != null)
+					return setting.Orders;
+			}
+			return null;
+		}
+
+		public async Task<DepartmentSetting> SetDepartmentPersonnelListStatusSortOrderAsync(int departmentId, List<PersonnelListStatusOrder> orders, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var setting = new PersonnelListStatusOrderSetting();
+			setting.Orders = orders;
+
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(setting),
+				DepartmentSettingTypes.PersonnelListStatusSortOrder, cancellationToken);
+		}
+
+		private async Task<DepartmentSetting> GetSettingByDepartmentIdType(int departmentId, DepartmentSettingTypes settingType)
+		{
+			return await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(departmentId, settingType);
+		}
+
+		private async Task<DepartmentSetting> GetSettingBySettingTypeAsync(string setting, DepartmentSettingTypes settingType)
+		{
+			return await _departmentSettingsRepository.GetDepartmentSettingBySettingTypeAsync(setting, settingType);
 		}
 	}
 }

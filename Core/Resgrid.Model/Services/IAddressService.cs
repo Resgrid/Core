@@ -1,13 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model.Providers;
 
 namespace Resgrid.Model.Services
 {
 	public interface IAddressService
 	{
-		Address GetAddressById(int addressId);
-		Address SaveAddress(Address address);
-		AddressVerificationResult IsAddressValid(Address address);
 		Task<Address> GetAddressByIdAsync(int addressId);
+		Task<Address> SaveAddressAsync(Address address, CancellationToken cancellationToken = default(CancellationToken));
+		Task<AddressVerificationResult> IsAddressValidAsync(Address address);
 	}
 }

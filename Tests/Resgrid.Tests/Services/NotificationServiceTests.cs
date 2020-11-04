@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -62,7 +60,7 @@ namespace Resgrid.Tests.Services
 				DepartmentMembershipHelpers.SetupUsersForDepartment1(_departmentsServiceMock);
 
 				#region Unit State Mocks
-				_unitsServiceMock.Setup(x => x.GetUnitStateById(1)).Returns(new UnitState()
+				_unitsServiceMock.Setup(x => x.GetUnitStateByIdAsync(1)).ReturnsAsync(new UnitState()
 				{
 					UnitStateId = 1,
 					UnitId = 1,
@@ -75,7 +73,7 @@ namespace Resgrid.Tests.Services
 					}
 				});
 
-				_unitsServiceMock.Setup(x => x.GetUnitStateById(2)).Returns(new UnitState()
+				_unitsServiceMock.Setup(x => x.GetUnitStateByIdAsync(2)).ReturnsAsync(new UnitState()
 				{
 					UnitStateId = 2,
 					UnitId = 1,
@@ -88,7 +86,7 @@ namespace Resgrid.Tests.Services
 					}
 				});
 
-				_unitsServiceMock.Setup(x => x.GetUnitStateById(3)).Returns(new UnitState()
+				_unitsServiceMock.Setup(x => x.GetUnitStateByIdAsync(3)).ReturnsAsync(new UnitState()
 				{
 					UnitStateId = 3,
 					UnitId = 1,
@@ -101,7 +99,7 @@ namespace Resgrid.Tests.Services
 					}
 				});
 
-				_unitsServiceMock.Setup(x => x.GetLastUnitStateBeforeId(1,3)).Returns(new UnitState()
+				_unitsServiceMock.Setup(x => x.GetLastUnitStateBeforeIdAsync(1,3)).ReturnsAsync(new UnitState()
 				{
 					UnitStateId = 2,
 					UnitId = 1,
@@ -119,7 +117,7 @@ namespace Resgrid.Tests.Services
 				DepartmentGroupsHelper.SetupGroup(5, _departmentGroupsServiceMock);
 
 				#region User State Mocks
-				_userStateServiceMock.Setup(x => x.GetUserStateById(1)).Returns(
+				_userStateServiceMock.Setup(x => x.GetUserStateByIdAsync(1)).ReturnsAsync(
 					new UserState
 					{
 						UserStateId = 1,
@@ -127,7 +125,7 @@ namespace Resgrid.Tests.Services
 						UserId = TestData.Users.TestUser1Id
 					});
 
-				_userStateServiceMock.Setup(x => x.GetUserStateById(2)).Returns(
+				_userStateServiceMock.Setup(x => x.GetUserStateByIdAsync(2)).ReturnsAsync(
 					new UserState
 					{
 						UserStateId = 2,
@@ -135,7 +133,7 @@ namespace Resgrid.Tests.Services
 						UserId = TestData.Users.TestUser1Id
 					});
 
-				_userStateServiceMock.Setup(x => x.GetUserStateById(3)).Returns(
+				_userStateServiceMock.Setup(x => x.GetUserStateByIdAsync(3)).ReturnsAsync(
 					new UserState
 					{
 						UserStateId = 3,
@@ -143,7 +141,7 @@ namespace Resgrid.Tests.Services
 						UserId = TestData.Users.TestUser1Id
 					});
 
-				_userStateServiceMock.Setup(x => x.GetPerviousUserState(TestData.Users.TestUser1Id, 3)).Returns(
+				_userStateServiceMock.Setup(x => x.GetPreviousUserStateAsync(TestData.Users.TestUser1Id, 3)).ReturnsAsync(
 					new UserState
 					{
 						UserStateId = 2,
@@ -151,7 +149,7 @@ namespace Resgrid.Tests.Services
 						UserId = TestData.Users.TestUser1Id
 					});
 
-				_userStateServiceMock.Setup(x => x.GetLatestStatesForDepartment(1, true)).Returns(
+				_userStateServiceMock.Setup(x => x.GetLatestStatesForDepartmentAsync(1, true)).ReturnsAsync(
 					new List<UserState>
 					{ 
 						new UserState
@@ -194,7 +192,7 @@ namespace Resgrid.Tests.Services
 				#endregion User State Mocks
 
 				#region Personnel Roles Mocks
-				_personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRole(3)).Returns(new List<PersonnelRoleUser>()
+				_personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRoleAsync(3)).ReturnsAsync(new List<PersonnelRoleUser>()
 				{
 					new PersonnelRoleUser()
 					{
@@ -216,7 +214,7 @@ namespace Resgrid.Tests.Services
 					}
 				});
 
-				_personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRole(4)).Returns(new List<PersonnelRoleUser>()
+				_personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRoleAsync(4)).ReturnsAsync(new List<PersonnelRoleUser>()
 				{
 					new PersonnelRoleUser()
 					{
@@ -232,7 +230,7 @@ namespace Resgrid.Tests.Services
 					}
 				});
 
-				_personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRole(5)).Returns(new List<PersonnelRoleUser>()
+				_personnelRolesServiceMock.Setup(x => x.GetAllMembersOfRoleAsync(5)).ReturnsAsync(new List<PersonnelRoleUser>()
 				{
 					new PersonnelRoleUser()
 					{
@@ -274,7 +272,7 @@ namespace Resgrid.Tests.Services
 				#endregion Personnel Roles Mocks
 
 				#region Action Log Mocks
-				_actionLogsServiceMock.Setup(x => x.GetActionlogById(1)).Returns(
+				_actionLogsServiceMock.Setup(x => x.GetActionLogByIdAsync(1)).ReturnsAsync(
 					new ActionLog
 					{
 						ActionLogId = 1,
@@ -282,7 +280,7 @@ namespace Resgrid.Tests.Services
 						ActionTypeId = (int)ActionTypes.StandingBy
 					});
 
-				_actionLogsServiceMock.Setup(x => x.GetActionlogById(2)).Returns(
+				_actionLogsServiceMock.Setup(x => x.GetActionLogByIdAsync(2)).ReturnsAsync(
 					new ActionLog
 					{
 						ActionLogId = 2,
@@ -290,7 +288,7 @@ namespace Resgrid.Tests.Services
 						ActionTypeId = (int)ActionTypes.NotResponding
 					});
 
-				_actionLogsServiceMock.Setup(x => x.GetActionlogById(3)).Returns(
+				_actionLogsServiceMock.Setup(x => x.GetActionLogByIdAsync(3)).ReturnsAsync(
 					new ActionLog
 					{
 						ActionLogId = 3,
@@ -298,7 +296,7 @@ namespace Resgrid.Tests.Services
 						ActionTypeId = (int)ActionTypes.Responding
 					});
 
-				_actionLogsServiceMock.Setup(x => x.GetPreviousActionLog(TestData.Users.TestUser1Id, 3)).Returns(
+				_actionLogsServiceMock.Setup(x => x.GetPreviousActionLogAsync(TestData.Users.TestUser1Id, 3)).ReturnsAsync(
 					new ActionLog
 					{
 						ActionLogId = 2,
@@ -308,7 +306,7 @@ namespace Resgrid.Tests.Services
 				#endregion Action Log Mocks
 
 				#region Department Groups Mocks
-				_departmentGroupsServiceMock.Setup(x => x.GetGroupForUser(TestData.Users.TestUser1Id, 0)).Returns(
+				_departmentGroupsServiceMock.Setup(x => x.GetGroupForUserAsync(TestData.Users.TestUser1Id, 0)).ReturnsAsync(
 					new DepartmentGroup
 					{
 						DepartmentGroupId = 1,
@@ -335,10 +333,10 @@ namespace Resgrid.Tests.Services
 					});
 				#endregion Department Group Mocks
 
-				_unitsServiceMock.Setup(x => x.GetUnitById(1)).Returns(
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(1)).ReturnsAsync(
 					new Unit() {UnitId = 1, DepartmentId = 1, StationGroupId = 1});
 
-				_unitsServiceMock.Setup(x => x.GetAllUnitsForGroup(1)).Returns(
+				_unitsServiceMock.Setup(x => x.GetAllUnitsForGroupAsync(1)).ReturnsAsync(
 					new List<Unit>()
 					{
 						new Unit {UnitId = 1},
@@ -346,7 +344,7 @@ namespace Resgrid.Tests.Services
 						new Unit {UnitId = 12},
 					});
 				
-				_unitsServiceMock.Setup(x => x.GetAllUnitsForType(1, "Rescue")).Returns(
+				_unitsServiceMock.Setup(x => x.GetAllUnitsForTypeAsync(1, "Rescue")).ReturnsAsync(
 					new List<Unit>()
 					{
 						new Unit()
@@ -371,7 +369,7 @@ namespace Resgrid.Tests.Services
 						}
 					});
 
-				_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentId(1)).Returns(
+				_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(1)).ReturnsAsync(
 					new List<UnitState>()
 					{
 						new UnitState() { UnitId = 1, State = (int)UnitStateTypes.Available},
@@ -395,27 +393,27 @@ namespace Resgrid.Tests.Services
 		public class when_processing_notifications : with_the_notification_service
 		{
 			[Test]
-			public void should_not_throw_exception_with_nulls()
+			public async Task should_not_throw_exception_with_nulls()
 			{
-				_notificationServiceMock.ProcessNotifications(null, null);
+				await _notificationServiceMock.ProcessNotificationsAsync(null, null);
 			}
 
 			[Test]
-			public void should_not_throw_exception_with_no_settings()
+			public async Task should_not_throw_exception_with_no_settings()
 			{
 				var notifications = new List<ProcessedNotification>();
-				_notificationServiceMock.ProcessNotifications(notifications, null);
+				await _notificationServiceMock.ProcessNotificationsAsync(notifications, null);
 			}
 
 			[Test]
-			public void should__with_no_notifications()
+			public async Task should__with_no_notifications()
 			{
 				var notifications = new List<DepartmentNotification>();
-				_notificationServiceMock.ProcessNotifications(null, notifications);
+				await _notificationServiceMock.ProcessNotificationsAsync(null, notifications);
 			}
 
 			[Test]
-			public void should_work_with_everyone()
+			public async Task should_work_with_everyone()
 			{
 				var notifications = new List<DepartmentNotification>();
 				notifications.Add(new DepartmentNotification()
@@ -436,7 +434,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				});
 
-				var processedNots = _notificationServiceMock.ProcessNotifications(processedNotifications, notifications);
+				var processedNots = await _notificationServiceMock.ProcessNotificationsAsync(processedNotifications, notifications);
 
 				processedNots.Should().NotBeNull();
 				processedNots.Count.Should().Be(1);
@@ -445,7 +443,7 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public void should_work_with_dep_admins()
+			public async Task should_work_with_dep_admins()
 			{
 				var notifications = new List<DepartmentNotification>();
 				notifications.Add(new DepartmentNotification()
@@ -466,7 +464,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				});
 
-				var processedNots = _notificationServiceMock.ProcessNotifications(processedNotifications, notifications);
+				var processedNots = await _notificationServiceMock.ProcessNotificationsAsync(processedNotifications, notifications);
 
 				processedNots.Should().NotBeNull();
 				processedNots.Count.Should().Be(1);
@@ -475,7 +473,7 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public void should_lock_to_group_with_admins()
+			public async Task should_lock_to_group_with_admins()
 			{
 				var notifications = new List<DepartmentNotification>();
 				notifications.Add(new DepartmentNotification()
@@ -497,7 +495,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				});
 
-				var processedNots = _notificationServiceMock.ProcessNotifications(processedNotifications, notifications);
+				var processedNots = await _notificationServiceMock.ProcessNotificationsAsync(processedNotifications, notifications);
 
 				processedNots.Should().NotBeNull();
 				processedNots.Count.Should().Be(1);
@@ -506,7 +504,7 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public void should_lock_to_group_admins()
+			public async Task should_lock_to_group_admins()
 			{
 				var notifications = new List<DepartmentNotification>();
 				notifications.Add(new DepartmentNotification()
@@ -529,7 +527,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				});
 
-				var processedNots = _notificationServiceMock.ProcessNotifications(processedNotifications, notifications);
+				var processedNots = await _notificationServiceMock.ProcessNotificationsAsync(processedNotifications, notifications);
 
 				processedNots.Should().NotBeNull();
 				processedNots.Count.Should().Be(1);
@@ -538,7 +536,7 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public void should_lock_to_group_with_roles()
+			public async Task should_lock_to_group_with_roles()
 			{
 				var notifications = new List<DepartmentNotification>();
 				notifications.Add(new DepartmentNotification()
@@ -560,7 +558,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				});
 
-				var processedNots = _notificationServiceMock.ProcessNotifications(processedNotifications, notifications);
+				var processedNots = await _notificationServiceMock.ProcessNotificationsAsync(processedNotifications, notifications);
 
 				processedNots.Should().NotBeNull();
 				processedNots.Count.Should().Be(1);
@@ -569,7 +567,7 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public void should_add_users_roles_and_groups()
+			public async Task should_add_users_roles_and_groups()
 			{
 				var notifications = new List<DepartmentNotification>();
 				notifications.Add(new DepartmentNotification()
@@ -592,7 +590,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				});
 
-				var processedNots = _notificationServiceMock.ProcessNotifications(processedNotifications, notifications);
+				var processedNots = await _notificationServiceMock.ProcessNotificationsAsync(processedNotifications, notifications);
 
 				processedNots.Should().NotBeNull();
 				processedNots.Count.Should().Be(1);
@@ -605,7 +603,7 @@ namespace Resgrid.Tests.Services
 		public class when_validating_a_unit_status_changed_notification_for_processing : with_the_notification_service
 		{
 			[Test]
-			public void should_process_for_any_before_and_after_data()
+			public async Task should_process_for_any_before_and_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -624,13 +622,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_any_before_and_specific_after_data()
+			public async Task should_process_for_any_before_and_specific_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -649,13 +647,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_specific_before_and_any_after_data()
+			public async Task should_process_for_specific_before_and_any_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -674,13 +672,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_specific_before_and_after_data()
+			public async Task should_process_for_specific_before_and_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -699,13 +697,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_not_process_incorrect_before_data()
+			public async Task should_not_process_incorrect_before_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -724,13 +722,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
 
 			[Test]
-			public void should_not_process_incorrect_after_data()
+			public async Task should_not_process_incorrect_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -749,7 +747,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
@@ -759,7 +757,7 @@ namespace Resgrid.Tests.Services
 		public class when_validating_a_personnel_staffing_changed_notification_for_processing : with_the_notification_service
 		{
 			[Test]
-			public void should_process_for_any_before_and_after_data()
+			public async Task should_process_for_any_before_and_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -778,13 +776,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStaffingChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_any_before_and_specific_after_data()
+			public async Task should_process_for_any_before_and_specific_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -803,13 +801,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStaffingChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_specific_before_and_any_after_data()
+			public async Task should_process_for_specific_before_and_any_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -828,13 +826,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStaffingChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_specific_before_and_after_data()
+			public async Task should_process_for_specific_before_and_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -853,13 +851,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStaffingChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_not_process_incorrect_before_data()
+			public async Task should_not_process_incorrect_before_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -878,13 +876,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStaffingChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
 
 			[Test]
-			public void should_not_process_incorrect_after_data()
+			public async Task should_not_process_incorrect_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -903,7 +901,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStaffingChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
@@ -913,7 +911,7 @@ namespace Resgrid.Tests.Services
 		public class when_validating_a_personnel_status_changed_notification_for_processing : with_the_notification_service
 		{
 			[Test]
-			public void should_process_for_any_before_and_after_data()
+			public async Task should_process_for_any_before_and_after_data()
 			{		
 				var notification = new DepartmentNotification
 				{
@@ -932,13 +930,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_any_before_and_specific_after_data()
+			public async Task should_process_for_any_before_and_specific_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -957,13 +955,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_specific_before_and_any_after_data()
+			public async Task should_process_for_specific_before_and_any_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -982,13 +980,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_specific_before_and_after_data()
+			public async Task should_process_for_specific_before_and_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1007,13 +1005,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_not_process_incorrect_before_data()
+			public async Task should_not_process_incorrect_before_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1032,13 +1030,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
 
 			[Test]
-			public void should_not_process_incorrect_after_data()
+			public async Task should_not_process_incorrect_after_data()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1057,7 +1055,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.PersonnelStatusChanged
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
@@ -1067,7 +1065,7 @@ namespace Resgrid.Tests.Services
 		public class when_validating_a_roles_in_group_availability_notification_for_processing : with_the_notification_service
 		{
 			[Test]
-			public void should_process_for_roles_available_at_limit()
+			public async Task should_process_for_roles_available_at_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1088,14 +1086,14 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.RolesInGroupAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				//result.Should().BeTrue();
 				result.Should().BeFalse();
 			}
 
 			[Test]
-			public void should_process_for_roles_available_under_limit()
+			public async Task should_process_for_roles_available_under_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1116,14 +1114,14 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.RolesInGroupAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				//result.Should().BeTrue();
 				result.Should().BeFalse();
 			}
 
 			[Test]
-			public void should_not_process_for_roles_available_over_limit()
+			public async Task should_not_process_for_roles_available_over_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1144,7 +1142,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.RolesInGroupAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
@@ -1154,7 +1152,7 @@ namespace Resgrid.Tests.Services
 		public class when_validating_a_roles_in_department_availability_notification_for_processing : with_the_notification_service
 		{
 			[Test]
-			public void should_process_for_roles_available_at_limit()
+			public async Task should_process_for_roles_available_at_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1175,14 +1173,14 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.RolesInDepartmentAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				//result.Should().BeTrue();
 				result.Should().BeFalse();
 			}
 
 			[Test]
-			public void should_process_for_roles_available_under_limit()
+			public async Task should_process_for_roles_available_under_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1203,14 +1201,14 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.RolesInDepartmentAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				//result.Should().BeTrue();
 				result.Should().BeFalse();
 			}
 
 			[Test]
-			public void should_not_process_for_roles_available_over_limit()
+			public async Task should_not_process_for_roles_available_over_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1231,7 +1229,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.RolesInDepartmentAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
@@ -1241,7 +1239,7 @@ namespace Resgrid.Tests.Services
 		public class when_validating_a_unit_type_in_group_availability_notification_for_processing : with_the_notification_service
 		{
 			[Test]
-			public void should_process_for_roles_available_at_limit()
+			public async Task should_process_for_roles_available_at_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1262,13 +1260,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitTypesInGroupAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_roles_available_under_limit()
+			public async Task should_process_for_roles_available_under_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1289,13 +1287,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitTypesInGroupAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_not_process_for_roles_available_over_limit()
+			public async Task should_not_process_for_roles_available_over_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1316,7 +1314,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitTypesInGroupAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}
@@ -1326,7 +1324,7 @@ namespace Resgrid.Tests.Services
 		public class when_validating_a_unit_type_in_department_availability_notification_for_processing : with_the_notification_service
 		{
 			[Test]
-			public void should_process_for_roles_available_at_limit()
+			public async Task should_process_for_roles_available_at_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1347,13 +1345,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitTypesInDepartmentAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_process_for_roles_available_under_limit()
+			public async Task should_process_for_roles_available_under_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1374,13 +1372,13 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitTypesInDepartmentAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeTrue();
 			}
 
 			[Test]
-			public void should_not_process_for_roles_available_over_limit()
+			public async Task should_not_process_for_roles_available_over_limit()
 			{
 				var notification = new DepartmentNotification
 				{
@@ -1401,7 +1399,7 @@ namespace Resgrid.Tests.Services
 					Type = EventTypes.UnitTypesInDepartmentAvailabilityAlert
 				};
 
-				var result = _notificationServiceMock.ValidateNotificationForProcessing(processedNotification, notification);
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
 			}

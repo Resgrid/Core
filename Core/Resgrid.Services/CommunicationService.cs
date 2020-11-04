@@ -5,10 +5,10 @@ using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using System;
-using System.Collections.Async;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dasync.Collections;
 
 namespace Resgrid.Services
 {
@@ -34,16 +34,16 @@ namespace Resgrid.Services
 			_departmentSettingsService = departmentSettingsService;
 		}
 
-		public void SendMessage(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null)
+		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null)
 		{
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
-				profile = _userProfileService.GetProfileByUserId(message.ReceivingUserId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
 			if (profile == null || profile.SendMessageSms)
 			{
 				try
 				{
-					_smsService.SendMessage(message, departmentNumber, departmentId, profile);
+					await _smsService.SendMessageAsync(message, departmentNumber, departmentId, profile);
 				}
 				catch (Exception ex)
 				{
@@ -55,7 +55,7 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					_emailService.SendMessage(message, sendersName, profile, message.ReceivingUser);
+					await _emailService.SendMessageAsync(message, sendersName, profile, message.ReceivingUser);
 				}
 				catch (Exception ex)
 				{
@@ -75,28 +75,25 @@ namespace Resgrid.Services
 
 				spm.Title = "Msg:" + message.Subject.Truncate(200);
 
-				try
+
+				if (!String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				{
-					if (!String.IsNullOrWhiteSpace(message.ReceivingUserId))
-#pragma warning disable 4014
-						Task.Run(async () => { await _pushService.PushMessage(spm, message.ReceivingUserId, profile); }).ConfigureAwait(false);
-#pragma warning restore 4014
-					else
-#pragma warning disable 4014
-						Task.Run(async () => { await _pushService.PushMessage(spm, String.Empty, profile); }).ConfigureAwait(false);
-#pragma warning restore 4014
+					await _pushService.PushMessage(spm, message.ReceivingUserId, profile);
 				}
-				catch (Exception ex)
+				else
 				{
-					Logging.LogException(ex);
+					await _pushService.PushMessage(spm, String.Empty, profile);
 				}
+
 			}
+
+			return true;
 		}
 
-		public void SendCall(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
+		public async Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
 		{
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(dispatch.UserId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
 
 			// Send a Push Notification
 			if (profile == null || profile.SendPush)
@@ -106,6 +103,7 @@ namespace Resgrid.Services
 				spc.Title = string.Format("Call {0}", call.Name);
 				spc.Priority = call.Priority;
 				spc.ActiveCallCount = 1;
+				spc.DepartmentId = departmentId;
 
 				if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
 				{
@@ -134,7 +132,7 @@ namespace Resgrid.Services
 
 						if (points != null && points.Length == 2)
 						{
-							subTitle = _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+							subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 						}
 					}
 					catch
@@ -156,46 +154,20 @@ namespace Resgrid.Services
 
 				spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
 
-				try
-				{
-#pragma warning disable 4014
-					Task.Run(async () => { await _pushService.PushCall(spc, dispatch.UserId, profile, call.CallPriority); }).ConfigureAwait(false);
-#pragma warning restore 4014
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-				}
+
+				await _pushService.PushCall(spc, dispatch.UserId, profile, call.CallPriority);
 			}
 
 			// Send an SMS Message
 			if (profile == null || profile.SendSms)
 			{
-				try
-				{
-#pragma warning disable 4014
-					Task.Run(() => { _smsService.SendCall(call, dispatch, departmentNumber, departmentId, profile); }).ConfigureAwait(false);
-#pragma warning restore 4014
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-				}
+				await _smsService.SendCallAsync(call, dispatch, departmentNumber, departmentId, profile);
 			}
 
 			// Send an Email
 			if (profile == null || profile.SendEmail)
 			{
-				try
-				{
-#pragma warning disable 4014
-					Task.Run(() => { _emailService.SendCall(call, dispatch, profile); }).ConfigureAwait(false);
-#pragma warning restore 4014
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-				}
+				await _emailService.SendCallAsync(call, dispatch, profile);
 			}
 
 			// Initiate a Telephone Call
@@ -203,25 +175,27 @@ namespace Resgrid.Services
 			{
 				try
 				{
-#pragma warning disable 4014
-					if (!Config.SystemBehaviorConfig.DoNotBroadcast)
-						Task.Run(() => { _outboundVoiceProvider.CommunicateCall(departmentNumber, profile, call); }).ConfigureAwait(false);
-#pragma warning restore 4014
+
+					if (!Config.SystemBehaviorConfig.DoNotBroadcast || Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+						_outboundVoiceProvider.CommunicateCall(departmentNumber, profile, call);
 				}
 				catch (Exception ex)
 				{
 					Logging.LogException(ex);
 				}
 			}
+
+			return true;
 		}
 
-		public void SendUnitCall(Call call, CallDispatchUnit dispatch, string departmentNumber, string address = null)
+		public async Task<bool> SendUnitCallAsync(Call call, CallDispatchUnit dispatch, string departmentNumber, string address = null)
 		{
 			var spc = new StandardPushCall();
 			spc.CallId = call.CallId;
 			spc.Title = string.Format("Call {0}", call.Name);
 			spc.Priority = call.Priority;
 			spc.ActiveCallCount = 1;
+			spc.DepartmentId = call.DepartmentId;
 
 			if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
 			{
@@ -250,7 +224,7 @@ namespace Resgrid.Services
 
 					if (points != null && points.Length == 2)
 					{
-						subTitle = _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+						subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 					}
 				}
 				catch
@@ -274,29 +248,26 @@ namespace Resgrid.Services
 
 			try
 			{
-#pragma warning disable 4014
-				Task.Run(async () => { await _pushService.PushCallUnit(spc, dispatch.UnitId, call.CallPriority); }).ConfigureAwait(false);
-#pragma warning restore 4014
+				await _pushService.PushCallUnit(spc, dispatch.UnitId, call.CallPriority);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 			}
+
+			return true;
 		}
 
-		public void SendNotification(string userId, int departmentId, string message, string departmentNumber, string title = "Notification", UserProfile profile = null)
+		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, string title = "Notification", UserProfile profile = null)
 		{
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(userId, false);
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
 			if (profile == null || profile.SendNotificationSms)
 			{
 				try
 				{
-#pragma warning disable 4014
-					Task.Run(() => { _smsService.SendNotification(userId, departmentId, $"{title} {message}", departmentNumber, profile); })
-						.ConfigureAwait(false);
-#pragma warning restore 4014
+					await _smsService.SendNotificationAsync(userId, departmentId, $"{title} {message}", departmentNumber, profile);
 				}
 				catch (Exception ex)
 				{
@@ -308,9 +279,8 @@ namespace Resgrid.Services
 			{
 				try
 				{
-#pragma warning disable 4014
-					Task.Run(() => { _emailService.SendNotification(userId, $"{title} {message}", profile); }).ConfigureAwait(false);
-#pragma warning restore 4014
+					await _emailService.SendNotificationAsync(userId, $"{title} {message}", profile);
+
 				}
 				catch (Exception ex)
 				{
@@ -326,15 +296,16 @@ namespace Resgrid.Services
 
 				try
 				{
-#pragma warning disable 4014
-					Task.Run(async () => { await _pushService.PushNotification(spm, userId, profile); }).ConfigureAwait(false);
-#pragma warning restore 4014
+					await _pushService.PushNotification(spm, userId, profile);
+
 				}
 				catch (Exception ex)
 				{
 					Logging.LogException(ex);
 				}
 			}
+
+			return true;
 		}
 
 		public async Task<bool> SendChat(string chatId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients)
@@ -389,7 +360,7 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public void SendTroubleAlert(TroubleAlertEvent troubleAlertEvent, Unit unit, Call call, string departmentNumber, int departmentId, string callAddress, string unitAddress, List<UserProfile> recipients)
+		public async Task<bool> SendTroubleAlertAsync(TroubleAlertEvent troubleAlertEvent, Unit unit, Call call, string departmentNumber, int departmentId, string callAddress, string unitAddress, List<UserProfile> recipients)
 		{
 			string personnelNames = "No Unit Roles (Accountability) Set";
 			if (troubleAlertEvent.Roles != null && troubleAlertEvent.Roles.Count() > 0)
@@ -417,6 +388,7 @@ namespace Resgrid.Services
 					spc.Title = string.Format("TROUBLE ALERT for {0}", unit.Name);
 					spc.Priority = (int)CallPriority.Emergency;
 					spc.ActiveCallCount = 1;
+					spc.DepartmentId = departmentId;
 
 					string subTitle = String.Empty;
 					if (!String.IsNullOrWhiteSpace(unitAddress))
@@ -428,9 +400,7 @@ namespace Resgrid.Services
 
 					try
 					{
-#pragma warning disable 4014
-						Task.Run(async () => { await _pushService.PushCall(spc, recipient.UserId, recipient); }).ConfigureAwait(false);
-#pragma warning restore 4014
+						await _pushService.PushCall(spc, recipient.UserId, recipient);
 					}
 					catch (Exception ex)
 					{
@@ -443,9 +413,7 @@ namespace Resgrid.Services
 				{
 					try
 					{
-#pragma warning disable 4014
-						Task.Run(() => { _smsService.SendTroubleAlert(unit, call, unitAddress, departmentNumber, departmentId, recipient); }).ConfigureAwait(false);
-#pragma warning restore 4014
+						_smsService.SendTroubleAlert(unit, call, unitAddress, departmentNumber, departmentId, recipient);
 					}
 					catch (Exception ex)
 					{
@@ -458,9 +426,7 @@ namespace Resgrid.Services
 				{
 					try
 					{
-#pragma warning disable 4014
-						Task.Run(() => { _emailService.SendTroubleAlert(troubleAlertEvent, unit, call, callAddress, unitAddress, personnelNames, recipient); }).ConfigureAwait(false);
-#pragma warning restore 4014
+						_emailService.SendTroubleAlert(troubleAlertEvent, unit, call, callAddress, unitAddress, personnelNames, recipient);
 					}
 					catch (Exception ex)
 					{
@@ -468,12 +434,14 @@ namespace Resgrid.Services
 					}
 				}
 			}
+
+			return true;
 		}
 
 
-		public void SendTextMessage(string userId, string title, string message, int departmentId, string departmentNumber, UserProfile profile = null)
+		public async Task<bool> SendTextMessageAsync(string userId, string title, string message, int departmentId, string departmentNumber, UserProfile profile = null)
 		{
-			_smsService.SendText(userId, title, message, departmentId, departmentNumber, profile);
+			return await _smsService.SendTextAsync(userId, title, message, departmentId, departmentNumber, profile);
 		}
 	}
 }

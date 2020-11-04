@@ -11,5 +11,8 @@ namespace Resgrid.Web.Areas.User.Models.Units
 
 		public bool ConfirmClearAll { get; set; }
 		public string Message { get; set; }
+		public string OSMKey { get; set; }
+		public double CenterLat { get; set; }
+		public double CenterLon { get; set; }
 	}
 }

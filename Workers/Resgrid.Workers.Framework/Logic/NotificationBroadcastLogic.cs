@@ -1,5 +1,4 @@
-﻿using Microsoft.ServiceBus.Messaging;
-using Resgrid.Framework;
+﻿using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
@@ -7,7 +6,12 @@ using Resgrid.Model.Services;
 using Resgrid.Workers.Framework.Workers.Notification;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -21,25 +25,37 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueNotificationConnectionString, Config.ServiceBusConfig.NotificaitonBroadcastQueueName);
+					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueNotificationConnectionString, Config.ServiceBusConfig.NotificaitonBroadcastQueueName);
+					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueNotificationConnectionString, Config.ServiceBusConfig.NotificaitonBroadcastQueueName);
 				}
 				catch (TimeoutException) { }
 			}
 		}
 
-		public void Process(NotificationItem item)
+		public async Task<bool> Process(NotificationItem item)
 		{
 			if (Config.SystemBehaviorConfig.IsAzure)
 			{
-				ProcessQueueMessage(_client.Receive());
+				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+				{
+					MaxConcurrentCalls = 1,
+					AutoComplete = false
+				};
+
+				// Register the function that will process messages
+				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
+
+				//ProcessQueueMessage(_client.Receive());
 			}
 			else
 			{
-				ProcessNotificationItem(item, Guid.NewGuid().ToString(), "");
+				return await ProcessNotificationItem(item, Guid.NewGuid().ToString(), "");
 			}
+
+			return false;
 		}
 
-		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
+		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
 		{
 			bool success = true;
 			string result = "";
@@ -61,10 +77,11 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							success = false;
 							result = "Unable to parse message body Exception: " + ex.ToString();
-							message.DeadLetter();
+							//message.DeadLetter();
+							await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
 						}
 
-						ProcessNotificationItem(ni, message.MessageId, body);
+						await ProcessNotificationItem(ni, message.MessageId, body);
 					}
 					else
 					{
@@ -74,7 +91,8 @@ namespace Resgrid.Workers.Framework.Logic
 
 					try
 					{
-						message.Complete();
+						//message.Complete();
+						await _client.CompleteAsync(message.SystemProperties.LockToken);
 					}
 					catch (MessageLockLostException)
 					{
@@ -87,14 +105,15 @@ namespace Resgrid.Workers.Framework.Logic
 					result = ex.ToString();
 
 					Logging.LogException(ex);
-					message.Abandon();
+					//message.Abandon();
+					await _client.AbandonAsync(message.SystemProperties.LockToken); 
 				}
 			}
 
 			return new Tuple<bool, string>(success, result);
 		}
 
-		public static void ProcessNotificationItem(NotificationItem ni, string messageId, string body)
+		public static async Task<bool> ProcessNotificationItem(NotificationItem ni, string messageId, string body)
 		{
 			if (ni != null)
 			{
@@ -109,7 +128,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (ni.DepartmentId != 0)
 					item.DepartmentId = ni.DepartmentId;
 				else
-					item.DepartmentId = _notificationService.GetDepartmentIdForType(ni);
+					item.DepartmentId = await _notificationService.GetDepartmentIdForTypeAsync(ni);
 
 				item.Type = (EventTypes)ni.Type;
 				item.Value = ni.Value;
@@ -118,20 +137,20 @@ namespace Resgrid.Workers.Framework.Logic
 				item.ItemId = ni.ItemId;
 
 				var queueItem = new NotificationQueueItem();
-				queueItem.Department = _departmentsService.GetDepartmentById(item.DepartmentId, false);
-				queueItem.DepartmentTextNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(item.DepartmentId);
-				queueItem.NotificationSettings = _notificationService.GetNotificationsByDepartment(item.DepartmentId);
-				queueItem.Profiles = _userProfileService.GetAllProfilesForDepartment(item.DepartmentId);
+				queueItem.Department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId, false);
+				queueItem.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.DepartmentId);
+				queueItem.NotificationSettings = _notificationService.GetNotificationsByDepartmentAsync(item.DepartmentId);
+				queueItem.Profiles = await  _userProfileService.GetAllProfilesForDepartmentAsync(item.DepartmentId);
 
 				queueItem.Notifications = new List<ProcessedNotification>();
 				queueItem.Notifications.Add(item);
 
-				var notificaitons = _notificationService.ProcessNotifications(queueItem.Notifications, queueItem.NotificationSettings);
+				var notificaitons = await _notificationService.ProcessNotificationsAsync(queueItem.Notifications, queueItem.NotificationSettings);
 				if (notificaitons != null)
 				{
 					foreach (var notification in notificaitons)
 					{
-						var text = _notificationService.GetMessageForType(notification);
+						var text = await _notificationService.GetMessageForTypeAsync(notification);
 
 						if (!String.IsNullOrWhiteSpace(text))
 						{
@@ -144,7 +163,7 @@ namespace Resgrid.Workers.Framework.Logic
 									if (!_notificationService.AllowToSendViaSms(notification.Type))
 										profile.SendNotificationSms = false;
 
-									_communicationService.SendNotification(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, "Notification", profile);
+									await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, "Notification", profile);
 								}
 							}
 						}
@@ -157,6 +176,19 @@ namespace Resgrid.Workers.Framework.Logic
 				_userProfileService = null;
 				_departmentSettingsService = null;
 			}
+
+			return true;
+		}
+
+		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+		{
+			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
+			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
+			//Console.WriteLine("Exception context for troubleshooting:");
+			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
+			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
+			//Console.WriteLine($"- Executing Action: {context.Action}");
+			return Task.CompletedTask;
 		}
 	}
 }

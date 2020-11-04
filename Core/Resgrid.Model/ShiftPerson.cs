@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Resgrid.Model.Identity;
@@ -34,10 +35,19 @@ namespace Resgrid.Model
 		public virtual DepartmentGroup Group { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftPersonId; }
 			set { ShiftPersonId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ShiftPersons";
+
+		[NotMapped]
+		public string IdName => "ShiftPersonId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Shift", "User", "Group" };
 	}
 }

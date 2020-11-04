@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -48,10 +50,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new IndexView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (!String.IsNullOrWhiteSpace(model.Department.TimeZone))
 				model.TimeZone = DateTimeHelpers.WindowsToIana(model.Department.TimeZone);
@@ -59,10 +61,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.TimeZone = "Etc/UTC";
 
 			model.Types = new List<CalendarItemType>();
-			model.Types = _calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId);
+			model.Types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 
 			model.UpcomingItems = new List<CalendarItem>();
-			model.UpcomingItems = _calendarService.GetUpcomingCalendarItems(DepartmentId, DateTime.UtcNow);
+			model.UpcomingItems = await _calendarService.GetUpcomingCalendarItemsAsync(DepartmentId, DateTime.UtcNow);
 
 			return View(model);
 		}
@@ -70,15 +72,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			var model = new NewCalendarEntry();
 			model.Item = new CalendarItem();
 			model.Types = new List<CalendarItemType>();
 			model.Types.Add(new CalendarItemType() {CalendarItemTypeId = 0, Name = "No Type"});
-			model.Types.AddRange(_calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId));
+			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var currentTime = DateTime.UtcNow.TimeConverter(department);
 
 			model.Item.Start = currentTime.AddHours(3);
@@ -92,7 +94,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult New(NewCalendarEntry model)
+		public async Task<IActionResult> New(NewCalendarEntry model, CancellationToken cancellationToken)
 		{
 			if (model.Item.Start > model.Item.End)
 			{
@@ -109,20 +111,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var department = _departmentsService.GetDepartmentById(DepartmentId);
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 				model.Item.DepartmentId = DepartmentId;
 				model.Item.CreatorUserId = UserId;
 				model.Item.Entities = model.entities;
 
-				_calendarService.AddNewV2CalendarItem(model.Item, department.TimeZone);
+				await _calendarService.AddNewCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
 
 			model.Types = new List<CalendarItemType>();
 			model.Types.Add(new CalendarItemType() { CalendarItemTypeId = 0, Name = "No Type" });
-			model.Types.AddRange(_calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId));
+			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
 
 			model.Item.Description = StringHelpers.StripHtmlTagsCharArray(model.Item.Description);
 
@@ -132,24 +134,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_Update)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult Edit(int id)
+		public async Task<IActionResult> Edit(int id)
 		{
 			var model = new EditCalendarEntry();
 
-			if (!_authorizationService.CanUserModifyCalendarEntry(UserId, id))
+			if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, id))
 				Unauthorized();
 
-			model.Item = _calendarService.GetCalendarItemById(id);
+			model.Item = await _calendarService.GetCalendarItemByIdAsync(id);
 			model.Types = new List<CalendarItemType>();
 			model.Types.Add(new CalendarItemType() { CalendarItemTypeId = 0, Name = "No Type" });
-			model.Types.AddRange(_calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId));
+			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			model.StartTime = model.Item.Start.TimeConverter(department);
 			model.EndTime = model.Item.End.TimeConverter(department);
 
-			var recurrences = _calendarService.GetAllV2CalendarItemRecurrences(model.Item.CalendarItemId);
+			var recurrences = await _calendarService.GetAllCalendarItemRecurrencesAsync(model.Item.CalendarItemId);
 			if (recurrences != null && recurrences.Any())
 				model.IsRecurrenceParent = true;
 
@@ -162,7 +164,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Schedule_Update)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult Edit(EditCalendarEntry model)
+		public async Task<IActionResult> Edit(EditCalendarEntry model, CancellationToken cancellationToken)
 		{
 			if (model.Item.Start > model.Item.End)
 			{
@@ -179,7 +181,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var department = _departmentsService.GetDepartmentById(DepartmentId);
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 				model.Item.Start = model.StartTime;
 				model.Item.End = model.EndTime;
@@ -187,14 +189,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Item.CreatorUserId = UserId;
 				model.Item.Entities = model.entities;
 
-				_calendarService.UpdateV2CalendarItem(model.Item, department.TimeZone);
+				await _calendarService.UpdateCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
 
 			model.Types = new List<CalendarItemType>();
 			model.Types.Add(new CalendarItemType() { CalendarItemTypeId = 0, Name = "No Type" });
-			model.Types.AddRange(_calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId));
+			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
 			ViewBag.Types = new SelectList(model.Types, "CalendarItemTypeId", "Name");
 
 			return View(model);
@@ -203,11 +205,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public JsonResult CreateCalendarItem([FromBody]CalendarItemJson item)
+		public async Task<JsonResult> CreateCalendarItem([FromBody]CalendarItemJson item, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
-				var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 				var timeZone = "Etc/UTC";
 				if (!String.IsNullOrWhiteSpace(department.TimeZone))
@@ -269,9 +271,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (item.ItemType.HasValue)
 					calendarItem.ItemType = item.ItemType.Value;
 
-				calendarItem = _calendarService.SaveCalendarItem(calendarItem);
+				calendarItem = await _calendarService.SaveCalendarItemAsync(calendarItem, cancellationToken);
 
-				_eventAggregator.SendMessage<CalendarEventAddedEvent>(new CalendarEventAddedEvent() { DepartmentId = DepartmentId, Item = calendarItem});
+				await _eventAggregator.SendMessage<CalendarEventAddedEvent>(new CalendarEventAddedEvent() { DepartmentId = DepartmentId, Item = calendarItem});
 
 				return Json(item);
 			}
@@ -282,13 +284,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Schedule_Update)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public JsonResult UpdateCalendarItem(CalendarItemJson item)
+		public async Task<JsonResult> UpdateCalendarItem(CalendarItemJson item, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
-				var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
-				var calendarItem = _calendarService.GetCalendarItemById(item.CalendarItemId);
+				var calendarItem = await _calendarService.GetCalendarItemByIdAsync(item.CalendarItemId);
 
 				if (calendarItem != null)
 				{
@@ -332,9 +334,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (item.ItemType.HasValue)
 						calendarItem.ItemType = item.ItemType.Value;
 
-					calendarItem = _calendarService.SaveCalendarItem(calendarItem);
+					calendarItem = await _calendarService.SaveCalendarItemAsync(calendarItem, cancellationToken);
 
-					_eventAggregator.SendMessage<CalendarEventUpdatedEvent>(new CalendarEventUpdatedEvent() { DepartmentId = DepartmentId, Item = calendarItem });
+					await _eventAggregator.SendMessage<CalendarEventUpdatedEvent>(new CalendarEventUpdatedEvent() { DepartmentId = DepartmentId, Item = calendarItem });
 
 					return Json(item);
 				}
@@ -346,16 +348,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Schedule_Delete)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public JsonResult DeleteCalendarItem([FromBody]CalendarItemJson item)
+		public async Task<JsonResult> DeleteCalendarItem([FromBody]CalendarItemJson item, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
-				var calandarItem = _calendarService.GetCalendarItemById(item.CalendarItemId);
+				var calandarItem = await _calendarService.GetCalendarItemByIdAsync(item.CalendarItemId);
 
 				if (calandarItem == null || calandarItem.DepartmentId != DepartmentId)
 					Unauthorized();
 
-				_calendarService.DeleteCalendarItemById(item.CalendarItemId);
+				await _calendarService.DeleteCalendarItemByIdAsync(item.CalendarItemId, cancellationToken);
 			}
 
 			return null;
@@ -364,14 +366,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_Delete)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult DeleteCalendarItem(int itemId)
+		public async Task<IActionResult> DeleteCalendarItem(int itemId, CancellationToken cancellationToken)
 		{
-			var calandarItem = _calendarService.GetCalendarItemById(itemId);
+			var calandarItem = await _calendarService.GetCalendarItemByIdAsync(itemId);
 
 			if (calandarItem == null || calandarItem.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_calendarService.DeleteCalendarItemById(itemId);
+			await _calendarService.DeleteCalendarItemByIdAsync(itemId, cancellationToken);
 			
 			return RedirectToAction("Index");
 		}
@@ -379,12 +381,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_Delete)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult DeleteAllCalendarItems(int itemId)
+		public async Task<IActionResult> DeleteAllCalendarItems(int itemId, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserModifyCalendarEntry(UserId, itemId))
+			if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, itemId))
 				Unauthorized();
 
-			_calendarService.DeleteCalendarItemAndRecurrences(itemId);
+			await _calendarService.DeleteCalendarItemAndRecurrences(itemId, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
@@ -393,11 +395,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 
-		public IActionResult GetDepartmentCalendarItems()
+		public async Task<IActionResult> GetDepartmentCalendarItems()
 		{
 			List<CalendarItemJson> jsonItems = new List<CalendarItemJson>();
-			var items = _calendarService.GetAllCalendarItemsForDepartment(DepartmentId);
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			var items = await _calendarService.GetAllCalendarItemsForDepartmentAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			foreach (var item in items)
 			{
@@ -429,7 +431,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrWhiteSpace(item.RecurrenceId))
 				{
-					var parent = _calendarService.GetCalendarItemById(int.Parse(item.RecurrenceId));
+					var parent = await _calendarService.GetCalendarItemByIdAsync(int.Parse(item.RecurrenceId));
 
 					if (parent == null)
 					{
@@ -458,13 +460,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
-		public IActionResult GetV2CalendarEntriesForCal(string start, string end)
+		public async Task<IActionResult> GetV2CalendarEntriesForCal(string start, string end)
 		{
 			var jsonItems = new List<CalendarItemV2Json>();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var items = _calendarService.GetAllV2CalendarItemsForDepartment(DepartmentId, DateTime.UtcNow.AddMonths(-6));
-			var itemTypes = _calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var items = await _calendarService.GetAllCalendarItemsForDepartmentAsync(DepartmentId, DateTime.UtcNow.AddMonths(-6));
+			var itemTypes = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 
 			foreach (var item in items)
 			{
@@ -492,11 +494,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 
-		public IActionResult RemoveFromEvent(int id)
+		public async Task<IActionResult> RemoveFromEvent(int id, CancellationToken cancellationToken)
 		{
-			var attendee = _calendarService.GetCalendarAttendeeById(id);
+			var attendee = await _calendarService.GetCalendarAttendeeByIdAsync(id);
 
-			_calendarService.DeleteCalendarAttendeeById(id);
+			await _calendarService.DeleteCalendarAttendeeByIdAsync(id, cancellationToken);
 
 			return RedirectToAction("View", new { calendarItemId = attendee.CalendarItemId });
 		}
@@ -504,10 +506,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 
-		public IActionResult View(int calendarItemId)
+		public async Task<IActionResult> View(int calendarItemId)
 		{
 			var model = new CalendarItemView();
-			model.CalendarItem = _calendarService.GetCalendarItemById(calendarItemId);
+			model.CalendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
 
 			if (model.CalendarItem == null)
 				Unauthorized();
@@ -515,13 +517,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CalendarItem.Description = StringHelpers.SanitizeHtmlInString(model.CalendarItem.Description);
 
 			model.UserId = UserId;
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
-			var recurrences = _calendarService.GetAllV2CalendarItemRecurrences(calendarItemId);
+			var recurrences = await _calendarService.GetAllCalendarItemRecurrencesAsync(calendarItemId);
 			if (recurrences != null && recurrences.Any())
 				model.IsRecurrenceParent = true;
 
-			model.CanEdit = _authorizationService.CanUserModifyCalendarEntry(UserId, calendarItemId);
+			model.CanEdit = await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, calendarItemId);
 
 			if (model.CalendarItem.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -531,9 +533,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 		[HttpPost]
-		public IActionResult Signup(CalendarItemView model)
+		public async Task<IActionResult> Signup(CalendarItemView model, CancellationToken cancellationToken)
 		{
-			_calendarService.SignupForEvent(model.CalendarItem.CalendarItemId, UserId, model.Note, (int)CalendarItemAttendeeTypes.RSVP);
+			await _calendarService.SignupForEvent(model.CalendarItem.CalendarItemId, UserId, model.Note, (int)CalendarItemAttendeeTypes.RSVP, cancellationToken);
 
 			return RedirectToAction("View", new { calendarItemId = model.CalendarItem.CalendarItemId });
 		}
@@ -541,10 +543,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 
-		public IActionResult GetDepartmentCalendarItemTypes()
+		public async Task<IActionResult> GetDepartmentCalendarItemTypes()
 		{
 			var jsonItems = new List<CalendarItemTypeJson>();
-			var items = _calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId);
+			var items = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 
 			jsonItems.Add(new CalendarItemTypeJson()
 			{
@@ -568,17 +570,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
-		public IActionResult Types()
+		public async Task<IActionResult> Types()
 		{
 			TypesView model = new TypesView();
-			model.Types = _calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId);
+			model.Types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
-		public IActionResult NewType()
+		public async Task<IActionResult> NewType()
 		{
 			NewTypeView model = new NewTypeView();
 			model.Type = new CalendarItemType();
@@ -588,15 +590,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
-		public IActionResult NewType(NewTypeView model)
+		public async Task<IActionResult> NewType(NewTypeView model, CancellationToken cancellationToken)
 		{
-			if (_calendarService.GetAllCalendarItemTypesForDepartment(DepartmentId).Any(x => x.Name == model.Type.Name))
+			if ((await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId)).Any(x => x.Name == model.Type.Name))
 				ModelState.AddModelError("", "Type name already exists, please choose another name.");
 
 			if (ModelState.IsValid)
 			{
 				model.Type.DepartmentId = DepartmentId;
-				_calendarService.SaveCalendarItemType(model.Type);
+				await _calendarService.SaveCalendarItemTypeAsync(model.Type, cancellationToken);
 
 				return RedirectToAction("Types", "Calendar", new { Area = "User" });
 			}
@@ -606,26 +608,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
-		public IActionResult DeleteType(int typeId)
+		public async Task<IActionResult> DeleteType(int typeId, CancellationToken cancellationToken)
 		{
-			var type = _calendarService.GetCalendarItemTypeById(typeId);
+			var type = await _calendarService.GetCalendarItemTypeByIdAsync(typeId);
 
 			if (type.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_calendarService.DeleteCalendarItemType(type);
+			await _calendarService.DeleteCalendarItemTypeAsync(type, cancellationToken);
 
 			return RedirectToAction("Types");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
-		public IActionResult GetDepartmentEnitites()
+		public async Task<IActionResult> GetDepartmentEnitites()
 		{
 			List<DepartmentEntitiesJson> items = new List<DepartmentEntitiesJson>();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			items.Add(new DepartmentEntitiesJson()
 			{
@@ -649,18 +651,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
-		public IActionResult GetMapDataForItem(int calendarItemId)
+		public async Task<IActionResult> GetMapDataForItem(int calendarItemId)
 		{
 			dynamic result = new ExpandoObject();
 
-			var calendarItem = _calendarService.GetCalendarItemById(calendarItemId);
+			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
 
-			if (calendarItem.DepartmentId == DepartmentId)
+			if (calendarItem.DepartmentId == DepartmentId && !String.IsNullOrWhiteSpace(calendarItem.Location))
 			{
 				string locationResult = null;
 				try
 				{
-					locationResult = _geoLocationProvider.GetLatLonFromAddress(calendarItem.Location);
+					locationResult = await _geoLocationProvider.GetLatLonFromAddress(calendarItem.Location);
 				}
 				catch { }
 

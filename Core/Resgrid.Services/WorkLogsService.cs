@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -9,221 +11,148 @@ namespace Resgrid.Services
 {
 	public class WorkLogsService : IWorkLogsService
 	{
-		private readonly IGenericDataRepository<Log> _logsRepository;
-		private readonly IGenericDataRepository<LogUser> _logUsersRepository;
-		private readonly IGenericDataRepository<CallLog> _callLogsRepository;
-		private readonly IGenericDataRepository<LogAttachment> _logAttachmentRepository;
+		private readonly ILogsRepository _logsRepository;
+		private readonly ILogUsersRepository _logUsersRepository;
+		private readonly ICallLogsRepository _callLogsRepository;
+		private readonly ILogAttachmentRepository _logAttachmentRepository;
+		private readonly ILogUnitsRepository _logUnitsRepository;
+		private readonly IDepartmentsService _departmentsService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly ICallsService _callsService;
 
-		public WorkLogsService(IGenericDataRepository<Log> logsRepository, IGenericDataRepository<CallLog> callLogsRepository, IGenericDataRepository<LogUser> logUsersRepository,
-			IGenericDataRepository<LogAttachment> logAttachmentRepository)
+		public WorkLogsService(ILogsRepository logsRepository, ICallLogsRepository callLogsRepository, ILogUsersRepository logUsersRepository,
+			ILogAttachmentRepository logAttachmentRepository, ILogUnitsRepository logUnitsRepository, IDepartmentsService departmentsService,
+			IDepartmentGroupsService departmentGroupsService, ICallsService callsService)
 		{
 			_logsRepository = logsRepository;
 			_callLogsRepository = callLogsRepository;
 			_logUsersRepository = logUsersRepository;
 			_logAttachmentRepository = logAttachmentRepository;
+			_logUnitsRepository = logUnitsRepository;
+			_departmentsService = departmentsService;
+			_departmentGroupsService = departmentGroupsService;
+			_callsService = callsService;
 		}
 
-		public List<Log> GetAllLogsForUser(string userId)
+		public async Task<List<Log>> GetAllLogsForUserAsync(string userId)
 		{
-			var calls = from c in _logsRepository.GetAll()
-						where c.LoggedByUserId == userId
-						select c;
+			var calls = await _logsRepository.GetLogsForUserAsync(userId);
+			return calls.ToList();
+		}
+
+		public async Task<List<Log>> GetAllLogsForDepartmentAsync(int departmentId)
+		{
+			var calls = await _logsRepository.GetAllByDepartmentIdAsync(departmentId);
+			return calls.ToList();
+		}
+
+		public async Task<List<CallLog>> GetAllCallLogsForUserAsync(string userId)
+		{
+			var calls = await _callLogsRepository.GetLogsForUserAsync(userId);
 
 			return calls.ToList();
 		}
 
-		public List<Log> GetAllLogsForDepartmnt(int departmentId)
+		public async Task<Log> GetWorkLogByIdAsync(int logId)
 		{
-			var calls = from c in _logsRepository.GetAll()
-									where c.DepartmentId == departmentId
-									select c;
+			var log = await _logsRepository.GetByIdAsync(logId);
+			log.Users = (await _logUsersRepository.GetLogsByLogIdAsync(logId)).ToList();
+			log.Units = (await _logUnitsRepository.GetLogsByLogIdAsync(logId)).ToList();
+			log.Department = await _departmentsService.GetDepartmentByIdAsync(log.DepartmentId);
 
-			return calls.ToList();
+			if (log.StationGroupId.HasValue)
+				log.StationGroup = await _departmentGroupsService.GetGroupByIdAsync(log.StationGroupId.Value);
+
+			if (log.CallId.HasValue)
+				log.Call = await _callsService.GetCallByIdAsync(log.CallId.Value);
+
+			return log;
 		}
 
-		public List<CallLog> GetAllCallLogsForUser(string userId)
+		public async Task<CallLog> GetCallLogByIdAsync(int callLogId)
 		{
-			var calls = from c in _callLogsRepository.GetAll()
-						where c.LoggedByUserId == userId
-						select c;
-
-			return calls.ToList();
+			return await _callLogsRepository.GetByIdAsync(callLogId);
 		}
 
-		public Log GetWorkLogById(int logId)
-		{
-			return _logsRepository.GetAll().FirstOrDefault(x => x.LogId == logId);
-		}
-
-		public CallLog GetCallLogById(int callLogId)
-		{
-			return _callLogsRepository.GetAll().FirstOrDefault(x => x.CallLogId == callLogId);
-		}
-
-		public Log SaveLog(Log log)
+		public async Task<Log> SaveLogAsync(Log log, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			log.LoggedOn = DateTime.UtcNow;
 
-			_logsRepository.SaveOrUpdate(log);
-
-			return GetWorkLogById(log.LogId);
+			return await _logsRepository.SaveOrUpdateAsync(log, cancellationToken);
 		}
 
-		public List<Log> GetLogsForCall(int callId)
+		public async Task<List<Log>> GetLogsForCallAsync(int callId)
 		{
-			var logs = from l in _logsRepository.GetAll()
-								 where l.CallId == callId
-								 select l;
-
+			var logs = await _logsRepository.GetLogsForCallAsync(callId);
 			return logs.ToList();
 		}
 
 
-		public List<Log> GetAllLogsByDepartmentDateRange(int departmentId, LogTypes logType, DateTime start, DateTime end)
+		public async Task<List<Log>> GetAllLogsByDepartmentDateRangeAsync(int departmentId, LogTypes logType, DateTime start, DateTime end)
 		{
-			return (from c in _logsRepository.GetAll()
+			return (from c in await _logsRepository.GetAllByDepartmentIdAsync(departmentId)
 						 where c.DepartmentId == departmentId && c.LogType == (int)logType && c.StartedOn >= start && c.StartedOn <= end
 						 select c).ToList();
 		}
 
 
-		public CallLog SaveCallLog(CallLog log)
+		public async Task<CallLog> SaveCallLogAsync(CallLog log, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			log.LoggedOn = DateTime.UtcNow;
 
-			_callLogsRepository.SaveOrUpdate(log);
-
-			return GetCallLogById(log.CallLogId);
+			return await _callLogsRepository.SaveOrUpdateAsync(log, cancellationToken);
 		}
 
-		public void DeleteCallLog(int callLogId)
+		public async Task<bool> DeleteCallLogAsync(int callLogId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var log = GetCallLogById(callLogId);
+			var log = await GetCallLogByIdAsync(callLogId);
 
 			if (log != null)
 			{
-				_callLogsRepository.DeleteOnSubmit(log);
+				return await _callLogsRepository.DeleteAsync(log, cancellationToken);
 			}
+
+			return false;
 		}
 
-		public void DeleteLog(int logId)
+		public async Task<bool> DeleteLogAsync(int logId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var log = GetWorkLogById(logId);
+			var log = await GetWorkLogByIdAsync(logId);
 
 			if (log != null)
 			{
-				_logsRepository.DeleteOnSubmit(log);
+				return await _logsRepository.DeleteAsync(log, cancellationToken);
 			}
+
+			return false;
 		}
 
-		public void DeleteLogsForUser(string userId, string newUserId)
+		public async Task<List<CallLog>> GetCallLogsForCallAsync(int callId)
 		{
-			var workLogs = from l in _logsRepository.GetAll().AsEnumerable()
-			               where l.LoggedByUserId == userId
-			               select l;
-
-			var workLogUsers = from wlu in _logUsersRepository.GetAll().AsEnumerable()
-				where wlu.UserId == userId
-				select wlu;
-
-			var logs = from l in _callLogsRepository.GetAll().AsEnumerable()
-			           where l.LoggedByUserId == userId
-			           select l;
-
-			_callLogsRepository.DeleteAll(logs);
-			_logUsersRepository.DeleteAll(workLogUsers);
-
-			foreach (var wl in workLogs)
-			{
-				wl.LoggedByUserId = newUserId;
-				_logsRepository.SaveOrUpdate(wl);
-			}
-		}
-
-		public void ClearInvestigationByLogsForUser(string userId)
-		{
-			var logs = from l in _logsRepository.GetAll().AsEnumerable()
-										 where l.InvestigatedByUserId == userId
-										 select l;
-
-
-			foreach (var l in logs)
-			{
-				l.InvestigatedByUserId = null;
-				_logsRepository.SaveOrUpdate(l);
-			}
-		}
-
-		public List<CallLog> GetCallLogsForCall(int callId)
-		{
-			var logs = from l in _callLogsRepository.GetAll()
-			           where l.CallId == callId
-			           select l;
-
+			var logs = await _callLogsRepository.GetLogsForCallAsync(callId);
 			return logs.ToList();
 		}
 
-		public List<int> GetLogsCountForLast7DaysForDepartment(int departmentId)
+		public async Task<LogAttachment> SaveLogAttachmentAsync(LogAttachment attachment, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			List<int> actions = new List<int>();
-			var startDate = DateTime.UtcNow.AddDays(-7);
-
-			var worklogsForLast7Days =
-				_logsRepository.GetAll()
-					.Where(
-						x =>
-							x.DepartmentId == departmentId &&
-							x.LoggedOn >= startDate).ToList();
-
-			var calllogsForLast7Days =
-				_callLogsRepository.GetAll()
-					.Where(
-						x =>
-							x.DepartmentId == departmentId &&
-							x.LoggedOn >= startDate).ToList();
-
-			for (int i = 0; i < 7; i++)
-			{
-				int workLogs =
-					worklogsForLast7Days
-						.Count(
-							x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.AddDays(-i).ToShortDateString());
-
-
-				int callLogs =
-					calllogsForLast7Days
-						.Count(
-							x => x.LoggedOn.ToShortDateString() == DateTime.UtcNow.AddDays(-i).ToShortDateString());
-
-				actions.Add(workLogs + callLogs);
-			}
-
-			return actions;
+			return await _logAttachmentRepository.SaveOrUpdateAsync(attachment, cancellationToken);
 		}
 
-		public LogAttachment SaveLogAttachment(LogAttachment attachment)
+		public async Task<LogAttachment> GetAttachmentByIdAsync(int attachmentId)
 		{
-			_logAttachmentRepository.SaveOrUpdate(attachment);
-
-			return attachment;
+			return await _logAttachmentRepository.GetByIdAsync(attachmentId);
 		}
 
-		public LogAttachment GetAttachmentById(int attachmentId)
+		public async Task<List<LogAttachment>> GetAttachmentsForLogAsync(int logId)
 		{
-			return _logAttachmentRepository.GetAll().FirstOrDefault(x => x.LogAttachmentId == attachmentId);
+			var attachments = await _logAttachmentRepository.GetAttachmentsByLogIdAsync(logId);
+
+			return attachments.ToList();
 		}
 
-		public List<LogAttachment> GetAttachmentsForLog(int logId)
+		public async Task<bool> ClearGroupForLogsAsync(int departmentGroupId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var attachments = new List<LogAttachment>();
-			attachments.AddRange(_logAttachmentRepository.GetAll().Where(x => x.LogId == logId));
-
-			return attachments;
-		}
-
-		public void ClearGroupForLogs(int departmentGroupId)
-		{
-			var logs = _logsRepository.GetAll().Where(x => x.StationGroupId == departmentGroupId).ToList();
+			var logs = await _logsRepository.GetLogsForGroupAsync(departmentGroupId);
 
 			if (logs != null && logs.Any())
 			{
@@ -231,10 +160,14 @@ namespace Resgrid.Services
 				{
 					log.StationGroupId = null;
 					log.StationGroup = null;
+
+					await _logsRepository.SaveOrUpdateAsync(log, cancellationToken);
 				}
 
-				_logsRepository.SaveOrUpdateAll(logs);
+				return true;
 			}
+
+			return false;
 		}
 	}
 }

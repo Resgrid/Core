@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
-using Microsoft.ServiceBus.Messaging;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
@@ -9,6 +8,11 @@ using Resgrid.Model.Services;
 using System.Web;
 using MimeKit;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -23,29 +27,40 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueEmailConnectionString, Config.ServiceBusConfig.EmailBroadcastQueueName);
+					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueEmailConnectionString, Config.ServiceBusConfig.EmailBroadcastQueueName);
+					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueEmailConnectionString, Config.ServiceBusConfig.EmailBroadcastQueueName);
 				}
 				catch (TimeoutException) { }
 			}
 		}
 
-		public void Process(DistributionListQueueItem item)
+		public async Task<bool> Process(DistributionListQueueItem item)
 		{
 			bool success = true;
 
 			if (Config.SystemBehaviorConfig.IsAzure)
 			{
-				ProcessQueueMessage(_client.Receive());
+				//ProcessQueueMessage(_client.Receive());
+
+				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+				{
+					MaxConcurrentCalls = 1,
+					AutoComplete = false
+				};
+
+				// Register the function that will process messages
+				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
 			}
 			else
 			{
-				ProcessDistributionListQueueItem(item);
+				return await ProcessDistributionListQueueItem(item);
 			}
 
 			_queueService = null;
+			return false;
 		}
 
-		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
+		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
 		{
 			bool success = true;
 			string result = "";
@@ -67,16 +82,18 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							success = false;
 							result = "Unable to parse message body Exception: " + ex.ToString();
-							message.Complete();
+							//message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
 						}
 
-						ProcessDistributionListQueueItem(dlqi);
+						await ProcessDistributionListQueueItem(dlqi);
 					}
 
 					try
 					{
 						if (success)
-							message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
+							//message.Complete();
 					}
 					catch (MessageLockLostException)
 					{
@@ -87,14 +104,15 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					result = ex.ToString();
 					Logging.LogException(ex);
-					message.Abandon();
+					//message.Abandon();
+					await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
 				}
 			}
 
 			return new Tuple<bool, string>(success, result);
 		}
 
-		public static void ProcessDistributionListQueueItem(DistributionListQueueItem dlqi)
+		public static async Task<bool> ProcessDistributionListQueueItem(DistributionListQueueItem dlqi)
 		{
 			var emailService = Bootstrapper.GetKernel().Resolve<IEmailService>();
 			var distributionListsService = Bootstrapper.GetKernel().Resolve<IDistributionListsService>();
@@ -106,7 +124,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (dlqi.Users == null)
 				{
 					var departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-					dlqi.Users = departmentsService.GetAllUsersForDepartment(dlqi.List.DepartmentId);
+					dlqi.Users = await departmentsService.GetAllUsersForDepartmentAsync(dlqi.List.DepartmentId);
 				}
 
 				var mailMessage = new MimeMessage();
@@ -129,7 +147,7 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						foreach (var fileId in dlqi.FileIds)
 						{
-							var file = fileService.GetFileById(fileId);
+							var file = await fileService.GetFileByIdAsync(fileId);
 
 							// create an image attachment for the file located at path
 							var attachment = new MimePart(file.FileType)
@@ -145,7 +163,7 @@ namespace Resgrid.Workers.Framework.Logic
 							//mailMessage.Attachments.Add(file.Data, file.FileName, file.ContentId, file.FileType,
 							//	new HeaderCollection(),	NewAttachmentOptions.None, MailTransferEncoding.None);
 
-							fileService.DeleteFile(file);
+							fileService.DeleteFileAsync(file);
 						}
 					}
 				}
@@ -154,7 +172,7 @@ namespace Resgrid.Workers.Framework.Logic
 				mailMessage.Body = builder.ToMessageBody();
 
 				if (dlqi.List.Members == null)
-					dlqi.List = distributionListsService.GetDistributionListById(dlqi.List.DistributionListId);
+					dlqi.List = await distributionListsService.GetDistributionListByIdAsync(dlqi.List.DistributionListId);
 
 				foreach (var member in dlqi.List.Members)
 				{
@@ -175,6 +193,19 @@ namespace Resgrid.Workers.Framework.Logic
 			emailService = null;
 			distributionListsService = null;
 			fileService = null;
+
+			return true;
+		}
+
+		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+		{
+			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
+			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
+			//Console.WriteLine("Exception context for troubleshooting:");
+			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
+			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
+			//Console.WriteLine($"- Executing Action: {context.Action}");
+			return Task.CompletedTask;
 		}
 	}
 }

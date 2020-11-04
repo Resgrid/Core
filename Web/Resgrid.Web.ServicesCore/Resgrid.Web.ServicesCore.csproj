@@ -1,79 +1,103 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-	<TargetFramework>net472</TargetFramework>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+	<Description>Cloud system for First Responders</Description>
+	<VersionPrefix>3.0.0</VersionPrefix>
+	<Authors>Resgrid, LLC.</Authors>
+	<TargetFramework>netcoreapp3.1</TargetFramework>
+	<AssemblyName>Resgrid.Web.Services</AssemblyName>
+    <RootNamespace>Resgrid.Web.Services</RootNamespace>
+    <UserSecretsId>e5e5edd9-c59d-4c0f-b765-477c9c5350f8</UserSecretsId>
+    <StartupObject>Resgrid.Web.ServicesCore.Program</StartupObject>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+	<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
-	<DotNetCliToolReference Include="dotnet-version" Version="1.1.0" />
-	<DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.2.301" />
-	<DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
-	<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
+  </PropertyGroup>
 
-  <ItemGroup>
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="1.2.1" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="1.0.1" />
-	<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.0" />
-	<PackageReference Include="Autofac" Version="4.8.1" />
-	<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
-	<PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="4.1.0" />
-	<PackageReference Include="BundlerMinifier.Core" Version="2.5.357" />
-	<PackageReference Include="EntityFramework" Version="6.1.3" />
-	<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
-	<PackageReference Include="Microsoft.AspNetCore" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Http" Version="1.1.2" />
-	<PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="1.1.2" />
-	<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="1.1.2" />
-	<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="1.1.2" />
-	<PackageReference Include="NSwag.AspNetCore" Version="13.6.1" />
-	<PackageReference Include="protobuf-net" Version="2.3.2" />
-	<PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
-	<PackageReference Include="System.Reflection.Metadata" Version="1.4.2" />
-	<PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.2.1" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.DataProtection.SystemWeb" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Identity" Version="1.1.6" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.4" />
-	<PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.1.2" />
-	<PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.3" />
-	<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.3" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.2" />
-	<PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
-	<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
-	<PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.2" />
-	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.1">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Docker|AnyCPU'">
+    <DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
+	<DefineConstants>DOCKER</DefineConstants>
+  </PropertyGroup>
+
+	<ItemGroup>
+	<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="4.1.1" />
+	<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+	<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="3.1.8" />
+	<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="3.1.7" />
+	<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
+	<PackageReference Include="Autofac" Version="5.2.0" />
+	<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+	<PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.0" />
+	<PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+	<PackageReference Include="EntityFramework" Version="6.4.4" />
+	<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="3.1.8" />
+	<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.8" />
+	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+	<PackageReference Include="protobuf-net" Version="3.0.29" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.6.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.6.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.6.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.6.3" />
+	<PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+	<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+	<PackageReference Include="System.Reflection.Metadata" Version="1.8.1" />
+	<PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.4.1" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.8" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.8" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.8" />
+	<PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.8" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.8" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.8" />
+	<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.8" />
+	<PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4">
 	  <PrivateAssets>All</PrivateAssets>
 	</PackageReference>
 	<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-	<PackageReference Include="RestSharp" Version="105.2.3" />
-	<PackageReference Include="Stripe.net" Version="33.3.0" />
-	<PackageReference Include="Twilio" Version="5.5.0" />
+	<PackageReference Include="RestSharp" Version="106.11.4" />
+	<PackageReference Include="Stripe.net" Version="39.3.0" />
+	<PackageReference Include="System.ServiceModel.Syndication" Version="4.7.0" />
+	<PackageReference Include="Twilio" Version="5.46.2" />
 	<PackageReference Include="Twilio.AspNet.Common" Version="5.33.1" />
-	<PackageReference Include="Twilio.Auth" Version="1.4.0" />
-	<PackageReference Include="Twilio.IpMessaging" Version="1.2.0" />
-	<PackageReference Include="JWT" Version="1.3.4" />
-	<PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
-	<PackageReference Include="Vereyon.Web.HtmlSanitizer" Version="1.3.1" />
+	<PackageReference Include="JWT" Version="7.2.1" />
+	<PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
+	<PackageReference Include="Vereyon.Web.HtmlSanitizer" Version="1.6.0" />
   </ItemGroup>
 
   <ItemGroup>
+	<Content Remove="appsettings.json" />
 	<Content Remove="package-lock.json" />
 	<Content Remove="wwwroot\robots.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\Resources\defaultProfile.png" />
+    <None Remove="Resources\defaultProfile.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="appsettings.json" />
+    <EmbeddedResource Include="Properties\Resources\defaultProfile.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -87,17 +111,33 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.EmailProvider\Resgrid.Providers.EmailProvider.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.GeoLocationProvider\Resgrid.Providers.GeoProvider.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.PdfProvider\Resgrid.Providers.PdfProvider.csproj" />
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.TextProvider\Resgrid.Providers.NumberProvider.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\v3\" />
+    <Resource Include="Resources\defaultProfile.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

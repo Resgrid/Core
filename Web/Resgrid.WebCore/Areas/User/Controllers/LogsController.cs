@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -53,22 +55,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Log_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			LogsIndexView model = new LogsIndexView();
-			model.CallLogs = _workLogsService.GetAllCallLogsForUser(UserId);
-			model.WorkLogs = _workLogsService.GetAllLogsForUser(UserId);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.CallLogs = await _workLogsService.GetAllCallLogsForUserAsync(UserId);
+			model.WorkLogs = await _workLogsService.GetAllLogsForUserAsync(UserId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_Create)]
-		public IActionResult NewLog()
+		public async Task<IActionResult> NewLog()
 		{
 			var model = new NewLogView();
-			PopulateLogViewModel(model);
+			await PopulateLogViewModel(model);
 			model.Log = new Log();
 
 			return View(model);
@@ -76,9 +78,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Log_Create)]
-		public IActionResult NewLog(NewLogView model, IFormCollection form, ICollection<IFormFile> files)
+		public async Task<IActionResult> NewLog(NewLogView model, IFormCollection form, ICollection<IFormFile> files, CancellationToken cancellationToken)
 		{
-			PopulateLogViewModel(model);
+			await PopulateLogViewModel(model);
 
 			if (model.LogType == LogTypes.Work && String.IsNullOrWhiteSpace(form["nonUnitPersonnel"]))
 			{
@@ -150,20 +152,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (model.Call.Type == "No Type")
 							model.Call.Type = null;
 
-						model.Call = _callsService.SaveCall(model.Call);
+						model.Call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
 						model.Log.CallId = model.Call.CallId;
 						model.Log.StartedOn = model.Call.LoggedOn;
 					}
 					else
 					{
-						var call = _callsService.GetCallById(model.CallId);
+						var call = await _callsService.GetCallByIdAsync(model.CallId);
 						call.Priority = (int)model.CallPriority;
 						call.NatureOfCall = model.Call.NatureOfCall;
 						call.Address = model.Call.Address;
 						call.LoggedOn = model.Call.LoggedOn;
 						call.Name = model.Call.Name;
 
-						model.Call = _callsService.SaveCall(call);
+						model.Call = await _callsService.SaveCallAsync(call, cancellationToken);
 						model.Log.CallId = model.Call.CallId;
 					}
 				}
@@ -266,7 +268,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				var savedLog = _workLogsService.SaveLog(model.Log);
+				var savedLog = await _workLogsService.SaveLogAsync(model.Log, cancellationToken);
 
 				try
 				{
@@ -288,14 +290,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 								attachment.UserId = UserId;
 								attachment.Timestamp = DateTime.UtcNow;
 
-								_workLogsService.SaveLogAttachment(attachment);
+								await _workLogsService.SaveLogAttachmentAsync(attachment, cancellationToken);
 							}
 						}
 					}
 				}
 				catch { }
 
-				_eventAggregator.SendMessage<LogAddedEvent>(new LogAddedEvent() { DepartmentId = DepartmentId, Log = model.Log });
+				await _eventAggregator.SendMessage<LogAddedEvent>(new LogAddedEvent() { DepartmentId = DepartmentId, Log = model.Log });
 			}
 			catch (Exception ex)
 			{
@@ -310,12 +312,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_View)]
-		public IActionResult GetLogsList()
+		public async Task<IActionResult> GetLogsList()
 		{
 			List<LogForListJson> logsJson = new List<LogForListJson>();
 
-			var logs = _workLogsService.GetAllLogsForDepartmnt(DepartmentId);
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			var logs = await _workLogsService.GetAllLogsForDepartmentAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			foreach (var log in logs)
 			{
@@ -328,7 +330,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					logJson.Group = department.Name;
 
-				logJson.LoggedBy = UserHelper.GetFullNameForUser(log.LoggedBy.UserId);
+				logJson.LoggedBy = await UserHelper.GetFullNameForUser(log.LoggedByUserId);
 				logJson.LoggedOn = log.LoggedOn.TimeConverterToString(department);
 
 				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || log.LoggedByUserId == UserId || (log.StationGroupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(log.StationGroupId.Value)))
@@ -344,26 +346,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_Delete)]
-		public IActionResult DeleteWorkLog(int logId)
+		public async Task<IActionResult> DeleteWorkLog(int logId, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserViewAndEditWorkLog(UserId, logId))
+			if (!await _authorizationService.CanUserViewAndEditWorkLogAsync(UserId, logId))
 				Unauthorized();
 
-			_workLogsService.DeleteLog(logId);
+			await _workLogsService.DeleteLogAsync(logId, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_View)]
-		public IActionResult TrainingPerMonth()
+		public async Task<IActionResult> TrainingPerMonth()
 		{
 			List<TrainingMonthJson> logMonths = new List<TrainingMonthJson>();
 
 			CultureInfo culture = new CultureInfo("en-us");
 			Calendar calendar = culture.Calendar;
 			var logs =
-			_workLogsService.GetAllLogsByDepartmentDateRange(DepartmentId, LogTypes.Training,
+			await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Training,
 				new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59));
 
 			// Week
@@ -397,7 +399,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_View)]
-		public IActionResult GetNonUnitPersonnelForLog(int logId)
+		public async Task<IActionResult> GetNonUnitPersonnelForLog(int logId)
 		{
 			var personnelJson = new List<PersonnelForJson>();
 
@@ -406,9 +408,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_View)]
-		public FileResult GetAttachment(int logId, int attachmentId)
+		public async Task<FileResult> GetAttachment(int logId, int attachmentId)
 		{
-			var attachment = _workLogsService.GetAttachmentById(attachmentId);
+			var attachment = await _workLogsService.GetAttachmentByIdAsync(attachmentId);
 
 			if (attachment.LogId != logId)
 				Unauthorized();
@@ -430,9 +432,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return PartialView("_UnitLogBlockPartial", model);
 		}
 
-		private void PopulateLogViewModel(NewLogView model)
+		private async Task<NewLogView> PopulateLogViewModel(NewLogView model)
 		{
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 			model.Types = model.LogType.ToSelectList();
 			model.CallPriorities = model.CallPriority.ToSelectList();
@@ -443,13 +445,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Name = "Not Applicable"
 			});
-			groups.AddRange(_departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId));
+			groups.AddRange(await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId));
 			model.Stations = groups;
 
 			List<CallType> types = new List<CallType>();
 			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
-			types.AddRange(_callsService.GetCallTypesForDepartment(DepartmentId));
+			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
 			model.CallTypes = new SelectList(types, "Type", "Type");
+
+			return model;
 		}
 	}
 }

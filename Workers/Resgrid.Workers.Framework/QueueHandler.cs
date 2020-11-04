@@ -61,7 +61,7 @@ namespace Resgrid.Workers.Framework
 					}, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
 
-		protected void Cycle(ICommand<T> command)
+		protected async Task<bool> Cycle(ICommand<T> command)
 		{
 			try
 			{
@@ -70,7 +70,7 @@ namespace Resgrid.Workers.Framework
 					Sleep(new TimeSpan(0,0,0,2));
 				}
 
-				ProcessMessages(this.queue, this.queue.GetItems(50), command.Run);
+				await ProcessMessages(this.queue, await this.queue.GetItems(50), command.Run);
 
 				this.Sleep(this.interval);
 			}
@@ -79,6 +79,8 @@ namespace Resgrid.Workers.Framework
 			{
 				Resgrid.Framework.Logging.LogException(ex);
 			}
+
+			return true;
 		}
 	}
 }

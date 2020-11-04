@@ -1,10 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	public interface IDepartmentCallPruningRepository : IRepository<DepartmentCallPruning>
+	/// <summary>
+	/// Interface IDepartmentCallPruningRepository
+	/// Implements the <see cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.DepartmentCallPruning}" />
+	/// </summary>
+	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.DepartmentCallPruning}" />
+	public interface IDepartmentCallPruningRepository: IRepository<DepartmentCallPruning>
 	{
-		List<DepartmentCallPruning> GetAllDepartmentCallPrunings();
-		DepartmentCallPruning GetDepartmentCallPruningSettings(int departmentId);
+		/// <summary>
+		/// Gets the department call pruning settings asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;DepartmentCallPruning&gt;.</returns>
+		Task<DepartmentCallPruning> GetDepartmentCallPruningSettingsAsync(int departmentId);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.ServiceBus.Messaging;
+﻿using Microsoft.Azure.NotificationHubs.Messaging;
+using Microsoft.Azure.ServiceBus;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -7,6 +8,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Providers.Bus.Rabbit;
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -61,9 +63,9 @@ namespace Resgrid.Providers.Bus
 		}
 
 		#region Private Helpers
-		private static BrokeredMessage CreateMessage(Guid messageId, string messageBody)
+		private static Microsoft.Azure.ServiceBus.Message CreateMessage(Guid messageId, string messageBody)
 		{
-			return new BrokeredMessage(messageBody) { MessageId = messageId.ToString() };
+			return new Microsoft.Azure.ServiceBus.Message(Encoding.UTF8.GetBytes(messageBody)) { MessageId = messageId.ToString() };
 		}
 
 		private static void HandleTransientErrors(MessagingException e)
@@ -76,7 +78,7 @@ namespace Resgrid.Providers.Bus
 
 		public class UnitStatusHandler : IListener<UnitStatusEvent>
 		{
-			public void Handle(UnitStatusEvent message)
+			public async Task<bool> Handle(UnitStatusEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -90,14 +92,16 @@ namespace Resgrid.Providers.Bus
 				nqi.PreviousStateId = previousState;
 				nqi.Value = message.Status.State.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
-				_signalrProvider.UnitStatusUpdated(message.DepartmentId, message.Status);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+				await _signalrProvider.UnitStatusUpdated(message.DepartmentId, message.Status);
+
+				return true;
 			}
 		}
 
 		public class UnitTypeGroupAvailabilityHandler : IListener<UnitStatusEvent>
 		{
-			public void Handle(UnitStatusEvent message)
+			public async Task<bool> Handle(UnitStatusEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -112,13 +116,15 @@ namespace Resgrid.Providers.Bus
 				nqi.Value = message.Status.State.ToString();
 				nqi.UnitId = message.Status.UnitId;
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class UnitTypeDepartmentAvailabilityHandler : IListener<UnitStatusEvent>
 		{
-			public void Handle(UnitStatusEvent message)
+			public async Task<bool> Handle(UnitStatusEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -133,13 +139,15 @@ namespace Resgrid.Providers.Bus
 				nqi.Value = message.Status.State.ToString();
 				nqi.UnitId = message.Status.UnitId;
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class UserStaffingHandler : IListener<UserStaffingEvent>
 		{
-			public void Handle(UserStaffingEvent message)
+			public async Task<bool> Handle(UserStaffingEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -153,13 +161,15 @@ namespace Resgrid.Providers.Bus
 				nqi.PreviousStateId = previousStaffing;
 				nqi.Value = message.Staffing.State.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class UserRoleGroupAvailabilityHandler : IListener<UserStaffingEvent>
 		{
-			public void Handle(UserStaffingEvent message)
+			public async Task<bool> Handle(UserStaffingEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -174,13 +184,15 @@ namespace Resgrid.Providers.Bus
 				//nqi.Value = message.Staffing.State.ToString();
 				nqi.Value = message.Staffing.UserStateId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class UserRoleDepartmentAvailabilityHandler : IListener<UserStaffingEvent>
 		{
-			public void Handle(UserStaffingEvent message)
+			public async Task<bool> Handle(UserStaffingEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -195,14 +207,16 @@ namespace Resgrid.Providers.Bus
 				//nqi.Value = message.Staffing.State.ToString();
 				nqi.Value = message.Staffing.UserStateId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
-				_signalrProvider.PersonnelStaffingUpdated(message.Staffing.DepartmentId, message.Staffing);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+				await _signalrProvider.PersonnelStaffingUpdated(message.Staffing.DepartmentId, message.Staffing);
+
+				return true;
 			}
 		}
 
 		public class PersonnelStatusChangedHandler : IListener<UserStatusEvent>
 		{
-			public void Handle(UserStatusEvent message)
+			public async Task<bool> Handle(UserStatusEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -216,14 +230,16 @@ namespace Resgrid.Providers.Bus
 				nqi.PreviousStateId = previousStatus;
 				nqi.Value = message.Status.ActionTypeId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
-				_signalrProvider.PersonnelStatusUpdated(message.Status.DepartmentId, message.Status);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+				await _signalrProvider.PersonnelStatusUpdated(message.Status.DepartmentId, message.Status);
+
+				return true;
 			}
 		}
 
 		public class UserCreatedHandler : IListener<UserCreatedEvent>
 		{
-			public void Handle(UserCreatedEvent message)
+			public async Task<bool> Handle(UserCreatedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -232,13 +248,15 @@ namespace Resgrid.Providers.Bus
 				nqi.UserId = message.User.UserId;
 				nqi.Value = message.User.UserId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class UserAssignedToGroupHandler : IListener<UserAssignedToGroupEvent>
 		{
-			public void Handle(UserAssignedToGroupEvent message)
+			public async Task<bool> Handle(UserAssignedToGroupEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -253,13 +271,15 @@ namespace Resgrid.Providers.Bus
 				nqi.PreviousGroupId = previousGroup;
 				nqi.Value = message.UserId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class CalendarEventUpcomingHandler : IListener<CalendarEventUpcomingEvent>
 		{
-			public void Handle(CalendarEventUpcomingEvent message)
+			public async Task<bool> Handle(CalendarEventUpcomingEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -268,13 +288,15 @@ namespace Resgrid.Providers.Bus
 				nqi.ItemId = message.Item.CalendarItemId;
 				nqi.Value = message.Item.CalendarItemId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class CalendarEventAddedHandler : IListener<CalendarEventAddedEvent>
 		{
-			public void Handle(CalendarEventAddedEvent message)
+			public async Task<bool> Handle(CalendarEventAddedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -283,13 +305,15 @@ namespace Resgrid.Providers.Bus
 				nqi.ItemId = message.Item.CalendarItemId;
 				nqi.Value = message.Item.CalendarItemId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class CalendarEventUpdatedHandler : IListener<CalendarEventUpdatedEvent>
 		{
-			public void Handle(CalendarEventUpdatedEvent message)
+			public async Task<bool> Handle(CalendarEventUpdatedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -298,13 +322,15 @@ namespace Resgrid.Providers.Bus
 				nqi.ItemId = message.Item.CalendarItemId;
 				nqi.Value = message.Item.CalendarItemId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class DocumentAddedHandler : IListener<DocumentAddedEvent>
 		{
-			public void Handle(DocumentAddedEvent message)
+			public async Task<bool> Handle(DocumentAddedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -313,13 +339,15 @@ namespace Resgrid.Providers.Bus
 				nqi.ItemId = message.Document.DocumentId;
 				nqi.Value = message.Document.DocumentId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class NoteAddedHandler : IListener<NoteAddedEvent>
 		{
-			public void Handle(NoteAddedEvent message)
+			public async Task<bool> Handle(NoteAddedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -328,13 +356,15 @@ namespace Resgrid.Providers.Bus
 				nqi.ItemId = message.Note.NoteId;
 				nqi.Value = message.Note.NoteId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class UnitAddedHandler : IListener<UnitAddedEvent>
 		{
-			public void Handle(UnitAddedEvent message)
+			public async Task<bool> Handle(UnitAddedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -343,13 +373,15 @@ namespace Resgrid.Providers.Bus
 				nqi.UnitId = message.Unit.UnitId;
 				nqi.Value = message.Unit.UnitId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class LogAddedHandler : IListener<LogAddedEvent>
 		{
-			public void Handle(LogAddedEvent message)
+			public async Task<bool> Handle(LogAddedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -358,13 +390,15 @@ namespace Resgrid.Providers.Bus
 				nqi.ItemId = message.Log.LogId;
 				nqi.Value = message.Log.LogId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class ResourceOrderAddedHandler : IListener<ResourceOrderAddedEvent>
 		{
-			public void Handle(ResourceOrderAddedEvent message)
+			public async Task<bool> Handle(ResourceOrderAddedEvent message)
 			{
 				var nqi = new NotificationItem();
 
@@ -373,13 +407,15 @@ namespace Resgrid.Providers.Bus
 				nqi.ItemId = message.Order.ResourceOrderId;
 				nqi.Value = message.Order.ResourceOrderId.ToString();
 
-				_outboundQueueProvider.EnqueueNotification(nqi);
+				await _outboundQueueProvider.EnqueueNotification(nqi);
+
+				return true;
 			}
 		}
 
 		public class ShiftTradeRequestedHandler : IListener<ShiftTradeRequestedEvent>
 		{
-			public void Handle(ShiftTradeRequestedEvent message)
+			public async Task<bool> Handle(ShiftTradeRequestedEvent message)
 			{
 				if (_outboundQueueProvider == null)
 					_outboundQueueProvider = new OutboundQueueProvider();
@@ -390,13 +426,15 @@ namespace Resgrid.Providers.Bus
 				item.DepartmentNumber = message.DepartmentNumber;
 				item.Type = (int)ShiftQueueTypes.TradeRequested;
 
-				_outboundQueueProvider.EnqueueShiftNotification(item);
+				await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+				return true;
 			}
 		}
 
 		public class ShiftTradeRejectedEventHandler : IListener<ShiftTradeRejectedEvent>
 		{
-			public void Handle(ShiftTradeRejectedEvent message)
+			public async Task<bool> Handle(ShiftTradeRejectedEvent message)
 			{
 				if (_outboundQueueProvider == null)
 					_outboundQueueProvider = new OutboundQueueProvider();
@@ -408,13 +446,15 @@ namespace Resgrid.Providers.Bus
 				item.Type = (int)ShiftQueueTypes.TradeRejected;
 				item.SourceUserId = message.UserId;
 
-				_outboundQueueProvider.EnqueueShiftNotification(item);
+				await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+				return true;
 			}
 		}
 
 		public class ShiftTradeProposedEventHandler : IListener<ShiftTradeProposedEvent>
 		{
-			public void Handle(ShiftTradeProposedEvent message)
+			public async Task<bool> Handle(ShiftTradeProposedEvent message)
 			{
 				if (_outboundQueueProvider == null)
 					_outboundQueueProvider = new OutboundQueueProvider();
@@ -426,13 +466,15 @@ namespace Resgrid.Providers.Bus
 				item.Type = (int)ShiftQueueTypes.TradeProposed;
 				item.SourceUserId = message.UserId;
 
-				_outboundQueueProvider.EnqueueShiftNotification(item);
+				await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+				return true;
 			}
 		}
 
 		public class ShiftTradeFilledEventHandler : IListener<ShiftTradeFilledEvent>
 		{
-			public void Handle(ShiftTradeFilledEvent message)
+			public async Task<bool> Handle(ShiftTradeFilledEvent message)
 			{
 				if (_outboundQueueProvider == null)
 					_outboundQueueProvider = new OutboundQueueProvider();
@@ -444,13 +486,15 @@ namespace Resgrid.Providers.Bus
 				item.Type = (int)ShiftQueueTypes.TradeFilled;
 				item.SourceUserId = message.UserId;
 
-				_outboundQueueProvider.EnqueueShiftNotification(item);
+				await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+				return true;
 			}
 		}
 
 		public class ShiftCreatedEventHandler : IListener<ShiftCreatedEvent>
 		{
-			public void Handle(ShiftCreatedEvent message)
+			public async Task<bool> Handle(ShiftCreatedEvent message)
 			{
 				if (_outboundQueueProvider == null)
 					_outboundQueueProvider = new OutboundQueueProvider();
@@ -461,13 +505,15 @@ namespace Resgrid.Providers.Bus
 				item.ShiftId = message.Item.ShiftId;
 				item.Type = (int)ShiftQueueTypes.ShiftCreated;
 
-				_outboundQueueProvider.EnqueueShiftNotification(item);
+				await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+				return true;
 			}
 		}
 
 		public class ShiftUpdatedEventHandler : IListener<ShiftUpdatedEvent>
 		{
-			public void Handle(ShiftUpdatedEvent message)
+			public async Task<bool> Handle(ShiftUpdatedEvent message)
 			{
 				if (_outboundQueueProvider == null)
 					_outboundQueueProvider = new OutboundQueueProvider();
@@ -478,13 +524,15 @@ namespace Resgrid.Providers.Bus
 				item.ShiftId = message.Item.ShiftId;
 				item.Type = (int)ShiftQueueTypes.ShiftUpdated;
 
-				_outboundQueueProvider.EnqueueShiftNotification(item);
+				await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+				return true;
 			}
 		}
 
 		public class ShiftDaysAddedEventHandler : IListener<ShiftDaysAddedEvent>
 		{
-			public void Handle(ShiftDaysAddedEvent message)
+			public async Task<bool> Handle(ShiftDaysAddedEvent message)
 			{
 				if (_outboundQueueProvider == null)
 					_outboundQueueProvider = new OutboundQueueProvider();
@@ -495,7 +543,9 @@ namespace Resgrid.Providers.Bus
 				item.ShiftId = message.Item.ShiftId;
 				item.Type = (int)ShiftQueueTypes.ShiftDaysAdded;
 
-				_outboundQueueProvider.EnqueueShiftNotification(item);
+				await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+				return true;
 			}
 		}
 
@@ -503,44 +553,44 @@ namespace Resgrid.Providers.Bus
 		#region Topic Based Events
 		public class DepartmentSettingsChangedHandler : IListener<DepartmentSettingsChangedEvent>
 		{
-			public void Handle(DepartmentSettingsChangedEvent message)
+			public async Task<bool> Handle(DepartmentSettingsChangedEvent message)
 			{
-				var topicClient = TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureServiceBusConnectionString, Topics.GenericTopic);
+				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusConnectionString, Topics.GenericTopic);
 
 				var messageBus = CreateMessage(Guid.NewGuid(), new { DepartmentId = message.DepartmentId }.SerializeJson());
 				messageBus.CorrelationId = message.DepartmentId.ToString();
-				messageBus.Properties.Add("Type", (int)EventTypes.DepartmentSettingsChanged);
-				messageBus.Properties.Add("Value", message.DepartmentId);
-				messageBus.Properties.Add("DepartmentId", message.DepartmentId);
+				messageBus.UserProperties.Add("Type", (int)EventTypes.DepartmentSettingsChanged);
+				messageBus.UserProperties.Add("Value", message.DepartmentId);
+				messageBus.UserProperties.Add("DepartmentId", message.DepartmentId);
 
 				while (true)
 				{
 					try
 					{
-						topicClient.Send(messageBus);
+						await topicClient.SendAsync(messageBus);
+						break;
 					}
-					catch (MessagingException e)
+					catch (MessagingCommunicationException e)
 					{
 						if (!e.IsTransient)
 							throw;
 						else
 							HandleTransientErrors(e);
 					}
-
-					break;
 				}
+
+				return true;
 			}
 		}
 
 		public class WorkerHeartbeatHandler : IListener<WorkerHeartbeatEvent>
 		{
-			public void Handle(WorkerHeartbeatEvent message)
+			public async Task<bool> Handle(WorkerHeartbeatEvent message)
 			{
-				var topicClient = TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
 
 				var messageBus = CreateMessage(Guid.NewGuid(), new { WorkerType = message.WorkerType, TimeStamp = message.Timestamp }.SerializeJson());
-				messageBus.Properties.Add("Type", (int)HeartbeatTypes.Worker);
-				//messageBus.Properties.Add("Timestamp", DateTime.UtcNow);
+				messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.Worker);
 
 				while (true)
 				{
@@ -548,7 +598,8 @@ namespace Resgrid.Providers.Bus
 
 					try
 					{
-						topicClient.Send(messageBus);
+						await topicClient.SendAsync(messageBus);
+						break;
 					}
 					catch (MessagingException e)
 					{
@@ -567,21 +618,20 @@ namespace Resgrid.Providers.Bus
 						else
 							throw;
 					}
-
-					break;
 				}
+
+				return true;
 			}
 		}
 
 		public class DListCheckHandler : IListener<DistributionListCheckEvent>
 		{
-			public void Handle(DistributionListCheckEvent message)
+			public async Task<bool> Handle(DistributionListCheckEvent message)
 			{
-				var topicClient = TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
 
 				var messageBus = CreateMessage(Guid.NewGuid(), new { ListId = message.DistributionListId, TimeStamp = message.Timestamp, IsFailure = message.IsFailure, ErrorMessage = message.ErrorMessage }.SerializeJson());
-				messageBus.Properties.Add("Type", (int)HeartbeatTypes.DListCheck);
-				//messageBus.Properties.Add("Timestamp", DateTime.UtcNow);
+				messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.DListCheck);
 
 				while (true)
 				{
@@ -589,7 +639,8 @@ namespace Resgrid.Providers.Bus
 
 					try
 					{
-						topicClient.Send(messageBus);
+						await topicClient.SendAsync(messageBus);
+						break;
 					}
 					catch (MessagingException e)
 					{
@@ -608,257 +659,199 @@ namespace Resgrid.Providers.Bus
 						else
 							throw;
 					}
-
-					break;
 				}
+
+				return true;
 			}
 		}
 
 
 		public class PersonnelStatusChangedTopicHandler : IListener<UserStatusEvent>
 		{
-			public void Handle(UserStatusEvent message)
+			public async Task<bool> Handle(UserStatusEvent message)
 			{
-				try
-				{
-					if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+					return _rabbitTopicProvider.PersonnelStatusChanged(message);
+
+
+				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+				var topicMessage = CreateMessage(Guid.NewGuid(),
+					new
 					{
-						_rabbitTopicProvider.PersonnelStatusChanged(message);
-						return;
+						Type = EventingTypes.PersonnelStatusUpdated,
+						TimeStamp = DateTime.UtcNow,
+						DepartmentId = message.Status.DepartmentId,
+						ItemId = message.Status.ActionLogId
+					}.SerializeJson());
+				topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStatusUpdated);
+				topicMessage.UserProperties.Add("DepartmentId", message.Status.DepartmentId);
+				topicMessage.UserProperties.Add("ItemId", message.Status.ActionLogId);
+
+
+				int retry = 0;
+				bool sent = false;
+
+				while (!sent)
+				{
+					try
+					{
+						await topicClient.SendAsync(topicMessage);
+						sent = true;
 					}
-
-					var topicClient =
-						TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-					var topicMessage = CreateMessage(Guid.NewGuid(),
-						new
-						{
-							Type = EventingTypes.PersonnelStatusUpdated,
-							TimeStamp = DateTime.UtcNow,
-							DepartmentId = message.Status.DepartmentId,
-							ItemId = message.Status.ActionLogId
-						}.SerializeJson());
-					topicMessage.Properties.Add("Type", (int)EventingTypes.PersonnelStatusUpdated);
-					topicMessage.Properties.Add("DepartmentId", message.Status.DepartmentId);
-					topicMessage.Properties.Add("ItemId", message.Status.ActionLogId);
-
-#pragma warning disable 4014
-					Task.Run(() =>
+					catch (Exception ex)
 					{
-						int retry = 0;
-						bool sent = false;
+						Logging.LogException(ex, message.ToString());
 
-						while (!sent)
-						{
-							try
-							{
-								topicClient.Send(topicMessage);
-								sent = true;
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex, message.ToString());
+						if (retry >= 5)
+							return false;
 
-								if (retry >= 5)
-									return false;
-
-								Thread.Sleep(1000);
-								retry++;
-							}
-						}
-
-						return sent;
-					}).ConfigureAwait(false);
-#pragma warning restore 4014
+						Thread.Sleep(1000);
+						retry++;
+					}
 				}
-				catch (Exception ex)
-				{
 
-				}
+				return sent;
 			}
 		}
 
 		public class PersonnelStaffingChangedTopicHandler : IListener<UserStaffingEvent>
 		{
-			public void Handle(UserStaffingEvent message)
+			public async Task<bool> Handle(UserStaffingEvent message)
 			{
-				try
-				{
-					if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+					return _rabbitTopicProvider.PersonnelStaffingChanged(message);
+
+				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+				var topicMessage = CreateMessage(Guid.NewGuid(),
+					new
 					{
-						_rabbitTopicProvider.PersonnelStaffingChanged(message);
-						return;
+						Type = EventingTypes.PersonnelStaffingUpdated,
+						TimeStamp = DateTime.UtcNow,
+						DepartmentId = message.DepartmentId,
+						ItemId = message.Staffing.UserStateId
+					}.SerializeJson());
+				topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStaffingUpdated);
+				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+				topicMessage.UserProperties.Add("ItemId", message.Staffing.UserStateId);
+
+
+				int retry = 0;
+				bool sent = false;
+
+				while (!sent)
+				{
+					try
+					{
+						await topicClient.SendAsync(topicMessage);
+						sent = true;
 					}
-
-					var topicClient =
-						TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-					var topicMessage = CreateMessage(Guid.NewGuid(),
-						new
-						{
-							Type = EventingTypes.PersonnelStaffingUpdated,
-							TimeStamp = DateTime.UtcNow,
-							DepartmentId = message.DepartmentId,
-							ItemId = message.Staffing.UserStateId
-						}.SerializeJson());
-					topicMessage.Properties.Add("Type", (int)EventingTypes.PersonnelStaffingUpdated);
-					topicMessage.Properties.Add("DepartmentId", message.DepartmentId);
-					topicMessage.Properties.Add("ItemId", message.Staffing.UserStateId);
-
-#pragma warning disable 4014
-					Task.Run(() =>
+					catch (Exception ex)
 					{
-						int retry = 0;
-						bool sent = false;
+						Logging.LogException(ex, message.ToString());
 
-						while (!sent)
-						{
-							try
-							{
-								topicClient.Send(topicMessage);
-								sent = true;
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex, message.ToString());
+						if (retry >= 5)
+							return false;
 
-								if (retry >= 5)
-									return false;
-
-								Thread.Sleep(1000);
-								retry++;
-							}
-						}
-
-						return sent;
-					}).ConfigureAwait(false);
-#pragma warning restore 4014
+						Thread.Sleep(1000);
+						retry++;
+					}
 				}
-				catch (Exception ex)
-				{
 
-				}
+				return sent;
 			}
 		}
 
 		public class UnitStatusTopicHandler : IListener<UnitStatusEvent>
 		{
-			public void Handle(UnitStatusEvent message)
+			public async Task<bool> Handle(UnitStatusEvent message)
 			{
-				try
-				{
-					if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+					return _rabbitTopicProvider.UnitStatusChanged(message);
+
+				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+				var topicMessage = CreateMessage(Guid.NewGuid(),
+					new
 					{
-						_rabbitTopicProvider.UnitStatusChanged(message);
-						return;
+						Type = EventingTypes.UnitStatusUpdated,
+						TimeStamp = DateTime.UtcNow,
+						DepartmentId = message.DepartmentId,
+						ItemId = message.Status.UnitStateId
+					}.SerializeJson());
+				topicMessage.UserProperties.Add("Type", (int)EventingTypes.UnitStatusUpdated);
+				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+				topicMessage.UserProperties.Add("ItemId", message.Status.UnitStateId);
+
+
+				int retry = 0;
+				bool sent = false;
+
+				while (!sent)
+				{
+					try
+					{
+						await topicClient.SendAsync(topicMessage);
+						sent = true;
 					}
-
-					var topicClient =
-						TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-					var topicMessage = CreateMessage(Guid.NewGuid(),
-						new
-						{
-							Type = EventingTypes.UnitStatusUpdated,
-							TimeStamp = DateTime.UtcNow,
-							DepartmentId = message.DepartmentId,
-							ItemId = message.Status.UnitStateId
-						}.SerializeJson());
-					topicMessage.Properties.Add("Type", (int)EventingTypes.UnitStatusUpdated);
-					topicMessage.Properties.Add("DepartmentId", message.DepartmentId);
-					topicMessage.Properties.Add("ItemId", message.Status.UnitStateId);
-
-#pragma warning disable 4014
-					Task.Run(() =>
+					catch (Exception ex)
 					{
-						int retry = 0;
-						bool sent = false;
+						Logging.LogException(ex, message.ToString());
 
-						while (!sent)
-						{
-							try
-							{
-								topicClient.Send(topicMessage);
-								sent = true;
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex, message.ToString());
+						if (retry >= 5)
+							return false;
 
-								if (retry >= 5)
-									return false;
-
-								Thread.Sleep(1000);
-								retry++;
-							}
-						}
-
-						return sent;
-					}).ConfigureAwait(false);
-#pragma warning restore 4014
+						Thread.Sleep(1000);
+						retry++;
+					}
 				}
-				catch (Exception ex)
-				{
-				}
+
+				return sent;
 			}
 		}
 
 		public class CallAddedTopicHandler : IListener<CallAddedEvent>
 		{
-			public void Handle(CallAddedEvent message)
+			public async Task<bool> Handle(CallAddedEvent message)
 			{
 				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				{
-					_rabbitTopicProvider.CallAdded(message);
-					return;
-				}
+					return _rabbitTopicProvider.CallAdded(message);
 
-				try
-				{
-					var topicClient =
-						TopicClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-					var topicMessage = CreateMessage(Guid.NewGuid(),
-						new
-						{
-							Type = EventingTypes.CallsUpdated,
-							TimeStamp = DateTime.UtcNow,
-							DepartmentId = message.DepartmentId,
-							ItemId = message.Call.CallId
-						}.SerializeJson());
-					topicMessage.Properties.Add("Type", (int)EventingTypes.CallsUpdated);
-					topicMessage.Properties.Add("DepartmentId", message.DepartmentId);
-					topicMessage.Properties.Add("ItemId", message.Call.CallId);
 
-#pragma warning disable 4014
-					Task.Run(() =>
+				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+				var topicMessage = CreateMessage(Guid.NewGuid(),
+					new
 					{
-						int retry = 0;
-						bool sent = false;
+						Type = EventingTypes.CallsUpdated,
+						TimeStamp = DateTime.UtcNow,
+						DepartmentId = message.DepartmentId,
+						ItemId = message.Call.CallId
+					}.SerializeJson());
+				topicMessage.UserProperties.Add("Type", (int)EventingTypes.CallsUpdated);
+				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+				topicMessage.UserProperties.Add("ItemId", message.Call.CallId);
 
-						while (!sent)
-						{
-							try
-							{
-								topicClient.Send(topicMessage);
-								sent = true;
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex, message.ToString());
+				int retry = 0;
+				bool sent = false;
 
-								if (retry >= 5)
-									return false;
-
-								Thread.Sleep(1000);
-								retry++;
-							}
-						}
-
-						return sent;
-					}).ConfigureAwait(false);
-#pragma warning restore 4014
-				}
-				catch (Exception ex)
+				while (!sent)
 				{
+					try
+					{
+						await topicClient.SendAsync(topicMessage);
+						sent = true;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, message.ToString());
 
+						if (retry >= 5)
+							return false;
+
+						Thread.Sleep(1000);
+						retry++;
+					}
 				}
+
+				return sent;
 			}
 		}
 		#endregion Topic Based Events

@@ -38,11 +38,11 @@ namespace Resgrid.Workers.Framework
 
 				_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 
-				var task = new Task(() =>
+				var task = new Task(async () =>
 									   {
 										   try
 										   {
-											   var items = _departmentsService.GetAllDepartmentEmailSettings();
+											   var items = await _departmentsService.GetAllDepartmentEmailSettingsAsync();
 
 											   foreach (var i in items)
 											   {
@@ -75,11 +75,13 @@ namespace Resgrid.Workers.Framework
 				_queue = new Queue<CallEmailQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public bool IsLocked
@@ -102,10 +104,10 @@ namespace Resgrid.Workers.Framework
 			return item;
 		}
 
-		public IEnumerable<CallEmailQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<CallEmailQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<CallEmailQueueItem>();
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CallEmail, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CallEmail, Timestamp = DateTime.UtcNow });
 
 			int count = 0;
 			if (_queue.Count < maxItemsToReturn)

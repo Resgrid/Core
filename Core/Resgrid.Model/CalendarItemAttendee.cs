@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using ProtoBuf;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -40,18 +40,19 @@ namespace Resgrid.Model
 		public string Note { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CalendarItemAttendeeId; }
 			set { CalendarItemAttendeeId = (int)value; }
 		}
-	}
 
-	public class CalendarItemAttendee_Mapping : EntityTypeConfiguration<CalendarItemAttendee>
-	{
-		public CalendarItemAttendee_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "CalendarItemAttendees";
+
+		[NotMapped]
+		public string IdName => "CalendarItemAttendeeId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "CalendarItem", "User" };
 	}
 }

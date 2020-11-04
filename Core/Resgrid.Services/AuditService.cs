@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -9,49 +11,30 @@ namespace Resgrid.Services
 {
 	public class AuditService : IAuditService
 	{
-		private readonly IGenericDataRepository<AuditLog> _auditLogsRepository;
+		private readonly IAuditLogsRepository _auditLogsRepository;
 		private readonly IUserProfileService _userProfileService;
 
-		public AuditService(IGenericDataRepository<AuditLog> auditLogsRepository, IUserProfileService userProfileService)
+		public AuditService(IAuditLogsRepository auditLogsRepository, IUserProfileService userProfileService)
 		{
 			_auditLogsRepository = auditLogsRepository;
 			_userProfileService = userProfileService;
 		}
 
-		public AuditLog SaveAuditLog(AuditLog auditLog)
+		public async Task<AuditLog> SaveAuditLogAsync(AuditLog auditLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			auditLog.LoggedOn = DateTime.UtcNow;
-			_auditLogsRepository.SaveOrUpdate(auditLog);
-
-			return auditLog;
+			return await _auditLogsRepository.SaveOrUpdateAsync(auditLog, cancellationToken);
 		}
 
-		public AuditLog GetAuditLogById(int auditLogId)
+		public async Task<AuditLog> GetAuditLogByIdAsync(int auditLogId)
 		{
-			return _auditLogsRepository.GetAll().FirstOrDefault(x => x.AuditLogId == auditLogId);
+			return await _auditLogsRepository.GetByIdAsync(auditLogId);
 		}
 
-		public List<AuditLog> GetAllAuditLogsForDepartment(int departmentId)
+		public async Task<List<AuditLog>> GetAllAuditLogsForDepartmentAsync(int departmentId)
 		{
-			return _auditLogsRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
-		}
-
-		public void DeleteAuditLogById(int auditLogId)
-		{
-			var auditLog = GetAuditLogById(auditLogId);
-
-			if (auditLog != null)
-				_auditLogsRepository.DeleteOnSubmit(auditLog);
-		}
-
-		public void DeleteSelectedAuditLogs(int departmentId, List<int> auditLogIds)
-		{
-			var auditLogs = from al in _auditLogsRepository.GetAll()
-				where al.DepartmentId == departmentId &&
-							auditLogIds.Contains(al.AuditLogId)
-				select al;
-
-			_auditLogsRepository.DeleteAll(auditLogs);
+			var logs = await _auditLogsRepository.GetAllByDepartmentIdAsync(departmentId);
+			return logs.ToList();
 		}
 
 		public string GetAuditLogTypeString(AuditLogTypes logType)

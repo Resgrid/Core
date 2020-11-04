@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -44,11 +44,20 @@ namespace Resgrid.Model
 		public virtual ShiftSignupTrade Trade { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftSignupId; }
 			set { ShiftSignupId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ShiftSignups";
+
+		[NotMapped]
+		public string IdName => "ShiftSignupId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Shift", "User", "Group", "Trade" };
 
 		public ShiftTradeTypes GetTradeType()
 		{
@@ -59,14 +68,6 @@ namespace Resgrid.Model
 				return ShiftTradeTypes.Source;
 			
 			return ShiftTradeTypes.Target;
-		}
-	}
-
-	public class ShiftSignup_Mapping : EntityTypeConfiguration<ShiftSignup>
-	{
-		public ShiftSignup_Mapping()
-		{
-
 		}
 	}
 }

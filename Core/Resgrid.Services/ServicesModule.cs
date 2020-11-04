@@ -1,11 +1,8 @@
 ﻿using Autofac;
-using Resgrid.Model.Facades;
 using Resgrid.Model.Facades.Stripe;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
-using Resgrid.Services.Facades;
 using Resgrid.Services.Facades.Stripe;
-using Stripe;
 
 namespace Resgrid.Services
 {
@@ -19,7 +16,6 @@ namespace Resgrid.Services
 			builder.RegisterType<CommunicationService>().As<ICommunicationService>().InstancePerLifetimeScope();
 			builder.RegisterType<SmsService>().As<ISmsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushLogsService>().As<IPushLogsService>().InstancePerLifetimeScope();
-			builder.RegisterType<PushUriService>().As<IPushUriService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushService>().As<IPushService>().SingleInstance();
 			builder.RegisterType<MessageService>().As<IMessageService>().InstancePerLifetimeScope();
 			builder.RegisterType<AddressService>().As<IAddressService>().InstancePerLifetimeScope();
@@ -62,8 +58,8 @@ namespace Resgrid.Services
 			builder.RegisterType<ImageService>().As<IImageService>().InstancePerLifetimeScope();
 			builder.RegisterType<MappingService>().As<IMappingService>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryService>().As<IInventoryService>().InstancePerLifetimeScope();
-			builder.RegisterType<DepartmentProfileService>().As<IDepartmentProfileService>().InstancePerLifetimeScope();
-			builder.RegisterType<IncidentService>().As<IIncidentService>().InstancePerLifetimeScope();
+			//builder.RegisterType<DepartmentProfileService>().As<IDepartmentProfileService>().InstancePerLifetimeScope();
+			//builder.RegisterType<IncidentService>().As<IIncidentService>().InstancePerLifetimeScope();
 			builder.RegisterType<FileService>().As<IFileService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentLinksService>().As<IDepartmentLinksService>().InstancePerLifetimeScope();
 			builder.RegisterType<ResourceOrdersService>().As<IResourceOrdersService>().InstancePerLifetimeScope();

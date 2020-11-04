@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
 using ProtoBuf.Meta;
@@ -49,11 +50,20 @@ namespace Resgrid.Model
 		public bool IsDeleted { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CustomStateDetailId; }
 			set { CustomStateDetailId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "CustomStateDetails";
+
+		[NotMapped]
+		public string IdName => "CustomStateDetailId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "CustomState" };
 
 		public string ButtonClassToColor()
 		{

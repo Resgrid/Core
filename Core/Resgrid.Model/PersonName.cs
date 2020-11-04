@@ -11,8 +11,8 @@ namespace Resgrid.Model
 		[ProtoMember(1)]
 		public string UserId { get { return _userId.ToUpper(); } set { _userId = value; } }
 
-		[ProtoMember(2)]
-		public string Name { get; set; }
+
+		public string Name => $"{FirstName} {LastName}";
 
 		[ProtoMember(3)]
 		public string FirstName { get; set; }

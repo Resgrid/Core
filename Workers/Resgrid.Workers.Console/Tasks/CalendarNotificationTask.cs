@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Logging;
-using Quidjibo.Commands;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model.Services;
@@ -8,7 +7,6 @@ using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
 using Resgrid.Workers.Framework.Workers.CalendarNotifier;
-using Serilog.Core;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,12 +28,12 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			progress.Report(1, $"Starting the {Name} Task");
 
-			await Task.Factory.StartNew(() =>
+			await Task.Run(async () =>
 			{
 				var _calendarService = Bootstrapper.GetKernel().Resolve<ICalendarService>();
 				var logic = new CalendarNotifierLogic();
 
-				var calendarItems = _calendarService.GetV2CalendarItemsToNotify(DateTime.UtcNow);
+				var calendarItems = await _calendarService.GetCalendarItemsToNotifyAsync(DateTime.UtcNow);
 
 				if (calendarItems != null)
 				{
@@ -48,7 +46,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 						_logger.LogInformation("CalendarNotification::Processing Notification for CalendarId:" + qi.CalendarItem.CalendarItemId);
 
-						var result = logic.Process(qi);
+						var result = await logic.Process(qi);
 
 						if (result.Item1)
 						{
@@ -64,7 +62,7 @@ namespace Resgrid.Workers.Console.Tasks
 				{
 					progress.Report(6, "CalendarNotification::No Calendar Items to Notify");
 				}
-			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			}, cancellationToken);
 
 			progress.Report(100, $"Finishing the {Name} Task");
 		}

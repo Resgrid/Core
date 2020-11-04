@@ -42,7 +42,7 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 			{
 				_isLocked = true;
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 															{
 																try
 																{
@@ -56,13 +56,13 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 																		_queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
 																		_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 
-																		var items = _queueService.Dequeue(QueueTypes.MessageBroadcast);
+																		var items = await _queueService.DequeueAsync(QueueTypes.MessageBroadcast);
 
 																		foreach (var i in items)
 																		{
 																			var cqi = new MessageQueueItem();
 																			cqi.QueueItem = i;
-																			cqi.Message = _messageService.GetMessageById(int.Parse(i.SourceId));
+																			cqi.Message = await _messageService.GetMessageByIdAsync(int.Parse(i.SourceId));
 
 																			var users = new List<string>();
 
@@ -72,7 +72,7 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 																			if (!String.IsNullOrWhiteSpace(cqi.Message.SendingUserId))
 																				users.Add(cqi.Message.SendingUserId);
 
-																			cqi.Profiles = _userProfileService.GetSelectedUserProfiles(users);
+																			cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(users);
 
 																			_queue.Enqueue(cqi);
 																		}
@@ -108,7 +108,7 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 				_queue = new Queue<MessageQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 
@@ -121,7 +121,7 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 					_queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
 
 					var queueItems = _queue.Select(x => x.QueueItem).ToList();
-					_queueService.RequeueAll(queueItems);
+					await _queueService.RequeueAllAsync(queueItems);
 				}
 				catch (Exception ex)
 				{
@@ -132,6 +132,8 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 					_queueService = null;
 				}
 			}
+
+			return true;
 		}
 
 		public void AddItem(MessageQueueItem item)
@@ -149,11 +151,11 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 			return item;
 		}
 
-		public IEnumerable<MessageQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<MessageQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<MessageQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.MessageBroadcast, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.MessageBroadcast, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

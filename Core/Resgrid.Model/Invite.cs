@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -40,18 +40,19 @@ namespace Resgrid.Model
 		public virtual Department Department { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return InviteId; }
 			set { InviteId = (int)value; }
 		}
-	}
 
-	public class Invite_Mapping : EntityTypeConfiguration<Invite>
-	{
-		public Invite_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "Invites";
+
+		[NotMapped]
+		public string IdName => "InviteId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "SendingUser", "Department" };
 	}
 }

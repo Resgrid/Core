@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Collections.Generic;
+using Autofac;
 using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
@@ -8,6 +9,7 @@ using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Model;
 
 namespace Resgrid.Workers.Console.Tasks
 {
@@ -26,12 +28,13 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			progress.Report(1, $"Starting the {Name} Task");
 
-			await Task.Factory.StartNew(() =>
+			await Task.Run(async () =>
 			{
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var logic = new CallEmailImporterLogic();
 
-				var items = _departmentsService.GetAllDepartmentEmailSettings();
+				//var items = await _departmentsService.GetAllDepartmentEmailSettingsAsync();
+				var items = new List<DepartmentCallEmail>();
 
 				if (items != null)
 				{
@@ -44,7 +47,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 						_logger.LogInformation("CallEmailImport::Processing Email for DepartmentCallEmailId:" + cqi.EmailSettings.DepartmentCallEmailId);
 
-						var result = logic.Process(cqi);
+						var result = await logic.Process(cqi);
 
 						if (result.Item1)
 						{
@@ -56,7 +59,7 @@ namespace Resgrid.Workers.Console.Tasks
 						}
 					}
 				}
-			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			}, cancellationToken);
 
 			progress.Report(100, $"Finishing the {Name} Task");
 		}

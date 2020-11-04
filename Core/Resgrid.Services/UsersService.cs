@@ -30,11 +30,11 @@ namespace Resgrid.Services
 		private static TimeSpan CacheLength = TimeSpan.FromDays(7);
 		private static TimeSpan UGRCacheLength = TimeSpan.FromDays(14);
 
-		private readonly IGenericDataRepository<DepartmentMember> _departmentMembersRepository;
+		private readonly IDepartmentMembersRepository _departmentMembersRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IIdentityRepository _identityRepository;
 
-		public UsersService(IGenericDataRepository<DepartmentMember> departmentMembersRepository, ICacheProvider cacheProvider, IIdentityRepository identityRepository)
+		public UsersService(IDepartmentMembersRepository departmentMembersRepository, ICacheProvider cacheProvider, IIdentityRepository identityRepository)
 		{
 			_departmentMembersRepository = departmentMembersRepository;
 			_cacheProvider = cacheProvider;
@@ -77,10 +77,10 @@ namespace Resgrid.Services
 			return _identityRepository.GetUserByEmail(emailAddress);
 		}
 
-		public bool DoesUserHaveAnyActiveDepartments(string userName)
+		public async Task<bool> DoesUserHaveAnyActiveDepartments(string userName)
 		{
-			var user = GetUserByName(userName);
-			var memberships = _departmentMembersRepository.GetAll().Where(x => x.UserId == user.UserId).ToList();
+			var user = await GetUserByNameAsync(userName);
+			var memberships = await _departmentMembersRepository.GetAllByUserIdAsync(user.UserId);
 
 			return memberships.Any(x => x.IsDeleted == false);
 		}
@@ -123,19 +123,9 @@ namespace Resgrid.Services
 			return _identityRepository.GetUserById(userId.ToString());
 		}
 
-		public IdentityUser GetUserByName(string userName)
-		{
-			return _identityRepository.GetUserByUserName(userName);
-		}
-
 		public async Task<IdentityUser> GetUserByNameAsync(string userName)
 		{
 			return await _identityRepository.GetUserByUserNameAsync(userName);
-		}
-
-		public IdentityUser GetIdentityByUserName(string userName)
-		{
-			return _identityRepository.GetUserByUserName(userName);
 		}
 
 		public void InitUserExtInfo(string userId)
@@ -143,13 +133,13 @@ namespace Resgrid.Services
 			_identityRepository.InitUserExtInfo(userId);
 		}
 
-		public IdentityUser UpdateUsername(string oldUsername, string newUsername)
+		public async Task<IdentityUser> UpdateUsername(string oldUsername, string newUsername)
 		{
 			if (String.IsNullOrEmpty(oldUsername) || String.IsNullOrEmpty(newUsername))
 				return null;
 
 			_identityRepository.UpdateUsername(oldUsername, newUsername);
-			var user = _identityRepository.GetUserByUserName(newUsername);
+			var user = await _identityRepository.GetUserByUserNameAsync(newUsername);
 
 			return user;
 		}

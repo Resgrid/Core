@@ -1,4 +1,5 @@
-﻿using Resgrid.Workers.Framework.Logic;
+﻿using System.Threading.Tasks;
+using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework
 {
@@ -11,10 +12,11 @@ namespace Resgrid.Workers.Framework
 
 		public bool Continue { get; set; }
 
-		public void Run(StaffingScheduleQueueItem item)
+		public async Task<bool> Run(StaffingScheduleQueueItem item)
 		{
 			var logic = new StaffingScheduleLogic();
-			logic.Process(item);
+			await logic.Process(item);
+			return true;
 		}
 	}
 }

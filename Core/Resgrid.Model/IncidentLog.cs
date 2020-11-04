@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -22,7 +23,6 @@ namespace Resgrid.Model
 
 		public virtual Incident Incident { get; set; }
 
-
 		[Required]
 		[ForeignKey("Unit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
 		[ProtoMember(3)]
@@ -37,10 +37,19 @@ namespace Resgrid.Model
 		public string Description { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return IncidentLogId; }
 			set { IncidentLogId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "IncidentLogs";
+
+		[NotMapped]
+		public string IdName => "IncidentLogId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Incident", "Unit" };
 	}
 }

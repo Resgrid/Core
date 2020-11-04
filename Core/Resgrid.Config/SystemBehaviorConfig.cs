@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Resgrid.Config
 {
@@ -8,6 +9,11 @@ namespace Resgrid.Config
 	/// </summary>
 	public static class SystemBehaviorConfig
 	{
+		/// <summary>
+		/// The Environment context Resgrid is running under
+		/// </summary>
+		public static SystemEnvironment Environment = SystemEnvironment.Dev;
+
 		/// <summary>
 		/// The base url to where the Resgrid web application lives
 		/// </summary>
@@ -24,6 +30,14 @@ namespace Resgrid.Config
 		/// out a broadcast to unknowing users.
 		/// </summary>
 		public static bool DoNotBroadcast = true;
+
+		/// <summary>
+		/// These departments will bypass the DoNotBroadcast value
+		/// </summary>
+		public static HashSet<int> BypassDoNotBroadcastDepartments = new HashSet<int>()
+		{
+			1
+		};
 
 		/// <summary>
 		/// This will initially redirect default route landing at Home\Index to the Account\Login
@@ -130,5 +144,30 @@ namespace Resgrid.Config
 		/// an annual payment, please contact team@resgrid.com. 
 		/// </summary>
 		public static string SiteKey = "";
+
+		public static string GetEnvPrefix()
+		{
+			switch (Environment)
+			{
+				case SystemEnvironment.Prod:
+					return String.Empty;
+				case SystemEnvironment.Staging:
+					return "ST";
+				case SystemEnvironment.QA:
+					return "QA";
+				case SystemEnvironment.Dev:
+					return "DEV";
+				default:
+					return String.Empty;
+			}
+		}
+	}
+
+	public enum SystemEnvironment
+	{
+		Prod,
+		Staging,
+		QA,
+		Dev
 	}
 }

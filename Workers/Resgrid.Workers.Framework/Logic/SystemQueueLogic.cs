@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac;
-using Microsoft.ServiceBus.Messaging;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
@@ -12,9 +11,14 @@ using KellermanSoftware.CompareNetObjects;
 using Resgrid.Model.Identity;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Model.Providers;
 using Newtonsoft.Json;
 using Stripe.Checkout;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -28,7 +32,8 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.SystemQueueName);
+					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.SystemQueueName);
+					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.SystemQueueName);
 				}
 				catch (TimeoutException) { }
 			}
@@ -36,10 +41,19 @@ namespace Resgrid.Workers.Framework.Logic
 
 		public void Process(SystemQueueItem item)
 		{
-			ProcessQueueMessage(_client.Receive());
+			//ProcessQueueMessage(_client.Receive());
+
+			var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+			{
+				MaxConcurrentCalls = 1,
+				AutoComplete = false
+			};
+
+			// Register the function that will process messages
+			_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
 		}
 
-		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
+		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
 		{
 			bool success = true;
 			string result = "";
@@ -61,16 +75,18 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							success = false;
 							result = "Unable to parse message body Exception: " + ex.ToString();
-							message.Complete();
+							//message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
 						}
 
-						success = ProcessSystemQueueItem(qi);
+						success = await ProcessSystemQueueItem(qi);
 					}
 
 					try
 					{
 						if (success)
-							message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
+							//message.Complete();
 					}
 					catch (MessageLockLostException)
 					{
@@ -79,7 +95,8 @@ namespace Resgrid.Workers.Framework.Logic
 				catch (Exception ex)
 				{
 					Logging.LogException(ex);
-					message.Abandon();
+					await _client.AbandonAsync(message.SystemProperties.LockToken); 
+					//message.Abandon();
 					success = false;
 					result = ex.ToString();
 				}
@@ -88,7 +105,7 @@ namespace Resgrid.Workers.Framework.Logic
 			return new Tuple<bool, string>(success, result);
 		}
 
-		public static bool ProcessSystemQueueItem(CqrsEvent qi)
+		public static async Task<bool> ProcessSystemQueueItem(CqrsEvent qi, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			bool success = true;
 
@@ -115,7 +132,7 @@ namespace Resgrid.Workers.Framework.Logic
 							try
 							{
 								unitService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
-								unitService.AddUnitLocation(unitLocation);
+								await unitService.AddUnitLocationAsync(unitLocation, cancellationToken);
 							}
 							catch (Exception ex)
 							{
@@ -142,7 +159,7 @@ namespace Resgrid.Workers.Framework.Logic
 						if (data != null)
 						{
 							var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
-							var resgriterResult = pushService.Register(data).Result;
+							var resgriterResult = await pushService.Register(data);
 
 							pushService = null;
 						}
@@ -171,7 +188,7 @@ namespace Resgrid.Workers.Framework.Logic
 							pushUri.Uuid = unitData.Uuid;
 
 							var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
-							var unitResult = pushService.RegisterUnit(pushUri).Result;
+							var unitResult = await pushService.RegisterUnit(pushUri);
 
 							pushService = null;
 						}
@@ -183,7 +200,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-							paymentProviderService.ProcessStripePayment(succeededCharge);
+							await paymentProviderService.ProcessStripePaymentAsync(succeededCharge);
 						}
 						break;
 					case CqrsEventTypes.StripeChargeFailed:
@@ -193,7 +210,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-							paymentProviderService.ProcessStripeChargeFailed(failedCharge);
+							await paymentProviderService.ProcessStripeChargeFailedAsync(failedCharge);
 						}
 						break;
 					case CqrsEventTypes.StripeChargeRefunded:
@@ -203,7 +220,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-							paymentProviderService.ProcessStripeSubscriptionRefund(refundedCharge);
+							await paymentProviderService.ProcessStripeSubscriptionRefundAsync(refundedCharge);
 						}
 						break;
 					case CqrsEventTypes.StripeSubUpdated:
@@ -213,7 +230,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-							paymentProviderService.ProcessStripeSubscriptionUpdate(updatedSubscription);
+							await paymentProviderService.ProcessStripeSubscriptionUpdateAsync(updatedSubscription);
 						}
 						break;
 					case CqrsEventTypes.StripeSubDeleted:
@@ -223,7 +240,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-							paymentProviderService.ProcessStripeSubscriptionCancellation(deletedSubscription);
+							await paymentProviderService.ProcessStripeSubscriptionCancellationAsync(deletedSubscription);
 						}
 						break;
 					case CqrsEventTypes.ClearDepartmentCache:
@@ -289,16 +306,16 @@ namespace Resgrid.Workers.Framework.Logic
 									List<UserProfile> profiles = new List<UserProfile>();
 									if (newChatEvent.RecipientUserIds.Count == 1)
 									{
-										profiles.Add(userProfileService.GetProfileByUserId(newChatEvent.RecipientUserIds.First()));
+										profiles.Add(await userProfileService.GetProfileByUserIdAsync(newChatEvent.RecipientUserIds.First()));
 									}
 									else
 									{
-										profiles.AddRange(userProfileService.GetSelectedUserProfiles(newChatEvent.RecipientUserIds));
+										profiles.AddRange(await userProfileService.GetSelectedUserProfilesAsync(newChatEvent.RecipientUserIds));
 									}
 
-									var sendingUserProfile = userProfileService.GetProfileByUserId(newChatEvent.SendingUserId);
+									var sendingUserProfile = await userProfileService.GetProfileByUserIdAsync(newChatEvent.SendingUserId);
 
-									var chatResult = communicationService.SendChat(newChatEvent.Id, newChatEvent.SendingUserId, newChatEvent.GroupName, newChatEvent.Message, sendingUserProfile, profiles).Result;
+									var chatResult = await communicationService.SendChat(newChatEvent.Id, newChatEvent.SendingUserId, newChatEvent.GroupName, newChatEvent.Message, sendingUserProfile, profiles);
 								}
 
 								userProfileService = null;
@@ -330,32 +347,32 @@ namespace Resgrid.Workers.Framework.Logic
 							var departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
 							var geoLocationProvider = Bootstrapper.GetKernel().Resolve<IGeoLocationProvider>();
 
-							var admins = departmentService.GetAllAdminsForDepartment(troubleAlertEvent.DepartmentId.Value);
-							var unit = unitsService.GetUnitById(troubleAlertEvent.UnitId);
+							var admins = await departmentService.GetAllAdminsForDepartmentAsync(troubleAlertEvent.DepartmentId.Value);
+							var unit = await unitsService.GetUnitByIdAsync(troubleAlertEvent.UnitId);
 							List<UserProfile> profiles = new List<UserProfile>();
 							Call call = null;
 							string departmentNumber = "";
 							string callAddress = "No Call Address";
 							string unitAproxAddress = "Unknown Unit Address";
 
-							departmentNumber = departmentSettingsService.GetTextToCallNumberForDepartment(troubleAlertEvent.DepartmentId.Value);
+							departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(troubleAlertEvent.DepartmentId.Value);
 
 							if (admins != null)
-								profiles.AddRange(userProfileService.GetSelectedUserProfiles(admins.Select(x => x.Id).ToList()));
+								profiles.AddRange(await userProfileService.GetSelectedUserProfilesAsync(admins.Select(x => x.Id).ToList()));
 
 							if (unit != null)
 							{
 								if (unit.StationGroupId.HasValue)
 								{
-									var groupAdmins = departmentGroupService.GetAllAdminsForGroup(unit.StationGroupId.Value);
+									var groupAdmins = await departmentGroupService.GetAllAdminsForGroupAsync(unit.StationGroupId.Value);
 
 									if (groupAdmins != null)
-										profiles.AddRange(userProfileService.GetSelectedUserProfiles(groupAdmins.Select(x => x.UserId).ToList()));
+										profiles.AddRange(await userProfileService.GetSelectedUserProfilesAsync(groupAdmins.Select(x => x.UserId).ToList()));
 								}
 
 								if (troubleAlertEvent.CallId.HasValue && troubleAlertEvent.CallId.GetValueOrDefault() > 0)
 								{
-									call = callsService.GetCallById(troubleAlertEvent.CallId.Value);
+									call = await callsService.GetCallByIdAsync(troubleAlertEvent.CallId.Value);
 
 									if (!String.IsNullOrEmpty(call.Address))
 										callAddress = call.Address;
@@ -365,17 +382,17 @@ namespace Resgrid.Workers.Framework.Logic
 
 										if (points != null && points.Length == 2)
 										{
-											callAddress = geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+											callAddress = await geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 										}
 									}
 								}
 
 								if (!String.IsNullOrWhiteSpace(troubleAlertEvent.Latitude) && !String.IsNullOrWhiteSpace(troubleAlertEvent.Longitude))
 								{
-									unitAproxAddress = geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(troubleAlertEvent.Latitude), double.Parse(troubleAlertEvent.Longitude));
+									unitAproxAddress = await geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(troubleAlertEvent.Latitude), double.Parse(troubleAlertEvent.Longitude));
 								}
 
-								communicationService.SendTroubleAlert(troubleAlertEvent, unit, call, departmentNumber, troubleAlertEvent.DepartmentId.Value, callAddress, unitAproxAddress, profiles);
+								await communicationService.SendTroubleAlertAsync(troubleAlertEvent, unit, call, departmentNumber, troubleAlertEvent.DepartmentId.Value, callAddress, unitAproxAddress, profiles);
 							}
 						}
 
@@ -393,10 +410,10 @@ namespace Resgrid.Workers.Framework.Logic
 
 						if (auditEvent != null)
 						{
-							var auditLogsRepository = Bootstrapper.GetKernel().Resolve<IGenericDataRepository<AuditLog>>();
+							var auditLogsRepository = Bootstrapper.GetKernel().Resolve<IAuditLogsRepository>();
 							var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 
-							var profile = userProfileService.GetProfileByUserId(auditEvent.UserId);
+							var profile = await userProfileService.GetProfileByUserIdAsync(auditEvent.UserId);
 
 							var auditLog = new AuditLog();
 							auditLog.DepartmentId = auditEvent.DepartmentId;
@@ -414,7 +431,7 @@ namespace Resgrid.Workers.Framework.Logic
 								case AuditLogTypes.UserAdded:
 									if (auditEvent.After != null && auditEvent.After.GetType().BaseType == typeof(IdentityUser))
 									{
-										var newProfile = userProfileService.GetProfileByUserId(((IdentityUser)auditEvent.After).UserId);
+										var newProfile = await userProfileService.GetProfileByUserIdAsync(((IdentityUser)auditEvent.After).UserId);
 										auditLog.Message = string.Format("{0} added new user {1}", profile.FullName.AsFirstNameLastName, newProfile.FullName.AsFirstNameLastName);
 
 										auditLog.Data = $"New UserId: {newProfile.UserId}";
@@ -502,6 +519,22 @@ namespace Resgrid.Workers.Framework.Logic
 										auditLog.Data = resultProfile.DifferencesString;
 									}
 									break;
+								case AuditLogTypes.SubscriptionUpdated:
+									auditLog.Message = $"{profile.FullName.AsFirstNameLastName} changed (upgrade or downgrade) the active subscription of department id {auditEvent.DepartmentId}";
+									auditLog.Data = "No Data";
+									break;
+								case AuditLogTypes.SubscriptionBillingInfoUpdated:
+									auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the subscription billing information for department id {auditEvent.DepartmentId}";
+									auditLog.Data = "No Data";
+									break;
+								case AuditLogTypes.SubscriptionCancelled:
+									auditLog.Message = $"{profile.FullName.AsFirstNameLastName} canceled the active subscription of department id {auditEvent.DepartmentId}";
+									auditLog.Data = "No Data";
+									break;
+								case AuditLogTypes.SubscriptionCreated:
+									auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created a new active subscription for department id {auditEvent.DepartmentId}";
+									auditLog.Data = "No Data";
+									break;
 							}
 
 							if (String.IsNullOrWhiteSpace(auditLog.Data))
@@ -510,7 +543,7 @@ namespace Resgrid.Workers.Framework.Logic
 							if (!String.IsNullOrWhiteSpace(auditLog.Message))
 							{
 								auditLog.LoggedOn = DateTime.UtcNow;
-								auditLogsRepository.SaveOrUpdate(auditLog);
+								await auditLogsRepository.SaveOrUpdateAsync(auditLog, cancellationToken);
 							}
 						}
 						break;
@@ -521,7 +554,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-							paymentProviderService.ProcessStripeCheckoutCompleted(stripeCheckoutSession);
+							await paymentProviderService.ProcessStripeCheckoutCompletedAsync(stripeCheckoutSession, cancellationToken);
 						}
 						break;
 					case CqrsEventTypes.StripeCheckoutUpdated:
@@ -531,7 +564,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-							paymentProviderService.ProcessStripeCheckoutUpdate(stripeCheckoutSessionUpdated);
+							await paymentProviderService.ProcessStripeCheckoutUpdateAsync(stripeCheckoutSessionUpdated, cancellationToken);
 						}
 						break;
 					default:
@@ -540,6 +573,17 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return success;
+		}
+
+		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+		{
+			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
+			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
+			//Console.WriteLine("Exception context for troubleshooting:");
+			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
+			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
+			//Console.WriteLine($"- Executing Action: {context.Action}");
+			return Task.CompletedTask;
 		}
 	}
 }

@@ -6,8 +6,6 @@ using Resgrid.Model.Services;
 using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
-using Serilog.Core;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,12 +26,12 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			progress.Report(1, $"Starting the {Name} Task");
 
-			await Task.Factory.StartNew(() =>
+			await Task.Run(async () =>
 			{
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var logic = new CallPruneLogic();
 
-				var items = _departmentsService.GetAllDepartmentCallPrunings();
+				var items = await _departmentsService.GetAllDepartmentCallPruningsAsync();
 
 				if (items != null)
 				{
@@ -44,13 +42,13 @@ namespace Resgrid.Workers.Console.Tasks
 						var item = new CallPruneQueueItem();
 						item.PruneSettings = i;
 
-						_logger.LogInformation("CallPrune::Processing Calls for DepartmentId:" + item.PruneSettings.DepartmentId);
+						_logger.LogInformation("CallPrune::Pruning Calls for DepartmentId:" + item.PruneSettings.DepartmentId);
 
-						var result = logic.Process(item);
+						var result = await logic.Process(item);
 
 						if (result.Item1)
 						{
-							_logger.LogInformation($"CallPrune::Processing Calls for Department {item.PruneSettings.DepartmentId} successfully.");
+							_logger.LogInformation($"CallPrune::Pruned Calls for Department {item.PruneSettings.DepartmentId} successfully.");
 						}
 						else
 						{
@@ -58,7 +56,7 @@ namespace Resgrid.Workers.Console.Tasks
 						}
 					}
 				}
-			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			}, cancellationToken);
 
 
 			progress.Report(100, $"Finishing the {Name} Task");

@@ -17,7 +17,7 @@ namespace Resgrid.Web.Areas.User.Models.Groups
 		public NewGroupView()
 		{
 			NewGroup = new DepartmentGroup();
-			NewGroup.Address = new Address();
+			//NewGroup.Address = new Address();
 			NewGroup.Type = 1;
 		}
 

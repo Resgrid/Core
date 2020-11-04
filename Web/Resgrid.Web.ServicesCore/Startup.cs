@@ -1,37 +1,58 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
+﻿using System;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Serialization;
 using Resgrid.Config;
-using Resgrid.Model.Identity;
 using Resgrid.Providers.Claims;
-using Resgrid.Providers.Claims.Core;
-using Resgrid.Repositories.DataRepository.Migrations;
 using Resgrid.Repositories.DataRepository.Stores;
-using Resgrid.Web.ServicesCore.Helpers;
 using Resgrid.Web.ServicesCore.Middleware;
 using Resgrid.Web.ServicesCore.Options;
 using Stripe;
-using System;
 using System.Configuration;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
+using System.IO;
+using System.Net;
 using System.Reflection;
-using Configuration = Resgrid.Repositories.DataRepository.Migrations.Configuration;
+using System.Security.Claims;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.CommonServiceLocator;
+using CommonServiceLocator;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Services;
+using Resgrid.Providers.AddressVerification;
+using Resgrid.Providers.Audio;
+using Resgrid.Providers.Bus;
+using Resgrid.Providers.Bus.Rabbit;
+using Resgrid.Providers.Cache;
+using Resgrid.Providers.EmailProvider;
+using Resgrid.Providers.Firebase;
+using Resgrid.Providers.GeoLocationProvider;
+using Resgrid.Providers.Marketing;
+using Resgrid.Providers.NumberProvider;
+using Resgrid.Providers.PdfProvider;
+using Resgrid.Repositories.DataRepository;
+using Resgrid.Services;
+using Resgrid.Web.Services.Hubs;
+using Resgrid.Web.Services.Middleware;
 
 namespace Resgrid.Web.ServicesCore
 {
 	public class Startup
 	{
-		public IContainer ApplicationContainer { get; private set; }
 		public IConfigurationRoot Configuration { get; private set; }
+		public ILifetimeScope AutofacContainer { get; private set; }
+		public AutofacServiceLocator Locator { get; private set; }
+		public IServiceCollection Services { get; private set; }
 
 		public Startup(IHostingEnvironment env)
 		{
@@ -44,7 +65,7 @@ namespace Resgrid.Web.ServicesCore
 			if (env.IsDevelopment() || env.IsStaging())
 			{
 				// For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-				builder.AddUserSecrets();
+				//builder.AddUserSecrets();
 
 				// This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
 				builder.AddApplicationInsightsSettings(developerMode: true);
@@ -55,26 +76,27 @@ namespace Resgrid.Web.ServicesCore
 		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
-		public IServiceProvider ConfigureServices(IServiceCollection services)
+		public void ConfigureServices(IServiceCollection services)
 		{
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
+			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
 			Framework.Logging.Initialize(Configuration["AppOptions:SentryKey"]);
 
-			var manager = new ApplicationPartManager();
-			manager.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
+			//var manager = new ApplicationPartManager();
+			//manager.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
 
 			// Add framework services.
 			services.AddApplicationInsightsTelemetry(Configuration);
 
 			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
-			var element = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
-			var collection = typeof(ConfigurationElementCollection).GetField("bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
 
 			element.SetValue(settings, false);
 			collection.SetValue(settings, false);
 
-			if (!configResult)
+			if (!configResult && !envConfigResult)
 				settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
 			else
 				settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
@@ -84,15 +106,19 @@ namespace Resgrid.Web.ServicesCore
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
 
-			Database.SetInitializer(new MigrateDatabaseToLatestVersion<Repositories.DataRepository.Contexts.DataContext, Configuration>());
-			var migrator = new DbMigrator(new Repositories.DataRepository.Migrations.Configuration());
-			migrator.Update();
+			//Database.SetInitializer(new MigrateDatabaseToLatestVersion<Repositories.DataRepository.Contexts.DataContext, Configuration>());
+			//var migrator = new DbMigrator(new Repositories.DataRepository.Migrations.Configuration());
+			//migrator.Update();
+			
+			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
+			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();
+			services.AddScoped<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>, ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
-			services.AddScoped<IPasswordHasher<IdentityUser>, SqlPasswordHasher>();
-
-			//Configure Identity middleware with ApplicationUser and the EF6 IdentityDbContext
-			services.AddIdentity<IdentityUser, IdentityRole>(config =>
+			services.AddIdentity<Model.Identity.IdentityUser, Model.Identity.IdentityRole>(config =>
 			{
+				config.SignIn.RequireConfirmedAccount = false;
+				config.SignIn.RequireConfirmedEmail = false;
+				config.SignIn.RequireConfirmedPhoneNumber = false;
 				config.User.RequireUniqueEmail = true;
 				config.User.AllowedUserNameCharacters = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@";
 				config.Password.RequireDigit = false;
@@ -100,59 +126,110 @@ namespace Resgrid.Web.ServicesCore
 				config.Password.RequireUppercase = false;
 				config.Password.RequireNonAlphanumeric = false;
 				config.Password.RequiredLength = 6;
-			}).AddDefaultTokenProviders();
+			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
-			services.AddScoped<IUserStore<IdentityUser>, IdentityUserStore>();
-			services.AddScoped<IRoleStore<IdentityRole>, IdentityRoleStore>();
+			//services.AddCors(options =>
+			//{
+			//	options.AddPolicy("_resgridWebsiteAllowSpecificOrigins",
+			//	builder =>
+			//	{
+			//		builder.WithOrigins("http://resgrid.com",
+			//				"http://www.resgrid.com",
+			//				"https://resgrid.com",
+			//				"https://www.resgrid.com",
+			//				"https://qaweb.resgrid.com",
+			//				"https://qaapi.resgrid.com",
+			//				"http://qaweb.resgrid.com",
+			//				"http://qaapi.resgrid.com",
+			//				"https://s3.amazonaws.com",
+			//				"https://resgrid.freshdesk.com",
+			//				"https://www.google.com",
+			//				"https://js.stripe.com",
+			//				"https://wchat.freshchat.com",
+			//				"https://q.stripe.com",
+			//				"https://cdn.plyr.io",
+			//				"https://unit.resgrid.com",
+			//				"https://responder.resgrid.com",
+			//				"https://dispatch.resgrid.com",
+			//				"https://command.resgrid.com",
+			//				"https://eventing.resgrid.com",
+			//				"https://qaeventing.resgrid.com",
+			//				"http://eventing.resgrid.com",
+			//				"http://qaeventing.resgrid.com",
+			//				"https://cdn.jsdelivr.net",
+			//				"https://ajax.googleapis.com",
+			//				"https://maps.googleapis.com",
+			//				"https://assetscdn-wchat.freshchat.com",
+			//				"https://assets.freshdesk.com",
+			//				"https://assets1.freshdesk.com",
+			//				"https://assets2.freshdesk.com",
+			//				"https://assets3.freshdesk.com",
+			//				"https://assets4.freshdesk.com",
+			//				"https://assets5.freshdesk.com",
+			//				"https://assets6.freshdesk.com",
+			//				"https://az416426.vo.msecnd.net",
+			//				"https://localhost",
+			//				"http://localhost",
+			//				"http://localhost:8100",
+			//				"https://localhost:8100",
+			//				"http://localhost:44319",
+			//				"https://localhost:44319")
+			//			.AllowAnyMethod()
+			//			.AllowAnyHeader()
+			//			.AllowCredentials();
+			//	});
+			//});
 
-			services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ClaimsPrincipalFactory<IdentityUser, IdentityRole>>();
-			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-			services.AddSingleton(manager);
+			services.AddCors();
 
-			services.AddCors(options =>
+			services.AddControllers().AddNewtonsoftJson(options =>
 			{
-				options.AddPolicy("_resgridWebsiteAllowSpecificOrigins",
-				builder =>
-				{
-					builder.WithOrigins("http://resgrid.com",
-										"http://www.resgrid.com",
-										"https://resgrid.com",
-										"https://www.resgrid.com",
-										"https://s3.amazonaws.com",
-										"https://resgrid.freshdesk.com",
-										"https://www.google.com",
-										"https://js.stripe.com",
-										"https://wchat.freshchat.com",
-										"https://q.stripe.com",
-										"https://cdn.plyr.io",
-										"https://unit.resgrid.com",
-										"https://responder.resgrid.com",
-										"https://cdn.jsdelivr.net",
-										"https://ajax.googleapis.com",
-										"https://maps.googleapis.com",
-										"https://assetscdn-wchat.freshchat.com",
-										"https://assets.freshdesk.com",
-										"https://assets1.freshdesk.com",
-										"https://assets2.freshdesk.com",
-										"https://assets3.freshdesk.com",
-										"https://assets4.freshdesk.com",
-										"https://assets5.freshdesk.com",
-										"https://assets6.freshdesk.com",
-										"https://az416426.vo.msecnd.net");
-				});
+				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 			});
 
-			services.AddMvc().AddJsonOptions(opt =>
+			services.AddApiVersioning(x =>  
+			{  
+				x.DefaultApiVersion = new ApiVersion(3, 0);  
+				x.AssumeDefaultVersionWhenUnspecified = true;  
+				x.ReportApiVersions = true;  
+			});  
+
+			services.AddSwaggerGen();
+			services.AddSwaggerGenNewtonsoftSupport();
+			services.ConfigureSwaggerGen(options =>
 			{
-				var resolver = opt.SerializerSettings.ContractResolver;
-				if (resolver != null)
-				{
-					var res = resolver as DefaultContractResolver;
-					res.NamingStrategy = null;  // <<!-- this removes the camelcasing
-				}
+				options.SwaggerDoc("v3",
+					new OpenApiInfo
+					{
+						Title = "Resgrid API",
+						Version = "v3",
+						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference",
+						Contact = new OpenApiContact() {Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com")},
+						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
+					}
+				);
+ 
+				var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "Resgrid.Web.Services.xml");
+				options.IncludeXmlComments(filePath);
+				options.DescribeAllEnumsAsStrings();
 			});
 
-			services.AddApiVersioning();
+			services.AddAuthentication("BasicAuthentication")
+				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);
+
+			services.AddSignalR(hubOptions =>
+			{
+				hubOptions.EnableDetailedErrors = true;
+			}).AddStackExchangeRedis(CacheConfig.RedisConnectionString, options => {
+				options.Configuration.ChannelPrefix = $"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-api-sr";
+			});
+
+			services.Configure<ForwardedHeadersOptions>(options =>
+			{
+				options.ForwardedHeaders =
+					ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
+			});
 
 			#region Auth Roles
 			services.AddAuthorization(options =>
@@ -273,45 +350,97 @@ namespace Resgrid.Web.ServicesCore
 			var configOptions = Configuration.GetSection("AppOptions").Get<AppOptions>();
 			services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
 
-			WebBootstrapper.Initialize(services);
-			this.ApplicationContainer = WebBootstrapper.GetKernel();
+			if (Config.PaymentProviderConfig.IsTestMode)
+				StripeConfiguration.SetApiKey(PaymentProviderConfig.TestApiKey);
+			else
+				StripeConfiguration.SetApiKey(PaymentProviderConfig.ProductionApiKey);
 
-			StripeConfiguration.SetApiKey(configOptions.StripeApiKey);
+			this.Services = services;
+		}
 
-			// Create and return the service provider.
-			return new AutofacServiceProvider(this.ApplicationContainer);
+		public void ConfigureContainer(ContainerBuilder builder)
+		{
+			builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
+
+			builder.RegisterModule(new DataModule());
+			builder.RegisterModule(new ServicesModule());
+			builder.RegisterModule(new ProviderModule());
+			builder.RegisterModule(new EmailProviderModule());
+			builder.RegisterModule(new BusModule());
+			builder.RegisterModule(new RabbitBusModule());
+			builder.RegisterModule(new AddressVerificationModule());
+			builder.RegisterModule(new NumbersProviderModule());
+			builder.RegisterModule(new CacheProviderModule());
+			builder.RegisterModule(new MarketingModule());
+			builder.RegisterModule(new PdfProviderModule());
+			builder.RegisterModule(new AudioProviderModule());
+			builder.RegisterModule(new FirebaseProviderModule());
+
+			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
+			builder.RegisterType<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>().As<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+
+			builder.RegisterType<UserValidator<Model.Identity.IdentityUser>>().As<IUserValidator<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<PasswordValidator<Model.Identity.IdentityUser>>().As<IPasswordValidator<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<PasswordHasher<Model.Identity.IdentityUser>>().As<IPasswordHasher<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<UpperInvariantLookupNormalizer>().As<ILookupNormalizer>().InstancePerLifetimeScope();
+			builder.RegisterType<DefaultUserConfirmation<Model.Identity.IdentityUser>>().As<IUserConfirmation<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<UserManager<Model.Identity.IdentityUser>>().As<UserManager<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<SignInManager<Model.Identity.IdentityUser>>().As<SignInManager<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-			loggerFactory.AddDebug();
+			app.UseForwardedHeaders();
 
-			app.UseApplicationInsightsRequestTelemetry();
+			//loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+			//loggerFactory.AddDebug();
 
-			if (env.IsDevelopment())
+			//app.UseApplicationInsightsRequestTelemetry();
+
+			this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+			var eventAggregator = this.AutofacContainer.Resolve<IEventAggregator>();
+			var outbound = this.AutofacContainer.Resolve<IOutboundEventProvider>();
+			var eventService = this.AutofacContainer.Resolve<ICoreEventService>();
+
+			this.Locator = new AutofacServiceLocator(this.AutofacContainer);
+			ServiceLocator.SetLocatorProvider(() => this.Locator);
+
+			app.Use(async (context, next) => {
+				context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
+				context.Request.Scheme = "https";
+				await next.Invoke();
+			});
+
+			//app.UseApplicationInsightsExceptionTelemetry();
+
+			//app.UseCors("_resgridWebsiteAllowSpecificOrigins");
+			// global cors policy
+			app.UseCors(x => x
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+				.SetIsOriginAllowed(origin => true) // allow any origin
+				.AllowCredentials()); // allow credentials
+
+			app.UseRouting();
+			app.UseStaticFiles();
+
+			app.UseAuthentication();
+			app.UseAuthorization(); 
+
+			app.UseSwagger();
+			app.UseSwaggerUI(c =>
 			{
-				app.UseDeveloperExceptionPage();
-			}
-			else if (env.IsStaging())
+				c.SwaggerEndpoint("/swagger/v3/swagger.json", "Resgrid API V3");
+				c.RoutePrefix = string.Empty;
+			});
+
+			app.UseEndpoints(endpoints =>
 			{
-				app.UseDeveloperExceptionPage();
-				//app.UseDatabaseErrorPage();
-			}
-			else
-			{
-				app.UseExceptionHandler("/Home/Error");
-			}
+				endpoints.MapControllers();
 
-			app.UseApplicationInsightsExceptionTelemetry();
-
-			app.UseIdentity();
-			app.UseV3AuthTokenMiddleware();
-
-			app.UseMvc(routes =>
-			{
-
+				endpoints.MapHub<EventingHub>("/eventingHub");
 			});
 		}
 	}

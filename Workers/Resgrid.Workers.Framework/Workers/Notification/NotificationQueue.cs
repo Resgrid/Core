@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Microsoft.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Workers.Notification
 {
@@ -46,28 +46,28 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 				_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 				_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 				{
 					try
 					{
-						var allNotifications = _notificationService.GetAll();
+						var allNotifications = await _notificationService.GetAllAsync();
 						var items = new List<ProcessedNotification>();
 
-						BrokeredMessage message = null;
+						Message message = null;
 						while (message != null)
 						{
 							try
 							{
 								var item = new ProcessedNotification();
 
-								if (message.Properties["DepartmentId"] != null)
-									item.DepartmentId = int.Parse(message.Properties["DepartmentId"].ToString());
+								if (message.UserProperties["DepartmentId"] != null)
+									item.DepartmentId = int.Parse(message.UserProperties["DepartmentId"].ToString());
 
-								if (message.Properties["Type"] != null)
-									item.Type = (EventTypes) message.Properties["Type"];
+								if (message.UserProperties["Type"] != null)
+									item.Type = (EventTypes) message.UserProperties["Type"];
 
-								if (message.Properties["Value"] != null)
-									item.Value = message.Properties["Value"].ToString();
+								if (message.UserProperties["Value"] != null)
+									item.Value = message.UserProperties["Value"].ToString();
 
 								item.MessageId = message.MessageId;
 
@@ -77,11 +77,11 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 									items.Add(item);
 
 									// Remove message from subscription
-									message.Complete();
+									//message.Complete();
 								}
 								catch (InvalidOperationException)
 								{
-									message.Complete();
+									//message.Complete();
 								}
 							}
 							catch (Exception ex)
@@ -89,7 +89,7 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 								Logging.LogException(ex);
 
 								// Indicate a problem, unlock message in subscription
-								message.Abandon();
+								//message.Abandon();
 							}
 						}
 
@@ -102,11 +102,11 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 						foreach (var group in groupedItems)
 						{
 							var queueItem = new NotificationQueueItem();
-							queueItem.Department = _departmentsService.GetDepartmentById(group.Key, false);
-							queueItem.DepartmentTextNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(group.Key);
+							queueItem.Department = await _departmentsService.GetDepartmentByIdAsync(group.Key, false);
+							queueItem.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(group.Key);
 							queueItem.NotificationSettings = allNotifications.Where(x => x.DepartmentId == group.Key).ToList();
 							queueItem.Notifications = group.ToList();
-							queueItem.Profiles = _userProfileService.GetAllProfilesForDepartment(group.Key);
+							queueItem.Profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(group.Key);
 
 							_queue.Enqueue(queueItem);
 						}
@@ -142,10 +142,11 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 				_queue = new Queue<NotificationQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 			_queue.Clear();
+			return _cleared;
 		}
 
 		public void AddItem(NotificationQueueItem item)
@@ -163,11 +164,11 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 			return item;
 		}
 
-		public IEnumerable<NotificationQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<NotificationQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<NotificationQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.Notification, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.Notification, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

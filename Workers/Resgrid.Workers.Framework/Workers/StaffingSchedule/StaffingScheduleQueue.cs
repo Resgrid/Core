@@ -44,16 +44,24 @@ namespace Resgrid.Workers.Framework
 				_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				_scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 				{
 					try
 					{
-						var allItems = _scheduledTasksService.GetUpcomingScheduledTaks();
+						var allItems = await _scheduledTasksService.GetUpcomingScheduledTasksAsync();
 						Logging.LogTrace(string.Format("StaffingJob: Analyzing {0} schedule tasks", allItems.Count));
 
+						Dictionary<int, Department> departments = new Dictionary<int, Department>();
+						foreach (var item in allItems)
+						{
+							if (!departments.ContainsKey(item.DepartmentId))
+								departments.Add(item.DepartmentId, await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId));
+						}
+
+						// TODO: Prob a bug here as st.DepartmentId can be null
 						// Filter only the past items and ones that are 5 minutes 30 seconds in the future
 						var items = from st in allItems
-							let department = _departmentsService.GetDepartmentByUserId(st.UserId)
+							let department = departments[st.DepartmentId]
 							let runTime = st.WhenShouldJobBeRun(TimeConverterHelper.TimeConverter(DateTime.UtcNow, department))
 							where
 								(st.TaskType == (int) TaskTypes.DepartmentStaffingReset || st.TaskType == (int) TaskTypes.UserStaffingLevel) &&
@@ -103,10 +111,12 @@ namespace Resgrid.Workers.Framework
 				_queue = new Queue<StaffingScheduleQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public void AddItem(StaffingScheduleQueueItem item)
@@ -124,11 +134,11 @@ namespace Resgrid.Workers.Framework
 			return item;
 		}
 
-		public IEnumerable<StaffingScheduleQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<StaffingScheduleQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<StaffingScheduleQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.StaffingChange, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.StaffingChange, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

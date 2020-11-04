@@ -6,18 +6,20 @@ using Resgrid.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Services
 {
 	public class CalendarService : ICalendarService
 	{
 		private readonly ICalendarItemsRepository _calendarItemRepository;
-		private readonly IGenericDataRepository<CalendarItemType> _calendarItemTypeRepository;
-		private readonly IGenericDataRepository<CalendarItemAttendee> _calendarItemAttendeeRepository;
+		private readonly ICalendarItemTypeRepository _calendarItemTypeRepository;
+		private readonly ICalendarItemAttendeeRepository _calendarItemAttendeeRepository;
 		private readonly IDepartmentsService _departmentsService;
 
-		public CalendarService(ICalendarItemsRepository calendarItemRepository, IGenericDataRepository<CalendarItemType> calendarItemTypeRepository,
-			IGenericDataRepository<CalendarItemAttendee> calendarItemAttendeeRepository, IDepartmentsService departmentsService)
+		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
+			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService)
 		{
 			_calendarItemRepository = calendarItemRepository;
 			_calendarItemTypeRepository = calendarItemTypeRepository;
@@ -25,89 +27,92 @@ namespace Resgrid.Services
 			_departmentsService = departmentsService;
 		}
 
-		public List<CalendarItem> GetAllCalendarItemsForDepartment(int departmentId)
+		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId)
 		{
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.IsV2Schedule == true).ToList();
+			return (from ci in await _calendarItemRepository.GetAllByDepartmentIdAsync(departmentId)
+										where ci.IsV2Schedule
+										select ci).ToList();
 		}
 
-		public List<CalendarItem> GetAllCalendarItemsForDepartment(int departmentId, DateTime startDate)
+		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId, DateTime startDate)
 		{
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= startDate && x.IsV2Schedule == true).ToList();
+			return (from ci in await GetAllCalendarItemsForDepartmentAsync(departmentId)
+				where ci.Start >= startDate
+				select ci).ToList();
 		}
 
-		public List<CalendarItem> GetAllCalendarItemsForDepartmentInRange(int departmentId, DateTime startDate, DateTime endDate)
+		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentInRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= startDate && x.End <= endDate && x.IsV2Schedule == true).ToList();
+			return (from ci in await GetAllCalendarItemsForDepartmentAsync(departmentId)
+				where ci.Start >= startDate && ci.End <= endDate
+				select ci).ToList();
 		}
 
-		public List<CalendarItemType> GetAllCalendarItemTypesForDepartment(int departmentId)
+		public async Task<List<CalendarItemType>> GetAllCalendarItemTypesForDepartmentAsync(int departmentId)
 		{
-			return _calendarItemTypeRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _calendarItemTypeRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public List<CalendarItem> GetUpcomingCalendarItems(int departmentId, DateTime start)
+		public async Task<List<CalendarItem>> GetUpcomingCalendarItemsAsync(int departmentId, DateTime start)
 		{
-			var endDate = start.AddDays(7);
-			return _calendarItemRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.Start >= start && x.Start <= endDate && x.IsV2Schedule == true).ToList();
+			return await GetAllCalendarItemsForDepartmentInRangeAsync(departmentId, start, start.AddDays(7));
 		}
 
-		public CalendarItem SaveCalendarItem(CalendarItem calendarItem)
+		public async Task<CalendarItem> SaveCalendarItemAsync(CalendarItem calendarItem, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_calendarItemRepository.SaveOrUpdate(calendarItem);
-
-			return calendarItem;
+			return await _calendarItemRepository.SaveOrUpdateAsync(calendarItem, cancellationToken);
 		}
 
-		public CalendarItem GetCalendarItemById(int calendarItemId)
+		public async Task<CalendarItem> GetCalendarItemByIdAsync(int calendarItemId)
 		{
-			return _calendarItemRepository.GetAll().FirstOrDefault(x => x.CalendarItemId == calendarItemId);
+			return await _calendarItemRepository.GetCalendarItemByIdAsync(calendarItemId);
 		}
 
-		public CalendarItemAttendee GetCalendarAttendeeById(int calendarAttendeeId)
+		public async Task<CalendarItemAttendee> GetCalendarAttendeeByIdAsync(int calendarAttendeeId)
 		{
-			return _calendarItemAttendeeRepository.GetAll().FirstOrDefault(x => x.CalendarItemAttendeeId == calendarAttendeeId);
+			return await _calendarItemAttendeeRepository.GetByIdAsync(calendarAttendeeId);
 		}
 
-		public void DeleteCalendarItemById(int calendarItemId)
+		public async Task<bool> DeleteCalendarItemByIdAsync(int calendarItemId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var item = GetCalendarItemById(calendarItemId);
+			var item = await GetCalendarItemByIdAsync(calendarItemId);
 
 			if (item != null)
-				_calendarItemRepository.DeleteOnSubmit(item);
+				return await _calendarItemRepository.DeleteAsync(item, cancellationToken);
+
+			return false;
 		}
 
-		public void DeleteCalendarAttendeeById(int calendarAttendeeId)
+		public async Task<bool> DeleteCalendarAttendeeByIdAsync(int calendarAttendeeId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var item = GetCalendarAttendeeById(calendarAttendeeId);
+			var item = await GetCalendarAttendeeByIdAsync(calendarAttendeeId);
 
 			if (item != null)
-				_calendarItemAttendeeRepository.DeleteOnSubmit(item);
+				return await _calendarItemAttendeeRepository.DeleteAsync(item, cancellationToken);
+
+			return false;
 		}
 
-		public CalendarItemType SaveCalendarItemType(CalendarItemType type)
+		public async Task<CalendarItemType> SaveCalendarItemTypeAsync(CalendarItemType type, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_calendarItemTypeRepository.SaveOrUpdate(type);
-
-			return type;
+			return await _calendarItemTypeRepository.SaveOrUpdateAsync(type, cancellationToken);
 		}
 
-		public CalendarItemType GetCalendarItemTypeById(int calendarItemTypeId)
+		public async Task<CalendarItemType> GetCalendarItemTypeByIdAsync(int calendarItemTypeId)
 		{
-			return _calendarItemTypeRepository.GetAll().FirstOrDefault(x => x.CalendarItemTypeId == calendarItemTypeId);
+			return await _calendarItemTypeRepository.GetByIdAsync(calendarItemTypeId);
 		}
 
-		public void DeleteCalendarItemType(CalendarItemType type)
+		public async Task<bool> DeleteCalendarItemTypeAsync(CalendarItemType type, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (type != null)
-				_calendarItemTypeRepository.DeleteOnSubmit(type);
+				return await _calendarItemTypeRepository.DeleteAsync(type, cancellationToken);
+
+			return false;
 		}
 
-		public List<CalendarItem> GetAllV2CalendarItemsForDepartment(int departmentId, DateTime startDate)
-		{
-			return _calendarItemRepository.GetAllV2CalendarItemsForDepartment(departmentId, startDate);
-		}
-
-		public CalendarItem AddNewV2CalendarItem(CalendarItem item, string timeZone)
+		public async Task<CalendarItem> AddNewCalendarItemAsync(CalendarItem item, string timeZone, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (item.CalendarItemId == 0) // We haven't saved yet, thus this isn't UTC
 			{
@@ -120,20 +125,23 @@ namespace Resgrid.Services
 			item.IsV2Schedule = true;
 			item.Description = StringHelpers.SanitizeHtmlInString(item.Description);
 
-			_calendarItemRepository.SaveOrUpdate(item);
-			var recurrenceItems = CreateRecurrenceCalendarItems(item, DateTime.UtcNow);
+			var saved = await SaveCalendarItemAsync(item, cancellationToken);
+			var recurrenceItems = await CreateRecurrenceCalendarItemsAsync(saved, DateTime.UtcNow);
 
 			if (recurrenceItems != null && recurrenceItems.Count > 0)
 			{
-				_calendarItemRepository.SaveOrUpdateAll(recurrenceItems);
+				foreach (var recurrenceItem in recurrenceItems)
+				{
+					await SaveCalendarItemAsync(recurrenceItem, cancellationToken);
+				}
 			}
 
 			return item;
 		}
 
-		public CalendarItem UpdateV2CalendarItem(CalendarItem item, string timeZone)
+		public async Task<CalendarItem> UpdateCalendarItemAsync(CalendarItem item, string timeZone, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var calendarItem = _calendarItemRepository.GetAll().FirstOrDefault(x => x.CalendarItemId == item.CalendarItemId);
+			var calendarItem = await GetCalendarItemByIdAsync(item.CalendarItemId);
 
 			if (calendarItem == null)
 				return null;
@@ -160,56 +168,57 @@ namespace Resgrid.Services
 			calendarItem.SignupType = item.SignupType;
 			calendarItem.Public = item.Public;
 
-			_calendarItemRepository.SaveOrUpdate(calendarItem);
+			var saved = await SaveCalendarItemAsync(calendarItem, cancellationToken);
 
-			var calendarItems = _calendarItemRepository.GetAll().Where(x => x.RecurrenceId == calendarItem.CalendarItemId.ToString()).ToList();
+			var calendarItems = await _calendarItemRepository.GetCalendarItemsByRecurrenceIdAsync(calendarItem.CalendarItemId);
 
-			if (calendarItems.Any())
+			if (calendarItems != null && calendarItems.Any())
 			{
 				foreach (var calItem in calendarItems)
 				{
-					calItem.Start = item.Start;
-					calItem.End = item.End;
-					calItem.RecurrenceId = item.CalendarItemId.ToString();
-					calItem.Title = item.Title;
+					calItem.Start = saved.Start;
+					calItem.End = saved.End;
+					calItem.RecurrenceId = saved.CalendarItemId.ToString();
+					calItem.Title = saved.Title;
 					calItem.IsV2Schedule = true;
-					calItem.Reminder = item.Reminder;
-					calItem.Location = item.Location;
-					calItem.LockEditing = item.LockEditing;
-					calItem.Entities = item.Entities;
-					calItem.Description = item.Description;
-					calItem.RequiredAttendes = item.RequiredAttendes;
-					calItem.OptionalAttendes = item.OptionalAttendes;
-					calItem.CreatorUserId = item.CreatorUserId;
-					calItem.IsAllDay = item.IsAllDay;
-					calItem.ItemType = item.ItemType;
-					calItem.SignupType = item.SignupType;
-					calItem.Public = item.Public;
+					calItem.Reminder = saved.Reminder;
+					calItem.Location = saved.Location;
+					calItem.LockEditing = saved.LockEditing;
+					calItem.Entities = saved.Entities;
+					calItem.Description = saved.Description;
+					calItem.RequiredAttendes = saved.RequiredAttendes;
+					calItem.OptionalAttendes = saved.OptionalAttendes;
+					calItem.CreatorUserId = saved.CreatorUserId;
+					calItem.IsAllDay = saved.IsAllDay;
+					calItem.ItemType = saved.ItemType;
+					calItem.SignupType = saved.SignupType;
+					calItem.Public = saved.Public;
 
-					_calendarItemRepository.SaveOrUpdate(calItem);
+					var saved2 = await SaveCalendarItemAsync(calItem, cancellationToken);
 				}
 			}
 
 			return calendarItem;
 		}
 
-		public List<CalendarItem> GetAllV2CalendarItemRecurrences(int calendarItemId)
+		public async Task<List<CalendarItem>> GetAllCalendarItemRecurrencesAsync(int calendarItemId)
 		{
-			return _calendarItemRepository.GetAllV2CalendarItemRecurrences(calendarItemId.ToString());
+			var items = await _calendarItemRepository.GetCalendarItemsByRecurrenceIdAsync(calendarItemId);
+			return items.ToList();
 		}
 
-		public void DeleteCalendarItemAndRecurrences(int calendarItemId)
+		public async Task<bool> DeleteCalendarItemAndRecurrences(int calendarItemId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_calendarItemRepository.DeleteCalendarItemAndRecurrences(calendarItemId);
+			return await _calendarItemRepository.DeleteCalendarItemAndRecurrencesAsync(calendarItemId, cancellationToken);
 		}
 
-		public List<CalendarItem> CreateRecurrenceCalendarItems(CalendarItem item, DateTime start)
+		public async Task<List<CalendarItem>> CreateRecurrenceCalendarItemsAsync(CalendarItem item, DateTime start)
 		{
 			var calendarItems = new List<CalendarItem>();
 
 			if (!item.RecurrenceEnd.HasValue || item.RecurrenceEnd > DateTime.UtcNow && item.Start >= start)
 			{
-				var department = _departmentsService.GetDepartmentById(item.DepartmentId, false);
+				var department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId, false);
 				var currentTime = item.Start.TimeConverter(department);
 				DateTime startTimeConverted = item.Start.TimeConverter(department);
 
@@ -344,12 +353,12 @@ namespace Resgrid.Services
 			return dates;
 		}
 
-		public List<CalendarItem> GetCalendarItemsForDepartmentInRange(int departmentId, DateTime start)
+		public async Task<List<CalendarItem>> GetCalendarItemsForDepartmentInRangeAsync(int departmentId, DateTime start)
 		{
 			var calendarItems = new List<CalendarItem>();
 
-			var items = _calendarItemRepository.GetAllV2CalendarItemsForDepartment(departmentId, start);
-			var department = _departmentsService.GetDepartmentById(departmentId, false);
+			var items = await GetAllCalendarItemsForDepartmentAsync(departmentId, start);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			//var currentDateTime = DateTime.UtcNow.FormatForDepartment()
 
 			foreach (var item in items)
@@ -363,9 +372,9 @@ namespace Resgrid.Services
 			return calendarItems;
 		}
 
-		public void SignupForEvent(int calendarEventItemId, string userId, string note, int attendeeType)
+		public async Task<CalendarItemAttendee> SignupForEvent(int calendarEventItemId, string userId, string note, int attendeeType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			CalendarItemAttendee attendee = GetCalendarItemAttendeeByUser(calendarEventItemId, userId);
+			CalendarItemAttendee attendee = await GetCalendarItemAttendeeByUserAsync(calendarEventItemId, userId);
 
 			if (attendee == null)
 				attendee = new CalendarItemAttendee();
@@ -376,18 +385,18 @@ namespace Resgrid.Services
 			attendee.AttendeeType = attendeeType;
 			attendee.Timestamp = DateTime.UtcNow;
 
-			_calendarItemAttendeeRepository.SaveOrUpdate(attendee);
+			return await _calendarItemAttendeeRepository.SaveOrUpdateAsync(attendee, cancellationToken);
 		}
 
-		public CalendarItemAttendee GetCalendarItemAttendeeByUser(int calendarEventItemId, string userId)
+		public async Task<CalendarItemAttendee> GetCalendarItemAttendeeByUserAsync(int calendarEventItemId, string userId)
 		{
-			return _calendarItemAttendeeRepository.GetAll().FirstOrDefault(x => x.CalendarItemId == calendarEventItemId && x.UserId == userId);
+			return await _calendarItemAttendeeRepository.GetCalendarItemAttendeeByUserAsync(calendarEventItemId, userId);
 		}
 
-		public List<CalendarItem> GetCalendarItemsToNotify(DateTime timestamp)
+		public async Task<List<CalendarItem>> GetCalendarItemsToNotifyAsync(DateTime timestamp)
 		{
 			List<CalendarItem> itemsToNotify = new List<CalendarItem>();
-			var calendarItems = _calendarItemRepository.GetAllCalendarItemsToNotify();
+			var calendarItems = await _calendarItemRepository.GetAllCalendarItemsToNotifyAsync(timestamp);
 
 			foreach (var calendarItem in calendarItems)
 			{
@@ -406,37 +415,18 @@ namespace Resgrid.Services
 			return itemsToNotify;
 		}
 
-		public List<CalendarItem> GetV2CalendarItemsToNotify(DateTime timestamp)
+		public async Task<bool> MarkAsNotifiedAsync(int calendarItemId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			List<CalendarItem> itemsToNotify = new List<CalendarItem>();
-			var calendarItems = _calendarItemRepository.GetAllV2CalendarItemsToNotify(timestamp);
-
-			foreach (var calendarItem in calendarItems)
-			{
-				//var convertedTime = DateTimeHelpers.ConvertToUtc(calendarItem.Start, calendarItem.StartTimezone);
-				int minutesToAdjust = calendarItem.GetMinutesForReminder();
-				var convertedTime = calendarItem.Start.AddMinutes(-minutesToAdjust);
-
-				//var localizedDate = TimeConverterHelper.TimeConverter(currentTime, training.Department);
-				//var setToNotify = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day, 10, 0, 0, 0);
-
-				if (timestamp == convertedTime.Within(TimeSpan.FromMinutes(30)))
-					itemsToNotify.Add(calendarItem);
-			}
-
-
-			return itemsToNotify;
-		}
-
-		public void MarkAsNotified(int calendarItemId)
-		{
-			var calendarItem = GetCalendarItemById(calendarItemId);
+			var calendarItem = await GetCalendarItemByIdAsync(calendarItemId);
 
 			if (calendarItem != null)
 			{
 				calendarItem.ReminderSent = true;
-				SaveCalendarItem(calendarItem);
+				await SaveCalendarItemAsync(calendarItem, cancellationToken);
+				return true;
 			}
+
+			return false;
 		}
 
 		public int NotificationTypeToMinutes(int notificationType)

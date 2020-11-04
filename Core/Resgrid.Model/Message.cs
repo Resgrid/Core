@@ -68,11 +68,20 @@ namespace Resgrid.Model
 		public virtual ICollection<MessageRecipient> MessageRecipients { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return MessageId; }
 			set { MessageId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Messages";
+
+		[NotMapped]
+		public string IdName => "MessageId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "SendingUser", "ReceivingUser", "MessageRecipients" };
 
 		public List<string> GetRecipients()
 		{

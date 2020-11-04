@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -21,15 +22,15 @@ namespace Resgrid.Tests.Services
 
 			protected readonly Mock<IDepartmentsService> _departmentsServiceMock;
 			protected readonly Mock<ICalendarItemsRepository> _calendarItemRepositoryMock;
-			protected readonly Mock<IGenericDataRepository<CalendarItemType>> _calendarItemTypeRepositoryMock;
-			protected readonly Mock<IGenericDataRepository<CalendarItemAttendee>> _calendarItemAttendeeRepositoryMock;
+			protected readonly Mock<ICalendarItemTypeRepository> _calendarItemTypeRepositoryMock;
+			protected readonly Mock<ICalendarItemAttendeeRepository> _calendarItemAttendeeRepositoryMock;
 
 			protected with_the_calendar_service()
 			{
 				_departmentsServiceMock = new Mock<IDepartmentsService>();
 				_calendarItemRepositoryMock = new Mock<ICalendarItemsRepository>();
-				_calendarItemTypeRepositoryMock = new Mock<IGenericDataRepository<CalendarItemType>>();
-				_calendarItemAttendeeRepositoryMock = new Mock<IGenericDataRepository<CalendarItemAttendee>>();
+				_calendarItemTypeRepositoryMock = new Mock<ICalendarItemTypeRepository>();
+				_calendarItemAttendeeRepositoryMock = new Mock<ICalendarItemAttendeeRepository>();
 
 				#region Departments
 				_testDepartment = new Department()
@@ -54,7 +55,7 @@ namespace Resgrid.Tests.Services
 				};
 				#endregion Departments
 
-				_departmentsServiceMock.Setup(x => x.GetDepartmentById(999, false)).Returns(_testDepartment);
+				_departmentsServiceMock.Setup(x => x.GetDepartmentByIdAsync(999, false)).ReturnsAsync(_testDepartment);
 
 				_calendarService = new CalendarService(_calendarItemRepositoryMock.Object, _calendarItemTypeRepositoryMock.Object,
 					_calendarItemAttendeeRepositoryMock.Object, _departmentsServiceMock.Object);
@@ -65,7 +66,7 @@ namespace Resgrid.Tests.Services
 		public class when_generating_recurring_calendar_items : with_the_calendar_service
 		{
 			[Test]
-			public void should_return_empty_list_for_no_recurrance()
+			public async Task should_return_empty_list_for_no_recurrance()
 			{
 				CalendarItem item = new CalendarItem();
 				item.DepartmentId = 999;
@@ -75,14 +76,14 @@ namespace Resgrid.Tests.Services
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
-				var calendarItems = _calendarService.CreateRecurrenceCalendarItems(item, now);
+				var calendarItems = await _calendarService.CreateRecurrenceCalendarItemsAsync(item, now);
 
 				calendarItems.Should().NotBeNull();
 				calendarItems.Should().BeEmpty();
 			}
 
 			[Test]
-			public void should_return_empty_list_for_expired_recurrance()
+			public async Task should_return_empty_list_for_expired_recurrance()
 			{
 				CalendarItem item = new CalendarItem();
 				item.DepartmentId = 999;
@@ -93,7 +94,7 @@ namespace Resgrid.Tests.Services
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
-				var calendarItems = _calendarService.CreateRecurrenceCalendarItems(item, now);
+				var calendarItems = await _calendarService.CreateRecurrenceCalendarItemsAsync(item, now);
 
 				calendarItems.Should().NotBeNull();
 				calendarItems.Should().BeEmpty();
@@ -104,7 +105,7 @@ namespace Resgrid.Tests.Services
 		public class when_getting_next_week_dates : with_the_calendar_service
 		{
 			[Test]
-			public void should_return_array_with_nulls_for_no_days()
+			public async Task should_return_array_with_nulls_for_no_days()
 			{
 				CalendarItem item = new CalendarItem();
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
@@ -328,7 +329,7 @@ namespace Resgrid.Tests.Services
 		public class when_generating_recurring_calendar_items_weekly : with_the_calendar_service
 		{
 			[Test]
-			public void should_get_full_year_for_biweekly_recurrance()
+			public async Task should_get_full_year_for_biweekly_recurrance()
 			{
 				CalendarItem item = new CalendarItem();
 				item.CalendarItemId = 512;
@@ -341,7 +342,7 @@ namespace Resgrid.Tests.Services
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
-				var calendarItems = _calendarService.CreateRecurrenceCalendarItems(item, now);
+				var calendarItems = await _calendarService.CreateRecurrenceCalendarItemsAsync(item, now);
 
 				calendarItems.Should().NotBeNull();
 				calendarItems.Should().NotBeEmpty();
@@ -353,7 +354,7 @@ namespace Resgrid.Tests.Services
 		public class when_generating_recurring_calendar_items_monthly : with_the_calendar_service
 		{
 			[Test]
-			public void should_get_full_year_for_day_of_month()
+			public async Task should_get_full_year_for_day_of_month()
 			{
 				CalendarItem item = new CalendarItem();
 				item.CalendarItemId = 512;
@@ -365,7 +366,7 @@ namespace Resgrid.Tests.Services
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
-				var calendarItems = _calendarService.CreateRecurrenceCalendarItems(item, now);
+				var calendarItems = await _calendarService.CreateRecurrenceCalendarItemsAsync(item, now);
 
 				calendarItems.Should().NotBeNull();
 				calendarItems.Should().NotBeEmpty();
@@ -392,7 +393,7 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public void should_get_correct_day_of_month()
+			public async Task should_get_correct_day_of_month()
 			{
 				CalendarItem item = new CalendarItem();
 				item.CalendarItemId = 512;
@@ -405,7 +406,7 @@ namespace Resgrid.Tests.Services
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
-				var calendarItems = _calendarService.CreateRecurrenceCalendarItems(item, now);
+				var calendarItems = await _calendarService.CreateRecurrenceCalendarItemsAsync(item, now);
 
 				calendarItems.Should().NotBeNull();
 				calendarItems.Should().NotBeEmpty();
@@ -431,7 +432,7 @@ namespace Resgrid.Tests.Services
 		public class when_generating_recurring_calendar_items_yearly : with_the_calendar_service
 		{
 			[Test]
-			public void should_get_next_year()
+			public async Task should_get_next_year()
 			{
 				CalendarItem item = new CalendarItem();
 				item.CalendarItemId = 512;
@@ -443,7 +444,7 @@ namespace Resgrid.Tests.Services
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
-				var calendarItems = _calendarService.CreateRecurrenceCalendarItems(item, now);
+				var calendarItems = await _calendarService.CreateRecurrenceCalendarItemsAsync(item, now);
 
 				calendarItems.Should().NotBeNull();
 				calendarItems.Should().NotBeEmpty();

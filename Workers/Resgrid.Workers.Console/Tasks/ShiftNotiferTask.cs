@@ -8,7 +8,6 @@ using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
 using Resgrid.Workers.Framework.Workers.ShiftNotifier;
-using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +31,7 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			progress.Report(1, $"Starting the {Name} Task");
 
-			await Task.Factory.StartNew(() =>
+			await Task.Run(async () =>
 			{
 				IUserProfileService _userProfileService = null;
 				ILogService _logsService = null;
@@ -40,7 +39,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 				var logic = new ShiftNotifierLogic();
 
-				var shifts = _shiftsService.GetShiftsStartingNextDay(DateTime.UtcNow);
+				var shifts = await _shiftsService.GetShiftsStartingNextDayAsync(DateTime.UtcNow);
 
 				if (shifts != null && shifts.Any())
 				{
@@ -53,14 +52,14 @@ namespace Resgrid.Workers.Console.Tasks
 					{
 						var qi = new ShiftNotifierQueueItem();
 
-						var processLog = _logsService.GetProcessLogForTypeTime(ProcessLogTypes.ShiftNotifier, shift.ShiftId, shift.StartDay);
+						var processLog = await _logsService.GetProcessLogForTypeTimeAsync(ProcessLogTypes.ShiftNotifier, shift.ShiftId, shift.StartDay);
 
 						if (processLog != null)
 						{
-							_logsService.SetProcessLog(ProcessLogTypes.ShiftNotifier, shift.ShiftId, shift.StartDay);
+							await _logsService.SetProcessLogAsync(ProcessLogTypes.ShiftNotifier, shift.ShiftId, shift.StartDay);
 
 							if (shift.Personnel != null && shift.Personnel.Any())
-								qi.Profiles = _userProfileService.GetSelectedUserProfiles(shift.Personnel.Select(x => x.UserId).ToList());
+								qi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(shift.Personnel.Select(x => x.UserId).ToList());
 
 							qi.Day = shift.GetShiftDayforDateTime(DateTime.UtcNow.AddDays(1));
 							if (qi.Day != null)
@@ -68,11 +67,11 @@ namespace Resgrid.Workers.Console.Tasks
 								if (qi.Profiles == null)
 									qi.Profiles = new List<UserProfile>();
 
-								qi.Signups = _shiftsService.GetShiftSignpsForShiftDay(qi.Day.ShiftDayId);
+								qi.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(qi.Day.ShiftDayId);
 
 								if (qi.Signups != null && qi.Signups.Any())
 								{
-									qi.Profiles.AddRange(_userProfileService.GetSelectedUserProfiles(qi.Signups.Select(x => x.UserId).ToList()));
+									qi.Profiles.AddRange(await _userProfileService.GetSelectedUserProfilesAsync(qi.Signups.Select(x => x.UserId).ToList()));
 
 									var users = new List<string>();
 									foreach (var signup in qi.Signups)
@@ -87,7 +86,7 @@ namespace Resgrid.Workers.Console.Tasks
 									}
 
 									if (users.Any())
-										qi.Profiles.AddRange(_userProfileService.GetSelectedUserProfiles(users));
+										qi.Profiles.AddRange(await _userProfileService.GetSelectedUserProfilesAsync(users));
 								}
 							}
 
@@ -95,7 +94,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 							_logger.LogInformation("ShiftNotifer::Processing Shift Notification: " + qi.Shift.ShiftId);
 
-							var result = logic.Process(qi);
+							var result = await logic.Process(qi);
 
 							if (result.Item1)
 							{
@@ -108,7 +107,7 @@ namespace Resgrid.Workers.Console.Tasks
 						}
 					}
 				}
-			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			}, cancellationToken);
 
 			progress.Report(100, $"Finishing the {Name} Task");
 		}

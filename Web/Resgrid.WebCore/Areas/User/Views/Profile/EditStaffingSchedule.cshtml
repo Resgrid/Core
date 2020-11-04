@@ -1,142 +1,206 @@
 ﻿
 @model Resgrid.Web.Areas.User.Models.Profile.EditStaffingLevelView
 @{
-	ViewBag.Title = "Resgrid | Edit Staffing Schedule";
+  ViewBag.Title = "Resgrid | Edit Staffing Schedule";
 }
 @section Styles
 {
-	<style>
-		.k-select {
-			line-height: 1.5em !important;
-		}
-	</style>
+  <style>
+	.k-select {
+	line-height: 1.5em !important;
+	}
+  </style>
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Edit Staffing Schedule</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Profile" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
-			</li>
-			<li>
-				<a asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Staffing Schedule</a>
-			</li>
-			<li class="active">
-				<strong>Edit Schedule</strong>
-			</li>
-		</ol>
-	</div>
+  <div class="col-sm-4">
+    <h2>Edit Staffing Schedule</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
+      </li>
+      <li>
+        <a asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Staffing Schedule</a>
+      </li>
+      <li class="active">
+        <strong>Edit Schedule</strong>
+      </li>
+    </ol>
+  </div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="EditStaffingSchedule" asp-route-area="User" method="post">
-						@Html.AntiForgeryToken()
-						@Html.HiddenFor(m => m.ScheduleId)
-						@if (!String.IsNullOrEmpty(Model.Message))
-						{
-							<div class="alert alert-success">
-								@Model.Message
-							</div>
-						}
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="EditStaffingSchedule" asp-route-area="User" method="post">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.ScheduleId)
+            @if (!String.IsNullOrEmpty(Model.Message))
+			{
+              <div class="alert alert-success">
+                @Model.Message
+              </div>
+			}
 
-						<div asp-validation-summary="All" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
 
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Schedule Type</label>
-							<div class="col-sm-10">
-								<div class="radio radio-info radio-inline">
-									<input type="radio" class="form-control" asp-for="SpecificDatetime" value="true" id="specific_datetime">
-									<label for="inlineRadio1">  Specific Date </label>
-								</div>
-								<div class="radio radio-inline">
-									<input type="radio" class="form-control" asp-for="SpecificDatetime" value="false" id="days_of_the_week">
-									<label for="inlineRadio2"> Days of the Week </label>
-								</div>
-							</div>
-						</div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Priority</label>
+              <div class="col-sm-10">
+                @Html.DropDownListFor(m => m.SpecificDatetime, new SelectList(
+				  new List<Object>{
+					  new { value = true, text = "Specific Date"  },
+					  new { value = false, text = "Days of the Week" }
+				  },
+				  "value",
+				  "text"
+				  ), new { @style = "width: 140px;" })
+            </div>
+          </div>
 
-						<div class="form-group" id="specificdatetimearea">
-							<label class="col-sm-2 control-label">Specific DateTime</label>
-							<div class="col-sm-10"><input type="text" asp-for="SpecifcDate" id="SpecifcDateTime" onkeydown="javascript:return false;"></div>
-						</div>
+          <div class="form-group" id="specificdatetimearea">
+            <label class="col-sm-2 control-label">Specific DateTime</label>
+            <div class="col-sm-10"><input type="text" asp-for="SpecifcDate" id="SpecifcDateTime" onkeydown="javascript:return false;"></div>
+          </div>
 
 
-						<div class="form-group" id="daysoftheweekarea">
-							<label class="col-sm-2 control-label">
-								Days of the Week
-							</label>
-							<div class="col-sm-10">
-								<div class="checkbox checkbox-inline">
-									<input type="checkbox" asp-for="Sunday" class="checkbox checkbox-primary">
-									<label for="Sunday"> Sunday </label>
-								</div>
-								<div class="checkbox checkbox-inline">
-									<input type="checkbox" asp-for="Monday" class="checkbox checkbox-primary">
-									<label for="Monday"> Monday </label>
-								</div>
-								<div class="checkbox checkbox-inline">
-									<input type="checkbox" asp-for="Tuesday" class="checkbox checkbox-primary">
-									<label for="Tuesday"> Tuesday </label>
-								</div>
-								<div class="checkbox checkbox-inline">
-									<input type="checkbox" asp-for="Wednesday" class="checkbox checkbox-primary">
-									<label for="Wednesday"> Wednesday </label>
-								</div>
-								<div class="checkbox checkbox-inline">
-									<input type="checkbox" asp-for="Thursday" class="checkbox checkbox-primary">
-									<label for="Thursday"> Thursday </label>
-								</div>
-								<div class="checkbox checkbox-inline">
-									<input type="checkbox" asp-for="Friday" class="checkbox checkbox-primary">
-									<label for="Friday"> Friday </label>
-								</div>
-								<div class="checkbox checkbox-inline">
-									<input type="checkbox" asp-for="Saturday" class="checkbox checkbox-primary">
-									<label for="Saturday"> Saturday </label>
-								</div>
-							</div>
-						</div>
-						<div class="form-group" id="daysoftheweekarea_time">
-							<label class="col-sm-2 control-label">Time To Run</label>
-							<div class="col-sm-10"><input type="text" asp-for="Time" id="DayOfWeekTime" onkeydown="javascript:return false;"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Change Staffing To
-							</label>
-							<div class="" col-sm-10">
-								@Html.DropDownListFor(m => m.StaffingLevel, Model.StaffingLevels, new { })
-							</div>
-						</div>
+          <div class="form-group" id="daysoftheweekarea">
+            <label class="col-sm-2 control-label">
+              Days of the Week
+            </label>
+            <div class="col-sm-10">
+              <div class="form-group">
+                <label class="col-sm-1 control-label">Sunday</label>
+                <div class="col-sm-8">
+                  <div class="switch">
+                    <div class="onoffswitch">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Sunday">
+                      <label class="onoffswitch-label" for="Sunday">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-1 control-label">Monday</label>
+                <div class="col-sm-8">
+                  <div class="switch">
+                    <div class="onoffswitch">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Monday">
+                      <label class="onoffswitch-label" for="Monday">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-1 control-label">Tuesday</label>
+                <div class="col-sm-8">
+                  <div class="switch">
+                    <div class="onoffswitch">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Tuesday">
+                      <label class="onoffswitch-label" for="Tuesday">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-1 control-label">Wednesday</label>
+                <div class="col-sm-8">
+                  <div class="switch">
+                    <div class="onoffswitch">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Wednesday">
+                      <label class="onoffswitch-label" for="Wednesday">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-1 control-label">Thursday</label>
+                <div class="col-sm-8">
+                  <div class="switch">
+                    <div class="onoffswitch">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Thursday">
+                      <label class="onoffswitch-label" for="Thursday">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-1 control-label">Friday</label>
+                <div class="col-sm-8">
+                  <div class="switch">
+                    <div class="onoffswitch">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Friday">
+                      <label class="onoffswitch-label" for="Friday">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-1 control-label">Saturday</label>
+                <div class="col-sm-8">
+                  <div class="switch">
+                    <div class="onoffswitch">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Saturday">
+                      <label class="onoffswitch-label" for="Saturday">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" id="daysoftheweekarea_time">
+            <label class="col-sm-2 control-label">Time To Run</label>
+            <div class="col-sm-10"><input type="text" asp-for="Time" id="DayOfWeekTime" onkeydown="javascript:return false;"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">
+              Change Staffing To
+            </label>
+            <div class="col-sm-10">
+              @Html.DropDownListFor(m => m.StaffingLevel, Model.StaffingLevels, new { })
+            </div>
+          </div>
 
-						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Cancel</a>
-								<button class="btn btn-primary" type="submit">Save changes</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+          <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-2">
+              <a class="btn btn-white" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Cancel</a>
+              <button class="btn btn-primary" type="submit">Save changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 @section Scripts
 {
-	<script src="~/js/app/internal/profile/resgrid.profile.addstaffingschedule.js"></script>
-
-	<script>
-		$(document).ready(function () {
-			$('select').select2();
-		});
-	</script>
+  <script src="~/js/app/internal/profile/resgrid.profile.addstaffingschedule.js"></script>
 }

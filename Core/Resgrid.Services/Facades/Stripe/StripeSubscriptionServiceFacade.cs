@@ -24,8 +24,8 @@ namespace Resgrid.Services.Facades.Stripe
 				createOptions = new SubscriptionCreateOptions();
 
 			createOptions.Customer = customerId;
-			createOptions.Items = new List<SubscriptionItemOption>();
-			createOptions.Items.Add(new SubscriptionItemOption { Plan = planId, Quantity = 1 });
+			createOptions.Items = new List<SubscriptionItemOptions>();
+			createOptions.Items.Add(new SubscriptionItemOptions { Plan = planId, Quantity = 1 });
 
 			return _stripeSubscriptionService.Create(createOptions);
 		}

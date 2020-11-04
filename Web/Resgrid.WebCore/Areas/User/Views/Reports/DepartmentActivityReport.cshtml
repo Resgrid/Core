@@ -49,7 +49,7 @@
 	<div class="content">
 		<div class="row">
 			<div class="col-md-4 col-md-offset-1">
-				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-6" style="text-align: right;">
 				<h3 style="margin-top: 10px;">YTD Department Activity Report</h3>
@@ -289,7 +289,7 @@
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 10) != null)
 									{
-										@Html.Raw(Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 11).Item2)
+										@Html.Raw(Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 10).Item2)
 									}
 									else
 									{

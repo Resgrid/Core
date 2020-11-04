@@ -31,14 +31,14 @@
       <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
         @if (Model.IsOwnProfile)
 		{
-          <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">Reporting</a>
+          <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">Report Delivery</a>
 		}
 		else
 		{
           <a id="changePassword" class="btn btn-primary top-button" title="Change Users Password" asp-controller="Profile" asp-action="ResetPasswordForUser" asp-route-area="User" asp-route-userId="@Model.UserId">Change Users Password</a>
 		}
-        <a id="staffingScheduleButton" class="btn btn-primary top-button" title="Edit Staffing Schedule" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@Model.UserId">Edit Staffing Schedule</a>
-        <a id="certificationsButton" class="btn btn-primary top-button" title="Edit Certifications" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@Model.UserId">Edit Certifications</a>
+        <a id="staffingScheduleButton" class="btn btn-primary top-button" title="Edit Staffing Schedule" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@Model.UserId">Staffing Schedules</a>
+        <a id="certificationsButton" class="btn btn-primary top-button" title="Edit Certifications" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@Model.UserId">Certifications</a>
       </div>
     </div>
   </div>
@@ -291,11 +291,11 @@
               <div id="avatar" class="center" style="text-align: center;">
                 @if (Model.HasCustomIamge)
 				{
-                  <img style="width: 100px; height: 100px; text-align: center;" src="@Model.ApiUrl/api/v3/Avatars/Get?id=@Model.UserId" onerror="this.src = 'https://resgrid.com/Images/defaultProfile.png'" />
+                  <img style="width: 100px; height: 100px; text-align: center;" src="@Model.ApiUrl/api/v3/Avatars/Get?id=@Model.UserId" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'" />
 				}
 				else
 				{
-                  <img style="width: 100px; height: 100px; text-align: center;" src="~/Images/defaultProfile.png" />
+                  <img style="width: 100px; height: 100px; text-align: center;" src="~/images/defaultProfile.png" />
 				}
               </div>
               <div>&nbsp;</div>
@@ -315,7 +315,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendEmail">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendEmail">
                     <label class="onoffswitch-label" for="Profile_SendEmail">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -329,7 +329,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendSms">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendSms">
                     <label class="onoffswitch-label" for="Profile_SendSms">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -343,7 +343,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendPush">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendPush">
                     <label class="onoffswitch-label" for="Profile_SendPush">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -367,7 +367,7 @@
                 <div class="col-sm-8">
                   <div class="switch">
                     <div class="onoffswitch">
-                      <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.VoiceForCall">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceForCall">
                       <label class="onoffswitch-label" for="Profile_VoiceForCall">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
@@ -381,7 +381,7 @@
                 <div class="col-sm-8">
                   <div class="switch">
                     <div class="onoffswitch">
-                      <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.VoiceCallHome">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceCallHome">
                       <label class="onoffswitch-label" for="Profile_VoiceCallHome">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
@@ -395,7 +395,7 @@
                 <div class="col-sm-8">
                   <div class="switch">
                     <div class="onoffswitch">
-                      <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.VoiceCallMobile">
+                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceCallMobile">
                       <label class="onoffswitch-label" for="Profile_VoiceCallMobile">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
@@ -426,7 +426,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendMessageEmail">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessageEmail">
                     <label class="onoffswitch-label" for="Profile_SendMessageEmail">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -440,7 +440,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendMessageSms">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessageSms">
                     <label class="onoffswitch-label" for="Profile_SendMessageSms">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -454,7 +454,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendMessagePush">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessagePush">
                     <label class="onoffswitch-label" for="Profile_SendMessagePush">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -476,7 +476,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendNotificationEmail">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendNotificationEmail">
                     <label class="onoffswitch-label" for="Profile_SendNotificationEmail">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -490,7 +490,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendNotificationSms">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendNotificationSms">
                     <label class="onoffswitch-label" for="Profile_SendNotificationSms">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -504,7 +504,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.SendNotificationPush">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendNotificationPush">
                     <label class="onoffswitch-label" for="Profile_SendNotificationPush">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>
@@ -526,7 +526,7 @@
               <div class="col-sm-8">
                 <div class="switch">
                   <div class="onoffswitch">
-                    <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.DoNotRecieveNewsletters">
+                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.DoNotRecieveNewsletters">
                     <label class="onoffswitch-label" for="Profile_DoNotRecieveNewsletters">
                       <span class="onoffswitch-inner"></span>
                       <span class="onoffswitch-switch"></span>

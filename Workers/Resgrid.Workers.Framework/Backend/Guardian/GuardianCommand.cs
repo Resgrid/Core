@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 
@@ -17,7 +18,7 @@ namespace Resgrid.Workers.Framework.Backend
 
 		public bool Continue { get; set; }
 
-		public void Run(GuardianQueueItem item)
+		public async Task<bool> Run(GuardianQueueItem item)
 		{
 			if (item != null && item.Job != null)
 			{
@@ -25,12 +26,12 @@ namespace Resgrid.Workers.Framework.Backend
 				{
 					if (item.Job.LastCheckTimestamp.Value.AddSeconds(item.Job.CheckInterval * 3.5) < DateTime.UtcNow)
 					{
-						_jobsService.MarkJobForReset((JobTypes)item.Job.JobType);
+						await _jobsService.MarkJobForResetAsync((JobTypes)item.Job.JobType);
 					}
 				}
 			}
 
-			
+			return true;
 		}
 	}
 }

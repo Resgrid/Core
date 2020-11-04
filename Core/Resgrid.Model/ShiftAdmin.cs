@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -28,10 +29,19 @@ namespace Resgrid.Model
 		public virtual IdentityUser User { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftAdminId; }
 			set { ShiftAdminId = (int) value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ShiftAdmins";
+
+		[NotMapped]
+		public string IdName => "ShiftAdminId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Shift", "User" };
 	}
 }

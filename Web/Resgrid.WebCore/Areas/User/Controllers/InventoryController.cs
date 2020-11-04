@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
-using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Inventory;
 using Microsoft.AspNetCore.Authorization;
+using Resgrid.Model.Helpers;
 using Resgrid.Providers.Claims;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -32,20 +33,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			return View();
 		}
 
 		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public IActionResult ManageTypes()
+		public async Task<IActionResult> ManageTypes()
 		{
 			return View();
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public IActionResult AddType()
+		public async Task<IActionResult> AddType()
 		{
 			var model = new AddTypeView();
 			model.Type = new InventoryType();
@@ -55,19 +56,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Inventory_Create)]
-		public IActionResult Adjust()
+		public async Task<IActionResult> Adjust()
 		{
 			var model = new AdjustView();
 			model.Inventory = new Inventory();
-			model.Types = _inventoryService.GetAllTypesForDepartment(DepartmentId);
-			model.Stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+			model.Types = await _inventoryService.GetAllTypesForDepartmentAsync(DepartmentId);
+			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Inventory_Create)]
-		public IActionResult Adjust(AdjustView model)
+		public async Task<IActionResult> Adjust(AdjustView model)
 		{
 			if (model.Inventory.Amount == 0)
 				ModelState.AddModelError("Inventory.Amount", "You must supply a non-zero inventory adjustment (count/amount).");
@@ -81,34 +82,34 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.UnitId > 0)
 					model.Inventory.UnitId = model.UnitId;
 
-				_inventoryService.SaveInventory(model.Inventory);
+				_inventoryService.SaveInventoryAsync(model.Inventory);
 
 				return RedirectToAction("Index");
 			}
 
-			model.Types = _inventoryService.GetAllTypesForDepartment(DepartmentId);
-			model.Stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+			model.Types = await _inventoryService.GetAllTypesForDepartmentAsync(DepartmentId);
+			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public IActionResult History()
+		public async Task<IActionResult> History()
 		{
 			return View();
 		}
 
 		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public IActionResult ViewEntry(int inventoryId)
+		public async Task<IActionResult> ViewEntry(int inventoryId)
 		{
 			var model = new ViewEntryView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.Inventory = _inventoryService.GetInventoryById(inventoryId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Inventory = await _inventoryService.GetInventoryByIdAsync(inventoryId);
 			
 			if (model.Inventory == null || model.Inventory.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			var profile = _userProfileService.GetProfileByUserId(model.Inventory.AddedByUserId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(model.Inventory.AddedByUserId);
 
 			if (profile != null)
 				model.Name = profile.FullName.AsFirstNameLastName;
@@ -120,9 +121,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public IActionResult DeleteType(int typeId)
+		public async Task<IActionResult> DeleteType(int typeId)
 		{
-			var type = _inventoryService.GetTypeById(typeId);
+			var type = await _inventoryService.GetTypeByIdAsync(typeId);
 
 			if (type == null)
 				return RedirectToAction("ManageTypes");
@@ -130,16 +131,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (type.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_inventoryService.DeleteType(typeId);
+			_inventoryService.DeleteTypeAsync(typeId);
 
 			return RedirectToAction("ManageTypes");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public IActionResult EditType(int typeId)
+		public async Task<IActionResult> EditType(int typeId)
 		{
-			var type = _inventoryService.GetTypeById(typeId);
+			var type = await _inventoryService.GetTypeByIdAsync(typeId);
 
 			if (type == null)
 				return RedirectToAction("ManageTypes");
@@ -155,9 +156,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public IActionResult EditType(EditTypeView model)
+		public async Task<IActionResult> EditType(EditTypeView model)
 		{
-			var type = _inventoryService.GetTypeById(model.Type.InventoryTypeId);
+			var type = await _inventoryService.GetTypeByIdAsync(model.Type.InventoryTypeId);
 
 			if (type == null)
 				return RedirectToAction("ManageTypes");
@@ -167,19 +168,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			type.ExpiresDays = model.Type.ExpiresDays;
 			type.UnitOfMesasure = model.Type.UnitOfMesasure;
 
-			_inventoryService.SaveType(type);
+			_inventoryService.SaveTypeAsync(type);
 
 			return RedirectToAction("ManageTypes");
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public IActionResult AddType(AddTypeView model)
+		public async Task<IActionResult> AddType(AddTypeView model)
 		{
 			if (ModelState.IsValid)
 			{
 				model.Type.DepartmentId = DepartmentId;
-				_inventoryService.SaveType(model.Type);
+				_inventoryService.SaveTypeAsync(model.Type);
 
 				return RedirectToAction("ManageTypes");
 			}
@@ -189,11 +190,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public IActionResult GetTypesList()
+		public async Task<IActionResult> GetTypesList()
 		{
 			List<InventoryTypeJson> inventoryJson = new List<InventoryTypeJson>();
 
-			var types = _inventoryService.GetAllTypesForDepartment(DepartmentId);
+			var types = await _inventoryService.GetAllTypesForDepartmentAsync(DepartmentId);
 
 			foreach (var type in types)
 			{
@@ -214,11 +215,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public IActionResult GetCombinedInventoryList()
+		public async Task<IActionResult> GetCombinedInventoryList()
 		{
 			List<InventorySummaryJson> inventoryJson = new List<InventorySummaryJson>();
 
-			var items = _inventoryService.GetConsolidatedInventoryForDepartment(DepartmentId);
+			var items = await _inventoryService.GetConsolidatedInventoryForDepartment(DepartmentId);
 
 			foreach (var item in items)
 			{
@@ -242,14 +243,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 
 		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public IActionResult GetInventoryList()
+		public async Task<IActionResult> GetInventoryList()
 		{
 			List<InventoryJson> inventoryJson = new List<InventoryJson>();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var items = _inventoryService.GetAllTransactionsForDepartment(DepartmentId);
-			var names = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
-			//var groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var items = await _inventoryService.GetAllTransactionsForDepartmentAsync(DepartmentId);
+			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			//var groups = await _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
 			
 			foreach (var item in items)
 			{

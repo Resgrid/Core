@@ -73,7 +73,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 					{
 						using (var channel = connection.CreateModel())
 						{
-							channel.ExchangeDeclare(Topics.EventingTopic, "fanout");
+							channel.ExchangeDeclare(SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 						}
 					}
 				}
@@ -95,7 +95,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 					{
 						using (var channel = connection.CreateModel())
 						{
-							channel.BasicPublish(exchange: topicName,
+							channel.BasicPublish(exchange: SetQueueNameForEnv(topicName),
 										 routingKey: "",
 										 basicProperties: null,
 										 body: Encoding.ASCII.GetBytes(message));
@@ -111,6 +111,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
+		}
+
+		private static string SetQueueNameForEnv(string cacheKey)
+		{
+			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
+				return $"DEV{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
+				return $"QA{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
+				return $"ST{cacheKey}";
+
+			return cacheKey;
 		}
 	}
 }

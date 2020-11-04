@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -47,18 +47,19 @@ namespace Resgrid.Model
 		public byte[] Data { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PersonnelCertificationId; }
 			set { PersonnelCertificationId = (int)value; }
 		}
-	}
 
-	public class PersonnelCertification_Mapping : EntityTypeConfiguration<PersonnelCertification>
-	{
-		public PersonnelCertification_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "PersonnelCertifications";
+
+		[NotMapped]
+		public string IdName => "PersonnelCertificationId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "User" };
 	}
 }

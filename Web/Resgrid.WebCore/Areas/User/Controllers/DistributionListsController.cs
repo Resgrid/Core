@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -30,16 +33,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			IndexView model = new IndexView();
-			model.Lists = _distributionListsService.GetDistributionListsByDepartmentId(DepartmentId);
+			model.Lists = await _distributionListsService.GetDistributionListsByDepartmentIdAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult NewList()
+		public async Task<IActionResult> NewList()
 		{
 			var model = new NewListView();
 			model.List = new DistributionList();
@@ -48,7 +51,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.List.UseSsl = false;
 			model.List.Type = (int)DistributionListTypes.Internal;
 
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId, true);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, true);
 
 			return View(model);
 		}
@@ -56,12 +59,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult NewList(NewListView model, IFormCollection collection)
+		public async Task<IActionResult> NewList(NewListView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId, true);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, true);
 			model.ListTypes = model.Type.ToSelectList();
 
-			var result = _distributionListsService.GetDistributionListByAddress(model.List.EmailAddress);
+			var result = await _distributionListsService.GetDistributionListByAddressAsync(model.List.EmailAddress);
 
 			if (result != null)
 				ModelState.AddModelError("List.EmailAddress", "Email address already in use, please try another one");
@@ -85,7 +88,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				_distributionListsService.SaveDistributionList(model.List);
+				await _distributionListsService.SaveDistributionListAsync(model.List, cancellationToken);
 
 				return RedirectToAction("Index", "DistributionLists", new { Area = "User" });
 			}
@@ -94,10 +97,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult EditList(int distributionListId)
+		public async Task<IActionResult> EditList(int distributionListId)
 		{
 			var model = new EditListView();
-			model.List = _distributionListsService.GetDistributionListById(distributionListId);
+			model.List = await _distributionListsService.GetDistributionListByIdAsync(distributionListId);
 			model.ListTypes = model.Type.ToSelectList();
 
 			if (!model.List.UseSsl.HasValue)
@@ -108,7 +111,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.Type = DistributionListTypes.External;
 
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId, true);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, true);
 
 			return View(model);
 		}
@@ -116,10 +119,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult EditList(EditListView model, IFormCollection collection)
+		public async Task<IActionResult> EditList(EditListView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
-			var list = _distributionListsService.GetDistributionListById(model.List.DistributionListId);
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
+			var list = await _distributionListsService.GetDistributionListByIdAsync(model.List.DistributionListId);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			model.ListTypes = model.Type.ToSelectList();
 
 			if (!model.List.UseSsl.HasValue)
@@ -145,22 +148,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 				list.Username = null;
 				list.Password = null;
 
-				list.Members = new Collection<DistributionListMember>();
-
 				if (collection.ContainsKey("listMembers"))
 				{
 					var userIds = collection["listMembers"].ToString().Split(char.Parse(","));
+					var membersToRemove = list.Members.Where(x => !userIds.Contains(x.UserId)).ToList();
+
+					foreach (var member in membersToRemove)
+					{
+						list.Members.Remove(member);
+					}
 
 					foreach (var userId in userIds)
 					{
-						var member = new DistributionListMember();
-						member.UserId = userId;
+						if (list.Members.All(x => x.UserId != userId))
+						{
+							var member = new DistributionListMember();
+							member.UserId = userId;
 
-						list.Members.Add(member);
+							list.Members.Add(member);
+						}
 					}
 				}
+				else
+				{
+					list.Members = new Collection<DistributionListMember>();
+				}
 
-				_distributionListsService.SaveDistributionList(list);
+				await _distributionListsService.SaveDistributionListAsync(list, cancellationToken);
 
 				return RedirectToAction("Index", "DistributionLists", new { Area = "User" });
 			}
@@ -169,36 +183,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult DeleteList(int distributionListId)
+		public async Task<IActionResult> DeleteList(int distributionListId, CancellationToken cancellationToken)
 		{
-			var list = _distributionListsService.GetDistributionListById(distributionListId);
+			var list = await _distributionListsService.GetDistributionListByIdAsync(distributionListId);
 
 			if (list.DepartmentId == DepartmentId)
 			{
-				_distributionListsService.DeleteDistributionListsById(distributionListId);
+				await _distributionListsService.DeleteDistributionListsByIdAsync(distributionListId, cancellationToken);
 			}
 
 			return RedirectToAction("Index", "DistributionLists", new { Area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult SetListStatus(int distributionListId, bool disable)
+		public async Task<IActionResult> SetListStatus(int distributionListId, bool disable, CancellationToken cancellationToken)
 		{
-			var list = _distributionListsService.GetDistributionListById(distributionListId);
+			var list = await _distributionListsService.GetDistributionListByIdAsync(distributionListId);
 			list.IsDisabled = disable;
 
-			_distributionListsService.SaveDistributionListOnly(list);
+			await _distributionListsService.SaveDistributionListOnlyAsync(list, cancellationToken);
 
 			return RedirectToAction("Index", "DistributionLists", new { Area = "User" });
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult ValidateAddress(int id, string emailAddress)
+		public async Task<IActionResult> ValidateAddress(int id, string emailAddress)
 		{
 			string returnText = "";
 
-			var result = _distributionListsService.GetDistributionListByAddress(emailAddress);
+			var result = await _distributionListsService.GetDistributionListByAddressAsync(emailAddress);
 
 			if (result != null && result.DistributionListId != id)
 				returnText = "Address already in use, please select another";
@@ -208,15 +222,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult GetMembersForList(int id)
+		public async Task<IActionResult> GetMembersForList(int id)
 		{
 			var personnelJson = new List<PersonnelForJson>();
-			var list = _distributionListsService.GetDistributionListById(id);
+			var list = await _distributionListsService.GetDistributionListByIdAsync(id);
 
 			if (list.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			var members = _distributionListsService.GetAllListMembersByListId(id);
+			var members = await _distributionListsService.GetAllListMembersByListIdAsync(id);
 
 			foreach (var member in members)
 			{

@@ -1,4 +1,5 @@
-﻿using Resgrid.Workers.Framework.Logic;
+﻿using System.Threading.Tasks;
+using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework
 {
@@ -11,10 +12,11 @@ namespace Resgrid.Workers.Framework
 
 		public bool Continue { get; set; }
 
-		public void Run(CallEmailQueueItem item)
+		public async Task<bool> Run(CallEmailQueueItem item)
 		{
 			var logic = new CallEmailImporterLogic();
-			logic.Process(item);
+			await logic.Process(item);
+			return true;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,10 +28,19 @@ namespace Resgrid.Model
 		public int? EmailImportCallPruneInterval { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentCallPruningId; }
 			set { DepartmentCallPruningId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "DepartmentCallPruning";
+
+		[NotMapped]
+		public string IdName => "DepartmentCallPruningId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department" };
 	}
 }

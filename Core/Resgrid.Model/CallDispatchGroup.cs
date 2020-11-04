@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -34,18 +34,19 @@ namespace Resgrid.Model
 		public DateTime? LastDispatchedOn { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CallDispatchGroupId; }
 			set { CallDispatchGroupId = (int)value; }
 		}
-	}
 
-	public class CallDispatchGroup_Mapping : EntityTypeConfiguration<CallDispatchGroup>
-	{
-		public CallDispatchGroup_Mapping()
-		{
-			this.HasRequired(t => t.Group).WithMany().HasForeignKey(t => t.DepartmentGroupId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "CallDispatchGroups";
+
+		[NotMapped]
+		public string IdName => "CallDispatchGroupId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Group", "Call" };
 	}
 }

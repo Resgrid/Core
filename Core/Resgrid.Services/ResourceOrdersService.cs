@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Data.Entity;
+using System.Linq;
+using System.Threading;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
-using System.Linq;
-using System.Device.Location;
 using System.Threading.Tasks;
+using GeoCoordinatePortable;
 using Resgrid.Model.Events;
 using Resgrid.Providers.Bus;
 
@@ -17,60 +17,63 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEventAggregator _eventAggregator;
-		private readonly IGenericDataRepository<ResourceOrder> _genericResourceOrderRepository;
-		private readonly IGenericDataRepository<ResourceOrderItem> _genericResourceOrderItemRepository;
-		private readonly IGenericDataRepository<ResourceOrderFill> _genericResourceOrderFillRepository;
+		private readonly IResourceOrderItemRepository _resourceOrderItemRepository;
+		private readonly IResourceOrderFillRepository _resourceOrderFillRepository;
+		private readonly IResourceOrderSettingsRepository _resourceOrderSettingsRepository;
 
-		public ResourceOrdersService(IResourceOrdersRepository resourceOrdersRepository, IDepartmentsService departmentsService, IDepartmentSettingsService departmentSettingsService, 
-			IEventAggregator eventAggregator, IGenericDataRepository<ResourceOrder> genericResourceOrderRepository, IGenericDataRepository<ResourceOrderItem> genericResourceOrderItemRepository,
-			IGenericDataRepository<ResourceOrderFill> genericResourceOrderFillRepository)
+		public ResourceOrdersService(IResourceOrdersRepository resourceOrdersRepository, IDepartmentsService departmentsService,
+			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, IResourceOrderItemRepository resourceOrderItemRepository,
+			IResourceOrderFillRepository resourceOrderFillRepository, IResourceOrderSettingsRepository resourceOrderSettingsRepository)
 		{
 			_resourceOrdersRepository = resourceOrdersRepository;
 			_departmentsService = departmentsService;
 			_departmentSettingsService = departmentSettingsService;
 			_eventAggregator = eventAggregator;
-			_genericResourceOrderRepository = genericResourceOrderRepository;
-			_genericResourceOrderItemRepository = genericResourceOrderItemRepository;
-			_genericResourceOrderFillRepository = genericResourceOrderFillRepository;
+			_resourceOrderItemRepository = resourceOrderItemRepository;
+			_resourceOrderFillRepository = resourceOrderFillRepository;
+			_resourceOrderSettingsRepository = resourceOrderSettingsRepository;
 		}
 
-		public async Task<List<ResourceOrder>> GetAll()
+		public async Task<List<ResourceOrder>> GetAllAsync()
 		{
-			return await _resourceOrdersRepository.GetAll();
+			var items = await _resourceOrdersRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public async Task<List<ResourceOrder>> GetAllOpen()
+		public async Task<List<ResourceOrder>> GetAllOpenAsync()
 		{
-			return await _resourceOrdersRepository.GetAllOpen();
+			var items = await _resourceOrdersRepository.GetAllOpenOrdersAsync();
+			return items.ToList();
 		}
 
-		public async Task<List<ResourceOrder>> GetOpenOrdersByDepartmentId(int departmentId)
+		public async Task<List<ResourceOrder>> GetOpenOrdersByDepartmentIdAsync(int departmentId)
 		{
-			//return await _resourceOrdersRepository.GetOpenOrdersByDepartmentId(departmentId);
-			return await _genericResourceOrderRepository.GetAll().Where(x => x.DepartmentId == departmentId && x.CloseDate == null).ToListAsync();
+			var items = await GetAllOpenAsync();
+			return items.Where(x => x.DepartmentId == departmentId).ToList();
 		}
 
-		public async Task<List<ResourceOrder>> GetAllOrdersByDepartmentId(int departmentId)
+		public async Task<List<ResourceOrder>> GetAllOrdersByDepartmentIdAsync(int departmentId)
 		{
-			//return await _resourceOrdersRepository.GetOpenOrdersByDepartmentId(departmentId);
-			return await _genericResourceOrderRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToListAsync();
+			var items = await _resourceOrdersRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public async Task<ResourceOrderSetting> GetSettingsByDepartmentId(int departmentId)
+		public async Task<ResourceOrderSetting> GetSettingsByDepartmentIdAsync(int departmentId)
 		{
-			return await _resourceOrdersRepository.GetOrderSettingByDepartmentId(departmentId);
+			var items = await _resourceOrderSettingsRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.FirstOrDefault();
 		}
 
-		public async Task<ResourceOrderSetting> SaveSettings(ResourceOrderSetting settings)
+		public async Task<ResourceOrderSetting> SaveSettingsAsync(ResourceOrderSetting settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _resourceOrdersRepository.SaveSettings(settings);
+			return await _resourceOrderSettingsRepository.SaveOrUpdateAsync(settings, cancellationToken);
 		}
 
-		public async Task<ResourceOrder> CreateOrder(ResourceOrder order)
+		public async Task<ResourceOrder> CreateOrderAsync(ResourceOrder order, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var savedOrder = await _resourceOrdersRepository.SaveOrder(order);
+			var savedOrder = await _resourceOrdersRepository.SaveOrderAsync(order, cancellationToken);
 
-			_eventAggregator.SendMessage<ResourceOrderAddedEvent>(new ResourceOrderAddedEvent()
+			await _eventAggregator.SendMessage<ResourceOrderAddedEvent>(new ResourceOrderAddedEvent()
 			{
 				Order = savedOrder
 			});
@@ -78,60 +81,49 @@ namespace Resgrid.Services
 			return savedOrder;
 		}
 
-		public async Task<ResourceOrder> GetOrderById(int orderId)
+		public async Task<ResourceOrder> GetOrderByIdAsync(int orderId)
 		{
-			//return await _resourceOrdersRepository.GetOrderById(orderId);
-			return await _genericResourceOrderRepository.GetAll().Where(x => x.ResourceOrderId == orderId).FirstOrDefaultAsync();
+			return await _resourceOrdersRepository.GetByIdAsync(orderId);
 		}
 
-		public async Task<ResourceOrderItem> GetOrderItemById(int orderItemId)
+		public async Task<ResourceOrderItem> GetOrderItemByIdAsync(int orderItemId)
 		{
-			return await _genericResourceOrderItemRepository.GetAll().Where(x => x.ResourceOrderItemId == orderItemId).FirstOrDefaultAsync();
+			return await _resourceOrderItemRepository.GetByIdAsync(orderItemId);
 		}
 
-		public async Task<ResourceOrderFill> GetOrderFillById(int orderFillId)
+		public async Task<ResourceOrderFill> GetOrderFillByIdAsync(int orderFillId)
 		{
-			return await _genericResourceOrderFillRepository.GetAll().Where(x => x.ResourceOrderFillId == orderFillId).FirstOrDefaultAsync();
+			return await _resourceOrderFillRepository.GetByIdAsync(orderFillId);
 		}
 
-		public async Task<ResourceOrderFill> CreateFill(ResourceOrderFill fill)
+		public async Task<ResourceOrderFill> CreateFillAsync(ResourceOrderFill fill, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var savedFill = await _resourceOrdersRepository.SaveFill(fill);
-
-			//_eventAggregator.SendMessage<ResourceOrderFillAddedEvent>(new ResourceOrderFillAddedEvent()
-			//{
-			//	Order = savedOrder
-			//});
-
-			return savedFill;
+			return await _resourceOrdersRepository.SaveFillAsync(fill, cancellationToken);
 		}
 
-		public async Task SetFillStatus(int fillId, string userId, bool accepted)
+		public async Task<bool> SetFillStatusAsync(int fillId, string userId, bool accepted, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			await _resourceOrdersRepository.UpdateFillStatus(fillId, userId, accepted);
+			return await _resourceOrderFillRepository.UpdateFillStatusAsync(fillId, userId, accepted, cancellationToken);
 		}
 
-		public async Task<List<ResourceOrder>> GetOpenAvailableOrders(int departmentId)
+		public async Task<List<ResourceOrder>> GetOpenAvailableOrdersAsync(int departmentId)
 		{
 			var orders = new List<ResourceOrder>();
 
-			var departmentSettings = await _resourceOrdersRepository.GetOrderSettingByDepartmentId(departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId);
-			var mapCenterLocation = _departmentSettingsService.GetMapCenterCoordinates(department);
+			var departmentSettings = await GetSettingsByDepartmentIdAsync(departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+			var mapCenterLocation = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
 
 			// Target department does not want to recieve orders
 			if (departmentSettings != null && departmentSettings.DoNotReceiveOrders)
 				return orders;
 
-			//var allRangeOrders = await _resourceOrdersRepository.GetAllOpenOrdersByRange(departmentId);
-			var allRangeOrders =
-				await _genericResourceOrderRepository.GetAll()
-					.Where(x => x.DepartmentId != departmentId && x.CloseDate == null && x.Visibility == 0)
-					.ToListAsync();
+			var allRangeOrders = await _resourceOrdersRepository.GetAllNonDepartmentOpenVisibleOrdersAsync(departmentId);
 			orders.AddRange(allRangeOrders.Where(x => (x.OriginLocation.GetDistanceTo(new GeoCoordinate(mapCenterLocation.Latitude.Value, mapCenterLocation.Longitude.Value)) / 1609.344) <= x.Range));
-			//orders.AddRange(await _resourceOrdersRepository.GetAllOpenOrdersUnrestricted(departmentId));
-			orders.AddRange(await _genericResourceOrderRepository.GetAll().Where(x => x.DepartmentId != departmentId && x.CloseDate == null && x.Visibility == 3).ToListAsync());
-			orders.AddRange(await _resourceOrdersRepository.GetAllOpenOrdersLinked(departmentId));
+
+			// TODO: Yea :-(
+			//orders.AddRange(await _genericResourceOrderRepository.GetAll().Where(x => x.DepartmentId != departmentId && x.CloseDate == null && x.Visibility == 3).ToListAsync());
+			//orders.AddRange(await _resourceOrdersRepository.GetAllOpenOrdersLinked(departmentId));
 
 			return orders;
 		}

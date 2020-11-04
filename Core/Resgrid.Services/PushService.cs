@@ -13,16 +13,14 @@ namespace Resgrid.Services
 {
 	public class PushService : IPushService
 	{
-		private readonly IPushUriService _pushUriService;
 		private readonly IPushLogsService _pushLogsService;
 		private readonly INotificationProvider _notificationProvider;
 		private readonly IUnitNotificationProvider _unitNotificationProvider;
 		private readonly IUserProfileService _userProfileService;
 
-		public PushService(IPushUriService pushUriService, IPushLogsService pushLogsService, INotificationProvider notificationProvider,
+		public PushService(IPushLogsService pushLogsService, INotificationProvider notificationProvider,
 			IUserProfileService userProfileService, IUnitNotificationProvider unitNotificationProvider)
 		{
-			_pushUriService = pushUriService;
 			_pushLogsService = pushLogsService;
 			_notificationProvider = notificationProvider;
 			_userProfileService = userProfileService;
@@ -61,8 +59,6 @@ namespace Resgrid.Services
 		{
 			await _notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
 
-			_pushUriService.DeleteAllPushUrisByPlatformDevice((Platforms)pushUri.PlatformType, pushUri.DeviceId);
-
 			return true;
 		}
 
@@ -94,8 +90,6 @@ namespace Resgrid.Services
 		{
 			await _unitNotificationProvider.UnRegisterPushByUserDeviceId(pushUri);
 
-			_pushUriService.DeleteAllPushUrisByPlatformDevice((Platforms)pushUri.PlatformType, pushUri.DeviceId);
-
 			return true;
 		}
 
@@ -110,10 +104,10 @@ namespace Resgrid.Services
 				return false;
 
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(userId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			if (profile != null && profile.SendMessagePush)
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("M{0}", message.MessageId), ((int)PushSoundTypes.Message).ToString(), profile.CustomPushSounds, 1, "#000000");
+				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("M{0}", message.MessageId), ((int)PushSoundTypes.Message).ToString(), true, 1, "#000000");
 
 			return true;
 		}
@@ -124,10 +118,10 @@ namespace Resgrid.Services
 				return false;
 
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(userId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			if (profile != null && profile.SendNotificationPush)
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("N{0}", message.MessageId), ((int)PushSoundTypes.Notifiation).ToString(), profile.CustomPushSounds, 1, "#000000");
+				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("N{0}", message.MessageId), ((int)PushSoundTypes.Notifiation).ToString(), true, 1, "#000000");
 
 			return true;
 		}
@@ -141,35 +135,35 @@ namespace Resgrid.Services
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			if (profile != null && profile.SendMessagePush)
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, message.Id, ((int)PushSoundTypes.Message).ToString(), profile.CustomPushSounds, 1, "#000000");
+				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, message.Id, ((int)PushSoundTypes.Message).ToString(), true, 1, "#000000");
 
 			return true;
 		}
 
 		public async Task<bool> PushCall(StandardPushCall call, string userId, UserProfile profile = null, DepartmentCallPriority priority = null)
 		{
-			if (Config.SystemBehaviorConfig.DoNotBroadcast)
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId.GetValueOrDefault()))
 				return false;
 
 			if (call == null)
 				return false;
 
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(userId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			string color = null;
 			if (priority != null)
 				color = priority.Color;
 
 			if (profile != null && profile.SendPush)
-				await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), profile.CustomPushSounds, call.ActiveCallCount, color);
+				await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
 
 			return true;
 		}
 
 		public async Task<bool> PushCallUnit(StandardPushCall call, int unitId, DepartmentCallPriority priority = null)
 		{
-			if (Config.SystemBehaviorConfig.DoNotBroadcast)
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId.GetValueOrDefault()))
 				return false;
 
 			if (call == null)

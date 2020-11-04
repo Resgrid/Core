@@ -2,52 +2,49 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
-using System.Data.SqlServerCe;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
-using Resgrid.Model.Custom;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.DepartmentGroups;
+using Resgrid.Repositories.DataRepository.Queries.Messages;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class DepartmentGroupsRepository : RepositoryBase<DepartmentGroup>, IDepartmentGroupsRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentGroupsRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-
-		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentUnlimitedAsync(int departmentId)
+		public DepartmentGroupsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = await db.QueryAsync<DepartmentGroup>(@"SELECT * FROM DepartmentGroups WHERE DepartmentId = @departmentId",
-						new { departmentId = departmentId });
-
-				return result.ToList();
-			}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public List<DepartmentGroup> GetAllStationGroupsForDepartment(int departmentId)
+		public async Task<List<DepartmentGroup>> GetAllStationGroupsForDepartmentAsync(int departmentId)
 		{
 			Dictionary<int, DepartmentGroup> lookup = new Dictionary<int, DepartmentGroup>();
 
-			using (IDbConnection db = new SqlConnection(connectionString))
+			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
 				var query = @"SELECT * FROM DepartmentGroups dg
 							LEFT OUTER JOIN Addresses a ON dg.AddressId = a.AddressId
 							WHERE dg.DepartmentId = @departmentId AND dg.Type = 2";
 
-				db.Query<DepartmentGroup, Address, DepartmentGroup>(query, (dg, a) =>
+				await db.QueryAsync<DepartmentGroup, Address, DepartmentGroup>(query, (dg, a) =>
 				{
 					DepartmentGroup group;
 
@@ -64,10 +61,285 @@ namespace Resgrid.Repositories.DataRepository
 
 					return dg;
 
-				}, new { departmentId = departmentId }, splitOn: "AddressId").ToList();
+				}, new { departmentId = departmentId }, splitOn: "AddressId");
 			}
 
 			return lookup.Values.ToList();
+		}
+
+		public async Task<IEnumerable<DepartmentGroup>> GetAllGroupsByDepartmentIdAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroup>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectAllGroupsByDidQuery>();
+
+					var dictionary = new Dictionary<int, DepartmentGroup>();
+					var result = await x.QueryAsync<DepartmentGroup, DepartmentGroupMember, DepartmentGroup>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: GroupMemberMapping(dictionary),
+						splitOn: "DepartmentGroupMemberId");
+
+					if (dictionary.Count > 0)
+						return dictionary.Select(y => y.Value);
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		public async Task<IEnumerable<DepartmentGroup>> GetAllGroupsByParentGroupIdAsync(int parentGroupId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroup>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("GroupId", parentGroupId);
+
+					var query = _queryFactory.GetQuery<SelectAllGroupsByParentIdQuery>();
+
+					var dictionary = new Dictionary<int, DepartmentGroup>();
+					var result = await x.QueryAsync<DepartmentGroup, DepartmentGroupMember, DepartmentGroup>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: GroupMemberMapping(dictionary),
+						splitOn: "DepartmentGroupMemberId");
+
+					if (dictionary.Count > 0)
+						return dictionary.Select(y => y.Value);
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		public async Task<DepartmentGroup> GetGroupByGroupIdAsync(int departmentGroupId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<DepartmentGroup>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("GroupId", departmentGroupId);
+
+					var query = _queryFactory.GetQuery<SelectGroupByGroupIdQuery>();
+
+					var dictionary = new Dictionary<int, DepartmentGroup>();
+					var result = await x.QueryAsync<DepartmentGroup, DepartmentGroupMember, DepartmentGroup>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: GroupMemberMapping(dictionary),
+						splitOn: "DepartmentGroupMemberId");
+
+					if (dictionary.Count > 0)
+						return dictionary.Select(y => y.Value).FirstOrDefault();
+
+					return result.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		public async Task<DepartmentGroup> GetGroupByDispatchCodeAsync(string dispatchCode)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<DepartmentGroup>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DispatchEmail", dispatchCode);
+
+					var query = _queryFactory.GetQuery<SelectGroupByDispatchCodeQuery>();
+
+					var dictionary = new Dictionary<int, DepartmentGroup>();
+					var result = await x.QueryAsync<DepartmentGroup, DepartmentGroupMember, DepartmentGroup>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: GroupMemberMapping(dictionary),
+						splitOn: "DepartmentGroupMemberId");
+
+					if (dictionary.Count > 0)
+						return dictionary.Select(y => y.Value).FirstOrDefault();
+
+					return result.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		public async Task<DepartmentGroup> GetGroupByMessageCodeAsync(string messageCode)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<DepartmentGroup>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("MessageEmail", messageCode);
+
+					var query = _queryFactory.GetQuery<SelectGroupByMessageCodeQuery>();
+
+					var dictionary = new Dictionary<int, DepartmentGroup>();
+					var result = await x.QueryAsync<DepartmentGroup, DepartmentGroupMember, DepartmentGroup>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: GroupMemberMapping(dictionary),
+						splitOn: "DepartmentGroupMemberId");
+
+					if (dictionary.Count > 0)
+						return dictionary.Select(y => y.Value).FirstOrDefault();
+
+					return result.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		private static Func<DepartmentGroup, DepartmentGroupMember, DepartmentGroup> GroupMemberMapping(Dictionary<int, DepartmentGroup> dictionary)
+		{
+			return new Func<DepartmentGroup, DepartmentGroupMember, DepartmentGroup>((group, groupMember) =>
+			{
+				var dictionaryGroup = default(DepartmentGroup);
+
+				if (groupMember != null)
+				{
+					if (dictionary.TryGetValue(group.DepartmentGroupId, out dictionaryGroup))
+					{
+						if (dictionaryGroup.Members.All(x => x.DepartmentGroupMemberId != groupMember.DepartmentGroupMemberId))
+							dictionaryGroup.Members.Add(groupMember);
+					}
+					else
+					{
+						if (group.Members == null)
+							group.Members = new List<DepartmentGroupMember>();
+
+						group.Members.Add(groupMember);
+						dictionary.Add(group.DepartmentGroupId, group);
+
+						dictionaryGroup = group;
+					}
+				}
+				else
+				{
+					group.Members = new List<DepartmentGroupMember>();
+					dictionaryGroup = group;
+					dictionary.Add(group.DepartmentGroupId, group);
+				}
+
+				return dictionaryGroup;
+			});
 		}
 	}
 }

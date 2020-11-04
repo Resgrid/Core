@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Device.Location;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -125,22 +125,19 @@ namespace Resgrid.Model
 		public string PhoneNumber { get; set; }
 
 		[NotMapped]
-		public GeoCoordinate Coordinate
-		{
-			get
-			{
-				if (!String.IsNullOrWhiteSpace(Latitude) && !String.IsNullOrWhiteSpace(Longitude))
-					return new GeoCoordinate(double.Parse(Latitude), double.Parse(Longitude));
-				else
-					return new GeoCoordinate(0, 0);
-			}
-		}
-
-		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentProfileId; }
 			set { DepartmentProfileId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "DepartmentProfiles";
+
+		[NotMapped]
+		public string IdName => "DepartmentProfileId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Address" };
 	}
 }

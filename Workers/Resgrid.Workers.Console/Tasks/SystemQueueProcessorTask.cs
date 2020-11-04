@@ -24,29 +24,36 @@ namespace Resgrid.Workers.Console.Tasks
 
 		public async Task ProcessAsync(SystemQueueProcessorCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
-			progress.Report(1, $"Starting the {Name} Task");
+			if (progress != null)
+				progress.Report(1, $"Starting the {Name} Task");
 
 			RabbitInboundQueueProvider queue = new RabbitInboundQueueProvider();
 			queue.CqrsEventQueueReceived += OnCqrsEventQueueReceived;
 
-			queue.Start();
+			await queue.Start();
 
-			await Task.Factory.StartNew(() =>
+			while (!cancellationToken.IsCancellationRequested)
 			{
-				// Keep alive
-				while (_running)
-				{
-					Thread.Sleep(1000);
-				}
-			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+				Thread.Sleep(500);
+			}
 
-			progress.Report(100, $"Finishing the {Name} Task");
+			//await Task.Factory.StartNew(() =>
+			//{
+			//	// Keep alive
+			//	while (_running)
+			//	{
+			//		Thread.Sleep(1000);
+			//	}
+			//}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+			if (progress != null)
+				progress.Report(100, $"Finishing the {Name} Task");
 		}
 
-		private void OnCqrsEventQueueReceived(CqrsEvent cqrs)
+		private async Task OnCqrsEventQueueReceived(CqrsEvent cqrs)
 		{
 			_logger.LogInformation($"{Name}: System Queue Received with a type of {cqrs.Type}, starting processing...");
-			SystemQueueLogic.ProcessSystemQueueItem(cqrs);
+			await SystemQueueLogic.ProcessSystemQueueItem(cqrs);
 			_logger.LogInformation($"{Name}: Finished processing of system queue item with type of {cqrs.Type}.");
 		}
 	}

@@ -1,33 +1,37 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using Dapper;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class DepartmentNotificationRepository : RepositoryBase<DepartmentNotification>, IDepartmentNotificationRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentNotificationRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
+		public DepartmentNotificationRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		{
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
+		}
 
 		public List<DepartmentNotification> GetNotificationsByDepartment(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var result = db.Query<DepartmentNotification>($"SELECT * FROM DepartmentNotifications WHERE DepartmentId = @departmentId", new { departmentId = departmentId });
-				return result.ToList();
-			}
+			//using (IDbConnection db = new SqlConnection(connectionString))
+			//{
+			//	var result = db.Query<DepartmentNotification>($"SELECT * FROM DepartmentNotifications WHERE DepartmentId = @departmentId", new { departmentId = departmentId });
+			//	return result.ToList();
+			//}
+
+			return null;
 		}
 	}
 }

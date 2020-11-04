@@ -38,11 +38,11 @@ namespace Resgrid.Workers.Framework.Workers.CalendarNotifier
 
 				_calendarService = Bootstrapper.GetKernel().Resolve<ICalendarService>();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 				{
 					try
 					{
-						var calendarItems = _calendarService.GetCalendarItemsToNotify(DateTime.UtcNow);
+						var calendarItems = await _calendarService.GetCalendarItemsToNotifyAsync(DateTime.UtcNow);
 
 						if (calendarItems != null)
 						{
@@ -83,10 +83,12 @@ namespace Resgrid.Workers.Framework.Workers.CalendarNotifier
 				_queue = new Queue<CalendarNotifierQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public void AddItem(CalendarNotifierQueueItem item)
@@ -104,11 +106,11 @@ namespace Resgrid.Workers.Framework.Workers.CalendarNotifier
 			return item;
 		}
 
-		public IEnumerable<CalendarNotifierQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<CalendarNotifierQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<CalendarNotifierQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CalendarNotifier, Timestamp = DateTime.UtcNow});
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CalendarNotifier, Timestamp = DateTime.UtcNow});
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

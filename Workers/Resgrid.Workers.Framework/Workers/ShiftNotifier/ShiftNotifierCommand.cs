@@ -1,4 +1,5 @@
-﻿using Resgrid.Workers.Framework.Logic;
+﻿using System.Threading.Tasks;
+using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework.Workers.ShiftNotifier
 {
@@ -11,10 +12,11 @@ namespace Resgrid.Workers.Framework.Workers.ShiftNotifier
 
 		public bool Continue { get; set; }
 
-		public void Run(ShiftNotifierQueueItem item)
+		public async Task<bool> Run(ShiftNotifierQueueItem item)
 		{
 			var logic = new ShiftNotifierLogic();
-			logic.Process(item);
+			await logic.Process(item);
+			return true;
 		}
 	}
 }

@@ -3,7 +3,11 @@
 	public static class PaymentProviderConfig
 	{
 		public static bool IsTestMode = true;
-		public static string ProductionKey = "";
-		public static string TestKey = "";
+
+		public static string ProductionApiKey = "";
+		public static string TestApiKey = "";
+
+		public static string ProductionClientKey = "";
+		public static string TestClientKey = "";
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Cache;
 using Resgrid.Model.Events;
@@ -16,12 +18,12 @@ namespace Resgrid.Services
 		private static string CacheKey = "CustomStates_{0}";
 		private static TimeSpan CacheLength = TimeSpan.FromDays(7);
 
-		private readonly IGenericDataRepository<CustomState> _customStateRepository;
-		private readonly IGenericDataRepository<CustomStateDetail> _customStateDetailRepository;
+		private readonly ICustomStateRepository _customStateRepository;
+		private readonly ICustomStateDetailRepository _customStateDetailRepository;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICacheProvider _cacheProvider;
 
-		public CustomStateService(IGenericDataRepository<CustomState> customStateRepository, IGenericDataRepository<CustomStateDetail> customStateDetailRepository,
+		public CustomStateService(ICustomStateRepository customStateRepository, ICustomStateDetailRepository customStateDetailRepository,
 			IEventAggregator eventAggregator, ICacheProvider cacheProvider)
 		{
 			_customStateRepository = customStateRepository;
@@ -30,14 +32,14 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 		}
 
-		public CustomState GetCustomSateById(int customStateId)
+		public async Task<CustomState> GetCustomSateByIdAsync(int customStateId)
 		{
-			return _customStateRepository.GetAll().FirstOrDefault(x => x.CustomStateId == customStateId);
+			return await _customStateRepository.GetCustomStatesByIdAsync(customStateId);
 		}
 
-		public List<CustomState> GetAllActiveCustomStatesForDepartment(int departmentId)
+		public async Task<List<CustomState>> GetAllActiveCustomStatesForDepartmentAsync(int departmentId)
 		{
-			var states = GetAllCustomStatesForDepartment(departmentId);
+			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			if (states != null)
 				return states.Where(x => x.DepartmentId == departmentId && x.IsDeleted == false).ToList();
@@ -45,9 +47,9 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public List<CustomState> GetAllActiveUnitStatesForDepartment(int departmentId)
+		public async Task<List<CustomState>> GetAllActiveUnitStatesForDepartmentAsync(int departmentId)
 		{
-			var states = GetAllCustomStatesForDepartment(departmentId);
+			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			if (states != null)
 				return states.Where(x => x.DepartmentId == departmentId && x.IsDeleted == false && x.Type == (int)CustomStateTypes.Unit).ToList();
@@ -55,10 +57,10 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public CustomState GetActivePersonnelStateForDepartment(int departmentId)
+		public async Task<CustomState> GetActivePersonnelStateForDepartmentAsync(int departmentId)
 		{
 			CustomState state = null;
-			var states = GetAllCustomStatesForDepartment(departmentId);
+			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			if (states != null)
 				state = states.FirstOrDefault(x => x.DepartmentId == departmentId && x.IsDeleted == false && x.Type == (int)CustomStateTypes.Personnel);
@@ -74,10 +76,33 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public CustomState GetActiveStaffingLevelsForDepartment(int departmentId)
+		public async Task<List<CustomStateDetail>> GetCustomPersonnelStatusesOrDefaultsAsync(int departmentId)
+		{
+			var statuses = await GetActivePersonnelStateForDepartmentAsync(departmentId);
+
+			if (statuses != null && statuses.GetActiveDetails().Any())
+			{
+				return statuses.GetActiveDetails();
+			}
+			else
+			{
+				List<CustomStateDetail> details = new List<CustomStateDetail>();
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.StandingBy, ButtonText = "Available" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.NotResponding, ButtonText = "Not Responding" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.Responding, ButtonText = "Responding" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.OnScene, ButtonText = "On Scene" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.AvailableStation, ButtonText = "Available Station" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToStation, ButtonText = "Responding To Station" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToScene, ButtonText = "Responding To Scene" });
+
+				return details;
+			}
+		}
+
+		public async Task<CustomState> GetActiveStaffingLevelsForDepartmentAsync(int departmentId)
 		{
 			CustomState state = null;
-			var states = GetAllCustomStatesForDepartment(departmentId);
+			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			if (states != null)
 				state = states.FirstOrDefault(x => x.DepartmentId == departmentId && x.IsDeleted == false && x.Type == (int)CustomStateTypes.Staffing);
@@ -93,11 +118,11 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public List<CustomState> GetAllCustomStatesForDepartment(int departmentId)
+		public async Task<List<CustomState>> GetAllCustomStatesForDepartmentAsync(int departmentId)
 		{
-			Func<List<CustomState>> getCustomStates = delegate()
+			async Task<List<CustomState>> getCustomStates()
 			{
-				var states = _customStateRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+				var states = await _customStateRepository.GetCustomStatesByDepartmentIdAsync(departmentId);
 
 				foreach (var state in states)
 				{
@@ -105,14 +130,14 @@ namespace Resgrid.Services
 						state.Details = new List<CustomStateDetail>();
 				}
 
-				return states;
-			};
+				return states.ToList();
+			}
 
 			if (Config.SystemBehaviorConfig.CacheEnabled)
-				return _cacheProvider.Retrieve<List<CustomState>>(string.Format(CacheKey, departmentId), getCustomStates,
+				return await _cacheProvider.RetrieveAsync<List<CustomState>>(string.Format(CacheKey, departmentId), getCustomStates,
 					CacheLength);
 			else
-				return getCustomStates();
+				return await getCustomStates();
 		}
 
 		public void InvalidateCustomStateInCache(int departmentId)
@@ -120,67 +145,68 @@ namespace Resgrid.Services
 			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
 		}
 
-		public CustomState Save(CustomState customState)
+		public async Task<CustomState> SaveAsync(CustomState customState, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_customStateRepository.SaveOrUpdate(customState);
+			var saved = await _customStateRepository.SaveOrUpdateAsync(customState,cancellationToken);
 
 			_cacheProvider.Remove(string.Format(CacheKey, customState.DepartmentId));
 
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customState.DepartmentId });
+			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customState.DepartmentId });
 
-			return customState;
+			return saved;
 		}
 
-		public CustomStateDetail GetCustomDetailById(int detailId)
+		public async Task<CustomStateDetail> GetCustomDetailByIdAsync(int detailId)
 		{
-			return _customStateDetailRepository.GetAll().FirstOrDefault(x => x.CustomStateDetailId == detailId);
+			return await _customStateDetailRepository.GetByIdAsync(detailId);
 		}
 
-		public CustomStateDetail SaveDetail(CustomStateDetail customStateDetail)
+		public async Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_customStateDetailRepository.SaveOrUpdate(customStateDetail);
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customStateDetail.CustomState.DepartmentId });
+			var saved = await _customStateDetailRepository.SaveOrUpdateAsync(customStateDetail, cancellationToken);
+			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customStateDetail.CustomState.DepartmentId });
 
-			return customStateDetail;
+			return saved;
 		}
 
-		public void Delete(CustomState customState)
+		public async Task<CustomState> DeleteAsync(CustomState customState, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			customState.IsDeleted = true;
 
 			foreach (var existingDetails in customState.Details)
 			{
-				DeleteDetail(existingDetails);
+				await DeleteDetailAsync(existingDetails, cancellationToken);
 			}
 
-			Save(customState);
+			return await SaveAsync(customState, cancellationToken);
 		}
 
-		public void DeleteDetail(CustomStateDetail detail)
+		public async Task<CustomStateDetail> DeleteDetailAsync(CustomStateDetail detail, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			detail.IsDeleted = true;
 
-			_customStateDetailRepository.SaveOrUpdate(detail);
+			return await _customStateDetailRepository.SaveOrUpdateAsync(detail, cancellationToken);
 		}
 
-		public CustomState Update(CustomState state, List<CustomStateDetail> details)
+		public async Task<CustomState> UpdateAsync(CustomState state, List<CustomStateDetail> details, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			foreach (var existingDetails in state.Details)
 			{
-				DeleteDetail(existingDetails);
+				await DeleteDetailAsync(existingDetails, cancellationToken);
 			}
 
 			foreach (var detail in details)
 			{
+				detail.CustomStateId = state.CustomStateId;
 				state.Details.Add(detail);
 			}
 
-			return Save(state);
+			return await SaveAsync(state, cancellationToken);
 		}
 
-		public CustomStateDetail GetCustomDetailForDepartment(int departmentId, int detailId)
+		public async Task<CustomStateDetail> GetCustomDetailForDepartmentAsync(int departmentId, int detailId)
 		{
-			var states = GetAllCustomStatesForDepartment(departmentId);
+			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			if (states != null && states.Count > 0)
 				return states.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == detailId)).FirstOrDefault(detail => detail != null);
@@ -188,7 +214,7 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public CustomStateDetail GetCustomPersonnelStaffing(int departmentId, UserState state)
+		public async Task<CustomStateDetail> GetCustomPersonnelStaffingAsync(int departmentId, UserState state)
 		{
 			if (state.State <= 25)
 			{
@@ -204,13 +230,13 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				var stateDetail = GetCustomDetailForDepartment(departmentId, state.State);
+				var stateDetail = await GetCustomDetailForDepartmentAsync(departmentId, state.State);
 
 				return stateDetail;
 			}
 		}
 
-		public CustomStateDetail GetCustomPersonnelStatus(int departmentId, ActionLog state)
+		public async Task<CustomStateDetail> GetCustomPersonnelStatusAsync(int departmentId, ActionLog state)
 		{
 			if (state.ActionTypeId <= 25)
 			{
@@ -226,13 +252,13 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				var stateDetail = GetCustomDetailForDepartment(departmentId, state.ActionTypeId);
+				var stateDetail = await GetCustomDetailForDepartmentAsync(departmentId, state.ActionTypeId);
 
 				return stateDetail;
 			}
 		}
 
-		public CustomStateDetail GetCustomUnitState(UnitState state)
+		public async Task<CustomStateDetail> GetCustomUnitStateAsync(UnitState state)
 		{
 			if (state.State <= 25)
 			{
@@ -248,7 +274,7 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				var stateDetail = GetCustomDetailForDepartment(state.Unit.DepartmentId, state.State);
+				var stateDetail = await GetCustomDetailForDepartmentAsync(state.Unit.DepartmentId, state.State);
 
 				return stateDetail;
 			}

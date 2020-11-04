@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -88,11 +91,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Invites
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Invites()
+		public async Task<IActionResult> Invites()
 		{
 			var model = new InvitesView();
-			model.Invites = _invitesService.GetAllInvitesForDepartment(DepartmentId);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Invites = await _invitesService.GetAllInvitesForDepartmentAsync(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (model.Invites == null)
 				model.Invites = new List<Invite>();
@@ -103,9 +106,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Invites(InvitesView model)
+		public async Task<IActionResult> Invites(InvitesView model, CancellationToken cancellationToken)
 		{
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			List<string> emails = new List<string>();
 			string[] rawEmails = model.EmailAddresses.Split(char.Parse(","));
@@ -118,7 +121,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var email in emails)
 			{
-				if (_invitesService.GetInviteByEmail(email) != null)
+				if (await _invitesService.GetInviteByEmailAsync(email) != null)
 				{
 					ModelState.AddModelError("EmailAddresses", string.Format("{0} already has a pending or completed invite.", email));
 				}
@@ -137,42 +140,42 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var user = _usersService.GetUserByEmail(email);
 				if (user != null)
 				{
-					ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department on another. Email address can only be used once per account in the system.", email));
+					ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department or another. Email address can only be used once per account in the system.", email));
 				}
 			}
 
 			if (ModelState.IsValid)
 			{
-				_invitesService.CreateInvites(model.Department, UserId, emails);
+				await _invitesService.CreateInvitesAsync(model.Department, UserId, emails, cancellationToken);
 
 				return RedirectToAction("Invites", "Department", new { Area = "User" });
 			}
 
-			model.Invites = _invitesService.GetAllInvitesForDepartment(DepartmentId);
+			model.Invites = await _invitesService.GetAllInvitesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult ResendInvite(int? inviteId)
+		public async Task<IActionResult> ResendInvite(int? inviteId, CancellationToken cancellationToken)
 		{
 			if (inviteId.HasValue == false)
 				return RedirectToAction("Invites", "Department", new { Area = "User" });
 
-			if (_authorizationService.CanUserManageInvite(UserId, inviteId.Value))
-				_invitesService.ResendInvite(inviteId.Value);
+			if (await _authorizationService.CanUserManageInviteAsync(UserId, inviteId.Value))
+				await _invitesService.ResendInviteAsync(inviteId.Value, cancellationToken);
 
 			return RedirectToAction("Invites", "Department", new { Area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult DeleteInvite(int? inviteId)
+		public async Task<IActionResult> DeleteInvite(int? inviteId, CancellationToken cancellationToken)
 		{
 			if (inviteId.HasValue == false)
 				return RedirectToAction("Invites", "Department", new { Area = "User" });
 
-			if (_authorizationService.CanUserManageInvite(UserId, inviteId.Value))
-				_invitesService.DeleteInvite(inviteId.Value);
+			if (await _authorizationService.CanUserManageInviteAsync(UserId, inviteId.Value))
+				await _invitesService.DeleteInviteAsync(inviteId.Value, cancellationToken);
 
 			return RedirectToAction("Invites", "Department", new { Area = "User" });
 		}
@@ -181,11 +184,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Settings
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Settings()
+		public async Task<IActionResult> Settings()
 		{
 			DepartmentSettingsModel model = new DepartmentSettingsModel();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.SetUsers(_departmentsService.GetAllUsersForDepartment(DepartmentId, false, true), _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId));
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.SetUsers(await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, false, true), await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId));
 
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
@@ -205,15 +208,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.Use24HourTime = false;
 
-			var address = _departmentSettingsService.GetBigBoardCenterAddressDepartment(DepartmentId);
-			var zoomLevel = _departmentSettingsService.GetBigBoardMapZoomLevelForDepartment(DepartmentId);
-			var refreshTimer = _departmentSettingsService.GetBigBoardRefreshTimeForDepartment(DepartmentId);
-			var mapCenterGpsCoordilates = _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartment(DepartmentId);
-			var mapHideUnavailable = _departmentSettingsService.GetBigBoardHideUnavailableDepartment(DepartmentId);
-			var activeCallRssKey = _departmentSettingsService.GetRssKeyForDepartment(DepartmentId);
-			model.DisableAutoAvailable = _departmentSettingsService.GetDisableAutoAvailableForDepartment(DepartmentId);
+			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
+			var zoomLevel = await _departmentSettingsService.GetBigBoardMapZoomLevelForDepartmentAsync(DepartmentId);
+			var refreshTimer = await _departmentSettingsService.GetBigBoardRefreshTimeForDepartmentAsync(DepartmentId);
+			var mapCenterGpsCoordilates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
+			var mapHideUnavailable = await _departmentSettingsService.GetBigBoardHideUnavailableDepartmentAsync(DepartmentId);
+			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
+			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
 
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
 				model.StaffingLevels = model.UserStateTypes.ToSelectListInt();
@@ -223,7 +226,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 			}
 
-			var actionLogs = _customStateService.GetActivePersonnelStateForDepartment(DepartmentId);
+			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 			if (actionLogs == null)
 			{
 				model.StatusLevels = model.UserStatusTypes.ToSelectListInt();
@@ -263,7 +266,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Department.Address == null)
 			{
 				if (model.Department.AddressId.HasValue)
-					model.Department.Address = _addressService.GetAddressById(model.Department.AddressId.Value);
+					model.Department.Address = await _addressService.GetAddressByIdAsync(model.Department.AddressId.Value);
 				else
 					model.Department.Address = new Address();
 			}
@@ -278,7 +281,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			// Staffing Reset
-			var tasks = _scheduledTasksService.GetScheduledTasksByUserType(model.Department.ManagingUserId, (int)TaskTypes.DepartmentStaffingReset);
+			var tasks = await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(model.Department.ManagingUserId, (int)TaskTypes.DepartmentStaffingReset);
 			if (tasks != null && tasks.Count > 0)
 			{
 				model.EnableStaffingReset = true;
@@ -291,7 +294,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			// Status Reset
-			var statusTask = _scheduledTasksService.GetScheduledTasksByUserType(model.Department.ManagingUserId, (int)TaskTypes.DepartmentStatusReset);
+			var statusTask = await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(model.Department.ManagingUserId, (int)TaskTypes.DepartmentStatusReset);
 			if (statusTask != null && statusTask.Count > 0)
 			{
 				model.EnableStatusReset = true;
@@ -309,9 +312,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Settings(DepartmentSettingsModel model)
+		public async Task<IActionResult> Settings(DepartmentSettingsModel model, CancellationToken cancellationToken)
 		{
-			Department d = _departmentsService.GetDepartmentEF(DepartmentId);
+			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			d.TimeZone = model.Department.TimeZone;
 			d.Name = model.Department.Name;
 			d.ManagingUserId = model.Department.ManagingUserId;
@@ -326,7 +329,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CallSortOrders callSortTypes = CallSortOrders.Default;
 			model.CallSortTypes = callSortTypes.ToSelectListInt();
 
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
 				model.StaffingLevels = model.UserStateTypes.ToSelectListInt();
@@ -336,7 +339,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 			}
 
-			var actionLogs = _customStateService.GetActivePersonnelStateForDepartment(DepartmentId);
+			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 			if (actionLogs == null)
 			{
 				model.StatusLevels = model.UserStatusTypes.ToSelectListInt();
@@ -349,7 +352,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Address departmentAddress = null;
 			if (model.Department.Address.AddressId != 0)
 			{
-				departmentAddress = _addressService.GetAddressById(model.Department.Address.AddressId);
+				departmentAddress = await _addressService.GetAddressByIdAsync(model.Department.Address.AddressId);
 				departmentAddress.Address1 = model.Department.Address.Address1;
 				departmentAddress.City = model.Department.Address.City;
 				departmentAddress.State = model.Department.Address.State;
@@ -360,7 +363,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				departmentAddress = model.Department.Address;
 
 			model.User = _usersService.GetUserById(UserId);
-			model.SetUsers(_departmentsService.GetAllUsersForDepartment(DepartmentId, false, true), _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId));
+			model.SetUsers(await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, false, true), await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId));
 
 			if (!String.IsNullOrWhiteSpace(model.MapZoomLevel))
 			{
@@ -410,7 +413,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				departmentAddress = _addressService.SaveAddress(departmentAddress);
+				departmentAddress = await _addressService.SaveAddressAsync(departmentAddress, cancellationToken);
 				d.AddressId = departmentAddress.AddressId;
 
 				var auditEvent = new AuditEvent();
@@ -419,33 +422,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.Type = AuditLogTypes.DepartmentSettingsChanged;
 				auditEvent.Before = d.CloneJson();
 
-				_departmentsService.UpdateDepartment(d);
+				await _departmentsService.UpdateDepartmentAsync(d, cancellationToken);
 				auditEvent.After = d;
 
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 				model.Message = "Department settings save successful, you may have to log out and log back in for everything to take effect.";
 
 				model.Department = d;
 
 				if (!String.IsNullOrWhiteSpace(model.MapZoomLevel))
-					_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.MapZoomLevel, DepartmentSettingTypes.BigBoardMapZoomLevel);
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapZoomLevel, DepartmentSettingTypes.BigBoardMapZoomLevel, cancellationToken);
 
 				if (!String.IsNullOrWhiteSpace(model.RefreshTime))
-					_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.RefreshTime, DepartmentSettingTypes.BigBoardPageRefresh);
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.RefreshTime, DepartmentSettingTypes.BigBoardPageRefresh, cancellationToken);
 
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable);
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable, cancellationToken);
 
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.PersonnelSort.ToString(), DepartmentSettingTypes.PersonnelSortOrder);
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.UnitsSort.ToString(), DepartmentSettingTypes.UnitsSortOrder);
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.CallsSort.ToString(), DepartmentSettingTypes.CallsSortOrder);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelSort.ToString(), DepartmentSettingTypes.PersonnelSortOrder, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitsSort.ToString(), DepartmentSettingTypes.UnitsSortOrder, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.CallsSort.ToString(), DepartmentSettingTypes.CallsSortOrder, cancellationToken);
 
 				if (!String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLatitude) && !String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLongitude))
-					_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.MapCenterGpsCoordinatesLatitude + "," + model.MapCenterGpsCoordinatesLongitude, DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates);
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapCenterGpsCoordinatesLatitude + "," + model.MapCenterGpsCoordinatesLongitude, DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates, cancellationToken);
 
 				if (!String.IsNullOrWhiteSpace(model.MapCenterPointAddressAddress1))
 				{
-					var address = _departmentSettingsService.GetBigBoardCenterAddressDepartment(DepartmentId);
+					var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
 
 					if (address == null)
 					{
@@ -456,8 +459,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						newAddress.PostalCode = model.MapCenterPointAddressPostalCode;
 						newAddress.Country = model.MapCenterPointAddressCountry;
 
-						newAddress = _addressService.SaveAddress(newAddress);
-						_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, newAddress.AddressId.ToString(), DepartmentSettingTypes.BigBoardMapCenterAddress);
+						newAddress = await _addressService.SaveAddressAsync(newAddress, cancellationToken);
+						await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, newAddress.AddressId.ToString(), DepartmentSettingTypes.BigBoardMapCenterAddress, cancellationToken);
 					}
 					else
 					{
@@ -467,7 +470,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						address.PostalCode = model.MapCenterPointAddressPostalCode;
 						address.Country = model.MapCenterPointAddressCountry;
 
-						_addressService.SaveAddress(address);
+						await _addressService.SaveAddressAsync(address, cancellationToken);
 					}
 				}
 
@@ -489,14 +492,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					task.UserId = model.Department.ManagingUserId;
 					task.DepartmentId = model.Department.DepartmentId;
 
-					_scheduledTasksService.DeleteDepartmentStaffingResetJob(model.Department.DepartmentId);
-					_scheduledTasksService.SaveScheduledTask(task);
+					await _scheduledTasksService.DeleteDepartmentStaffingResetJobAsync(model.Department.DepartmentId, cancellationToken);
+					await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 				}
 				else
 				{
 					model.ResetStaffingTo = (int)UserStateTypes.Available;
 					model.TimeToResetStaffing = String.Empty;
-					_scheduledTasksService.DeleteDepartmentStaffingResetJob(model.Department.DepartmentId);
+					await _scheduledTasksService.DeleteDepartmentStaffingResetJobAsync(model.Department.DepartmentId, cancellationToken);
 				}
 
 				if (model.EnableStatusReset)
@@ -517,17 +520,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					task.UserId = model.Department.ManagingUserId;
 					task.DepartmentId = model.Department.DepartmentId;
 
-					_scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId);
-					_scheduledTasksService.SaveScheduledTask(task);
+					await _scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId, cancellationToken);
+					await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 				}
 				else
 				{
 					model.ResetStatusTo = (int)ActionTypes.StandingBy;
 					model.TimeToResetStatus = String.Empty;
-					_scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId);
+					await _scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId, cancellationToken);
 				}
 
-				_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent(){DepartmentId = DepartmentId});
+				await _eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent(){DepartmentId = DepartmentId});
 
 				_departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
 
@@ -539,12 +542,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Api()
+		public async Task<IActionResult> Api()
 		{
 			DepartmentSettingsModel model = new DepartmentSettingsModel();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			var activeCallRssKey = _departmentSettingsService.GetRssKeyForDepartment(DepartmentId);
+			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
 			if (!String.IsNullOrWhiteSpace(activeCallRssKey))
 				model.ActiveCallRssKey = activeCallRssKey;
 
@@ -553,13 +556,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult ProvisionApiKey()
+		public async Task<IActionResult> ProvisionApiKey(CancellationToken cancellationToken)
 		{
 			DepartmentSettingsModel model = new DepartmentSettingsModel();
 
-			Department d = _departmentsService.GetDepartmentById(DepartmentId);
+			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			d.ApiKey = Guid.NewGuid().ToString("N");
-			_departmentsService.UpdateDepartment(d);
+			await _departmentsService.UpdateDepartmentAsync(d, cancellationToken);
 
 			model.Department = d;
 
@@ -568,35 +571,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult ProvisionApiKeyAsync()
+		public async Task<IActionResult> ProvisionApiKeyAsync(CancellationToken cancellationToken)
 		{
-			Department d = _departmentsService.GetDepartmentById(DepartmentId);
+			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			d.ApiKey = Guid.NewGuid().ToString("N");
-			_departmentsService.UpdateDepartment(d);
+			await _departmentsService.UpdateDepartmentAsync(d, cancellationToken);
 
 			return Content(d.ApiKey);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult ProvisionActiveCallRssKey()
+		public async Task<IActionResult> ProvisionActiveCallRssKey(CancellationToken cancellationToken)
 		{
-			_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, Guid.NewGuid().ToString("N"), DepartmentSettingTypes.RssFeedKeyForActiveCalls);
+			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, Guid.NewGuid().ToString("N"), DepartmentSettingTypes.RssFeedKeyForActiveCalls, cancellationToken);
 
 			return RedirectToAction("Api", "Department", new { Area = "User" });
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Address()
+		public async Task<IActionResult> Address()
 		{
 			SettingsAddressModel model = new SettingsAddressModel();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (model.Department.Address == null)
 			{
 				if (model.Department.AddressId.HasValue)
-					model.Department.Address = _addressService.GetAddressById(model.Department.AddressId.Value);
+					model.Department.Address = await _addressService.GetAddressByIdAsync(model.Department.AddressId.Value);
 				else
 					model.Department.Address = new Address();
 			}
@@ -607,13 +610,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Address(SettingsAddressModel model)
+		public async Task<IActionResult> Address(SettingsAddressModel model, CancellationToken cancellationToken)
 		{
 			Address address = null;
 
 			if (model.Department.Address.AddressId != 0)
 			{
-				address = _addressService.GetAddressById(model.Department.Address.AddressId);
+				address = await _addressService.GetAddressByIdAsync(model.Department.Address.AddressId);
 				address.AddressId = model.Department.Address.AddressId;
 				address.Address1 = model.Department.Address.Address1;
 				address.City = model.Department.Address.City;
@@ -624,7 +627,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				address = model.Department.Address;
 
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 
 
@@ -632,10 +635,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				//using (var scope = new TransactionScope())
 				//{
-				address = _addressService.SaveAddress(address);
+				address = await _addressService.SaveAddressAsync(address, cancellationToken);
 
 				model.Department.AddressId = address.AddressId;
-				_departmentsService.UpdateDepartment(model.Department);
+				await _departmentsService.UpdateDepartmentAsync(model.Department, cancellationToken);
 
 				//	scope.Complete();
 				//}
@@ -652,36 +655,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region User States
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult SetUserResponding(string userId)
+		public async Task<IActionResult> SetUserResponding(string userId)
 		{
-			_actionLogsService.SetUserAction(userId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId,
+			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 																			 (int)ActionTypes.Responding);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult SetUserNotResponding(string userId)
+		public async Task<IActionResult> SetUserNotResponding(string userId)
 		{
-			_actionLogsService.SetUserAction(userId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId,
+			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 																			 (int)ActionTypes.NotResponding);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult SetUserStandingBy(string userId)
+		public async Task<IActionResult> SetUserStandingBy(string userId)
 		{
-			_actionLogsService.SetUserAction(userId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId,
+			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 																			 (int)ActionTypes.StandingBy);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult SetUserOnScene(string userId)
+		public async Task<IActionResult> SetUserOnScene(string userId)
 		{
-			_actionLogsService.SetUserAction(userId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId,
+			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 																			 (int)ActionTypes.OnScene);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
@@ -691,13 +694,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Call Settings
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult CallSettings()
+		public async Task<IActionResult> CallSettings()
 		{
 			var model = new CallSettingsView();
-			model.EmailSettings = _departmentsService.GetDepartmentEmailSettings(DepartmentId);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.EmailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			var internalDispatchEmail = _departmentSettingsService.GetDispatchEmailForDepartment(DepartmentId);
+			var internalDispatchEmail = await _departmentSettingsService.GetDispatchEmailForDepartmentAsync(DepartmentId);
 			if (!String.IsNullOrWhiteSpace(internalDispatchEmail))
 				model.InternalDispatchEmail = $"{internalDispatchEmail}@{Config.InboundEmailConfig.DispatchDomain}";
 
@@ -714,7 +717,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.CallType == 0)
 				model.CallType = (int)CallEmailTypes.Generic;
 
-			var callPruning = _departmentsService.GetDepartmentCallPruningSettings(DepartmentId);
+			var callPruning = await _departmentsService.GetDepartmentCallPruningSettingsAsync(DepartmentId);
 
 			if (callPruning != null)
 			{
@@ -730,12 +733,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult CallSettings(CallSettingsView model)
+		public async Task<IActionResult> CallSettings(CallSettingsView model, CancellationToken cancellationToken)
 		{
-			model.CallTypes = _callsService.GetCallTypesForDepartment(DepartmentId);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
-			var internalDispatchEmail = _departmentSettingsService.GetDispatchEmailForDepartment(DepartmentId);
+			var internalDispatchEmail = await _departmentSettingsService.GetDispatchEmailForDepartmentAsync(DepartmentId);
 			if (!String.IsNullOrWhiteSpace(internalDispatchEmail))
 				model.InternalDispatchEmail = $"{internalDispatchEmail}@{Config.InboundEmailConfig.DispatchDomain}";
 
@@ -747,7 +750,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				DepartmentCallEmail emailSettings = _departmentsService.GetDepartmentEmailSettings(DepartmentId);
+				DepartmentCallEmail emailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(DepartmentId);
 				model.EmailSettings.DepartmentId = DepartmentId;
 				model.EmailSettings.FormatType = model.CallType;
 
@@ -762,9 +765,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				emailSettings.FormatType = model.EmailSettings.FormatType;
 				emailSettings.UseSsl = model.EmailSettings.UseSsl;
 
-				model.EmailSettings = _departmentsService.SaveDepartmentEmailSettings(emailSettings);
+				model.EmailSettings = await _departmentsService.SaveDepartmentEmailSettingsAsync(emailSettings, cancellationToken);
 
-				DepartmentCallPruning pruningSettings = _departmentsService.GetDepartmentCallPruningSettings(DepartmentId);
+				DepartmentCallPruning pruningSettings = await _departmentsService.GetDepartmentCallPruningSettingsAsync(DepartmentId);
 
 				if (pruningSettings == null)
 					pruningSettings = new DepartmentCallPruning();
@@ -773,7 +776,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				pruningSettings.PruneEmailImportedCalls = model.PruneEmailCalls;
 				pruningSettings.EmailImportCallPruneInterval = model.MinutesTillPrune;
 
-				pruningSettings = _departmentsService.SavelDepartmentCallPruning(pruningSettings);
+				pruningSettings = await _departmentsService.SaveDepartmentCallPruningAsync(pruningSettings, cancellationToken);
 
 				if (pruningSettings.PruneEmailImportedCalls.HasValue)
 					model.PruneEmailCalls = pruningSettings.PruneEmailImportedCalls.Value;
@@ -791,7 +794,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult GetCallEmailTypes()
+		public async Task<IActionResult> GetCallEmailTypes()
 		{
 			List<CallEmailTypesForJson> callEmailTypes = new List<CallEmailTypesForJson>();
 			var values = Enum.GetValues(typeof(CallEmailTypes)).Cast<CallEmailTypes>();
@@ -926,6 +929,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 						fourPartPipe.Code = v.ToString();
 						callEmailTypes.Add(fourPartPipe);
 						break;
+					case CallEmailTypes.RandR:
+						CallEmailTypesForJson randr = new CallEmailTypesForJson();
+						randr.Id = (int)v;
+						randr.Name = "R&R";
+						randr.Code = v.ToString();
+						callEmailTypes.Add(randr);
+						break;
+					case CallEmailTypes.Active911:
+						CallEmailTypesForJson active911 = new CallEmailTypesForJson();
+						active911.Id = (int)v;
+						active911.Name = "Active911";
+						active911.Code = v.ToString();
+						callEmailTypes.Add(active911);
+						break;
 				}
 			}
 
@@ -934,22 +951,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult ClearDepartmentCache()
+		public async Task<IActionResult> ClearDepartmentCache()
 		{
 			CqrsEvent clearDepartmentCacheEvent = new CqrsEvent();
 			clearDepartmentCacheEvent.Type = (int)CqrsEventTypes.ClearDepartmentCache;
 			clearDepartmentCacheEvent.Data = DepartmentId.ToString();
 
-			_cqrsProvider.EnqueueCqrsEvent(clearDepartmentCacheEvent);
+			await _cqrsProvider.EnqueueCqrsEventAsync(clearDepartmentCacheEvent);
 
 			return Json("true");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult DeleteCallEmailSettings()
+		public async Task<IActionResult> DeleteCallEmailSettings(CancellationToken cancellationToken)
 		{
-			_departmentsService.DeleteDepartmentEmailSettings(DepartmentId);
+			await _departmentsService.DeleteDepartmentEmailSettingsAsync(DepartmentId, cancellationToken);
 
 			return RedirectToAction("CallSettings");
 		}
@@ -958,33 +975,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Unit Settings
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult UnitSettings()
+		public async Task<IActionResult> UnitSettings()
 		{
 			UnitSettingsView model = new UnitSettingsView();
-			model.UnitTypes = _unitsService.GetUnitTypesForDepartment(DepartmentId);
+			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult DeleteUnitType(int unitTypeId)
+		public async Task<IActionResult> DeleteUnitType(int unitTypeId, CancellationToken cancellationToken)
 		{
-			_unitsService.DeleteUnitType(unitTypeId);
+			await _unitsService.DeleteUnitTypeAsync(unitTypeId, cancellationToken);
 
 			return RedirectToAction("Types");
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult NewUnitType(UnitSettingsView model)
+		public async Task<IActionResult> NewUnitType(UnitSettingsView model, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrWhiteSpace(model.NewUnitType))
 				ModelState.AddModelError("NewUnitType", "You Must specify the new unit type.");
 
 			if (ModelState.IsValid)
 			{
-				_unitsService.AddUnitType(DepartmentId, model.NewUnitType, model.UnitCustomStatesId);
+				await _unitsService.AddUnitTypeAsync(DepartmentId, model.NewUnitType, model.UnitCustomStatesId, cancellationToken);
 			}
 
 			return RedirectToAction("Types");
@@ -994,26 +1011,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Types
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult Types()
+		public async Task<IActionResult> Types()
 		{
 			var model = new DepartmentTypesView();
-			model.CertificationTypes = _certificationService.GetAllCertificationTypesByDepartment(DepartmentId);
-			model.UnitTypes = _unitsService.GetUnitTypesForDepartment(DepartmentId);
-			model.CallTypes = _callsService.GetCallTypesForDepartment(DepartmentId);
+			model.CertificationTypes = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			
 			var states = new List<CustomState>();
 			states.Add(new CustomState
 			{
 				Name = "Standard Actions"
 			});
-			states.AddRange(_customStateService.GetAllActiveUnitStatesForDepartment(DepartmentId));
+			states.AddRange(await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId));
 			model.States = states;
 
-			model.CallPriorites = _callsService.GetActiveCallPrioritesForDepartment(DepartmentId);
+			model.CallPriorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
 
 			if (model.CallPriorites == null || !model.CallPriorites.Any())
 			{
-				model.CallPriorites = _callsService.GetDefaultCallPriorites();
+				model.CallPriorites = _callsService.GetDefaultCallPriorities();
 
 				//Sounds don't need to come back to the UI
 				foreach(var priority in model.CallPriorites)
@@ -1028,23 +1045,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult DeleteCertificationType(int certificationTypeId)
+		public async Task<IActionResult> DeleteCertificationType(int certificationTypeId, CancellationToken cancellationToken)
 		{
-			_certificationService.DeleteCertificationTypeById(certificationTypeId);
+			await _certificationService.DeleteCertificationTypeByIdAsync(certificationTypeId, cancellationToken);
 
 			return RedirectToAction("Types");
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult NewCertificationType(DepartmentTypesView model)
+		public async Task<IActionResult> NewCertificationType(DepartmentTypesView model, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrEmpty(model.NewCertificationType))
 				ModelState.AddModelError("NewCertificationType", "You Must specify the new certification type.");
 
 			if (ModelState.IsValid)
 			{
-				_certificationService.SaveNewCertificationType(model.NewCertificationType, DepartmentId);
+				await _certificationService.SaveNewCertificationTypeAsync(model.NewCertificationType, DepartmentId, cancellationToken);
 			}
 
 			return RedirectToAction("Types");
@@ -1052,23 +1069,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult DeleteCallType(int callTypeId)
+		public async Task<IActionResult> DeleteCallType(int callTypeId, CancellationToken cancellationToken)
 		{
-			_callsService.DeleteCallType(callTypeId);
+			await _callsService.DeleteCallTypeAsync(callTypeId, cancellationToken);
 
 			return RedirectToAction("Types");
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult NewCallType(CallSettingsView model)
+		public async Task<IActionResult> NewCallType(CallSettingsView model, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrEmpty(model.NewCallType))
 				ModelState.AddModelError("NewCallType", "You Must specify the new call type.");
 
 			if (ModelState.IsValid)
 			{
-				_callsService.SaveNewCallType(model.NewCallType, DepartmentId);
+				await _callsService.SaveNewCallTypeAsync(model.NewCallType, DepartmentId, cancellationToken);
 			}
 
 			return RedirectToAction("Types");
@@ -1078,17 +1095,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Text Messaging
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult TextSettings()
+		public async Task<IActionResult> TextSettings()
 		{
 			var model = new TextSetupModel();
 
-			model.CanProvisionNumber = _limitsService.CanDepartmentProvisionNumber(DepartmentId);
-			model.DepartmentTextToCallNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
-			model.DepartmentTextToCallSourceNumbers = _departmentSettingsService.GetTextToCallSourceNumbersForDepartment(DepartmentId);
-			model.EnableTextToCall = _departmentSettingsService.GetDepartmentIsTextCallImportEnabled(DepartmentId);
-			model.EnableTextCommand = _departmentSettingsService.GetDepartmentIsTextCommandEnabled(DepartmentId);
+			model.CanProvisionNumber = await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId);
+			model.DepartmentTextToCallNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+			model.DepartmentTextToCallSourceNumbers = await _departmentSettingsService.GetTextToCallSourceNumbersForDepartmentAsync(DepartmentId);
+			model.EnableTextToCall = await _departmentSettingsService.GetDepartmentIsTextCallImportEnabledAsync(DepartmentId);
+			model.EnableTextCommand = await _departmentSettingsService.GetDepartmentIsTextCommandEnabledAsync(DepartmentId);
 
-			var textImportFormat = _departmentSettingsService.GetTextToCallImportFormatForDepartment(DepartmentId);
+			var textImportFormat = await _departmentSettingsService.GetTextToCallImportFormatForDepartmentAsync(DepartmentId);
 			if (textImportFormat.HasValue)
 				model.TextCallType = textImportFormat.Value;
 
@@ -1099,12 +1116,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult TextSettings(TextSetupModel model)
+		public async Task<IActionResult> TextSettings(TextSetupModel model, CancellationToken cancellationToken)
 		{
-			model.CanProvisionNumber = _limitsService.CanDepartmentProvisionNumber(DepartmentId);
-			model.DepartmentTextToCallNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
+			model.CanProvisionNumber = await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId);
+			model.DepartmentTextToCallNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 
-			var textImportFormat = _departmentSettingsService.GetTextToCallImportFormatForDepartment(DepartmentId);
+			var textImportFormat = await _departmentSettingsService.GetTextToCallImportFormatForDepartmentAsync(DepartmentId);
 			if (textImportFormat.HasValue)
 				model.TextCallType = textImportFormat.Value;
 
@@ -1114,35 +1131,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				if (!String.IsNullOrWhiteSpace(model.DepartmentTextToCallSourceNumbers))
-					_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.DepartmentTextToCallSourceNumbers, DepartmentSettingTypes.TextToCallSourceNumbers);
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DepartmentTextToCallSourceNumbers, DepartmentSettingTypes.TextToCallSourceNumbers, cancellationToken);
 				else
-					_departmentSettingsService.DeleteSetting(DepartmentId, DepartmentSettingTypes.TextToCallSourceNumbers);
+					await _departmentSettingsService.DeleteSettingAsync(DepartmentId, DepartmentSettingTypes.TextToCallSourceNumbers, cancellationToken);
 
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.TextCallType.ToString(), DepartmentSettingTypes.TextToCallImportFormat);
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.EnableTextToCall.ToString(), DepartmentSettingTypes.EnableTextToCall);
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, model.EnableTextCommand.ToString(), DepartmentSettingTypes.EnableTextCommand);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.TextCallType.ToString(), DepartmentSettingTypes.TextToCallImportFormat, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.EnableTextToCall.ToString(), DepartmentSettingTypes.EnableTextToCall, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.EnableTextCommand.ToString(), DepartmentSettingTypes.EnableTextCommand, cancellationToken);
 			}
 
 			return View(model);
 		}
 
 		[HttpGet]
-		public IActionResult GetAvailableNumbers(string country, string areaCode)
+		public async Task<IActionResult> GetAvailableNumbers(string country, string areaCode)
 		{
 			return Json(_numbersService.GetAvailableNumbers(country, areaCode));
 		}
 
 		[HttpGet]
-		public IActionResult ProvisionNumber(string msisdn, string country)
+		public async Task<IActionResult> ProvisionNumber(string msisdn, string country, CancellationToken cancellationToken)
 		{
-			if (!_limitsService.CanDepartmentProvisionNumber(DepartmentId))
+			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
 				return RedirectToAction("Unauthorized", "Public", new { Area = "" });
 
-			var success = _numbersService.ProvisionNumber(DepartmentId, msisdn, country);
+			var success = await _numbersService.ProvisionNumberAsync(DepartmentId, msisdn, country);
 
 			if (success)
 			{
-				_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, "0", DepartmentSettingTypes.TextToCallImportFormat);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, "0", DepartmentSettingTypes.TextToCallImportFormat, cancellationToken);
 				return RedirectToAction("TextSettings");
 			}
 
@@ -1150,20 +1167,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult ProvisionDefaultNumberAsync(string country, string areaCode)
+		public async Task<IActionResult> ProvisionDefaultNumberAsync(string country, string areaCode, CancellationToken cancellationToken)
 		{
-			if (!_limitsService.CanDepartmentProvisionNumber(DepartmentId))
+			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
 				return RedirectToAction("Unauthorized", "Public", new { Area = "" });
 
 			var numbers = _numbersService.GetAvailableNumbers(country, areaCode);
 
 			if (numbers.Count > 0)
 			{
-				var success = _numbersService.ProvisionNumber(DepartmentId, numbers.First().msisdn, country);
+				var success = await _numbersService.ProvisionNumberAsync(DepartmentId, numbers.First().msisdn, country);
 
 				if (success)
 				{
-					_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, "0", DepartmentSettingTypes.TextToCallImportFormat);
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, "0", DepartmentSettingTypes.TextToCallImportFormat, cancellationToken);
 
 					return Content(numbers.First().msisdn);
 				}
@@ -1172,14 +1189,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Content("Could not provision number");
 		}
 
-		public IActionResult ProvisionFailed()
+		public async Task<IActionResult> ProvisionFailed()
 		{
 			return View();
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult GetCallTextTypes()
+		public async Task<IActionResult> GetCallTextTypes()
 		{
 			var callEmailTypes = new List<CallEmailTypesForJson>();
 			var values = Enum.GetValues(typeof(CallTextTypes)).Cast<CallTextTypes>();
@@ -1205,11 +1222,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Stations Grid
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult GetStationsForGrid()
+		public async Task<IActionResult> GetStationsForGrid()
 		{
 			var stations = new List<StationJson>();
 
-			var groups = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
 			foreach (var group in groups)
 			{
@@ -1232,7 +1249,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult GetDepartmentTypes()
+		public async Task<IActionResult> GetDepartmentTypes()
 		{
 			var model = new RegisterViewModel();
 
@@ -1243,13 +1260,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Recipients
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult GetRecipientsForGrid(int filter = 0, bool filterSelf = false, bool filterNotInGroup = false, int ignoreGroupId = 0)
+		public async Task<IActionResult> GetRecipientsForGrid(int filter = 0, bool filterSelf = false, bool filterNotInGroup = false, int ignoreGroupId = 0)
 		{
 			var result = new List<RecipientJson>();
 
-			var stations = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-			var roles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
-			var profiles = _userProfileService.GetAllProfilesForDepartment(DepartmentId);
+			var stations = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
 
 			if (filter == 0 || filter == 1)
 			{
@@ -1314,31 +1331,34 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Aync Site Parts
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult GetSubscriptionLimitWarning()
+		public async Task<IActionResult> GetSubscriptionLimitWarning()
 		{
-			if (!_limitsService.ValidateDepartmentIsWithinLimits(DepartmentId))
-				return Content("Invalid");
+			if (!String.IsNullOrWhiteSpace(Config.NoticeConfig.DashboardToastNotice))
+				return Json(new {title = "System Notice", message = Config.NoticeConfig.DashboardToastNotice});
 
-			return new EmptyResult();
+			if (!await _limitsService.ValidateDepartmentIsWithinLimitsAsync(DepartmentId))
+				return Json(new {title = "Department Limits", message = "The department is at or has exceeded some limits for the current subscription plan. Some functionality may be impacted."});
+
+			return Json(new {title = "", message = ""});
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public PartialViewResult TopIconsArea()
+		public async Task<PartialViewResult> TopIconsArea()
 		{
 			TopIconsModel model = new TopIconsModel();
-			model.SetMessages(UserId, DepartmentId);
+			await model.SetMessages(UserId, DepartmentId);
 
 			return PartialView("_TopIconsPartial", model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult UpgradeButton()
+		public async Task<IActionResult> UpgradeButton()
 		{
 			if (!Config.SystemBehaviorConfig.RedirectHomeToLogin)
 			{
-				var plan = _subscriptionsService.GetCurrentPlanForDepartment(DepartmentId);
+				var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
 
 				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && plan != null && plan.PlanId == 1)
 					return PartialView("_TopUpgradePartial");
@@ -1351,7 +1371,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Async Validation Methods
 		//[HttpPost]
 		//[Authorize(Policy = ResgridResources.Department_View)]
-		//public IActionResult TestEmailSettings(EmailTestInput input)
+		//public async Task<IActionResult> TestEmailSettings(EmailTestInput input)
 		//{
 		//	string returnText = "";
 
@@ -1364,7 +1384,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		//		email.Username = input.Username;
 		//		email.Password = input.Password;
 
-		//		returnText = _emailService.TestEmailSettings(email);
+		//		returnText = await _emailService.TestEmailSettings(email);
 		//	}
 		//	else
 		//	{
@@ -1376,12 +1396,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult ValidateAddress(Address address)
+		public async Task<IActionResult> ValidateAddress(Address address)
 		{
 			string returnText = "";
 
 			//SJ: Disabling for now.
-			var result = _addressService.IsAddressValid(address);
+			var result = await _addressService.IsAddressValidAsync(address);
 
 			if (result.ServiceSuccess && !result.AddressValid)
 				returnText = "Address looks like it might be invalid. Verify it before you continue.";
@@ -1393,35 +1413,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Setup Wizard
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult SetupWizard()
+		public async Task<IActionResult> SetupWizard()
 		{
 			var model = new SetupWizardView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.Groups = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
-			model.Units = _unitsService.GetUnitsForDepartment(DepartmentId);
-			model.CanProvisionNumber = _limitsService.CanDepartmentProvisionNumber(DepartmentId);
-			model.DepartmentTextToCallNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
-			model.DepartmentTextToCallSourceNumbers = _departmentSettingsService.GetTextToCallSourceNumbersForDepartment(DepartmentId);
-			model.EmailSettings = _departmentsService.GetDepartmentEmailSettings(DepartmentId);
-			model.DepartmentEmailAddress = _departmentSettingsService.GetDispatchEmailForDepartment(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			model.CanProvisionNumber = await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId);
+			model.DepartmentTextToCallNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+			model.DepartmentTextToCallSourceNumbers = await _departmentSettingsService.GetTextToCallSourceNumbersForDepartmentAsync(DepartmentId);
+			model.EmailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(DepartmentId);
+			model.DepartmentEmailAddress = await _departmentSettingsService.GetDispatchEmailForDepartmentAsync(DepartmentId);
 
 			return View("_SetupWizard", model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult SubmitSetupWizard([FromBody]SetupWizardFormPayload payload)
+		public async Task<IActionResult> SubmitSetupWizard([FromBody]SetupWizardFormPayload payload, CancellationToken cancellationToken)
 		{
 			var formCollection = JsonConvert.DeserializeObject<Dictionary<string, string>>(payload.setupWizardForm);
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			department.TimeZone = formCollection["Department.TimeZone"];
 
-			_departmentSettingsService.SaveOrUpdateSetting(DepartmentId, formCollection["DisableAutoAvailable"], DepartmentSettingTypes.DisabledAutoAvailable);
+			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, formCollection["DisableAutoAvailable"], DepartmentSettingTypes.DisabledAutoAvailable, cancellationToken);
 
 			Address address = null;
 			if (department.AddressId.HasValue)
-				address = _addressService.GetAddressById(department.AddressId.Value);
+				address = await _addressService.GetAddressByIdAsync(department.AddressId.Value);
 			else
 				address = new Address();
 
@@ -1431,10 +1451,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			address.PostalCode = formCollection["Department.Address.PostalCode"];
 			address.Country = formCollection["Department.Address.Country"];
 
-			address = _addressService.SaveAddress(address);
+			address = await _addressService.SaveAddressAsync(address, cancellationToken);
 			department.AddressId = address.AddressId;
 
-			_departmentsService.SaveDepartment(department);
+			await _departmentsService.SaveDepartmentAsync(department, cancellationToken);
 
 			int stationCount = int.Parse(formCollection["StationCount"]);
 			var newStations = new List<DepartmentGroup>();
@@ -1452,10 +1472,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				stationAddress.PostalCode = formCollection["stationPostalCode_" + i];
 				stationAddress.Country = formCollection["stationCountry_" + i];
 
-				stationAddress = _addressService.SaveAddress(stationAddress);
+				stationAddress = await _addressService.SaveAddressAsync(stationAddress, cancellationToken);
 				station.AddressId = stationAddress.AddressId;
 
-				newStations.Add(_departmentGroupsService.Save(station));
+				newStations.Add(await _departmentGroupsService.SaveAsync(station, cancellationToken));
 			}
 
 			int unitsCount = int.Parse(formCollection["UnitCount"]);
@@ -1466,12 +1486,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unit.Name = formCollection["unit_" + i];
 				unit.DepartmentId = DepartmentId;
 
-				newUnits.Add(_unitsService.SaveUnit(unit));
+				newUnits.Add(await _unitsService.SaveUnitAsync(unit, cancellationToken));
 			}
 
 			if (formCollection["CallImportOption"] == "Email Call Importing")
 			{
-				DepartmentCallEmail emailSettings = _departmentsService.GetDepartmentEmailSettings(DepartmentId);
+				DepartmentCallEmail emailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(DepartmentId);
 				if (emailSettings == null)
 					emailSettings = new DepartmentCallEmail();
 
@@ -1483,7 +1503,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				emailSettings.FormatType = (int)CallEmailTypes.Generic;
 				emailSettings.UseSsl = bool.Parse(formCollection["EmailSettings.UseSsl"]);
 
-				_departmentsService.SaveDepartmentEmailSettings(emailSettings);
+				await _departmentsService.SaveDepartmentEmailSettingsAsync(emailSettings, cancellationToken);
 			}
 
 
@@ -1493,7 +1513,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult GetPrinterNetPrinters(string key)
+		public async Task<IActionResult> GetPrinterNetPrinters(string key)
 		{
 			return Json(_printerProvider.GetPrinters(key));
 		}

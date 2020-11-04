@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,6 +27,7 @@ using Newtonsoft.Json;
 using Resgrid.Model.Helpers;
 using Resgrid.Web.Areas.User.Models.BigBoardX;
 using Resgrid.Model.Identity;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -40,7 +42,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IUserStateService _userStateService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
-		private readonly IPushUriService _pushUriService;
 		private readonly Resgrid.Model.Services.IAuthorizationService _authorizationService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly ICallsService _callsService;
@@ -57,7 +58,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly UserManager<IdentityUser> _userManager;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
-			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, IPushUriService pushUriService, Resgrid.Model.Services.IAuthorizationService authorizationService,
+			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, ICallsService callsService, IGeoLocationProvider geoLocationProvider, IDepartmentSettingsService departmentSettingsService,
 			IUnitsService unitsService, IAddressService addressService, IPersonnelRolesService personnelRolesService, IPushService pushService, ILimitsService limitsService,
 			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<IdentityUser> userManager)
@@ -67,7 +68,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_actionLogsService = actionLogsService;
 			_userStateService = userStateService;
 			_departmentGroupsService = departmentGroupsService;
-			_pushUriService = pushUriService;
 			_authorizationService = authorizationService;
 			_userProfileService = userProfileService;
 			_callsService = callsService;
@@ -87,15 +87,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[Authorize(Policy = ResgridResources.Department_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult Dashboard(bool firstRun = false)
+		public async Task<IActionResult> Dashboard(bool firstRun = false)
 		{
 			var model = new DashboardModel();
 
-			var staffingLevel = _userStateService.GetLastUserStateByUserId(UserId);
+			var staffingLevel = await _userStateService.GetLastUserStateByUserIdAsync(UserId);
 			model.UserState = staffingLevel.State;
 			model.StateNote = staffingLevel.Note;
 
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
 				model.UserStateTypes = model.UserStateEnum.ToSelectList();
@@ -109,109 +109,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ViewBag.UserStateTypes = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText", selected);
 			}
 
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			model.FirstRun = firstRun;
-			model.Number = _departmentSettingsService.GetTextToCallNumberForDepartment(DepartmentId);
-			model.States = _customStateService.GetActivePersonnelStateForDepartment(DepartmentId);
+			model.Number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+			model.States = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		#region Partials
-		public IActionResult ActivityStats()
-		{
-			var model = new ActivityStatsModel();
-			var actions = _actionLogsService.GetActionsCountForLast7DaysForDepartment(DepartmentId);
-			var report = _departmentsService.GetDepartmentSetupReport(DepartmentId);
-
-			if (report != null)
-				model.SetupScore = (int)_departmentsService.GenerateSetupScore(report);
-
-			float actionChange = 0;
-
-			if (actions[1] != 0 && actions[0] != 0)
-				actionChange = actions[1] - actions[0] / actions[1];
-			else if (actions[0] > 0)
-				actionChange = 100;
-
-			if (actionChange > 0)
-				model.ActivityChange = string.Format("+{0}%", actionChange.ToString());
-			else if (actionChange < 0)
-				model.ActivityChange = string.Format("-{0}%", actionChange.ToString());
-			else
-				model.ActivityChange = string.Format("{0}%", actionChange.ToString());
-
-			model.ActivityCount = actions.Sum().ToString();
-			model.ActivityNumbers = string.Format("{0},{1},{2},{3},{4},{5},{6}", actions[6], actions[5], actions[4], actions[3],
-				actions[2], actions[1], actions[0]);
-
-			//var logs = _workLogsService.GetLogsCountForLast7DaysForDepartment(DepartmentId);
-			//float logsChange = 0;
-
-			//if (logs[1] != 0 && logs[0] != 0)
-			//	logsChange = logs[1] - logs[0] / logs[1];
-			//else if (logs[0] > 0)
-			//	logsChange = 100;
-
-			//if (logsChange > 0)
-			//	model.LogsChange = string.Format("+{0}%", logsChange.ToString());
-			//else if (logsChange < 0)
-			//	model.LogsChange = string.Format("-{0}%", logsChange.ToString());
-			//else
-			//	model.LogsChange = string.Format("{0}%", logsChange.ToString());
-
-			//model.LogsCount = logs.Sum().ToString();
-			//model.LogsNumbers = string.Format("{0},{1},{2},{3},{4},{5},{6}", logs[6], logs[5], logs[4], logs[3],
-			//	logs[2], logs[1], logs[0]);
-
-			var calls = _callsService.GetCallsCountForLast7DaysForDepartment(DepartmentId);
-			float callsChange = 0;
-
-			if (calls[1] != 0 && calls[0] != 0)
-				callsChange = calls[1] - calls[0] / calls[1];
-			else if (calls[0] > 0)
-				callsChange = 100;
-
-			if (callsChange > 0)
-				model.CallsChange = string.Format("+{0}%", callsChange.ToString());
-			else if (callsChange < 0)
-				model.CallsChange = string.Format("-{0}%", callsChange.ToString());
-			else
-				model.CallsChange = string.Format("{0}%", callsChange.ToString());
-
-			model.CallsCount = calls.Sum().ToString();
-			model.CallsNumbers = string.Format("{0},{1},{2},{3},{4},{5},{6}", calls[6], calls[5], calls[4], calls[3],
-				calls[2], calls[1], calls[0]);
-
-			return View("_ActivityStatsPartial", model);
-		}
-
 		[Authorize(Policy = ResgridResources.Department_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetUserStatusTable()
+		public async Task<IActionResult> GetUserStatusTable()
 		{
 			var model = new UserStatusTableModel();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId, false);
-			model.LastUserActionlogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			model.LastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			model.UserStates = new List<UserState>();
-			model.DepartmentGroups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-			model.Stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
-			model.UsersGroup = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
-			model.States = _customStateService.GetActivePersonnelStateForDepartment(DepartmentId);
-			model.StaffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			model.DepartmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			model.UsersGroup = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+			model.States = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
+			model.StaffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 
-			var userStates = _userStateService.GetLatestStatesForDepartment(DepartmentId);
-			//var allRoles = _personnelRolesService.GetAllRolesForUsersInDepartment(DepartmentId);
-			//var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
+			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
 
-			//var allUsers = _departmentsService.GetAllUsersForDepartment(DepartmentId);
+			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
 			var allUsers = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
-			model.ExcludedUsers = _departmentsService.GetAllDisabledOrHiddenUsers(DepartmentId);
+			model.ExcludedUsers = await _departmentsService.GetAllDisabledOrHiddenUsersAsync(DepartmentId);
 
 			List<string> groupedUserIds = new List<string>();
 
 			foreach (var dg in model.DepartmentGroups)
 			{
+				UserStatusGroup group = new UserStatusGroup();
+				group.Group = dg;
+
 				var membersToProcess = from member in dg.Members
 									   where !(model.ExcludedUsers.Any(item2 => item2 == member.UserId))
 									   select member;
@@ -221,6 +155,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (allUsers.Any(x => x.UserId == u.UserId))
 					{
 						groupedUserIds.Add(u.UserId);
+						var userInfo = allUsers.FirstOrDefault(x => x.UserId == u.UserId);
 
 						UserState state = userStates.FirstOrDefault(x => x.UserId == u.UserId);
 
@@ -233,35 +168,71 @@ namespace Resgrid.Web.Areas.User.Controllers
 							state.State = (int)UserStateTypes.Available;
 						}
 
-						model.DepartmentUserStates.Add(u.UserId, state);
+						if (!model.DepartmentUserStates.ContainsKey(u.UserId))
+							model.DepartmentUserStates.Add(u.UserId, state);
+
+						var al = model.LastUserActionlogs.FirstOrDefault(x => x.UserId == u.UserId);
+
+						UserStatus userStatus = new UserStatus();
+						userStatus.UserInfo = userInfo;
+						userStatus.CurrentStatus = al;
+						userStatus.CurrentStaffing = state;
+
+						if (al != null)
+						{
+							if (personnelStatusSortOrder != null && personnelStatusSortOrder.Any())
+							{
+								var statusSorting = personnelStatusSortOrder.FirstOrDefault(x => x.StatusId == al.ActionTypeId);
+								if (statusSorting != null)
+									userStatus.Weight = statusSorting.Weight;
+								else
+									userStatus.Weight = 9000;
+							}
+							else
+							{
+								userStatus.Weight = 9000;
+							}
+						}
+						else
+							userStatus.Weight = 9000;
+
+						group.UserStatuses.Add(userStatus);
 					}
 				}
 
+				switch (personnelSortOrder)
+				{
+					case PersonnelSortOrders.Default:
+						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ToList();
+						break;
+					case PersonnelSortOrders.FirstName:
+						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.FirstName).ToList();
+						break;
+					case PersonnelSortOrders.LastName:
+						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.LastName).ToList();
+						break;
+					default:
+						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ToList();
+						break;
+				}
 
+				model.UserStatusGroups.Add(group);
 
 				var allGroupMembers = new List<DepartmentGroupMember>(dg.Members);
-
-				foreach (var allMember in allGroupMembers)
-				{
-					if (!allUsers.Any(x => x.UserId == allMember.UserId))
-					{
-						dg.Members.Remove(allMember);
-					}
-				}
 			}
 
 			var ungroupedUsers = from u in allUsers
 								 where !(groupedUserIds.Contains(u.UserId)) && !(model.ExcludedUsers.Any(item2 => item2 == u.UserId))
 								 select u;
 
+			UserStatusGroup unGroupedUsersGroup = new UserStatusGroup();
+			unGroupedUsersGroup.Group = null;
 			foreach (var u in ungroupedUsers)
 			{
 				model.UnGroupedUsers.Add(u.UserId);
-			}
 
-			foreach (var u in allUsers)
-			{
 				UserState state = userStates.FirstOrDefault(x => x.UserId == u.UserId);
+				var userInfo = allUsers.FirstOrDefault(x => x.UserId == u.UserId);
 
 				if (state == null)
 				{
@@ -272,56 +243,71 @@ namespace Resgrid.Web.Areas.User.Controllers
 					state.State = (int)UserStateTypes.Available;
 				}
 
-				model.UserStates.Add(state);
+				var al = model.LastUserActionlogs.FirstOrDefault(x => x.UserId == u.UserId);
 
-				//var name = personnelNames.FirstOrDefault(x => x.UserId == u.UserId);
-				var name = u.Name;
+				UserStatus userStatus = new UserStatus();
+				userStatus.UserInfo = userInfo;
+				userStatus.CurrentStatus = al;
+				userStatus.CurrentStaffing = state;
 
-				if (name == null)
-					name = UserHelper.GetFullNameForUser(u.UserId);
+				if (al != null)
+				{
+					if (personnelStatusSortOrder != null && personnelStatusSortOrder.Any())
+					{
+						var statusSorting = personnelStatusSortOrder.FirstOrDefault(x => x.StatusId == al.ActionTypeId);
+						if (statusSorting != null)
+							userStatus.Weight = statusSorting.Weight;
+						else
+							userStatus.Weight = 9000;
+					}
+					else
+					{
+						userStatus.Weight = 9000;
+					}
+				}
+				else
+					userStatus.Weight = 9000;
 
-				if (!model.Names.ContainsKey(u.UserId))
-					model.Names.Add(u.UserId, name);
-
-				//var rolesText = new StringBuilder();
-
-				//if (allRoles.ContainsKey(u.UserId))
-				//{
-				//	var roles = allRoles[u.UserId];
-
-				//	foreach (var role in roles)
-				//	{
-				//		if (rolesText.Length > 0)
-				//			rolesText.Append(", " + role.Name);
-				//		else
-				//			rolesText.Append(role.Name);
-				//	}
-				//}
-
-				if (!model.Roles.ContainsKey(u.UserId))
-					model.Roles.Add(u.UserId, u.RoleNames);
+				unGroupedUsersGroup.UserStatuses.Add(userStatus);
 			}
+
+			switch (personnelSortOrder)
+			{
+				case PersonnelSortOrders.Default:
+					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ToList();
+					break;
+				case PersonnelSortOrders.FirstName:
+					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.FirstName).ToList();
+					break;
+				case PersonnelSortOrders.LastName:
+					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.LastName).ToList();
+					break;
+				default:
+					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ToList();
+					break;
+			}
+			model.UserStatusGroups.Add(unGroupedUsersGroup);
 
 			return PartialView("_UserStatusTablePartial", model);
 		}
 
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult UserActionsPartial()
+		public async Task<IActionResult> UserActionsPartial()
 		{
 			var model = new UserActionsPartialView();
-			model.States = _customStateService.GetActivePersonnelStateForDepartment(DepartmentId);
+			model.States = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 
 			return View("_UserActionsPartial", model);
 		}
 
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult PersonnelActionButtonsPartial()
+		public async Task<IActionResult> PersonnelActionButtonsPartial()
 		{
 			var model = new PersonnelActionButtonsPartialView();
-			model.States = _customStateService.GetActivePersonnelStateForDepartment(DepartmentId);
-			model.StaffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			model.States = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
+			model.StaffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 
-			return View("_UserActionsPartial", model);
+			return View("_PersonnelActionButtonsPartial", model);
 		}
 		#endregion Partials
 
@@ -329,28 +315,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult EditUserProfile(string userId)
+		public async Task<IActionResult> EditUserProfile(string userId)
 		{
 			var model = new EditProfileModel();
-			model.ApiUrl = _appOptionsAccessor.Value.ResgridApiUrl;
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			var departmentMember = _departmentsService.GetDepartmentMember(userId, DepartmentId);
+			model.ApiUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var departmentMember = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
 
-			if (!_authorizationService.CanUserEditProfile(UserId, DepartmentId, userId))
+			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, userId))
 				Unauthorized();
 
 			var groups = new List<DepartmentGroup>();
 			var defaultGroup = new DepartmentGroup();
 			defaultGroup.Name = "No Group";
 			groups.Add(defaultGroup);
-			groups.AddRange(_departmentGroupsService.GetAllGroupsForDepartment(model.Department.DepartmentId));
+			groups.AddRange(await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId));
 
 			ViewBag.Carriers = model.Carrier.ToSelectList();
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 
 			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name");
-			var group = _departmentGroupsService.GetGroupForUser(userId, DepartmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, DepartmentId);
 
 			if (group != null)
 			{
@@ -358,11 +344,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.IsUserGroupAdmin = group.IsUserGroupAdmin(userId);
 			}
 
-			//model.UsersRoles = _personnelRolesService.GetRolesForUser(userId);
+			//model.UsersRoles = await _personnelRolesService.GetRolesForUser(userId);
 			model.IsDisabled = departmentMember.IsDisabled.HasValue != false && departmentMember.IsDisabled.Value;
 			model.IsHidden = departmentMember.IsHidden.HasValue != false && departmentMember.IsHidden.Value;
 			model.IsDepartmentAdmin = departmentMember.IsAdmin.HasValue != false && departmentMember.IsAdmin.Value;
-			model.CanEnableVoice = _limitsService.CanDepartmentUseVoice(DepartmentId);
+			model.CanEnableVoice = await _limitsService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			if (userId == UserId)
 				model.IsOwnProfile = true;
@@ -371,8 +357,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UserId = userId;
 			model.Email = model.User.Email;
 
-			//model.Profile = _userProfileService.GetProfileByUserId(userId, true);
-			model.Profile = _userProfileService.GetUserProfileForEditing(userId);
+			model.Profile = await _userProfileService.GetProfileByUserIdAsync(userId, true);
 
 			if (model.Profile == null)
 				model.Profile = new UserProfile();
@@ -384,7 +369,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Profile != null && model.Profile.HomeAddressId.HasValue)
 			{
-				var homeAddress = _addressService.GetAddressById(model.Profile.HomeAddressId.Value);
+				var homeAddress = await _addressService.GetAddressByIdAsync(model.Profile.HomeAddressId.Value);
 				model.PhysicalAddress1 = homeAddress.Address1;
 				model.PhysicalCity = homeAddress.City;
 				model.PhysicalCountry = homeAddress.Country;
@@ -399,7 +384,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else if (model.Profile != null && model.Profile.MailingAddressId.HasValue)
 			{
-				var mailingAddress = _addressService.GetAddressById(model.Profile.MailingAddressId.Value);
+				var mailingAddress = await _addressService.GetAddressByIdAsync(model.Profile.MailingAddressId.Value);
 				model.MailingAddress1 = mailingAddress.Address1;
 				model.MailingCity = mailingAddress.City;
 				model.MailingCountry = mailingAddress.Country;
@@ -420,7 +405,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//MembershipUser currentUser = Membership.GetUser(model.User.UserName, userIsOnline: true);
 				//var pfile = ProfileBase.Create(model.User.UserName, true);
 
-				var userProfile = _userProfileService.GetProfileByUserId(userId);
+				var userProfile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 				if (userProfile != null)
 				{
@@ -434,27 +419,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
+			model.EnableSms = model.Profile.SendSms;
+
 			return View(model);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public async Task<IActionResult> EditUserProfile(EditProfileModel model, IFormCollection form)
+		public async Task<IActionResult> EditUserProfile(EditProfileModel model, IFormCollection form, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserEditProfile(UserId, DepartmentId, model.UserId))
+			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, model.UserId))
 				Unauthorized();
 
 			model.User = _usersService.GetUserById(model.UserId);
-			//model.PushUris = _pushUriService.GetPushUrisByUserId(model.UserId);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.CanEnableVoice = _limitsService.CanDepartmentUseVoice(DepartmentId);
+			//model.PushUris = await _pushUriService.GetPushUrisByUserId(model.UserId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CanEnableVoice = await _limitsService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			var groups = new List<DepartmentGroup>();
 			var defaultGroup = new DepartmentGroup();
 			defaultGroup.Name = "No Group";
 			groups.Add(defaultGroup);
-			groups.AddRange(_departmentGroupsService.GetAllGroupsForDepartment(model.Department.DepartmentId));
+			groups.AddRange(await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId));
 			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name");
 
 			ViewBag.Carriers = model.Carrier.ToSelectList();
@@ -579,7 +566,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.ProfileUpdated;
 
-				var savedProfile = _userProfileService.GetUserProfileForEditing(model.UserId);
+				var savedProfile = await _userProfileService.GetProfileByUserIdAsync(model.UserId);
 
 				if (savedProfile == null)
 					savedProfile = new UserProfile();
@@ -608,8 +595,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.CanEnableVoice)
 				{
 					savedProfile.VoiceForCall = model.Profile.VoiceForCall;
-					savedProfile.VoiceCallHome = model.Profile.VoiceCallHome;
-					savedProfile.VoiceCallMobile = model.Profile.VoiceCallMobile;
+
+					if (savedProfile.VoiceForCall)
+					{
+						savedProfile.VoiceCallHome = model.Profile.VoiceCallHome;
+						savedProfile.VoiceCallMobile = model.Profile.VoiceCallMobile;
+					}
+					else
+					{
+						savedProfile.VoiceCallHome = false;
+						savedProfile.VoiceCallMobile = false;
+					}
 				}
 				else
 				{
@@ -620,12 +616,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				{
-					var currentGroup = _departmentGroupsService.GetGroupForUser(model.UserId, DepartmentId);
+					var currentGroup = await _departmentGroupsService.GetGroupForUserAsync(model.UserId, DepartmentId);
 					if (model.UserGroup != 0 && (currentGroup == null || currentGroup.DepartmentGroupId != model.UserGroup))
-						_departmentGroupsService.MoveUserIntoGroup(model.UserId, model.UserGroup, model.IsUserGroupAdmin, DepartmentId);
+						await _departmentGroupsService.MoveUserIntoGroupAsync(model.UserId, model.UserGroup, model.IsUserGroupAdmin, DepartmentId, cancellationToken);
 					else if (currentGroup != null && currentGroup.DepartmentGroupId == model.UserGroup)
 					{
-						var member = _departmentGroupsService.GetGroupMemberForUser(model.UserId, DepartmentId);
+						var member = await _departmentGroupsService.GetGroupMemberForUserAsync(model.UserId, DepartmentId);
 
 						if (member != null)
 						{
@@ -634,7 +630,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						}
 					}
 					else if (model.UserGroup <= 0)
-						_departmentGroupsService.DeleteUserFromGroups(model.UserId, DepartmentId);
+						await _departmentGroupsService.DeleteUserFromGroupsAsync(model.UserId, DepartmentId, cancellationToken);
 				}
 
 				if (form.ContainsKey("roles"))
@@ -642,14 +638,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var roles = form["roles"].ToString().Split(char.Parse(","));
 
 					if (roles.Any())
-						_personnelRolesService.SetRolesForUser(DepartmentId, model.UserId, roles);
+						await _personnelRolesService.SetRolesForUserAsync(DepartmentId, model.UserId, roles, cancellationToken);
 				}
 
 				if (savedProfile.HomeAddressId.HasValue)
-					homeAddress = _addressService.GetAddressById(savedProfile.HomeAddressId.Value);
+					homeAddress = await _addressService.GetAddressByIdAsync(savedProfile.HomeAddressId.Value);
 
 				if (savedProfile.MailingAddressId.HasValue)
-					mailingAddress = _addressService.GetAddressById(savedProfile.MailingAddressId.Value);
+					mailingAddress = await _addressService.GetAddressByIdAsync(savedProfile.MailingAddressId.Value);
 
 				if (!model.MailingAddressSameAsPhysical && homeAddress != null && mailingAddress != null &&
 					(homeAddress.AddressId == mailingAddress.AddressId))
@@ -666,7 +662,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					homeAddress.PostalCode = model.PhysicalPostalCode;
 					homeAddress.State = model.PhysicalState;
 
-					homeAddress = _addressService.SaveAddress(homeAddress);
+					homeAddress = await _addressService.SaveAddressAsync(homeAddress, cancellationToken);
 					savedProfile.HomeAddressId = homeAddress.AddressId;
 
 					if (model.MailingAddressSameAsPhysical)
@@ -684,17 +680,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					mailingAddress.PostalCode = model.MailingPostalCode;
 					mailingAddress.State = model.MailingState;
 
-					mailingAddress = _addressService.SaveAddress(mailingAddress);
+					mailingAddress = await _addressService.SaveAddressAsync(mailingAddress, cancellationToken);
 					savedProfile.MailingAddressId = mailingAddress.AddressId;
 				}
 
 				savedProfile.LastUpdated = DateTime.UtcNow;
-				_userProfileService.SaveProfile(DepartmentId, savedProfile);
+				await _userProfileService.SaveProfileAsync(DepartmentId, savedProfile, cancellationToken);
 
 				auditEvent.After = savedProfile.CloneJson();
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				var depMember = _departmentsService.GetDepartmentMember(model.UserId, DepartmentId);
+				var depMember = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
 				if (depMember != null)
 				{
 					// Users Department Admin status changes, invalid the department object in cache.
@@ -705,7 +701,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					depMember.IsDisabled = model.IsDisabled;
 					depMember.IsHidden = model.IsHidden;
 
-					_departmentsService.SaveDepartmentMember(depMember);
+					await _departmentsService.SaveDepartmentMemberAsync(depMember, cancellationToken);
 				}
 
 				if (!model.Profile.DoNotRecieveNewsletters)
@@ -747,67 +743,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Edit User Profile
 
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult DeletePushUri(int pushUriId)
-		{
-			if (!_authorizationService.CanUserDeletePushUri(UserId, pushUriId))
-				return new UnauthorizedResult();
-
-			var pushUri = _pushUriService.GetPushUriById(pushUriId);
-
-			_pushService.UnRegisterNotificationOnly(pushUri);
-			_pushUriService.DeleteAllPushUrisByPlatformDevice((Platforms)pushUri.PlatformType, pushUri.DeviceId);
-
-			return RedirectToAction("Devices", "Profile", new { Area = "User" });
-		}
 
 		#region User Actions
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult SetCustomAction(int actionType, string note)
+		public async Task<IActionResult> SetCustomAction(int actionType, string note)
 		{
 			if (!String.IsNullOrWhiteSpace(note))
-				_actionLogsService.SetUserAction(UserId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId, actionType, null, note);
+				await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, actionType, null, note);
 			else
-				_actionLogsService.SetUserAction(UserId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId, actionType);
+				await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, actionType);
 
-			return new StatusCodeResult((int)HttpStatusCode.OK);
+			return new StatusCodeResult((int)HttpStatusCode.NoContent);
 		}
 
-		public IActionResult SetCustomUserAction(string userId, int actionType)
+		public async Task<IActionResult> SetCustomUserAction(string userId, int actionType)
 		{
-			_actionLogsService.SetUserAction(userId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId, actionType);
-
-			return new StatusCodeResult((int)HttpStatusCode.OK);
-		}
-
-		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult SetCustomStaffing(string userId, int staffingLevel)
-		{
-			_userStateService.CreateUserState(userId, DepartmentId, staffingLevel);
+			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, actionType);
 
 			return new StatusCodeResult((int)HttpStatusCode.OK);
 		}
 
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult ResetAllToStandingBy()
+		public async Task<IActionResult> SetCustomStaffing(string userId, int staffingLevel)
 		{
-			_actionLogsService.SetActionForEntireDepartment(_departmentsService.GetDepartmentByUserId(UserId).DepartmentId, (int)ActionTypes.StandingBy);
+			await _userStateService.CreateUserState(userId, DepartmentId, staffingLevel);
+
+			return new StatusCodeResult((int)HttpStatusCode.NoContent);
+		}
+
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> ResetAllToStandingBy()
+		{
+			await _actionLogsService.SetActionForEntireDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, (int)ActionTypes.StandingBy);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult ResetGroupToStandingBy(int groupId)
+		public async Task<IActionResult> ResetGroupToStandingBy(int groupId)
 		{
-			_actionLogsService.SetActionForDepartmentGroup(groupId, (int)ActionTypes.StandingBy);
+			await _actionLogsService.SetActionForDepartmentGroupAsync(groupId, (int)ActionTypes.StandingBy);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult SetUserState(DashboardModel model)
+		public async Task<IActionResult> SetUserState(DashboardModel model)
 		{
 			int state = 0;
 			if (model.CustomStaffingActive)
@@ -816,47 +798,47 @@ namespace Resgrid.Web.Areas.User.Controllers
 				state = (int)model.UserStateEnum;
 
 			if (String.IsNullOrWhiteSpace(model.StateNote))
-				_userStateService.CreateUserState(UserId, DepartmentId, state);
+				await _userStateService.CreateUserState(UserId, DepartmentId, state);
 			else
-				_userStateService.CreateUserState(UserId, DepartmentId, state, model.StateNote);
+				await _userStateService.CreateUserState(UserId, DepartmentId, state, model.StateNote);
 
 			return RedirectToAction("Dashboard");
 		}
 
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult UserRespondingToStation(int stationId)
+		public async Task<IActionResult> UserRespondingToStation(int stationId)
 		{
-			_actionLogsService.SetUserAction(UserId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId,
+			await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 											 (int)ActionTypes.RespondingToStation, null, stationId);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult UserRespondingToCall(int callId)
+		public async Task<IActionResult> UserRespondingToCall(int callId)
 		{
 			if (callId > 0)
-				_actionLogsService.SetUserAction(UserId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId,
+				await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 											 (int)ActionTypes.RespondingToScene, null, callId);
 			else
-				_actionLogsService.SetUserAction(UserId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId,
+				await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 											 (int)ActionTypes.RespondingToScene, null);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult SetStateForUser(string userId, UserStateTypes stateType)
+		public async Task<IActionResult> SetStateForUser(string userId, UserStateTypes stateType)
 		{
-			_userStateService.CreateUserState(userId, DepartmentId, (int)stateType);
+			await _userStateService.CreateUserState(userId, DepartmentId, (int)stateType);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public IActionResult SetActionForUser(string userId, int actionType)
+		public async Task<IActionResult> SetActionForUser(string userId, int actionType)
 		{
-			_actionLogsService.SetUserAction(userId, _departmentsService.GetDepartmentByUserId(UserId).DepartmentId, actionType);
+			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, actionType);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
@@ -877,444 +859,5 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			catch { }
 		}
-
-		#region BigBoard (Deprecated)
-		public IActionResult BigBoard()
-		{
-			return Redirect("https://bigboard.resgrid.com");
-		}
-
-		public IActionResult BigBoard2()
-		{
-			return Redirect("https://bigboard.resgrid.com");
-		}
-
-		public ActionResult BigBoardData()
-		{
-			// TODO: replace with webapi
-
-			var serializerSettings = new JsonSerializerSettings
-			{
-				ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
-				NullValueHandling = NullValueHandling.Include,
-				//ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-				//PreserveReferencesHandling = PreserveReferencesHandling.All,
-				Formatting = Formatting.Indented,
-				Converters = new JsonConverter[]
-				{
-					new Newtonsoft.Json.Converters.IsoDateTimeConverter(),
-					new Newtonsoft.Json.Converters.StringEnumConverter()
-				},
-			};
-
-			var model = GetBigBoardData();
-
-			var result = JsonConvert.SerializeObject(model, Formatting.Indented, serializerSettings);
-			return Content(result, "application/json");
-		}
-
-		private Models.BigBoardX.BigBoardModel GetBigBoardData()
-		{
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
-			var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
-
-			#region Calls
-			var calls = _callsService.GetActiveCallsByDepartment(DepartmentId);
-			var callViewModels = new List<User.Models.BigBoardX.CallViewModel>();
-			foreach (var call in calls)
-			{
-				var callViewModel = new User.Models.BigBoardX.CallViewModel
-				{
-					Id = call.Number,
-					Name = call.Name,
-					Timestamp = call.LoggedOn.TimeConverter(department),
-					LogginUser = UserHelper.GetFullNameForUser(call.ReportingUserId),
-					Priority = call.ToCallPriorityDisplayText(),
-					PriorityCss = call.ToCallPriorityCss(),
-					State = call.ToCallStateDisplayText(),
-					StateCss = call.ToCallStateCss()
-				};
-
-				callViewModels.Add(callViewModel);
-			}
-			#endregion
-
-			#region Personnel
-			var allUsers = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			var hideUnavailable = _departmentSettingsService.GetBigBoardHideUnavailableDepartment(DepartmentId);
-			var lastUserActionlogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId);
-			var departmentGroups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-
-			var lastUserStates = _userStateService.GetLatestStatesForDepartment(DepartmentId);
-			var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
-
-			var names = new Dictionary<string, string>();
-
-			var userStates = new List<UserState>();
-
-			foreach (var u in allUsers)
-			{
-				var state = lastUserStates.FirstOrDefault(x => x.UserId == u.UserId);
-
-				if (state != null)
-					userStates.Add(state);
-				else
-					userStates.Add(_userStateService.GetLastUserStateByUserId(u.UserId));
-
-				var name = personnelNames.FirstOrDefault(x => x.UserId == u.UserId);
-				if (name != null)
-					names.Add(u.UserId, name.Name);
-				else
-					names.Add(u.UserId, UserHelper.GetFullNameForUser(u.UserId));
-			}
-
-			var personnelViewModels = new List<Models.BigBoardX.PersonnelViewModel>();
-
-			var sortedUngroupedUsers = from u in allUsers
-										   // let mu = Membership.GetUser(u.UserId)
-									   let userGroup = _departmentGroupsService.GetGroupForUser(u.UserId, DepartmentId)
-									   let groupName = userGroup == null ? "" : userGroup.Name
-									   let roles = _personnelRolesService.GetRolesForUser(u.UserId, DepartmentId)
-									   //let name = (ProfileBase.Create(mu.UserName, true)).GetPropertyValue("Name").ToString()
-									   let name = names[u.UserId]
-									   let weight = lastUserActionlogs.Where(x => x.UserId == u.UserId).FirstOrDefault().GetWeightForAction()
-									   orderby groupName, weight, name ascending
-									   select new
-									   {
-										   Name = name,
-										   User = u,
-										   Group = userGroup,
-										   Roles = roles
-									   };
-
-			foreach (var u in sortedUngroupedUsers)
-			{
-				//var mu = Membership.GetUser(u.User.UserId);
-				var al = lastUserActionlogs.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
-				var us = userStates.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
-
-				// if setting is such, ignore unavailable users.
-				if (hideUnavailable.HasValue && hideUnavailable.Value && us.State != (int)UserStateTypes.Unavailable)
-					continue;
-
-				string callNumber = "";
-				if (al != null && al.ActionTypeId == (int)ActionTypes.RespondingToScene || (al != null && al.DestinationType.HasValue && al.DestinationType.Value == 2))
-				{
-					if (al.DestinationId.HasValue)
-					{
-						var call = calls.FirstOrDefault(x => x.CallId == al.DestinationId.Value);
-
-						if (call != null)
-							callNumber = call.Number;
-					}
-				}
-				var respondingToDepartment = stations.Where(s => al != null && s.DepartmentGroupId == al.DestinationId).FirstOrDefault();
-				var personnelViewModel = Models.BigBoardX.PersonnelViewModel.Create(u.Name, al, us, department, respondingToDepartment, u.Group, u.Roles, callNumber);
-
-				personnelViewModels.Add(personnelViewModel);
-			}
-			#endregion
-
-			#region Units
-			var units = _unitsService.GetUnitsForDepartment(DepartmentId);
-			var unitStates = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(DepartmentId);
-			var unitViewModels = new List<User.Models.BigBoardX.UnitViewModel>();
-
-			var sortedUnits = from u in units
-							  let station = u.StationGroup
-							  let stationName = station == null ? "" : station.Name
-							  orderby stationName, u.Name ascending
-							  select new
-							  {
-								  Unit = u,
-								  Station = station,
-								  StationName = stationName
-							  };
-
-			foreach (var unit in sortedUnits)
-			{
-				var stateFound = unitStates.FirstOrDefault(x => x.UnitId == unit.Unit.UnitId);
-				var state = "Unknown";
-				var stateCss = "";
-				int? destinationId = 0;
-				decimal? latitude = 0;
-				decimal? longitude = 0;
-
-				DateTime? timestamp = null;
-
-				if (stateFound != null)
-				{
-					state = stateFound.ToStateDisplayText();
-					stateCss = stateFound.ToStateCss();
-					destinationId = stateFound.DestinationId;
-					latitude = stateFound.Latitude;
-					longitude = stateFound.Longitude;
-					timestamp = stateFound.Timestamp;
-				}
-
-				int groupId = 0;
-				if (unit.Station != null)
-					groupId = unit.Station.DepartmentGroupId;
-
-				var unitViewModel = new User.Models.BigBoardX.UnitViewModel
-				{
-					Name = unit.Unit.Name,
-					Type = unit.Unit.Type,
-					State = state,
-					StateCss = stateCss,
-					Timestamp = timestamp,
-					DestinationId = destinationId,
-					Latitude = latitude,
-					Longitude = longitude,
-					GroupId = groupId,
-					GroupName = unit.StationName
-				};
-
-				unitViewModels.Add(unitViewModel);
-			}
-
-			#endregion
-
-			#region Map
-			var address = _departmentSettingsService.GetBigBoardCenterAddressDepartment(DepartmentId);
-			var gpsCoordinates = _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartment(DepartmentId);
-
-			string weatherUnits = "";
-			double? centerLat = null;
-			double? centerLon = null;
-
-			if (address != null && !String.IsNullOrWhiteSpace(address.Country))
-			{
-				if (address.Country == "Canada")
-					weatherUnits = "ca";
-				else if (address.Country == "United Kingdom")
-					weatherUnits = "uk";
-				else if (address.Country == "Australia")
-					weatherUnits = "uk";
-				else
-					weatherUnits = "us";
-			}
-			else if (department.Address != null && !String.IsNullOrWhiteSpace(department.Address.Country))
-			{
-				if (department.Address.Country == "Canada")
-					weatherUnits = "ca";
-				else if (department.Address.Country == "United Kingdom")
-					weatherUnits = "uk";
-				else if (department.Address.Country == "Australia")
-					weatherUnits = "uk";
-				else
-					weatherUnits = "us";
-			}
-
-			if (!String.IsNullOrWhiteSpace(gpsCoordinates))
-			{
-				string[] coordinates = gpsCoordinates.Split(char.Parse(","));
-
-				if (coordinates.Count() == 2)
-				{
-					double newLat;
-					double newLon;
-					if (double.TryParse(coordinates[0], out newLat) && double.TryParse(coordinates[1], out newLon))
-					{
-						centerLat = newLat;
-						centerLon = newLon;
-					}
-				}
-			}
-
-			if (!centerLat.HasValue && !centerLon.HasValue && address != null)
-			{
-				string coordinates = _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", address.Address1,
-																		address.City, address.State, address.PostalCode));
-
-				if (!String.IsNullOrEmpty(coordinates))
-				{
-					double newLat;
-					double newLon;
-					var coordinatesArr = coordinates.Split(char.Parse(","));
-					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
-					{
-						centerLat = newLat;
-						centerLon = newLon;
-					}
-				}
-			}
-
-			if (!centerLat.HasValue && !centerLon.HasValue && department.Address != null)
-			{
-				string coordinates = _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", department.Address.Address1,
-																		department.Address.City,
-																		department.Address.State,
-																		department.Address.PostalCode));
-
-				if (!String.IsNullOrEmpty(coordinates))
-				{
-					double newLat;
-					double newLon;
-					var coordinatesArr = coordinates.Split(char.Parse(","));
-					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
-					{
-						centerLat = newLat;
-						centerLon = newLon;
-					}
-				}
-			}
-
-			if (!centerLat.HasValue || !centerLon.HasValue)
-			{
-				centerLat = 39.14086268299356;
-				centerLon = -119.7583809782715;
-			}
-
-			var zoomLevel = _departmentSettingsService.GetBigBoardMapZoomLevelForDepartment(department.DepartmentId);
-			var refreshTime = _departmentSettingsService.GetBigBoardRefreshTimeForDepartment(department.DepartmentId);
-
-
-			var mapModel = new User.Models.BigBoardX.BigBoardMapModel
-			{
-				CenterLat = centerLat.Value,
-				CenterLon = centerLon.Value,
-				ZoomLevel = zoomLevel.HasValue ? zoomLevel.Value : 9,
-			};
-
-			foreach (var station in stations)
-			{
-				MapMakerInfo info = new MapMakerInfo();
-				info.ImagePath = "Station";
-				info.Title = station.Name;
-				info.InfoWindowContent = station.Name;
-
-				if (station.Address != null)
-				{
-					string coordinates = _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", station.Address.Address1,
-																		station.Address.City,
-																		station.Address.State,
-																		station.Address.PostalCode));
-
-					if (!String.IsNullOrEmpty(coordinates))
-					{
-						info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
-						info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
-
-						mapModel.MapMakerInfos.Add(info);
-					}
-				}
-				else if (!String.IsNullOrWhiteSpace(station.Latitude) && !String.IsNullOrWhiteSpace(station.Longitude))
-				{
-					info.Latitude = double.Parse(station.Latitude);
-					info.Longitude = double.Parse(station.Longitude);
-
-					mapModel.MapMakerInfos.Add(info);
-				}
-			}
-
-			foreach (var call in calls)
-			{
-				MapMakerInfo info = new MapMakerInfo();
-				info.ImagePath = "Call";
-				info.Title = call.Name;
-				info.InfoWindowContent = call.NatureOfCall;
-
-				if (!String.IsNullOrEmpty(call.GeoLocationData))
-				{
-					try
-					{
-						info.Latitude = double.Parse(call.GeoLocationData.Split(char.Parse(","))[0]);
-						info.Longitude = double.Parse(call.GeoLocationData.Split(char.Parse(","))[1]);
-
-						mapModel.MapMakerInfos.Add(info);
-					}
-					catch { }
-				}
-				else if (!String.IsNullOrEmpty(call.Address))
-				{
-					string coordinates = _geoLocationProvider.GetLatLonFromAddress(call.Address);
-					if (!String.IsNullOrEmpty(coordinates))
-					{
-						info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
-						info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
-					}
-
-					mapModel.MapMakerInfos.Add(info);
-				}
-			}
-
-			foreach (var unit in unitStates)
-			{
-				if (unit.Latitude.HasValue && unit.Latitude.Value != 0 && unit.Longitude.HasValue &&
-					unit.Longitude.Value != 0)
-				{
-					MapMakerInfo info = new MapMakerInfo();
-					info.ImagePath = "Engine_Responding";
-					info.Title = unit.Unit.Name;
-					info.InfoWindowContent = "";
-					info.Latitude = double.Parse(unit.Latitude.Value.ToString());
-					info.Longitude = double.Parse(unit.Longitude.Value.ToString());
-
-					mapModel.MapMakerInfos.Add(info);
-				}
-			}
-
-			foreach (var person in personnelViewModels)
-			{
-				if (person.Latitude.HasValue && person.Latitude.Value != 0 && person.Longitude.HasValue &&
-					person.Longitude.Value != 0)
-				{
-					MapMakerInfo info = new MapMakerInfo();
-
-					if (person.StatusValue <= 25)
-					{
-						if (person.StatusValue == 5)
-							info.ImagePath = "Person_RespondingStation";
-						else if (person.StatusValue == 6)
-							info.ImagePath = "Person_RespondingCall";
-						else if (person.StatusValue == 3)
-							info.ImagePath = "Person_OnScene";
-						else
-							info.ImagePath = "Person_RespondingCall";
-					}
-					else if (person.DestinationType > 0)
-					{
-						if (person.DestinationType == 1)
-							info.ImagePath = "Person_RespondingStation";
-						else if (person.DestinationType == 2)
-							info.ImagePath = "Person_RespondingCall";
-						else
-							info.ImagePath = "Person_RespondingCall";
-					}
-					else
-					{
-						info.ImagePath = "Person_RespondingCall";
-					}
-
-					info.Title = person.Name;
-					info.InfoWindowContent = "";
-					info.Latitude = double.Parse(person.Latitude.Value.ToString());
-					info.Longitude = double.Parse(person.Longitude.Value.ToString());
-
-					mapModel.MapMakerInfos.Add(info);
-				}
-			}
-			#endregion
-
-			#region Groups
-			var groupsViewModels = (from @group in departmentGroups select new GroupViewModel() { GroupId = @group.DepartmentGroupId, Name = @group.Name }).ToList();
-
-			#endregion Groups
-
-			var model = new User.Models.BigBoardX.BigBoardModel
-			{
-				Personnel = personnelViewModels,
-				RefreshTime = refreshTime.HasValue ? refreshTime.Value : 5,
-				MapModel = mapModel,
-				Units = unitViewModels,
-				Calls = callViewModels,
-				WeatherUnit = weatherUnits,
-				Groups = groupsViewModels
-			};
-
-			return model;
-		}
-		#endregion BigBoard (Deprecated)
 	}
 }

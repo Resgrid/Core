@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -34,11 +35,20 @@ namespace Resgrid.Model
 		public DateTime Timestamp { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return FileId; }
 			set { FileId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Files";
+
+		[NotMapped]
+		public string IdName => "DepartmentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Message" };
 
 		public string GetIconType()
 		{

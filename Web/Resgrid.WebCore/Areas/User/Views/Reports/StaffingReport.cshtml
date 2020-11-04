@@ -44,7 +44,7 @@
 	<div class="content">
 		<div class="row">
 			<div class="col-md-5 col-md-offset-1">
-				<img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-5" style="text-align: right;">
 				<h3 style="margin-top: 10px;">Resgrid Staffing Report</h3>
@@ -131,7 +131,7 @@
 									}
 									else
 									{
-										var customState = CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), row.Staffing);
+										var customState = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), row.Staffing);
 
 										if (customState != null)
 										{
@@ -171,7 +171,7 @@
 									}
 									else
 									{
-										var customState = CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), row.NextStaffing);
+										var customState = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), row.NextStaffing);
 
 										if (customState != null)
 										{

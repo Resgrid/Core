@@ -38,10 +38,19 @@ namespace Resgrid.Model
 		public int Count { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PoiTypeId; }
 			set { PoiTypeId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "POITypes";
+
+		[NotMapped]
+		public string IdName => "PoiTypeId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Pois", "Count" };
 	}
 }

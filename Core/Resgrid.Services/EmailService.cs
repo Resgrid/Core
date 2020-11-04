@@ -14,6 +14,7 @@ using System.Text;
 using MimeKit;
 using Resgrid.Model.Events;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Resgrid.Services
 {
@@ -59,31 +60,37 @@ namespace Resgrid.Services
 		}
 		#endregion Private Members and Constructors
 
-		public void SendWelcomeEmail(string departmentName, string name, string emailAddress, string userName, string password, int departmentId)
+		public async Task<bool> SendWelcomeEmail(string departmentName, string name, string emailAddress, string userName, string password, int departmentId)
 		{
 			try
 			{
-				_emailProvider.SendWelcomeMail(name, departmentName, userName, password, emailAddress, departmentId);
+				await _emailProvider.SendWelcomeMail(name, departmentName, userName, password, emailAddress, departmentId);
+				return true;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 			}
+
+			return false;
 		}
 
-		public void SendPasswordResetEmail(string emailAddress, string name, string userName, string password, string departmentName)
+		public async Task<bool> SendPasswordResetEmail(string emailAddress, string name, string userName, string password, string departmentName)
 		{
 			try
 			{
-				_emailProvider.SendPasswordResetMail(name, password, userName, emailAddress, departmentName);
+				await _emailProvider.SendPasswordResetMail(name, password, userName, emailAddress, departmentName);
+				return true;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 			}
+
+			return false;
 		}
 
-		public void Notify(EmailNotification email)
+		public async Task<bool> Notify(EmailNotification email)
 		{
 			using (var mail = new MailMessage())
 			{
@@ -94,15 +101,16 @@ namespace Resgrid.Services
 				mail.Body = string.Format("Name: {0}<br/> Email: {1}<br/> {2}", email.Name, email.From, email.Body);
 				mail.IsBodyHtml = true;
 
-				_emailSender.SendEmail(mail);
+				await _emailSender.SendEmail(mail);
+				return true;
 			}
 		}
 
-		public void SystemTest(string emailAddresss, EmailNotification email)
+		public async Task<bool> SystemTest(string emailAddress, EmailNotification email)
 		{
 			using (var mail = new MailMessage())
 			{
-				mail.To.Add(emailAddresss);
+				mail.To.Add(emailAddress);
 				mail.Subject = email.Subject;
 
 				if (!String.IsNullOrWhiteSpace(email.From))
@@ -113,24 +121,21 @@ namespace Resgrid.Services
 				mail.Body = string.Format("--SYSTEM TEST-- <br/>Email Id: {0} <br/>From: {1}, ", email.Body, email.Name);
 				mail.IsBodyHtml = true;
 
-				_smtpClient.Send(mail);
+				await _smtpClient.SendMailAsync(mail);
+				return true;
 			}
 		}
 
-		public void SendSignupEmail(string departmentName, string name, string emailAddress)
+		public async Task<bool> SendSignupEmail(string departmentName, string name, string emailAddress)
 		{
-			_emailProvider.SendSignupMail(name, departmentName, emailAddress);
+			await _emailProvider.SendSignupMail(name, departmentName, emailAddress);
+			return true;
 		}
 
-		public void SendAffiliateSignupEmail(string name, string emailAddress)
-		{
-			_emailProvider.SendAffiliateWelcomeMail(name, emailAddress);
-		}
-
-		public void SendMessage(Message message, string senderName, UserProfile profile = null, IdentityUser user = null)
+		public async Task<bool> SendMessageAsync(Message message, string senderName, UserProfile profile = null, IdentityUser user = null)
 		{
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
-				profile = _userProfileService.GetProfileByUserId(message.ReceivingUserId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
 			if (user == null && profile != null && profile.User != null)
 				user = profile.User;
@@ -148,16 +153,18 @@ namespace Resgrid.Services
 				senderEmail = "do-not-reply@resgrid.com";
 
 			if (profile != null && profile.SendMessageEmail)
-				_emailProvider.SendMessageMail(user.Email, subject, message.Subject, message.Body, senderEmail, senderName, message.SentOn.ToString("G") + " UTC", message.MessageId);
+				await _emailProvider.SendMessageMail(user.Email, subject, message.Subject, message.Body, senderEmail, senderName, message.SentOn.ToString("G") + " UTC", message.MessageId);
+
+			return true;
 		}
 
-		public void SendCall(Call call, CallDispatch dispatch, UserProfile profile = null)
+		public async Task<bool> SendCallAsync(Call call, CallDispatch dispatch, UserProfile profile = null)
 		{
-			if (Config.SystemBehaviorConfig.DoNotBroadcast)
-				return;
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId))
+				return false;
 
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(dispatch.UserId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
 
 			string emailAddress = String.Empty;
 
@@ -198,7 +205,7 @@ namespace Resgrid.Services
 				{
 					try
 					{
-						address = _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 					}
 					catch (Exception)
 					{
@@ -234,14 +241,16 @@ namespace Resgrid.Services
 			}
 
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
-				_emailProvider.SendCallMail(emailAddress, subject, call.Name, priority, call.NatureOfCall, call.MapPage,
+				await _emailProvider.SendCallMail(emailAddress, subject, call.Name, priority, call.NatureOfCall, call.MapPage,
 																	address, dispatchedOn, call.CallId, dispatch.UserId, coordinates, call.ShortenedAudioUrl);
+
+			return true;
 		}
 
-		public void SendTroubleAlert(TroubleAlertEvent troubleAlertEvent, Unit unit, Call call, string callAddress, string unitAddress, string personnelNames, UserProfile profile)
+		public async Task<bool> SendTroubleAlert(TroubleAlertEvent troubleAlertEvent, Unit unit, Call call, string callAddress, string unitAddress, string personnelNames, UserProfile profile)
 		{
-			if (Config.SystemBehaviorConfig.DoNotBroadcast)
-				return;
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(unit.DepartmentId))
+				return false;
 
 			string emailAddress = string.Empty;
 
@@ -257,7 +266,6 @@ namespace Resgrid.Services
 			}
 
 			string subject = $"TROUBLE ALERT for {unit.Name} located at {unitAddress}";
-
 			string dispatchedOn = String.Empty;
 
 			if (call.Department != null)
@@ -271,21 +279,30 @@ namespace Resgrid.Services
 				gpsLocation = $"{troubleAlertEvent.Latitude},{troubleAlertEvent.Longitude}";
 
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
-				_emailProvider.SendTroubleAlertMail(emailAddress, unit.Name, gpsLocation, "", callAddress, unitAddress, "", call.Name);
+			{
+				await _emailProvider.SendTroubleAlertMail(emailAddress, unit.Name, gpsLocation, "", callAddress,
+					unitAddress, "", call.Name);
+
+				return true;
+			}
+
+			return false;
 		}
 
-		public void SendInvite(Invite invite, string senderName, string senderEmail)
+		public async Task<bool> SendInviteAsync(Invite invite, string senderName, string senderEmail)
 		{
 			if (invite == null)
-				return;
+				return false;
 
 			if (invite.Department == null)
-				invite.Department = _departmentsService.GetDepartmentById(invite.DepartmentId);
+				invite.Department = await _departmentsService.GetDepartmentByIdAsync(invite.DepartmentId);
 
-			_emailProvider.SendInviteMail(invite.Code.ToString(), invite.Department.Name, invite.EmailAddress, senderName, senderEmail);
+			await _emailProvider.SendInviteMail(invite.Code.ToString(), invite.Department.Name, invite.EmailAddress, senderName, senderEmail);
+
+			return true;
 		}
 
-		public void SendDistributionListEmail(MimeMessage message, string emailAddress, string name, string listUsername, string listEmail)
+		public async Task<bool> SendDistributionListEmail(MimeMessage message, string emailAddress, string name, string listUsername, string listEmail)
 		{
 			// VERP https://www.limilabs.com/blog/verp-variable-envelope-return-path-net
 
@@ -298,10 +315,11 @@ namespace Resgrid.Services
 			message.Headers.Add(new MimeKit.Header(HeaderId.ReturnPath, $"{listUsername}+{emailAddress.Replace("@", "=")}@{Config.InboundEmailConfig.ListsDomain}"));
 			message.Headers.Add(new MimeKit.Header("Return-Path", $"{listUsername}+{emailAddress.Replace("@", "=")}@{Config.InboundEmailConfig.ListsDomain}"));
 
-			_amazonEmailSender.SendDistributionListEmail(message);
+			await _amazonEmailSender.SendDistributionListEmail(message);
+			return true;
 		}
 
-		public void SendPaymentRecieptEmail(Payment payment, Department department)
+		public async Task<bool> SendPaymentReceiptEmailAsync(Payment payment, Department department)
 		{
 			IdentityUser user;
 
@@ -310,101 +328,104 @@ namespace Resgrid.Services
 			else
 				user = _usersService.GetUserById(department.ManagingUserId, false);
 
-			var userProfile = _userProfileService.GetProfileByUserId(department.ManagingUserId);
+			var userProfile = await _userProfileService.GetProfileByUserIdAsync(department.ManagingUserId);
 
-			_emailProvider.SendPaymentReciept(department.Name, userProfile.FullName.AsFirstNameLastName, payment.PurchaseOn.ToShortDateString() + " (UTC)", payment.Amount.ToString("C"), user.Email,
+			await _emailProvider.SendPaymentReciept(department.Name, userProfile.FullName.AsFirstNameLastName, payment.PurchaseOn.ToShortDateString() + " (UTC)", payment.Amount.ToString("C"), user.Email,
 					((PaymentMethods)payment.Method).ToString(), payment.TransactionId, payment.Plan.Name, string.Format("{0} to {1}", payment.EffectiveOn.ToShortDateString(),
 					payment.EndingOn.ToShortDateString()), payment.EndingOn.ToShortDateString() + " " + payment.EndingOn.ToShortTimeString() + " (UTC)", payment.PaymentId);
 
+			return true;
 		}
 
-		public void SendCancellationEmail(Payment payment, Department department)
+		public async Task<bool> SendCancellationEmailAsync(Payment payment, Department department)
 		{
 			if (department == null && payment != null && payment.Department != null)
 				department = payment.Department;
 
 			if (department == null)
-				return;
+				return false;
 
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
-			var profile = _userProfileService.GetProfileByUserId(user.UserId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
 			if (user == null)
-				return;
+				return false;
 
 			string name = "";
 			if (profile != null)
 				name = profile.FullName.AsFirstNameLastName;
 
-			_emailProvider.SendCancellationReciept(name, user.Email, payment.EndingOn.ToShortDateString(), department.Name);
+			await _emailProvider.SendCancellationReciept(name, user.Email, payment.EndingOn.ToShortDateString(), department.Name);
+
+			return true;
 		}
 
-		public void SendChargeFailedEmail(Payment payment, Department department, Resgrid.Model.Plan plan)
+		public async Task<bool> SendChargeFailedEmailAsync(Payment payment, Department department, Resgrid.Model.Plan plan)
 		{
 			if (payment != null && department != null)
 			{
 				var user = _usersService.GetUserById(department.ManagingUserId, false);
-				var profile = _userProfileService.GetProfileByUserId(user.UserId);
+				var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 				string planName = "";
 
 				if (plan != null)
 					planName = plan.Name;
 
 				if (profile != null)
-					_emailProvider.SendChargeFailed(profile.FullName.AsFirstNameLastName, user.Email, payment.EndingOn.ToShortDateString(), department.Name, planName);
+					await _emailProvider.SendChargeFailed(profile.FullName.AsFirstNameLastName, user.Email, payment.EndingOn.ToShortDateString(), department.Name, planName);
 				else
-					_emailProvider.SendChargeFailed("", user.Email, payment.EndingOn.ToShortDateString(), department.Name, planName);
+					await _emailProvider.SendChargeFailed("", user.Email, payment.EndingOn.ToShortDateString(), department.Name, planName);
 			}
+
+			return true;
 		}
 
-		public void SendCancellationWithRefundEmail(Payment payment, Charge charge, Department department)
+		public async Task<bool> SendCancellationWithRefundEmailAsync(Payment payment, Charge charge, Department department)
 		{
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
-			var profile = _userProfileService.GetProfileByUserId(user.UserId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
-			_emailProvider.SendRefundReciept(profile.FirstName + " " + profile.LastName, user.Email, department.Name, DateTime.UtcNow.ToShortDateString(), (float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C"),
+			await _emailProvider.SendRefundReciept(profile.FirstName + " " + profile.LastName, user.Email, department.Name, DateTime.UtcNow.ToShortDateString(), (float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C"),
 					((PaymentMethods)payment.Method).ToString(), charge.Id, payment.PaymentId.ToString());
+
+			return true;
 		}
 
-		public void SendUserCancellationNotificationToTeam(Department department, Payment payment, string userId, string reason)
+		public async Task<bool> SendUserCancellationNotificationToTeamAsync(Department department, Payment payment, string userId, string reason)
 		{
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
-			var profile = _userProfileService.GetProfileByUserId(user.UserId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
 			bool refundIssued = false;
 
 			if (DateTime.UtcNow <= payment.PurchaseOn.AddDays(30))
 				refundIssued = true;
 
-			_emailProvider.TEAM_SendNofifySubCancelled(profile.FirstName + " " + profile.LastName, user.Email,
+			await _emailProvider.TEAM_SendNofifySubCancelled(profile.FirstName + " " + profile.LastName, user.Email,
 					department.Name, department.DepartmentId.ToString(), reason, DateTime.UtcNow.ToShortDateString() + " " + DateTime.UtcNow.ToShortTimeString(),
 					payment.Plan.Name, refundIssued.ToString());
+
+			return true;
 		}
 
-		public void SendRefundIssuedNotificationToTeam(Payment payment, Charge charge, Department department)
+		public async Task<bool> SendRefundIssuedNotificationToTeam(Payment payment, Charge charge, Department department)
 		{
-			_emailProvider.TEAM_SendNotifyRefundIssued(department.DepartmentId.ToString(), department.Name, DateTime.UtcNow.ToShortDateString() + " " + DateTime.UtcNow.ToShortTimeString(),
+			await _emailProvider.TEAM_SendNotifyRefundIssued(department.DepartmentId.ToString(), department.Name, DateTime.UtcNow.ToShortDateString() + " " + DateTime.UtcNow.ToShortTimeString(),
 													(float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C"), ((PaymentMethods)payment.Method).ToString(), charge.Id, payment.PaymentId.ToString());
+
+			return true;
 		}
 
-		public void SendUpgradePaymentRecieptEmail(Payment newPayment, Payment oldPayment, Department department)
+		public async Task<bool> SendUpgradePaymentReceiptEmail(Payment newPayment, Payment oldPayment, Department department)
 		{
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
 
-			_emailProvider.SendUpgradePaymentReciept(department.Name, newPayment.PurchaseOn.ToShortDateString() + " (UTC)", newPayment.Amount.ToString("C"), user.Email,
+			await  _emailProvider.SendUpgradePaymentReciept(department.Name, newPayment.PurchaseOn.ToShortDateString() + " (UTC)", newPayment.Amount.ToString("C"), user.Email,
 					((PaymentMethods)newPayment.Method).ToString(), newPayment.TransactionId, oldPayment.Plan.Name, newPayment.Plan.Name, string.Format("{0} to {1}", newPayment.EffectiveOn.ToShortDateString(),
 					newPayment.EndingOn.ToShortDateString()), newPayment.EndingOn.ToShortDateString() + " " + newPayment.EndingOn.ToShortTimeString() + " (UTC)");
 
-		}
+			return true;
 
-		public void SendAffiliateApprovalEmail(Affiliate affiliate)
-		{
-			_emailProvider.SendAffiliateRegister(affiliate.EmailAddress, affiliate.AffiliateCode);
-		}
-
-		public void SendAffiliateRejectionEmail(Affiliate affiliate)
-		{
-			_emailProvider.SendAffiliateRejection(affiliate.EmailAddress, affiliate.RejectReason);
 		}
 
 		//public string TestEmailSettings(DepartmentCallEmail emailSettings)
@@ -412,7 +433,7 @@ namespace Resgrid.Services
 		//	return _callEmailProvider.TestEmailSettings(emailSettings);
 		//}
 
-		public void SendReportDeliveryEmail(EmailNotification email)
+		public async Task<bool> SendReportDeliveryEmail(EmailNotification email)
 		{
 			using (var mail = new MailMessage())
 			{
@@ -431,16 +452,19 @@ namespace Resgrid.Services
 
 				try
 				{
-					_emailSender.SendEmail(mail);
+					await _emailSender.SendEmail(mail);
+					return true;
 				}
 				catch (SmtpException sex) { }
 			}
+
+			return false;
 		}
 
-		public void SendNotification(string userId, string message, UserProfile profile = null)
+		public async Task<bool> SendNotificationAsync(string userId, string message, UserProfile profile = null)
 		{
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(userId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			if (profile != null && profile.SendNotificationEmail)
 			{
@@ -464,19 +488,23 @@ namespace Resgrid.Services
 						mail.Body = message;
 						mail.IsBodyHtml = false;
 
-						_emailSender.SendEmail(mail);
+						await _emailSender.SendEmail(mail);
 					}
 				}
 			}
+
+			return true;
 		}
 
-		public void SendNewDepartmentLinkMail(DepartmentLink link)
+		public async Task<bool> SendNewDepartmentLinkMailAsync(DepartmentLink link)
 		{
-			var sourceDepartment = _departmentsService.GetDepartmentById(link.DepartmentId);
-			var targetDepartment = _departmentsService.GetDepartmentById(link.DepartmentLinkId);
-			var managingProfile = _userProfileService.GetProfileByUserId(targetDepartment.ManagingUserId);
+			var sourceDepartment = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId);
+			var targetDepartment = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentLinkId);
+			var managingProfile = await _userProfileService.GetProfileByUserIdAsync(targetDepartment.ManagingUserId);
 
-			_emailProvider.SendNewDepartmentLinkMail(managingProfile.FullName.AsFirstNameLastName, sourceDepartment.Name, "", managingProfile.User.Email, targetDepartment.DepartmentId);
+			await _emailProvider.SendNewDepartmentLinkMail(managingProfile.FullName.AsFirstNameLastName, sourceDepartment.Name, "", managingProfile.User.Email, targetDepartment.DepartmentId);
+
+			return false;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -36,10 +37,19 @@ namespace Resgrid.Model
 		public DateTime ShiftDay { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftGroupAssignmentId; }
 			set { ShiftGroupAssignmentId = (int) value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ShiftGroupAssignments";
+
+		[NotMapped]
+		public string IdName => "ShiftGroupAssignmentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ShiftGroup" };
 	}
 }

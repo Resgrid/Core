@@ -1,7 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Calls.UpdateCallView
 @{
-	ViewBag.Title = "Resgrid | Update Call";
-	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+  ViewBag.Title = "Resgrid | Update Call";
+  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
 {
@@ -9,167 +9,172 @@
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Update Call</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
-			</li>
-			<li class="active">
-				<strong>Update Call</strong>
-			</li>
-		</ol>
-	</div>
+  <div class="col-sm-4">
+    <h2>Update Call</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+      </li>
+      <li class="active">
+        <strong>Update Call</strong>
+      </li>
+    </ol>
+  </div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" method="post">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" method="post">
 
-						<div class="row">
-							<div class="col-md-8 col-md-offset-1">
-								@Html.AntiForgeryToken()
-								@Html.HiddenFor(m => m.Latitude)
-								@Html.HiddenFor(m => m.Longitude)
-								@Html.HiddenFor(m => m.Call.CallId)
-								<div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+              <div class="col-md-8 col-md-offset-1">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Latitude)
+                @Html.HiddenFor(m => m.Longitude)
+                @Html.HiddenFor(m => m.Call.CallId)
+                @Html.HiddenFor(m => m.Call.ReportingUserId)
+                <div asp-validation-summary="All" class="text-danger"></div>
 
-								@if (!String.IsNullOrEmpty(Model.Message))
-								{
-									<div class="alert alert-success">
-										@Model.Message
-									</div>
-								}
-							</div>
-						</div>
+                @if (!String.IsNullOrEmpty(Model.Message))
+				{
+                  <div class="alert alert-success">
+                    @Model.Message
+                  </div>
+				}
+              </div>
+            </div>
 
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Name</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Call" asp-for="Call.Name"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Priority</label>
-							<div class="col-sm-10">@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { @style = "width: 120px;", tabindex = "2" })</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Type</label>
-							<div class="col-sm-10">@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 120px;", tabindex = "3" })</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Reporter Name</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Person Reporting the call" asp-for="Call.ContactName"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Reporter Contact Info</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Phone or Email address of the Reporter" asp-for="Call.ContactNumber"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Call Identifier</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Inbound Call System Id" asp-for="Call.ExternalIdentifier"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Reference Id</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Partner or Reference Number" asp-for="Call.ReferenceNumber"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Nature of the Call</label>
-							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the nature of the call" asp-for="Call.NatureOfCall"></textarea></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Notes</label>
-							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="Notes for the call" asp-for="Call.Notes"></textarea></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Map Page</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Map Book Page" asp-for="Call.MapPage"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Location</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-md-5">
-										<div class="input-group input-group-sm">
-											<input type="text" class="form-control" placeholder="Full Address of the call (Street, City, State, Zip)" asp-for="Call.Address">
-											<span class="input-group-btn">
-												<a id="searchButton" href="#" class="btn btn-info">Find Address</a>
-											</span>
-										</div>
-									</div>
-									<div class="col-md-6" style="padding-left: 0px;">
-										<div class="input-group input-group-sm">
-											<input type="text" class="form-control" placeholder="what.three.words" asp-for="What3Word" style="width:250px;">
-											<span class="input-group-btn" style="float: left;">
-												<a id="findw3wButton" href="#" class="btn btn-info">Find w3w Location</a>
-											</span>
-										</div>
-										<span class="help-inline">This is a what3words address. <a href="https://what3words.com/about/" target="_blank">Learn More.</a></span>
-									</div>
-								</div>
-								<div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px;"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Dispatch</label>
-							<div class="col-sm-10">
-								<div>
-									<ul class="nav nav-tabs" role="tablist">
-										<li role="presentation" class="active"><a href="#personnelTab" aria-controls="home" role="tab" data-toggle="tab">Personnel</a></li>
-										<li role="presentation"><a href="#groupsTab" aria-controls="profile" role="tab" data-toggle="tab">Groups</a></li>
-										<li role="presentation"><a href="#unitsTab" aria-controls="messages" role="tab" data-toggle="tab">Units</a></li>
-										<li role="presentation"><a href="#rolesTab" aria-controls="settings" role="tab" data-toggle="tab">Roles</a></li>
-									</ul>
-									<div class="tab-content" style="height: 600px;">
-										<div role="tabpanel" class="tab-pane active" id="personnelTab">
-											<div id="personnelGrid"></div>
-										</div>
-										<div role="tabpanel" class="tab-pane" id="groupsTab">
-											<div id="groupsGrid"></div>
-										</div>
-										<div role="tabpanel" class="tab-pane" id="unitsTab">
-											<div id="unitsGrid"></div>
-										</div>
-										<div role="tabpanel" class="tab-pane" id="rolesTab">
-											<div id="rolesGrid"></div>
-										</div>
-									</div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Name</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Call" asp-for="Call.Name"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Priority</label>
+              <div class="col-sm-10">@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { @style = "width: 120px;", tabindex = "2" })</div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Type</label>
+              <div class="col-sm-10">@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 120px;", tabindex = "3" })</div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Reporter Name</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Person Reporting the call" asp-for="Call.ContactName"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Reporter Contact Info</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Phone or Email address of the Reporter" asp-for="Call.ContactNumber"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Call Identifier</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Inbound Call System Id" asp-for="Call.ExternalIdentifier"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Incident Id</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Incident Grouping Id (can be same as Call Id)" asp-for="Call.IncidentNumber"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Reference Id</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Partner or Reference Number" asp-for="Call.ReferenceNumber"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Nature of the Call</label>
+              <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the nature of the call" asp-for="Call.NatureOfCall"></textarea></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Notes</label>
+              <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="Notes for the call" asp-for="Call.Notes"></textarea></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Map Page</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Map Book Page" asp-for="Call.MapPage"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Location</label>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control" placeholder="Full Address of the call (Street, City, State, Zip)" asp-for="Call.Address">
+                      <span class="input-group-btn">
+                        <a id="searchButton" href="#" class="btn btn-info">Find Address</a>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-6" style="padding-left: 0px;">
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control" placeholder="what.three.words" asp-for="What3Word" style="width:250px;">
+                      <span class="input-group-btn" style="float: left;">
+                        <a id="findw3wButton" href="#" class="btn btn-info">Find w3w Location</a>
+                      </span>
+                    </div>
+                    <span class="help-inline">This is a what3words address. <a href="https://what3words.com/about/" target="_blank">Learn More.</a></span>
+                  </div>
+                </div>
+                <div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px;"></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Dispatch</label>
+              <div class="col-sm-10">
+                <div>
+                  <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#personnelTab" aria-controls="home" role="tab" data-toggle="tab">Personnel</a></li>
+                    <li role="presentation"><a href="#groupsTab" aria-controls="profile" role="tab" data-toggle="tab">Groups</a></li>
+                    <li role="presentation"><a href="#unitsTab" aria-controls="messages" role="tab" data-toggle="tab">Units</a></li>
+                    <li role="presentation"><a href="#rolesTab" aria-controls="settings" role="tab" data-toggle="tab">Roles</a></li>
+                  </ul>
+                  <div class="tab-content" style="height: 600px;">
+                    <div role="tabpanel" class="tab-pane active" id="personnelTab">
+                      <div id="personnelGrid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="groupsTab">
+                      <div id="groupsGrid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="unitsTab">
+                      <div id="unitsGrid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="rolesTab">
+                      <div id="rolesGrid"></div>
+                    </div>
+                  </div>
 
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">ReDispatch</label>
-							<div class="col-sm-10">
-								<div class="checkbox checkbox-warning">
-									<input type="checkbox" asp-for="RebroadcastCall">
-									<label for="RebroadcastCall"></label>
-									<span class="help-block m-b-none">If you want to rebroadcast this call check this box. This will dispatch the call to all users selected, regardless if they were on the first dispatch or not.</span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Update Call</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">ReDispatch</label>
+              <div class="col-sm-10">
+                <div class="checkbox checkbox-warning">
+                  <input type="checkbox" asp-for="RebroadcastCall">
+                  <label for="RebroadcastCall"></label>
+                  <span class="help-block m-b-none">If you want to rebroadcast this call check this box. This will dispatch the call to all users selected, regardless if they were on the first dispatch or not.</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Cancel</a>
+                <button class="btn btn-primary" type="submit">Update Call</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 @section Scripts
 {
-	<script type="text/javascript">
+  <script type="text/javascript">
 		var callId = @(Model.Call.CallId);
-	</script>
+  </script>
 
-	<script src="~/js/app/internal/dispatch/resgrid.dispatch.editcall.js"></script>
+  <script src="~/js/app/internal/dispatch/resgrid.dispatch.editcall.js"></script>
 }

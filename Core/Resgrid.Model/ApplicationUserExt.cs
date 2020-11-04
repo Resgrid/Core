@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -28,10 +29,19 @@ namespace Resgrid.Model
 		public DateTime? LastActivityDate { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return UserId; }
 			set { UserId = (string)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "AspNetUsersExt";
+
+		[NotMapped]
+		public string IdName => "UserId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

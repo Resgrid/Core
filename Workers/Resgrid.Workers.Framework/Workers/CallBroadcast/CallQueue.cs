@@ -42,7 +42,7 @@ namespace Resgrid.Workers.Framework
 			{
 				_isLocked = true;
 
-				Task t1 = new Task(() =>
+				Task t1 = new Task(async () =>
 									   {
 										   try
 										   {
@@ -56,14 +56,14 @@ namespace Resgrid.Workers.Framework
 													 _queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
 													 _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 
-												   var items = _queueService.Dequeue(QueueTypes.CallBroadcast);
+												   var items = await _queueService.DequeueAsync(QueueTypes.CallBroadcast);
 
 												   foreach (var i in items)
 												   {
 													   var cqi = new CallQueueItem();
 													   cqi.QueueItem = i;
-														 cqi.Call = _callsService.GetCallById(int.Parse(i.SourceId));
-													   cqi.Profiles = _userProfileService.GetSelectedUserProfiles(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
+														 cqi.Call = await _callsService.GetCallByIdAsync(int.Parse(i.SourceId));
+													   cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
 
 													   _queue.Enqueue(cqi);
 												   }
@@ -99,7 +99,7 @@ namespace Resgrid.Workers.Framework
 				_queue = new Queue<CallQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 
@@ -112,7 +112,7 @@ namespace Resgrid.Workers.Framework
 					_queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
 
 					var queueItems = _queue.Select(x => x.QueueItem).ToList();
-					_queueService.RequeueAll(queueItems);
+					await _queueService.RequeueAllAsync(queueItems);
 				}
 				catch (Exception ex)
 				{
@@ -123,6 +123,8 @@ namespace Resgrid.Workers.Framework
 					_queueService = null;
 				}
 			}
+
+			return true;
 		}
 
 		public void AddItem(CallQueueItem item)
@@ -140,11 +142,11 @@ namespace Resgrid.Workers.Framework
 			return item;
 		}
 
-		public IEnumerable<CallQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<CallQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<CallQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.Broadcast, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.Broadcast, Timestamp = DateTime.UtcNow });
 
 
 			if (_queue.Count <= 0)

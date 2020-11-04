@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -32,18 +32,19 @@ namespace Resgrid.Model
 		public bool? IsAdmin { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentGroupMemberId; }
 			set { DepartmentGroupMemberId = (int)value; }
 		}
-	}
 
-	public class DepartmentGroupMember_Mapping : EntityTypeConfiguration<DepartmentGroupMember>
-	{
-		public DepartmentGroupMember_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "DepartmentGroupMembers";
+
+		[NotMapped]
+		public string IdName => "DepartmentGroupMemberId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "DepartmentGroup", "User" };
 	}
 }

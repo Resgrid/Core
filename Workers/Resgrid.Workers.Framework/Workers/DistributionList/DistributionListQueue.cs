@@ -38,11 +38,11 @@ namespace Resgrid.Workers.Framework.Workers.DistributionList
 
 				_distributionListsService = Bootstrapper.GetKernel().Resolve<IDistributionListsService>();
 
-				var t1 = new Task(() =>
+				var t1 = new Task(async () =>
 														 {
 															 try
 															 {
-																 var items = _distributionListsService.GetAllActiveDistributionLists();
+																 var items = await _distributionListsService.GetAllActiveDistributionListsAsync();
 
 																 foreach (var i in items)
 																 {
@@ -75,11 +75,13 @@ namespace Resgrid.Workers.Framework.Workers.DistributionList
 				_queue = new Queue<DistributionListQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public bool IsLocked
@@ -102,11 +104,11 @@ namespace Resgrid.Workers.Framework.Workers.DistributionList
 			return item;
 		}
 
-		public IEnumerable<DistributionListQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<DistributionListQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			List<DistributionListQueueItem> items = new List<DistributionListQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.DistributionList, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.DistributionList, Timestamp = DateTime.UtcNow });
 
 			int count = 0;
 			if (_queue.Count < maxItemsToReturn)

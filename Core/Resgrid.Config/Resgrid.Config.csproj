@@ -84,6 +84,7 @@
     <Compile Include="LinksConfig.cs" />
     <Compile Include="MappingConfig.cs" />
     <Compile Include="MarketingConfig.cs" />
+    <Compile Include="NoticeConfig.cs" />
     <Compile Include="NumberProviderConfig.cs" />
     <Compile Include="OutboundEmailServerConfig.cs" />
     <Compile Include="PaymentProviderConfig.cs" />

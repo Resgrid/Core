@@ -8,5 +8,6 @@
 		public int Priority { get; set; }
 		public int ActiveCallCount { get; set; }
 		public string Color { get; set; }
+		public int? DepartmentId { get; set; }
 	}
 }

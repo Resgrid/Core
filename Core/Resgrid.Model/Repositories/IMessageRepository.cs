@@ -3,15 +3,46 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	public interface IMessageRepository : IRepository<Message>
+	/// <summary>
+	/// Interface IMessageRepository
+	/// Implements the <see cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.Message}" />
+	/// </summary>
+	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.Message}" />
+	public interface IMessageRepository: IRepository<Message>
 	{
-		Message GetMessageById(int messageId);
-		int GetUnreadMessageCount(string userId);
+		/// <summary>
+		/// Gets the inbox messages by user identifier asynchronous.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Message&gt;&gt;.</returns>
+		Task<IEnumerable<Message>> GetInboxMessagesByUserIdAsync(string userId);
+
+		/// <summary>
+		/// Gets the sent messages by user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Message&gt;&gt;.</returns>
+		Task<IEnumerable<Message>> GetSentMessagesByUserIdAsync(string userId);
+
+		/// <summary>
+		/// Gets the unread message count asynchronous.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <returns>Task&lt;System.Int32&gt;.</returns>
 		Task<int> GetUnreadMessageCountAsync(string userId);
-		Task<Message> GetMessageByIdAsync(int messageId);
-		List<Message> GetInboxMessagesByUserId(string userId);
-		Task<List<Message>> GetInboxMessagesByUserIdAsync(string userId);
-		List<Message> GetSentMessagesByUserId(string userId);
-		Task<List<Message>> GetSentMessagesByUserIdAsync(string userId);
+
+		/// <summary>
+		/// Gets the messages by user asynchronous.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;MessageRecipient&gt;&gt;.</returns>
+		Task<IEnumerable<Message>> GetMessagesByUserSendRecIdAsync(string userId);
+
+		/// <summary>
+		/// Gets the messages by message identifier asynchronous.
+		/// </summary>
+		/// <param name="messageId">The message identifier.</param>
+		/// <returns>Task&lt;Message&gt;.</returns>
+		Task<Message> GetMessagesByMessageIdAsync(int messageId);
 	}
 }

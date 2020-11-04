@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -12,50 +14,43 @@ namespace Resgrid.Services
 	{
 		private static TimeSpan CacheLength = TimeSpan.FromDays(14);
 
-		private readonly IGenericDataRepository<DepartmentLink> _departmentLinksRepository;
-		private readonly IGenericDataRepository<Department> _departmentsRepository;
+		private readonly IDepartmentLinksRepository _departmentLinksRepository;
+		private readonly IDepartmentsRepository _departmentsRepository;
 		private readonly ICacheProvider _cacheProvider;
 
-		public DepartmentLinksService(IGenericDataRepository<DepartmentLink> departmentLinksRepository, IGenericDataRepository<Department> departmentsRepository, ICacheProvider cacheProvider)
+		public DepartmentLinksService(IDepartmentLinksRepository departmentLinksRepository, IDepartmentsRepository departmentsRepository, ICacheProvider cacheProvider)
 		{
 			_departmentLinksRepository = departmentLinksRepository;
 			_departmentsRepository = departmentsRepository;
 			_cacheProvider = cacheProvider;
 		}
 
-		public List<DepartmentLink> GetAllLinksForDepartment(int departmentId)
+		public async Task<List<DepartmentLink>> GetAllLinksForDepartmentAsync(int departmentId)
 		{
-			var links = (from dl in _departmentLinksRepository.GetAll()
-				where dl.DepartmentId == departmentId || dl.LinkedDepartmentId == departmentId
-				select dl).ToList();
+			var links = await _departmentLinksRepository.GetAllLinksForDepartmentAsync(departmentId);
 
-			return links;
+			return links.ToList();
 		}
 
-		public DepartmentLink GetLinkById(int linkId)
+		public async Task<DepartmentLink> GetLinkByIdAsync(int linkId)
 		{
-			return _departmentLinksRepository.GetAll().FirstOrDefault(x => x.DepartmentLinkId == linkId);
+			return await _departmentLinksRepository.GetByIdAsync(linkId);
 		}
 
-		public DepartmentLink Save(DepartmentLink link)
+		public async Task<DepartmentLink> SaveAsync(DepartmentLink link, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_departmentLinksRepository.SaveOrUpdate(link);
-
-			return link;
+			return await _departmentLinksRepository.SaveOrUpdateAsync(link, cancellationToken);
 		}
 
-		public bool DoesLinkExist(int departmentId, int departmentLinkId)
+		public async Task<bool> DoesLinkExistAsync(int departmentId, int departmentLinkId)
 		{
-			return (from dl in _departmentLinksRepository.GetAll()
-				where dl.DepartmentId == departmentId && dl.DepartmentLinkId == departmentLinkId
+			return (from dl in await _departmentLinksRepository.GetAllLinksForDepartmentAndIdAsync(departmentId, departmentLinkId)
 				select dl).Any();
 		}
 
-		public Department GetDepartmentByLinkCode(string code)
+		public async Task<Department> GetDepartmentByLinkCodeAsync(string code)
 		{
-			return (from dl in _departmentsRepository.GetAll()
-				where dl.LinkCode == code
-				select dl).FirstOrDefault();
+			return await _departmentsRepository.GetByLinkCodeAsync(code);
 		}
 	}
 }

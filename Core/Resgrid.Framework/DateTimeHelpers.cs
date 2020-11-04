@@ -130,7 +130,7 @@ namespace Resgrid.Framework
 				timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ConvertTimeZoneString(timeZone));
 			else
 				timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-			
+
 			return timeZoneInfo;
 		}
 
@@ -207,62 +207,96 @@ namespace Resgrid.Framework
 
 		public static DateTime ConvertStringTime(string timeIn, DateTime date, bool use24HourTime)
 		{
-			string time = "";
-
-			if (use24HourTime)
-				time = Convert24HourTo12Hour(timeIn);
-			else if (!time.ToUpper().Contains("AM") || !time.ToUpper().Contains("PM"))
-				time = Convert24HourTo12Hour(timeIn);
-			else
-				time = timeIn;
-
-			bool am = time.ToUpper().Contains("AM");
-			int hour = 0;
-			int minute = 0;
-
-			String[] timeParts = time.Split(char.Parse(":"));
-
-			if (timeParts.Count() == 2)
+			if (timeIn.Contains(" "))
 			{
-				hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
-				minute = int.Parse(timeParts[1].ToLower().Replace("am", "").Replace("pm", "").Trim());
-			}
-			else if (timeParts.Count() == 1)
-			{
-				hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
+				var parts = timeIn.Split(char.Parse(" "));
 
-				if (!time.ToUpper().Contains("AM") || !time.ToUpper().Contains("PM"))
-					if (hour < 12)
-						am = true;
+				foreach (var part in parts)
+				{
+					var tryTime = TryConvertStringTime(part, date, use24HourTime);
+
+					if (tryTime.HasValue)
+						return tryTime.Value;
+				}
 			}
 
-			if (hour > 24)
-				hour = 12;
+			var time = TryConvertStringTime(timeIn, date, use24HourTime);
 
-			int adjustedHours = 0;
-
-			if (hour == 12)
-			{
-				if (!am)
-					adjustedHours = 12;
-				else
-					adjustedHours = 0;
-			}
-			else
-			{
-				if (!am)
-					adjustedHours = 12 + hour;
-				else
-					adjustedHours = hour;
-			}
-
-			return new DateTime(date.Year, date.Month, date.Day, adjustedHours, minute, 0);
+			return time.Value;
 		}
 
-		public static string Convert24HourTo12Hour(string time)
+		private static DateTime? TryConvertStringTime(string timeIn, DateTime date, bool use24HourTime)
 		{
-			if (time.ToUpper().Contains("AM") || time.ToUpper().Contains("PM"))
-				return time;
+			if (timeIn.Contains("/"))
+				return null;
+
+			try
+			{
+				string time = "";
+
+				if (use24HourTime)
+					time = Convert24HourTo12Hour(timeIn);
+				else if (!time.ToUpper().Contains("AM") || !time.ToUpper().Contains("PM"))
+					time = Convert24HourTo12Hour(timeIn);
+				else
+					time = timeIn;
+
+				bool am = time.ToUpper().Contains("AM");
+				int hour = 0;
+				int minute = 0;
+
+				String[] timeParts = time.Split(char.Parse(":"));
+
+				if (timeParts.Count() == 2)
+				{
+					hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
+					minute = int.Parse(timeParts[1].ToLower().Replace("am", "").Replace("pm", "").Trim());
+				}
+				else if (timeParts.Count() == 1)
+				{
+					hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
+
+					if (!time.ToUpper().Contains("AM") || !time.ToUpper().Contains("PM"))
+						if (hour < 12)
+							am = true;
+				}
+
+				if (hour > 24)
+					hour = 12;
+
+				int adjustedHours = 0;
+
+				if (hour == 12)
+				{
+					if (!am)
+						adjustedHours = 12;
+					else
+						adjustedHours = 0;
+				}
+				else
+				{
+					if (!am)
+						adjustedHours = 12 + hour;
+					else
+						adjustedHours = hour;
+				}
+
+				return new DateTime(date.Year, date.Month, date.Day, adjustedHours, minute, 0);
+			}
+			catch
+			{
+				// Ignore for now
+			}
+
+			return null;
+		}
+
+		public static string Convert24HourTo12Hour(string inputTime)
+		{
+			if (inputTime.ToUpper().Contains("AM") || inputTime.ToUpper().Contains("PM"))
+				return inputTime;
+
+			var time = inputTime.Replace(":", "").Trim();
 
 			string timeOfDay = "AM";
 			int hour = 0;

@@ -54,7 +54,7 @@ namespace Resgrid.Workers.Framework
 					TaskCreationOptions.LongRunning);
 		}
 
-		protected void Cycle(IBatchCommand<T> batchCommand)
+		protected async Task<bool> Cycle(IBatchCommand<T> batchCommand)
 		{
 			try
 			{
@@ -63,7 +63,7 @@ namespace Resgrid.Workers.Framework
 				bool continueProcessing;
 				do
 				{
-					var messages = this.queue.GetItems(32);
+					var messages = await this.queue.GetItems(32);
 					ProcessMessages(this.queue, messages, batchCommand.Run);
 
 					continueProcessing = messages.Count() > 0;
@@ -77,6 +77,8 @@ namespace Resgrid.Workers.Framework
 			catch (TimeoutException)
 			{
 			}
+
+			return true;
 		}
 	}
 }

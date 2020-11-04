@@ -41,26 +41,26 @@
 				<div class="col-lg-2 col-lg-offset-2">
 					<address>
 						<strong><span class="navy">Resgrid, LLC.</span></strong><br />
-						3108 Silver Sage Dr.<br />
+						1802 North Carson Street<br />
+						Suite 157<br />
 						Carson City, NV 89701<br />
 					</address>
 				</div>
 				<div class="col-lg-4">
 					<p class="text-color text-center">
 						<ul class="list-group text-center" style="list-style: none;">
-							<li><a asp-controller="Home" asp-action="OpenSource">Open Source</a></li>
-							<li><a asp-controller="Home" asp-action="Apps">Mobile Apps</a></li>
-							<li><a href="https://status.resgrid.com">Updates</a></li>
+							<li><a asp-controller="Home" asp-action="OpenSource" asp-area="">Open Source</a></li>
+							<li><a asp-controller="Home" asp-action="Apps" asp-area="">Mobile Apps</a></li>
+							<li><a href="https://status.resgrid.com">System Status</a></li>
 							<li><a href="https://api.resgrid.com/help" target="_blank">Api</a></li>
-							<li><a asp-controller="Jobs" asp-action="Index">Jobs</a></li>
 						</ul>
 					</p>
 				</div>
 				<div class="col-lg-4">
 				  <address>
 				    <strong><span class="navy">Contact Us</span></strong><br />
-				    +1 888 570-4953<br />
-				    <a href="https://resgrid.freshdesk.com/support/home">Contact Our Team</a><br />
+				    <a asp-controller="Home" asp-action="Contact" asp-area="">Contact Our Team</a><br />
+				    <a href="https://resgrid.freshdesk.com/support/home">Submit Support Ticket</a><br />
 				  </address>
 					<p>Subscribe to our newsletter</p>
 					<form onsubmit="return resgrid.public.mailer.addPublicSubscriber($('#newsletter_input').val())" id="newsletter" name="mc-embedded-subscribe-form" target="_blank" novalidate>

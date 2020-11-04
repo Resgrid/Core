@@ -51,7 +51,7 @@
   <div id="runLog" class="container">
     <div class="row">
       <div class="col-xs-6" style="text-align: left;">
-        <img src="@Url.Content("~/Images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+        <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
       </div>
       <div class="col-xs-6" style="text-align: right;">
         <h3 style="margin-top: 10px;">Call Export</h3>
@@ -64,7 +64,7 @@
             <tr>
               <td>
                 <strong><small>Id</small></strong>
-                <span style="display: block;">@Model.Call.Id</span>
+                <span style="display: block;">@Model.Call.CallId</span>
               </td>
               <td>
                 <strong><small>Number</small></strong>
@@ -113,7 +113,7 @@
 
               <td>
                 <strong><small>Logged By</small></strong>
-                <span style="display: block;">@UserHelper.GetFullNameForUser(Model.Call.ReportingUser.UserId)</span>
+                <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</span>
               </td>
 
               <td>
@@ -145,7 +145,7 @@
                 </td>
                 <td>
                   <strong><small>Closed By</small></strong>
-                  <span style="display: block;">@UserHelper.GetFullNameForUser(Model.Call.ClosedByUser.UserId)</span>
+                  <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Call.ClosedByUserId))</span>
                 </td>
 			  }
 			  else
@@ -249,7 +249,7 @@
               <tr>
                 <td></td>
                 <td></td>
-                <td>@UserHelper.GetFullNameForUser(d.UserId)</td>
+                <td>@(await UserHelper.GetFullNameForUser(d.UserId))</td>
               </tr>
 			}
           </tbody>
@@ -288,7 +288,7 @@
           <tbody>
             @foreach (var us in Model.UnitStates)
 			{
-			  var customState = CustomStatesHelper.GetCustomUnitState(us);
+			  var customState = await CustomStatesHelper.GetCustomUnitState(us);
               <tr>
                 <td>@us.Unit.Name</td>
 
@@ -321,9 +321,9 @@
           <tbody>
             @foreach (var al in Model.ActionLogs)
 			{
-			  var customState = CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
+			  var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
               <tr>
-                <td>@UserHelper.GetFullNameForUser(al.UserId)</td>
+                <td>@(await UserHelper.GetFullNameForUser(al.UserId))</td>
 
                 @if (al.ActionTypeId <= 25)
 				{

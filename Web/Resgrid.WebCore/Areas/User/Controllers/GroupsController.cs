@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -56,24 +58,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			DepartmentGroupsModel model = new DepartmentGroupsModel();
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartmentUnlimited(DepartmentId);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedAsync(DepartmentId);
 
-			model.CanAddNewGroup = _limitsService.CanDepartentAddNewGroup(DepartmentId);
+			model.CanAddNewGroup = await _limitsService.CanDepartmentAddNewGroup(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_Create)]
-		public IActionResult NewGroup()
+		public async Task<IActionResult> NewGroup()
 		{
 			NewGroupView model = new NewGroupView();
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartmentUnlimited(DepartmentId);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedAsync(DepartmentId);
 
 
 			List<DepartmentGroup> groups = new List<DepartmentGroup>();
@@ -88,10 +90,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.GenericGroup_Create)]
-		public IActionResult NewGroup(NewGroupView model, IFormCollection collection)
+		public async Task<IActionResult> NewGroup(NewGroupView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			var groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup { DepartmentGroupId = -1, Name = "None" });
@@ -114,9 +116,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var groupUser in allUsers)
 			{
-				if (_departmentGroupsService.IsUserInAGroup(groupUser, DepartmentId))
+				if (await _departmentGroupsService.IsUserInAGroupAsync(groupUser, DepartmentId))
 				{
-					var profile = _userProfileService.GetProfileByUserId(groupUser);
+					var profile = await _userProfileService.GetProfileByUserIdAsync(groupUser);
 
 					ModelState.AddModelError("", string.Format("{0} Is already in a group. Cannot add to another.", profile.FullName.AsFirstNameLastName));
 				}
@@ -223,14 +225,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.NewGroup.DispatchEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 				model.NewGroup.MessageEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 
-				_departmentGroupsService.Save(model.NewGroup);
+				await _departmentGroupsService.SaveAsync(model.NewGroup, cancellationToken);
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.GroupAdded;
 				auditEvent.After = model.NewGroup.CloneJson();
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
 			}
@@ -240,18 +242,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_Delete)]
-		public IActionResult DeleteGroup(int departmentGroupId)
+		public async Task<IActionResult> DeleteGroup(int departmentGroupId)
 		{
 			DeleteGroupView model = new DeleteGroupView();
-			model.Group = _departmentGroupsService.GetGroupById(departmentGroupId);
+			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
 
-			if (model.Group == null || model.Group.DepartmentId != DepartmentId || !_authorizationService.CanUserEditDepartmentGroup(UserId, departmentGroupId))
+			if (model.Group == null || model.Group.DepartmentId != DepartmentId || !await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
 				Unauthorized();
 
 			var users = _departmentGroupsService.GetAllUsersForGroup(departmentGroupId);
-			var childGroups = _departmentGroupsService.GetAllChildDepartmentGroups(departmentGroupId);
-			var units = _unitsService.GetAllUnitsForGroup(departmentGroupId);
-			var shifts = _shiftsService.GetShiftGroupsByGroupId(departmentGroupId);
+			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(departmentGroupId);
+			var units = await _unitsService.GetAllUnitsForGroupAsync(departmentGroupId);
+			var shifts = await _shiftsService.GetShiftGroupsByGroupIdAsync(departmentGroupId);
 
 			if (users != null)
 				model.UserCount = users.Count;
@@ -278,17 +280,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.GenericGroup_Delete)]
-		public IActionResult DeleteGroup(DeleteGroupView model)
+		public async Task<IActionResult> DeleteGroup(DeleteGroupView model, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserEditDepartmentGroup(UserId, model.Group.DepartmentGroupId))
+			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.Group.DepartmentGroupId))
 				Unauthorized();
 
-			var group = _departmentGroupsService.GetGroupById(model.Group.DepartmentGroupId);
+			var group = await _departmentGroupsService.GetGroupByIdAsync(model.Group.DepartmentGroupId);
 
 			var users = _departmentGroupsService.GetAllUsersForGroup(model.Group.DepartmentGroupId);
-			var childGroups = _departmentGroupsService.GetAllChildDepartmentGroups(model.Group.DepartmentGroupId);
-			var units = _unitsService.GetAllUnitsForGroup(model.Group.DepartmentGroupId);
-			var shifts = _shiftsService.GetShiftGroupsByGroupId(model.Group.DepartmentGroupId);
+			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(model.Group.DepartmentGroupId);
+			var units = await _unitsService.GetAllUnitsForGroupAsync(model.Group.DepartmentGroupId);
+			var shifts = await _shiftsService.GetShiftGroupsByGroupIdAsync(model.Group.DepartmentGroupId);
 
 			if (childGroups.Count > 0 || users.Count > 0 || units.Count > 0 || shifts.Count > 0)
 			{
@@ -319,7 +321,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			var department = _departmentsService.GetDepartmentById(group.DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(group.DepartmentId);
 
 			if (department.IsUserAnAdmin(UserId) || group.IsUserGroupAdmin(UserId))
 			{
@@ -328,9 +330,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.GroupRemoved;
 				auditEvent.Before = group.CloneJson();
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				_deleteService.DeleteGroup(group.DepartmentGroupId, UserId);
+				await _deleteService.DeleteGroupAsync(group.DepartmentGroupId, UserId);
 			}
 
 			return RedirectToAction("Index", "Groups", new { Area = "User" });
@@ -338,15 +340,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_Update)]
-		public IActionResult EditGroup(int departmentGroupId)
+		public async Task<IActionResult> EditGroup(int departmentGroupId)
 		{
-			if (!_authorizationService.CanUserEditDepartmentGroup(UserId, departmentGroupId))
+			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
 				Unauthorized();
 
 			EditGroupView model = new EditGroupView();
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-			model.EditGroup = _departmentGroupsService.GetGroupById(departmentGroupId);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			model.EditGroup = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
 			model.InternalDispatchEmail = $"{model.EditGroup.DispatchEmail}@{Config.InboundEmailConfig.GroupsDomain}";
 			model.Latitude = model.EditGroup.Latitude;
 			model.Longitude = model.EditGroup.Longitude;
@@ -380,20 +382,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.GenericGroup_Update)]
-		public IActionResult EditGroup(EditGroupView model, IFormCollection collection)
+		public async Task<IActionResult> EditGroup(EditGroupView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserEditDepartmentGroup(UserId, model.EditGroup.DepartmentGroupId))
+			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.EditGroup.DepartmentGroupId))
 				Unauthorized();
 
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
-			model.Groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			List<DepartmentGroup> groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup { DepartmentGroupId = -1, Name = "None" });
 			groups.AddRange(model.Groups.Where(x => x.Type.HasValue && x.Type.Value == (int)DepartmentGroupTypes.Station));
 			model.StationGroups = new SelectList(groups, "DepartmentGroupId", "Name");
 
-			var group = _departmentGroupsService.GetGroupById(model.EditGroup.DepartmentGroupId);
+			var group = await _departmentGroupsService.GetGroupByIdAsync(model.EditGroup.DepartmentGroupId);
 
 			if (String.IsNullOrWhiteSpace(group.DispatchEmail))
 				group.DispatchEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
@@ -462,11 +464,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				model.EditGroup.DepartmentId = DepartmentId;
-				List<DepartmentGroupMember> users = new List<DepartmentGroupMember>();
 
 				foreach (var user in allUsers)
 				{
-					if (users.All(x => x.UserId != user))
+					if (group.Members.All(x => x.UserId != user))
 					{
 						var dgm = new DepartmentGroupMember();
 						dgm.DepartmentId = DepartmentId;
@@ -475,8 +476,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (groupAdmins.Contains(user))
 							dgm.IsAdmin = true;
 
-						users.Add(dgm);
+						group.Members.Add(dgm);
 					}
+				}
+
+				var usersToRemove = group.Members.Where(x => !allUsers.Contains(x.UserId)).ToList();
+				foreach (var user in usersToRemove)
+				{
+					group.Members.Remove(user);
 				}
 
 				if (model.EditGroup.Type.HasValue && model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
@@ -524,11 +531,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				group.DispatchToPrinter = model.EditGroup.DispatchToPrinter;
 
-				group.Members = users;
-				_departmentGroupsService.Update(group);
+				await _departmentGroupsService.UpdateAsync(group, cancellationToken);
 
 				auditEvent.After = group.CloneJson();
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
 			}
@@ -540,31 +546,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_Update)]
-		public IActionResult Geofence(int departmentGroupId)
+		public async Task<IActionResult> Geofence(int departmentGroupId)
 		{
 			var model = new GeofenceView();
-			model.Group = _departmentGroupsService.GetGroupById(departmentGroupId);
+			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
 
 			if (model.Group.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			model.Coordinates = _departmentGroupsService.GetMapCenterCoordinatesForGroup(departmentGroupId);
+			model.Coordinates = await _departmentGroupsService.GetMapCenterCoordinatesForGroupAsync(departmentGroupId);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.GenericGroup_Update)]
-		public IActionResult SaveGeofence([FromBody]SaveGeofenceModel model)
+		public async Task<IActionResult> SaveGeofence([FromBody]SaveGeofenceModel model, CancellationToken cancellationToken)
 		{
-			var group = _departmentGroupsService.GetGroupById(model.DepartmentGroupId);
+			var group = await _departmentGroupsService.GetGroupByIdAsync(model.DepartmentGroupId);
 
 			if (group != null)
 			{
 				group.GeofenceColor = model.Color;
 				group.Geofence = model.GeoFence;
 
-				_departmentGroupsService.Save(group);
+				await _departmentGroupsService.SaveAsync(group, cancellationToken);
 				model.Success = true;
 				model.Message = "Station response area geofence has been saved.";
 
@@ -577,10 +583,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_View)]
 		
-		public IActionResult GetMembersForGroup(int groupId, bool includeAdmins = true, bool includeNormal = true)
+		public async Task<IActionResult> GetMembersForGroup(int groupId, bool includeAdmins = true, bool includeNormal = true)
 		{
 			var groupsJson = new List<GroupMemberJson>();
-			var groups = _departmentGroupsService.GetAllMembersForGroup(groupId);
+			var groups = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 
 			foreach (var group in groups)
 			{
@@ -593,7 +599,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					groupJson.DepartmentGroupId = group.DepartmentGroupId;
 					groupJson.UserId = group.UserId;
 					groupJson.IsAdmin = isAdmin;
-					groupJson.Name = UserHelper.GetFullNameForUser(group.UserId);
+					groupJson.Name = await UserHelper.GetFullNameForUser(group.UserId);
 
 					groupsJson.Add(groupJson);
 				}
@@ -604,11 +610,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_View)]
-		public IActionResult GetAllGroups()
+		public async Task<IActionResult> GetAllGroups()
 		{
 			var stations = new List<StationJson>();
 
-			var groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			foreach (var group in groups)
 			{
@@ -625,10 +631,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_View)]
 		
-		public IActionResult GetGroupsForCallGrid()
+		public async Task<IActionResult> GetGroupsForCallGrid()
 		{
 			List<StationJson> groupsJson = new List<StationJson>();
-			var groups = _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			foreach (var group in groups)
 			{

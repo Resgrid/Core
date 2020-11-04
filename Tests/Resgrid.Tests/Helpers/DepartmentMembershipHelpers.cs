@@ -13,12 +13,12 @@ namespace Resgrid.Tests.Helpers
 	{
 		public static void SetupDisabledAndHiddenUsers(Mock<IDepartmentsService> mock)
 		{
-			mock.Setup(m => m.IsUserDisabled(TestData.Users.TestUser10Id, 1)).Returns(true);
-			mock.Setup(m => m.IsUserHidden(TestData.Users.TestUser11Id, 1)).Returns(true);
+			mock.Setup(m => m.IsUserDisabledAsync(TestData.Users.TestUser10Id, 1)).ReturnsAsync(true);
+			mock.Setup(m => m.IsUserHiddenAsync(TestData.Users.TestUser11Id, 1)).ReturnsAsync(true);
 
-			mock.Setup(m => m.GetDepartmentMember(TestData.Users.TestUser9Id, 1, true)).Returns(CreateDepartmentMembershipsForDepartment4().FirstOrDefault(x => x.UserId == TestData.Users.TestUser9Id));
-			mock.Setup(m => m.GetDepartmentMember(TestData.Users.TestUser10Id, 1, true)).Returns(CreateDepartmentMembershipsForDepartment4().FirstOrDefault(x => x.UserId == TestData.Users.TestUser10Id));
-			mock.Setup(m => m.GetDepartmentMember(TestData.Users.TestUser11Id, 1, true)).Returns(CreateDepartmentMembershipsForDepartment4().FirstOrDefault(x => x.UserId == TestData.Users.TestUser11Id));
+			mock.Setup(m => m.GetDepartmentMemberAsync(TestData.Users.TestUser9Id, 1, true)).ReturnsAsync(CreateDepartmentMembershipsForDepartment4().FirstOrDefault(x => x.UserId == TestData.Users.TestUser9Id));
+			mock.Setup(m => m.GetDepartmentMemberAsync(TestData.Users.TestUser10Id, 1, true)).ReturnsAsync(CreateDepartmentMembershipsForDepartment4().FirstOrDefault(x => x.UserId == TestData.Users.TestUser10Id));
+			mock.Setup(m => m.GetDepartmentMemberAsync(TestData.Users.TestUser11Id, 1, true)).ReturnsAsync(CreateDepartmentMembershipsForDepartment4().FirstOrDefault(x => x.UserId == TestData.Users.TestUser11Id));
 		}
 
 		public static void SetupUsersForDepartment1(Mock<IDepartmentsService> mock)
@@ -37,7 +37,7 @@ namespace Resgrid.Tests.Helpers
 			admins.Add(UsersHelpers.CreateUser(Guid.NewGuid().ToString()));
 
 			mock.Setup(m => m.GetAllUsersForDepartment(1,true,false)).Returns(users);
-			mock.Setup(m => m.GetAllAdminsForDepartment(1)).Returns(admins);
+			mock.Setup(m => m.GetAllAdminsForDepartmentAsync(1)).ReturnsAsync(admins);
 		}
 
 		public static IQueryable<DepartmentMember> CreateDepartmentMembershipsForDepartment4()

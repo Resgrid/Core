@@ -39,11 +39,20 @@ namespace Resgrid.Model
 		public string Data { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentNotificationId; }
 			set { DepartmentNotificationId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "DepartmentNotifications";
+
+		[NotMapped]
+		public string IdName => "DepartmentNotificationId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department" };
 
 		public void AddUserToNotify(string userId)
 		{

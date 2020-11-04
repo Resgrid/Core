@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -27,10 +28,10 @@ namespace Resgrid.Services
 			_emailSender = emailSender;
 		}
 
-		public void SendMessage(Message message, string departmentNumber, int departmentId, UserProfile profile = null)
+		public async Task<bool> SendMessageAsync(Message message, string departmentNumber, int departmentId, UserProfile profile = null)
 		{
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
-				profile = _userProfileService.GetProfileByUserId(message.ReceivingUserId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
 			MailMessage email = new MailMessage();
 
@@ -67,15 +68,17 @@ namespace Resgrid.Services
 					_emailSender.SendEmail(email);
 				}
 			}
+
+			return true;
 		}
 
-		public void SendCall(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
+		public async Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
 		{
-			if (Config.SystemBehaviorConfig.DoNotBroadcast)
-				return;
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
 
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(dispatch.UserId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
 
 			if (profile != null && profile.SendSms)
 			{
@@ -93,7 +96,7 @@ namespace Resgrid.Services
 
 							if (points != null && points.Length == 2)
 							{
-								address = _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+								address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 							}
 						}
 						catch
@@ -183,6 +186,8 @@ namespace Resgrid.Services
 					SendCallViaEmailSmsGateway(call, address, profile);
 				}
 			}
+
+			return true;
 		}
 
 		private void SendCallViaEmailSmsGateway(Call call, string address, UserProfile profile)
@@ -217,7 +222,7 @@ namespace Resgrid.Services
 
 		public void SendTroubleAlert(Unit unit, Call call, string unitAddress, string departmentNumber, int departmentId, UserProfile profile)
 		{
-			if (Config.SystemBehaviorConfig.DoNotBroadcast)
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(unit.DepartmentId))
 				return;
 
 			if (profile != null && profile.SendSms)
@@ -248,12 +253,12 @@ namespace Resgrid.Services
 			}
 		}
 
-		public void SendText(string userId, string title, string message, int departmentId, string departmentNumber, UserProfile profile = null)
+		public async Task<bool> SendTextAsync(string userId, string title, string message, int departmentId, string departmentNumber, UserProfile profile = null)
 		{
 			// TODO: This method should only be working with Twilio for inbound text message support
 
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(userId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			var email = new MailMessage();
 
@@ -283,12 +288,14 @@ namespace Resgrid.Services
 					_emailSender.SendEmail(email);
 				}
 			}
+
+			return true;
 		}
 
-		public void SendNotification(string userId, int departmentId, string message, string departmentNumber, UserProfile profile = null)
+		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, UserProfile profile = null)
 		{
 			if (profile == null)
-				profile = _userProfileService.GetProfileByUserId(userId);
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			var email = new MailMessage();
 
@@ -317,6 +324,8 @@ namespace Resgrid.Services
 					_emailSender.SendEmail(email);
 				}
 			}
+
+			return true;
 		}
 
 		private string FormatCallSubject(Call call)

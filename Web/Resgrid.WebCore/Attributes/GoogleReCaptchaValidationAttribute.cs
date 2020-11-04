@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Resgrid.Config;
 using System;
 using System.ComponentModel.DataAnnotations;

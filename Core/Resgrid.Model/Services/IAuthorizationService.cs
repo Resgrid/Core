@@ -1,33 +1,226 @@
-﻿namespace Resgrid.Model.Services
+﻿using System.Threading.Tasks;
+
+namespace Resgrid.Model.Services
 {
+	/// <summary>
+	/// Interface IAuthorizationService
+	/// </summary>
 	public interface IAuthorizationService
 	{
-		bool CanUserDeletePushUri(string userId, int pushUriId);
-		bool CanUserManageInvite(string userId, int inviteId);
-		bool CanUserViewCall(string userId, int callId);
-		bool CanUserEditCall(string userId, int callId);
-		bool CanUserViewMessage(string userId, int messageId);
-		bool CanUserViewAndEditCallLog(string userId, int callLogId);
-		bool CanUserViewAndEditWorkLog(string userId, int logId);
-		bool CanUserViewPayment(string userId, int paymentId);
-		bool CanUserEditDepartmentGroup(string userId, int departmentGroupId);
-		bool CanUserEditRole(string userId, int personnelRoleId);
-		bool CanUserViewRole(string userId, int personnelRoleId);
-		bool IsUserValidWithinLimits(string userId, int departmentId);
-		bool CanUserModifyUnit(string userId, int unitId);
-		bool CanUserViewUnit(string userId, int unitId);
-		bool CanUserViewUser(string viewerUserId, string targetUserId);
-		bool CanGroupAdminsAddUsers(int departmentId);
-		bool CanGroupAdminsRemoveUsers(int departmentId);
-		bool CanUserAddNewUser(int departmentId, string userId);
-		bool CanUserDeleteUser(int departmentId, string userId, string UserIdToDelete);
+		/// <summary>
+		/// Determines whether this instance [can user manage invite asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="inviteId">The invite identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserManageInviteAsync(string userId, int inviteId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view call asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="callId">The call identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewCallAsync(string userId, int callId);
+
+		/// <summary>
+		/// Determines whether this instance [can user edit call asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="callId">The call identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserEditCallAsync(string userId, int callId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view message asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="messageId">The message identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewMessageAsync(string userId, int messageId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view message] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="message">The message.</param>
+		/// <returns><c>true</c> if this instance [can user view message] the specified user identifier; otherwise, <c>false</c>.</returns>
 		bool CanUserViewMessage(string userId, Message message);
-		bool CanUserCreateCall(string userId, int departmentId);
-		bool CanUserViewPII(string userId, int departmentId);
-		bool CanUserCreateNote(string userId, int departmentId);
-		bool CanUserModifyCalendarEntry(string userId, int calendarItemId);
-		bool CanUserEditProfile(string userId, int departmentId, string editingProfileId);
-		bool CanUserModifyProtocol(string userId, int protocolId);
-		bool CanUserViewProtocol(string userId, int protocolId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view and edit call log asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="callLogId">The call log identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewAndEditCallLogAsync(string userId, int callLogId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view and edit work log asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="logId">The log identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewAndEditWorkLogAsync(string userId, int logId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view payment asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="paymentId">The payment identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewPaymentAsync(string userId, int paymentId);
+
+		/// <summary>
+		/// Determines whether this instance [can user edit department group asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentGroupId">The department group identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserEditDepartmentGroupAsync(string userId, int departmentGroupId);
+
+		/// <summary>
+		/// Determines whether this instance [can user edit role asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="personnelRoleId">The personnel role identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserEditRoleAsync(string userId, int personnelRoleId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view role asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="personnelRoleId">The personnel role identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewRoleAsync(string userId, int personnelRoleId);
+
+		/// <summary>
+		/// Determines whether [is user valid within limits asynchronous] [the specified user identifier].
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> IsUserValidWithinLimitsAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can user modify unit asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="unitId">The unit identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserModifyUnitAsync(string userId, int unitId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view unit asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="unitId">The unit identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewUnitAsync(string userId, int unitId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view user asynchronous] the specified viewer user identifier.
+		/// </summary>
+		/// <param name="viewerUserId">The viewer user identifier.</param>
+		/// <param name="targetUserId">The target user identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewUserAsync(string viewerUserId, string targetUserId);
+
+		/// <summary>
+		/// Determines whether this instance [can group admins add users asynchronous] the specified department identifier.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanGroupAdminsAddUsersAsync(int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can group admins remove users asynchronous] the specified department identifier.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanGroupAdminsRemoveUsersAsync(int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can user add new user asynchronous] the specified department identifier.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="userId">The user identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserAddNewUserAsync(int departmentId, string userId);
+
+		/// <summary>
+		/// Determines whether this instance [can user delete user asynchronous] the specified department identifier.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="userIdToDelete">The user identifier to delete.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserDeleteUserAsync(int departmentId, string userId, string userIdToDelete);
+
+		/// <summary>
+		/// Determines whether this instance [can user create call asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserCreateCallAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view pii asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewPIIAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can user create note asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserCreateNoteAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can user modify calendar entry asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="calendarItemId">The calendar item identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserModifyCalendarEntryAsync(string userId, int calendarItemId);
+
+		/// <summary>
+		/// Determines whether this instance [can user edit profile asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="editingProfileId">The editing profile identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserEditProfileAsync(string userId, int departmentId, string editingProfileId);
+
+		/// <summary>
+		/// Determines whether this instance [can user modify protocol asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="protocolId">The protocol identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserModifyProtocolAsync(string userId, int protocolId);
+
+		/// <summary>
+		/// Determines whether this instance [can user view protocol asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="protocolId">The protocol identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewProtocolAsync(string userId, int protocolId);
+
+		/// <summary>
+		/// Determines whether this instance [can user manage subscription asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserManageSubscriptionAsync(string userId, int departmentId);
 	}
 }

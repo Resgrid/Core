@@ -41,10 +41,19 @@ namespace Resgrid.Model
 		public virtual ICollection<CommandDefinitionRolePersonnelRole> RequiredRoles { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CommandDefinitionRoleId; }
 			set { CommandDefinitionRoleId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "CommandDefinitionRoles";
+
+		[NotMapped]
+		public string IdName => "CommandDefinitionRoleId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Command", "RequiredUnitTypes", "RequiredCerts", "RequiredRoles" };
 	}
 }

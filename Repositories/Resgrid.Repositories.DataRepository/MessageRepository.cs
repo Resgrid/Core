@@ -1,281 +1,345 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
+﻿using System;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using System.Configuration;
-using Dapper;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Messages;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class MessageRepository : RepositoryBase<Message>, IMessageRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public MessageRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public int GetUnreadMessageCount(string userId)
+		public MessageRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			var query = $@"SELECT COUNT(*) FROM Messages m LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId WHERE mr.UserId = @userId AND mr.IsDeleted = 0 AND m.IsDeleted = 0";
-
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var results = db.Query<int>(query, new { userId = userId });
-
-				return results.FirstOrDefault();
-			}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<int> GetUnreadMessageCountAsync(string userId)
 		{
-			var query = $@"SELECT COUNT(*) FROM Messages m LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId WHERE mr.UserId = @userId AND mr.IsDeleted = 0 AND m.IsDeleted = 0";
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var results = await db.QueryAsync<int>(query, new { userId = userId });
-
-				return results.FirstOrDefault();
-			}
-		}
-
-		public Message GetMessageById(int messageId)
-		{
-			Message message = null;
-			Dictionary<int, Message> lookup = new Dictionary<int, Message>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var query = @"SELECT m.*, mr.* FROM Messages m
-								LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId
-								WHERE m.MessageId = @messageId";
-
-				message = db.Query<Message, MessageRecipient, Message>(query, (m, mr) =>
+				var selectFunction = new Func<DbConnection, Task<int>>(async x =>
 				{
-					Message mess;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
 
-					if (!lookup.TryGetValue(m.MessageId, out mess))
+					var query = _queryFactory.GetQuery<SelectUnreadMessageCountQuery>();
+
+					var result = await x.QueryFirstOrDefaultAsync<int>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						lookup.Add(m.MessageId, m);
-						mess = m;
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
-
-					if (mess.MessageRecipients == null)
-						mess.MessageRecipients = new List<MessageRecipient>();
-
-					if (mr != null && !mess.MessageRecipients.Contains(mr))
-					{
-						mess.MessageRecipients.Add(mr);
-						mr.Message = mess;
-					}
-
-					return mess;
-
-				}, new { messageId = messageId }, splitOn: "MessageRecipientId").FirstOrDefault();
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			return lookup.Values.FirstOrDefault();
+				return 0;
+			}
 		}
 
 		public async Task<Message> GetMessageByIdAsync(int messageId)
 		{
-			Message message = null;
-			Dictionary<int, Message> lookup = new Dictionary<int, Message>();
+			//Message message = null;
+			//Dictionary<int, Message> lookup = new Dictionary<int, Message>();
 
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				var query = @"SELECT m.*, mr.* FROM Messages m
-								LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId
-								WHERE m.MessageId = @messageId";
+			//using (IDbConnection db = new SqlConnection(connectionString))
+			//{
+			//	var query = @"SELECT m.*, mr.* FROM Messages m
+			//					LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId
+			//					WHERE m.MessageId = @messageId";
 
-				var result = await db.QueryAsync<Message, MessageRecipient, Message>(query, (m, mr) =>
-				{
-					Message mess;
+			//	var result = await db.QueryAsync<Message, MessageRecipient, Message>(query, (m, mr) =>
+			//	{
+			//		Message mess;
 
-					if (!lookup.TryGetValue(m.MessageId, out mess))
-					{
-						lookup.Add(m.MessageId, m);
-						mess = m;
-					}
+			//		if (!lookup.TryGetValue(m.MessageId, out mess))
+			//		{
+			//			lookup.Add(m.MessageId, m);
+			//			mess = m;
+			//		}
 
-					if (mess.MessageRecipients == null)
-						mess.MessageRecipients = new List<MessageRecipient>();
+			//		if (mess.MessageRecipients == null)
+			//			mess.MessageRecipients = new List<MessageRecipient>();
 
-					if (mr != null && !mess.MessageRecipients.Contains(mr))
-					{
-						mess.MessageRecipients.Add(mr);
-						mr.Message = mess;
-					}
+			//		if (mr != null && !mess.MessageRecipients.Contains(mr))
+			//		{
+			//			mess.MessageRecipients.Add(mr);
+			//			mr.Message = mess;
+			//		}
 
-					return mess;
+			//		return mess;
 
-				}, new {messageId = messageId}, splitOn: "MessageRecipientId");
+			//	}, new {messageId = messageId}, splitOn: "MessageRecipientId");
 
-				message = result.FirstOrDefault();
-			}
+			//	message = result.FirstOrDefault();
+			//}
 
-			return lookup.Values.FirstOrDefault();
+			//return lookup.Values.FirstOrDefault();
+
+			return null;
 		}
 
-		public List<Message> GetInboxMessagesByUserId(string userId)
+		public async Task<Message> GetMessagesByMessageIdAsync(int messageId)
 		{
-			var messages = new List<Message>();
-			Dictionary<int, Message> lookup = new Dictionary<int, Message>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var query = @"SELECT m.*, mr.* FROM Messages m
-							LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId
-							WHERE mr.UserId = @userId AND mr.IsDeleted = 0 AND m.IsDeleted = 0";
-
-				messages = db.Query<Message, MessageRecipient, Message>(query, (m, mr) =>
+				var selectFunction = new Func<DbConnection, Task<Message>>(async x =>
 				{
-					Message mess;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("MessageId", messageId);
 
-					if (!lookup.TryGetValue(m.MessageId, out mess))
+					var query = _queryFactory.GetQuery<SelectMessageByIdQuery>();
+
+					var messageDictionary = new Dictionary<int, Message>();
+					var result = await x.QueryAsync<Message, MessageRecipient, Message>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: MessageRecipientsMapping(messageDictionary),
+						splitOn: "MessageRecipientId");
+
+					if (messageDictionary.Count > 0)
+						return messageDictionary.Select(y => y.Value).FirstOrDefault();
+
+					return result.FirstOrDefault();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						lookup.Add(m.MessageId, m);
-						mess = m;
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
-
-					if (mess.MessageRecipients == null)
-						mess.MessageRecipients = new List<MessageRecipient>();
-
-					if (mr != null && !mess.MessageRecipients.Contains(mr))
-					{
-						mess.MessageRecipients.Add(mr);
-						mr.Message = mess;
-					}
-
-					return mess;
-
-				}, new { userId = userId }, splitOn: "MessageRecipientId").ToList();
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			return lookup.Values.ToList();
+				return null;
+			}
 		}
 
-		public async Task<List<Message>> GetInboxMessagesByUserIdAsync(string userId)
+		public async Task<IEnumerable<Message>> GetInboxMessagesByUserIdAsync(string userId)
 		{
-			Dictionary<int, Message> lookup = new Dictionary<int, Message>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var query = @"SELECT m.*, mr.* FROM Messages m
-							LEFT OUTER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId
-							WHERE mr.UserId = @userId AND mr.IsDeleted = 0 AND m.IsDeleted = 0";
-
-				var result = await db.QueryAsync<Message, MessageRecipient, Message>(query, (m, mr) =>
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Message>>>(async x =>
 				{
-					Message mess;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
 
-					if (!lookup.TryGetValue(m.MessageId, out mess))
+					var query = _queryFactory.GetQuery<SelectInboxMessagesByUserQuery>();
+
+					var messageDictionary = new Dictionary<int, Message>();
+					var result = await x.QueryAsync<Message, MessageRecipient, Message>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: MessageRecipientsMapping(messageDictionary),
+						splitOn: "MessageRecipientId");
+
+					if (messageDictionary.Count > 0)
+						return messageDictionary.Select(y => y.Value);
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						lookup.Add(m.MessageId, m);
-						mess = m;
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
-
-					if (mess.MessageRecipients == null)
-						mess.MessageRecipients = new List<MessageRecipient>();
-
-					if (mr != null && !mess.MessageRecipients.Contains(mr))
-					{
-						mess.MessageRecipients.Add(mr);
-						mr.Message = mess;
-					}
-
-					return mess;
-
-				}, new { userId = userId }, splitOn: "MessageRecipientId");
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			return lookup.Values.ToList();
+				return null;
+			}
 		}
 
-		public List<Message> GetSentMessagesByUserId(string userId)
+		public async Task<IEnumerable<Message>> GetSentMessagesByUserIdAsync(string userId)
 		{
-			var messages = new List<Message>();
-			Dictionary<int, Message> lookup = new Dictionary<int, Message>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var query = @"SELECT m.*, mr.* FROM Messages m
-							INNER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId
-							WHERE m.IsDeleted = 0 
-							AND (m.SendingUserId = @userId AND m.ReceivingUserId = @userId) 
-							OR (m.SendingUserId = @userId AND m.ReceivingUserId IS null)";
-
-				messages = db.Query<Message, MessageRecipient, Message>(query, (m, mr) =>
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Message>>>(async x =>
 				{
-					Message mess;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
 
-					if (!lookup.TryGetValue(m.MessageId, out mess))
+					var query = _queryFactory.GetQuery<SelectSentMessagesByUserQuery>();
+
+					var messageDictionary = new Dictionary<int, Message>();
+					var result = await x.QueryAsync<Message, MessageRecipient, Message>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: MessageRecipientsMapping(messageDictionary),
+						splitOn: "MessageRecipientId");
+
+					if (messageDictionary.Count > 0)
+						return messageDictionary.Select(y => y.Value);
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						lookup.Add(m.MessageId, m);
-						mess = m;
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
-
-					if (mess.MessageRecipients == null)
-						mess.MessageRecipients = new List<MessageRecipient>();
-
-					if (mr != null && !mess.MessageRecipients.Contains(mr))
-					{
-						mess.MessageRecipients.Add(mr);
-						mr.Message = mess;
-					}
-
-					return mess;
-
-				}, new { userId = userId }, splitOn: "MessageRecipientId").ToList();
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			return lookup.Values.ToList();
+				return null;
+			}
 		}
 
-		public async Task<List<Message>> GetSentMessagesByUserIdAsync(string userId)
+		public async Task<IEnumerable<Message>> GetMessagesByUserSendRecIdAsync(string userId)
 		{
-			Dictionary<int, Message> lookup = new Dictionary<int, Message>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var query = @"SELECT m.*, mr.* FROM Messages m
-							INNER JOIN MessageRecipients mr ON m.MessageId = mr.MessageId
-							WHERE m.IsDeleted = 0 
-							AND (m.SendingUserId = @userId AND m.ReceivingUserId = @userId) 
-							OR (m.SendingUserId = @userId AND m.ReceivingUserId IS null)";
-
-				var result = await db.QueryAsync<Message, MessageRecipient, Message>(query, (m, mr) =>
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Message>>>(async x =>
 				{
-					Message mess;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
 
-					if (!lookup.TryGetValue(m.MessageId, out mess))
+					var query = _queryFactory.GetQuery<SelectMessagesByUserQuery>();
+
+					var messageDictionary = new Dictionary<int, Message>();
+					var result = await x.QueryAsync<Message, MessageRecipient, Message>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: MessageRecipientsMapping(messageDictionary),
+						splitOn: "MessageRecipientId");
+
+					if (messageDictionary.Count > 0)
+						return messageDictionary.Select(y => y.Value);
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
 					{
-						lookup.Add(m.MessageId, m);
-						mess = m;
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
 					}
-
-					if (mess.MessageRecipients == null)
-						mess.MessageRecipients = new List<MessageRecipient>();
-
-					if (mr != null && !mess.MessageRecipients.Contains(mr))
-					{
-						mess.MessageRecipients.Add(mr);
-						mr.Message = mess;
-					}
-
-					return mess;
-
-				}, new { userId = userId }, splitOn: "MessageRecipientId");
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			return lookup.Values.ToList();
+				return null;
+			}
+		}
+
+		private static Func<Message, MessageRecipient, Message> MessageRecipientsMapping(Dictionary<int, Message> dictionary)
+		{
+			return new Func<Message, MessageRecipient, Message>((message, messageRecipient) =>
+			{
+				var dictionaryMessage = default(Message);
+
+				if (messageRecipient != null)
+				{
+					if (dictionary.TryGetValue(message.MessageId, out dictionaryMessage))
+					{
+						if (dictionaryMessage.MessageRecipients.All(x => x.MessageRecipientId != messageRecipient.MessageRecipientId))
+							dictionaryMessage.MessageRecipients.Add(messageRecipient);
+					}
+					else
+					{
+						if (message.MessageRecipients == null)
+							message.MessageRecipients = new List<MessageRecipient>();
+
+						message.MessageRecipients.Add(messageRecipient);
+						dictionary.Add(message.MessageId, message);
+
+						dictionaryMessage = message;
+					}
+				}
+				else
+				{
+					message.MessageRecipients = new List<MessageRecipient>();
+					dictionaryMessage = message;
+					dictionary.Add(message.MessageId, message);
+				}
+
+				return dictionaryMessage;
+			});
 		}
 	}
 }

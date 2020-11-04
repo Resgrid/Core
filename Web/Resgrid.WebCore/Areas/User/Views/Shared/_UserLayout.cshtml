@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
     <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
     <link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" />
     <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
     <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
@@ -41,6 +42,7 @@
     <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
     <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
     <link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
     <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
     <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
@@ -104,13 +106,14 @@
     <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/clib/signalr/jquery.signalR-2.2.0.js"></script>
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/clib/picEdit/js/picedit.min.js"></script>
     <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
     <script src="~/lib/quill/quill.min.js"></script>
     <script src="~/lib/moment/moment.min.js"></script>
     <script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
+    <script src="~/lib/leaflet/leaflet.js"></script>
     <script src="~/js/site.min.js"></script>
   </environment>
   <environment names="Staging,Production">
@@ -125,7 +128,7 @@
     <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
     <script src="~/clib/ujs/jquery-ujs.js"></script>
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script src="~/clib/signalr/jquery.signalR-2.2.0.min.js"></script>
+	<script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/clib/picEdit/js/picedit.min.js"></script>
     <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
@@ -134,11 +137,9 @@
     <script src="~/lib/moment/moment.min.js"></script>
     <script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/leaflet/leaflet.min.js"></script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
   </environment>
-
-  <!-- Signalr Hubs -->
-  <script src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/signalr/hubs"></script>
 
   <script src="~/js/app/resgrid.js"></script>
   <script src="~/js/app/internal/resgrid.user.js"></script>
@@ -149,7 +150,7 @@
 	var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
 	var userId = '@(ClaimsAuthorizationHelper.GetUserId())';
 
-	resgrid.absoluteBaseUrl = "";
+	resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
 	resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
   </script>
 

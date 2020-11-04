@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,10 +27,19 @@ namespace Resgrid.Model
 		public virtual ScheduledTask ScheduledTask { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ScheduledTaskLogId; }
 			set { ScheduledTaskLogId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ScheduledTaskLogs";
+
+		[NotMapped]
+		public string IdName => "ScheduledTaskLogId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ScheduledTask" };
 	}
 }

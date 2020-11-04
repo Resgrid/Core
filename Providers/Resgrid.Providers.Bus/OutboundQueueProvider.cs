@@ -1,5 +1,4 @@
-﻿using Microsoft.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
+﻿using Microsoft.Azure.ServiceBus;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model.Providers;
@@ -28,13 +27,10 @@ namespace Resgrid.Providers.Bus
 			VerifyAndCreateClients();
 		}
 
-		public void EnqueueCall(CallQueueItem callQueue)
+		public async Task<bool> EnqueueCall(CallQueueItem callQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitOutboundQueueProvider.EnqueueCall(callQueue);
-				return;
-			}
+				return _rabbitOutboundQueueProvider.EnqueueCall(callQueue);
 
 			VerifyAndCreateClients();
 			string serializedObject = String.Empty;
@@ -60,20 +56,17 @@ namespace Resgrid.Providers.Bus
 				serializedObject = ObjectSerialization.Serialize(callQueue);
 			}
 
-			BrokeredMessage message = new BrokeredMessage(serializedObject);
+			Message message = new Message(Encoding.UTF8.GetBytes(serializedObject));
 			message.MessageId = string.Format("{0}|{1}", callQueue.Call.CallId, callQueue.Call.DispatchCount);
 
-			SendMessage(_callClient, message);
-
+			return await SendMessage(_callClient, message);
 		}
 
-		public void EnqueueMessage(MessageQueueItem messageQueue)
+		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitOutboundQueueProvider.EnqueueMessage(messageQueue);
-				return;
-			}
+				return _rabbitOutboundQueueProvider.EnqueueMessage(messageQueue);
+
 
 			VerifyAndCreateClients();
 			string serializedObject = String.Empty;
@@ -109,19 +102,17 @@ namespace Resgrid.Providers.Bus
 				serializedObject = ObjectSerialization.Serialize(messageQueue);
 			}
 
-			BrokeredMessage message = new BrokeredMessage(serializedObject);
+			Message message = new Message(Encoding.UTF8.GetBytes(serializedObject));
 			message.MessageId = string.Format("{0}|{1}", messageQueue.Message.MessageId, messageQueue.Message.ReceivingUserId);
 
-			SendMessage(_messageClient, message);
+			return await SendMessage(_messageClient, message);
 		}
 
-		public void EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
+		public async Task<bool> EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitOutboundQueueProvider.EnqueueDistributionList(distributionListQueue);
-				return;
-			}
+				return _rabbitOutboundQueueProvider.EnqueueDistributionList(distributionListQueue);
+
 
 			VerifyAndCreateClients();
 			string serializedObject = String.Empty;
@@ -155,94 +146,85 @@ namespace Resgrid.Providers.Bus
 				serializedObject = ObjectSerialization.Serialize(distributionListQueue);
 			}
 
-			BrokeredMessage message = new BrokeredMessage(serializedObject);
+			Message message = new Message(Encoding.UTF8.GetBytes(serializedObject));
 			message.MessageId = string.Format("{0}|{1}", distributionListQueue.Message.MessageID, distributionListQueue.List.DistributionListId);
 
-			SendMessage(_distributionListClient, message);
+			return await SendMessage(_distributionListClient, message);
 		}
 
-		public void EnqueueNotification(NotificationItem notificationQueue)
+		public async Task<bool> EnqueueNotification(NotificationItem notificationQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitOutboundQueueProvider.EnqueueNotification(notificationQueue);
-				return;
-			}
+				return _rabbitOutboundQueueProvider.EnqueueNotification(notificationQueue);
 
 			VerifyAndCreateClients();
 
-			BrokeredMessage message = new BrokeredMessage(ObjectSerialization.Serialize(notificationQueue));
+			Message message = new Message(Encoding.UTF8.GetBytes(ObjectSerialization.Serialize(notificationQueue)));
 			message.MessageId = string.Format("{0}", notificationQueue.GetHashCode());
 
-			SendMessage(_notificationClient, message);
+			return await SendMessage(_notificationClient, message);
 		}
 
-		public void EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
+		public async Task<bool> EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
-				return;
-			}
+				return _rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
 
 			VerifyAndCreateClients();
 
-			BrokeredMessage message = new BrokeredMessage(ObjectSerialization.Serialize(shiftQueueItem));
+			Message message = new Message(Encoding.UTF8.GetBytes(ObjectSerialization.Serialize(shiftQueueItem)));
 			message.MessageId = Guid.NewGuid().ToString();
 
-			SendMessage(_shiftsClient, message);
+			return await SendMessage(_shiftsClient, message);
 		}
 
-		private void SendMessage(QueueClient client, BrokeredMessage message)
+		private async Task<bool> SendMessage(QueueClient client, Message message)
 		{
 			if (client != null)
 			{
-#pragma warning disable 4014
-				Task.Run(() =>
+				int retry = 0;
+				bool sent = false;
+
+				while (!sent)
 				{
-					int retry = 0;
-					bool sent = false;
-
-					while (!sent)
+					try
 					{
-						try
-						{
-							client.Send(message);
-							sent = true;
-						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex, message.ToString());
-
-							if (retry >= 5)
-								return false;
-
-							Thread.Sleep(1000);
-							retry++;
-						}
+						await client.SendAsync(message);
+						sent = true;
 					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, message.ToString());
 
-					return sent;
-				}).ConfigureAwait(false);
-#pragma warning restore 4014
+						if (retry >= 5)
+							return false;
+
+						Thread.Sleep(1000);
+						retry++;
+					}
+				}
+
+				return sent;
 			}
+
+			return false;
 		}
 
 		private void VerifyAndCreateClients()
 		{
 			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueConnectionString))
 			{
-				while (_callClient == null || _callClient.IsClosed)
+				while (_callClient == null || _callClient.IsClosedOrClosing)
 				{
 					try
 					{
 						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueConnectionString)
 						{
-							OperationTimeout = TimeSpan.FromMinutes(5)
+							OperationTimeout = TimeSpan.FromMinutes(5),
+							EntityPath = Config.ServiceBusConfig.CallBroadcastQueueName
 						};
 
-						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-						_callClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.CallBroadcastQueueName);
+						_callClient = new QueueClient(builder);
 					}
 					catch (TimeoutException) { }
 				}
@@ -250,17 +232,17 @@ namespace Resgrid.Providers.Bus
 
 			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueMessageConnectionString))
 			{
-				while (_messageClient == null || _messageClient.IsClosed)
+				while (_messageClient == null || _messageClient.IsClosedOrClosing)
 				{
 					try
 					{
 						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueMessageConnectionString)
 						{
-							OperationTimeout = TimeSpan.FromMinutes(5)
+							OperationTimeout = TimeSpan.FromMinutes(5),
+							EntityPath = Config.ServiceBusConfig.MessageBroadcastQueueName
 						};
 
-						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-						_messageClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.MessageBroadcastQueueName);
+						_messageClient = new QueueClient(builder);
 					}
 					catch (TimeoutException) { }
 				}
@@ -269,17 +251,17 @@ namespace Resgrid.Providers.Bus
 
 			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueNotificationConnectionString))
 			{
-				while (_notificationClient == null || _notificationClient.IsClosed)
+				while (_notificationClient == null || _notificationClient.IsClosedOrClosing)
 				{
 					try
 					{
 						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueNotificationConnectionString)
 						{
-							OperationTimeout = TimeSpan.FromMinutes(5)
+							OperationTimeout = TimeSpan.FromMinutes(5),
+							EntityPath = Config.ServiceBusConfig.NotificaitonBroadcastQueueName
 						};
 
-						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-						_notificationClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.NotificaitonBroadcastQueueName);
+						_notificationClient = new QueueClient(builder);
 					}
 					catch (TimeoutException) { }
 				}
@@ -287,17 +269,17 @@ namespace Resgrid.Providers.Bus
 
 			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueShiftsConnectionString))
 			{
-				while (_shiftsClient == null || _shiftsClient.IsClosed)
+				while (_shiftsClient == null || _shiftsClient.IsClosedOrClosing)
 				{
 					try
 					{
 						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueShiftsConnectionString)
 						{
-							OperationTimeout = TimeSpan.FromMinutes(5)
+							OperationTimeout = TimeSpan.FromMinutes(5),
+							EntityPath = Config.ServiceBusConfig.ShiftNotificationsQueueName
 						};
 
-						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-						_shiftsClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.ShiftNotificationsQueueName);
+						_shiftsClient = new QueueClient(builder);
 					}
 					catch (TimeoutException) { }
 				}
@@ -305,17 +287,17 @@ namespace Resgrid.Providers.Bus
 
 			if (!String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureQueueEmailConnectionString))
 			{
-				while (_distributionListClient == null || _distributionListClient.IsClosed)
+				while (_distributionListClient == null || _distributionListClient.IsClosedOrClosing)
 				{
 					try
 					{
 						var builder = new ServiceBusConnectionStringBuilder(Config.ServiceBusConfig.AzureQueueEmailConnectionString)
 						{
-							OperationTimeout = TimeSpan.FromMinutes(5)
+							OperationTimeout = TimeSpan.FromMinutes(5),
+							EntityPath = Config.ServiceBusConfig.EmailBroadcastQueueName
 						};
 
-						var messagingFactory = MessagingFactory.CreateFromConnectionString(builder.ToString());
-						_distributionListClient = messagingFactory.CreateQueueClient(Config.ServiceBusConfig.EmailBroadcastQueueName);
+						_distributionListClient = new QueueClient(builder);
 					}
 					catch (TimeoutException) { }
 				}

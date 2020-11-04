@@ -1,4 +1,6 @@
-﻿using Resgrid.Model;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Resgrid.Model;
 using Resgrid.Model.Services;
 using Stripe;
 using Stripe.Checkout;
@@ -15,32 +17,35 @@ namespace Resgrid.Services
 		}
 		#endregion Private Methods and Constructors
 
-		public PaymentProviderEvent SaveEvent(PaymentProviderEvent providerEvent)
+		public async Task<PaymentProviderEvent> SaveEventAsync(PaymentProviderEvent providerEvent,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return null;
 		}
 
-		public Payment ProcessStripePayment(Charge charge)
+		public async Task<Payment> ProcessStripePaymentAsync(Charge charge)
 		{
 			return null;
 		}
 
-		public Payment ProcessStripeSubscriptionUpdate(Subscription stripeSubscription)
+		public async Task<Payment> ProcessStripeSubscriptionUpdateAsync(Subscription stripeSubscription,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return null;
 		}
 
-		public Payment ProcessStripeSubscriptionCancellation(Subscription stripeSubscription)
+		public async Task<Payment> ProcessStripeSubscriptionCancellationAsync(Subscription stripeSubscription,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{		
 			return null;
 		}
 
-		public Payment ProcessStripeSubscriptionRefund(Charge stripeCharge)
+		public async Task<Payment> ProcessStripeSubscriptionRefundAsync(Charge stripeCharge)
 		{
 			return null;
 		}
 
-		public Payment ProcessStripeChargeFailed(Charge stripeCharge)
+		public async Task<Payment> ProcessStripeChargeFailedAsync(Charge stripeCharge)
 		{
 			return null;
 		}
@@ -55,7 +60,8 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public Payment ProcessStripeCheckoutCompleted(Session session)
+		public async Task<Payment> ProcessStripeCheckoutCompletedAsync(Session session,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return null;
 		}
@@ -71,6 +77,12 @@ namespace Resgrid.Services
 		}
 
 		public Invoice ChangeActiveSubscription(string stripeCustomerId, string stripePlanId)
+		{
+			return null;
+		}
+
+		public async Task<Customer> ProcessStripeCheckoutUpdateAsync(Session session,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return null;
 		}

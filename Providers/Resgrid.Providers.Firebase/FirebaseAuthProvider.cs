@@ -44,7 +44,10 @@ namespace Resgrid.Providers.Firebase
 					options.ServiceAccountId = FirebaseConfig.ResponderProjectEmail;
 					options.Credential = GoogleCredential.FromJson(FirebaseConfig.ResponderJsonFile);
 
-					_responderFirebaseApp = FirebaseApp.Create(options, _appName);
+					_responderFirebaseApp = FirebaseApp.GetInstance(_appName);
+
+					//if (_responderFirebaseApp == null)
+					//	_responderFirebaseApp = FirebaseApp.Create(options, _appName);
 				}
 				catch (System.ArgumentException aex)
 				{

@@ -2,7 +2,10 @@
 
 namespace Resgrid.Model.Repositories
 {
-	public interface IDepartmentNotificationRepository : IRepository<DepartmentNotification>
+	/// <summary>
+	/// Interface IDepartmentNotificationRepository
+	/// </summary>
+	public interface IDepartmentNotificationRepository: IRepository<DepartmentNotification>
 	{
 		List<DepartmentNotification> GetNotificationsByDepartment(int departmentId);
 	}

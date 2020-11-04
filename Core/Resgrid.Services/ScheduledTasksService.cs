@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
@@ -30,47 +32,47 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 		}
 
-		public List<ScheduledTask> GetScheduledStaffingTasksForUser(string userId)
+		public async Task<List<ScheduledTask>> GetScheduledStaffingTasksForUserAsync(string userId)
 		{
-			return (from st in GetAllScheduledTasks()
+			return (from st in await GetAllScheduledTasksAsync()
 							where st.UserId == userId && st.TaskType == (int)TaskTypes.UserStaffingLevel
 							select st).ToList();
 		}
 
-		public List<ScheduledTask> GetScheduledReportingTasksForUser(string userId)
+		public async Task<List<ScheduledTask>> GetScheduledReportingTasksForUserAsync(string userId)
 		{
-			return (from st in GetAllScheduledTasks()
+			return (from st in await GetAllScheduledTasksAsync()
 							where st.UserId == userId && st.TaskType == (int)TaskTypes.ReportDelivery
 							select st).ToList();
 		}
 
-		public ScheduledTask SaveScheduledTask(ScheduledTask scheduledTask)
+		public async Task<ScheduledTask> SaveScheduledTaskAsync(ScheduledTask scheduledTask, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_scheduledTaskRepository.SaveOrUpdate(scheduledTask);
+			var saved = await _scheduledTaskRepository.SaveOrUpdateAsync(scheduledTask, cancellationToken);
 
 			InvalidateScheduledTasksCache();
 
-			return scheduledTask;
+			return saved;
 		}
 
-		public ScheduledTask GetScheduledTaskById(int scheduledTaskId)
+		public async Task<ScheduledTask> GetScheduledTaskByIdAsync(int scheduledTaskId)
 		{
-			return _scheduledTaskRepository.GetAll().FirstOrDefault(x => x.ScheduledTaskId == scheduledTaskId);
+			return await _scheduledTaskRepository.GetByIdAsync(scheduledTaskId);
 		}
 
-		public List<ScheduledTask> GetScheduledTasksByUserType(string userId, int taskType)
+		public async Task<List<ScheduledTask>> GetScheduledTasksByUserTypeAsync(string userId, int taskType)
 		{
-			return (from st in GetAllScheduledTasks()
+			return (from st in await GetAllScheduledTasksAsync()
 							where st.UserId == userId && st.TaskType == taskType
 							select st).ToList();
 		}
 
-		public void DeleteDepartmentStaffingResetJob(int departmentId)
+		public async Task<bool> DeleteDepartmentStaffingResetJobAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			// TODO: Possible bug here, if they change the managing user after setting up a job, it will miss here
-			var tasks = (from st in _scheduledTaskRepository.GetAll()
+			var tasks = (from st in await _scheduledTaskRepository.GetAllAsync()
 						 where st.DepartmentId == departmentId && st.TaskType == (int)TaskTypes.DepartmentStaffingReset
 					select st).ToList();
 
@@ -78,10 +80,10 @@ namespace Resgrid.Services
 
 			foreach (var task in tasks)
 			{
-				_scheduledTaskRepository.DeleteOnSubmit(task);
+				await _scheduledTaskRepository.DeleteAsync(task, cancellationToken);
 			}
 
-			var tasks2 = (from st in _scheduledTaskRepository.GetAll()
+			var tasks2 = (from st in await _scheduledTaskRepository.GetAllAsync()
 						  where st.UserId == department.ManagingUserId && st.TaskType == (int)TaskTypes.DepartmentStaffingReset
 						 select st).ToList();
 
@@ -89,22 +91,23 @@ namespace Resgrid.Services
 
 			foreach (var task in tasks2)
 			{
-				_scheduledTaskRepository.DeleteOnSubmit(task);
+				await _scheduledTaskRepository.DeleteAsync(task, cancellationToken);
 			}
 
-
 			InvalidateScheduledTasksCache();
+
+			return true;
 		}
 
-		public void DeleteDepartmentStatusResetJob(int departmentId)
+		public async Task<bool> DeleteDepartmentStatusResetJob(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			// TODO: Possible bug here, if they change the managing user after setting up a job, it will miss here
 			//var tasks = GetScheduledTasksByUserType(department.ManagingUserId, (int)TaskTypes.DepartmentStatusReset);
 
 			// TODO: Possible bug here, if they change the managing user after setting up a job, it will miss here
-			var tasks = (from st in _scheduledTaskRepository.GetAll()
+			var tasks = (from st in await _scheduledTaskRepository.GetAllAsync()
 						 where st.DepartmentId == departmentId && st.TaskType == (int)TaskTypes.DepartmentStatusReset
 						 select st).ToList();
 
@@ -112,10 +115,10 @@ namespace Resgrid.Services
 
 			foreach (var task in tasks)
 			{
-				_scheduledTaskRepository.DeleteOnSubmit(task);
+				await _scheduledTaskRepository.DeleteAsync(task, cancellationToken);
 			}
 
-			var tasks2 = (from st in _scheduledTaskRepository.GetAll()
+			var tasks2 = (from st in await _scheduledTaskRepository.GetAllAsync()
 						  where st.UserId == department.ManagingUserId && st.TaskType == (int)TaskTypes.DepartmentStatusReset
 						  select st).ToList();
 
@@ -123,43 +126,52 @@ namespace Resgrid.Services
 
 			foreach (var task in tasks2)
 			{
-				_scheduledTaskRepository.DeleteOnSubmit(task);
+				await _scheduledTaskRepository.DeleteAsync(task, cancellationToken);
 			}
 
 			InvalidateScheduledTasksCache();
+
+			return true;
 		}
 
-		public void DisabledScheduledTaskById(int scheduledTaskId)
+		public async Task<ScheduledTask> DisabledScheduledTaskByIdAsync(int scheduledTaskId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var scheduledTask = GetScheduledTaskById(scheduledTaskId);
+			var scheduledTask = await GetScheduledTaskByIdAsync(scheduledTaskId);
 
 			if (scheduledTask != null)
 			{
 				scheduledTask.Active = false;
-				SaveScheduledTask(scheduledTask);
+				return await SaveScheduledTaskAsync(scheduledTask, cancellationToken);
 			}
+
+			return null;
 		}
 
-		public void EnableScheduledTaskById(int scheduledTaskId)
+		public async Task<ScheduledTask> EnableScheduledTaskByIdAsync(int scheduledTaskId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var scheduledTask = GetScheduledTaskById(scheduledTaskId);
+			var scheduledTask = await GetScheduledTaskByIdAsync(scheduledTaskId);
 
 			if (scheduledTask != null)
 			{
 				scheduledTask.Active = true;
-				SaveScheduledTask(scheduledTask);
+				return await SaveScheduledTaskAsync(scheduledTask, cancellationToken);
 			}
+
+			return null;
 		}
 
-		public void DeleteScheduledTask(int scheduledTaskId)
+		public async Task<bool> DeleteScheduledTask(int scheduledTaskId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var scheduledTask = GetScheduledTaskById(scheduledTaskId);
+			var scheduledTask = await GetScheduledTaskByIdAsync(scheduledTaskId);
 
 			if (scheduledTask != null)
 			{
-				_scheduledTaskRepository.DeleteOnSubmit(scheduledTask);
+				var result = await _scheduledTaskRepository.DeleteAsync(scheduledTask, cancellationToken);
 				InvalidateScheduledTasksCache();
+				return result;
 			}
+
+			return false;
 		}
 
 		public void InvalidateScheduledTasksCache()
@@ -167,37 +179,38 @@ namespace Resgrid.Services
 			_cacheProvider.Remove(CacheKey);
 		}
 
-		public List<ScheduledTask> GetAllScheduledTasks(bool bypassCache = false)
+		public async Task<List<ScheduledTask>> GetAllScheduledTasksAsync(bool bypassCache = false)
 		{
-			Func<List<ScheduledTask>> getAllScheduledTasks = delegate ()
+			async Task<List<ScheduledTask>> getAllScheduledTasks()
 			{
-				return _scheduledTaskRepository.GetAllTasks();
-			};
+				var items = await _scheduledTaskRepository.GetAllAsync();
+				return items.ToList();
+			}
 
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
-				return _cacheProvider.Retrieve<List<ScheduledTask>>(CacheKey, getAllScheduledTasks, CacheLength);
+				return await _cacheProvider.RetrieveAsync<List<ScheduledTask>>(CacheKey, getAllScheduledTasks, CacheLength);
 			else
-				return getAllScheduledTasks();
+				return await getAllScheduledTasks();
 		}
 
-		public List<ScheduledTask> GetAllUpcomingStaffingScheduledTaks()
+		public async Task<List<ScheduledTask>> GetAllUpcomingStaffingScheduledTasksAsync()
 		{
 			//var tasks = (from st in GetAllScheduledTasks()
 			//						 where st.Active == true && (st.TaskType == (int)TaskTypes.DepartmentStaffingReset || st.TaskType == (int)TaskTypes.UserStaffingLevel)
 			//						 select st).ToList();
 
-			var tasks = _scheduledTaskRepository.GetAllActiveTasksForTypes(new[] { (int)TaskTypes.DepartmentStaffingReset, (int)TaskTypes.UserStaffingLevel }.ToList());
+			var tasks = await _scheduledTaskRepository.GetAllActiveTasksForTypesAsync(new[] { (int)TaskTypes.DepartmentStaffingReset, (int)TaskTypes.UserStaffingLevel }.ToList());
 
-			return GetUpcomingScheduledTaks(DateTime.UtcNow, tasks);
+			return await GetUpcomingScheduledTasksAsync(DateTime.UtcNow, tasks.ToList());
 		}
 
-		public List<ScheduledTask> GetUpcomingScheduledTaks()
+		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksAsync()
 		{
-			return GetUpcomingScheduledTaks(DateTime.UtcNow, null);
+			return await GetUpcomingScheduledTasksAsync(DateTime.UtcNow, null);
 		}
 
-		public List<ScheduledTask> GetUpcomingScheduledTaks(DateTime currentTime, List<ScheduledTask> tasks)
+		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksAsync(DateTime currentTime, List<ScheduledTask> tasks)
 		{
 			//Logging.LogTrace("ScheduledTasksService: Entering GetUpcomingScheduledTaks");
 
@@ -205,12 +218,12 @@ namespace Resgrid.Services
 
 			if (tasks == null || !tasks.Any())
 			{
-				tasks = (from st in GetAllScheduledTasks()
+				tasks = (from st in await GetAllScheduledTasksAsync()
 								 where st.Active == true
 								 select st).ToList();
 			}
 
-			var logs = _scheduledTaskLogRepository.GetAllLogForDate(DateTime.UtcNow);
+			var logs = await _scheduledTaskLogRepository.GetAllLogForDateAsync(DateTime.UtcNow);
 
 			//Logging.LogTrace(string.Format("ScheduledTasksService: Analyzing {0} active tasks.", tasks.Count));
 
@@ -302,20 +315,20 @@ namespace Resgrid.Services
 			return upcomingTasks;
 		}
 
-		public List<ScheduledTask> GetUpcomingScheduledTasksByUserId(string userId)
+		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksByUserIdAsync(string userId)
 		{
 			var upcomingTasks = new List<ScheduledTask>();
 
-			var tasks = (from st in GetAllScheduledTasks()
+			var tasks = (from st in await GetAllScheduledTasksAsync()
 									 where st.Active == true && st.UserId == userId
 									 select st).ToList();
 
-			var department = _departmentsService.GetDepartmentByUserId(userId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var runDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
 
 			foreach (var scheduledTask in tasks)
 			{
-				var log = _scheduledTaskLogRepository.GetLogForTaskAndDate(scheduledTask.ScheduledTaskId, DateTime.UtcNow);
+				var log = await _scheduledTaskLogRepository.GetLogForTaskAndDateAsync(scheduledTask.ScheduledTaskId, DateTime.UtcNow);
 
 				var runTime = scheduledTask.WhenShouldJobBeRun(runDate);
 
@@ -344,26 +357,26 @@ namespace Resgrid.Services
 			return upcomingTasks;
 		}
 
-		public List<ScheduledTask> GetUpcomingScheduledTasksByUserIdTaskType(string userId, TaskTypes? type)
+		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksByUserIdTaskTypeAsync(string userId, TaskTypes? type)
 		{
 			var upcomingTasks = new List<ScheduledTask>();
 			var tasks = new List<ScheduledTask>();
 
 			if (type == null)
-				tasks = (from st in GetAllScheduledTasks()
+				tasks = (from st in await GetAllScheduledTasksAsync()
 								 where st.Active == true && st.UserId == userId
 								 select st).ToList();
 			else
-				tasks = (from st in GetAllScheduledTasks()
+				tasks = (from st in await GetAllScheduledTasksAsync()
 								 where st.Active == true && st.UserId == userId && st.TaskType == (int)type.Value
 								 select st).ToList();
 
-			var department = _departmentsService.GetDepartmentByUserId(userId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var runDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
 
 			foreach (var scheduledTask in tasks)
 			{
-				var log = _scheduledTaskLogRepository.GetLogForTaskAndDate(scheduledTask.ScheduledTaskId, DateTime.UtcNow);
+				var log = await _scheduledTaskLogRepository.GetLogForTaskAndDateAsync(scheduledTask.ScheduledTaskId, DateTime.UtcNow);
 
 				var runTime = scheduledTask.WhenShouldJobBeRun(runDate);
 
@@ -392,14 +405,14 @@ namespace Resgrid.Services
 			return upcomingTasks;
 		}
 
-		public void CreateScheduleTaskLog(ScheduledTask task)
+		public async Task<ScheduledTaskLog> CreateScheduleTaskLogAsync(ScheduledTask task, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var log = new ScheduledTaskLog();
 			log.RunDate = DateTime.UtcNow;
 			log.Successful = true;
 			log.ScheduledTaskId = task.ScheduledTaskId;
 
-			_scheduledTaskLogRepository.SaveOrUpdate(log);
+			return await _scheduledTaskLogRepository.SaveOrUpdateAsync(log, cancellationToken);
 		}
 	}
 }

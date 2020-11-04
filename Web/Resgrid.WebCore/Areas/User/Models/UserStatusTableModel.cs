@@ -21,6 +21,10 @@ namespace Resgrid.Web.Areas.User.Models
 		public CustomState States { get; set; }
 		public CustomState StaffingLevels { get; set; }
 
+
+		public List<UserStatusGroup> UserStatusGroups {get;set;}
+
+
 		public UserStatusTableModel()
 		{
 			DepartmentGroups = new List<DepartmentGroup>();
@@ -29,6 +33,32 @@ namespace Resgrid.Web.Areas.User.Models
 			LastUserActionlogs = new List<ActionLog>();
 			Names = new Dictionary<string, string>();
 			Roles = new Dictionary<string, string>();
+
+			UserStatusGroups = new List<UserStatusGroup>();
 		}
+	}
+
+	public class UserStatusGroup
+	{
+		public DepartmentGroup Group { get; set; }
+
+		public List<UserStatusGroup> ChildGroups { get; set; }
+
+		public List<UserStatus> UserStatuses { get; set; }
+
+		public UserStatusGroup()
+		{
+			ChildGroups = new List<UserStatusGroup>();
+			UserStatuses = new List<UserStatus>();
+		}
+	}
+
+	public class UserStatus
+	{
+		public int Weight { get; set; }
+		public UserGroupRole UserInfo {get; set; }
+		public ActionLog CurrentStatus { get; set; }
+		public UserState CurrentStaffing { get; set; }
+		public string Eta { get; set; }
 	}
 }

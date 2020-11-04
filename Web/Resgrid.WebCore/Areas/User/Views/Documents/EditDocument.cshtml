@@ -41,7 +41,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<form class="form-horizontal" role="form" asp-controller="Documents" asp-action="NewDocument" asp-route-area="User" method="post">
+					<form class="form-horizontal" role="form" asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" method="post">
 
 						<div class="row">
 							<div class="col-md-8 col-md-offset-1">
@@ -77,11 +77,7 @@
 									Viewable By
 								</label>
 								<div class="col-sm-10">
-									@Html.DropDownListFor(x => x.AdminOnly, new[]
-																				{
-																						new SelectListItem {Selected = true, Text = "Everyone", Value = Boolean.FalseString},
-																						new SelectListItem {Selected = false, Text = "Admins Only", Value = Boolean.TrueString}
-																				})
+									@Html.DropDownListFor(x => x.AdminOnly, new[] { new SelectListItem {Selected = true, Text = "Everyone", Value = Boolean.FalseString}, new SelectListItem {Selected = false, Text = "Admins Only", Value = Boolean.TrueString} })
 								</div>
 							</div>
 						}

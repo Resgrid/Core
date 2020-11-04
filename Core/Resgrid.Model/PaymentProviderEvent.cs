@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,10 +30,19 @@ namespace Resgrid.Model
 		public bool? Processed { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PaymentProviderEventId; }
 			set { PaymentProviderEventId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "PaymentProviderEvents";
+
+		[NotMapped]
+		public string IdName => "PaymentProviderEventId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

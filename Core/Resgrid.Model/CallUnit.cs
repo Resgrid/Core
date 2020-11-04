@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -42,10 +43,19 @@ namespace Resgrid.Model
 		public virtual UnitState UnitState { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CallUnitId; }
 			set { CallUnitId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "CallUnits";
+
+		[NotMapped]
+		public string IdName => "CallUnitId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Unit", "UnitState" };
 	}
 }

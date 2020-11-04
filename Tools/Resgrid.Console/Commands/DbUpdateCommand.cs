@@ -1,11 +1,8 @@
-using Consolas.Core;
 using Resgrid.Console.Args;
-using Resgrid.Repositories.DataRepository.Migrations;
 using System;
 using System.Configuration;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
+using Consolas2.Core;
 
 namespace Resgrid.Console.Commands
 {
@@ -27,9 +24,9 @@ namespace Resgrid.Console.Commands
 
 			try
 			{
-				Database.SetInitializer(new MigrateDatabaseToLatestVersion<Repositories.DataRepository.Contexts.DataContext, Repositories.DataRepository.Migrations.Configuration>());
-				var migrator = new DbMigrator(new Repositories.DataRepository.Migrations.Configuration());
-				migrator.Update();
+				//Database.SetInitializer(new MigrateDatabaseToLatestVersion<Repositories.DataRepository.Contexts.DataContext, Repositories.DataRepository.Migrations.Configuration>());
+				//var migrator = new DbMigrator(new Repositories.DataRepository.Migrations.Configuration());
+				//migrator.Update();
 
 				_console.WriteLine("Completed updating the Resgrid Database!");
 			}

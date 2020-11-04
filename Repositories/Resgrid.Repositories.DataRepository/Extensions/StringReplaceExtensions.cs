@@ -7,25 +7,28 @@ namespace Resgrid.Repositories.DataRepository.Extensions
 {
 	public static class StringReplaceExtensions
 	{
-		public static string ReplaceInsertQueryParameters(this string query, string schemaName, string tableName, string columns, string values)
+		public static string ReplaceInsertQueryParameters(this string query, string schemaName, string tableName, string returnIdCmd, string columns, string values)
 		{
 			return query.Replace("%SCHEMA%", schemaName)
 						.Replace("%TABLENAME%", tableName)
+						.Replace("%RETURNID%", returnIdCmd)
 						.Replace("%COLUMNS%", $"({columns})")
 						.Replace("%VALUES%", values);
 		}
 
-		public static string ReplaceDeleteQueryParameters(this string query, string schemaName, string tableName, string idParameter)
+		public static string ReplaceDeleteQueryParameters(this string query, string schemaName, string tableName, string idColumnName, string idParameter)
 		{
 			return query.Replace("%SCHEMA%", schemaName)
 						.Replace("%TABLENAME%", tableName)
+						.Replace("%IDCOLUMN%", idColumnName)
 						.Replace("%ID%", idParameter);
 		}
 
-		public static string ReplaceUpdateQueryParameters(this string query, string schemaName, string tableName, string setValues, string idParameter)
+		public static string ReplaceUpdateQueryParameters(this string query, string schemaName, string tableName, string setValues, string idColumnName, string idParameter)
 		{
 			return query.Replace("%SCHEMA%", schemaName)
 						.Replace("%TABLENAME%", tableName)
+						.Replace("%IDCOLUMN%", idColumnName)
 						.Replace("%SETVALUES%", setValues)
 						.Replace("%ID%", idParameter);
 		}

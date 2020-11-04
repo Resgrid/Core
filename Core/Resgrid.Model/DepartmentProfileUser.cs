@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,10 +22,19 @@ namespace Resgrid.Model
 		public string Email { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentProfileUserId; }
 			set { DepartmentProfileUserId = value.ToString(); }
 		}
+
+		[NotMapped]
+		public string TableName => "DepartmentProfileUsers";
+
+		[NotMapped]
+		public string IdName => "DepartmentProfileUserId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

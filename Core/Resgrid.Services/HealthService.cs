@@ -9,11 +9,13 @@ namespace Resgrid.Services
 	{
 		private readonly IHealthRepository _healthRepository;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IRabbitOutboundQueueProvider _rabbitOutboundQueueProvider;
 
-		public HealthService(IHealthRepository healthRepository, ICacheProvider cacheProvider)
+		public HealthService(IHealthRepository healthRepository, ICacheProvider cacheProvider, IRabbitOutboundQueueProvider rabbitOutboundQueueProvider)
 		{
 			_healthRepository = healthRepository;
 			_cacheProvider = cacheProvider;
+			_rabbitOutboundQueueProvider = rabbitOutboundQueueProvider;
 		}
 
 		public async Task<string> GetDatabaseTimestamp()
@@ -24,6 +26,11 @@ namespace Resgrid.Services
 		public bool IsCacheProviderConnected()
 		{
 			return _cacheProvider.IsConnected();
+		}
+
+		public bool IsServiceBusProviderConnected()
+		{
+			return _rabbitOutboundQueueProvider.VerifyAndCreateClients();
 		}
 	}
 }

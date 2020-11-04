@@ -1,34 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Services
 {
+	/// <summary>
+	/// Interface ICalendarService
+	/// </summary>
 	public interface ICalendarService
 	{
-		List<CalendarItem> GetAllCalendarItemsForDepartment(int departmentId);
-		List<CalendarItemType> GetAllCalendarItemTypesForDepartment(int departmentId);
-		CalendarItem SaveCalendarItem(CalendarItem calendarItem);
-		CalendarItemType SaveCalendarItemType(CalendarItemType type);
-		void DeleteCalendarItemById(int calendarItemId);
-		CalendarItem GetCalendarItemById(int calendarItemId);
-		CalendarItemType GetCalendarItemTypeById(int calendarItemTypeId);
-		void DeleteCalendarItemType(CalendarItemType type);
-		void SignupForEvent(int calendarEventItemId, string userId, string note, int attendeeType);
-		List<CalendarItem> GetCalendarItemsToNotify(DateTime timestamp);
-		void MarkAsNotified(int calendarItemId);
-		CalendarItemAttendee GetCalendarAttendeeById(int calendarAttendeeId);
-		void DeleteCalendarAttendeeById(int calendarAttendeeId);
-		CalendarItemAttendee GetCalendarItemAttendeeByUser(int calendarEventItemId, string userId);
-		List<CalendarItem> GetAllCalendarItemsForDepartment(int departmentId, DateTime startDate);
-		List<CalendarItem> GetAllCalendarItemsForDepartmentInRange(int departmentId, DateTime startDate, DateTime endDate);
-		List<CalendarItem> CreateRecurrenceCalendarItems(CalendarItem item, DateTime currentDate);
+		Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId);
+
+		Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId, DateTime startDate);
+
+		Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentInRangeAsync(int departmentId, DateTime startDate,
+			DateTime endDate);
+
+		Task<List<CalendarItemType>> GetAllCalendarItemTypesForDepartmentAsync(int departmentId);
+
+		Task<List<CalendarItem>> GetUpcomingCalendarItemsAsync(int departmentId, DateTime start);
+
+		Task<CalendarItem> SaveCalendarItemAsync(CalendarItem calendarItem,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItem> GetCalendarItemByIdAsync(int calendarItemId);
+
+		Task<CalendarItemAttendee> GetCalendarAttendeeByIdAsync(int calendarAttendeeId);
+
+		Task<bool> DeleteCalendarItemByIdAsync(int calendarItemId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<bool> DeleteCalendarAttendeeByIdAsync(int calendarAttendeeId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItemType> SaveCalendarItemTypeAsync(CalendarItemType type,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItemType> GetCalendarItemTypeByIdAsync(int calendarItemTypeId);
+
+		Task<bool> DeleteCalendarItemTypeAsync(CalendarItemType type,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItem> AddNewCalendarItemAsync(CalendarItem item, string timeZone,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItem> UpdateCalendarItemAsync(CalendarItem item, string timeZone,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<CalendarItem>> GetAllCalendarItemRecurrencesAsync(int calendarItemId);
+
+		Task<bool> DeleteCalendarItemAndRecurrences(int calendarItemId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<CalendarItem>> CreateRecurrenceCalendarItemsAsync(CalendarItem item, DateTime start);
+
 		DateTime?[] GetNextWeekValues(CalendarItem item, DateTime currentDate);
-		CalendarItem AddNewV2CalendarItem(CalendarItem item, string timeZone);
-		List<CalendarItem> GetAllV2CalendarItemsForDepartment(int departmentId, DateTime startDate);
-		List<CalendarItem> GetV2CalendarItemsToNotify(DateTime timestamp);
-		List<CalendarItem> GetAllV2CalendarItemRecurrences(int calendarItemId);
-		CalendarItem UpdateV2CalendarItem(CalendarItem item, string timeZone);
-		void DeleteCalendarItemAndRecurrences(int calendarItemId);
-		List<CalendarItem> GetUpcomingCalendarItems(int departmentId, DateTime start);
+
+		Task<List<CalendarItem>> GetCalendarItemsForDepartmentInRangeAsync(int departmentId, DateTime start);
+
+		Task<CalendarItemAttendee> SignupForEvent(int calendarEventItemId, string userId, string note, int attendeeType,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItemAttendee> GetCalendarItemAttendeeByUserAsync(int calendarEventItemId, string userId);
+
+		Task<List<CalendarItem>> GetCalendarItemsToNotifyAsync(DateTime timestamp);
+
+		Task<bool> MarkAsNotifiedAsync(int calendarItemId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		int NotificationTypeToMinutes(int notificationType);
+
+
 	}
 }

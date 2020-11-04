@@ -15,14 +15,16 @@ using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using System.Drawing;
-using System.Net;
+using System.Net.Mime;
+using System.Threading;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Options;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Web.Areas.User.Models.Personnel;
-using Microsoft.AspNetCore.Http.Authentication;
-using Resgrid.Model.Identity;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -35,7 +37,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IScheduledTasksService _scheduledTasksService;
-		private readonly IPushUriService _pushUriService;
 		private readonly ICertificationService _certificationService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IImageService _imageService;
@@ -45,7 +46,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly SignInManager<IdentityUser> _signInManager;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
-			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, IPushUriService pushUriService, ICertificationService certificationService,
+			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
 			ICustomStateService customStateService, IImageService imageService, IOptions<AppOptions> appOptionsAccessor,
 			IEmailService emailService, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
 		{
@@ -54,7 +55,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_authorizationService = authorizationService;
 			_userProfileService = userProfileService;
 			_scheduledTasksService = scheduledTasksService;
-			_pushUriService = pushUriService;
 			_certificationService = certificationService;
 			_customStateService = customStateService;
 			_imageService = imageService;
@@ -65,42 +65,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Private Members and Constructors
 
-		#region Devices
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult Devices()
-		{
-			EditProfileModel model = new EditProfileModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
-			model.User = _usersService.GetUserById(UserId);
-
-			//model.StaffingLevels = model.StaffingLevel.ToSelectList();
-			model.PushUris = _pushUriService.GetPushUrisByUserId(UserId);
-
-			return View(model);
-		}
-		#endregion Devices
-
 		#region Reporting
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult Reporting()
+		public async Task<IActionResult>  Reporting()
 		{
 			var model = new ReportingView();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
-			model.User = _usersService.GetUserById(UserId);
+			model.Department= await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			model.User= _usersService.GetUserById(UserId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult GetScheduledReportingForGrid()
+		public async Task<IActionResult>  GetScheduledReportingForGrid()
 		{
 			var scheduleJson = new List<ScheduledTasksForJson>();
 
-			var dep = _departmentsService.GetDepartmentByUserId(UserId);
-			var tasks = _scheduledTasksService.GetScheduledReportingTasksForUser(UserId);
+			var dep= await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			var tasks= await _scheduledTasksService.GetScheduledReportingTasksForUserAsync(UserId);
 
 			foreach (var task in tasks)
 			{
@@ -154,7 +138,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult AddNewScheduledReport()
+		public async Task<IActionResult>  AddNewScheduledReport()
 		{
 			var model = new NewScheduledReportView();
 			model.ReportTypes = model.ReportType.ToSelectList();
@@ -165,7 +149,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		[ValidateAntiForgeryToken]
-		public IActionResult AddNewScheduledReport(NewScheduledReportView model)
+		public async Task<IActionResult>  AddNewScheduledReport(NewScheduledReportView model, CancellationToken cancellationToken)
 		{
 			model.ReportTypes = model.ReportType.ToSelectList();
 
@@ -234,7 +218,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Data = ((int)model.ReportType).ToString();
 				task.TaskType = (int)TaskTypes.ReportDelivery;
 
-				_scheduledTasksService.SaveScheduledTask(task);
+				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
 				ViewBag.EditProfile_TabProfileActiveCSS = "";
 				ViewBag.EditProfile_TabScheduleActiveCSS = "active";
@@ -247,12 +231,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult EditScheduledReport(int scheduleId)
+		public async Task<IActionResult>  EditScheduledReport(int scheduleId)
 		{
 			var model = new EditScheduledReportView();
 			model.ReportTypes = model.ReportType.ToSelectList();
 
-			var schedule = _scheduledTasksService.GetScheduledTaskById(scheduleId);
+			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
 			if (schedule.ScheduleType == (int)ScheduleTypes.SpecifcDateTime)
 			{
 				model.SpecificDatetime = true;
@@ -278,7 +262,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult EditScheduledReport(EditScheduledReportView model)
+		public async Task<IActionResult>  EditScheduledReport(EditScheduledReportView model, CancellationToken cancellationToken)
 		{
 			model.ReportTypes = model.ReportType.ToSelectList();
 
@@ -322,7 +306,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				ScheduledTask task = _scheduledTasksService.GetScheduledTaskById(model.ScheduleId);
+				ScheduledTask task= await _scheduledTasksService.GetScheduledTaskByIdAsync(model.ScheduleId);
 				task.UserId = UserId;
 
 				if (model.SpecificDatetime)
@@ -348,7 +332,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Data = ((int)model.ReportType).ToString();
 				task.TaskType = (int)TaskTypes.ReportDelivery;
 
-				_scheduledTasksService.SaveScheduledTask(task);
+				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
 				ViewBag.EditProfile_TabProfileActiveCSS = "";
 				ViewBag.EditProfile_TabScheduleActiveCSS = "active";
@@ -363,11 +347,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Staffing Schedules
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult AddNewStaffingSchedule(string userId)
+		public async Task<IActionResult> AddNewStaffingSchedule(string userId)
 		{
 			var model = new NewStaffingLevelView();
 
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
 				model.StaffingLevels = model.StaffingLevelEnum.ToSelectListInt();
@@ -384,27 +368,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult ViewSchedules(string userId)
+		public async Task<IActionResult> ViewSchedules(string userId)
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 
 			var model = new EditProfileModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(userToGet);
+			model.Department= await _departmentsService.GetDepartmentByUserIdAsync(userToGet);
 			model.User = _usersService.GetUserById(userToGet);
 
 			if (userToGet == UserId)
 				model.Self = true;
 			else
-				model.Name = UserHelper.GetFullNameForUser(userToGet);
+				model.Name = await UserHelper.GetFullNameForUser(userToGet);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult AddNewStaffingSchedule(NewStaffingLevelView model)
+		public async Task<IActionResult>  AddNewStaffingSchedule(NewStaffingLevelView model, CancellationToken cancellationToken)
 		{
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
 				model.StaffingLevels = model.StaffingLevelEnum.ToSelectListInt();
@@ -479,7 +463,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Data = model.StaffingLevel.ToString();
 				task.TaskType = (int)TaskTypes.UserStaffingLevel;
 
-				_scheduledTasksService.SaveScheduledTask(task);
+				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
 				ViewBag.EditProfile_TabProfileActiveCSS = "";
 				ViewBag.EditProfile_TabScheduleActiveCSS = "active";
@@ -496,13 +480,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult GetScheduledStaffingTasksForGrid(string userId)
+		public async Task<IActionResult>  GetScheduledStaffingTasksForGrid(string userId)
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 			var scheduleJson = new List<ScheduledTasksForJson>();
 
-			var dep = _departmentsService.GetDepartmentByUserId(userToGet);
-			var tasks = _scheduledTasksService.GetScheduledStaffingTasksForUser(userToGet);
+			var dep= await _departmentsService.GetDepartmentByUserIdAsync(userToGet);
+			var tasks= await _scheduledTasksService.GetScheduledStaffingTasksForUserAsync(userToGet);
 
 			foreach (var task in tasks)
 			{
@@ -553,7 +537,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					var stateDetail = _customStateService.GetCustomDetailForDepartment(DepartmentId, state);
+					var stateDetail= await _customStateService.GetCustomDetailForDepartmentAsync(DepartmentId, state);
 
 					st.Data = stateDetail.ButtonText;
 				}
@@ -566,11 +550,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult EditStaffingSchedule(int scheduleId)
+		public async Task<IActionResult>  EditStaffingSchedule(int scheduleId)
 		{
 			var model = new EditStaffingLevelView();
 
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
 				model.StaffingLevels = model.StaffingLevelEnum.ToSelectListInt();
@@ -580,7 +564,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 			}
 
-			var schedule = _scheduledTasksService.GetScheduledTaskById(scheduleId);
+			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
 			if (schedule.ScheduleType == (int)ScheduleTypes.SpecifcDateTime)
 			{
 				model.SpecificDatetime = true;
@@ -606,9 +590,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult EditStaffingSchedule(EditStaffingLevelView model)
+		public async Task<IActionResult>  EditStaffingSchedule(EditStaffingLevelView model, CancellationToken cancellationToken)
 		{
-			var staffingLevels = _customStateService.GetActiveStaffingLevelsForDepartment(DepartmentId);
+			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
 				model.StaffingLevels = model.StaffingLevelEnum.ToSelectListInt();
@@ -657,7 +641,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				ScheduledTask task = _scheduledTasksService.GetScheduledTaskById(model.ScheduleId);
+				ScheduledTask task= await _scheduledTasksService.GetScheduledTaskByIdAsync(model.ScheduleId);
 
 				if (model.SpecificDatetime)
 				{
@@ -681,7 +665,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Data = model.StaffingLevel.ToString();
 				task.TaskType = (int)TaskTypes.UserStaffingLevel;
 
-				_scheduledTasksService.SaveScheduledTask(task);
+				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
 				ViewBag.EditProfile_TabProfileActiveCSS = "";
 				ViewBag.EditProfile_TabScheduleActiveCSS = "active";
@@ -697,25 +681,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult DeactivateSchedule(int scheduleId)
+		public async Task<IActionResult>  DeactivateSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
-			_scheduledTasksService.DisabledScheduledTaskById(scheduleId);
+			await _scheduledTasksService.DisabledScheduledTaskByIdAsync(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult ActivateSchedule(int scheduleId)
+		public async Task<IActionResult>  ActivateSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
-			_scheduledTasksService.EnableScheduledTaskById(scheduleId);
+			await _scheduledTasksService.EnableScheduledTaskByIdAsync(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult DeleteSchedule(int scheduleId)
+		public async Task<IActionResult> DeleteSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
-			_scheduledTasksService.DeleteScheduledTask(scheduleId);
+			await _scheduledTasksService.DeleteScheduledTask(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
 		#endregion Staffing Schedules
@@ -723,27 +707,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Certifications
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult Certifications(string userId)
+		public async Task<IActionResult> Certifications(string userId)
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 
 			var model = new CertificationsView();
-			model.Certifications = _certificationService.GetCertificationsByUserId(userToGet);
-			model.Department = _departmentsService.GetDepartmentByUserId(userToGet);
+			model.Certifications= await _certificationService.GetCertificationsByUserIdAsync(userToGet);
+			model.Department= await _departmentsService.GetDepartmentByUserIdAsync(userToGet);
 			model.UserId = userToGet;
 
-			var user = _usersService.GetUserById(userToGet);
+			var user= _usersService.GetUserById(userToGet);
 			if (userToGet == UserId)
 				model.Self = true;
 			else
-				model.Name = UserHelper.GetFullNameForUser(userToGet);
+				model.Name = await UserHelper.GetFullNameForUser(userToGet);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult AddCertification(string userId)
+		public async Task<IActionResult> AddCertification(string userId)
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 			var model = new AddCertificationView();
@@ -754,7 +738,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult AddCertification(AddCertificationView model, IFormFile fileToUpload)
+		public async Task<IActionResult> AddCertification(AddCertificationView model, IFormFile fileToUpload)
 		{
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
@@ -797,7 +781,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					cert.Data = uploadedFile;
 				}
 
-				_certificationService.SaveCertification(cert);
+				await _certificationService.SaveCertificationAsync(cert);
 
 				if (model.UserId == UserId)
 					return RedirectToAction("Certifications", "Profile", new { area = "User" });
@@ -810,16 +794,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult DeleteCertification(int certId)
+		public async Task<IActionResult> DeleteCertification(int certId, CancellationToken cancellationToken)
 		{
-			var cert = _certificationService.GetCertificationById(certId);
+			var cert= await _certificationService.GetCertificationByIdAsync(certId);
 
 			if (cert.DepartmentId != DepartmentId)
 				Unauthorized();
 
 			string userId = cert.UserId;
 
-			_certificationService.DeleteCertification(cert);
+			await _certificationService.DeleteCertification(cert, cancellationToken);
 
 			if (userId == UserId)
 				return RedirectToAction("Certifications", "Profile", new { area = "User" });
@@ -829,9 +813,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult EditCertification(EditCertificationView model, IFormFile fileToUpload)
+		public async Task<IActionResult> EditCertification(EditCertificationView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
-			var cert = _certificationService.GetCertificationById(model.CertificationId);
+			var cert= await _certificationService.GetCertificationByIdAsync(model.CertificationId);
 
 			if (cert.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -875,7 +859,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					cert.Data = uploadedFile;
 				}
 
-				_certificationService.SaveCertification(cert);
+				await _certificationService.SaveCertificationAsync(cert, cancellationToken);
 
 				if (cert.UserId == UserId)
 					return RedirectToAction("Certifications", "Profile", new { area = "User" });
@@ -888,9 +872,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
-		public IActionResult EditCertification(int certId)
+		public async Task<IActionResult> EditCertification(int certId)
 		{
-			var cert = _certificationService.GetCertificationById(certId);
+			var cert= await _certificationService.GetCertificationByIdAsync(certId);
 
 			if (cert.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -911,9 +895,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
 
-		public FileResult GetCertificationData(int certId)
+		public async Task<FileResult> GetCertificationData(int certId)
 		{
-			var cert = _certificationService.GetCertificationById(certId);
+			var cert= await _certificationService.GetCertificationByIdAsync(certId);
 
 			if (cert.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -926,21 +910,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		[HttpGet]
-		public IActionResult GetDepartmentCertificationTypes()
+		public async Task<IActionResult> GetDepartmentCertificationTypes()
 		{
-			return Json(_certificationService.GetDepartmentCertificationTypes(DepartmentId));
+			return Json(_certificationService.GetDepartmentCertificationTypesAsync(DepartmentId));
 		}
 		#endregion Certifications
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public IActionResult ResetPasswordForUser(string userId)
+		public async Task<IActionResult>  ResetPasswordForUser(string userId)
 		{
 			var model = new ResetPasswordForUserView();
 			model.UserId = userId;
 
 			var user = _usersService.GetUserById(userId);
-			model.Name = UserHelper.GetFullNameForUser(userId);
+			model.Name = await UserHelper.GetFullNameForUser(userId);
 			model.Email = user.Email;
 			model.Username = user.UserName;
 
@@ -950,23 +934,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> ResetPasswordForUser(ResetPasswordForUserView model)
+		public async Task<IActionResult>  ResetPasswordForUser(ResetPasswordForUserView model)
 		{
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department= await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (model.UserId == department.ManagingUserId)
 				Unauthorized();
 
-			var userDepartment = _departmentsService.GetDepartmentByUserId(model.UserId);
+			var userDepartment= await _departmentsService.GetDepartmentByUserIdAsync(model.UserId);
 
 			if (department.DepartmentId != userDepartment.DepartmentId)
 				Unauthorized();
 
 			var user = await _userManager.FindByIdAsync(model.UserId);
-			model.Name = UserHelper.GetFullNameForUser(model.UserId);
+			model.Name = await UserHelper.GetFullNameForUser(model.UserId);
 			model.Email = user.Email;
 
-			var profile = _userProfileService.GetProfileByUserId(model.UserId);
+			var profile= await _userProfileService.GetProfileByUserIdAsync(model.UserId);
 
 			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 			var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
@@ -990,10 +974,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Your Departments
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public async Task<IActionResult> YourDepartments()
+		public async Task<IActionResult>  YourDepartments()
 		{
 			YourDepartmentsView model = new YourDepartmentsView();
-			model.Members = _departmentsService.GetAllDepartmentsForUser(UserId);
+			model.Members = await _departmentsService.GetAllDepartmentsForUserAsync(UserId);
 			model.UserId = UserId;
 
 			var user = await _userManager.FindByIdAsync(UserId);
@@ -1004,12 +988,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public string JoinDepartment(int id, string code)
+		public async Task<string> JoinDepartment(int id, string code)
 		{
 			if (id == 0 || String.IsNullOrWhiteSpace(code))
 				return "Department Id and Code are required.";
 
-			var department = _departmentsService.GetDepartmentById(id);
+			var department= await _departmentsService.GetDepartmentByIdAsync(id);
 
 			if (department == null)
 				return "Unknown department id or department code. Please reach out to an administrator of the department you want to join and ensure the values are correct.";
@@ -1017,7 +1001,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (department.Code != code)
 				return "Unknown department id or department code. Please reach out to an administrator of the department you want to join and ensure the values are correct.";
 
-			if (_departmentsService.IsMemberOfDepartment(id, UserId))
+			if (await _departmentsService.IsMemberOfDepartmentAsync(id, UserId))
 				return "You are already a member of this department and cannot join it again.";
 
 			return null;
@@ -1025,12 +1009,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public IActionResult JoinDepartment(IFormCollection form)
+		public async Task<IActionResult>  JoinDepartment(IFormCollection form)
 		{
 			var departmentId = form["deparmentId"];
 			var departmentCode = form["departmentCode"];
 
-			var department = _departmentsService.GetDepartmentById(int.Parse(departmentId));
+			var department= await _departmentsService.GetDepartmentByIdAsync(int.Parse(departmentId));
 
 			if (department == null)
 				return RedirectToAction("YourDepartments");
@@ -1038,28 +1022,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (department.Code != departmentCode)
 				return RedirectToAction("YourDepartments");
 
-			if (!_departmentsService.IsMemberOfDepartment(int.Parse(departmentId), UserId))
-				_departmentsService.JoinDepartment(int.Parse(departmentId), UserId);
+			if (!await _departmentsService.IsMemberOfDepartmentAsync(int.Parse(departmentId), UserId))
+				await _departmentsService.JoinDepartmentAsync(int.Parse(departmentId), UserId);
 
 			return RedirectToAction("YourDepartments");
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public async Task<IActionResult> SetActiveDepartment([FromBody]ChangeActiveDepartmentModel model)
+		public async Task<IActionResult>  SetActiveDepartment([FromBody]ChangeActiveDepartmentModel model)
 		{
-			if (_departmentsService.IsMemberOfDepartment(model.DepartmentId, UserId))
+			if (await _departmentsService.IsMemberOfDepartmentAsync(model.DepartmentId, UserId))
 			{
 				var user = await _userManager.FindByIdAsync(UserId);
 
-				_departmentsService.SetActiveDepartmentForUser(UserId, model.DepartmentId, user);
+				await _departmentsService.SetActiveDepartmentForUserAsync(UserId, model.DepartmentId, user);
 
 				await _signInManager.SignOutAsync();
-				await HttpContext.Authentication.SignOutAsync("ResgridCookieMiddlewareInstance");
+
+
+				await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
 				await _signInManager.SignInAsync(user, true);
 
-				await HttpContext.Authentication.SignInAsync("ResgridCookieMiddlewareInstance", HttpContext.User, new AuthenticationProperties
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, HttpContext.User, new AuthenticationProperties
 				{
 					ExpiresUtc = DateTime.UtcNow.AddHours(4),
 					IsPersistent = false,
@@ -1074,21 +1060,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public async Task<IActionResult> SetDefaultDepartment(int departmentId)
+		public async Task<IActionResult>  SetDefaultDepartment(int departmentId, CancellationToken cancellationToken)
 		{
-			if (_departmentsService.IsMemberOfDepartment(departmentId, UserId))
+			if (await _departmentsService.IsMemberOfDepartmentAsync(departmentId, UserId))
 			{
 				var user = await _userManager.FindByIdAsync(UserId);
 
-				_departmentsService.SetActiveDepartmentForUser(UserId, departmentId, user);
-				_departmentsService.SetDefaultDepartmentForUser(UserId, departmentId, user);
+				await _departmentsService.SetActiveDepartmentForUserAsync(UserId, departmentId, user, cancellationToken);
+				await _departmentsService.SetDefaultDepartmentForUserAsync(UserId, departmentId, user, cancellationToken);
 
 				await _signInManager.SignOutAsync();
-				await HttpContext.Authentication.SignOutAsync("ResgridCookieMiddlewareInstance");
+
+				await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
 				await _signInManager.SignInAsync(user, true);
 
-				await HttpContext.Authentication.SignInAsync("ResgridCookieMiddlewareInstance", HttpContext.User, new AuthenticationProperties
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, HttpContext.User, new AuthenticationProperties
 				{
 					ExpiresUtc = DateTime.UtcNow.AddHours(4),
 					IsPersistent = false,
@@ -1100,12 +1087,106 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return RedirectToAction("YourDepartments");
 		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		public async Task<IActionResult> DeleteDepartmentLink(int departmentId, CancellationToken cancellationToken)
+		{
+			if (await _departmentsService.IsMemberOfDepartmentAsync(departmentId, UserId))
+			{
+				var departmentLinks= await _departmentsService.GetAllDepartmentsForUserAsync(UserId);
+				var departmentToRemove = departmentLinks.FirstOrDefault(x => x.DepartmentId == departmentId);
+				var user = await _userManager.FindByIdAsync(UserId);
+
+				if (departmentToRemove != null && departmentLinks.Count > 1)
+				{
+					var defaultDepartment = departmentLinks.FirstOrDefault(x => x.IsDefault);
+
+					if (departmentToRemove.IsActive)
+					{
+						if (defaultDepartment != null &&
+						    departmentToRemove.DepartmentId != defaultDepartment.DepartmentId)
+						{
+							await _departmentsService.SetActiveDepartmentForUserAsync(UserId, defaultDepartment.DepartmentId,
+								user, cancellationToken);
+							await _departmentsService.DeleteUserAsync(departmentToRemove.DepartmentId, UserId, UserId, cancellationToken);
+
+							await _signInManager.SignOutAsync();
+
+							await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+							await _signInManager.SignInAsync(user, true);
+
+							await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+								HttpContext.User, new AuthenticationProperties
+								{
+									ExpiresUtc = DateTime.UtcNow.AddHours(4),
+									IsPersistent = false,
+									AllowRefresh = false
+								});
+
+							return RedirectToAction("Dashboard", "Home", new {Area = "User"});
+						}
+						else if (defaultDepartment != null &&
+						         departmentToRemove.DepartmentId == defaultDepartment.DepartmentId)
+						{
+							var nextDepartmentUp =
+								departmentLinks.FirstOrDefault(x => x.DepartmentId != departmentToRemove.DepartmentId);
+
+							if (nextDepartmentUp != null)
+							{
+								await _departmentsService.SetActiveDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
+									user, cancellationToken);
+								await _departmentsService.DeleteUserAsync(departmentToRemove.DepartmentId, UserId, UserId, cancellationToken);
+
+								await _signInManager.SignOutAsync();
+
+								await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+								await _signInManager.SignInAsync(user, true);
+
+								await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+									HttpContext.User, new AuthenticationProperties
+									{
+										ExpiresUtc = DateTime.UtcNow.AddHours(4),
+										IsPersistent = false,
+										AllowRefresh = false
+									});
+
+								return RedirectToAction("Dashboard", "Home", new {Area = "User"});
+							}
+						}
+					}
+					else if (defaultDepartment != null)
+					{
+						if (departmentToRemove.DepartmentId != defaultDepartment.DepartmentId)
+						{
+							await _departmentsService.DeleteUserAsync(departmentToRemove.DepartmentId, UserId, UserId, cancellationToken);
+						}
+						else
+						{
+							var nextDepartmentUp =
+								departmentLinks.FirstOrDefault(x => x.DepartmentId != departmentToRemove.DepartmentId);
+
+							if (nextDepartmentUp != null)
+							{
+								_departmentsService.SetDefaultDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
+									user, cancellationToken);
+							}
+						}
+					}
+				}
+			}
+
+			return RedirectToAction("YourDepartments");
+		}
+
 		#endregion Your Departments
 
 
 		#region Avatar
 		[HttpGet]
-		public IActionResult GetAvatar(string id, int? type)
+		public async Task<IActionResult> GetAvatar(string id, int? type)
 		{
 			if (type == null)
 			{ // User profile images (will have a null type) are by Guid
@@ -1129,9 +1210,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			byte[] data = null;
 			if (type == null)
-				data = _imageService.GetImage(ImageTypes.Avatar, id);
+				data= await _imageService.GetImageAsync(ImageTypes.Avatar, id);
 			else
-				data = _imageService.GetImage((ImageTypes)type.Value, id);
+				data= await _imageService.GetImageAsync((ImageTypes)type.Value, id);
 
 			if (data == null || data.Length <= 0)
 				return StatusCode(404);
@@ -1140,7 +1221,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Upload(string id, int? type)
+		public async Task<IActionResult> Upload(string id, int? type, CancellationToken cancellationToken)
 		{
 			if (Request.Form.Files == null || !Request.Form.Files.Any()) { return BadRequest(); }
 
@@ -1158,11 +1239,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			byte[] imgArray = (byte[])converter.ConvertTo(image, typeof(byte[]));
 
 			if (type == null)
-				_imageService.SaveImage(ImageTypes.Avatar, id, imgArray);
+				await _imageService.SaveImageAsync(ImageTypes.Avatar, id, imgArray, cancellationToken);
 			else
-				_imageService.SaveImage((ImageTypes)type.Value, id, imgArray);
+				await _imageService.SaveImageAsync((ImageTypes)type.Value, id, imgArray, cancellationToken);
 
-			var baseUrl = _appOptionsAccessor.Value.ResgridApiUrl;
+			var baseUrl= Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 
 			string url;
 
@@ -1183,7 +1264,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPut]
-		public IActionResult Crop([FromBody]CropRequest model)
+		public async Task<IActionResult> Crop([FromBody]CropRequest model, CancellationToken cancellationToken)
 		{
 			// extract original image ID and generate a new filename for the cropped result
 			var originalUri = new Uri(model.imgUrl);
@@ -1191,7 +1272,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var ms = new MemoryStream(_imageService.GetImage(ImageTypes.Avatar, originalId));
+				var ms = new MemoryStream(await _imageService.GetImageAsync(ImageTypes.Avatar, originalId));
 				var img = Image.FromStream(ms);
 
 				// load the original picture and resample it to the scaled values
@@ -1202,7 +1283,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ImageConverter converter = new ImageConverter();
 				byte[] imgArray = (byte[])converter.ConvertTo(croppedBitmap, typeof(byte[]));
 
-				_imageService.SaveImage(ImageTypes.Avatar, originalId, imgArray);
+				await _imageService.SaveImageAsync(ImageTypes.Avatar, originalId, imgArray, cancellationToken);
 			}
 			catch (Exception e)
 			{
@@ -1230,7 +1311,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly string[] _imageFileExtensions = { ".jpg", ".png", ".gif", ".jpeg" };
 
 		[ValidateAntiForgeryToken]
-		public IActionResult _Upload(ICollection<IFormFile> files)
+		public async Task<IActionResult> _Upload(ICollection<IFormFile> files)
 		{
 			if (files == null || !files.Any()) return Json(new { success = false, errorMessage = "No file uploaded." });
 
@@ -1244,7 +1325,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult SaveAvatar(string t, string l, string h, string w, IFormFile file)
+		public async Task<IActionResult> SaveAvatar(string t, string l, string h, string w, IFormFile file, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -1264,7 +1345,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// ... crop the part the user selected, ...
 				//img.Crop(top, left, img.Height - top - AvatarStoredHeight, img.Width - left - AvatarStoredWidth);
 
-				var profile = _userProfileService.GetUserProfileForEditing(UserId);
+				var profile= await _userProfileService.GetProfileByUserIdAsync(UserId);
 
 				if (profile != null)
 				{
@@ -1274,11 +1355,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					profile = new UserProfile();
 
-					var user = _usersService.GetUserById(UserId);
+					var user= _usersService.GetUserById(UserId);
 
 					profile.UserId = UserId;
 					//profile.Image = img.GetBytes();
-					profile.FirstName = UserHelper.GetFullNameForUser(UserId);
+					profile.FirstName = await UserHelper.GetFullNameForUser(UserId);
 					profile.MobileCarrier = (int)MobileCarriers.None;
 					profile.SendEmail = true;
 					profile.SendPush = true;
@@ -1291,7 +1372,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				profile.LastUpdated = DateTime.Now;
-				_userProfileService.SaveProfile(DepartmentId, profile);
+				await _userProfileService.SaveProfileAsync(DepartmentId, profile, cancellationToken);
 
 				return Json(new { success = true });
 			}

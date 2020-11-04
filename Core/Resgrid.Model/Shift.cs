@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using Newtonsoft.Json;
 using Resgrid.Framework;
@@ -42,11 +41,20 @@ namespace Resgrid.Model
 		public virtual ICollection<ShiftSignup> Signups { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ShiftId; }
 			set { ShiftId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Shifts";
+
+		[NotMapped]
+		public string IdName => "ShiftId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Groups", "Days", "Personnel", "PersoAdminsnnel", "Signups", "Admins" };
 
 		public ShiftDay GetShiftDayforDateTime(DateTime timestamp)
 		{
@@ -94,14 +102,6 @@ namespace Resgrid.Model
 			}
 
 			return null;
-		}
-	}
-
-	public class Shift_Mapping : EntityTypeConfiguration<Shift>
-	{
-		public Shift_Mapping()
-		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
 		}
 	}
 }

@@ -1,280 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{43570079-E393-40D9-89AF-F63E7B8437B8}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Resgrid.Workers.Framework</RootNamespace>
-    <AssemblyName>Resgrid.Workers.Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Cloud|AnyCPU'">
-    <OutputPath>bin\Cloud\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Azure|AnyCPU'">
-    <OutputPath>bin\Azure\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
-    <OutputPath>bin\Staging\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.2.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>..\..\packages\BouncyCastle.1.8.2\lib\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=3.9.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CompareNETObjects.3.09.0.0\lib\net46\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ServiceBus, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WindowsAzure.ServiceBus.3.4.6\lib\net45-full\Microsoft.ServiceBus.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.WindowsAzure.ConfigurationManager.3.2.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MimeKit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MimeKit.2.0.4\lib\net45\MimeKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenPop, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\References\OpenPop.NET-2.0.5\binaries\OpenPop.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Stripe.net, Version=33.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Stripe.net.33.3.0\lib\net45\Stripe.net.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Net.Http">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.0" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.5" />
+    <PackageReference Include="CompareNETObjects" Version="4.66.0" />
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.3" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\Common\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Backend\Guardian\GuardianCommand.cs" />
-    <Compile Include="Backend\Guardian\GuardianQueueItem.cs" />
-    <Compile Include="Backend\Guardian\GuardianQueue.cs" />
-    <Compile Include="Backend\Heartbeat\HeartbeatCommand.cs" />
-    <Compile Include="Backend\Heartbeat\HeartbeatQueue.cs" />
-    <Compile Include="Backend\Heartbeat\HeartbeatQueueItem.cs" />
-    <Compile Include="Backend\Scout\ScoutCommand.cs" />
-    <Compile Include="Backend\Scout\ScoutQueue.cs" />
-    <Compile Include="Backend\Scout\ScoutQueueItem.cs" />
-    <Compile Include="BatchProcessingQueueHandler.cs" />
-    <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Logic\DistributionListLogic.cs" />
-    <Compile Include="Logic\BroadcastMessageLogic.cs" />
-    <Compile Include="Logic\CalendarNotifierLogic.cs" />
-    <Compile Include="Logic\MaintenanceLogic.cs" />
-    <Compile Include="Logic\CallBroadcast.cs" />
-    <Compile Include="Logic\CallEmailImporterLogic.cs" />
-    <Compile Include="Logic\CallPruneLogic.cs" />
-    <Compile Include="Logic\DistributionListEmailImporterLogic.cs" />
-    <Compile Include="Logic\NotificationBroadcastLogic.cs" />
-    <Compile Include="Logic\ReportDeliveryLogic.cs" />
-    <Compile Include="Logic\ShiftNotificationLogic.cs" />
-    <Compile Include="Logic\ShiftNotifierLogic.cs" />
-    <Compile Include="Logic\StaffingScheduleLogic.cs" />
-    <Compile Include="Logic\PaymentQueueLogic.cs" />
-    <Compile Include="Logic\SystemQueueLogic.cs" />
-    <Compile Include="Logic\ResourceOrderNotifierLogic.cs" />
-    <Compile Include="Logic\TrainingNotifierLogic.cs" />
-    <Compile Include="Workers\CalendarNotifier\CalendarNotifierCommand.cs" />
-    <Compile Include="Workers\CalendarNotifier\CalendarNotifierQueue.cs" />
-    <Compile Include="Workers\CalendarNotifier\CalendarNotifierQueueItem.cs" />
-    <Compile Include="Workers\CallBroadcast\CallBroadcastCommand.cs" />
-    <Compile Include="Workers\CallEmail\CallEmailCommand.cs" />
-    <Compile Include="Workers\CallEmail\CallEmailQueueItem.cs" />
-    <Compile Include="Workers\CallEmail\CallEmailQueue.cs" />
-    <Compile Include="Workers\CallPrune\CallPruneQueue.cs" />
-    <Compile Include="Workers\CallPrune\CallPruneQueueItem.cs" />
-    <Compile Include="Workers\CallPrune\CallPruningCommand.cs" />
-    <Compile Include="Workers\Maintenance\MaintenanceQueueItem.cs" />
-    <Compile Include="Workers\Maintenance\MaintenanceCommand.cs" />
-    <Compile Include="Workers\MessageBroadcast\MessageBroadcastCommand.cs" />
-    <Compile Include="Workers\MessageBroadcast\MessageQueue.cs" />
-    <Compile Include="Workers\Notification\NotificationCommand.cs" />
-    <Compile Include="Workers\Notification\NotificationQueue.cs" />
-    <Compile Include="Workers\Notification\NotificationQueueItem.cs" />
-    <Compile Include="Workers\ReportDelivery\ReportDeliveryCommand.cs" />
-    <Compile Include="Workers\ReportDelivery\ReportDeliveryQueue.cs" />
-    <Compile Include="Workers\ReportDelivery\ReportDeliveryQueueItem.cs" />
-    <Compile Include="Workers\TrainingNotifier\TrainingNotifierCommand.cs" />
-    <Compile Include="Workers\TrainingNotifier\TrainingNotifierQueue.cs" />
-    <Compile Include="Workers\TrainingNotifier\TrainingNotifierQueueItem.cs" />
-    <Compile Include="Workers\ShiftNotifier\ShiftNotifierCommand.cs" />
-    <Compile Include="Workers\ShiftNotifier\ShiftNotifierQueue.cs" />
-    <Compile Include="Workers\ShiftNotifier\ShiftNotifierQueueItem.cs" />
-    <Compile Include="Workers\StaffingSchedule\StaffingScheduleQueueItem.cs" />
-    <Compile Include="Workers\StaffingSchedule\StaffingScheduleQueue.cs" />
-    <Compile Include="Workers\StaffingSchedule\StaffingScheduleCommand.cs" />
-    <Compile Include="GenericQueueHandler.cs" />
-    <Compile Include="Helpers\TraceHelper.cs" />
-    <Compile Include="IBatchCommand.cs" />
-    <Compile Include="ICommand.cs" />
-    <Compile Include="Workers\CallBroadcast\CallQueue.cs" />
-    <Compile Include="IJob.cs" />
-    <Compile Include="QueueHandler.cs" />
-    <Compile Include="WorkerFrameworkModule.cs" />
-    <Compile Include="Workers\DistributionList\DistributionListCommand.cs" />
-    <Compile Include="Workers\DistributionList\DistributionListQueue.cs" />
-    <Compile Include="Workers\DistributionList\DistributionListQueueItem.cs" />
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj">
-      <Project>{dd9e37af-9af3-4cbb-ba7f-b66158c61222}</Project>
-      <Name>Resgrid.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj">
-      <Project>{21b7c3a0-bd8b-4f05-b5dd-4d2e6b1893fa}</Project>
-      <Name>Resgrid.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj">
-      <Project>{8b7997ec-67a2-42ab-9fbd-f8ed2c2997c8}</Project>
-      <Name>Resgrid.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj">
-      <Project>{80fb64b4-62f9-4f06-9549-c519b4360dfc}</Project>
-      <Name>Resgrid.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj">
-      <Project>{cad8c361-dbdb-4506-bee7-679df2c2b26a}</Project>
-      <Name>Resgrid.Providers.AddressVerification</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj">
-      <Project>{2bcb42d0-eeea-4295-8733-9bf9c77190c3}</Project>
-      <Name>Resgrid.Providers.Audio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj">
-      <Project>{d551040a-69be-4b9b-9f33-000ac41dad53}</Project>
-      <Name>Resgrid.Providers.Bus</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj">
-      <Project>{691efeb7-a87e-4478-8be2-4bcd0ce7a409}</Project>
-      <Name>Resgrid.Providers.Cache</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.EmailProvider\Resgrid.Providers.EmailProvider.csproj">
-      <Project>{bf6d6f80-3424-4ea1-baf3-a815856e155c}</Project>
-      <Name>Resgrid.Providers.EmailProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj">
-      <Project>{7eef606f-04e4-4744-ad16-f68c796c5f41}</Project>
-      <Name>Resgrid.Providers.Firebase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.GeoLocationProvider\Resgrid.Providers.GeoProvider.csproj">
-      <Project>{be40f1e9-e2df-4a1a-987e-6a9e18c93384}</Project>
-      <Name>Resgrid.Providers.GeoProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj">
-      <Project>{cea86d8a-b122-42e0-b4be-596a6195cee7}</Project>
-      <Name>Resgrid.Providers.Marketing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.PdfProvider\Resgrid.Providers.PdfProvider.csproj">
-      <Project>{e9b3214b-dce0-48ce-9077-293d46ec1e6b}</Project>
-      <Name>Resgrid.Providers.PdfProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.TextProvider\Resgrid.Providers.NumberProvider.csproj">
-      <Project>{df186d09-8dfd-41b8-850a-74852b84d2a7}</Project>
-      <Name>Resgrid.Providers.NumberProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj">
-      <Project>{db5ded75-669d-485c-a093-736e02115892}</Project>
-      <Name>Resgrid.Repositories.DataRepository</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

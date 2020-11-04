@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ServiceModel.Configuration;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using Resgrid.Framework;
 using Resgrid.Framework.Testing;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
@@ -47,7 +46,7 @@ namespace Resgrid.Tests.Services
 		public class when_sending_a_communication : with_the_communication_service
 		{
 			//[Test]
-			public void should_be_able_to_send_message()
+			public async Task should_be_able_to_send_message()
 			{
 				Message message = new Message();
 				message.Subject = "Test";
@@ -68,14 +67,14 @@ namespace Resgrid.Tests.Services
 				profile.SendMessagePush = true;
 				profile.SendMessageSms = true;
 
-				_communicationService.SendMessage(message, "Test Sender", "0000000", 1, profile);
-				_smsServiceMock.Verify(m => m.SendMessage(message, "0000000", 1, profile));
-				_emailServiceMock.Verify(m => m.SendMessage(message, "Test Sender", profile, message.ReceivingUser));
+				await _communicationService.SendMessageAsync(message, "Test Sender", "0000000", 1, profile);
+				_smsServiceMock.Verify(m => m.SendMessageAsync(message, "0000000", 1, profile));
+				_emailServiceMock.Verify(m => m.SendMessageAsync(message, "Test Sender", profile, message.ReceivingUser));
 				_pushServiceMock.Verify(m => m.PushMessage(It.IsAny<StandardPushMessage>(), TestData.Users.TestUser1Id, profile));
 			}
 
 			//[Test]
-			public void should_be_able_to_send_call()
+			public async Task should_be_able_to_send_call()
 			{
 				Call call = new Call();
 				call.DepartmentId = 1;
@@ -96,9 +95,9 @@ namespace Resgrid.Tests.Services
 				cd1.UserId = TestData.Users.TestUser2Id;
 				call.Dispatches.Add(cd1);
 
-				_communicationService.SendCall(call, cd, null, 1, null);
-				_smsServiceMock.Verify(m => m.SendCall(call, cd, null, 1, null, null));
-				_emailServiceMock.Verify(m => m.SendCall(call, cd, null));
+				await _communicationService.SendCallAsync(call, cd, null, 1, null);
+				_smsServiceMock.Verify(m => m.SendCallAsync(call, cd, null, 1, null, null));
+				_emailServiceMock.Verify(m => m.SendCallAsync(call, cd, null));
 				//_pushServiceMock.Verify(m => m.PushCall(It.IsAny<StandardPushCall>(), Users.TestUser1Id));
 			}
 		}

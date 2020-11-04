@@ -7,6 +7,8 @@ using Resgrid.Web.Areas.User.Models.Dispatch;
 using Resgrid.Web.Helpers;
 using Resgrid.WebCore.Areas.User.Models.Links;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model.Helpers;
 using Resgrid.Web.Areas.User.Models.Units;
 
@@ -44,21 +46,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Private Members and Constructors
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new LinksIndexView();
 			model.DepartmentId = DepartmentId;
-			model.Links = _departmentLinksService.GetAllLinksForDepartment(DepartmentId);
-			model.CanCreateLinks = _limitsService.CanDepartmentUseLinks(DepartmentId);
+			model.Links = await _departmentLinksService.GetAllLinksForDepartmentAsync(DepartmentId);
+			model.CanCreateLinks = await _limitsService.CanDepartmentUseLinksAsync(DepartmentId);
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Code = department.LinkCode;
 
 			return View(model);
 		}
 
 		[HttpGet]
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			var model = new NewLinksView();
 			model.DepartmentId = DepartmentId;
@@ -67,15 +69,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult New(NewLinksView model)
+		public async Task<IActionResult> New(NewLinksView model, CancellationToken cancellationToken)
 		{
-			if (!_limitsService.CanDepartmentUseLinks(DepartmentId))
+			if (!await _limitsService.CanDepartmentUseLinksAsync(DepartmentId))
 			{
 				model.Message = $"Unable to a created a link while on the Free Plan.";
 				return View(model);
 			}
 			
-			var linkedDepartment = _departmentLinksService.GetDepartmentByLinkCode(model.LinkCode);
+			var linkedDepartment = await _departmentLinksService.GetDepartmentByLinkCodeAsync(model.LinkCode);
 
 			if (linkedDepartment == null)
 			{
@@ -89,7 +91,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			if (!_limitsService.CanDepartmentUseLinks(linkedDepartment.DepartmentId))
+			if (!await _limitsService.CanDepartmentUseLinksAsync(linkedDepartment.DepartmentId))
 			{
 				model.Message = $"Unable to a link to a department on the Free Plan.";
 				return View(model);
@@ -100,16 +102,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Link.LinkEnabled = false;
 			model.Link.LinkCreated = DateTime.UtcNow;
 
-			_departmentLinksService.Save(model.Link);
-			_emailService.SendNewDepartmentLinkMail(model.Link);
+			await _departmentLinksService.SaveAsync(model.Link, cancellationToken);
+			await _emailService.SendNewDepartmentLinkMailAsync(model.Link);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult EnableLink(int linkId)
+		public async Task<IActionResult> EnableLink(int linkId, CancellationToken cancellationToken)
 		{
-			var link = _departmentLinksService.GetLinkById(linkId);
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
 				Unauthorized();
@@ -117,15 +119,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			link.LinkEnabled = true;
 			link.LinkAccepted = DateTime.UtcNow;
 
-			_departmentLinksService.Save(link);
+			await _departmentLinksService.SaveAsync(link, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult DisableLink(int linkId)
+		public async Task<IActionResult> DisableLink(int linkId, CancellationToken cancellationToke)
 		{
-			var link = _departmentLinksService.GetLinkById(linkId);
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
 				Unauthorized();
@@ -133,15 +135,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			link.LinkEnabled = false;
 			link.LinkAccepted = null;
 
-			_departmentLinksService.Save(link);
+			await _departmentLinksService.SaveAsync(link, cancellationToke);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult Enable(int linkId)
+		public async Task<IActionResult> Enable(int linkId)
 		{
-			var link = _departmentLinksService.GetLinkById(linkId);
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
 				Unauthorized();
@@ -154,9 +156,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Enable(NewLinksView model)
+		public async Task<IActionResult> Enable(NewLinksView model, CancellationToken cancellationToken)
 		{
-			var link = _departmentLinksService.GetLinkById(model.Link.DepartmentLinkId);
+			var link = await _departmentLinksService.GetLinkByIdAsync(model.Link.DepartmentLinkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
 				Unauthorized();
@@ -165,13 +167,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			link.LinkEnabled = true;
 			link.LinkAccepted = DateTime.UtcNow;
 
-			_departmentLinksService.Save(link);
+			await _departmentLinksService.SaveAsync(link, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
-		public IActionResult DeleteLink(int linkId)
+		public async Task<IActionResult> DeleteLink(int linkId)
 		{
 
 
@@ -179,10 +181,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult View(int linkId)
+		public async Task<IActionResult> View(int linkId)
 		{
 			var model = new LinkDataView();
-			model.Link = _departmentLinksService.GetLinkById(linkId);
+			model.Link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (model.Link.DepartmentId != DepartmentId && model.Link.LinkedDepartmentId != DepartmentId)
 				Unauthorized();
@@ -191,9 +193,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetActiveCallsList(int linkId)
+		public async Task<IActionResult> GetActiveCallsList(int linkId)
 		{
-			var link = _departmentLinksService.GetLinkById(linkId);
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			List<CallListJson> callsJson = new List<CallListJson>();
 
@@ -202,8 +204,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (link.LinkEnabled && link.DepartmentShareCalls)
 			{
-				var calls = _callsService.GetActiveCallsByDepartment(link.DepartmentId).OrderByDescending(x => x.LoggedOn);
-				var department = _departmentsService.GetDepartmentById(link.DepartmentId, false);
+				var calls = (await _callsService.GetActiveCallsByDepartmentAsync(link.DepartmentId)).OrderByDescending(x => x.LoggedOn);
+				var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId, false);
 
 				foreach (var call in calls)
 				{
@@ -214,8 +216,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					callJson.State = _callsService.CallStateToString((CallStates) call.State);
 					callJson.StateColor = _callsService.CallStateToColor((CallStates) call.State);
 					callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
-					callJson.Priority = _callsService.CallPriorityToString(call.Priority, link.DepartmentId);
-					callJson.Color = _callsService.CallPriorityToColor(call.Priority, link.DepartmentId);
+					callJson.Priority = await _callsService.CallPriorityToStringAsync(call.Priority, link.DepartmentId);
+					callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, link.DepartmentId);
 
 					if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || call.ReportingUserId == UserId)
 						callJson.CanDeleteCall = true;
@@ -230,18 +232,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetUnitsList(int linkId)
+		public async Task<IActionResult> GetUnitsList(int linkId)
 		{
-			var link = _departmentLinksService.GetLinkById(linkId);
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
 				Unauthorized();
 
 			List<UnitForListJson> unitsJson = new List<UnitForListJson>();
 
-			var units = _unitsService.GetUnitsForDepartment(link.DepartmentId);
-			var states = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(link.DepartmentId);
-			var department = _departmentsService.GetDepartmentById(link.DepartmentId, false);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(link.DepartmentId);
+			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(link.DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId, false);
 
 			foreach (var unit in units)
 			{
@@ -257,7 +259,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (state != null)
 				{
-					var customState = CustomStatesHelper.GetCustomUnitState(state);
+					var customState = await CustomStatesHelper.GetCustomUnitState(state);
 
 					unitJson.StateId = state.State;
 					unitJson.State = customState.ButtonText;
@@ -273,23 +275,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetPersonnelList(int linkId)
+		public async Task<IActionResult> GetPersonnelList(int linkId)
 		{
-			var link = _departmentLinksService.GetLinkById(linkId);
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
 				Unauthorized();
 
-			var department = _departmentsService.GetDepartmentById(link.DepartmentId);
-			var allUsers = _departmentsService.GetAllUsersForDepartment(link.DepartmentId);
-			var lastUserActionlogs = _actionLogsService.GetActionLogsForDepartment(link.DepartmentId);
-			var departmentGroups = _departmentGroupsService.GetAllGroupsForDepartment(link.DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId);
+			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(link.DepartmentId);
+			var lastUserActionlogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(link.DepartmentId);
+			var departmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(link.DepartmentId);
 
-			var lastUserStates = _userStateService.GetLatestStatesForDepartment(link.DepartmentId);
-			var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(link.DepartmentId);
+			var lastUserStates = await _userStateService.GetLatestStatesForDepartmentAsync(link.DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(link.DepartmentId);
 
-			var calls = _callsService.GetActiveCallsByDepartment(link.DepartmentId);
-			var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(link.DepartmentId);
+			var calls = await _callsService.GetActiveCallsByDepartmentAsync(link.DepartmentId);
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(link.DepartmentId);
 
 			var names = new Dictionary<string, string>();
 
@@ -302,39 +304,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (state != null)
 					userStates.Add(state);
 				else
-					userStates.Add(_userStateService.GetLastUserStateByUserId(u.UserId));
+					userStates.Add(await _userStateService.GetLastUserStateByUserIdAsync(u.UserId));
 
 				var name = personnelNames.FirstOrDefault(x => x.UserId == u.UserId);
 				if (name != null)
 					names.Add(u.UserId, name.Name);
 				else
-					names.Add(u.UserId, UserHelper.GetFullNameForUser(u.UserId));
+					names.Add(u.UserId, await UserHelper.GetFullNameForUser(u.UserId));
 			}
 
 			var personnelViewModels = new List<Models.BigBoardX.PersonnelViewModel>();
 
 			var sortedUngroupedUsers = from u in allUsers
 										   // let mu = Membership.GetUser(u.UserId)
-									   let userGroup = _departmentGroupsService.GetGroupForUser(u.UserId, DepartmentId)
-									   let groupName = userGroup == null ? "" : userGroup.Name
-									   let roles = _personnelRolesService.GetRolesForUser(u.UserId, DepartmentId)
+									   //let userGroup = await _departmentGroupsService.GetGroupForUserAsync(u.UserId, DepartmentId)
+									   //let groupName = userGroup == null ? "" : userGroup.Name
+									   //let roles = await _personnelRolesService.GetRolesForUserAsync(u.UserId, DepartmentId)
 									   //let name = (ProfileBase.Create(mu.UserName, true)).GetPropertyValue("Name").ToString()
 									   let name = names[u.UserId]
 									   let weight = lastUserActionlogs.Where(x => x.UserId == u.UserId).FirstOrDefault().GetWeightForAction()
-									   orderby groupName, weight, name ascending
+									   orderby weight, name ascending
 									   select new
 									   {
 										   Name = name,
 										   User = u,
-										   Group = userGroup,
-										   Roles = roles
+										   //Group = userGroup,
+										   Roles = new List<PersonnelRole>()
 									   };
+
+
 
 			foreach (var u in sortedUngroupedUsers)
 			{
 				//var mu = Membership.GetUser(u.User.UserId);
 				var al = lastUserActionlogs.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
 				var us = userStates.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
+				u.Roles.AddRange(await _personnelRolesService.GetRolesForUserAsync(u.User.UserId, DepartmentId));
+				var group = await _departmentGroupsService.GetGroupForUserAsync(u.User.UserId, DepartmentId);
 
 				string callNumber = "";
 				if (al != null && al.ActionTypeId == (int)ActionTypes.RespondingToScene || (al != null && al.DestinationType.HasValue && al.DestinationType.Value == 2))
@@ -348,7 +354,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 				var respondingToDepartment = stations.Where(s => al != null && s.DepartmentGroupId == al.DestinationId).FirstOrDefault();
-				var personnelViewModel = Models.BigBoardX.PersonnelViewModel.Create(u.Name, al, us, department, respondingToDepartment, u.Group, u.Roles, callNumber);
+				var personnelViewModel = await Models.BigBoardX.PersonnelViewModel.Create(u.Name, al, us, department, respondingToDepartment, group, u.Roles, callNumber);
 
 				personnelViewModels.Add(personnelViewModel);
 			}

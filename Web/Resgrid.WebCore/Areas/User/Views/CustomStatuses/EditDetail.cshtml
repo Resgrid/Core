@@ -15,7 +15,7 @@
 				<a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">Custom Statuses</a>
 			</li>
 			<li>
-				<a asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Detail.CustomStateId">Edit @Model.Detail.CustomState.Name</a>
+				<a asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Detail.CustomStateId.ToString()">Edit @Model.Detail.CustomState.Name</a>
 			</li>
 			<li class="active">
 				<strong>Edit @Model.Detail.ButtonText Button</strong>
@@ -100,7 +100,8 @@
 			</div>
 		</div>
 	</div>
-	
+</div>
+
 @section Scripts
 {
 	<script src="~/js/app/internal/statuses/resgrid.statuses.editDetail.js"></script>

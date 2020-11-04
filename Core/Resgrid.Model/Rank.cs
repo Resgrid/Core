@@ -25,10 +25,19 @@ namespace Resgrid.Model
 		public virtual ICollection<DepartmentMember> Members { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return RankId; }
 			set { RankId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Ranks";
+
+		[NotMapped]
+		public string IdName => "RankId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Members" };
 	}
 }

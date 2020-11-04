@@ -3,176 +3,178 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.CustomStatuses.CustomStatusesIndexView
 @{
-	ViewBag.Title = "Resgrid | Custom Statuses";
+  ViewBag.Title = "Resgrid | Custom Statuses";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Custom Statuses</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li class="active">
-				<strong>Custom Statuses</strong>
-			</li>
-		</ol>
-	</div>
+  <div class="col-sm-4">
+    <h2>Custom Statuses</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Custom Statuses</strong>
+      </li>
+    </ol>
+  </div>
 </div>
 
 <div class="row">
-	<div class="col-xs-9">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Current Unit Statuses</h5>
-					<div class="ibox-tools">
-						<div class="buttons-actions">
-							<a title="Add a new Custom Unit Statuses" class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="2">Add Unit Statuses</a>
-						</div>
-					</div>
-				</div>
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>
-										Name
-									</th>
-									<th>
-										Count
-									</th>
-									<th>
-										Description
-									</th>
-									<th class="span1">
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var g in Model.UnitStates)
-								{
-									<tr>
-										<td>
-											@g.Name
-										</td>
-										<td>
-											@if (g.Details != null)
-											{
-												@Html.Raw(g.GetActiveDetails().Count)
-											}
-											else
-											{
-												@Html.Raw("0")
-											}
-										</td>
-										<td>
-											@g.Description
-										</td>
-										<td>
-											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-											{
-												<a class="btn btn-xs btn-danger" asp-controller="CustomStatuses" asp-action="Delete" asp-route-area="User" asp-route-id="@g.CustomStateId" data-confirm="WARNING: This will permanently delete this status set and your buttons will revert back to the defaults for this unit type. Are you sure you want to delete this status set?" rel="nofollow">Delete</a>
-												<a class="btn btn-xs btn-primary" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@g.CustomStateId">Edit</a>
-											}
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3">
-		<div class="form-horizontal">
-			<div class="wrapper wrapper-content animated fadeInUp">
-				<div class="ibox">
-					<div class="ibox-title">
-						<h5>Custom Personnel Statuses (Actions)</h5>
-					</div>
-					<div class="ibox-content">
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Personnel Statuses
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-md-7">
-										<ul class="site-stats">
-											@if (Model.PersonnelStatuses == null)
-											{
-												<strong>Default Personnel Actions/Statuses</strong>
-											}
-											else
-											{
-												<strong>@Model.PersonnelStatuses.Name</strong>
-											}
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								@if (Model.PersonnelStatuses == null)
-								{
-									<a class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="1">Set Custom Statuses</a>
-								}
-								else
-								{
-									<a class="btn btn-primary" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.PersonnelStatuses.CustomStateId">Edit Personnel Statuses</a>
-								}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="ibox">
-					<div class="ibox-title">
-						<h5>Custom Personnel Staffing Levels</h5>
-					</div>
-					<div class="ibox-content">
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Staffing Levels
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-md-7">
-										<ul class="site-stats">
-											@if (Model.PersonellStaffing == null)
-											{
-												<strong>Default Personnel Staffing</strong>
-											}
-											else
-											{
-												<strong>@Model.PersonellStaffing.Name</strong>
-											}
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								@if (Model.PersonellStaffing == null)
-								{
-									<a class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="3">Set Custom Staffing Levels</a>
-								}
-								else
-								{
-									<a class="btn btn-primary" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.PersonellStaffing.CustomStateId">Edit Staffing Levels</a>
-								}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	@section Scripts
+  <div class="col-xs-9">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Current Unit Statuses</h5>
+          <div class="ibox-tools">
+            <div class="buttons-actions">
+              <a title="Add a new Custom Unit Statuses" class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="2">Add Unit Statuses</a>
+            </div>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th>
+                  Name
+                </th>
+                <th>
+                  Count
+                </th>
+                <th>
+                  Description
+                </th>
+                <th class="span1">
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              @foreach (var g in Model.UnitStates)
+              {
+                <tr>
+                  <td>
+                    @g.Name
+                  </td>
+                  <td>
+                    @if (g.Details != null)
+                    {
+                      @Html.Raw(g.GetActiveDetails().Count)
+                    }
+                    else
+                    {
+                      @Html.Raw("0")
+                    }
+                  </td>
+                  <td>
+                    @g.Description
+                  </td>
+                  <td>
+                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                    {
+                      <a class="btn btn-xs btn-danger" asp-controller="CustomStatuses" asp-action="Delete" asp-route-area="User" asp-route-id="@g.CustomStateId" data-confirm="WARNING: This will permanently delete this status set and your buttons will revert back to the defaults for this unit type. Are you sure you want to delete this status set?" rel="nofollow">Delete</a>
+                      <a class="btn btn-xs btn-primary" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@g.CustomStateId">Edit</a>
+                    }
+                  </td>
+                </tr>
+              }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="form-horizontal">
+      <div class="wrapper wrapper-content animated fadeInUp">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Custom Personnel Statuses (Actions)</h5>
+          </div>
+          <div class="ibox-content">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">
+                Personnel Statuses
+              </label>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-md-7">
+                    <ul class="site-stats">
+                      @if (Model.PersonnelStatuses == null)
+                      {
+                        <strong>Default Personnel Actions/Statuses</strong>
+                      }
+                      else
+                      {
+                        <strong>@Model.PersonnelStatuses.Name</strong>
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                @if (Model.PersonnelStatuses == null)
+                {
+                  <a class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="1">Set Custom Statuses</a>
+                }
+                else
+                {
+                  <a class="btn btn-primary" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.PersonnelStatuses.CustomStateId">Edit Personnel Statuses</a>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Custom Personnel Staffing Levels</h5>
+          </div>
+          <div class="ibox-content">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">
+                Staffing Levels
+              </label>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-md-7">
+                    <ul class="site-stats">
+                      @if (Model.PersonellStaffing == null)
+                      {
+                        <strong>Default Personnel Staffing</strong>
+                      }
+                      else
+                      {
+                        <strong>@Model.PersonellStaffing.Name</strong>
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                @if (Model.PersonellStaffing == null)
+                {
+                  <a class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="3">Set Custom Staffing Levels</a>
+                }
+                else
+                {
+                  <a class="btn btn-primary" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.PersonellStaffing.CustomStateId">Edit Staffing Levels</a>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
 {
 
-	}
+}

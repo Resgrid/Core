@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -21,6 +22,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Resgrid.Model.Identity;
 using Resgrid.WebCore.Areas.User.Models.Personnel;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -75,28 +77,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			PersonnelModel model = new PersonnelModel();
 			model.LastActivityDates = new Dictionary<Guid, string>();
 			model.States = new Dictionary<Guid, string>();
 			model.Groups = new Dictionary<Guid, DepartmentGroup>();
 
-			model.CanAddNewUser = _limitsService.CanDepartentAddNewUser(DepartmentId);
-			model.CanGroupAdminsAdd = _authorizationService.CanGroupAdminsAddUsers(DepartmentId);
+			model.CanAddNewUser = await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId);
+			model.CanGroupAdminsAdd = await _authorizationService.CanGroupAdminsAddUsersAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_Create)]
-		public IActionResult AddPerson()
+		public async Task<IActionResult> AddPerson()
 		{
-			if (!_authorizationService.CanUserAddNewUser(DepartmentId, UserId))
+			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
 				Unauthorized();
 
 			var model = new AddPersonModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 			model.Profile = new UserProfile();
 			model.SendAccountCreationNotification = true;
@@ -109,12 +111,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var defaultGroup = new DepartmentGroup();
 			defaultGroup.Name = "No Group";
 			groups.Add(defaultGroup);
-			groups.AddRange(_departmentGroupsService.GetAllGroupsForDepartment(DepartmentId));
+			groups.AddRange(await  _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId));
 
-			var isUserGroupAdmin = _departmentGroupsService.IsUserAGroupAdmin(UserId, DepartmentId);
+			var isUserGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
 			if (isUserGroupAdmin && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 			{
-				var group = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 				model.Groups = new SelectList(groups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId), "DepartmentGroupId", "Name");
 			}
 			else
@@ -125,7 +127,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && isUserGroupAdmin)
 			{
 				model.GroupAdmin = true;
-				var group = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 
 				model.UserGroup = group.DepartmentGroupId;
 				model.GroupName = group.Name;
@@ -136,23 +138,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public IActionResult ViewPerson(string userId)
+		public async Task<IActionResult> ViewPerson(string userId)
 		{
-			if (!_authorizationService.CanUserViewUser(UserId, userId))
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
 				Unauthorized();
 
 			ViewPersonView model = new ViewPersonView();
-			model.Profile = _userProfileService.GetProfileByUserId(userId, true);
+			model.Profile = await _userProfileService.GetProfileByUserIdAsync(userId, true);
 			model.User = _usersService.GetUserById(userId);
 
-			var member = _departmentsService.GetDepartmentMember(userId, DepartmentId);
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
 			if (member != null)
-				model.Department = _departmentsService.GetDepartmentById(member.DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(member.DepartmentId);
 			else
-				model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			model.Group = _departmentGroupsService.GetGroupForUser(userId, DepartmentId);
-			var roles = _personnelRolesService.GetRolesForUser(userId, DepartmentId);
+			model.Group = await _departmentGroupsService.GetGroupForUserAsync(userId, DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, DepartmentId);
 
 			if (roles != null && roles.Count > 0)
 			{
@@ -187,8 +189,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.State = sb.ToString();
 			}
 
-			model.UserState = _userStateService.GetLastUserStateByUserId(userId);
-			model.ActionLog = _actionLogsService.GetLastActionLogForUser(userId, DepartmentId);
+			model.UserState = await _userStateService.GetLastUserStateByUserIdAsync(userId);
+			model.ActionLog = await _actionLogsService.GetLastActionLogForUserAsync(userId, DepartmentId);
 
 			return View(model);
 		}
@@ -196,30 +198,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_Create)]
-		public async Task<IActionResult> AddPerson(AddPersonModel model, IFormCollection form)
+		public async Task<IActionResult> AddPerson(AddPersonModel model, IFormCollection form, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserAddNewUser(DepartmentId, UserId))
+			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
 				Unauthorized();
 
 			ModelState.Remove("Profile.UserId");
 
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 
 			var groups = new List<DepartmentGroup>();
 			var defaultGroup = new DepartmentGroup();
 			defaultGroup.Name = "No Group";
 			groups.Add(defaultGroup);
-			groups.AddRange(_departmentGroupsService.GetAllGroupsForDepartment(DepartmentId));
+			groups.AddRange(await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId));
 
 			ViewBag.Carriers = model.Carrier.ToSelectList();
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 
-			model.IsUserGroupAdmin = _departmentGroupsService.IsUserAGroupAdmin(UserId, DepartmentId);
+			model.IsUserGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
 			if (model.IsUserGroupAdmin)
 			{
-				var group = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 				model.Groups = new SelectList(groups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId), "DepartmentGroupId", "Name");
 			}
 			else
@@ -230,7 +232,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && model.IsUserGroupAdmin)
 			{
 				model.GroupAdmin = true;
-				var group = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 
 				model.UserGroup = group.DepartmentGroupId;
 				model.GroupName = group.Name;
@@ -264,7 +266,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("Profile.MobileNumber", "You have selected you want SMS/Text notifications but have not supplied a mobile number.");
 			}
 
-			var deletedUserId = _departmentsService.GetUserIdForDeletedUserInDepartment(DepartmentId, model.Email);
+			var deletedUserId = await _departmentsService.GetUserIdForDeletedUserInDepartmentAsync(DepartmentId, model.Email);
 			if (deletedUserId != null)
 			{
 				return RedirectToAction("ReactivateUser", "Personnel", new { area = "User", id = deletedUserId });
@@ -276,7 +278,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("AddExistingUser", "Personnel", new { area = "User", id = existingEmailAddress.Id });
 			}
 
-			var existingUsername = _usersService.GetUserByName(model.Username);
+			var existingUsername = await _usersService.GetUserByNameAsync(model.Username);
 			if (existingUsername != null)
 			{
 				ModelState.AddModelError("Username", $"The username {model.Username} has already been taken, please try another.");
@@ -292,7 +294,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Profile.MobileCarrier = (int)model.Carrier;
 					model.Profile.FirstName = model.FirstName;
 					model.Profile.LastName = model.LastName;
-					_userProfileService.SaveProfile(DepartmentId, model.Profile);
+					await _userProfileService.SaveProfileAsync(DepartmentId, model.Profile, cancellationToken);
 
 					_usersService.AddUserToUserRole(user.Id);
 
@@ -303,29 +305,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					catch { }
 
-					//_departmentsService.AddUserToDepartment(model.Department.Name, user.UserId);
-					_departmentsService.AddUserToDepartment(DepartmentId, user.UserId);
+					await _departmentsService.AddUserToDepartmentAsync(DepartmentId, user.UserId, false, cancellationToken);
 
 					var userObject = _usersService.GetUserById(user.UserId);
 
-					_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent() { DepartmentId = DepartmentId, Name = string.Format("{0} {1}", model.FirstName, model.LastName), User = userObject });
+					await _eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent() { DepartmentId = DepartmentId, Name = string.Format("{0} {1}", model.FirstName, model.LastName), User = userObject });
 
 					var auditEvent = new AuditEvent();
 					auditEvent.DepartmentId = DepartmentId;
 					auditEvent.UserId = UserId;
 					auditEvent.Type = AuditLogTypes.UserAdded;
 					auditEvent.After = userObject;
-					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+					await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					if (model.UserGroup != 0)
-						_departmentGroupsService.MoveUserIntoGroup(user.UserId, model.UserGroup, model.IsUserGroupAdmin, DepartmentId);
+						await _departmentGroupsService.MoveUserIntoGroupAsync(user.UserId, model.UserGroup, model.IsUserGroupAdmin, DepartmentId, cancellationToken);
 
 					if (form.ContainsKey("roles"))
 					{
 						var roles = form["roles"].ToString().Split(char.Parse(","));
 
 						if (roles.Any())
-							_personnelRolesService.SetRolesForUser(DepartmentId, user.UserId, roles);
+							await _personnelRolesService.SetRolesForUserAsync(DepartmentId, user.UserId, roles, cancellationToken);
 					}
 					
 					_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
@@ -353,13 +354,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_Delete)]
-		public IActionResult DeletePerson(string userId)
+		public async Task<IActionResult> DeletePerson(string userId)
 		{
-			if (!_authorizationService.CanUserDeleteUser(DepartmentId, UserId, userId))
+			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, userId))
 				Unauthorized();
 
 			DeletePersonModel model = new DeletePersonModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(userId);
 			model.UserId = userId;
 
@@ -369,12 +370,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_Delete)]
-		public IActionResult DeletePerson(DeletePersonModel model)
+		public async Task<IActionResult> DeletePerson(DeletePersonModel model, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserDeleteUser(DepartmentId, UserId, model.UserId))
+			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, model.UserId))
 				Unauthorized();
 
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(model.UserId);
 
 			if (model.Department.ManagingUserId == model.UserId)
@@ -384,8 +385,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (model.AreYouSure)
 				{
-					var member = _departmentsService.DeleteUser(DepartmentId, model.UserId, UserId);
-					//var result = _deleteService.DeleteUser(DepartmentId, UserId, model.UserId);
+					var member = await _departmentsService.DeleteUserAsync(DepartmentId, model.UserId, UserId, cancellationToken);
+					//var result = await _deleteService.DeleteUser(DepartmentId, UserId, model.UserId);
 
 					_userProfileService.ClearUserProfileFromCache(model.UserId);
 					_userProfileService.ClearAllUserProfilesFromCache(model.Department.DepartmentId);
@@ -394,7 +395,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					_departmentsService.InvalidateDepartmentMembers();
 					_usersService.ClearCacheForDepartment(DepartmentId);
 
-					_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
+					await _eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
 
 					if (member != null && member.IsDeleted)
 					{
@@ -415,12 +416,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelForGrid()
+		public async Task<IActionResult> GetPersonnelForGrid()
 		{
 			List<PersonnelForJson> personnelJson = new List<PersonnelForJson>();
-			//var dep = _departmentsService.GetDepartmentByUserId(UserId);
-			//var users = _departmentsService.GetAllUsersForDepartment(DepartmentId);//.GetAllUsersForDepartmentUnlimitedMinusDisabled(DepartmentId);
-			//var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			//var dep = await _departmentsService.GetDepartmentByUserId(UserId);
+			//var users = await _departmentsService.GetAllUsersForDepartment(DepartmentId);//.GetAllUsersForDepartmentUnlimitedMinusDisabled(DepartmentId);
+			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
 
 			var personGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
 
@@ -431,12 +432,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//person.Name = UserHelper.GetFullNameForUser(personnelNames, null, user.UserId);
 				person.Name = user.Name;
 
-				//var group = _departmentGroupsService.GetGroupForUser(user.UserId);
+				//var group = await _departmentGroupsService.GetGroupForUser(user.UserId);
 				//if (group != null)
 				//	person.Group = group.Name;
 				person.Group = user.DepartmentGroupName;
 
-				//var roles = _personnelRolesService.GetRolesForUser(user.UserId);
+				//var roles = await _personnelRolesService.GetRolesForUser(user.UserId);
 				person.Roles = new List<string>();
 				foreach (var role in user.RoleNamesList)
 				{
@@ -452,26 +453,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelForCallGrid(string callLat, string callLong)
+		public async Task<IActionResult> GetPersonnelForCallGrid(string callLat, string callLong)
 		{
 			List<PersonnelForJson> personnelJson = new List<PersonnelForJson>();
-			var users = _departmentsService.GetAllUsersForDepartment(DepartmentId);//.GetAllUsersForDepartmentUnlimitedMinusDisabled(DepartmentId);
-			var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);//.GetAllUsersForDepartmentUnlimitedMinusDisabled(DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
-			var lastUserActionlogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId);
-			var userStates = _userStateService.GetLatestStatesForDepartment(DepartmentId);
+			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
+			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
 
 			foreach (var user in users)
 			{
 				PersonnelForJson person = new PersonnelForJson();
 				person.UserId = user.UserId;
-				person.Name = UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
+				person.Name = await UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
 
-				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				if (group != null)
 					person.Group = group.Name;
 
-				var roles = _personnelRolesService.GetRolesForUser(user.UserId, DepartmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
 				person.Roles = new List<string>();
 				foreach (var role in roles)
 				{
@@ -481,7 +482,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var currentStaffing = userStates.FirstOrDefault(x => x.UserId == user.UserId);
 				if (currentStaffing != null)
 				{
-					var staffing = CustomStatesHelper.GetCustomPersonnelStaffing(DepartmentId, currentStaffing);
+					var staffing = await CustomStatesHelper.GetCustomPersonnelStaffing(DepartmentId, currentStaffing);
 
 					if (staffing != null)
 					{
@@ -498,7 +499,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var currentStatus = lastUserActionlogs.FirstOrDefault(x => x.UserId == user.UserId);
 				if (currentStatus != null)
 				{
-					var status = CustomStatesHelper.GetCustomPersonnelStatus(DepartmentId, currentStatus);
+					var status = await CustomStatesHelper.GetCustomPersonnelStatus(DepartmentId, currentStatus);
 					if (status != null)
 					{
 						person.Status = status.ButtonText;
@@ -515,7 +516,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					person.Eta = "N/A";
 				else
 				{
-					var eta = _geoService.GetEtaInSeconds(currentStatus.GeoLocationData, String.Format("{0},{1}", callLat, callLong));
+					var eta = await _geoService.GetEtaInSecondsAsync(currentStatus.GeoLocationData, String.Format("{0},{1}", callLat, callLong));
 
 					if (eta > 0)
 						person.Eta = $"{Math.Round(eta / 60, MidpointRounding.AwayFromZero)}m";
@@ -532,12 +533,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelForGridWithFilter(bool filterSelf = false)
+		public async Task<IActionResult> GetPersonnelForGridWithFilter(bool filterSelf = false)
 		{
 			List<PersonnelForJson> personnelJson = new List<PersonnelForJson>();
-			var dep = _departmentsService.GetDepartmentByUserId(UserId);
-			var users = _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabled(dep.DepartmentId);
-			var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var dep = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(dep.DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			foreach (var user in users)
 			{
@@ -547,13 +548,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				PersonnelForJson person = new PersonnelForJson();
 				person.UserId = user.UserId;
-				person.Name = UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
+				person.Name = await UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
 
-				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				if (group != null)
 					person.Group = group.Name;
 
-				var roles = _personnelRolesService.GetRolesForUser(user.UserId, DepartmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
 				person.Roles = new List<string>();
 				foreach (var role in roles)
 				{
@@ -569,19 +570,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelList()
+		public async Task<IActionResult> GetPersonnelList()
 		{
 			List<PersonnelForListJson> personnelJson = new List<PersonnelForListJson>();
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var users = _departmentsService.GetAllUsersForDepartmentUnlimited(DepartmentId);
-			var departmentMembers = _departmentsService.GetAllMembersForDepartmentUnlimited(DepartmentId);
-			//var actionLogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId, true);
-			//var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
-			var canGroupAdminsDelete = _authorizationService.CanGroupAdminsRemoveUsers(DepartmentId);
-			var profiles = _userProfileService.GetAllProfilesForDepartmentIncDisabledDeleted(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedAsync(DepartmentId);
+			var departmentMembers = await _departmentsService.GetAllMembersForDepartmentUnlimitedAsync(DepartmentId);
+			//var actionLogs = await _actionLogsService.GetActionLogsForDepartment(DepartmentId, true);
+			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var canGroupAdminsDelete = await _authorizationService.CanGroupAdminsRemoveUsersAsync(DepartmentId);
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentIncDisabledDeletedAsync(DepartmentId);
 			var userGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, false);
 
-			var sortOrder = _departmentSettingsService.GetDepartmentPersonnelSortOrder(DepartmentId);
+			var sortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 
 			foreach (var user in users)
 			{
@@ -590,7 +591,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
 				//var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
-				//var userProfile = _userProfileService.GetProfileByUserId(user.UserId);
+				//var userProfile = await _userProfileService.GetProfileByUserId(user.UserId);
 
 				if (!profiles.ContainsKey(user.UserId))
 				{
@@ -609,7 +610,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					person.EmailAddress = "";
 
-				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				if (group != null)
 				{
 					person.Group = group.Name;
@@ -629,7 +630,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				//var roles = _personnelRolesService.GetRolesForUser(user.UserId);
+				//var roles = await _personnelRolesService.GetRolesForUser(user.UserId);
 				//foreach (var role in roles)
 				//{
 				//	if (String.IsNullOrWhiteSpace(person.Roles))
@@ -696,21 +697,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelListPaged(int perPage, int page)
+		public async Task<IActionResult> GetPersonnelListPaged(int perPage, int page)
 		{
 			PersonnelListPagedResult result = new PersonnelListPagedResult();
 			result.Data = new List<PersonnelForListJson>();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var users = _departmentsService.GetAllUsersForDepartmentUnlimited(DepartmentId);
-			var departmentMembers = _departmentsService.GetAllMembersForDepartmentUnlimited(DepartmentId);
-			//var actionLogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId, true);
-			//var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
-			var canGroupAdminsDelete = _authorizationService.CanGroupAdminsRemoveUsers(DepartmentId);
-			var profiles = _userProfileService.GetAllProfilesForDepartmentIncDisabledDeleted(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedAsync(DepartmentId);
+			var departmentMembers = await _departmentsService.GetAllMembersForDepartmentUnlimitedAsync(DepartmentId);
+			//var actionLogs = await _actionLogsService.GetActionLogsForDepartment(DepartmentId, true);
+			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var canGroupAdminsDelete = await _authorizationService.CanGroupAdminsRemoveUsersAsync(DepartmentId);
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentIncDisabledDeletedAsync(DepartmentId);
 			var userGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, false);
 
-			var sortOrder = _departmentSettingsService.GetDepartmentPersonnelSortOrder(DepartmentId);
+			var sortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 
 			foreach (var user in users)
 			{
@@ -719,7 +720,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
 				//var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
-				//var userProfile = _userProfileService.GetProfileByUserId(user.UserId);
+				//var userProfile = await _userProfileService.GetProfileByUserId(user.UserId);
 
 				if (!profiles.ContainsKey(user.UserId))
 				{
@@ -738,7 +739,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					person.EmailAddress = "";
 
-				var group = _departmentGroupsService.GetGroupForUser(user.UserId, DepartmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				if (group != null)
 				{
 					person.Group = group.Name;
@@ -758,7 +759,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				//var roles = _personnelRolesService.GetRolesForUser(user.UserId);
+				//var roles = await _personnelRolesService.GetRolesForUser(user.UserId);
 				//foreach (var role in roles)
 				//{
 				//	if (String.IsNullOrWhiteSpace(person.Roles))
@@ -830,22 +831,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelGroupStatusForGridCombined()
+		public async Task<IActionResult> GetPersonnelGroupStatusForGridCombined()
 		{
 			List<GroupStatusJson> personnelGroupJson = new List<GroupStatusJson>();
-			var dep = _departmentsService.GetDepartmentByUserId(UserId);
-			var groups = _departmentGroupsService.GetAllGroupsForDepartment(dep.DepartmentId);
-			var lastUserActionlogs = _actionLogsService.GetActionLogsForDepartment(dep.DepartmentId);
-			var allUsers = _departmentsService.GetAllUsersForDepartment(dep.DepartmentId);
-			var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var dep = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(dep.DepartmentId);
+			var lastUserActionlogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(dep.DepartmentId);
+			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(dep.DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			List<UserState> userStates = new List<UserState>();
 
 			foreach (var u in allUsers)
 			{
-				if (!_departmentsService.IsUserDisabled(u.UserId, DepartmentId) && !_departmentsService.IsUserHidden(u.UserId, DepartmentId))
+				if (!await _departmentsService.IsUserDisabledAsync(u.UserId, DepartmentId) && !await _departmentsService.IsUserHiddenAsync(u.UserId, DepartmentId))
 				{
-					userStates.Add(_userStateService.GetLastUserStateByUserId(u.UserId));
+					userStates.Add(await _userStateService.GetLastUserStateByUserIdAsync(u.UserId));
 				}
 			}
 
@@ -857,19 +858,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				group.Personnel = new List<PersonnelStatusJson>();
 
 				var sortedUsers = from u in departmentGroup.Members
-													let name = UserHelper.GetFullNameForUser(personnelNames, u.User.UserName, u.UserId)
-													orderby name ascending
-													select new
-													{
-														Name = name,
-														User = u
-													};
+													  join pn in personnelNames on u.UserId equals pn.UserId
+													  let name = pn.Name
+													  orderby name ascending
+													  select new
+													  {
+													  	Name = name,
+													  	User = u
+													  };
 
 				foreach (var member in sortedUsers)
 				{
 					PersonnelStatusJson person = new PersonnelStatusJson();
 					person.UserId = member.User.UserId;
-					person.Name = member.Name;
 
 					var al = lastUserActionlogs.Where(x => x.UserId == member.User.UserId).FirstOrDefault();
 
@@ -901,11 +902,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelGroupStatusForGrid()
+		public async Task<IActionResult> GetPersonnelGroupStatusForGrid()
 		{
 			List<GroupStatusJson> personnelGroupJson = new List<GroupStatusJson>();
-			var dep = _departmentsService.GetDepartmentByUserId(UserId);
-			var groups = _departmentGroupsService.GetAllGroupsForDepartment(dep.DepartmentId);
+			var dep = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(dep.DepartmentId);
 
 			foreach (var departmentGroup in groups)
 			{
@@ -930,17 +931,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetPersonnelGroupMemberStatusForGrid(int groupId)
+		public async Task<IActionResult> GetPersonnelGroupMemberStatusForGrid(int groupId)
 		{
 			List<PersonnelStatusJson> personnel = new List<PersonnelStatusJson>();
-			var dep = _departmentsService.GetDepartmentByUserId(UserId);
-			var lastUserActionlogs = _actionLogsService.GetActionLogsForDepartment(dep.DepartmentId);
-			var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
+			var dep = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			var lastUserActionlogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(dep.DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			if (groupId == 0)
 			{
-				var allUsers = _departmentsService.GetAllUsersForDepartment(dep.DepartmentId);
-				var groupedUserIds = _departmentGroupsService.AllGroupedUserIdsForDepartment(dep.DepartmentId);
+				var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(dep.DepartmentId);
+				var groupedUserIds = await _departmentGroupsService.AllGroupedUserIdsForDepartmentAsync(dep.DepartmentId);
 
 				var unGroupedUsers = from u in allUsers
 														 where !(from uid in groupedUserIds
@@ -948,7 +949,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 														 select u;
 
 				var sortedUsers = from u in unGroupedUsers
-													let name = UserHelper.GetFullNameForUser(personnelNames, u.UserName, u.UserId)
+													join pn in personnelNames on u.UserId equals pn.UserId
+													let name = pn.Name
 													orderby name ascending
 													select new
 													{
@@ -971,7 +973,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						person.LastActionDate = al.Timestamp;
 					}
 
-					var level = _userStateService.GetLastUserStateByUserId(member.User.UserId);
+					var level = await _userStateService.GetLastUserStateByUserIdAsync(member.User.UserId);
 
 					if (level != null)
 					{
@@ -984,10 +986,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else
 			{
-				var depGroup = _departmentGroupsService.GetGroupById(groupId);
+				var depGroup = await _departmentGroupsService.GetGroupByIdAsync(groupId);
 
 				var sortedUsers = from u in depGroup.Members
-													let name = UserHelper.GetFullNameForUser(personnelNames, u.User.UserName, u.UserId)
+													join pn in personnelNames on u.UserId equals pn.UserId
+													let name = pn.Name
 													orderby name ascending
 													select new
 													{
@@ -1010,7 +1013,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						person.LastActionDate = al.Timestamp;
 					}
 
-					var level = _userStateService.GetLastUserStateByUserId(member.User.UserId);
+					var level = await _userStateService.GetLastUserStateByUserIdAsync(member.User.UserId);
 
 					if (level != null)
 					{
@@ -1028,9 +1031,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult GetMembersForRole(int id)
+		public async Task<IActionResult> GetMembersForRole(int id)
 		{
-			var role = _personnelRolesService.GetRoleById(id);
+			var role = await _personnelRolesService.GetRoleByIdAsync(id);
 
 			return Json(role.Users.Select(x => x.UserId).ToList());
 		}
@@ -1038,20 +1041,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public IActionResult ReactivateUser(string id)
+		public async Task<IActionResult> ReactivateUser(string id, CancellationToken cancellationToken)
 		{
 			ViewPersonView model = new ViewPersonView();
-			model.Profile = _userProfileService.GetProfileByUserId(id, true);
+			model.Profile = await _userProfileService.GetProfileByUserIdAsync(id, true);
 			model.User = _usersService.GetUserById(id);
 
-			var member = _departmentsService.GetDepartmentMember(id, DepartmentId);
+			var member = await _departmentsService.GetDepartmentMemberAsync(id, DepartmentId);
 			if (member != null)
-				model.Department = _departmentsService.GetDepartmentById(member.DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(member.DepartmentId);
 			else
-				model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			model.Group = _departmentGroupsService.GetGroupForUser(id, DepartmentId);
-			var roles = _personnelRolesService.GetRolesForUser(id, DepartmentId);
+			model.Group = await _departmentGroupsService.GetGroupForUserAsync(id, DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(id, DepartmentId);
 
 			if (roles != null && roles.Count > 0)
 			{
@@ -1086,7 +1089,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.State = sb.ToString();
 			}
 
-			_departmentsService.ReactivateUser(DepartmentId, id);
+			await _departmentsService.ReactivateUserAsync(DepartmentId, id, cancellationToken);
 
 			_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
 			_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
@@ -1099,20 +1102,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public IActionResult AddExistingUser(string id)
+		public async Task<IActionResult> AddExistingUser(string id, CancellationToken cancellationToken)
 		{
 			ViewPersonView model = new ViewPersonView();
-			model.Profile = _userProfileService.GetProfileByUserId(id, true);
-			model.User = _usersService.GetUserById(id);
+			model.Profile = await _userProfileService.GetProfileByUserIdAsync(id, true);
+			model.User = _usersService.GetUserById(id, true);
 
-			var member = _departmentsService.GetDepartmentMember(id, DepartmentId);
+			var member = await _departmentsService.GetDepartmentMemberAsync(id, DepartmentId);
 			if (member != null)
-				model.Department = _departmentsService.GetDepartmentById(member.DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(member.DepartmentId);
 			else
-				model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			model.Group = _departmentGroupsService.GetGroupForUser(id, DepartmentId);
-			var roles = _personnelRolesService.GetRolesForUser(id, DepartmentId);
+			model.Group = await _departmentGroupsService.GetGroupForUserAsync(id, DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(id, DepartmentId);
 
 			if (roles != null && roles.Count > 0)
 			{
@@ -1147,7 +1150,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.State = sb.ToString();
 			}
 
-			_departmentsService.AddExistingUser(DepartmentId, id);
+			await _departmentsService.AddExistingUserAsync(DepartmentId, id, cancellationToken);
 
 			_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
 			_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
@@ -1161,10 +1164,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public IActionResult GetRolesForCallGrid()
+		public async Task<IActionResult> GetRolesForCallGrid()
 		{
 			List<RoleForJson> rolesJson = new List<RoleForJson>();
-			var roles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
 
 			foreach (var role in roles)
 			{
@@ -1187,18 +1190,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		[Authorize(Policy = ResgridResources.Role_View)]
-		public IActionResult Roles()
+		public async Task<IActionResult> Roles()
 		{
 			PersonnelRolesModel model = new PersonnelRolesModel();
-			model.Roles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
-			model.CanAddNewRole = _limitsService.CanDepartentAddNewRole(DepartmentId);
+			model.Roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			model.CanAddNewRole = true;
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Role_Create)]
-		public IActionResult AddRole()
+		public async Task<IActionResult> AddRole()
 		{
 			AddRoleModel model = new AddRoleModel();
 			model.Role = new PersonnelRole();
@@ -1208,16 +1211,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Role_Create)]
-		public IActionResult AddRole(AddRoleModel model)
+		public async Task<IActionResult> AddRole(AddRoleModel model, CancellationToken cancellationToken)
 		{
 			model.Role.DepartmentId = DepartmentId;
 
-			if (_personnelRolesService.GetRoleByDepartmentAndName(model.Role.DepartmentId, model.Role.Name) != null)
+			if (await _personnelRolesService.GetRoleByDepartmentAndNameAsync(model.Role.DepartmentId, model.Role.Name) != null)
 				ModelState.AddModelError("Role.Name", "Role with that name already exists in the department.");
 
 			if (ModelState.IsValid)
 			{
-				_personnelRolesService.SaveRole(model.Role);
+				await _personnelRolesService.SaveRoleAsync(model.Role, cancellationToken);
 
 				return RedirectToAction("Roles");
 			}
@@ -1227,37 +1230,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Role_Update)]
-		public IActionResult EditRole(int roleId)
+		public async Task<IActionResult> EditRole(int roleId)
 		{
-			if (!_authorizationService.CanUserEditRole(UserId, roleId))
+			if (!await _authorizationService.CanUserEditRoleAsync(UserId, roleId))
 				Unauthorized();
 
 			EditRoleModel model = new EditRoleModel();
-			model.Role = _personnelRolesService.GetRoleById(roleId);
-			model.Users = _departmentsService.GetAllUsersForDepartment(DepartmentId);
+			model.Role = await _personnelRolesService.GetRoleByIdAsync(roleId);
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Role_Update)]
-		public IActionResult EditRole(EditRoleModel model, IFormCollection collection)
+		public async Task<IActionResult> EditRole(EditRoleModel model, IFormCollection collection, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserEditRole(UserId, model.Role.PersonnelRoleId))
+			if (!await _authorizationService.CanUserEditRoleAsync(UserId, model.Role.PersonnelRoleId))
 				Unauthorized();
 
-			var role = _personnelRolesService.GetRoleById(model.Role.PersonnelRoleId);
+			var role = await _personnelRolesService.GetRoleByIdAsync(model.Role.PersonnelRoleId);
 			role.Name = model.Role.Name;
 			role.Description = model.Role.Description;
 
-			if (_personnelRolesService.GetRoleByDepartmentAndName(model.Role.DepartmentId, model.Role.Name) != null)
+			var existingRole = await _personnelRolesService.GetRoleByDepartmentAndNameAsync(model.Role.DepartmentId, model.Role.Name);
+			if (existingRole != null && existingRole.PersonnelRoleId != model.Role.PersonnelRoleId)
 				ModelState.AddModelError("Role.Name", "Role with that name already exists in the department.");
 
 			if (ModelState.IsValid)
 			{
 				//using (var scope = new TransactionScope())
 				//{
-				_personnelRolesService.DeleteRoleUsers(role.Users.ToList());
+				await _personnelRolesService.DeleteRoleUsersAsync(role.Users.ToList(), cancellationToken);
 
 				if (collection.ContainsKey("users"))
 				{
@@ -1279,7 +1283,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//	scope.Complete();
 				//}
 
-				_personnelRolesService.SaveRole(role);
+				await _personnelRolesService.SaveRoleAsync(role, cancellationToken);
 
 				//_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
@@ -1296,25 +1300,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Role_Delete)]
-		public IActionResult DeleteRole(int roleId)
+		public async Task<IActionResult> DeleteRole(int roleId, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserEditRole(UserId, roleId))
+			if (!await _authorizationService.CanUserEditRoleAsync(UserId, roleId))
 				Unauthorized();
 
-			_personnelRolesService.DeleteRoleById(roleId);
+			await _personnelRolesService.DeleteRoleByIdAsync(roleId, cancellationToken);
 
 			return RedirectToAction("Roles");
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Role_View)]
-		public IActionResult ViewRole(int roleId)
+		public async Task<IActionResult> ViewRole(int roleId)
 		{
-			if (!_authorizationService.CanUserViewRole(UserId, roleId))
+			if (!await _authorizationService.CanUserViewRoleAsync(UserId, roleId))
 				Unauthorized();
 
 			ViewRoleModel model = new ViewRoleModel();
-			model.Role = _personnelRolesService.GetRoleById(roleId);
+			model.Role = await _personnelRolesService.GetRoleByIdAsync(roleId);
 
 			return View(model);
 		}
@@ -1322,10 +1326,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 
-		public IActionResult GetRoles()
+		public async Task<IActionResult> GetRoles()
 		{
 			var rolesJson = new List<RoleForJson>();
-			var roles = _personnelRolesService.GetRolesForDepartment(DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
 
 			foreach (var role in roles)
 			{
@@ -1342,10 +1346,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 
-		public IActionResult GetCertifications()
+		public async Task<IActionResult> GetCertifications()
 		{
 			var certificationsJson = new List<CertificationJson>();
-			var certifications = _certificationService.GetAllCertificationTypesByDepartment(DepartmentId);
+			var certifications = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
 
 			foreach (var certification in certifications)
 			{
@@ -1362,10 +1366,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 
-		public IActionResult GetRolesForUser(string userId)
+		public async Task<IActionResult> GetRolesForUser(string userId)
 		{
 			var rolesJson = new List<RoleForJson>();
-			var roles = _personnelRolesService.GetRolesForUser(userId, DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, DepartmentId);
 
 			foreach (var role in roles)
 			{

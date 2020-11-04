@@ -3,6 +3,7 @@ using System.Text;
 using Resgrid.Model;
 using Resgrid.Web.Areas.User.Models.Home;
 using System;
+using System.Threading.Tasks;
 using Resgrid.Model.Helpers;
 using Resgrid.Web.Helpers;
 using Resgrid.Model.Identity;
@@ -98,7 +99,7 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public class PersonnelViewModel
 		{
-			public static PersonnelViewModel Create(string name, ActionLog actionLog, UserState userState, Department department, DepartmentGroup respondingToDepartment, DepartmentGroup group, List<PersonnelRole> roles, string callNumber)
+			public static async Task<PersonnelViewModel> Create(string name, ActionLog actionLog, UserState userState, Department department, DepartmentGroup respondingToDepartment, DepartmentGroup group, List<PersonnelRole> roles, string callNumber)
 			{
 				DateTime updateDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
 
@@ -146,7 +147,7 @@ namespace Resgrid.Web.Areas.User.Models
 					}
 					else
 					{
-						var customState = CustomStatesHelper.GetCustomState(department.DepartmentId, userState.State);
+						var customState = await CustomStatesHelper.GetCustomState(department.DepartmentId, userState.State);
 
 						if (customState != null)
 						{
@@ -272,7 +273,7 @@ namespace Resgrid.Web.Areas.User.Models
 					}
 					else
 					{
-						var customStatus = CustomStatesHelper.GetCustomState(department.DepartmentId, actionLog.ActionTypeId);
+						var customStatus = await CustomStatesHelper.GetCustomState(department.DepartmentId, actionLog.ActionTypeId);
 
 						if (customStatus != null)
 						{

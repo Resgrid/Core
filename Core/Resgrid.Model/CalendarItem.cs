@@ -96,11 +96,21 @@ namespace Resgrid.Model
 		public virtual ICollection<CalendarItemAttendee> Attendees { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CalendarItemId; }
 			set { CalendarItemId = (int)value; }
 		}
+
+		
+		[NotMapped]
+		public string TableName => "CalendarItems";
+
+		[NotMapped]
+		public string IdName => "CalendarItemId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Attendees", "Department" };
 
 		public bool IsUserAttending(string userId)
 		{

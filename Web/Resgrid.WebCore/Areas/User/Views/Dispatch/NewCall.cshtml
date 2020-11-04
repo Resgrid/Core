@@ -8,29 +8,29 @@
 
 }
 
-  <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-4">
-      <h2>New Call</h2>
-      <ol class="breadcrumb">
-        <li>
-          <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-        </li>
-        <li>
-          <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
-        </li>
-        <li class="active">
-          <strong>New Call</strong>
-        </li>
-      </ol>
-    </div>
-    <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <div class="buttons-actions">
-          <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">Template</a>
-        </div>
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>New Call</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+      </li>
+      <li class="active">
+        <strong>New Call</strong>
+      </li>
+    </ol>
+  </div>
+  <div class="col-sm-8">
+    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+      <div class="buttons-actions">
+        <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">Template</a>
       </div>
     </div>
   </div>
+</div>
 
 <div class="row">
   <div class="col-xs-12">
@@ -44,14 +44,15 @@
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.Latitude)
                 @Html.HiddenFor(m => m.Longitude)
+                @Html.HiddenFor(m => m.Call.ReportingUserId)
                 <div asp-validation-summary="All" class="text-danger"></div>
 
                 @if (!String.IsNullOrEmpty(Model.Message))
-                {
+				{
                   <div class="alert alert-success">
                     @Model.Message
                   </div>
-                }
+				}
               </div>
             </div>
 
@@ -76,8 +77,12 @@
               <div class="col-sm-10"><input type="text" class="form-control" placeholder="Phone or Email address of the Reporter" asp-for="Call.ContactNumber"></div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Call Identifier</label>
+              <label class="col-sm-2 control-label">Call Id</label>
               <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Inbound Call System Id" asp-for="Call.ExternalIdentifier"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Incident Id</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Incident Grouping Id (can be same as Call Id)" asp-for="Call.IncidentNumber"></div>
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label">Reference Id</label>
@@ -165,122 +170,122 @@
                 <div>
                   <ul class="nav nav-tabs" role="tablist">
                     @{
-                      var count = 0;
+					  var count = 0;
 
-                      var ungroupedUnits = Model.Units.Where(x => x.StationGroupId == null);
+					  var ungroupedUnits = Model.Units.Where(x => x.StationGroupId == null);
 
-                      if (ungroupedUnits != null && ungroupedUnits.Any())
-                      {
+					  if (ungroupedUnits != null && ungroupedUnits.Any())
+					  {
                         @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab0' aria-controls='home' role='tab' data-toggle='tab'>Units</a></li>");
-                        count++;
-                      }
+						count++;
+					  }
 
 
-                      for (var i = 0; i < Model.Groups.Count(); i++)
-                      {
-                        var units = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
+					  for (var i = 0; i < Model.Groups.Count(); i++)
+					  {
+						var units = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
 
-                        if (units != null && units.Any())
-                        {
-                          if (count == 0)
-                          {
+						if (units != null && units.Any())
+						{
+						  if (count == 0)
+						  {
                             @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
-                          }
-                          else
-                          {
+						  }
+						  else
+						  {
                             @Html.Raw("<li role='presentation'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
-                          }
+						  }
 
-                          count++;
-                        }
-                      }
+						  count++;
+						}
+					  }
                     }
                   </ul>
                   <div class="tab-content">
                     @{
-                      var count2 = 0;
+					  var count2 = 0;
 
-                      var ungroupedUnits2 = Model.Units.Where(x => x.StationGroupId == null);
+					  var ungroupedUnits2 = Model.Units.Where(x => x.StationGroupId == null);
 
-                      if (ungroupedUnits2 != null && ungroupedUnits2.Any())
-                      {
+					  if (ungroupedUnits2 != null && ungroupedUnits2.Any())
+					  {
                         @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>");
                         @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_0\", this)'/></th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody id='unitGroups_0'>");
 
-                        if (ungroupedUnits2 != null && ungroupedUnits2.Any())
-                        {
-                          foreach (var u in ungroupedUnits2)
-                          {
-                            var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
-                            var stateText = "Unknown";
-                            var stateColor = "#000000";
-                            var stateTextColor = "#FFFFFF";
+						if (ungroupedUnits2 != null && ungroupedUnits2.Any())
+						{
+						  foreach (var u in ungroupedUnits2)
+						  {
+							var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
+							var stateText = "Unknown";
+							var stateColor = "#000000";
+							var stateTextColor = "#FFFFFF";
 
-                            if (unitStatus != null)
-                            {
-                              var state = CustomStatesHelper.GetCustomUnitState(unitStatus);
+							if (unitStatus != null)
+							{
+							  var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
 
-                              if (state != null)
-                              {
-                                stateText = state.ButtonText;
-                                stateColor = state.ButtonColor;
-                                stateTextColor = state.TextColor;
-                              }
-                            }
+							  if (state != null)
+							  {
+								stateText = state.ButtonText;
+								stateColor = state.ButtonColor;
+								stateTextColor = state.TextColor;
+							  }
+							}
 
                             @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>");
-                          }
-                        }
+						  }
+						}
                         @Html.Raw("</tbody></table></div></div>");
-                        count2++;
-                      }
+						count2++;
+					  }
 
-                      for (var i = 0; i < Model.Groups.Count(); i++)
-                      {
-                        var groupUnits = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
+					  for (var i = 0; i < Model.Groups.Count(); i++)
+					  {
+						var groupUnits = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
 
-                        if (groupUnits != null && groupUnits.Any())
-                        {
-                          if (count2 == 0)
-                          {
+						if (groupUnits != null && groupUnits.Any())
+						{
+						  if (count2 == 0)
+						  {
                             @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
-                          }
-                          else
-                          {
+						  }
+						  else
+						  {
                             @Html.Raw("<div role='tabpanel' class='tab-pane' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
-                          }
+						  }
 
                           @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_" + Model.Groups[i].DepartmentGroupId + "\", this)'/></th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>");
 
-                          if (groupUnits != null && groupUnits.Any())
-                          {
-                            foreach (var u in groupUnits)
-                            {
-                              var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
-                              var stateText = "Unknown";
-                              var stateColor = "#000000";
-                              var stateTextColor = "#FFFFFF";
+						  if (groupUnits != null && groupUnits.Any())
+						  {
+							foreach (var u in groupUnits)
+							{
+							  var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
+							  var stateText = "Unknown";
+							  var stateColor = "#000000";
+							  var stateTextColor = "#FFFFFF";
 
-                              if (unitStatus != null)
-                              {
-                                var state = CustomStatesHelper.GetCustomUnitState(unitStatus);
+							  if (unitStatus != null)
+							  {
+								var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
 
-                                if (state != null)
-                                {
-                                  stateText = state.ButtonText;
-                                  stateColor = state.ButtonColor;
-                                  stateTextColor = state.TextColor;
-                                }
-                              }
+								if (state != null)
+								{
+								  stateText = state.ButtonText;
+								  stateColor = state.ButtonColor;
+								  stateTextColor = state.TextColor;
+								}
+							  }
 
                               @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>");
-                            }
-                          }
+							}
+						  }
                           @Html.Raw("</tbody></table></div></div>");
 
-                          count2++;
-                        }
-                      }
+						  count2++;
+						}
+					  }
                     }
                   </div>
                 </div>
@@ -307,20 +312,20 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Select Call Template</h4>
       </div>
-        <div class="modal-body">
-          <div class="form-group">
-			<label class=" control-label">
-			  Call Templates
-			</label>
-			<div class="controls">
-			  @Html.DropDownListFor(m => m.CallTemplateId, Model.CallTemplates)
-			</div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class=" control-label">
+            Call Templates
+          </label>
+          <div class="controls">
+            @Html.DropDownListFor(m => m.CallTemplateId, Model.CallTemplates)
           </div>
         </div>
-		<div class="modal-footer">
-		  <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		  <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="resgrid.dispatch.newcall.fillCallTemplate();">Set Template</button>
-		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="resgrid.dispatch.newcall.fillCallTemplate();">Set Template</button>
+      </div>
     </div>
   </div>
 </div>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using System.Linq;
 using ProtoBuf;
@@ -153,11 +152,23 @@ namespace Resgrid.Model
 		public DepartmentCallPriority CallPriority { get; set; }
 
 		[NotMapped]
-		public object Id
+		public int PreviousDispatchCount { get; set; }
+
+		[NotMapped]
+		public object IdValue
 		{
 			get { return CallId; }
 			set { CallId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "Calls";
+
+		[NotMapped]
+		public string IdName => "CallId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount" };
 
 		public string GetIdentifier()
 		{
@@ -240,13 +251,19 @@ namespace Resgrid.Model
 
 			return false;
 		}
-	}
 
-	public class Call_Mapping : EntityTypeConfiguration<Call>
-	{
-		public Call_Mapping()
+		public void IncreaseDispatchCount()
 		{
-			this.HasRequired(t => t.Department).WithMany().HasForeignKey(t => t.DepartmentId).WillCascadeOnDelete(false);
+			PreviousDispatchCount = DispatchCount;
+			DispatchCount++;
+		}
+
+		public bool DidDispatchCountChange()
+		{
+			if (PreviousDispatchCount == 0)
+				return false;
+
+			return PreviousDispatchCount == DispatchCount;
 		}
 	}
 }

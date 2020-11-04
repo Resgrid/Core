@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
@@ -8,6 +11,7 @@ using Resgrid.Model.Services;
 using Stripe;
 using Newtonsoft.Json;
 using Stripe.Checkout;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -21,7 +25,8 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.PaymentQueueName);
+					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.PaymentQueueName);
+					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.PaymentQueueName);
 				}
 				catch (TimeoutException) { }
 			}
@@ -29,10 +34,19 @@ namespace Resgrid.Workers.Framework.Logic
 
 		public void Process(SystemQueueItem item)
 		{
-			ProcessQueueMessage(_client.Receive());
+			var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+			{
+				MaxConcurrentCalls = 1,
+				AutoComplete = false
+			};
+
+			// Register the function that will process messages
+			_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
+
+			//ProcessQueueMessage(_client.Receive());
 		}
 
-		public static Tuple<bool, string> ProcessQueueMessage(BrokeredMessage message)
+		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
 		{
 			bool success = true;
 			string result = "";
@@ -54,16 +68,18 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							success = false;
 							result = "Unable to parse message body Exception: " + ex.ToString();
-							message.Complete();
+							//message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
 						}
 
-						success = ProcessPaymentQueueItem(qi);
+						success = await ProcessPaymentQueueItem(qi);
 					}
 
 					try
 					{
 						if (success)
-							message.Complete();
+							await _client.CompleteAsync(message.SystemProperties.LockToken);
+							//message.Complete();
 					}
 					catch (MessageLockLostException)
 					{
@@ -74,7 +90,8 @@ namespace Resgrid.Workers.Framework.Logic
 					Logging.LogException(ex);
 					Logging.SendExceptionEmail(ex, "PaymentQueueLogic");
 
-					message.Abandon();
+					await _client.AbandonAsync(message.SystemProperties.LockToken); 
+					//message.Abandon();
 					success = false;
 					result = ex.ToString();
 				}
@@ -83,7 +100,7 @@ namespace Resgrid.Workers.Framework.Logic
 			return new Tuple<bool, string>(success, result);
 		}
 
-		public static bool ProcessPaymentQueueItem(CqrsEvent qi)
+		public static async Task<bool> ProcessPaymentQueueItem(CqrsEvent qi)
 		{
 			bool success = true;
 
@@ -102,7 +119,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-								paymentProviderService.ProcessStripePayment(succeededCharge);
+								await paymentProviderService.ProcessStripePaymentAsync(succeededCharge);
 							}
 							break;
 						case CqrsEventTypes.StripeChargeFailed:
@@ -112,7 +129,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-								paymentProviderService.ProcessStripeChargeFailed(failedCharge);
+								await paymentProviderService.ProcessStripeChargeFailedAsync(failedCharge);
 							}
 							break;
 						case CqrsEventTypes.StripeChargeRefunded:
@@ -122,7 +139,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-								paymentProviderService.ProcessStripeSubscriptionRefund(refundedCharge);
+								await paymentProviderService.ProcessStripeSubscriptionRefundAsync(refundedCharge);
 							}
 							break;
 						case CqrsEventTypes.StripeSubUpdated:
@@ -132,7 +149,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-								paymentProviderService.ProcessStripeSubscriptionUpdate(updatedSubscription);
+								await paymentProviderService.ProcessStripeSubscriptionUpdateAsync(updatedSubscription);
 							}
 							break;
 						case CqrsEventTypes.StripeSubDeleted:
@@ -142,7 +159,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-								paymentProviderService.ProcessStripeSubscriptionCancellation(deletedSubscription);
+								await paymentProviderService.ProcessStripeSubscriptionCancellationAsync(deletedSubscription);
 							}
 							break;
 						case CqrsEventTypes.StripeCheckoutCompleted:
@@ -152,7 +169,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-								paymentProviderService.ProcessStripeCheckoutCompleted(stripeCheckoutSession);
+								await paymentProviderService.ProcessStripeCheckoutCompletedAsync(stripeCheckoutSession);
 							}
 							break;
 						case CqrsEventTypes.StripeCheckoutUpdated:
@@ -162,7 +179,7 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
 
-								paymentProviderService.ProcessStripeCheckoutUpdate(stripeCheckoutSessionUpdated);
+								await paymentProviderService.ProcessStripeCheckoutUpdateAsync(stripeCheckoutSessionUpdated);
 							}
 							break;
 						default:
@@ -177,6 +194,17 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return success;
+		}
+
+		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+		{
+			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
+			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
+			//Console.WriteLine("Exception context for troubleshooting:");
+			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
+			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
+			//Console.WriteLine($"- Executing Action: {context.Action}");
+			return Task.CompletedTask;
 		}
 	}
 }

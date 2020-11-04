@@ -12,12 +12,13 @@ var resgrid;
                 $('#DayOfWeekTime').kendoTimePicker({
                     interval: 15
                 });
-                if ($('#specific_datetime').is(':checked')) {
+                var selectedValue = $('#SpecificDatetime').val();
+                if (selectedValue === 'True') {
                     $("#specificdatetimearea").show();
                     $("#daysoftheweekarea").hide();
                     $("#daysoftheweekarea_time").hide();
                 }
-                else if ($('#days_of_the_week').is(':checked')) {
+                else if (selectedValue === 'False') {
                     $("#specificdatetimearea").hide();
                     $("#daysoftheweekarea").show();
                     $("#daysoftheweekarea_time").show();
@@ -27,22 +28,18 @@ var resgrid;
                     $("#daysoftheweekarea").hide();
                     $("#daysoftheweekarea_time").hide();
                 }
-                $("#specific_datetime").change(function (e) {
-                    switch ($(e.target).val()) {
-                        case "true":
-                            $("#specificdatetimearea").show();
-                            $("#daysoftheweekarea").hide();
-                            $("#daysoftheweekarea_time").hide();
-                            break;
-                    }
-                });
-                $("#days_of_the_week").change(function (e) {
-                    switch ($(e.target).val()) {
-                        case "false":
-                            $("#specificdatetimearea").hide();
-                            $("#daysoftheweekarea").show();
-                            $("#daysoftheweekarea_time").show();
-                            break;
+                $("#SpecificDatetime").change(function (e) {
+                    switch ($(this).val()) {
+                    case "True":
+                        $("#specificdatetimearea").show();
+                        $("#daysoftheweekarea").hide();
+                        $("#daysoftheweekarea_time").hide();
+                        break;
+                    case "False":
+                        $("#specificdatetimearea").hide();
+                        $("#daysoftheweekarea").show();
+                        $("#daysoftheweekarea_time").show();
+                        break;    
                     }
                 });
             });

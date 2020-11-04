@@ -60,10 +60,20 @@ namespace Resgrid.Model
 		public string ErrorMessage { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DistributionListId; }
 			set { DistributionListId = (int)value; }
 		}
+
+		
+		[NotMapped]
+		public string TableName => "DistributionLists";
+
+		[NotMapped]
+		public string IdName => "DistributionListId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Members" };
 	}
 }

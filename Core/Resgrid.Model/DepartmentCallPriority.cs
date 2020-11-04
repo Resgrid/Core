@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -58,10 +59,20 @@ namespace Resgrid.Model
 		public bool IsSystemPriority { get; set; }
 		
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return DepartmentCallPriorityId; }
 			set { DepartmentCallPriorityId = (int)value; }
 		}
+
+		
+		[NotMapped]
+		public string TableName => "DepartmentCallPriorities";
+
+		[NotMapped]
+		public string IdName => "DepartmentCallPriorityId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "IsSystemPriority" };
 	}
 }

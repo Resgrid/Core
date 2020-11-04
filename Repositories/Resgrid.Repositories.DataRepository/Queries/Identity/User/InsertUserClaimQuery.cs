@@ -4,6 +4,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using Resgrid.Model;
 
 namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
 {
@@ -25,6 +26,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
             var query = _sqlConfiguration.InsertUserClaimQuery
                                          .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.UserClaimTable,
+                                                                       _sqlConfiguration.InsertGetReturnIdCommand,
                                                                        columns.GetCommaSeparatedColumns(),
                                                                        string.Join(", ", valuesArray));
 

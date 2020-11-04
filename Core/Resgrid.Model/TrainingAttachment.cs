@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Resgrid.Model
@@ -24,10 +25,19 @@ namespace Resgrid.Model
 		public byte[] Data { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return TrainingAttachmentId; }
 			set { TrainingAttachmentId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "TrainingAttachments";
+
+		[NotMapped]
+		public string IdName => "TrainingAttachmentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Training" };
 	}
 }

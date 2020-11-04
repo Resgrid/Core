@@ -44,7 +44,7 @@
 
             @if (!String.IsNullOrWhiteSpace(Model.Message.SendingUserId))
 			{
-              <span class="font-noraml">From: </span>@UserHelper.GetFullNameForUser(Model.Message.SendingUserId)
+              <span class="font-noraml">From: </span>@(await UserHelper.GetFullNameForUser(Model.Message.SendingUserId))
 			}
 			else
 			{
@@ -193,7 +193,7 @@
 					  var groupAndRole = Model.UserGroupsAndRoles.FirstOrDefault(x => x.UserId == recipient.UserId);
 
                       <tr>
-                        <td>@UserHelper.GetFullNameForUser(recipient.UserId)</td>
+                        <td>@(await UserHelper.GetFullNameForUser(recipient.UserId))</td>
                         <td>
                           @if (groupAndRole == null || !groupAndRole.DepartmentGroupId.HasValue)
 						  {
@@ -270,7 +270,7 @@
                     @foreach (var recipient in Model.Message.MessageRecipients)
 					{
                       <tr>
-                        <td>@UserHelper.GetFullNameForUser(recipient.UserId)</td>
+                        <td>@(await UserHelper.GetFullNameForUser(recipient.UserId))</td>
                         <td>
                           @if (recipient.ReadOn.HasValue)
 						  {

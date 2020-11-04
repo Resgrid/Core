@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Framework;
 using Resgrid.Model;
-using Resgrid.Model.Services;
+using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Backend.Heartbeat
 {
@@ -35,15 +35,15 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 				{
 					try
 					{
-						BrokeredMessage message = null;
+						Message message = null;
 						while (message != null)
 						{
 							try
 							{
 								var queueItem = new HeartbeatQueueItem();
 
-								if (message.Properties["Type"] != null)
-									queueItem.Type = (HeartbeatTypes) int.Parse(message.Properties["Type"].ToString());
+								if (message.UserProperties["Type"] != null)
+									queueItem.Type = (HeartbeatTypes) int.Parse(message.UserProperties["Type"].ToString());
 
 								//if (message.Properties["Timestamp"] != null)
 								//	queueItem.Timestamp = DateTime.Parse(message.Properties["Timestamp"].ToString());
@@ -54,7 +54,7 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 									_queue.Enqueue(queueItem);
 
 									// Remove message from subscription
-									message.Complete();
+									//message.Complete();
 								}
 								catch (System.ServiceModel.FaultException)
 								{
@@ -64,15 +64,15 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 								{
 									message = null;
 								}
-								catch (Microsoft.ServiceBus.Messaging.MessageLockLostException)
+								catch (MessageLockLostException)
 								{
 								}
 								catch (InvalidOperationException)
 								{
-									message.Complete();
+									//message.Complete();
 								}
 							}
-							catch (Microsoft.ServiceBus.Messaging.MessageLockLostException)
+							catch (MessageLockLostException)
 							{
 							}
 							catch (Exception ex)
@@ -80,7 +80,7 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 								Logging.LogException(ex);
 
 								// Indicate a problem, unlock message in subscription
-								message.Abandon();
+								//message.Abandon();
 							}
 						}
 					}
@@ -106,10 +106,12 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 				_queue = new Queue<HeartbeatQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 			_queue.Clear();
+
+			return _cleared;
 		}
 
 		public void AddItem(HeartbeatQueueItem item)
@@ -127,7 +129,7 @@ namespace Resgrid.Workers.Framework.Backend.Heartbeat
 			return item;
 		}
 
-		public IEnumerable<HeartbeatQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<HeartbeatQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<HeartbeatQueueItem>();
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -32,14 +33,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				Unauthorized();
 
 			var model = new PermissionsView();
 
-			var permissions = _permissionsService.GetAllPermissionsForDepartment(DepartmentId);
+			var permissions = await _permissionsService.GetAllPermissionsForDepartmentAsync(DepartmentId);
 
 			int val = (int)PermissionTypes.AddPersonnel;
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.AddPersonnel))
@@ -224,7 +225,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		public IActionResult Audits()
+		public async Task<IActionResult> Audits()
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				Unauthorized();
@@ -232,11 +233,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View();
 		}
 
-		public IActionResult GetAuditLogsList()
+		public async Task<IActionResult> GetAuditLogsList()
 		{
 			var auditLogsJson = new List<AuditLogJson>();
-			var auditLogs = _auditService.GetAllAuditLogsForDepartment(DepartmentId);
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
+			var auditLogs = await _auditService.GetAllAuditLogsForDepartmentAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			foreach (var auditLog in auditLogs)
 			{
@@ -258,47 +259,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(auditLogsJson);
 		}
 
-		public IActionResult DeleteAudit(int auditLogId)
+		public async Task<IActionResult> ViewAudit(int auditLogId)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				Unauthorized();
 
-			_auditService.DeleteAuditLogById(auditLogId);
+			var model = new ViewAuditLogView();
+			model.AuditLog = await _auditService.GetAuditLogByIdAsync(auditLogId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Type = (AuditLogTypes)model.AuditLog.LogType;
 
-			return RedirectToAction("Audits");
-		}
-
-		[HttpPost]
-		public IActionResult ClearSelectedAuditLogs(IFormCollection form)
-		{
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			if (model.AuditLog.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			var auditLogIds = new List<int>();
-			foreach (var key in form.Keys)
-			{
-				if (key.ToString().StartsWith("selectAuditLog_"))
-				{
-					var eventId = int.Parse(key.ToString().Replace("selectAuditLog_", ""));
-					auditLogIds.Add(eventId);
-				}
-			}
 
-			if (auditLogIds.Any())
-				_auditService.DeleteSelectedAuditLogs(DepartmentId, auditLogIds);
-
-			return RedirectToAction("Audits");
+			return View(model);
 		}
 
 		#region Async
 
 		[HttpGet]
-		public IActionResult SetPermission(int type, int perm, bool? lockToGroup)
+		public async Task<IActionResult> SetPermission(int type, int perm, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 			{
-				var before = _permissionsService.GetPermisionByDepartmentType(DepartmentId, (PermissionTypes)type);
-				var result = _permissionsService.SetPermissionForDepartment(DepartmentId, UserId, (PermissionTypes)type, (PermissionActions)perm, null, lockToGroup.GetValueOrDefault());
+				var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);
+				var result = await _permissionsService.SetPermissionForDepartmentAsync(DepartmentId, UserId, (PermissionTypes)type, (PermissionActions)perm, null, lockToGroup.GetValueOrDefault());
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
@@ -314,12 +300,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.NotModified);
 		}
 
-		public IActionResult SetPermissionData(int type, string data, bool? lockToGroup)
+		public async Task<IActionResult> SetPermissionData(int type, string data, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 			{
-				var before = _permissionsService.GetPermisionByDepartmentType(DepartmentId, (PermissionTypes)type);
-				var result = _permissionsService.SetPermissionForDepartment(DepartmentId, UserId, (PermissionTypes)type, (PermissionActions)before.Action, data, lockToGroup.GetValueOrDefault());
+				var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);
+				var result = await _permissionsService.SetPermissionForDepartmentAsync(DepartmentId, UserId, (PermissionTypes)type, (PermissionActions)before.Action, data, lockToGroup.GetValueOrDefault());
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
@@ -335,9 +321,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.NotModified);
 		}
 
-		public IActionResult GetRolesForPermission(int type)
+		public async Task<IActionResult> GetRolesForPermission(int type)
 		{
-			var before = _permissionsService.GetPermisionByDepartmentType(DepartmentId, (PermissionTypes)type);
+			var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);
 
 			if (before != null)
 				return Json(before.Data);

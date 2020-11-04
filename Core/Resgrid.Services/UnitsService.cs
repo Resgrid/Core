@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -12,21 +13,21 @@ namespace Resgrid.Services
 {
 	public class UnitsService : IUnitsService
 	{
-		private readonly IGenericDataRepository<Unit> _unitsRepository;
+		private readonly IUnitsRepository _unitsRepository;
 		private readonly IUnitStatesRepository _unitStatesRepository;
-		private readonly IGenericDataRepository<UnitLog> _unitLogsRepository;
-		private readonly IGenericDataRepository<UnitType> _unitTypesRepository;
-		private readonly IGenericDataRepository<UnitRole> _unitRolesRepository;
-		private readonly IGenericDataRepository<UnitStateRole> _unitStateRoleRepository;
+		private readonly IUnitLogsRepository _unitLogsRepository;
+		private readonly IUnitTypesRepository _unitTypesRepository;
+		private readonly IUnitRolesRepository _unitRolesRepository;
+		private readonly IUnitStateRoleRepository _unitStateRoleRepository;
 		private readonly IUnitLocationRepository _unitLocationRepository;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IUserStateService _userStateService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICustomStateService _customStateService;
 
-		public UnitsService(IGenericDataRepository<Unit> unitsRepository, IUnitStatesRepository unitStatesRepository,
-			IGenericDataRepository<UnitLog> unitLogsRepository, IGenericDataRepository<UnitType> unitTypesRepository, ISubscriptionsService subscriptionsService,
-			IGenericDataRepository<UnitRole> unitRolesRepository, IGenericDataRepository<UnitStateRole> unitStateRoleRepository, IUserStateService userStateService,
+		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
+			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
+			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, IUnitLocationRepository unitLocationRepository)
 		{
 			_unitsRepository = unitsRepository;
@@ -42,34 +43,31 @@ namespace Resgrid.Services
 			_unitLocationRepository = unitLocationRepository;
 		}
 
-		public List<Unit> GetAll()
+		public async Task<List<Unit>> GetAllAsync()
 		{
-			return _unitsRepository.GetAll().ToList();
+			var items = await _unitsRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public Unit SaveUnit(Unit unit)
+		public async Task<Unit> SaveUnitAsync(Unit unit, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_unitsRepository.SaveOrUpdate(unit);
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
+			var saved = await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
+			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
 
-			return unit;
+			return saved;
 		}
 
-		public UnitLog SaveUnitLog(UnitLog unitLog)
+		public async Task<UnitLog> SaveUnitLogAsync(UnitLog unitLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_unitLogsRepository.SaveOrUpdate(unitLog);
-
-			return unitLog;
+			return await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
 		}
 
-		public List<Unit> GetUnitsForDepartment(int departmentId)
+		public async Task<List<Unit>> GetUnitsForDepartmentAsync(int departmentId)
 		{
 			List<Unit> systemUnts = new List<Unit>();
-			var units = (from unit in _unitsRepository.GetAll()
-									 where unit.DepartmentId == departmentId
-									 select unit).ToList();
+			var units = (await _unitsRepository.GetAllByDepartmentIdAsync(departmentId)).ToList();
 
-			int limit = _subscriptionsService.GetCurrentPlanForDepartment(departmentId).GetLimitForTypeAsInt(PlanLimitTypes.Units);
+			int limit = (await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId)).GetLimitForTypeAsInt(PlanLimitTypes.Units);
 			int count = units.Count < limit ? units.Count : limit;
 
 			// Only return units up to the plans unit limit
@@ -81,43 +79,46 @@ namespace Resgrid.Services
 			return systemUnts;
 		}
 
-		public List<Unit> GetUnitsForDepartmentUnlimited(int departmentId)
+		public async Task<List<Unit>> GetUnitsForDepartmentUnlimitedAsync(int departmentId)
 		{
-			var units = from unit in _unitsRepository.GetAll()
-									where unit.DepartmentId == departmentId
-									select unit;
+			var units = await _unitsRepository.GetAllByDepartmentIdAsync(departmentId);
 
 			return units.ToList();
 		}
 
-		public Unit GetUnitById(int unitId)
+		public async Task<Unit> GetUnitByIdAsync(int unitId)
 		{
-			return _unitsRepository.GetAll().FirstOrDefault(x => x.UnitId == unitId);
+			return await _unitsRepository.GetByIdAsync(unitId);
 		}
 
-		public void DeleteUnit(int unitId)
+		public async Task<bool> DeleteUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var unit = _unitsRepository.GetAll().FirstOrDefault(x => x.UnitId == unitId);
+			var unit = await _unitsRepository.GetByIdAsync(unitId);
 
 			if (unit != null)
 			{
-				var states = _unitStatesRepository.GetAll().Where(x => x.UnitId == unitId);
+				var states = await _unitStatesRepository.GetAllStatesByUnitIdAsync(unitId);
 
 				if (states != null && states.Any())
-					_unitStatesRepository.DeleteAll(states);
+				{
+					foreach (var unitState in states)
+					{
+						await _unitStatesRepository.DeleteAsync(unitState, cancellationToken);
+					}
+				}
 
-				_unitsRepository.DeleteOnSubmit(unit);
-				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
+				await _unitsRepository.DeleteAsync(unit, cancellationToken);
+				await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
 
+				return true;
 			}
+
+			return false;
 		}
 
-		public UnitState GetLastUnitStateByUnitId(int unitId)
+		public async Task<UnitState> GetLastUnitStateByUnitIdAsync(int unitId)
 		{
-			var userState = (from us in _unitStatesRepository.GetAll()
-											 where us.UnitId == unitId
-											 orderby us.Timestamp descending
-											 select us).FirstOrDefault();
+			var userState = await _unitStatesRepository.GetLastUnitStateByUnitIdAsync(unitId);
 
 			if (userState != null)
 				return userState;
@@ -130,19 +131,15 @@ namespace Resgrid.Services
 			return state;
 		}
 
-		public UnitState GetLastUnitStateBeforeId(int unitId, int unitStateId)
+		public async Task<UnitState> GetLastUnitStateBeforeIdAsync(int unitId, int unitStateId)
 		{
-			var states = (from us in _unitStatesRepository.GetAll()
-										where us.UnitId == unitId && us.UnitStateId > unitStateId
-										orderby us.Timestamp descending
-										select us).ToList();
+			var state = await _unitStatesRepository.GetLastUnitStateBeforeIdAsync(unitId, unitStateId);
 
-			if (states.Count > 0)
-			{
-				return states.FirstOrDefault();
-			}
+			if (state != null)
+				return state;
+			
 
-			UnitState state = new UnitState();
+			state = new UnitState();
 			state.UnitId = unitId;
 			state.Timestamp = DateTime.Now.ToUniversalTime();
 			state.State = (int)UnitStateTypes.Available;
@@ -150,11 +147,11 @@ namespace Resgrid.Services
 			return state;
 		}
 
-		public List<UnitState> GetAllLatestStatusForUnitsByDepartmentId(int departmentId)
+		public async Task<List<UnitState>> GetAllLatestStatusForUnitsByDepartmentIdAsync(int departmentId)
 		{
 			var states = new List<UnitState>();
-			var units = GetUnitsForDepartment(departmentId);
-			var currentStates = _unitStatesRepository.GetLatestUnitStatesForDepartment(departmentId);
+			var units = await GetUnitsForDepartmentAsync(departmentId);
+			var currentStates = await _unitStatesRepository.GetLatestUnitStatesForDepartmentAsync(departmentId);
 
 			foreach (var unit in units)
 			{
@@ -179,57 +176,48 @@ namespace Resgrid.Services
 			return states;
 		}
 
-		public List<UnitState> GetAllStatesForUnit(int unitId)
+		public async Task<List<UnitState>> GetAllStatesForUnitAsync(int unitId)
 		{
-			var unitStates = (from us in _unitStatesRepository.GetAll()
-												where us.UnitId == unitId
-												orderby us.Timestamp descending
-												select us).ToList();
+			var unitStates = (from us in await _unitStatesRepository.GetAllStatesByUnitIdAsync(unitId)
+				orderby us.Timestamp descending
+				select us).ToList();
 
 			return unitStates;
 		}
 
-		public UnitState GetUnitStateById(int unitStateId)
+		public async Task<UnitState> GetUnitStateByIdAsync(int unitStateId)
 		{
-			return (from us in _unitStatesRepository.GetAll()
-							where us.UnitStateId == unitStateId
-							select us).FirstOrDefault();
+			return await _unitStatesRepository.GetUnitStateByUnitStateIdAsync(unitStateId);
 		}
 
-		public List<UnitType> GetUnitTypesForDepartment(int departmentId)
+		public async Task<List<UnitType>> GetUnitTypesForDepartmentAsync(int departmentId)
 		{
-			var types = (from type in _unitTypesRepository.GetAll()
-									 where type.DepartmentId == departmentId
-									 select type).ToList();
+			var types = await _unitTypesRepository.GetAllByDepartmentIdAsync(departmentId);
 
-			return types;
+			return types.ToList();
 		}
 
-		public Unit GetUnitByNameDepartmentId(int departmentId, string name)
+		public async Task<Unit> GetUnitByNameDepartmentIdAsync(int departmentId, string name)
 		{
-			var units = from unit in _unitsRepository.GetAll()
-									where unit.DepartmentId == departmentId && unit.Name == name
-									select unit;
-
-			return units.FirstOrDefault();
+			return await _unitsRepository.GetUnitByNameDepartmentIdAsync(departmentId, name);
 		}
 
-		public UnitType GetUnitTypeById(int unitTypeId)
+		public async Task<UnitType> GetUnitTypeByIdAsync(int unitTypeId)
 		{
-			return _unitTypesRepository.GetAll().FirstOrDefault(x => x.UnitTypeId == unitTypeId);
+			return await _unitTypesRepository.GetByIdAsync(unitTypeId);
 		}
 
-		public UnitType AddUnitType(int departmentId, string name)
+		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return AddUnitType(departmentId, name, 0);
+			return await AddUnitTypeAsync(departmentId, name, 0, cancellationToken);
 		}
 
-		public UnitType GetUnitTypeByName(int departmentId, string type)
+		public async Task<UnitType> GetUnitTypeByNameAsync(int departmentId, string type)
 		{
-			return _unitTypesRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId && x.Type == type);
+			return await _unitTypesRepository.GetUnitByNameDepartmentIdAsync(departmentId, type);
 		}
 
-		public UnitType AddUnitType(int departmentId, string name, int customStatesId)
+		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int customStatesId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var type = new UnitType();
 			type.DepartmentId = departmentId;
@@ -238,81 +226,69 @@ namespace Resgrid.Services
 			if (customStatesId != 0)
 				type.CustomStatesId = customStatesId;
 
-			_unitTypesRepository.SaveOrUpdate(type);
-
-			return type;
+			return await _unitTypesRepository.SaveOrUpdateAsync(type, cancellationToken);
 		}
 
-		public UnitType SaveUnitType(UnitType unitType)
+		public async Task<UnitType> SaveUnitTypeAsync(UnitType unitType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_unitTypesRepository.SaveOrUpdate(unitType);
-
-			return unitType;
+			return await _unitTypesRepository.SaveOrUpdateAsync(unitType, cancellationToken);
 		}
 
-		public void DeleteUnitType(int unitTypeId)
+		public async Task<bool> DeleteUnitTypeAsync(int unitTypeId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var type = GetUnitTypeById(unitTypeId);
+			var type = await GetUnitTypeByIdAsync(unitTypeId);
 
 			if (type != null)
-				_unitTypesRepository.DeleteOnSubmit(type);
+				return await _unitTypesRepository.DeleteAsync(type, cancellationToken);
+
+			return false;
 		}
 
-		public UnitState SetUnitState(int unitId, int unitStateType)
+		public async Task<UnitState> SetUnitStateAsync(int unitId, int unitStateType, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var state = new UnitState();
 			state.UnitId = unitId;
 			state.State = unitStateType;
 			state.Timestamp = DateTime.UtcNow;
 
-			_unitStatesRepository.SaveOrUpdate(state);
+			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
-			var departmentId = _unitsRepository.GetAll().Where(x => x.UnitId == unitId).Select(x => x.DepartmentId).FirstOrDefault();
-			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = state });
+			await _eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
 
-			return state;
+			return saved;
 		}
 
-		public UnitState SetUnitState(UnitState state, int departmentId = 0)
+		public async Task<UnitState> SetUnitStateAsync(UnitState state, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (state.Accuracy > 100000)
 				state.Accuracy = 100000;
 
-			_unitStatesRepository.SaveOrUpdate(state);
+			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
-			if (departmentId == 0)
-				departmentId = _unitsRepository.GetAll().Where(x => x.UnitId == state.UnitId).Select(x => x.DepartmentId).FirstOrDefault();
-
-			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = state });
+			await _eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
 			
 			return state;
 		}
 
-		public List<UnitLog> GetLogsForUnit(int unitId)
+		public async Task<List<UnitLog>> GetLogsForUnitAsync(int unitId)
 		{
-			var logs = from l in _unitLogsRepository.GetAll()
-								 where l.UnitId == unitId
-								 orderby l.Timestamp descending
-								 select l;
+			var logs = await _unitLogsRepository.GetAllLogsByUnitIdAsync(unitId);
 
 			return logs.ToList();
 		}
 
-		public List<UnitRole> GetRolesForUnit(int unitId)
+		public async Task<List<UnitRole>> GetRolesForUnitAsync(int unitId)
 		{
-			var roles = from r in _unitRolesRepository.GetAll()
-									where r.UnitId == unitId
-									select r;
-
+			var roles = await _unitRolesRepository.GetAllRolesByUnitIdAsync(unitId);
 			return roles.ToList();
 		}
 
-		public UnitRole GetRoleById(int unitRoleId)
+		public async Task<UnitRole> GetRoleByIdAsync(int unitRoleId)
 		{
-			return _unitRolesRepository.GetAll().FirstOrDefault(x => x.UnitRoleId == unitRoleId);
+			return await _unitRolesRepository.GetByIdAsync(unitRoleId);
 		}
 
-		public List<UnitRole> SetRolesForUnit(int unitId, List<UnitRole> roles)
+		public async Task<List<UnitRole>> SetRolesForUnitAsync(int unitId, List<UnitRole> roles, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (unitId <= 0)
 				throw new ArgumentException("UnitId cannot be null", "unitId");
@@ -320,48 +296,57 @@ namespace Resgrid.Services
 			if (roles == null || roles.Count == 0)
 				throw new ArgumentException("Unit Roles cannot be null or empty", "roles");
 
-			ClearRolesForUnit(unitId);
+			await ClearRolesForUnitAsync(unitId, cancellationToken);
 
 			foreach (var role in roles)
 			{
 				role.UnitId = unitId;
+				await _unitRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
 			}
-			_unitRolesRepository.SaveOrUpdateAll(roles);
 
 			return roles;
 		}
 
-		public void ClearRolesForUnit(int unitId)
+		public async Task<bool> ClearRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (unitId <= 0)
 				throw new ArgumentException("UnitId cannot be null", "unitId");
 
-			var savedRoles = from r in _unitRolesRepository.GetAll()
-											 where r.UnitId == unitId
-											 select r;
+			var savedRoles = await GetRolesForUnitAsync(unitId);
 
-			_unitRolesRepository.DeleteAll(savedRoles);
+			if (savedRoles != null && savedRoles.Any())
+			{
+				foreach (var savedRole in savedRoles)
+				{
+					await _unitRolesRepository.DeleteAsync(savedRole, cancellationToken);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
-		public void ClearGroupForUnits(int departmentGroupId)
+		public async Task<bool> ClearGroupForUnitsAsync(int departmentGroupId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (departmentGroupId <= 0)
 				throw new ArgumentException("DepartmentGroupId cannot be null", "departmentGroupId");
 
-			var units = (from r in _unitsRepository.GetAll()
-									 where r.StationGroupId == departmentGroupId
-									 select r);
+			var units = await _unitsRepository.GetAllUnitsByGroupIdAsync(departmentGroupId);
 
 			foreach (var unit in units)
 			{
 				unit.StationGroupId = null;
 				unit.StationGroup = null;
+
+				
+				await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
 			}
 
-			_unitsRepository.SaveOrUpdateAll(units);
+			return true;
 		}
 
-		public void AddUnitStateRoleForEvent(int unitStateId, string userId, int roleId, string unitName, DateTime timestamp, string roleName = "Unknown")
+		public async Task<UnitStateRole> AddUnitStateRoleForEventAsync(int unitStateId, string userId, int roleId, string unitName, DateTime timestamp, string roleName = "Unknown", CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (unitStateId <= 0)
 				throw new ArgumentException("Unit State Id cannot be 0", "unitStateId");
@@ -372,59 +357,64 @@ namespace Resgrid.Services
 			if (roleId <= 0)
 				throw new ArgumentException("Role Id cannot be 0", "roleId");
 
-			//var role = GetRoleById(roleId);
-			//string roleName = "Unknown";
-
-			//if (role != null)
-			//	roleName = role.Name;
-
 			var unitStateRole = new UnitStateRole();
 			unitStateRole.UnitStateId = unitStateId;
 			unitStateRole.UserId = userId;
 			unitStateRole.Role = roleName;
 
-			//_userStateService.CreateUserState(userId, (int)UserStateTypes.Committed, string.Format("On {0}", unitName), timestamp);
-
-			_unitStateRoleRepository.SaveOrUpdate(unitStateRole);
+			return await _unitStateRoleRepository.SaveOrUpdateAsync(unitStateRole, cancellationToken);
 		}
 
-		public void AddAllUnitStateRoles(List<UnitStateRole> roles)
+		public async Task<bool> AddAllUnitStateRolesAsync(List<UnitStateRole> roles, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_unitStateRoleRepository.SaveOrUpdateAll(roles);
+			if (roles != null && roles.Any())
+			{
+				foreach (var unitStateRole in roles)
+				{
+					await _unitStateRoleRepository.SaveOrUpdateAsync(unitStateRole, cancellationToken);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
-		public void DeleteStatesForUnit(int unitId)
+		public async Task<bool> DeleteStatesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var unitStates = (from us in _unitStatesRepository.GetAll()
-												where us.UnitId == unitId
-												orderby us.Timestamp descending
-												select us).ToList();
+			var unitStates = await _unitStatesRepository.GetAllStatesByUnitIdAsync(unitId);
 
-			_unitStatesRepository.DeleteAll(unitStates);
+			if (unitStates != null && unitStates.Any())
+			{
+				foreach (var unitState in unitStates)
+				{
+					await _unitStatesRepository.DeleteAsync(unitState, cancellationToken);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
-		public List<Unit> GetAllUnitsForType(int departmentId, string type)
+		public async Task<List<Unit>> GetAllUnitsForTypeAsync(int departmentId, string type)
 		{
-			var units = (from unit in _unitsRepository.GetAll()
-									 where unit.DepartmentId == departmentId && unit.Type == type
-									 select unit).ToList();
+			var units = await _unitsRepository.GetAllUnitsForTypeAsync(departmentId, type);
 
-			return units;
+			return units.ToList();
 		}
 
-		public List<Unit> GetAllUnitsForGroup(int groupId)
+		public async Task<List<Unit>> GetAllUnitsForGroupAsync(int groupId)
 		{
-			var units = (from unit in _unitsRepository.GetAll()
-									 where unit.StationGroupId == groupId
-									 select unit).ToList();
+			var units = await _unitsRepository.GetAllUnitsByGroupIdAsync(groupId);
 
-			return units;
+			return units.ToList();
 		}
 
-		public List<UnitState> GetUnitStatesForCall(int departmentId, int callId)
+		public async Task<List<UnitState>> GetUnitStatesForCallAsync(int departmentId, int callId)
 		{
 			List<int> callEnabledStates = new List<int>();
-			var states = _customStateService.GetAllCustomStatesForDepartment(departmentId);
+			var states = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			callEnabledStates.Add((int)UnitStateTypes.Enroute);
 			callEnabledStates.Add((int)UnitStateTypes.Committed);
@@ -445,43 +435,35 @@ namespace Resgrid.Services
 									   where detail.DetailType == (int)CustomStateDetailTypes.Calls || detail.DetailType == (int)CustomStateDetailTypes.CallsAndStations
 									   select detail.CustomStateDetailId);
 
-			var unitStates = (from us in _unitStatesRepository.GetAll()
-												where callEnabledStates.Contains(us.State) && us.DestinationId == callId
+			var unitStates = (from us in await _unitStatesRepository.GetAllStatesByCallIdAsync(callId)
+												where callEnabledStates.Contains(us.State)
 												select us).ToList();
 
 			return unitStates;
 		}
 
-		public UnitLocation AddUnitLocation(UnitLocation location)
+		public async Task<UnitLocation> AddUnitLocationAsync(UnitLocation location, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_unitLocationRepository.SoftAddUnitLocation(location);
-
-			return location;
+			return await _unitLocationRepository.SaveOrUpdateAsync(location, cancellationToken);
 		}
 
-		public UnitLocation GetLatestUnitLocation(int unitId, DateTime? timestamp = null)
+		public async Task<UnitLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null)
 		{
 			UnitLocation location = null;
 
 			if (timestamp == null)
-				location = (from ul in _unitLocationRepository.GetAll()
-										where ul.UnitId == unitId
-										orderby ul.UnitLocationId descending
-										select ul).FirstOrDefault();
+				location = await _unitLocationRepository.GetLastUnitLocationByUnitIdAsync(unitId);
 			else
-			{
-				location = (from ul in _unitLocationRepository.GetAll()
-										where ul.UnitId == unitId && ul.Timestamp > timestamp.Value
-										orderby ul.UnitLocationId descending
-										select ul).FirstOrDefault();
-			}
+				location = await _unitLocationRepository.GetLastUnitLocationByUnitIdTimestampAsync(unitId, timestamp.Value);
+			
 
 			return location;
 		}
 
-		public List<UnitStateRole> GetCurrentRolesForUnit(int unitId)
+		public async Task<List<UnitStateRole>> GetCurrentRolesForUnitAsync(int unitId)
 		{
-			return _unitStatesRepository.GetCurrentRolesForUnit(unitId);
+			var items = await _unitStateRoleRepository.GetCurrentRolesForUnitAsync(unitId);
+			return items.ToList();
 		}
 	}
 }

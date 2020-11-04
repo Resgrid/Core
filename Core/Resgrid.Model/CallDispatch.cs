@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using ProtoBuf;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -46,18 +46,20 @@ namespace Resgrid.Model
 		public virtual ActionLog ActionLog { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CallDispatchId; }
 			set { CallDispatchId = (int)value; }
 		}
-	}
 
-	public class CallDispatch_Mapping : EntityTypeConfiguration<CallDispatch>
-	{
-		public CallDispatch_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		
+		[NotMapped]
+		public string TableName => "CallDispatches";
+
+		[NotMapped]
+		public string IdName => "CallDispatchId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ActionLog", "User", "Call" };
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -13,53 +14,64 @@ namespace Resgrid.Services
 	public class TrainingService : ITrainingService
 	{
 		private readonly ITrainingRepository _trainingRepository;
-		private readonly IGenericDataRepository<TrainingAttachment> _trainingAttachmentRepository;
-		private readonly IGenericDataRepository<TrainingUser> _trainingUserRepository;
+		private readonly ITrainingAttachmentRepository _trainingAttachmentRepository;
+		private readonly ITrainingQuestionRepository _trainingQuestionRepository;
+		private readonly ITrainingUserRepository _trainingUserRepository;
 		private readonly ICommunicationService _communicationService;
 		private readonly IDepartmentsService _departmentService;
 
-		public TrainingService(ITrainingRepository trainingRepository, IGenericDataRepository<TrainingAttachment> trainingAttachmentRepository,
-			IGenericDataRepository<TrainingUser> trainingUserRepository, ICommunicationService communicationService, IDepartmentsService departmentService)
+		public TrainingService(ITrainingRepository trainingRepository, ITrainingAttachmentRepository trainingAttachmentRepository,
+			ITrainingUserRepository trainingUserRepository, ITrainingQuestionRepository trainingQuestionRepository, ICommunicationService communicationService, IDepartmentsService departmentService)
 		{
 			_trainingRepository = trainingRepository;
 			_trainingAttachmentRepository = trainingAttachmentRepository;
 			_trainingUserRepository = trainingUserRepository;
+			_trainingQuestionRepository = trainingQuestionRepository;
 			_communicationService = communicationService;
 			_departmentService = departmentService;
 		}
 
-		public List<Training> GetAllTrainingsForDepartment(int departmentId)
+		public async Task<List<Training>> GetAllTrainingsForDepartmentAsync(int departmentId)
 		{
-			return _trainingRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var list = await _trainingRepository.GetTrainingsByDepartmentIdAsync(departmentId);
+
+			foreach (var item in list)
+			{
+				item.Questions = (await _trainingQuestionRepository.GetTrainingQuestionsByTrainingIdAsync(item.TrainingId)).ToList();
+			}
+
+			return list.ToList();
 		}
 
-		public Training Save(Training training)
+		public async Task<Training> SaveAsync(Training training, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			training.Description = StringHelpers.SanitizeHtmlInString(training.Description);
 			training.TrainingText = StringHelpers.SanitizeHtmlInString(training.TrainingText);
 
-			_trainingRepository.SaveOrUpdate(training);
+			return await _trainingRepository.SaveOrUpdateAsync(training, cancellationToken);
+		}
+
+		public async Task<Training> GetTrainingByIdAsync(int trainingId)
+		{
+			var training = await _trainingRepository.GetTrainingByTrainingIdAsync(trainingId);
+			training.Questions = (await _trainingQuestionRepository.GetTrainingQuestionsByTrainingIdAsync(training.TrainingId)).ToList();
+			training.Attachments = (await _trainingAttachmentRepository.GetTrainingAttachmentsByTrainingIdAsync(trainingId)).ToList();
 
 			return training;
 		}
 
-		public Training GetTrainingById(int trainingId)
+		public async Task<TrainingAttachment> GetTrainingAttachmentByIdAsync(int trainingAttachmentId)
 		{
-			return _trainingRepository.GetAll().FirstOrDefault(x => x.TrainingId == trainingId);
+			return await _trainingAttachmentRepository.GetByIdAsync(trainingAttachmentId);
 		}
 
-		public TrainingAttachment GetTrainingAttachmentById(int trainingAttachmentId)
+		public async Task<TrainingUser> SetTrainingAsViewedAsync(int trainingId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _trainingAttachmentRepository.GetAll().FirstOrDefault(x => x.TrainingAttachmentId == trainingAttachmentId);
-		}
-
-		public void SetTrainingAsViewed(int trainingId, string userId)
-		{
-			var trainingUser =
-				_trainingUserRepository.GetAll().FirstOrDefault(x => x.TrainingId == trainingId && x.UserId == userId);
+			var trainingUser = await _trainingUserRepository.GetTrainingUserByTrainingIdAndUserIdAsync(trainingId, userId);
 
 			if (trainingUser != null)
 			{
+				trainingUser.Training = await GetTrainingByIdAsync(trainingId);
 				trainingUser.Viewed = true;
 				trainingUser.ViewedOn = DateTime.UtcNow;
 
@@ -69,14 +81,16 @@ namespace Resgrid.Services
 					trainingUser.CompletedOn = DateTime.UtcNow;
 				}
 
-				_trainingUserRepository.SaveOrUpdate(trainingUser);
+				return await _trainingUserRepository.SaveOrUpdateAsync(trainingUser, cancellationToken, true);
 			}
+
+			return null;
 		}
 
-		public void RecordTrainingQuizResult(int trainingId, string userId, double answersCorrect)
+		public async Task<TrainingUser> RecordTrainingQuizResultAsync(int trainingId, string userId, double answersCorrect, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var training = GetTrainingById(trainingId);
-			var trainingUser = training.Users.FirstOrDefault(x => x.UserId == userId);
+			var training = await GetTrainingByIdAsync(trainingId);
+			var trainingUser = await _trainingUserRepository.GetTrainingUserByTrainingIdAndUserIdAsync(trainingId, userId);
 
 			if (trainingUser != null)
 			{
@@ -84,22 +98,23 @@ namespace Resgrid.Services
 				trainingUser.Complete = true;
 
 				if (answersCorrect > 0)
-					trainingUser.Score = Math.Round(answersCorrect/training.Questions.Count * 100, 2);
+					trainingUser.Score = Math.Round(answersCorrect / training.Questions.Count * 100, 2);
 
-				_trainingUserRepository.SaveOrUpdate(trainingUser);
+				return await _trainingUserRepository.SaveOrUpdateAsync(trainingUser, cancellationToken);
 			}
+
+			return null;
 		}
 
-		public void DeleteTraining(int trainingId)
+		public async Task<bool> DeleteTrainingAsync(int trainingId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var training = GetTrainingById(trainingId);
-			_trainingRepository.DeleteOnSubmit(training);
+			var training = await GetTrainingByIdAsync(trainingId);
+			return await _trainingRepository.DeleteAsync(training, cancellationToken);
 		}
 
-		public void ResetUser(int trainingId, string userId)
+		public async Task<TrainingUser> ResetUserAsync(int trainingId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var training = GetTrainingById(trainingId);
-			var trainingUser = training.Users.FirstOrDefault(x => x.UserId == userId);
+			var trainingUser = await _trainingUserRepository.GetTrainingUserByTrainingIdAndUserIdAsync(trainingId, userId);
 
 			if (trainingUser != null)
 			{
@@ -109,38 +124,35 @@ namespace Resgrid.Services
 				trainingUser.CompletedOn = null;
 				trainingUser.Score = 0;
 
-				_trainingUserRepository.SaveOrUpdate(trainingUser);
+				return await _trainingUserRepository.SaveOrUpdateAsync(trainingUser, cancellationToken);
 			}
+
+			return null;
 		}
 
-		//public async Task<bool> SendInitalTrainingNotice(Training training)
-		public void SendInitalTrainingNotice(Training training)
+
+		public async Task<bool> SendInitialTrainingNoticeAsync(Training training)
 		{
-			//var task = Task.Run(() =>
-			//{
-				foreach (var user in training.Users)
-				{
-					var message = String.Empty;
-					if (training.ToBeCompletedBy.HasValue)
-						message = string.Format("Training ({0}) due on {1}", training.Name,
-							training.ToBeCompletedBy.Value.ToShortDateString());
-					else
-						message = string.Format("Training ({0}) assigned to you", training.Name);
+			foreach (var user in training.Users)
+			{
+				var message = String.Empty;
+				if (training.ToBeCompletedBy.HasValue)
+					message = string.Format("Training ({0}) due on {1}", training.Name,
+						training.ToBeCompletedBy.Value.ToShortDateString());
+				else
+					message = string.Format("Training ({0}) assigned to you", training.Name);
 
-					_communicationService.SendNotification(user.UserId, training.DepartmentId, message, "New Training");
-				}
+				await _communicationService.SendNotificationAsync(user.UserId, training.DepartmentId, message, "New Training");
+			}
 
-				//return true;
-			//});
-
-			//return await task;
+			return true;
 		}
 
-		public List<Training> GetTrainingsToNotify(DateTime currentTime)
+		public async Task<List<Training>> GetTrainingsToNotifyAsync(DateTime currentTime)
 		{
 			var trainingsToNotify = new List<Training>();
 
-			var trainings = _trainingRepository.GetAllTrainings();
+			var trainings = await _trainingRepository.GetAllAsync();
 
 			if (trainings != null && trainings.Any())
 			{
@@ -156,11 +168,11 @@ namespace Resgrid.Services
 						if (training.Department != null)
 							d = training.Department;
 						else
-							d = _departmentService.GetDepartmentById(training.DepartmentId);
+							d = await _departmentService.GetDepartmentByIdAsync(training.DepartmentId);
 
 						if (d != null)
 						{
-							var localizedDate = TimeConverterHelper.TimeConverter(currentTime, d);
+							var localizedDate = currentTime.TimeConverter(d);
 							var setToNotify = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day, 10, 0, 0, 0);
 
 							if (localizedDate == setToNotify.Within(TimeSpan.FromMinutes(13)) && training.ToBeCompletedBy.HasValue)
@@ -176,12 +188,12 @@ namespace Resgrid.Services
 			return trainingsToNotify;
 		}
 
-		public void MarkAsNotified(int trainingId)
+		public async Task<Training> MarkAsNotifiedAsync(int trainingId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var training = GetTrainingById(trainingId);
+			var training = await GetTrainingByIdAsync(trainingId);
 			training.Notified = DateTime.UtcNow;
 
-			_trainingRepository.SaveOrUpdate(training);
+			return await _trainingRepository.SaveOrUpdateAsync(training, cancellationToken);
 		}
 	}
 }

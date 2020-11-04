@@ -1,9 +1,15 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
 	public interface IEntity
 	{
-		object Id { get; set; }
+		object IdValue { get; set; }
+
+		string TableName { get; }
+
+		string IdName { get; }
+
+		IEnumerable<string> IgnoredProperties { get; }
 	}
 }

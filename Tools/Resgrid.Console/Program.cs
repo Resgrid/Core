@@ -1,6 +1,4 @@
 ﻿using Autofac;
-using Consolas.Core;
-using Consolas.Mustache;
 using Resgrid.Config;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
@@ -9,8 +7,8 @@ using Resgrid.Providers.Bus;
 using Resgrid.Workers.Framework;
 using SimpleInjector;
 using System.Configuration;
-using System.IO;
-using System.Reflection;
+using Consolas2.Core;
+using Consolas2.ViewEngines;
 
 namespace Resgrid.Console
 {
@@ -31,7 +29,7 @@ namespace Resgrid.Console
 			container.Register<IConsole, SystemConsole>();
 
 
-			ViewEngines.Add<MustacheViewEngine>();
+			ViewEngines.Add<StubbleViewEngine>();
 		}
 
 		private static void Prime()

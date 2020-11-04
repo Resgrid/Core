@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,8 +13,8 @@ using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models;
 using Resgrid.Web.Areas.User.Models.Messages;
 using Resgrid.Web.Helpers;
-using RestSharp.Extensions.MonoHttp;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -45,52 +47,52 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Messages_View)]
-		public IActionResult Inbox()
+		public async Task<IActionResult> Inbox()
 		{
 			MessagesInboxModel model = new MessagesInboxModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			
 			model.User = _usersService.GetUserById(UserId);
-			model.Messages = _messageService.GetInboxMessagesByUserId(UserId);
-			model.UnreadMessages = _messageService.GetUnreadMessagesCountByUserId(UserId);
+			model.Messages = await _messageService.GetInboxMessagesByUserIdAsync(UserId);
+			model.UnreadMessages = await _messageService.GetUnreadMessagesCountByUserIdAsync(UserId);
 			
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Messages_View)]
-		public IActionResult Outbox()
+		public async Task<IActionResult> Outbox()
 		{
 			MessagesOutboxModel model = new MessagesOutboxModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			
 			model.User = _usersService.GetUserById(UserId);
-			model.Messages = _messageService.GetSentMessagesByUserId(UserId);
+			model.Messages = await _messageService.GetSentMessagesByUserIdAsync(UserId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Messages_Create)]
-		public IActionResult Compose()
+		public async Task<IActionResult> Compose()
 		{
 			ComposeMessageModel model = new ComposeMessageModel();
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 			model.Types = model.MessageType.ToSelectList();
 
-			var shifts = _shiftsService.GetAllShiftsByDepartment(DepartmentId);
+			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
 			model.Shifts = new SelectList(shifts, "ShiftId", "Name");
 
 			model.Message = new Message();
 
-			return View(FillComposeMessageModel(model));
+			return View(await FillComposeMessageModel(model));
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Messages_Create)]
-		public IActionResult Compose(ComposeMessageModel model, IFormCollection collection)
+		public async Task<IActionResult> Compose(ComposeMessageModel model, IFormCollection collection, CancellationToken cancellationToken)
 		{
 			var roles = new List<string>();
 			var groups = new List<string>();
@@ -123,7 +125,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					foreach (var shiftId in shifts)
 					{
-						var shift = _shiftsService.GetShiftById(int.Parse(shiftId));
+						var shift = await _shiftsService.GetShiftByIdAsync(int.Parse(shiftId));
 						excludedUsers.AddRange(shift.Personnel.Select(x => x.UserId));
 					}
 				}
@@ -131,7 +133,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Message.Type = (int)model.MessageType;
 				if (model.SendToAll)
 				{
-					var allUsers = _departmentsService.GetAllUsersForDepartment(DepartmentId);
+					var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 					foreach (var user in allUsers)
 					{
 						if (user.UserId != UserId && (!excludedUsers.Any() || !excludedUsers.Contains(user.UserId)))
@@ -144,13 +146,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					foreach (var role in roles)
 					{
-						var roleMembers = _personnelRolesService.GetAllMembersOfRole(int.Parse(role));
+						var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(role));
 						usersInRoles.Add(int.Parse(role), roleMembers.Select(x => x.UserId).ToList());
 					}
 
 					foreach (var group in groups)
 					{
-						var members = _departmentGroupsService.GetAllMembersForGroup(int.Parse(group));
+						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(int.Parse(group));
 
 						foreach (var member in members)
 						{
@@ -184,7 +186,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					// Add all members of the group
 					foreach (var group in groups)
 					{
-						var members = _departmentGroupsService.GetAllMembersForGroup(int.Parse(group));
+						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(int.Parse(group));
 
 						foreach (var member in members)
 						{
@@ -196,7 +198,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					// Add all the users of a specific role
 					foreach (var role in roles)
 					{
-						var roleMembers = _personnelRolesService.GetAllMembersOfRole(int.Parse(role));
+						var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(role));
 
 						foreach (var member in roleMembers)
 						{
@@ -211,46 +213,46 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Message.Body = System.Net.WebUtility.HtmlDecode(model.Message.Body);
 				model.Message.IsBroadcast = true;
 
-				var savedMessage = _messageService.SaveMessage(model.Message);
-				_messageService.SendMessage(savedMessage, "", DepartmentId, false);
+				var savedMessage = await _messageService.SaveMessageAsync(model.Message, cancellationToken);
+				await _messageService.SendMessageAsync(savedMessage, "", DepartmentId, false, cancellationToken);
 
 				return RedirectToAction("Inbox");
 			}
 
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.User = _usersService.GetUserById(UserId);
 			model.Types = model.MessageType.ToSelectList();
 
-			var savedShifts = _shiftsService.GetAllShiftsByDepartment(DepartmentId);
+			var savedShifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
 			model.Shifts = new SelectList(savedShifts, "ShiftId", "Name");
 			model.Message.Body = System.Net.WebUtility.HtmlDecode(model.Message.Body);
 
-			return View(FillComposeMessageModel(model));
+			return View(await FillComposeMessageModel(model));
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Messages_View)]
-		public IActionResult ViewMessage(int messageId)
+		public async Task<IActionResult> ViewMessage(int messageId, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserViewMessage(UserId, messageId))
+			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
 				Unauthorized();
 
 			ViewMessageView model = new ViewMessageView();
 			model.User = _usersService.GetUserById(UserId);
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.Message = _messageService.GetMessageById(messageId);
-			model.UnreadMessages = _messageService.GetUnreadMessagesCountByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Message = await _messageService.GetMessageByIdAsync(messageId);
+			model.UnreadMessages = await _messageService.GetUnreadMessagesCountByUserIdAsync(UserId);
 			model.UserGroupsAndRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, true);
-			_messageService.ReadMessageRecipient(messageId, UserId);
+			await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Messages_View)]
-		public IActionResult MessageResponse(int recipientId, int response, string note)
+		public async Task<IActionResult> MessageResponse(int recipientId, int response, string note, CancellationToken cancellationToken)
 		{
-			var messageRecipient = _messageService.GetMessageRecipientById(recipientId);
+			var messageRecipient = await _messageService.GetMessageRecipientByIdAsync(recipientId);
 
 			if (messageRecipient != null)
 			{
@@ -258,7 +260,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				messageRecipient.ReadOn = DateTime.UtcNow;
 				messageRecipient.Note = HttpUtility.UrlDecode(note);
 
-				_messageService.SaveMessageRecipient(messageRecipient);
+				await _messageService.SaveMessageRecipientAsync(messageRecipient, cancellationToken);
 			}
 
 			return RedirectToAction("Inbox");
@@ -266,24 +268,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Messages_Delete)]
-		public IActionResult DeleteMessage(int messageId)
+		public async Task<IActionResult> DeleteMessage(int messageId, CancellationToken cancellationToken)
 		{
-			if (!_authorizationService.CanUserViewMessage(UserId, messageId))
+			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
 				Unauthorized();
 
-			var message = _messageService.GetMessageByIdForEditing(messageId);
+			var message = await _messageService.GetMessageByIdAsync(messageId);
 
 			if (!String.IsNullOrWhiteSpace(message.ReceivingUserId))
-				_messageService.MarkMessageAsDeleted(messageId);
+				await _messageService.MarkMessageAsDeletedAsync(messageId, cancellationToken);
 			else
-				_messageService.MarkMessageAsDeleted(messageId, UserId);
+				await _messageService.MarkMessageAsDeletedAsync(messageId, cancellationToken);
 			
 			return RedirectToAction("Inbox");
 		}
 
 		[HttpDelete]
 		[Authorize(Policy = ResgridResources.Messages_Delete)]
-		public IActionResult DeleteMessages(string messageIds)
+		public async Task<IActionResult> DeleteMessages(string messageIds, CancellationToken cancellationToken)
 		{
 			var messages = messageIds.Split(char.Parse(","));
 
@@ -291,15 +293,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var id = int.Parse(messageId);
 
-				if (!_authorizationService.CanUserViewMessage(UserId, id))
+				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
 					Unauthorized();
 
-				var message = _messageService.GetMessageById(id);
+				var message = await _messageService.GetMessageByIdAsync(id);
 
 				if (!String.IsNullOrWhiteSpace(message.ReceivingUserId))
-					_messageService.MarkMessageAsDeleted(id);
+					await _messageService.MarkMessageAsDeletedAsync(id, cancellationToken);
 				else
-					_messageService.MarkMessageAsDeleted(id, UserId);
+					await _messageService.MarkMessageAsDeletedAsync(id, cancellationToken);
 			}
 
 			return RedirectToAction("Inbox");
@@ -307,7 +309,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPut]
 		[Authorize(Policy = ResgridResources.Messages_Update)]
-		public IActionResult MarkMessagesAsRead(string messageIds)
+		public async Task<IActionResult> MarkMessagesAsRead(string messageIds, CancellationToken cancellationToken)
 		{
 			var messages = messageIds.Split(char.Parse(","));
 
@@ -315,10 +317,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var id = int.Parse(messageId);
 
-				if (!_authorizationService.CanUserViewMessage(UserId, id))
+				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
 					Unauthorized();
 
-				_messageService.ReadMessageRecipient(id, UserId);
+				await _messageService.ReadMessageRecipientAsync(id, UserId, cancellationToken);
 			}
 
 			return RedirectToAction("Inbox");
@@ -326,19 +328,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Messages_Delete)]
-		public IActionResult DeleteOutboxMessage(int messageId)
+		public async Task<IActionResult> DeleteOutboxMessage(int messageId)
 		{
-			if (!_authorizationService.CanUserViewMessage(UserId, messageId))
+			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
 				Unauthorized();
 
-			_messageService.MarkMessageAsDeleted(messageId);
+			await _messageService.MarkMessageAsDeletedAsync(messageId);
 
 			return RedirectToAction("Outbox");
 		}
 
 		[HttpDelete]
 		[Authorize(Policy = ResgridResources.Messages_Delete)]
-		public IActionResult DeleteOutboxMessages(string messageIds)
+		public async Task<IActionResult> DeleteOutboxMessages(string messageIds, CancellationToken cancellationToken)
 		{
 			var messages = messageIds.Split(char.Parse(","));
 
@@ -346,28 +348,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var id = int.Parse(messageId);
 
-				if (!_authorizationService.CanUserViewMessage(UserId, id))
+				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
 					Unauthorized();
 
-				_messageService.MarkMessageAsDeleted(id);
+				await _messageService.MarkMessageAsDeletedAsync(id, cancellationToken);
 			}
 
 			return RedirectToAction("Outbox");
 		}
 
-		public IActionResult GetTopUnreadMessages()
+		public async Task<IActionResult> GetTopUnreadMessages()
 		{
 			var model = new TopUnreadMessagesView();
-			model.Department = _departmentsService.GetDepartmentById(DepartmentId);
-			model.UnreadMessages = _messageService.GetUnreadInboxMessagesByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.UnreadMessages = await _messageService.GetUnreadInboxMessagesByUserIdAsync(UserId);
 
 			return PartialView("_UnreadTopMessagesPartial", model);
 		}
 
-		#region Private Helpers
-		private ComposeMessageModel FillComposeMessageModel(ComposeMessageModel model)
+		private async Task<ComposeMessageModel> FillComposeMessageModel(ComposeMessageModel model)
 		{
-			model.Department = _departmentsService.GetDepartmentByUserId(UserId);
+			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 			
 			//model.Users = _departmentsService.GetAllUsersForDepartment(model.Department.DepartmentId);
@@ -377,12 +378,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		
-		public IActionResult GetInboxMessageList()
+		public async Task<IActionResult> GetInboxMessageList()
 		{
 			var messagesJson = new List<MessageJson>();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var messages = _messageService.GetInboxMessagesByUserId(UserId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var messages = await _messageService.GetInboxMessagesByUserIdAsync(UserId);
 
 			foreach (var message in messages)
 			{
@@ -401,7 +402,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (message.SystemGenerated)
 					json.SentBy = "System";
 				else if (!String.IsNullOrWhiteSpace(message.SendingUserId))
-					json.SentBy = UserHelper.GetFullNameForUser(message.SendingUserId);
+					json.SentBy = await UserHelper.GetFullNameForUser(message.SendingUserId);
 				else
 					json.SentBy = "System";
 
@@ -413,12 +414,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		
-		public IActionResult GetOutboxMessageList()
+		public async Task<IActionResult> GetOutboxMessageList()
 		{
 			var messagesJson = new List<MessageJson>();
 
-			var department = _departmentsService.GetDepartmentById(DepartmentId);
-			var messages = _messageService.GetSentMessagesByUserId(UserId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var messages = await _messageService.GetSentMessagesByUserIdAsync(UserId);
 
 			foreach (var message in messages)
 			{
@@ -438,6 +439,5 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return Json(messagesJson);
 		}
-		#endregion Private Helpers
 	}
 }

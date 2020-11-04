@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 
@@ -28,10 +29,19 @@ namespace Resgrid.Model
 		public virtual IdentityUser User { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return UnitStateRoleId; }
 			set { UnitStateRoleId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "UnitStateRoles";
+
+		[NotMapped]
+		public string IdName => "UnitStateRoleId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "UnitState", "User" };
 	}
 }

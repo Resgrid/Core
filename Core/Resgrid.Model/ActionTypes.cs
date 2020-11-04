@@ -46,7 +46,7 @@ namespace Resgrid.Model
 		/// <summary>
 		/// User is Responding directly to a scene (For a Specific Call)
 		/// </summary>
-		[Display(Name = "Responding To Station")]
+		[Display(Name = "Responding To Scene")]
 		RespondingToScene = 6
 	}
 }

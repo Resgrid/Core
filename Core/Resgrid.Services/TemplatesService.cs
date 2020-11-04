@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -8,34 +10,33 @@ namespace Resgrid.Services
 {
 	public class TemplatesService : ITemplatesService
 	{
-		private readonly IGenericDataRepository<CallQuickTemplate> _callQuickTemplateRepository;
+		private readonly ICallQuickTemplateRepository _callQuickTemplateRepository;
 
-		public TemplatesService(IGenericDataRepository<CallQuickTemplate> callQuickTemplateRepository)
+		public TemplatesService(ICallQuickTemplateRepository callQuickTemplateRepository)
 		{
 			_callQuickTemplateRepository = callQuickTemplateRepository;
 		}
 
-		public List<CallQuickTemplate> GetAllCallQuickTemplatesForDepartment(int departmentId)
+		public async Task<List<CallQuickTemplate>> GetAllCallQuickTemplatesForDepartmentAsync(int departmentId)
 		{
-			return _callQuickTemplateRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _callQuickTemplateRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
-		public CallQuickTemplate SaveCallQuickTemplate(CallQuickTemplate template)
+		public async Task<CallQuickTemplate> SaveCallQuickTemplateAsync(CallQuickTemplate template, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_callQuickTemplateRepository.SaveOrUpdate(template);
-
-			return template;
+			return await _callQuickTemplateRepository.SaveOrUpdateAsync(template, cancellationToken);
 		}
 
-		public CallQuickTemplate GetCallQuickTemplateById(int id)
+		public async Task<CallQuickTemplate> GetCallQuickTemplateByIdAsync(int id)
 		{
-			return _callQuickTemplateRepository.GetAll().FirstOrDefault(x => x.CallQuickTemplateId == id);
+			return await _callQuickTemplateRepository.GetByIdAsync(id);
 		}
 
-		public void DeleteCallQuickTemplate(int id)
+		public async Task<bool> DeleteCallQuickTemplateAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var template = GetCallQuickTemplateById(id);
-			_callQuickTemplateRepository.DeleteOnSubmit(template);
+			var template = await GetCallQuickTemplateByIdAsync(id);
+			return await _callQuickTemplateRepository.DeleteAsync(template, cancellationToken);
 		}
 	}
 }

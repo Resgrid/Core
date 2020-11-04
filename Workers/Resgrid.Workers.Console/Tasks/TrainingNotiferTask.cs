@@ -29,12 +29,12 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			progress.Report(1, $"Starting the {Name} Task");
 
-			await Task.Factory.StartNew(() =>
+			await Task.Run(async () =>
 			{
 				var _trainingService = Bootstrapper.GetKernel().Resolve<ITrainingService>();
 				var logic = new TrainingNotifierLogic();
 
-				var trainings = _trainingService.GetTrainingsToNotify(DateTime.UtcNow);
+				var trainings = await _trainingService.GetTrainingsToNotifyAsync(DateTime.UtcNow);
 
 				if (trainings != null && trainings.Any())
 				{
@@ -46,7 +46,7 @@ namespace Resgrid.Workers.Console.Tasks
 						qi.Training = training;
 
 						progress.Report(3, "TrainingNotifer::Processing Training Notification: " + qi.Training.TrainingId);
-						var result = logic.Process(qi);
+						var result = await logic.Process(qi);
 
 						if (result.Item1)
 						{
@@ -58,7 +58,7 @@ namespace Resgrid.Workers.Console.Tasks
 						}
 					}
 				}
-			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			}, cancellationToken);
 
 			progress.Report(100, $"Finishing the {Name} Task");
 		}

@@ -1,10 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	public interface IScheduledTasksRepository : IRepository<ScheduledTask>
+	/// <summary>
+	/// Interface IScheduledTasksRepository
+	/// Implements the <see cref="ScheduledTask" />
+	/// </summary>
+	/// <seealso cref="ScheduledTask" />
+	public interface IScheduledTasksRepository: IRepository<ScheduledTask>
 	{
-		List<ScheduledTask> GetAllTasks();
-		List<ScheduledTask> GetAllActiveTasksForTypes(List<int> types);
+		/// <summary>
+		/// Gets all active tasks for types asynchronous.
+		/// </summary>
+		/// <param name="types">The types.</param>
+		/// <returns>Task&lt;IEnumerable&lt;ScheduledTask&gt;&gt;.</returns>
+		Task<IEnumerable<ScheduledTask>> GetAllActiveTasksForTypesAsync(List<int> types);
 	}
 }

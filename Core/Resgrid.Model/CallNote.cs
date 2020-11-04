@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
 using Resgrid.Model.Identity;
 using ProtoBuf;
 using Resgrid.Framework;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -49,18 +49,19 @@ namespace Resgrid.Model
 		public decimal? Longitude { get; set; }
 		
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return CallNoteId; }
 			set { CallNoteId = (int)value; }
 		}
-	}
 
-	public class CallNote_Mapping : EntityTypeConfiguration<CallNote>
-	{
-		public CallNote_Mapping()
-		{
-			this.HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
-		}
+		[NotMapped]
+		public string TableName => "CallNotes";
+
+		[NotMapped]
+		public string IdName => "CallNoteId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Call", "User" };
 	}
 }

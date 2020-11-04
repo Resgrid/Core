@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
@@ -54,10 +55,19 @@ namespace Resgrid.Model
 		public decimal? Heading { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return UnitLocationId; }
 			set { UnitLocationId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "UnitLocations";
+
+		[NotMapped]
+		public string IdName => "UnitLocationId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Unit" };
 	}
 }

@@ -6,5 +6,7 @@ namespace Resgrid.Model.Services
 	{
 		Task<string> GetDatabaseTimestamp();
 		bool IsCacheProviderConnected();
+
+		bool IsServiceBusProviderConnected();
 	}
 }

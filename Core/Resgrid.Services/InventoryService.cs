@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -8,62 +10,79 @@ namespace Resgrid.Services
 {
 	public class InventoryService: IInventoryService
 	{
-		private readonly IGenericDataRepository<InventoryType> _inventoryTypesRepository;
-		private readonly IGenericDataRepository<Inventory> _inventoryRepository;
+		private readonly IInventoryTypesRepository _inventoryTypesRepository;
+		private readonly IInventoryRepository _inventoryRepository;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
 
-		public InventoryService(IGenericDataRepository<InventoryType> inventoryTypesRepository, IGenericDataRepository<Inventory> inventoryRepository)
+		public InventoryService(IInventoryTypesRepository inventoryTypesRepository, IInventoryRepository inventoryRepository, IDepartmentGroupsService departmentGroupsService)
 		{
 			_inventoryTypesRepository = inventoryTypesRepository;
 			_inventoryRepository = inventoryRepository;
+			_departmentGroupsService = departmentGroupsService;
 		}
 
-		public InventoryType GetTypeById(int typeId)
+		public async Task<InventoryType> GetTypeByIdAsync(int typeId)
 		{
-			return _inventoryTypesRepository.GetAll().FirstOrDefault(x => x.InventoryTypeId == typeId);
+			return await _inventoryTypesRepository.GetByIdAsync(typeId);
 		}
 
-		public InventoryType SaveType(InventoryType type)
+		public async Task<InventoryType> SaveTypeAsync(InventoryType type, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_inventoryTypesRepository.SaveOrUpdate(type);
-
-			return type;
+			return await _inventoryTypesRepository.SaveOrUpdateAsync(type, cancellationToken);
 		}
 
-		public Inventory GetInventoryById(int inventoryId)
+		public async Task<Inventory> GetInventoryByIdAsync(int inventoryId)
 		{
-			return _inventoryRepository.GetAll().FirstOrDefault(x => x.InventoryId == inventoryId);
-		}
+			var inventory = await _inventoryRepository.GetInventoryByIdAsync(inventoryId);
 
-		public Inventory SaveInventory(Inventory inventory)
-		{
-			_inventoryRepository.SaveOrUpdate(inventory);
+			if (inventory != null && inventory.GroupId > 0)
+				inventory.Group = await _departmentGroupsService.GetGroupByIdAsync(inventory.GroupId);
 
 			return inventory;
 		}
 
-		public void DeleteType(int typeId)
+		public async Task<Inventory> SaveInventoryAsync(Inventory inventory, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var type = GetTypeById(typeId);
-			var inventories = _inventoryRepository.GetAll().Where(x => x.TypeId == typeId);
-
-			_inventoryRepository.DeleteAll(inventories);
-			_inventoryTypesRepository.DeleteOnSubmit(type);
+			return await _inventoryRepository.SaveOrUpdateAsync(inventory, cancellationToken);
 		}
 
-		public List<Inventory> GetAllTransactionsForDepartment(int departmentId)
+		public async Task<bool> DeleteTypeAsync(int typeId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _inventoryRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var type = await GetTypeByIdAsync(typeId);
+			var inventories = await _inventoryRepository.GetInventoryByTypeIdAsync(typeId);
+
+			foreach (var inventory in inventories)
+			{
+				await _inventoryRepository.DeleteAsync(inventory, cancellationToken);
+			}
+
+			await _inventoryTypesRepository.DeleteAsync(type, cancellationToken);
+
+			return true;
 		}
 
-		public List<InventoryType> GetAllTypesForDepartment(int departmentId)
+		public async Task<List<Inventory>> GetAllTransactionsForDepartmentAsync(int departmentId)
 		{
-			return _inventoryTypesRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var inventories = await _inventoryRepository.GetAllInventoriesByDepartmentIdAsync(departmentId);
+
+			foreach (var inventory in inventories)
+			{
+				inventory.Group = await _departmentGroupsService.GetGroupByIdAsync(inventory.GroupId);
+			}
+
+			return inventories.ToList();
 		}
 
-		public List<Inventory> GetConsolidatedInventoryForDepartment(int departmentId)
+		public async Task<List<InventoryType>> GetAllTypesForDepartmentAsync(int departmentId)
+		{
+			var types = await _inventoryTypesRepository.GetAllByDepartmentIdAsync(departmentId);
+			return types.ToList();
+		}
+
+		public async Task<List<Inventory>> GetConsolidatedInventoryForDepartment(int departmentId)
 		{
 			var consolidated = new List<Inventory>();
-			var inventory = GetAllTransactionsForDepartment(departmentId);
+			var inventory = await GetAllTransactionsForDepartmentAsync(departmentId);
 
 			foreach (var inv in inventory)
 			{

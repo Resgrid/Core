@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -48,12 +50,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_personnelRolesService = personnelRolesService;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new MapIndexView();
 
-			var address = _departmentSettingsService.GetBigBoardCenterAddressDepartment(DepartmentId);
-			var center = _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartment(DepartmentId);
+			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
+			var center = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
 
 			if (center != null)
 			{
@@ -68,7 +70,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else if (address != null)
 			{
 				string coordinates =
-					_geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3} {4}", address.Address1,
+					await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3} {4}", address.Address1,
 						address.City, address.State, address.PostalCode, address.Country));
 
 				if (!String.IsNullOrEmpty(coordinates))
@@ -87,18 +89,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		public IActionResult ViewType(int poiTypeId)
+		public async Task<IActionResult> ViewType(int poiTypeId)
 		{
 			var model = new ViewTypeView();
 
-			var type = _mappingService.GetTypeById(poiTypeId);
+			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (type == null || type.DepartmentId != DepartmentId)
 				Unauthorized();
 
 			model.Type = type;
-			var address = _departmentSettingsService.GetBigBoardCenterAddressDepartment(DepartmentId);
-			var center = _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartment(DepartmentId);
+			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
+			var center = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
 
 			if (center != null)
 			{
@@ -113,7 +115,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else if (address != null)
 			{
 				string coordinates =
-					_geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3} {4}", address.Address1,
+					await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3} {4}", address.Address1,
 						address.City, address.State, address.PostalCode, address.Country));
 
 				if (!String.IsNullOrEmpty(coordinates))
@@ -132,26 +134,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		public IActionResult POIs()
+		public async Task<IActionResult> POIs()
 		{
 			var modal = new POIsView();
-			modal.Types = _mappingService.GetPOITypesForDepartment(DepartmentId);
+			modal.Types = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 
 			return View(modal);
 		}
 
 		[HttpGet]
-		public IActionResult AddPOIType()
+		public async Task<IActionResult> AddPOIType()
 		{
 			var modal = new AddPOITypeView();
 			modal.Type = new PoiType();
 			modal.Type.Marker = "";
+			modal.Type.Image = "";
 
 			return View(modal);
 		}
 
 		[HttpGet]
-		public IActionResult ImportPOIs()
+		public async Task<IActionResult> ImportPOIs()
 		{
 			var model = new ImportPOIsView();
 
@@ -159,7 +162,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult ImportPOIs(ImportPOIsView modal, IFormFile fileToUpload)
+		public async Task<IActionResult> ImportPOIs(ImportPOIsView modal, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
@@ -192,7 +195,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						poi.Latitude = coordinate.Latitude.Value;
 						poi.Longitude = coordinate.Longitude.Value;
 
-						_mappingService.SavePOI(poi);
+						await _mappingService.SavePOIAsync(poi, cancellationToken);
 					}
 				}
 
@@ -203,14 +206,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult AddPOIType(AddPOITypeView modal)
+		public async Task<IActionResult> AddPOIType(AddPOITypeView modal, CancellationToken cancellationToken)
 		{
 			modal.Type.DepartmentId = DepartmentId;
 			modal.Type.Marker = modal.MarkerType;
 
 			if (ModelState.IsValid)
 			{
-				_mappingService.SavePOIType(modal.Type);
+				await _mappingService.SavePOITypeAsync(modal.Type, cancellationToken);
 
 				return RedirectToAction("POIs");
 			}
@@ -219,23 +222,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult DeletePOIType(int poiTypeId)
+		public async Task<IActionResult> DeletePOIType(int poiTypeId, CancellationToken cancellationToken)
 		{
-			var type = _mappingService.GetTypeById(poiTypeId);
+			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (type != null)
 			{
 				if (type.DepartmentId != DepartmentId)
 					Unauthorized();
 
-				_mappingService.DeletePOIType(poiTypeId);
+				await _mappingService.DeletePOITypeAsync(poiTypeId, cancellationToken);
 			}
 
 			return RedirectToAction("POIs");
 		}
 
 		[HttpGet]
-		public IActionResult AddPOI(int poiTypeId)
+		public async Task<IActionResult> AddPOI(int poiTypeId)
 		{
 			var modal = new AddPOIView();
 			modal.TypeId = poiTypeId;
@@ -246,9 +249,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult AddPOI(AddPOIView modal)
+		public async Task<IActionResult> AddPOI(AddPOIView modal, CancellationToken cancellationToken)
 		{
-			var type = _mappingService.GetTypeById(modal.TypeId);
+			var type = await _mappingService.GetTypeByIdAsync(modal.TypeId);
 
 			if (type == null)
 			{
@@ -264,7 +267,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				modal.Poi.PoiTypeId = modal.TypeId;
-				_mappingService.SavePOI(modal.Poi);
+				await _mappingService.SavePOIAsync(modal.Poi, cancellationToken);
 
 				return RedirectToAction("POIs");
 			}
@@ -273,27 +276,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetMapData(MapSettingsInput input)
+		public async Task<IActionResult> GetMapData(MapSettingsInput input)
 		{
 			MapDataJson dataJson = new MapDataJson();
 
-			var calls = _callsService.GetActiveCallsByDepartment(DepartmentId);
-			var department = _departmentsService.GetDepartmentById(DepartmentId, false);
-			var stations = _departmentGroupsService.GetAllStationGroupsForDepartment(DepartmentId);
-			var lastUserActionlogs = _actionLogsService.GetActionLogsForDepartment(DepartmentId);
-			var personnelNames = _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
-			var unitStates = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(DepartmentId);
+			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 
-			var userLocationPermission = _permissionsService.GetPermisionByDepartmentType(DepartmentId, PermissionTypes.CanSeePersonnelLocations);
+			var userLocationPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CanSeePersonnelLocations);
 			if (userLocationPermission != null)
 			{
-				var userGroup = _departmentGroupsService.GetGroupForUser(UserId, DepartmentId);
+				var userGroup = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 				int? groupId = null;
 
 				if (userGroup != null)
 					groupId = userGroup.DepartmentGroupId;
 
-				var roles = _personnelRolesService.GetRolesForUser(UserId, DepartmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
 				var allowedUsers = _permissionsService.GetAllowedUsers(userLocationPermission, DepartmentId, groupId, ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), roles);
 
 				lastUserActionlogs.RemoveAll(x => !allowedUsers.Contains(x.UserId));
@@ -327,7 +330,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (station.Address != null)
 					{
 						string coordinates =
-							_geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", station.Address.Address1,
+							await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", station.Address.Address1,
 								station.Address.City,
 								station.Address.State,
 								station.Address.PostalCode));
@@ -374,7 +377,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					else if (!String.IsNullOrEmpty(call.Address))
 					{
-						string coordinates = _geoLocationProvider.GetLatLonFromAddress(call.Address);
+						string coordinates = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 						if (!String.IsNullOrEmpty(coordinates))
 						{
 							info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
@@ -440,7 +443,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (input.ShowPOIs)
 			{
-				var poiTypes = _mappingService.GetPOITypesForDepartment(DepartmentId);
+				var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 
 				foreach (var poiType in poiTypes)
 				{
@@ -464,11 +467,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetTypesMapData(int poiTypeId)
+		public async Task<IActionResult> GetTypesMapData(int poiTypeId)
 		{
 			MapDataJson dataJson = new MapDataJson();
 
-			var poiType = _mappingService.GetTypeById(poiTypeId);
+			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (poiType == null || poiType.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -491,11 +494,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetPoisForType(int poiTypeId)
+		public async Task<IActionResult> GetPoisForType(int poiTypeId)
 		{
 			var poisJson = new List<PoiJson>();
 
-			var poiType = _mappingService.GetTypeById(poiTypeId);
+			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (poiType == null || poiType.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -516,11 +519,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult LiveRouting(int callId)
+		public async Task<IActionResult> LiveRouting(int callId)
 		{
 			StationRoutingView model = new StationRoutingView();
 
-			var call = _callsService.GetCallById(callId);
+			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (call.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -539,12 +542,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult StationRouting(int stationId, int callId)
+		public async Task<IActionResult> StationRouting(int stationId, int callId)
 		{
 			StationRoutingView model = new StationRoutingView();
 
-			var station = _departmentGroupsService.GetGroupById(stationId);
-			var call = _callsService.GetCallById(callId);
+			var station = await _departmentGroupsService.GetGroupByIdAsync(stationId);
+			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (station.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -561,7 +564,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				startLon = station.Longitude;
 			} else if (station.Address != null)
 			{
-				var location = _geoLocationProvider.GetLatLonFromAddress(station.Address.FormatAddress());
+				var location = await _geoLocationProvider.GetLatLonFromAddress(station.Address.FormatAddress());
 
 				if (!String.IsNullOrWhiteSpace(location))
 				{

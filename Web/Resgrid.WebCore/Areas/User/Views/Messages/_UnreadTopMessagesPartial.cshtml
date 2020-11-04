@@ -7,14 +7,14 @@
     <li>
       <div class="dropdown-messages-box">
         <a class="pull-left" asp-controller="Personnel" asp-action="ViewPerson" asp-route-area="User" asp-route-userId="@message.SendingUserId" style="padding: 4px;">
-          <img alt="image" class="img-circle" src="https://api.resgrid.com/api/v3/Avatars/Get?id=@message.SendingUserId" onerror="this.src = 'https://resgrid.com/Images/defaultProfile.png'">
+          <img alt="image" class="img-circle" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@message.SendingUserId" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'">
         </a>
         <div class="media-body">
           <a asp-controller="Messages" asp-action="ViewMessage" asp-route-area="User" asp-route-messageId="@message.MessageId">
             <strong>@message.Subject</strong><br>
             @if (!String.IsNullOrWhiteSpace(message.SendingUserId))
 			{
-              @UserHelper.GetFullNameForUser(message.SendingUserId)<br>
+              @(await UserHelper.GetFullNameForUser(message.SendingUserId))<br>
 			}
 			else
 			{

@@ -1,9 +1,27 @@
 ﻿using ProtoBuf;
 using System;
+using System.Collections.Generic;
 
 namespace Resgrid.Model.Identity
 {
-	public class IdentityUserClaim : IdentityUserClaim<string> { }
+	public class IdentityUserClaim : IdentityUserClaim<string>, IEntity
+	{
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public object IdValue
+		{
+			get { return Id; }
+			set { Id = (int)value; }
+		}
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public string TableName => "AspNetUserClaims";
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public string IdName => "Id";
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
+	}
 
 
 	/// <summary>

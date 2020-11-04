@@ -4,11 +4,11 @@ namespace Resgrid.Model.Providers
 {
 	public interface IGeoLocationProvider
 	{
-		string GetAproxAddressFromLatLong(double lat, double lon);
-		string GetLatLonFromAddress(string address);
-		string GetAddressFromLatLong(double lat, double lon);
-		RouteInformation GetRoute(string start, string end);
-		RouteInformation GetRoute(double startLat, double startLon, double endLat, double endLon);
+		Task<string> GetAproxAddressFromLatLong(double lat, double lon);
+		Task<string> GetAddressFromLatLong(double lat, double lon);
+		Task<string> GetLatLonFromAddress(string address);
+		Task<RouteInformation> GetRoute(string start, string end);
+		Task<RouteInformation> GetRoute(double startLat, double startLon, double endLat, double endLon);
 		Coordinates GetCoordinatesFromW3W(string words);
 		string GetW3WFromCoordinates(Coordinates coordinates);
 		Coordinates GetLatLonFromAddressLocationIQ(string address);

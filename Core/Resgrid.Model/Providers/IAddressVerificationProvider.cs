@@ -1,7 +1,9 @@
-﻿namespace Resgrid.Model.Providers
+﻿using System.Threading.Tasks;
+
+namespace Resgrid.Model.Providers
 {
 	public interface IAddressVerificationProvider
 	{
-		AddressVerificationResult VerifyAddress(Address address);
+		Task<AddressVerificationResult> VerifyAddressAsync(Address address);
 	}
 }

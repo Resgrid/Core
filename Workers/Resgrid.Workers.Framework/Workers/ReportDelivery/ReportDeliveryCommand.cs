@@ -1,4 +1,5 @@
-﻿using Resgrid.Workers.Framework.Logic;
+﻿using System.Threading.Tasks;
+using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Framework.Workers.ReportDelivery
 {
@@ -11,10 +12,11 @@ namespace Resgrid.Workers.Framework.Workers.ReportDelivery
 
 		public bool Continue { get; set; }
 
-		public void Run(ReportDeliveryQueueItem item)
+		public async Task<bool> Run(ReportDeliveryQueueItem item)
 		{
 			var logic = new ReportDeliveryLogic();
-			logic.Process(item);
+			await logic.Process(item);
+			return true;
 		}
 	}
 }

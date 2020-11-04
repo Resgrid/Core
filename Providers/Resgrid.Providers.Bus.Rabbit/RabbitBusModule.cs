@@ -1,8 +1,7 @@
 ﻿using Autofac;
 using Resgrid.Model.Providers;
-using Resgrid.Providers.Bus.Rabbit;
 
-namespace Resgrid.Providers.Bus
+namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitBusModule : Module
 	{

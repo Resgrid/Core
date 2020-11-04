@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using Microsoft.Azure.Amqp.Serialization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -46,15 +47,23 @@ namespace Resgrid.Workers.Framework.Workers.ReportDelivery
 				_scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
 				_usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
 
-				Task t1 = new Task(() =>
+				Task t1 = new Task(async () =>
 				{
 					try
 					{
-						var allItems = _scheduledTasksService.GetUpcomingScheduledTaks();
+						var allItems = await _scheduledTasksService.GetUpcomingScheduledTasksAsync();
 
+						Dictionary<int, Department> departments = new Dictionary<int, Department>();
+						foreach (var item in allItems)
+						{
+							if (!departments.ContainsKey(item.DepartmentId))
+								departments.Add(item.DepartmentId, await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId));
+						}
+
+						// TODO: There is a bug here, might not have st.DepartmentId if it's old
 						// Filter only the past items and ones that are 5 minutes 30 seconds in the future
 						var items = from st in allItems
-							let department = _departmentsService.GetDepartmentByUserId(st.UserId)
+							let department = departments[st.DepartmentId]
 							let email = _usersService.GetMembershipByUserId(st.UserId).Email
 							let runTime = st.WhenShouldJobBeRun(TimeConverterHelper.TimeConverter(DateTime.UtcNow, department))
 							where
@@ -110,10 +119,11 @@ namespace Resgrid.Workers.Framework.Workers.ReportDelivery
 				_queue = new Queue<ReportDeliveryQueueItem>();
 		}
 
-		public void Clear()
+		public async Task<bool> Clear()
 		{
 			_cleared = true;
 			_queue.Clear();
+			return _cleared;
 		}
 
 		public void AddItem(ReportDeliveryQueueItem item)
@@ -131,11 +141,11 @@ namespace Resgrid.Workers.Framework.Workers.ReportDelivery
 			return item;
 		}
 
-		public IEnumerable<ReportDeliveryQueueItem> GetItems(int maxItemsToReturn)
+		public async Task<IEnumerable<ReportDeliveryQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<ReportDeliveryQueueItem>();
 
-			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.ReportDelivery, Timestamp = DateTime.UtcNow });
+			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.ReportDelivery, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

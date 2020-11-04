@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -9,22 +11,24 @@ namespace Resgrid.Services
 {
 	public class JobsService : IJobsService
 	{
-		private readonly IGenericDataRepository<Job> _jobsRepository;
+		private readonly IJobsRepository _jobsRepository;
 
-		public JobsService(IGenericDataRepository<Job> jobsRepository)
+		public JobsService(IJobsRepository jobsRepository)
 		{
 			_jobsRepository = jobsRepository;
 		}
 
-		public Job SetJobAsStarted(JobTypes jobType, int checkInterval)
+		public async Task<Job> SetJobAsStartedAsync(JobTypes jobType, int checkInterval, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Job job = _jobsRepository.GetAll().FirstOrDefault(x => x.JobType == (int)jobType);
+			Job job = (from j in await _jobsRepository.GetAllAsync()
+				      where j.JobType == (int)jobType
+				      select j).FirstOrDefault();
 
 			if (job != null)
 			{
 				job.DoRestart = false;
 				job.StartTimestamp = DateTime.UtcNow;
-				_jobsRepository.SaveOrUpdate(job);
+				await _jobsRepository.SaveOrUpdateAsync(job, cancellationToken);
 			}
 			else
 			{
@@ -33,46 +37,51 @@ namespace Resgrid.Services
 				job.CheckInterval = checkInterval;
 				job.StartTimestamp = DateTime.UtcNow;
 
-				_jobsRepository.SaveOrUpdate(job);
+				await _jobsRepository.SaveOrUpdateAsync(job, cancellationToken);
 			}
 
 			return job;
 		}
 
-		public Job SetJobAsChecked(JobTypes jobType)
+		public async Task<Job> SetJobAsCheckedAsync(JobTypes jobType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Job job = _jobsRepository.GetAll().FirstOrDefault(x => x.JobType == (int)jobType);
+			Job job = (from j in await _jobsRepository.GetAllAsync()
+				where j.JobType == (int)jobType
+				select j).FirstOrDefault();
 
 			if (job != null)
 			{
 				job.LastCheckTimestamp = DateTime.UtcNow;
-				_jobsRepository.SaveOrUpdate(job);
+				await _jobsRepository.SaveOrUpdateAsync(job, cancellationToken);
 			}
 
 			return job;
 		}
 
-		public Job SetJobAsChecked(JobTypes jobType, DateTime timestamp)
+		public async Task<Job> SetJobAsCheckedAsync(JobTypes jobType, DateTime timestamp, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Job job = _jobsRepository.GetAll().FirstOrDefault(x => x.JobType == (int)jobType);
+			Job job = (from j in await _jobsRepository.GetAllAsync()
+				where j.JobType == (int)jobType
+				select j).FirstOrDefault();
 
 			if (job != null)
 			{
 				job.LastCheckTimestamp = timestamp;
-				_jobsRepository.SaveOrUpdate(job);
+				await _jobsRepository.SaveOrUpdateAsync(job, cancellationToken);
 			}
 
 			return job;
 		}
 
-		public List<Job> GetAllJobs()
+		public async Task<List<Job>> GetAllJobsAsync()
 		{
-			return _jobsRepository.GetAll().ToList();
+			var jobs = await _jobsRepository.GetAllAsync();
+			return jobs.ToList();
 		}
 
-		public List<Job> GetAllBatchJobs()
+		public async Task<List<Job>> GetAllBatchJobsAsync()
 		{
-			var jobs = from j in _jobsRepository.GetAll()
+			var jobs = from j in await _jobsRepository.GetAllAsync()
 				where j.JobType == (int) JobTypes.Broadcast || j.JobType == (int) JobTypes.CallEmail ||
 				      j.JobType == (int) JobTypes.CallPrune || j.JobType == (int) JobTypes.DistributionList ||
 					  j.JobType == (int)JobTypes.StaffingChange || j.JobType == (int)JobTypes.DistributionList ||
@@ -91,46 +100,56 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public Job MarkJobForReset(JobTypes jobType)
+		public async Task<Job> MarkJobForResetAsync(JobTypes jobType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Job job = _jobsRepository.GetAll().FirstOrDefault(x => x.JobType == (int)jobType);
+			Job job = (from j in await _jobsRepository.GetAllAsync()
+				where j.JobType == (int)jobType
+				select j).FirstOrDefault();
 
 			if (job != null)
 			{
 				job.DoRestart = true;
 				job.RestartRequestedTimestamp = DateTime.UtcNow;
 
-				_jobsRepository.SaveOrUpdate(job);
+				await _jobsRepository.SaveOrUpdateAsync(job, cancellationToken);
 			}
 
 			return job;
 		}
 
-		public Job GetJobForType(JobTypes jobType)
+		public async Task<Job> GetJobForTypeAsync(JobTypes jobType)
 		{
-			return _jobsRepository.GetAll().FirstOrDefault(x => x.JobType == (int)jobType);
+			Job job = (from j in await _jobsRepository.GetAllAsync()
+				where j.JobType == (int)jobType
+				select j).FirstOrDefault();
+
+			return job;
 		}
 
-		public Job MarkJobAsRestarted(JobTypes jobType)
+		public async Task<Job> MarkJobAsRestartedAsync(JobTypes jobType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Job job = _jobsRepository.GetAll().FirstOrDefault(x => x.JobType == (int)jobType);
+			Job job = (from j in await _jobsRepository.GetAllAsync()
+				where j.JobType == (int)jobType
+				select j).FirstOrDefault();
 
 			if (job != null)
 			{
 				job.DoRestart = false;
 				job.LastResetTimestamp = DateTime.UtcNow;
 
-				_jobsRepository.SaveOrUpdate(job);
+				await _jobsRepository.SaveOrUpdateAsync(job, cancellationToken);
 			}
 
 			return job;
 		}
 
-		public void ResetJobsTimeStamps(List<JobTypes> jobTypes)
+		public async Task<bool> ResetJobsTimeStampsAsync(List<JobTypes> jobTypes, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			foreach (var jobType in jobTypes)
 			{
-				Job job = _jobsRepository.GetAll().FirstOrDefault(x => x.JobType == (int) jobType);
+				Job job = (from j in await _jobsRepository.GetAllAsync()
+					where j.JobType == (int)jobType
+					select j).FirstOrDefault();
 
 				if (job != null)
 				{
@@ -139,9 +158,11 @@ namespace Resgrid.Services
 					job.LastCheckTimestamp = null;
 					job.StartTimestamp = null;
 
-					_jobsRepository.SaveOrUpdate(job);
+					await _jobsRepository.SaveOrUpdateAsync(job, cancellationToken);
 				}
 			}
+
+			return true;
 		}
 	}
 }

@@ -6,6 +6,7 @@ using Resgrid.Model;
 using Resgrid.Model.Queue;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
@@ -15,22 +16,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 		private IConnection _connection;
 		private IModel _channel;
 
-		public Action<CallQueueItem> CallQueueReceived;
-		public Action<MessageQueueItem> MessageQueueReceived;
-		public Action<DistributionListQueueItem> DistributionListQueueReceived;
-		public Action<NotificationItem> NotificationQueueReceived;
-		public Action<ShiftQueueItem> ShiftNotificationQueueReceived;
-		public Action<CqrsEvent> CqrsEventQueueReceived;
+		public Func<CallQueueItem, Task> CallQueueReceived;
+		public Func<MessageQueueItem, Task> MessageQueueReceived;
+		public Func<DistributionListQueueItem, Task> DistributionListQueueReceived;
+		public Func<NotificationItem, Task> NotificationQueueReceived;
+		public Func<ShiftQueueItem, Task> ShiftNotificationQueueReceived;
+		public Func<CqrsEvent, Task> CqrsEventQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
-			RabbitOutboundQueueProvider.VerifyAndCreateClients();
+			RabbitOutboundQueueProvider provider = new RabbitOutboundQueueProvider();
 		}
 
-		public void Start()
+		public async Task Start()
 		{
 			VerifyAndCreateClients();
-			StartMonitoring();
+			await StartMonitoring();
 		}
 
 		private void VerifyAndCreateClients()
@@ -40,17 +41,17 @@ namespace Resgrid.Providers.Bus.Rabbit
 			_channel = _connection.CreateModel();
 		}
 
-		private void StartMonitoring()
+		private async Task StartMonitoring()
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			{
 				var callQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				callQueueReceivedConsumer.Received += (model, ea) =>
+				callQueueReceivedConsumer.Received += async (model, ea) =>
 				{
-					if (ea != null && ea.Body != null && ea.Body.Length > 0)
+					if (ea != null && ea.Body.Length > 0)
 					{
 						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body);
+						var message = Encoding.UTF8.GetString(body.ToArray());
 
 						try
 						{
@@ -58,7 +59,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 							if (cqi != null)
 							{
-								CallQueueReceived?.Invoke(cqi);
+								if (CallQueueReceived != null)
+									await CallQueueReceived.Invoke(cqi);
 							}
 						}
 						catch (Exception ex)
@@ -71,12 +73,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 				};
 
 				var messageQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				messageQueueReceivedConsumer.Received += (model, ea) =>
+				messageQueueReceivedConsumer.Received += async (model, ea) =>
 				{
-					if (ea != null && ea.Body != null && ea.Body.Length > 0)
+					if (ea != null && ea.Body.Length > 0)
 					{
 						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body);
+						var message = Encoding.UTF8.GetString(body.ToArray());
 
 						try
 						{
@@ -84,7 +86,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 							if (mqi != null)
 							{
-								MessageQueueReceived?.Invoke(mqi);
+								if (MessageQueueReceived != null)
+									await MessageQueueReceived.Invoke(mqi);
 							}
 						}
 						catch (Exception ex)
@@ -97,12 +100,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 				};
 
 				var distributionListQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				distributionListQueueReceivedConsumer.Received += (model, ea) =>
+				distributionListQueueReceivedConsumer.Received += async (model, ea) =>
 				{
-					if (ea != null && ea.Body != null && ea.Body.Length > 0)
+					if (ea != null && ea.Body.Length > 0)
 					{
 						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body);
+						var message = Encoding.UTF8.GetString(body.ToArray());
 
 						try
 						{
@@ -110,7 +113,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 							if (dlqi != null)
 							{
-								DistributionListQueueReceived?.Invoke(dlqi);
+								if (DistributionListQueueReceived != null)
+									await DistributionListQueueReceived.Invoke(dlqi);
 							}
 						}
 						catch (Exception ex)
@@ -123,12 +127,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 				};
 
 				var notificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				notificationQueueReceivedConsumer.Received += (model, ea) =>
+				notificationQueueReceivedConsumer.Received += async (model, ea) =>
 				{
-					if (ea != null && ea.Body != null && ea.Body.Length > 0)
+					if (ea != null && ea.Body.Length > 0)
 					{
 						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body);
+						var message = Encoding.UTF8.GetString(body.ToArray());
 
 						try
 						{
@@ -136,7 +140,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 							if (ni != null)
 							{
-								NotificationQueueReceived?.Invoke(ni);
+								if (NotificationQueueReceived != null)
+									await NotificationQueueReceived.Invoke(ni);
 							}
 						}
 						catch (Exception ex)
@@ -149,12 +154,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 				};
 
 				var shiftNotificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				shiftNotificationQueueReceivedConsumer.Received += (model, ea) =>
+				shiftNotificationQueueReceivedConsumer.Received += async (model, ea) =>
 				{
-					if (ea != null && ea.Body != null && ea.Body.Length > 0)
+					if (ea != null && ea.Body.Length > 0)
 					{
 						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body);
+						var message = Encoding.UTF8.GetString(body.ToArray());
 
 						try
 						{
@@ -162,7 +167,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 							if (sqi != null)
 							{
-								ShiftNotificationQueueReceived?.Invoke(sqi);
+								if (ShiftNotificationQueueReceived != null)
+									await ShiftNotificationQueueReceived.Invoke(sqi);
 							}
 						}
 						catch (Exception ex)
@@ -175,12 +181,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 				};
 
 				var cqrsEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				cqrsEventQueueReceivedConsumer.Received += (model, ea) =>
+				cqrsEventQueueReceivedConsumer.Received += async (model, ea) =>
 				{
-					if (ea != null && ea.Body != null && ea.Body.Length > 0)
+					if (ea != null && ea.Body.Length > 0)
 					{
 						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body);
+						var message = Encoding.UTF8.GetString(body.ToArray());
 
 						try
 						{
@@ -188,7 +194,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 							if (cqrs != null)
 							{
-								CqrsEventQueueReceived?.Invoke(cqrs);
+								if (CqrsEventQueueReceived != null)
+									await CqrsEventQueueReceived.Invoke(cqrs);
 							}
 						}
 						catch (Exception ex)
@@ -202,35 +209,55 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 
 				String callQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: ServiceBusConfig.CallBroadcastQueueName,
+					queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
 					autoAck: false,
 					consumer: callQueueReceivedConsumer);
 
 				String messageQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: ServiceBusConfig.MessageBroadcastQueueName,
+					queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
 					autoAck: false,
 					consumer: messageQueueReceivedConsumer);
 
 				String distributionListQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: ServiceBusConfig.EmailBroadcastQueueName,
+					queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
 					autoAck: false,
 					consumer: distributionListQueueReceivedConsumer);
 
 				String notificationQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: ServiceBusConfig.NotificaitonBroadcastQueueName,
+					queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
 					autoAck: false,
 					consumer: notificationQueueReceivedConsumer);
 
 				String shiftNotificationQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: ServiceBusConfig.ShiftNotificationsQueueName,
+					queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
 					autoAck: false,
 					consumer: shiftNotificationQueueReceivedConsumer);
 
 				String cqrsEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: ServiceBusConfig.SystemQueueName,
+					queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 					autoAck: false,
 					consumer: cqrsEventQueueReceivedConsumer);
 			}
+		}
+
+		public bool IsConnected()
+		{
+			if (_channel == null)
+				return false;
+
+			return _channel.IsOpen;
+		}
+
+		private static string SetQueueNameForEnv(string cacheKey)
+		{
+			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
+				return $"DEV{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
+				return $"QA{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
+				return $"ST{cacheKey}";
+
+			return cacheKey;
 		}
 	}
 }

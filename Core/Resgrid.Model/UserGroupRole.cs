@@ -24,8 +24,14 @@ namespace Resgrid.Model
 		[ProtoMember(5)]
 		public string RoleNames { get; set; }
 
-		[ProtoMember(6)]
-		public string Name { get; set; }
+		//[ProtoMember(6)]
+		public string Name => $"{FirstName} {LastName}";
+
+		[ProtoMember(7)]
+		public string FirstName {get;set;}
+
+		[ProtoMember(8)]
+		public string LastName {get; set; }
 
 		[NotMapped]
 		public List<int> RoleList

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -30,21 +31,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Command_View)]
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			var model = new CommandIndexView();
-			model.Commands = _commandsService.GetAllCommandsForDepartment(DepartmentId);
+			model.Commands = await _commandsService.GetAllCommandsForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Command_Create)]
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			var model = new NewCommandView();
 			model.Command = new CommandDefinition();
-			model.CallTypes = _callsService.GetCallTypesForDepartment(DepartmentId);
+			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			var types = new List<CallType>();
 			types.Add(new CallType() { Type = "Any Call Type" });

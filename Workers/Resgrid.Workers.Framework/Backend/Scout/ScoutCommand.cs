@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using RestSharp;
@@ -82,7 +83,7 @@ namespace Resgrid.Workers.Framework.Backend.Scout
 
 		public bool Continue { get; set; }
 
-		public void Run(ScoutQueueItem item)
+		public async Task<bool> Run(ScoutQueueItem item)
 		{
 			var client = new RestClient(Config.SystemBehaviorConfig.ResgridApiBaseUrl);
 
@@ -108,9 +109,9 @@ namespace Resgrid.Workers.Framework.Backend.Scout
 				systemNotificaiton.Subject = string.Format("[RGSYS] Api Scout Failure: {0}", DateTime.UtcNow);
 
 				_emailService.Notify(systemNotificaiton);
-				_jobsService.SetJobAsChecked(JobTypes.Scout);
+				await _jobsService.SetJobAsCheckedAsync(JobTypes.Scout);
 
-				return;
+				return true;
 			}
 
 			if (string.IsNullOrWhiteSpace(getStatusResponse.Content) || getStatusResponse.Data == null || getStatusResponse.Data.ActionType != type)
@@ -122,9 +123,9 @@ namespace Resgrid.Workers.Framework.Backend.Scout
 				systemNotificaiton.Subject = string.Format("[RGSYS] Api Scout Failure: {0}", DateTime.UtcNow);
 
 				_emailService.Notify(systemNotificaiton);
-				_jobsService.SetJobAsChecked(JobTypes.Scout);
+				await _jobsService.SetJobAsCheckedAsync(JobTypes.Scout);
 
-				return;
+				return true;
 			}
 
 			if (setStatusResponse.Content.Contains("Authorization has been denied for this request") || getStatusResponse.Content.Contains("Authorization has been denied for this request"))
@@ -136,9 +137,13 @@ namespace Resgrid.Workers.Framework.Backend.Scout
 				systemNotificaiton.Subject = string.Format("[RGSYS] Api Scout Failure: {0}", DateTime.UtcNow);
 
 				_emailService.Notify(systemNotificaiton);
+
+				return true;
 			}
 
-			_jobsService.SetJobAsChecked(JobTypes.Scout);
+			await _jobsService.SetJobAsCheckedAsync(JobTypes.Scout);
+
+			return false;
 		}
 	}
 }

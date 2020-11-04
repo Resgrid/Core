@@ -64,7 +64,7 @@
 								@foreach (var u in Model.Training.Users)
 								{
 									<tr>
-										<td>@UserHelper.GetFullNameForUser(u.UserId)</td>
+										<td>@(await UserHelper.GetFullNameForUser(u.UserId))</td>
 										<td>
 											@if (Model.UserGroups.ContainsKey(u.UserId))
 											{

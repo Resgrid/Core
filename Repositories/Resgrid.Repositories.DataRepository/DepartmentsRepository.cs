@@ -1,358 +1,519 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Custom;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
-using System.Configuration;
-using System.Data;
+using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Departments;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class DepartmentsRepository : RepositoryBase<Department>, IDepartmentsRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentsRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public Department GetDepartmentById(int departmentId)
+		public DepartmentsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
-			{
-				return db.Query<Department>($"SELECT * FROM Departments WHERE DepartmentId = @departmentId", new { departmentId = departmentId }).FirstOrDefault();
-			}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public Department GetDepartmentWithMembersById(int departmentId)
+		public async Task<Department> GetDepartmentWithMembersByIdAsync(int departmentId)
 		{
-			Department department;
-			Dictionary<int, Department> lookup = new Dictionary<int, Department>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var query = @"SELECT d.*, dm.*
-							FROM Departments d
-							INNER JOIN DepartmentMembers dm ON dm.DepartmentId = d.DepartmentId
-							WHERE d.DepartmentId = @departmentId AND dm.IsDeleted = 0";
-
-				//var multi = await db.QueryMultipleAsync(query, new { departmentId = departmentId });
-				//var department = (await multi.ReadAsync<Department>()).FirstOrDefault();
-
-				//if (department != null)
-				//	department.Members = (await multi.ReadAsync<DepartmentMember>()).ToList();
-
-				department = db.Query<Department, DepartmentMember, Department>(query, (possibleDupeDepartment, dm) =>
+				var selectFunction = new Func<DbConnection, Task<Department>>(async x =>
 				{
-					Department dep;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
 
-					if (!lookup.TryGetValue(possibleDupeDepartment.DepartmentId, out dep))
+					var query = _queryFactory.GetQuery<SelectDepartmentByIdQuery>();
+
+					var dictionary = new Dictionary<int, Department>();
+					var result = await x.QueryAsync<Department, DepartmentMember, Department>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: DepartmentMemberMapping(dictionary),
+						splitOn: "DepartmentMemberId");
+
+					Department department = null;
+					if (dictionary.Count > 0)
+						department = dictionary.Select(y => y.Value).FirstOrDefault();
+					else
+						department = result.FirstOrDefault();
+
+
+					if (department != null && department.Members != null)
 					{
-						lookup.Add(possibleDupeDepartment.DepartmentId, possibleDupeDepartment);
-						dep = possibleDupeDepartment;
+						department.AdminUsers = new List<string>();
+						foreach (var member in department.Members)
+						{
+							if (member.IsAdmin.GetValueOrDefault())
+								department.AdminUsers.Add(member.UserId);
+						}
 					}
 
-					if (dep.Members == null)
-						dep.Members = new List<DepartmentMember>();
+					if (department != null && !department.Use24HourTime.HasValue)
+						department.Use24HourTime = false;
 
-					if (!dep.Members.Contains(dm))
-					{
-						dep.Members.Add(dm);
-						dm.Department = dep;
-					}
+					return department;
+				});
 
-					return dep;
-
-				}, new { departmentId = departmentId }, splitOn: "DepartmentId").FirstOrDefault();
-			}
-
-			if (department != null && department.Members != null)
-			{
-				department.AdminUsers = new List<string>();
-				foreach (var member in department.Members)
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
 				{
-					if (member.IsAdmin.GetValueOrDefault())
-						department.AdminUsers.Add(member.UserId);
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
 				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			if (department != null && !department.Use24HourTime.HasValue)
-				department.Use24HourTime = false;
-
-			return department;
+				return null;
+			}
 		}
 
-		public Department GetDepartmentWithMembersByUserId(string userId)
+		public async Task<Department> GetDepartmentWithMembersByNameAsync(string name)
 		{
-			Department department;
-			Dictionary<int, Department> lookup = new Dictionary<int, Department>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var query = @"SELECT d.*, dm.*
-							FROM AspNetUsers u
-							INNER JOIN DepartmentMembers dm1 ON dm1.UserId = u.Id
-							INNER JOIN Departments d ON d.DepartmentId = dm1.DepartmentId
-							INNER JOIN DepartmentMembers dm ON dm.DepartmentId = d.DepartmentId
-							WHERE u.Id = @userId AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = 0";
-
-				//var multi = await db.QueryMultipleAsync(query, new { userId = userId });
-				//var department = (await multi.ReadAsync<Department>()).FirstOrDefault();
-
-				//if (department != null)
-				//	department.Members = (await multi.ReadAsync<DepartmentMember>()).ToList();
-
-				department = db.Query<Department, DepartmentMember, Department>(query, (possibleDupeDepartment, dm) =>
+				var selectFunction = new Func<DbConnection, Task<Department>>(async x =>
 				{
-					Department dep;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Name", name);
 
-					if (!lookup.TryGetValue(possibleDupeDepartment.DepartmentId, out dep))
+					var query = _queryFactory.GetQuery<SelectDepartmentByNameQuery>();
+
+					var dictionary = new Dictionary<int, Department>();
+					var result = await x.QueryAsync<Department, DepartmentMember, Department>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: DepartmentMemberMapping(dictionary),
+						splitOn: "DepartmentMemberId");
+
+					Department department = null;
+					if (dictionary.Count > 0)
+						department = dictionary.Select(y => y.Value).FirstOrDefault();
+					else
+						department = result.FirstOrDefault();
+
+
+					if (department != null && department.Members != null)
 					{
-						lookup.Add(possibleDupeDepartment.DepartmentId, possibleDupeDepartment);
-						dep = possibleDupeDepartment;
+						department.AdminUsers = new List<string>();
+						foreach (var member in department.Members)
+						{
+							if (member.IsAdmin.GetValueOrDefault())
+								department.AdminUsers.Add(member.UserId);
+						}
 					}
 
-					if (dep.Members == null)
-						dep.Members = new List<DepartmentMember>();
+					if (department != null && !department.Use24HourTime.HasValue)
+						department.Use24HourTime = false;
 
-					if (!dep.Members.Contains(dm))
-					{
-						dep.Members.Add(dm);
-						dm.Department = dep;
-					}
+					return department;
+				});
 
-					return dep;
-
-				}, new { userId = userId }, splitOn: "DepartmentId,DepartmentMemberId").FirstOrDefault();
-			}
-
-			if (department != null && department.Members != null)
-			{
-				department.AdminUsers = new List<string>();
-				foreach (var member in department.Members)
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
 				{
-					if (member.IsAdmin.GetValueOrDefault())
-						department.AdminUsers.Add(member.UserId);
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
 				}
 			}
-
-			if (department != null && !department.Use24HourTime.HasValue)
-				department.Use24HourTime = false;
-
-			return department;
-		}
-
-		public ValidateUserForDepartmentResult GetValidateUserForDepartmentData(string userName)
-		{
-			var data = db.SqlQuery<ValidateUserForDepartmentResult>(@"SELECT dm.UserId as 'UserId', dm.IsDisabled as 'IsDisabled', dm.IsDeleted as 'IsDeleted', d.DepartmentId as 'DepartmentId', d.Code as 'Code' 
-																	FROM AspNetUsers u
-																	INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
-																	INNER JOIN Departments d ON dm.DepartmentId = d.DepartmentId
-																	WHERE u.UserName = @userName AND dm.IsActive = 1",
-												new SqlParameter("@userName", userName));
-
-			return data.FirstOrDefault();
-		}
-
-		//public Department GetDepartmentForUserByUsername(string userName)
-		//{
-		//	var data = db.SqlQuery<Department>(@"SELECT TOP 1 d.*
-		//															FROM AspNetUsers u
-		//															INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
-		//															INNER JOIN Departments d ON dm.DepartmentId = d.DepartmentId
-		//															WHERE u.UserName = @userName AND dm.IsActive = 1",
-		//										new SqlParameter("@userName", userName));
-
-		//	return data.FirstOrDefault();
-		//}
-
-		public Department GetDepartmentForUserByUsername(string userName)
-		{
-			Department department;
-			Dictionary<int, Department> lookup = new Dictionary<int, Department>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			catch (Exception ex)
 			{
-				var query = @"SELECT d.*, dm.*
-							FROM AspNetUsers u
-							INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
-							INNER JOIN Departments d ON d.DepartmentId = dm.DepartmentId
-							WHERE u.UserName = @userName AND dm.IsDeleted = 0 AND (dm.IsActive = 1 OR dm.IsDefault = 1)";
+				Logging.LogException(ex);
 
-				//var multi = (await db.QueryMultipleAsync(query, new { userName = userName }));
-				//var department = multi.Read<Department>().FirstOrDefault();
-
-				//if (department != null)
-				//	department.Members = multi.Read<DepartmentMember>().ToList();
-
-				var multi = db.QueryMultiple(query, new { userName = userName });
-				var departments = multi.Read<Department, DepartmentMember, Department>((possibleDupeDepartment, dm) =>
-				{
-					Department dep;
-
-					if (!lookup.TryGetValue(possibleDupeDepartment.DepartmentId, out dep))
-					{
-						lookup.Add(possibleDupeDepartment.DepartmentId, possibleDupeDepartment);
-						dep = possibleDupeDepartment;
-					}
-
-					if (dep.Members == null)
-						dep.Members = new List<DepartmentMember>();
-
-					if (!dep.Members.Contains(dm))
-					{
-						dep.Members.Add(dm);
-						dm.Department = dep;
-					}
-
-					return dep;
-
-				}, splitOn: "DepartmentId").ToList();
-
-				department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsActive));
-
-				if (department == null)
-					department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsDefault));
+				return null;
 			}
+		}
 
-			if (department != null && department.Members != null)
+		public async Task<ValidateUserForDepartmentResult> GetValidateUserForDepartmentDataAsync(string userName)
+		{
+			try
 			{
-				department.AdminUsers = new List<string>();
-				foreach (var member in department.Members)
+				var selectFunction = new Func<DbConnection, Task<ValidateUserForDepartmentResult>>(async x =>
 				{
-					if (member.IsAdmin.GetValueOrDefault())
-						department.AdminUsers.Add(member.UserId);
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Username", userName);
+
+					var query = _queryFactory.GetQuery<SelectValidDepartmentByUsernameQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<ValidateUserForDepartmentResult>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
 				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			if (department != null && !department.Use24HourTime.HasValue)
-				department.Use24HourTime = false;
-
-			return department;
+				throw;
+			}
 		}
+
+		public async Task<Department> GetDepartmentForUserByUserIdAsync(string userId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<Department>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectDepartmentByUserIdQuery>();
+
+					var dictionary = new Dictionary<int, Department>();
+					var result = await x.QueryAsync<Department, DepartmentMember, Department>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: DepartmentMemberMapping(dictionary),
+						splitOn: "DepartmentMemberId");
+
+					Department department = null;
+					if (dictionary.Count > 0)
+						department = dictionary.Select(y => y.Value).FirstOrDefault();
+					else
+						department = result.FirstOrDefault();
+
+
+					if (department != null && department.Members != null)
+					{
+						department.AdminUsers = new List<string>();
+						foreach (var member in department.Members)
+						{
+							if (member.IsAdmin.GetValueOrDefault())
+								department.AdminUsers.Add(member.UserId);
+						}
+					}
+
+					if (department != null && !department.Use24HourTime.HasValue)
+						department.Use24HourTime = false;
+
+					return department;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
 
 		public async Task<Department> GetDepartmentForUserByUsernameAsync(string userName)
 		{
-			Department department;
-			Dictionary<int, Department> lookup = new Dictionary<int, Department>();
-
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				var query = @"SELECT d.*, dm.*
-							FROM AspNetUsers u
-							INNER JOIN DepartmentMembers dm1 ON dm1.UserId = u.Id
-							INNER JOIN Departments d ON d.DepartmentId = dm1.DepartmentId
-							INNER JOIN DepartmentMembers dm ON dm.DepartmentId = d.DepartmentId
-							WHERE u.UserName = @userName AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = 0 AND (dm.IsActive = 1 OR dm.IsDefault = 1)";
-
-				//var multi = (await db.QueryMultipleAsync(query, new { userName = userName }));
-				//var department = multi.Read<Department>().FirstOrDefault();
-
-				//if (department != null)
-				//	department.Members = multi.Read<DepartmentMember>().ToList();
-
-				var multi = await db.QueryMultipleAsync(query, new { userName = userName });
-				var departments = multi.Read<Department, DepartmentMember, Department>((possibleDupeDepartment, dm) =>
+				var selectFunction = new Func<DbConnection, Task<Department>>(async x =>
 				{
-					Department dep;
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Username", userName);
 
-					if (!lookup.TryGetValue(possibleDupeDepartment.DepartmentId, out dep))
+					var query = _queryFactory.GetQuery<SelectDepartmentByUsernameQuery>();
+
+					var dictionary = new Dictionary<int, Department>();
+					var result = await x.QueryAsync<Department, DepartmentMember, Department>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: DepartmentMemberMapping(dictionary),
+						splitOn: "DepartmentMemberId");
+
+					Department department = null;
+					if (dictionary.Count > 0)
+						department = dictionary.Select(y => y.Value).FirstOrDefault();
+					else
+						department = result.FirstOrDefault();
+
+
+					if (department != null && department.Members != null)
 					{
-						lookup.Add(possibleDupeDepartment.DepartmentId, possibleDupeDepartment);
-						dep = possibleDupeDepartment;
+						department.AdminUsers = new List<string>();
+						foreach (var member in department.Members)
+						{
+							if (member.IsAdmin.GetValueOrDefault())
+								department.AdminUsers.Add(member.UserId);
+						}
 					}
 
-					if (dep.Members == null)
-						dep.Members = new List<DepartmentMember>();
+					if (department != null && !department.Use24HourTime.HasValue)
+						department.Use24HourTime = false;
 
-					if (!dep.Members.Contains(dm))
-					{
-						dep.Members.Add(dm);
-						dm.Department = dep;
-					}
+					return department;
+				});
 
-					return dep;
-
-				}, splitOn: "DepartmentId").ToList();
-
-				department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsActive));
-
-				if (department == null)
-					department = departments.FirstOrDefault(x => x.Members.Any(y => y.IsDefault));
-			}
-
-			if (department != null && department.Members != null)
-			{
-				department.AdminUsers = new List<string>();
-				foreach (var member in department.Members)
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
 				{
-					if (member.IsAdmin.GetValueOrDefault())
-						department.AdminUsers.Add(member.UserId);
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
 				}
 			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 
-			if (department != null && !department.Use24HourTime.HasValue)
-				department.Use24HourTime = false;
-
-			return department;
+				return null;
+			}
 		}
 
-		public List<PersonName> GetAllPersonnelNamesForDepartment(int departmentId)
+		public async Task<DepartmentReport> GetDepartmentReportAsync(int departmentId)
 		{
-			var data = db.SqlQuery<PersonName>(@"
-											DECLARE @profiles TABLE 
-											( 
-													UserId VARCHAR(MAX), 
-													Name VARCHAR(MAX),
-													FirstName VARCHAR(MAX),
-													LastName VARCHAR(MAX)
-											)
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<DepartmentReport>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
 
-											INSERT INTO @profiles
-											SELECT dm.UserId, up.FirstName + ' ' + up.LastName as 'Name', up.FirstName, up.LastName
-											FROM UserProfiles up
-											RIGHT OUTER JOIN DepartmentMembers dm ON dm.UserId = up.UserId
-											WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0
+					var query = _queryFactory.GetQuery<SelectDepartmentReportByDidQuery>();
 
-											SELECT * FROM @profiles",
-						new SqlParameter("@departmentId", departmentId));
+					return await x.QueryFirstOrDefaultAsync<DepartmentReport>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
 
-			return data.ToList();
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
 		}
 
-		public DepartmentReport GetDepartmentReport(int departmentId)
+		public async Task<Department> GetByLinkCodeAsync(string code)
 		{
-			var data = db.SqlQuery<DepartmentReport>(@"SELECT 
-							d.DepartmentId,
-							d.Name,
-							d.CreatedOn,
-							(SELECT COUNT (*) FROM DepartmentGroups dg WHERE dg.DepartmentId = d.DepartmentId) AS 'Groups',
-							(SELECT COUNT (*) -1 FROM DepartmentMembers dm WHERE dm.DepartmentId = d.DepartmentId) AS 'Users',
-							(SELECT COUNT (*) FROM Units u WHERE u.DepartmentId = d.DepartmentId) AS 'Units',
-							(SELECT COUNT (*) FROM Calls c WHERE c.DepartmentId = d.DepartmentId) AS 'Calls',
-							(SELECT COUNT (*) FROM PersonnelRoles pr WHERE pr.DepartmentId = d.DepartmentId) AS 'Roles',
-							(SELECT COUNT (*) FROM DepartmentNotifications dn WHERE dn.DepartmentId = d.DepartmentId) AS 'Notifications',
-							(SELECT COUNT (*) FROM UnitTypes ut WHERE ut.DepartmentId = d.DepartmentId) AS 'UnitTypes',
-							(SELECT COUNT (*) FROM CallTypes ct WHERE ct.DepartmentId = d.DepartmentId) AS 'CallTypes',
-							(SELECT COUNT (*) FROM DepartmentCertificationTypes dct WHERE dct.DepartmentId = d.DepartmentId) AS 'CertTypes',
-								CASE 
-									WHEN d.TimeZone IS NOT NULL OR d.Use24HourTime IS NOT NULL OR d.AddressId IS NOT NULL
-										THEN 1 
-									ELSE 0 
-										END AS 'Settings'
-						FROM Departments d
-						WHERE d.DepartmentId = @departmentId",
-				new SqlParameter("@departmentId", departmentId));
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<Department>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Code", code);
 
-			return data.FirstOrDefault();
+					var query = _queryFactory.GetQuery<SelectDepartmentByLinkCodeQuery>();
+
+					var dictionary = new Dictionary<int, Department>();
+					var result = await x.QueryAsync<Department, DepartmentMember, Department>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: DepartmentMemberMapping(dictionary),
+						splitOn: "DepartmentMemberId");
+
+					Department department = null;
+					if (dictionary.Count > 0)
+						department = dictionary.Select(y => y.Value).FirstOrDefault();
+					else
+						department = result.FirstOrDefault();
+
+
+					if (department != null && department.Members != null)
+					{
+						department.AdminUsers = new List<string>();
+						foreach (var member in department.Members)
+						{
+							if (member.IsAdmin.GetValueOrDefault())
+								department.AdminUsers.Add(member.UserId);
+						}
+					}
+
+					if (department != null && !department.Use24HourTime.HasValue)
+						department.Use24HourTime = false;
+
+					return department;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
+		public async Task<DepartmentStats> GetDepartmentStatsByDepartmentUserIdAsync(int departmentId, string userId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<DepartmentStats>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectDepartmentStatsByUserDidQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<DepartmentStats>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		private static Func<Department, DepartmentMember, Department> DepartmentMemberMapping(Dictionary<int, Department> dictionary)
+		{
+			return new Func<Department, DepartmentMember, Department>((department, departmentMember) =>
+			{
+				var dictionaryDepartment = default(Department);
+
+				if (departmentMember != null)
+				{
+					if (dictionary.TryGetValue(department.DepartmentId, out dictionaryDepartment))
+					{
+						if (dictionaryDepartment.Members.All(x => x.DepartmentMemberId != departmentMember.DepartmentMemberId))
+							dictionaryDepartment.Members.Add(departmentMember);
+					}
+					else
+					{
+						if (department.Members == null)
+							department.Members = new List<DepartmentMember>();
+
+						department.Members.Add(departmentMember);
+						dictionary.Add(department.DepartmentId, department);
+
+						dictionaryDepartment = department;
+					}
+				}
+				else
+				{
+					department.Members = new List<DepartmentMember>();
+					dictionaryDepartment = department;
+					dictionary.Add(department.DepartmentId, department);
+				}
+
+				return dictionaryDepartment;
+			});
 		}
 	}
 }

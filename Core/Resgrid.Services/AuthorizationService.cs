@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 
@@ -8,7 +9,6 @@ namespace Resgrid.Services
 	public class AuthorizationService : IAuthorizationService
 	{
 		#region Private Members and Constructors
-		private readonly IPushUriService _pushUriService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IInvitesService _invitesService;
 		private readonly ICallsService _callsService;
@@ -22,12 +22,11 @@ namespace Resgrid.Services
 		private readonly ICalendarService _calendarService;
 		private readonly IProtocolsService _protocolsService;
 
-		public AuthorizationService(IPushUriService pushUriService, IDepartmentsService departmentsService, IInvitesService invitesService,
+		public AuthorizationService(IDepartmentsService departmentsService, IInvitesService invitesService,
 			ICallsService callsService, IMessageService messageService, IWorkLogsService workLogsService, ISubscriptionsService subscriptionsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService)
 		{
-			_pushUriService = pushUriService;
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
 			_callsService = callsService;
@@ -43,23 +42,10 @@ namespace Resgrid.Services
 		}
 		#endregion Private Members and Constructors
 
-		public bool CanUserDeletePushUri(string userId, int pushUriId)
+		public async Task<bool> CanUserManageInviteAsync(string userId, int inviteId)
 		{
-			var pushUri = _pushUriService.GetPushUriById(pushUriId);
-
-			if (pushUri != null)
-			{
-				if (pushUri.UserId == userId)
-					return true;
-			}
-
-			return false;
-		}
-
-		public bool CanUserManageInvite(string userId, int inviteId)
-		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var invite = _invitesService.GetInviteById(inviteId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var invite = await _invitesService.GetInviteByIdAsync(inviteId);
 
 			if (department == null || invite == null)
 				return false;
@@ -73,10 +59,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserViewCall(string userId, int callId)
+		public async Task<bool> CanUserViewCallAsync(string userId, int callId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var call = _callsService.GetCallById(callId, false);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var call = await _callsService.GetCallByIdAsync(callId, false);
 
 			if (department == null || call == null)
 				return false;
@@ -87,10 +73,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserEditCall(string userId, int callId)
+		public async Task<bool> CanUserEditCallAsync(string userId, int callId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var call = _callsService.GetCallById(callId, false);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var call = await _callsService.GetCallByIdAsync(callId, false);
 
 			if (department == null || call == null)
 				return false;
@@ -107,10 +93,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserViewMessage(string userId, int messageId)
+		public async Task<bool> CanUserViewMessageAsync(string userId, int messageId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var message = _messageService.GetMessageById(messageId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var message = await _messageService.GetMessageByIdAsync(messageId);
 
 			if (department == null || message == null)
 				return false;
@@ -132,10 +118,10 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserViewAndEditCallLog(string userId, int callLogId)
+		public async Task<bool> CanUserViewAndEditCallLogAsync(string userId, int callLogId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var log = _workLogsService.GetCallLogById(callLogId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var log = await _workLogsService.GetCallLogByIdAsync(callLogId);
 
 			if (department == null || log == null)
 				return false;
@@ -149,10 +135,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserViewAndEditWorkLog(string userId, int logId)
+		public async Task<bool> CanUserViewAndEditWorkLogAsync(string userId, int logId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var log = _workLogsService.GetWorkLogById(logId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var log = await _workLogsService.GetWorkLogByIdAsync(logId);
 
 			if (department == null || log == null)
 				return false;
@@ -166,10 +152,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserViewPayment(string userId, int paymentId)
+		public async Task<bool> CanUserViewPaymentAsync(string userId, int paymentId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var payment = _subscriptionsService.GetPaymentById(paymentId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var payment = await _subscriptionsService.GetPaymentByIdAsync(paymentId);
 
 			if (department == null || payment == null)
 				return false;
@@ -183,10 +169,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserEditDepartmentGroup(string userId, int departmentGroupId)
+		public async Task<bool> CanUserEditDepartmentGroupAsync(string userId, int departmentGroupId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var group = _departmentGroupsService.GetGroupById(departmentGroupId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
 
 			if (department == null || group == null)
 				return false;
@@ -203,10 +189,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserEditRole(string userId, int personnelRoleId)
+		public async Task<bool> CanUserEditRoleAsync(string userId, int personnelRoleId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var role = _personnelRolesService.GetRoleById(personnelRoleId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var role = await _personnelRolesService.GetRoleByIdAsync(personnelRoleId);
 
 			if (department == null || role == null)
 				return false;
@@ -220,10 +206,10 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserViewRole(string userId, int personnelRoleId)
+		public async Task<bool> CanUserViewRoleAsync(string userId, int personnelRoleId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var role = _personnelRolesService.GetRoleById(personnelRoleId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var role = await _personnelRolesService.GetRoleByIdAsync(personnelRoleId);
 
 			if (department == null || role == null)
 				return false;
@@ -240,17 +226,17 @@ namespace Resgrid.Services
 		/// </summary>
 		/// <param name="userId">UserId to check</param>
 		/// <returns>True if the user is in a valid state, otherwise false</returns>
-		public bool IsUserValidWithinLimits(string userId, int departmentId)
+		public async Task<bool> IsUserValidWithinLimitsAsync(string userId, int departmentId)
 		{
-			if (_departmentsService.IsUserDisabled(userId, departmentId))
+			if (await _departmentsService.IsUserDisabledAsync(userId, departmentId))
 				return false;
 
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			if (department == null)
 				return false;
 
-			var users = _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabled(department.DepartmentId);
+			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(department.DepartmentId);
 
 			// This was .All and was failing with an array of 1, but seemed to work other times.
 			if (!users.Any(x => x.Id == userId))
@@ -259,10 +245,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserModifyUnit(string userId, int unitId)
+		public async Task<bool> CanUserModifyUnitAsync(string userId, int unitId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var unit = _unitsService.GetUnitById(unitId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
 			if (department == null || unit == null)
 				return false;
@@ -276,10 +262,10 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserViewUnit(string userId, int unitId)
+		public async Task<bool> CanUserViewUnitAsync(string userId, int unitId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var unit = _unitsService.GetUnitById(unitId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
 			if (department == null || unit == null)
 				return false;
@@ -290,10 +276,10 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanUserViewUser(string viewerUserId, string targetUserId)
+		public async Task<bool> CanUserViewUserAsync(string viewerUserId, string targetUserId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(viewerUserId);
-			var department1 = _departmentsService.GetDepartmentByUserId(targetUserId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(viewerUserId);
+			var department1 = await _departmentsService.GetDepartmentByUserIdAsync(targetUserId);
 
 			if (department.DepartmentId != department1.DepartmentId)
 				return false;
@@ -301,9 +287,9 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public bool CanGroupAdminsAddUsers(int departmentId)
+		public async Task<bool> CanGroupAdminsAddUsersAsync(int departmentId)
 		{
-			var permission = _permissionsService.GetPermisionByDepartmentType(departmentId, PermissionTypes.AddPersonnel);
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AddPersonnel);
 
 			if (permission != null && permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins)
 				return true;
@@ -311,9 +297,9 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanGroupAdminsRemoveUsers(int departmentId)
+		public async Task<bool> CanGroupAdminsRemoveUsersAsync(int departmentId)
 		{
-			var permission = _permissionsService.GetPermisionByDepartmentType(departmentId, PermissionTypes.RemovePersonnel);
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.RemovePersonnel);
 
 			if (permission != null && permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins)
 				return true;
@@ -321,11 +307,11 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserAddNewUser(int departmentId, string userId)
+		public async Task<bool> CanUserAddNewUserAsync(int departmentId, string userId)
 		{
-			var permission = _permissionsService.GetPermisionByDepartmentType(departmentId, PermissionTypes.AddPersonnel);
-			var isGroupAdmin = _departmentGroupsService.IsUserAGroupAdmin(userId, departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AddPersonnel);
+			var isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			if (permission != null && permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isGroupAdmin)
 				return true;
@@ -336,12 +322,12 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserDeleteUser(int departmentId, string userId, string userIdToDelete)
+		public async Task<bool> CanUserDeleteUserAsync(int departmentId, string userId, string userIdToDelete)
 		{
-			var permission = _permissionsService.GetPermisionByDepartmentType(departmentId, PermissionTypes.RemovePersonnel);
-			var adminGroup = _departmentGroupsService.GetGroupForUser(userId, departmentId);
-			var destGroup = _departmentGroupsService.GetGroupForUser(userIdToDelete, departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.RemovePersonnel);
+			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var destGroup = await _departmentGroupsService.GetGroupForUserAsync(userIdToDelete, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			if (department.IsUserAnAdmin(userId))
 				return true;
@@ -352,14 +338,14 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserCreateCall(string userId, int departmentId)
+		public async Task<bool> CanUserCreateCallAsync(string userId, int departmentId)
 		{
-			var permission = _permissionsService.GetPermisionByDepartmentType(departmentId, PermissionTypes.CreateCall);
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateCall);
 
 			bool isGroupAdmin = false;
-			var group = _departmentGroupsService.GetGroupForUser(userId, departmentId);
-			var roles = _personnelRolesService.GetRolesForUser(userId, departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
@@ -367,14 +353,14 @@ namespace Resgrid.Services
 			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
-		public bool CanUserViewPII(string userId, int departmentId)
+		public async Task<bool> CanUserViewPIIAsync(string userId, int departmentId)
 		{
-			var permission = _permissionsService.GetPermisionByDepartmentType(departmentId, PermissionTypes.ViewPersonalInfo);
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewPersonalInfo);
 
 			bool isGroupAdmin = false;
-			var group = _departmentGroupsService.GetGroupForUser(userId, departmentId);
-			var roles = _personnelRolesService.GetRolesForUser(userId, departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
@@ -382,14 +368,14 @@ namespace Resgrid.Services
 			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
-		public bool CanUserCreateNote(string userId, int departmentId)
+		public async Task<bool> CanUserCreateNoteAsync(string userId, int departmentId)
 		{
-			var permission = _permissionsService.GetPermisionByDepartmentType(departmentId, PermissionTypes.CreateNote);
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateNote);
 
 			bool isGroupAdmin = false;
-			var group = _departmentGroupsService.GetGroupForUser(userId, departmentId);
-			var roles = _personnelRolesService.GetRolesForUser(userId, departmentId);
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
@@ -397,10 +383,10 @@ namespace Resgrid.Services
 			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
-		public bool CanUserModifyCalendarEntry(string userId, int calendarItemId)
+		public async Task<bool> CanUserModifyCalendarEntryAsync(string userId, int calendarItemId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var item = _calendarService.GetCalendarItemById(calendarItemId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
 
 			if (department == null || item == null)
 				return false;
@@ -420,12 +406,12 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserEditProfile(string userId, int departmentId, string editingProfileId)
+		public async Task<bool> CanUserEditProfileAsync(string userId, int departmentId, string editingProfileId)
 		{
 			if (userId == editingProfileId)
 				return true;
 
-			var usersDepartment = _departmentsService.GetDepartmentByUserId(editingProfileId);
+			var usersDepartment = await _departmentsService.GetDepartmentByUserIdAsync(editingProfileId);
 
 			if (usersDepartment == null)
 				return false;
@@ -433,11 +419,11 @@ namespace Resgrid.Services
 			if (usersDepartment.DepartmentId != departmentId)
 				return false;
 
-			var department = _departmentsService.GetDepartmentById(departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			if (department.IsUserAnAdmin(userId))
 				return true;
 
-			var group = _departmentGroupsService.GetGroupForUser(userId, departmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
 			if (group != null)
 			{
 				if (group.IsUserGroupAdmin(userId) && group.IsUserInGroup(editingProfileId))
@@ -448,10 +434,10 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserModifyProtocol(string userId, int protocolId)
+		public async Task<bool> CanUserModifyProtocolAsync(string userId, int protocolId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var protocol = _protocolsService.GetProcotolById(protocolId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var protocol = await _protocolsService.GetProtocolByIdAsync(protocolId);
 
 			if (department == null || protocol == null)
 				return false;
@@ -465,15 +451,28 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool CanUserViewProtocol(string userId, int protocolId)
+		public async Task<bool> CanUserViewProtocolAsync(string userId, int protocolId)
 		{
-			var department = _departmentsService.GetDepartmentByUserId(userId);
-			var protocol = _protocolsService.GetProcotolById(protocolId);
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var protocol = await _protocolsService.GetProtocolByIdAsync(protocolId);
 
 			if (department == null || protocol == null)
 				return false;
 
 			if (protocol.DepartmentId != department.DepartmentId)
+				return false;
+
+			return true;
+		}
+
+		public async Task<bool> CanUserManageSubscriptionAsync(string userId, int departmentId)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, true);
+
+			if (department == null)
+				return false;
+
+			if (!department.IsUserAnAdmin(userId))
 				return false;
 
 			return true;

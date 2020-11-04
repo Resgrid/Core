@@ -1,10 +1,10 @@
-﻿using Resgrid.Model;
+﻿using System.Threading.Tasks;
 
 namespace Resgrid.Workers.Framework
 {
 	public interface ICommand<in T>// where T : QueueItem
 	{
-		void Run(T message);
+		Task<bool> Run(T message);
 		bool Continue { get; set; }
 	}
 }

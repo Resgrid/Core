@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Resgrid.Model;
 using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
 
-namespace Identity.Dapper.Queries.Role
+namespace Resgrid.Repositories.DataRepository.Queries.Identity.Role
 {
-    public class UpdateRoleQuery : IUpdateQuery
+    public class UpdateQuery : IUpdateQuery
     {
         private readonly SqlConfiguration _sqlConfiguration;
-        public UpdateRoleQuery(SqlConfiguration sqlConfiguration)
+        public UpdateQuery(SqlConfiguration sqlConfiguration)
         {
             _sqlConfiguration = sqlConfiguration;
         }
@@ -23,6 +23,7 @@ namespace Identity.Dapper.Queries.Role
                                          .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.RoleTable,
                                                                        setFragment,
+                                                                       ((IEntity)entity).IdName,
                                                                        $"{_sqlConfiguration.ParameterNotation}Id");
 
             return query;

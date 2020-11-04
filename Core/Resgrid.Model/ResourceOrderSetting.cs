@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Framework;
@@ -10,7 +11,6 @@ namespace Resgrid.Model
 	{
 		[Key]
 		[Required]
-		[Dapper.IgnoreInsert]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int ResourceOrderSettingId { get; set; }
 
@@ -57,11 +57,20 @@ namespace Resgrid.Model
 		public string UserIdsToNotifyOnOrders { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ResourceOrderSettingId; }
 			set { ResourceOrderSettingId = (int) value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ResourceOrderSettings";
+
+		[NotMapped]
+		public string IdName => "ResourceOrderSettingId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "RoleAllowedToFulfilOrders" };
 	}
 
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -11,6 +12,7 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
+using Resgrid.Repositories.DataRepository.Queries.ActionLogs;
 
 namespace Resgrid.Services
 {
@@ -27,11 +29,11 @@ namespace Resgrid.Services
 
 		private readonly IDepartmentsRepository _departmentRepository;
 		private readonly IDepartmentMembersRepository _departmentMembersRepository;
-		private readonly IGenericDataRepository<UserProfile> _userProfileRepository;
+		private readonly IUserProfileService _userProfileRepository;
 		private readonly IUsersService _usersService;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IDepartmentCallEmailsRepository _departmentCallEmailsRepository;
-		private readonly IGenericDataRepository<DepartmentCallPruning> _departmentCallPruningRepository;
+		private readonly IDepartmentCallPruningRepository _departmentCallPruningRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEventAggregator _eventAggregator;
@@ -41,8 +43,8 @@ namespace Resgrid.Services
 
 		public DepartmentsService(IDepartmentsRepository departmentRepository, IDepartmentMembersRepository departmentMembersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentCallEmailsRepository departmentCallEmailsRepository,
-			IGenericDataRepository<DepartmentCallPruning> departmentCallPruningRepository, ICacheProvider cacheProvider, IUsersService usersService,
-			IDepartmentSettingsService departmentSettingsService, IGenericDataRepository<UserProfile> userProfileRepository,
+			IDepartmentCallPruningRepository departmentCallPruningRepository, ICacheProvider cacheProvider, IUsersService usersService,
+			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileRepository,
 			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository)
 		{
 			_departmentRepository = departmentRepository;
@@ -60,14 +62,15 @@ namespace Resgrid.Services
 		}
 		#endregion Private Members and Constructors
 
-		public List<Department> GetAll()
+		public async Task<List<Department>> GetAllAsync()
 		{
-			return _departmentRepository.GetAll().ToList();
+			var list = await _departmentRepository.GetAllAsync();
+			return list.ToList();
 		}
 
-		public bool DoesDepartmentExist(string name)
+		public async Task<bool> DoesDepartmentExistAsync(string name)
 		{
-			var values = from d in _departmentRepository.GetAll()
+			var values = from d in await GetAllAsync()
 						 where d.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
 						 select d;
 
@@ -77,25 +80,21 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public Department GetDepartmentByName(string name)
+		public async Task<Department> GetDepartmentByNameAsync(string name)
 		{
-			var values = from d in _departmentRepository.GetAll()
-						 where d.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
-						 select d;
+			var department = await _departmentRepository.GetDepartmentWithMembersByNameAsync(name.Trim());
 
-			var dep = values.FirstOrDefault();
+			if (department != null)
+				return await FillAdminUsersAsync(department);
 
-			if (dep != null)
-				return FillAdminUsers(dep);
-
-			return dep;
+			return department;
 		}
 
-		public Department GetDepartmentById(int departmentId, bool bypassCache = true)
+		public async Task<Department> GetDepartmentByIdAsync(int departmentId, bool bypassCache = true)
 		{
-			Func<Department> getDepartment = delegate ()
+			async Task<Department> getDepartment()
 			{
-				var department = _departmentRepository.GetDepartmentWithMembersById(departmentId);
+				var department = await _departmentRepository.GetDepartmentWithMembersByIdAsync(departmentId);
 
 				if (department == null && departmentId > 0)
 				{
@@ -103,39 +102,29 @@ namespace Resgrid.Services
 				}
 
 				return department;
-			};
+			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
-				return _cacheProvider.Retrieve<Department>(string.Format(CacheKey, departmentId), getDepartment, CacheLength);
+				return await _cacheProvider.RetrieveAsync<Department>(string.Format(CacheKey, departmentId), getDepartment, CacheLength);
 			else
-				return getDepartment();
+				return await getDepartment();
 		}
 
-		public Department GetDepartmentEF(int departmentId)
+		public async Task<Department> SaveDepartmentAsync(Department department, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var dep = _departmentRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId);
+			department.Name = department.Name.Trim();
+			department.UpdatedOn = DateTime.UtcNow;
 
-			return dep;
-		}
 
-		public Department GetDepartmentByIdNoAdmins(int departmentId)
-		{
-			var dep = _departmentRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId);
-
-			return dep;
-		}
-
-		public Department SaveDepartment(Department department)
-		{
-			_departmentRepository.SaveOrUpdate(department);
+			var dep = await _departmentRepository.SaveOrUpdateAsync(department, cancellationToken);
 			_cacheProvider.Remove(string.Format(CacheKey, department.DepartmentId));
 
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
+			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 			{
 				DepartmentId = department.DepartmentId
 			});
 
-			return department;
+			return dep;
 		}
 
 		public void InvalidateAllDepartmentsCache(int departmentId)
@@ -188,18 +177,10 @@ namespace Resgrid.Services
 			}
 		}
 
-		public Department CreateDepartment(string name, string userId, string type)
+		public async Task<Department> CreateDepartmentAsync(string name, string userId, string type, string affiliateCode, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return CreateDepartment(name, userId, type, null);
-		}
-
-		public Department CreateDepartment(string name, string userId, string type, string affiliateCode)
-		{
-			// I'm disabling the below check, department name doesn't need to be unique, I think I was trying to stop duplicate users from signing up. -SJ
-			//if (!DoesDepartmentExist(name))
-			//{
 			var d = new Department();
-			d.Name = name;
+			d.Name = name.Trim();
 			d.Code = CreateCode(4);
 			d.ManagingUserId = userId;
 			d.ShowWelcome = true;
@@ -208,81 +189,70 @@ namespace Resgrid.Services
 			d.DepartmentType = type;
 			d.AffiliateCode = affiliateCode;
 
-			SaveDepartment(d);
+			var dep = await SaveDepartmentAsync(d, cancellationToken);
+			var email = await _departmentSettingsService.GetDispatchEmailForDepartmentAsync(d.DepartmentId);
 
-			if (String.IsNullOrWhiteSpace(_departmentSettingsService.GetDispatchEmailForDepartment(d.DepartmentId)))
+			if (String.IsNullOrWhiteSpace(email))
 			{
 				var dispatchCode = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 
-				while (_departmentSettingsService.GetDepartmentIdForDispatchEmail(dispatchCode) != null)
+				while (await _departmentSettingsService.GetDepartmentIdForDispatchEmailAsync(dispatchCode) != null)
 				{
 					dispatchCode = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 				}
 
-				_departmentSettingsService.SaveOrUpdateSetting(d.DepartmentId, dispatchCode, DepartmentSettingTypes.InternalDispatchEmail);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(d.DepartmentId, dispatchCode, DepartmentSettingTypes.InternalDispatchEmail, cancellationToken);
 			}
 
 			return d;
-			//}
-
-			//return null;
 		}
 
-		public Department UpdateDepartment(Department department)
+		public async Task<Department> UpdateDepartmentAsync(Department department, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			department.UpdatedOn = DateTime.UtcNow;
 
-			SaveDepartment(department);
-
-			return department;
+			return await SaveDepartmentAsync(department, cancellationToken);
 		}
 
-		public Department GetDepartmentByApiKey(string apiKey)
+		public async Task<string> GetUserIdForDeletedUserInDepartmentAsync(int departmentId, string email)
 		{
-			var values = from d in _departmentRepository.GetAll()
-						 where d.ApiKey == apiKey
-						 select d;
+			var identity = _usersService.GetUserByEmail(email);
 
-			return values.FirstOrDefault();
-		}
-
-		public string GetUserIdForDeletedUserInDepartment(int departmentId, string email)
-		{
-			var idenity = _usersService.GetUserByEmail(email);
-
-			if (idenity == null)
+			if (identity == null)
 				return null;
 
-			var dm = _departmentMembersRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId && x.UserId == idenity.Id);
+			var dm = (from x in await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId)
+					  where x.UserId == identity.Id
+					  select x).FirstOrDefault();
 
 			if (dm == null)
 				return null;
 
 			if (dm.IsDeleted)
-				return idenity.Id;
+				return identity.Id;
 
 			return null;
 		}
 
-		public void ReactivateUser(int departmentId, string userId)
+		public async Task<DepartmentMember> ReactivateUserAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var dm = _departmentMembersRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId && x.UserId == userId);
+			var dm = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userId);
 			dm.IsDeleted = false;
 			dm.IsHidden = false;
 			dm.IsDisabled = false;
 
-			_departmentMembersRepository.SaveOrUpdate(dm);
+			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
 		}
 
-		public void AddExistingUser(int departmentId, string userId)
+		public async Task<DepartmentMember> AddExistingUserAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var dms = _departmentMembersRepository.GetAll().Where(x => x.UserId == userId).ToList();
+			var dms = await _departmentMembersRepository.GetAllDepartmentMemberByUserIdAsync(userId);
 			var defaultDm = dms.FirstOrDefault(x => x.IsDefault);
 			var activeDm = dms.FirstOrDefault(x => x.IsActive);
 			var existingDepDm = dms.FirstOrDefault(x => x.DepartmentId == departmentId);
 
 			if (existingDepDm != null)
-				return; // User already is in department
+				return null; // User already is in department
 
 			DepartmentMember dm = new DepartmentMember();
 			dm.DepartmentId = departmentId;
@@ -298,53 +268,21 @@ namespace Resgrid.Services
 			dm.IsDisabled = false;
 			dm.IsHidden = false;
 
-			_departmentMembersRepository.SaveOrUpdate(dm);
+			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
 		}
 
-		//public DepartmentMember AddUserToDepartment(string name, string userId)
-		//{
-		//	Department d = GetDepartmentByName(name);
-		//	if (d != null)
-		//	{
-		//		var currentDm = GetDepartmentMember(userId, d.DepartmentId);
-		//		if (currentDm == null)
-		//		{
-		//			var dm = new DepartmentMember();
-		//			dm.DepartmentId = d.DepartmentId;
-		//			dm.UserId = userId;
-		//			dm.IsAdmin = false;
-		//			dm.IsDisabled = false;
-		//			dm.IsHidden = false;
-		//			dm.IsActive = true;
-		//			dm.IsDefault = true;
-
-		//			_departmentMembersRepository.SaveOrUpdate(dm);
-		//			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
-		//			{
-		//				DepartmentId = d.DepartmentId
-		//			});
-
-		//			InvalidateDepartmentUsersInCache(d.DepartmentId);
-
-		//			return dm;
-		//		}
-		//	}
-
-		//	return null;
-		//}
-
-		public DepartmentMember DeleteUser(int departmentId, string userIdToDelete, string deletingUserId)
+		public async Task<DepartmentMember> DeleteUserAsync(int departmentId, string userIdToDelete, string deletingUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var member = _departmentMembersRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId && x.UserId == userIdToDelete);
+			var member = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userIdToDelete);
 			var auditEvent = new AuditEvent();
 			auditEvent.Before = member.CloneJson();
 
 			if (member != null)
 			{
 				member.IsDeleted = true;
-				_departmentMembersRepository.SaveOrUpdate(member);
+				var savedMember = _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
 
-				var member2 = _departmentMembersRepository.GetAll().FirstOrDefault(x => x.DepartmentId == departmentId && x.UserId == userIdToDelete);
+				var member2 = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userIdToDelete);
 
 				if (member2 != null && member2.IsDeleted)
 				{
@@ -352,7 +290,7 @@ namespace Resgrid.Services
 					auditEvent.UserId = deletingUserId;
 					auditEvent.Type = AuditLogTypes.UserRemoved;
 					auditEvent.After = member2.CloneJson();
-					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+					await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					InvalidateAllDepartmentsCache(departmentId);
 					InvalidateDepartmentUsersInCache(departmentId);
@@ -367,14 +305,14 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public DepartmentMember JoinDepartment(int departmentId, string userId)
+		public async Task<DepartmentMember> JoinDepartmentAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Department d = GetDepartmentById(departmentId);
+			Department d = await GetDepartmentByIdAsync(departmentId);
 
 			if (d != null)
 			{
 				// Check to see if we are already part of this department
-				var currentDepartments = GetAllDepartmentsForUser(userId);
+				var currentDepartments = await GetAllDepartmentsForUserAsync(userId);
 				foreach (var department in currentDepartments)
 				{
 					if (department.DepartmentId == departmentId)
@@ -390,54 +328,59 @@ namespace Resgrid.Services
 				dm.IsActive = false;
 				dm.IsDefault = false;
 
-				_departmentMembersRepository.SaveOrUpdate(dm);
-				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
+				var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+				await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 				{
 					DepartmentId = d.DepartmentId
 				});
 
 				InvalidateDepartmentUsersInCache(d.DepartmentId);
 
-				return dm;
+				return saved;
 			}
 
 			return null;
 		}
 
-		public void SetActiveDepartmentForUser(string userId, int departmentId, IdentityUser user)
+		public async Task<bool> SetActiveDepartmentForUserAsync(string userId, int departmentId, IdentityUser user, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var currentDepartments = GetAllDepartmentsForUser(userId);
+			var currentDepartments = await GetAllDepartmentsForUserAsync(userId);
 			foreach (var department in currentDepartments)
 			{
 				if (department.DepartmentId == departmentId)
 					department.IsActive = true;
 				else
 					department.IsActive = false;
+
+				await _departmentMembersRepository.SaveOrUpdateAsync(department, cancellationToken);
 			}
 
-			_departmentMembersRepository.SaveOrUpdateAll(currentDepartments);
 			InvalidateDepartmentMemberInCache(userId, departmentId);
 			InvalidateDepartmentUserInCache(userId, user);
+
+			return true;
 		}
 
-		public void SetDefaultDepartmentForUser(string userId, int departmentId, IdentityUser user)
+		public async Task<bool> SetDefaultDepartmentForUserAsync(string userId, int departmentId, IdentityUser user, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var currentDepartments = GetAllDepartmentsForUser(userId);
+			var currentDepartments = await GetAllDepartmentsForUserAsync(userId);
 			foreach (var department in currentDepartments)
 			{
 				if (department.DepartmentId == departmentId)
 					department.IsDefault = true;
 				else
 					department.IsDefault = false;
+
+				await _departmentMembersRepository.SaveOrUpdateAsync(department, cancellationToken);
 			}
 
-			_departmentMembersRepository.SaveOrUpdateAll(currentDepartments);
 			InvalidateDepartmentUserInCache(userId, user);
+			return true;
 		}
 
-		public bool IsMemberOfDepartment(int departmentId, string userId)
+		public async Task<bool> IsMemberOfDepartmentAsync(int departmentId, string userId)
 		{
-			var currentDepartments = GetAllDepartmentsForUser(userId);
+			var currentDepartments = await GetAllDepartmentsForUserAsync(userId);
 			foreach (var department in currentDepartments)
 			{
 				if (department.DepartmentId == departmentId)
@@ -447,98 +390,64 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public DepartmentMember AddUserToDepartment(int departmentId, string userId)
+		public async Task<DepartmentMember> AddUserToDepartmentAsync(int departmentId, string userId, bool isAdmin = false, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var currentDm = GetDepartmentMember(userId, departmentId);
+			var currentDm = await GetDepartmentMemberAsync(userId, departmentId, true);
 			if (currentDm == null)
 			{
 				var dm = new DepartmentMember();
 				dm.DepartmentId = departmentId;
 				dm.UserId = userId;
-				dm.IsAdmin = false;
+				dm.IsAdmin = isAdmin;
 				dm.IsDisabled = false;
 				dm.IsHidden = false;
 				dm.IsDefault = true;
 				dm.IsActive = true;
 
-				_departmentMembersRepository.SaveOrUpdate(dm);
-				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
+				var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+				await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 				{
 					DepartmentId = departmentId
 				});
 
 				InvalidateDepartmentUsersInCache(departmentId);
 
-				return dm;
+				return saved;
 			}
 
 			return null;
 		}
 
-		public Department GetDepartmentForUser(string userName)
-		{
-			var department = _departmentRepository.GetDepartmentForUserByUsername(userName);
-			return department;
-
-			//if (department == null)
-			//	return null;
-
-			//return FillAdminUsers(department);
-		}
-
 		public async Task<Department> GetDepartmentForUserAsync(string userName)
 		{
-			var department = await _departmentRepository.GetDepartmentForUserByUsernameAsync(userName);
-			return department;
-
-			//if (department == null)
-			//	return null;
-
-			//return FillAdminUsers(department);
+			return await _departmentRepository.GetDepartmentForUserByUsernameAsync(userName);
 		}
 
-		public Department GetDepartmentByUserId(string userId, bool bypassCache = false)
+		public async Task<Department> GetDepartmentByUserIdAsync(string userId, bool bypassCache = false)
 		{
-			//var member = _departmentMembersRepository.GetAll().FirstOrDefault(x => x.UserId == userId);
-
-			////var member = (from dm in GetAllDepartmentMembers(bypassCache)
-			////							where dm.UserId == userId
-			////							select dm).FirstOrDefault();
-
-			//// This should not happen for 99% of the case, but users like RGAdmin don't have Departments
-			//if (member == null)
-			//	return null;
-
-			////return FillAdminUsers(_departmentRepository.GetAll().Where(x => x.DepartmentId == member.DepartmentId).FirstOrDefault());
-			//return GetDepartmentById(member.DepartmentId, bypassCache);
-
-			var department = _departmentRepository.GetDepartmentWithMembersByUserId(userId);
-
-			return department;
+			return await _departmentRepository.GetDepartmentForUserByUserIdAsync(userId);
 		}
 
 
-
-		public ValidateUserForDepartmentResult GetValidateUserForDepartmentInfo(string userName, bool bypassCache = true)
+		public async Task<ValidateUserForDepartmentResult> GetValidateUserForDepartmentInfoAsync(string userName, bool bypassCache = true)
 		{
+			async Task<ValidateUserForDepartmentResult> validateForDepartment()
+			{
+				return await _departmentRepository.GetValidateUserForDepartmentDataAsync(userName);
+			}
+
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<ValidateUserForDepartmentResult> validateForDepartment = delegate ()
-				{
-					return _departmentRepository.GetValidateUserForDepartmentData(userName);
-				};
+				return await _cacheProvider.RetrieveAsync<ValidateUserForDepartmentResult>(string.Format(ValidateUserInfoCacheKey, userName), validateForDepartment, CacheLength);
+			}
 
-				return _cacheProvider.Retrieve<ValidateUserForDepartmentResult>(string.Format(ValidateUserInfoCacheKey, userName), validateForDepartment, CacheLength);
-			}
-			else
-			{
-				return _departmentRepository.GetValidateUserForDepartmentData(userName);
-			}
+			return await validateForDepartment();
+
 		}
 
-		public bool ValidateUserAndDepartmentByUser(string userName, int departmentId, string departmentCode)
+		public async Task<bool> ValidateUserAndDepartmentByUserAsync(string userName, int departmentId, string departmentCode)
 		{
-			var data = GetValidateUserForDepartmentInfo(userName);
+			var data = await GetValidateUserForDepartmentInfoAsync(userName);
 
 			if (data == null)
 				return false;
@@ -597,44 +506,30 @@ namespace Resgrid.Services
 			}
 		}
 
-		public List<PersonName> GetAllPersonnelNamesForDepartment(int departmentId)
+		public async Task<List<PersonName>> GetAllPersonnelNamesForDepartmentAsync(int departmentId)
 		{
-			Func<List<PersonName>> getDepartmentPersonnelNames = delegate ()
+			async Task<List<PersonName>> getDepartmentPersonnelNames()
 			{
-				return _departmentRepository.GetAllPersonnelNamesForDepartment(departmentId);
-			};
+				return (from i in await _userProfileRepository.GetAllProfilesForDepartmentAsync(departmentId)
+				select new PersonName{ UserId = i.Value.UserId, FirstName = i.Value.FirstName, LastName = i.Value.LastName}).ToList();
+			}
 
 			if (Config.SystemBehaviorConfig.CacheEnabled)
-				return _cacheProvider.Retrieve(string.Format(PersonnelNamesCacheKey, departmentId), getDepartmentPersonnelNames,
+				return await _cacheProvider.RetrieveAsync(string.Format(PersonnelNamesCacheKey, departmentId), getDepartmentPersonnelNames,
 					CacheLength);
 			else
-				return getDepartmentPersonnelNames();
+				return await getDepartmentPersonnelNames();
 		}
 
-		public List<IdentityUser> GetAllAdminsForDepartment(int departmentId)
+		public async Task<List<IdentityUser>> GetAllAdminsForDepartmentAsync(int departmentId)
 		{
-			//var departmentUsers = new List<IdentityUser>();
-			//var users = GetAllUsersForDepartmentUnlimited(departmentId);
-			var department = GetDepartmentById(departmentId);
+			var department = await GetDepartmentByIdAsync(departmentId);
 			return department.Members.Where(x => x.IsAdmin.GetValueOrDefault() || x.UserId == department.ManagingUserId).Select(y => new IdentityUser() { UserId = y.UserId }).ToList();
-			//var members = GetAllMembersForDepartmentUnlimited(departmentId);
-
-			//foreach (var member in members)
-			//{
-			//	if ((member.IsAdmin.GetValueOrDefault()) || member.UserId == department.ManagingUserId)
-			//	{
-			//		departmentUsers.Add(member.User);
-			//	}
-			//}
-
-
-			//return departmentUsers;
 		}
 
-		public List<DepartmentMember> GetAllMembersForDepartment(int departmentId)
+		public async Task<List<DepartmentMember>> GetAllMembersForDepartmentAsync(int departmentId)
 		{
-			//var members = _departmentMembersRepository.GetAllDepartmentMembersWithinLimits(departmentId);
-			var members = _departmentMembersRepository.GetAllDepartmentMembersWithinLimits(departmentId);
+			var members = await _departmentMembersRepository.GetAllDepartmentMembersWithinLimitsAsync(departmentId);
 
 			foreach (var member in members)
 			{
@@ -642,243 +537,121 @@ namespace Resgrid.Services
 					member.User = _usersService.GetUserById(member.UserId);
 			}
 
-			return members;
+			return members.ToList();
 		}
 
-		public List<IdentityUser> GetAllUsersForDepartmentUnlimited(int departmentId, bool bypassCache = false)
+		public async Task<List<IdentityUser>> GetAllUsersForDepartmentUnlimitedAsync(int departmentId, bool bypassCache = false)
 		{
-			var members = GetAllMembersForDepartmentUnlimited(departmentId);
+			var members = await GetAllMembersForDepartmentUnlimitedAsync(departmentId);
 			return members.Select(x => x.User).ToList();
 		}
 
-		public List<IdentityUser> GetAllUsersForDepartmentUnlimitedMinusDisabled(int departmentId, bool bypassCache = false)
+		public async Task<List<IdentityUser>> GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(int departmentId, bool bypassCache = false)
 		{
-			var dms = GetAllMembersForDepartmentUnlimited(departmentId);
+			var dms = await GetAllMembersForDepartmentUnlimitedAsync(departmentId);
 			var filteredUsers = from dm in dms
-								where dm.IsDisabled.GetValueOrDefault() == false
+								where !dm.IsDisabled.GetValueOrDefault()
 								select dm;
 
 			return filteredUsers.Select(x => x.User).ToList();
 		}
 
-		public List<DepartmentMember> GetAllMembersForDepartmentUnlimited(int departmentId, bool bypassCache = false)
+		public async Task<List<DepartmentMember>> GetAllMembersForDepartmentUnlimitedAsync(int departmentId, bool bypassCache = false)
 		{
-			//var dms = (from dm in GetAllDepartmentMembers(bypassCache)
-			//					 where dm.DepartmentId == departmentId
-			//					 select dm).ToList();
+			var dms = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId);
 
-			//var dms = (from dm in _departmentMembersRepository.GetAll()
-			//		   where dm.DepartmentId == departmentId && dm.IsDeleted == false
-			//		   select dm).ToList();
-
-			var dms = _departmentMembersRepository.GetAllDepartmentMembersUnlimited(departmentId);
-
-			// Fix, for some reason the DepartmentMember User property is null, probably an EF relationship issue.
 			foreach (var dm in dms)
 			{
 				if (dm.User == null)
 					dm.User = _identityRepository.GetUserById(dm.UserId.ToString());
 			}
 
-			return dms;
+			return dms.ToList();
 		}
 
-		public List<DepartmentMember> GetAllDepartmentMembers(bool bypassCache = false)
+		public async Task<DepartmentMember> GetDepartmentMemberAsync(string userId, int departmentId, bool bypassCache = true)
 		{
-
-			Func<List<DepartmentMember>> getAllDepartmentMembers = delegate ()
+			async Task<DepartmentMember> getDepartmentMember()
 			{
-				var dms = _departmentMembersRepository.GetAll().ToList();
-
-				foreach (var dm in dms)
-				{
-					if (dm != null && dm.User == null)
-						dm.User = _identityRepository.GetUserById(dm.UserId.ToString());
-				}
-
-				return dms;
-			};
+				return await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userId);
+			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
-				return _cacheProvider.Retrieve<List<DepartmentMember>>(AllDepartmentMembersCacheKey, getAllDepartmentMembers, CacheLength);
-			else
-				return getAllDepartmentMembers();
-
-		}
-
-		public DepartmentMember GetDepartmentMember(string userId, int departmentId, bool bypassCache = true)
-		{
-			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<DepartmentMember> getDepartmentMember = delegate ()
-				{
-					var dm = (from d in _departmentMembersRepository.GetAll()
-							  where d.UserId == userId && d.DepartmentId == departmentId
-							  select d).FirstOrDefault();
-
-					if (dm != null && dm.User == null)
-						dm.User = _identityRepository.GetUserById(dm.UserId.ToString());
-
-					return dm;
-				};
-
-
-				return _cacheProvider.Retrieve<DepartmentMember>(string.Format(DepartmentMemberCacheKey, userId, departmentId),
+				return await _cacheProvider.RetrieveAsync<DepartmentMember>(string.Format(DepartmentMemberCacheKey, userId, departmentId),
 					getDepartmentMember, CacheLength);
 			}
-			else
-			{
-				var dm = (from d in _departmentMembersRepository.GetAll()
-						  where d.UserId == userId
-						  select d).FirstOrDefault();
 
-				if (dm != null && dm.User == null)
-					dm.User = _identityRepository.GetUserById(dm.UserId.ToString());
+			return await getDepartmentMember();
 
-				return dm;
-			}
 		}
 
-		public DepartmentMember GetDepartmentMember(string userId, int departmentId)
+		public async Task<DepartmentMember> SaveDepartmentMemberAsync(DepartmentMember departmentMember, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var dm = (from d in _departmentMembersRepository.GetAll()
-					  where d.UserId == userId && d.DepartmentId == departmentId
-					  select d).FirstOrDefault();
-
-			if (dm != null && dm.User == null)
-				dm.User = _identityRepository.GetUserById(dm.UserId.ToString());
-
-			return dm;
-		}
-
-		public DepartmentMember SaveDepartmentMember(DepartmentMember departmentMember)
-		{
-			_departmentMembersRepository.SaveOrUpdate(departmentMember);
+			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(departmentMember, cancellationToken);
 
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);
 
-			return departmentMember;
+			return saved;
 		}
 
-		public DepartmentBreakdown GetDepartmentBreakdown()
+		public async Task<DepartmentCallEmail> GetDepartmentEmailSettingsAsync(int departmentId)
 		{
-			DepartmentBreakdown breakdown = new DepartmentBreakdown();
+			var settings = await _departmentCallEmailsRepository.GetAllByDepartmentIdAsync(departmentId);
 
-			breakdown.Unknown = (from d in _departmentRepository.GetAll()
-								 where d.DepartmentType == null
-								 select d).Count();
-
-			breakdown.VolunteerFire = (from d in _departmentRepository.GetAll()
-									   where d.DepartmentType == "Volunteer Fire"
-									   select d).Count();
-
-			breakdown.CareerFire = (from d in _departmentRepository.GetAll()
-									where d.DepartmentType == "Career Fire"
-									select d).Count();
-
-			breakdown.SearchAndRecue = (from d in _departmentRepository.GetAll()
-										where d.DepartmentType == "Search and Recue" || d.DepartmentType == "Search and Rescue"
-										select d).Count();
-
-			breakdown.HAZMAT = (from d in _departmentRepository.GetAll()
-								where d.DepartmentType == "HAZMAT"
-								select d).Count();
-
-			breakdown.EMS = (from d in _departmentRepository.GetAll()
-							 where d.DepartmentType == "EMS"
-							 select d).Count();
-
-			breakdown.Private = (from d in _departmentRepository.GetAll()
-								 where d.DepartmentType == "Private"
-								 select d).Count();
-
-			breakdown.Other = (from d in _departmentRepository.GetAll()
-							   where d.DepartmentType == "Other"
-							   select d).Count();
-
-			return breakdown;
+			return settings.FirstOrDefault();
 		}
 
-		public Dictionary<string, int> GetNewDepartmentCountForLast5Days()
+		public async Task<DepartmentCallEmail> SaveDepartmentEmailSettingsAsync(DepartmentCallEmail emailSettings, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			Dictionary<string, int> data = new Dictionary<string, int>();
-
-			var startDate = DateTime.UtcNow.AddDays(-4);
-			var filteredRecords =
-				_departmentRepository.GetAll()
-					.Where(
-						x => x.CreatedOn.HasValue && x.CreatedOn.Value >= startDate).ToList();
-
-			data.Add(DateTime.UtcNow.ToShortDateString(), filteredRecords.Count(x => x.CreatedOn.Value.ToShortDateString() == DateTime.UtcNow.ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-1).ToShortDateString(), filteredRecords.Count(x => x.CreatedOn.Value.ToShortDateString() == DateTime.UtcNow.AddDays(-1).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-2).ToShortDateString(), filteredRecords.Count(x => x.CreatedOn.Value.ToShortDateString() == DateTime.UtcNow.AddDays(-2).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-3).ToShortDateString(), filteredRecords.Count(x => x.CreatedOn.Value.ToShortDateString() == DateTime.UtcNow.AddDays(-3).ToShortDateString()));
-			data.Add(DateTime.UtcNow.AddDays(-4).ToShortDateString(), filteredRecords.Count(x => x.CreatedOn.Value.ToShortDateString() == DateTime.UtcNow.AddDays(-4).ToShortDateString()));
-
-			return data;
+			return await _departmentCallEmailsRepository.SaveOrUpdateAsync(emailSettings, cancellationToken);
 		}
 
-		public DepartmentCallEmail GetDepartmentEmailSettings(int departmentId)
+		public async Task<bool> DeleteDepartmentEmailSettingsAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var setting = from emailSetting in _departmentCallEmailsRepository.GetAll()
-						  where emailSetting.DepartmentId == departmentId
-						  select emailSetting;
-
-			return setting.FirstOrDefault();
-		}
-
-		public DepartmentCallEmail SaveDepartmentEmailSettings(DepartmentCallEmail emailSettings)
-		{
-			_departmentCallEmailsRepository.SaveOrUpdate(emailSettings);
-
-
-			return GetDepartmentEmailSettings(emailSettings.DepartmentId);
-		}
-
-		public void DeleteDepartmentEmailSettings(int departmentId)
-		{
-			var settings = GetDepartmentEmailSettings(departmentId);
+			var settings = await GetDepartmentEmailSettingsAsync(departmentId);
 
 			if (settings != null)
 			{
-				_departmentCallEmailsRepository.DeleteOnSubmit(settings);
+				await _departmentCallEmailsRepository.DeleteAsync(settings, cancellationToken);
 			}
+
+			return true;
 		}
 
-		public List<DepartmentCallEmail> GetAllDepartmentEmailSettings()
+		public async Task<List<DepartmentCallEmail>> GetAllDepartmentEmailSettingsAsync()
 		{
-			return _departmentCallEmailsRepository.GetAllDepartmentEmailSettings();
+			var items = await _departmentCallEmailsRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public DepartmentCallPruning GetDepartmentCallPruningSettings(int departmentId)
+		public async Task<DepartmentCallPruning> GetDepartmentCallPruningSettingsAsync(int departmentId)
 		{
-			return _departmentCallPruningDapperRepository.GetDepartmentCallPruningSettings(departmentId);
+			return await _departmentCallPruningDapperRepository.GetDepartmentCallPruningSettingsAsync(departmentId);
 		}
 
-		public List<DepartmentCallPruning> GetAllDepartmentCallPrunings()
+		public async Task<List<DepartmentCallPruning>> GetAllDepartmentCallPruningsAsync()
 		{
-			return _departmentCallPruningDapperRepository.GetAllDepartmentCallPrunings();
+			var items = await _departmentCallPruningDapperRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public DepartmentCallPruning SavelDepartmentCallPruning(DepartmentCallPruning callPruning)
+		public async Task<DepartmentCallPruning> SaveDepartmentCallPruningAsync(DepartmentCallPruning callPruning, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_departmentCallPruningRepository.SaveOrUpdate(callPruning);
-
-
-			return callPruning;
+			return await _departmentCallPruningRepository.SaveOrUpdateAsync(callPruning, cancellationToken);
 		}
 
-		public List<string> GetAllDisabledOrHiddenUsers(int departmentId)
+		public async Task<List<string>> GetAllDisabledOrHiddenUsersAsync(int departmentId)
 		{
-			var members = GetAllMembersForDepartment(departmentId);
+			var members = await GetAllMembersForDepartmentAsync(departmentId);
 
 			return (from departmentMember in members where departmentMember.IsDisabled.GetValueOrDefault() || departmentMember.IsHidden.GetValueOrDefault() select departmentMember.UserId).ToList();
 		}
 
-		public bool IsUserDisabled(string userId, int departmentId)
+		public async Task<bool> IsUserDisabledAsync(string userId, int departmentId)
 		{
-			var dm = GetDepartmentMember(userId, departmentId, false);
+			var dm = await GetDepartmentMemberAsync(userId, departmentId, false);
 
 			if (dm != null)
 				return dm.IsDisabled.GetValueOrDefault();
@@ -886,9 +659,9 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool IsUserHidden(string userId, int departmentId)
+		public async Task<bool> IsUserHiddenAsync(string userId, int departmentId)
 		{
-			var dm = GetDepartmentMember(userId, departmentId, false);
+			var dm = await GetDepartmentMemberAsync(userId, departmentId, false);
 
 			if (dm != null)
 				return dm.IsHidden.GetValueOrDefault();
@@ -896,9 +669,9 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public bool IsUserInDepartment(int departmentId, string userId)
+		public async Task<bool> IsUserInDepartmentAsync(int departmentId, string userId)
 		{
-			var dm = GetDepartmentMember(userId, departmentId, false);
+			var dm = await GetDepartmentMemberAsync(userId, departmentId, false);
 
 			if (dm != null)
 				if (dm.DepartmentId == departmentId)
@@ -907,20 +680,22 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public List<string> GetAllDepartmentNames()
+		public async Task<List<string>> GetAllDepartmentNamesAsync()
 		{
-			return (from d in _departmentRepository.GetAll()
+			return (from d in await _departmentRepository.GetAllAsync()
 					select d.Name).ToList();
 		}
 
-		public List<DepartmentMember> GetAllDepartmentsForUser(string userId)
+		public async Task<List<DepartmentMember>> GetAllDepartmentsForUserAsync(string userId)
 		{
-			return _departmentMembersRepository.GetAll().Where(x => x.UserId == userId && x.IsDeleted == false).ToList();
+			return (from dm in await _departmentMembersRepository.GetAllDepartmentMemberByUserIdAsync(userId)
+					where dm.IsDeleted == false
+					select dm).ToList();
 		}
 
-		public DepartmentReport GetDepartmentSetupReport(int departmentId)
+		public async Task<DepartmentReport> GetDepartmentSetupReportAsync(int departmentId)
 		{
-			return _departmentRepository.GetDepartmentReport(departmentId);
+			return await _departmentRepository.GetDepartmentReportAsync(departmentId);
 		}
 
 		public decimal GenerateSetupScore(DepartmentReport report)
@@ -958,6 +733,11 @@ namespace Resgrid.Services
 			return (scorePrecent * 100);
 		}
 
+		public async Task<DepartmentStats> GetDepartmentStatsByDepartmentUserIdAsync(int departmentId, string userId)
+		{
+			return await _departmentRepository.GetDepartmentStatsByDepartmentUserIdAsync(departmentId, userId);
+		}
+
 		#region Private Methods
 		private static string CreateCode(int passwordLength)
 		{
@@ -973,7 +753,7 @@ namespace Resgrid.Services
 			return new string(chars);
 		}
 
-		private Department FillAdminUsers(Department department)
+		private async Task<Department> FillAdminUsersAsync(Department department)
 		{
 			if (department != null)
 			{
@@ -983,14 +763,9 @@ namespace Resgrid.Services
 
 				if (department.AdminUsers.Count <= 0)
 				{
-					var departmentAdmins = (from dm in _departmentMembersRepository.GetAll()
-											where dm.DepartmentId == department.DepartmentId && (dm.IsAdmin.HasValue && dm.IsAdmin.Value)
-											select dm.UserId).ToList();
-
-					foreach (var v in departmentAdmins)
-					{
-						department.AdminUsers.Add(v);
-					}
+					department.AdminUsers.AddRange((from dm in await _departmentMembersRepository.GetAllByDepartmentIdAsync(department.DepartmentId)
+											where dm.IsAdmin.GetValueOrDefault()
+											select dm.UserId));
 				}
 			}
 

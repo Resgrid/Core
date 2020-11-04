@@ -14,7 +14,7 @@ var resgrid;
                     modal: true,
                     visible: false,
                     resizable: false,
-                    content: resgrid.absoluteBaseUrl + '/User/Dispatch/SmallActiveCallGrid',
+                    content: '/User/Dispatch/SmallActiveCallGrid',
                     width: 750,
                     height: 465
                 }).data("kendoWindow");
@@ -24,7 +24,7 @@ var resgrid;
                     modal: true,
                     visible: false,
                     resizable: false,
-                    content: resgrid.absoluteBaseUrl + '/User/Department/SmallStationGroupsGrid',
+                    content: '/User/Department/SmallStationGroupsGrid',
                     width: 750,
                     height: 465
                 }).data("kendoWindow");
@@ -41,7 +41,7 @@ var resgrid;
             });
             function reloadPersonnelTable() {
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/GetUserStatusTable',
+                    url: '/User/Home/GetUserStatusTable',
                     cache: false,
                     dataType: "html",
                     success: function (data) {
@@ -53,12 +53,12 @@ var resgrid;
             dashboard.reloadPersonnelTable = reloadPersonnelTable;
             function verifySubscriptionLimits() {
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Department/GetSubscriptionLimitWarning',
+                    url: '/User/Department/GetSubscriptionLimitWarning',
                     contentType: 'application/json; charset=utf-8',
                     type: 'GET'
                 }).done(function (data) {
-                    if (data && data.length > 0) {
-                        resgrid.common.notifications.showWarning('Department Limits', 'The department is at or has exceeded some limits for the current subscription plan. Some functionality may be impacted.');
+                    if (data && data.title && data.message) {
+                        resgrid.common.notifications.showWarning(data.title, data.message);
                     }
                 });
             }
@@ -74,9 +74,10 @@ var resgrid;
             function actionResponding() {
                 kendo.ui.progress($("#personnelGrid"), true);
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomAction?actionType=2',
+                    url: "/User/Home/SetCustomAction?actionType=2",
                     contentType: 'application/json; charset=utf-8',
-                    type: 'POST'
+                    type: 'GET'
+                    //type: 'POST'
                 }).done(function (results) {
                     reloadPersonnelTable();
                 });
@@ -85,7 +86,7 @@ var resgrid;
             function actionNotResponding() {
                 kendo.ui.progress($("#personnelGrid"), true);
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomAction?actionType=1',
+                    url: '/User/Home/SetCustomAction?actionType=1',
                     contentType: 'application/json; charset=utf-8',
                     type: 'POST'
                 }).done(function (results) {
@@ -96,7 +97,7 @@ var resgrid;
             function actionAvailable() {
                 kendo.ui.progress($("#personnelGrid"), true);
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomAction?actionType=0',
+                    url: '/User/Home/SetCustomAction?actionType=0',
                     contentType: 'application/json; charset=utf-8',
                     type: 'POST'
                 }).done(function (results) {
@@ -107,7 +108,7 @@ var resgrid;
             function actionAvailableStation() {
                 kendo.ui.progress($("#personnelGrid"), true);
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomAction?actionType=4',
+                    url: '/User/Home/SetCustomAction?actionType=4',
                     contentType: 'application/json; charset=utf-8',
                     type: 'POST'
                 }).done(function (results) {
@@ -118,7 +119,7 @@ var resgrid;
             function actionOnScene() {
                 kendo.ui.progress($("#personnelGrid"), true);
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomAction?actionType=3',
+                    url: '/User/Home/SetCustomAction?actionType=3',
                     contentType: 'application/json; charset=utf-8',
                     type: 'POST'
                 }).done(function (results) {
@@ -132,8 +133,7 @@ var resgrid;
                 if (note) {
                     note = encodeURIComponent(note);
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomAction?actionType=' + actionId + "&note=" + note,
-                        //contentType: 'application/json; charset=utf-8',
+                        url: '/User/Home/SetCustomAction?actionType=' + actionId + "&note=" + note,
                         type: 'GET'
                     }).done(function (results) {
                         resgrid.home.dashboard.reloadPersonnelTable();
@@ -141,8 +141,7 @@ var resgrid;
                 }
                 else {
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomAction?actionType=' + actionId,
-                        //contentType: 'application/json; charset=utf-8',
+                        url: '/User/Home/SetCustomAction?actionType=' + actionId,
                         type: 'GET'
                     }).done(function (results) {
                         resgrid.home.dashboard.reloadPersonnelTable();
@@ -153,8 +152,7 @@ var resgrid;
             function customStaffing(userId, staffingLevel) {
                 kendo.ui.progress($("#personnelGrid"), true);
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomStaffing?userId=' + userId + '&staffingLevel=' + staffingLevel,
-                    //contentType: 'application/json; charset=utf-8',
+                    url: '/User/Home/SetCustomStaffing?userId=' + userId + '&staffingLevel=' + staffingLevel,
                     type: 'GET'
                 }).done(function (results) {
                     resgrid.home.dashboard.reloadPersonnelTable();
@@ -164,8 +162,7 @@ var resgrid;
             function customUserAction(userId, actionId) {
                 kendo.ui.progress($("#personnelGrid"), true);
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Home/SetCustomUserAction?userId=' + userId + '&actionType=' + actionId,
-                    //contentType: 'application/json; charset=utf-8',
+                    url: '/User/Home/SetCustomUserAction?userId=' + userId + '&actionType=' + actionId,
                     type: 'GET'
                 }).done(function (results) {
                     resgrid.home.dashboard.reloadPersonnelTable();

@@ -1,15 +1,14 @@
 ﻿using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Resgrid.Model.Identity
 {
-
-
 	/// <summary>
 	/// Represents a role in the identity system
 	/// </summary>
-	public class IdentityRole : IdentityRole<string>
+	public class IdentityRole : IdentityRole<string>, IEntity
 	{
 		/// <summary>
 		///     Constructor
@@ -27,6 +26,22 @@ namespace Resgrid.Model.Identity
 		{
 			Name = roleName;
 		}
+
+		[NotMapped]
+		public object IdValue
+		{
+			get { return Id; }
+			set { Id = (string)value; }
+		}
+
+		[NotMapped]
+		public string TableName => "AspNetRoles";
+
+		[NotMapped]
+		public string IdName => "Id";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 
 

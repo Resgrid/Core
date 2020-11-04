@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -51,33 +51,32 @@ namespace Resgrid.Services
 			_customStateService = customStateService;
 		}
 
-		public List<DepartmentNotification> GetAll()
+		public async Task<List<DepartmentNotification>> GetAllAsync()
 		{
-			return _departmentNotificationRepository.GetAll().ToList();
+			var items = await _departmentNotificationRepository.GetAllAsync();
+			return items.ToList();
 		}
 
-		public DepartmentNotification Save(DepartmentNotification notification)
+		public async Task<DepartmentNotification> SaveAsync(DepartmentNotification notification, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_departmentNotificationRepository.SaveOrUpdate(notification);
-
-			return notification;
+			return await _departmentNotificationRepository.SaveOrUpdateAsync(notification, cancellationToken);
 		}
 
-		public List<DepartmentNotification> GetNotificationsByDepartment(int departmentId)
+		public List<DepartmentNotification> GetNotificationsByDepartmentAsync(int departmentId)
 		{
 			return _departmentNotificationRepository.GetNotificationsByDepartment(departmentId);
 		}
 
-		public int GetDepartmentIdForType(NotificationItem ni)
+		public async Task<int> GetDepartmentIdForTypeAsync(NotificationItem ni)
 		{
 			switch ((EventTypes)ni.Type)
 			{
 				case EventTypes.PersonnelStaffingChanged:
-					var state = _userStateService.GetUserStateById(ni.StateId);
+					var state = await _userStateService.GetUserStateByIdAsync(ni.StateId);
 
 					if (state != null)
 					{
-						var department = _departmentsService.GetDepartmentByUserId(state.UserId, true);
+						var department = await _departmentsService.GetDepartmentByUserIdAsync(state.UserId, true);
 
 						if (department != null)
 							return department.DepartmentId;
@@ -87,11 +86,11 @@ namespace Resgrid.Services
 					else
 						return 0;
 				case EventTypes.PersonnelStatusChanged:
-					var status = _actionLogsService.GetActionlogById(ni.StateId);
+					var status = await _actionLogsService.GetActionLogByIdAsync(ni.StateId);
 
 					if (status != null)
 					{
-						var department = _departmentsService.GetDepartmentByUserId(status.UserId, true);
+						var department = await _departmentsService.GetDepartmentByUserIdAsync(status.UserId, true);
 
 						if (department != null)
 							return department.DepartmentId;
@@ -101,81 +100,81 @@ namespace Resgrid.Services
 					else
 						return 0;
 				case EventTypes.CalendarEventAdded:
-					var cal = _calendarService.GetCalendarItemById(ni.ItemId);
+					var cal = await _calendarService.GetCalendarItemByIdAsync(ni.ItemId);
 
 					if (cal != null)
 						return cal.DepartmentId;
 					else
 						return 0;
 				case EventTypes.CalendarEventUpcoming:
-					var calUp = _calendarService.GetCalendarItemById(ni.ItemId);
+					var calUp = await _calendarService.GetCalendarItemByIdAsync(ni.ItemId);
 
 					if (calUp != null)
 						return calUp.DepartmentId;
 					else
 						return 0;
 				case EventTypes.CalendarEventUpdated:
-					var calUpdate = _calendarService.GetCalendarItemById(ni.ItemId);
+					var calUpdate = await _calendarService.GetCalendarItemByIdAsync(ni.ItemId);
 
 					if (calUpdate != null)
 						return calUpdate.DepartmentId;
 					else
 						return 0;
 				case EventTypes.DocumentAdded:
-					var docAdded = _documentsService.GetDocumentById(ni.ItemId);
+					var docAdded = await _documentsService.GetDocumentByIdAsync(ni.ItemId);
 
 					if (docAdded != null)
 						return docAdded.DepartmentId;
 					else
 						return 0;
 				case EventTypes.LogAdded:
-					var logAdded = _workLogsService.GetWorkLogById(ni.ItemId);
+					var logAdded = await _workLogsService.GetWorkLogByIdAsync(ni.ItemId);
 
 					if (logAdded != null)
 						return logAdded.DepartmentId;
 					else
 						return 0;
 				case EventTypes.NoteAdded:
-					var noteAdded = _notesService.GetNoteById(ni.ItemId);
+					var noteAdded = await _notesService.GetNoteByIdAsync(ni.ItemId);
 
 					if (noteAdded != null)
 						return noteAdded.DepartmentId;
 					else
 						return 0;
 				case EventTypes.ShiftCreated:
-					var shiftCreated = _shiftsService.GetShiftById(ni.ItemId);
+					var shiftCreated = await _shiftsService.GetShiftByIdAsync(ni.ItemId);
 
 					if (shiftCreated != null)
 						return shiftCreated.DepartmentId;
 					else
 						return 0;
 				case EventTypes.ShiftDaysAdded:
-					var shiftDaysAdded = _shiftsService.GetShiftById(ni.ItemId);
+					var shiftDaysAdded = await _shiftsService.GetShiftByIdAsync(ni.ItemId);
 
 					if (shiftDaysAdded != null)
 						return shiftDaysAdded.DepartmentId;
 					else
 						return 0;
 				case EventTypes.ShiftUpdated:
-					var shiftUpdated = _shiftsService.GetShiftById(ni.ItemId);
+					var shiftUpdated = await _shiftsService.GetShiftByIdAsync(ni.ItemId);
 
 					if (shiftUpdated != null)
 						return shiftUpdated.DepartmentId;
 					else
 						return 0;
 				case EventTypes.UnitAdded:
-					var unitAdded = _unitsService.GetUnitById(ni.UnitId);
+					var unitAdded = await _unitsService.GetUnitByIdAsync(ni.UnitId);
 
 					if (unitAdded != null)
 						return unitAdded.DepartmentId;
 					else
 						return 0;
 				case EventTypes.UnitStatusChanged:
-					var unitStatusChanged = _unitsService.GetUnitStateById(ni.StateId);
+					var unitStatusChanged = await _unitsService.GetUnitStateByIdAsync(ni.StateId);
 
 					if (unitStatusChanged != null)
 					{
-						var unit = _unitsService.GetUnitById(unitStatusChanged.UnitId);
+						var unit = await _unitsService.GetUnitByIdAsync(unitStatusChanged.UnitId);
 
 						if (unit != null)
 							return unit.DepartmentId;
@@ -189,7 +188,7 @@ namespace Resgrid.Services
 			return 0;
 		}
 
-		public List<ProcessedNotification> ProcessNotifications(List<ProcessedNotification> notifications, List<DepartmentNotification> settings)
+		public async Task<List<ProcessedNotification>> ProcessNotificationsAsync(List<ProcessedNotification> notifications, List<DepartmentNotification> settings)
 		{
 			if (notifications == null || notifications.Count < 0)
 				return null;
@@ -211,7 +210,7 @@ namespace Resgrid.Services
 
 						foreach (var setting in typeSettings)
 						{
-							if (ValidateNotificationForProcessing(notification, setting))
+							if (await ValidateNotificationForProcessingAsync(notification, setting))
 							{
 								if (setting.Everyone) // Add Everyone
 								{
@@ -221,17 +220,17 @@ namespace Resgrid.Services
 								else if (setting.DepartmentAdmins) // Add Only Department Admins
 								{
 									notification.Users =
-										_departmentsService.GetAllAdminsForDepartment(notification.DepartmentId).Select(x => x.UserId).ToList();
+										(await _departmentsService.GetAllAdminsForDepartmentAsync(notification.DepartmentId)).Select(x => x.UserId).ToList();
 								}
 								else if (setting.LockToGroup && EventOptions.GroupEvents.Contains(notification.Type))
 								// We are locked to the source group
 								{
-									var group = GetGroupForEvent(notification);
+									var group = await GetGroupForEventAsync(notification);
 									if (group != null)
 									{
 										if (setting.SelectedGroupsAdminsOnly) // Only add source group admins
 										{
-											var usersInGroup = _departmentGroupsService.GetAllAdminsForGroup(group.DepartmentGroupId);
+											var usersInGroup = await _departmentGroupsService.GetAllAdminsForGroupAsync(group.DepartmentGroupId);
 
 											if (usersInGroup != null)
 											{
@@ -244,13 +243,13 @@ namespace Resgrid.Services
 										}
 										else // Add source group users in selected roles
 										{
-											var usersInGroup = _departmentGroupsService.GetAllMembersForGroup(group.DepartmentGroupId)
+											var usersInGroup = (await _departmentGroupsService.GetAllMembersForGroupAsync(group.DepartmentGroupId))
 												.Select(x => x.UserId);
 											var roles = setting.RolesToNotify.Split(char.Parse(","));
 
 											foreach (var roleId in roles)
 											{
-												var usersInRole = _personnelRolesService.GetAllMembersOfRole(int.Parse(roleId));
+												var usersInRole = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(roleId));
 
 												if (usersInRole != null)
 												{
@@ -271,7 +270,7 @@ namespace Resgrid.Services
 										var roles = setting.RolesToNotify.Split(char.Parse(","));
 										foreach (var roleId in roles) // Add all users in Roles
 										{
-											var usersInRole = _personnelRolesService.GetAllMembersOfRole(int.Parse(roleId));
+											var usersInRole = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(roleId));
 											foreach (var user in usersInRole)
 											{
 												if (!notification.Users.Contains(user.UserId))
@@ -302,7 +301,7 @@ namespace Resgrid.Services
 											{
 												if (setting.SelectedGroupsAdminsOnly) // Only add group admins
 												{
-													var usersInGroup = _departmentGroupsService.GetAllAdminsForGroup(int.Parse(groupId));
+													var usersInGroup = await _departmentGroupsService.GetAllAdminsForGroupAsync(int.Parse(groupId));
 
 													if (usersInGroup != null)
 													{
@@ -315,7 +314,7 @@ namespace Resgrid.Services
 												}
 												else
 												{
-													var usersInGroup = _departmentGroupsService.GetAllMembersForGroup(int.Parse(groupId));
+													var usersInGroup = await _departmentGroupsService.GetAllMembersForGroupAsync(int.Parse(groupId));
 
 													if (usersInGroup != null)
 													{
@@ -337,7 +336,7 @@ namespace Resgrid.Services
 
 				if (notification.Type == EventTypes.CalendarEventAdded)
 				{
-					var calEvent = _calendarService.GetCalendarItemById(notification.ItemId);
+					var calEvent = await _calendarService.GetCalendarItemByIdAsync(notification.ItemId);
 
 					if (calEvent != null)
 					{
@@ -357,7 +356,7 @@ namespace Resgrid.Services
 									int groupId = 0;
 									if (int.TryParse(val.Replace("G:", ""), out groupId))
 									{
-										var usersInGroup = _departmentGroupsService.GetAllMembersForGroup(groupId);
+										var usersInGroup = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 
 										if (usersInGroup != null)
 										{
@@ -384,7 +383,7 @@ namespace Resgrid.Services
 				}
 				else if (notification.Type == EventTypes.CalendarEventUpdated)
 				{
-					var calEvent = _calendarService.GetCalendarItemById(notification.ItemId);
+					var calEvent = await _calendarService.GetCalendarItemByIdAsync(notification.ItemId);
 
 					if (calEvent != null)
 					{
@@ -404,7 +403,7 @@ namespace Resgrid.Services
 									int groupId = 0;
 									if (int.TryParse(val.Replace("G:", ""), out groupId))
 									{
-										var usersInGroup = _departmentGroupsService.GetAllMembersForGroup(groupId);
+										var usersInGroup = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 
 										if (usersInGroup != null)
 										{
@@ -437,37 +436,37 @@ namespace Resgrid.Services
 			return processNotifications;
 		}
 
-		public DepartmentGroup GetGroupForEvent(ProcessedNotification notification)
+		public async Task<DepartmentGroup> GetGroupForEventAsync(ProcessedNotification notification)
 		{
 			//NotificationItem dynamicData = (NotificationItem)JsonConvert.DeserializeObject(data);
 			NotificationItem dynamicData = ObjectSerialization.Deserialize<NotificationItem>(notification.Data);
 
 			if (notification.Type == EventTypes.UnitStatusChanged)
 			{
-				var unitEvent = _unitsService.GetUnitStateById(dynamicData.StateId);
-				return _departmentGroupsService.GetGroupById(unitEvent.Unit.StationGroupId.GetValueOrDefault());
+				var unitEvent = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
+				return await _departmentGroupsService.GetGroupByIdAsync(unitEvent.Unit.StationGroupId.GetValueOrDefault());
 			}
 			else if (notification.Type == EventTypes.PersonnelStatusChanged)
 			{
-				var userStaffing = _userStateService.GetUserStateById(dynamicData.StateId);
-				var group = _departmentGroupsService.GetGroupForUser(userStaffing.UserId, notification.DepartmentId);
+				var userStaffing = await _userStateService.GetUserStateByIdAsync(dynamicData.StateId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(userStaffing.UserId, notification.DepartmentId);
 				return group;
 			}
 			else if (notification.Type == EventTypes.PersonnelStatusChanged)
 			{
-				var actionLog = _actionLogsService.GetActionlogById(dynamicData.StateId);
-				var group = _departmentGroupsService.GetGroupForUser(actionLog.UserId, notification.DepartmentId);
+				var actionLog = await  _actionLogsService.GetActionLogByIdAsync(dynamicData.StateId);
+				var group = await  _departmentGroupsService.GetGroupForUserAsync(actionLog.UserId, notification.DepartmentId);
 				return group;
 			}
 			else if (notification.Type == EventTypes.UserAssignedToGroup)
 			{
-				return _departmentGroupsService.GetGroupById(dynamicData.GroupId);
+				return await  _departmentGroupsService.GetGroupByIdAsync(dynamicData.GroupId);
 			}
 
 			return null;
 		}
 
-		public bool ValidateNotificationForProcessing(ProcessedNotification notification, DepartmentNotification setting)
+		public async Task<bool> ValidateNotificationForProcessingAsync(ProcessedNotification notification, DepartmentNotification setting)
 		{
 			//dynamic dynamicData = JsonConvert.DeserializeObject(notification.Data);
 			NotificationItem dynamicData = ObjectSerialization.Deserialize<NotificationItem>(notification.Data);
@@ -486,10 +485,10 @@ namespace Resgrid.Services
 						UnitState beforeState = null;
 						UnitState currentState = null;
 
-						currentState = _unitsService.GetUnitStateById((int)dynamicData.StateId);
+						currentState = await _unitsService.GetUnitStateByIdAsync((int)dynamicData.StateId);
 
 						if (!beforeAny)
-							beforeState = _unitsService.GetLastUnitStateBeforeId(currentState.UnitId, currentState.UnitStateId);
+							beforeState = await _unitsService.GetLastUnitStateBeforeIdAsync(currentState.UnitId, currentState.UnitStateId);
 
 						if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
 							(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
@@ -512,10 +511,10 @@ namespace Resgrid.Services
 						UserState beforeState = null;
 						UserState currentState = null;
 
-						currentState = _userStateService.GetUserStateById((int)dynamicData.StateId);
+						currentState = await _userStateService.GetUserStateByIdAsync((int)dynamicData.StateId);
 
 						if (!beforeAny)
-							beforeState = _userStateService.GetPerviousUserState(currentState.UserId, currentState.UserStateId);
+							beforeState = await _userStateService.GetPreviousUserStateAsync(currentState.UserId, currentState.UserStateId);
 
 						if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
 							(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
@@ -538,10 +537,10 @@ namespace Resgrid.Services
 						ActionLog beforeState = null;
 						ActionLog currentState = null;
 
-						currentState = _actionLogsService.GetActionlogById((int)dynamicData.StateId);
+						currentState = await _actionLogsService.GetActionLogByIdAsync((int)dynamicData.StateId);
 
 						if (!beforeAny)
-							beforeState = _actionLogsService.GetPreviousActionLog(currentState.UserId, currentState.ActionLogId);
+							beforeState = await _actionLogsService.GetPreviousActionLogAsync(currentState.UserId, currentState.ActionLogId);
 
 						if ((currentAny || currentState.ActionTypeId == int.Parse(setting.CurrentData)) &&
 							(beforeAny || beforeState.ActionTypeId == int.Parse(setting.BeforeData)))
@@ -556,9 +555,9 @@ namespace Resgrid.Services
 					if (!String.IsNullOrWhiteSpace(setting.CurrentData) && !String.IsNullOrWhiteSpace(setting.Data))
 					{
 						int count = 0;
-						var userStateChanged = _userStateService.GetUserStateById((int)dynamicData.StateId);
-						var usersInRole = _personnelRolesService.GetAllMembersOfRole(int.Parse(setting.Data));
-						var group = _departmentGroupsService.GetGroupForUser(userStateChanged.UserId, notification.DepartmentId);
+						var userStateChanged = await _userStateService.GetUserStateByIdAsync((int)dynamicData.StateId);
+						var usersInRole = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(setting.Data));
+						var group = await _departmentGroupsService.GetGroupForUserAsync(userStateChanged.UserId, notification.DepartmentId);
 
 						if (group == null || group.Members == null || !group.Members.Any())
 							return false;
@@ -568,7 +567,7 @@ namespace Resgrid.Services
 						if (usersInRole != null && !usersInRole.Any())
 							return false;
 
-						var staffingLevels = _userStateService.GetLatestStatesForDepartment(setting.DepartmentId);
+						var staffingLevels = await _userStateService.GetLatestStatesForDepartmentAsync(setting.DepartmentId);
 
 						if (staffingLevels != null && staffingLevels.Any())
 						{
@@ -601,13 +600,13 @@ namespace Resgrid.Services
 					if (!String.IsNullOrWhiteSpace(setting.CurrentData) && !String.IsNullOrWhiteSpace(setting.Data))
 					{
 						int count = 0;
-						var usersInRole = _personnelRolesService.GetAllMembersOfRole(int.Parse(setting.Data));
+						var usersInRole = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(setting.Data));
 						var acceptableStaffingLevels = setting.CurrentData.Split(char.Parse(","));
 
 						if (usersInRole != null && !usersInRole.Any())
 							return false;
 
-						var staffingLevels = _userStateService.GetLatestStatesForDepartment(setting.DepartmentId);
+						var staffingLevels = await _userStateService.GetLatestStatesForDepartmentAsync(setting.DepartmentId);
 
 						if (staffingLevels != null && staffingLevels.Any())
 						{
@@ -639,20 +638,20 @@ namespace Resgrid.Services
 					if (!String.IsNullOrWhiteSpace(setting.CurrentData) && !String.IsNullOrWhiteSpace(setting.Data))
 					{
 						int count = 0;
-						var currentUnitState = _unitsService.GetUnitStateById((int)dynamicData.StateId);
-						var unitsForType = _unitsService.GetAllUnitsForType(setting.DepartmentId, setting.Data);
-						var unitForEvent = _unitsService.GetUnitById(currentUnitState.UnitId);
+						var currentUnitState = await _unitsService.GetUnitStateByIdAsync((int)dynamicData.StateId);
+						var unitsForType = await _unitsService.GetAllUnitsForTypeAsync(setting.DepartmentId, setting.Data);
+						var unitForEvent = await _unitsService.GetUnitByIdAsync(currentUnitState.UnitId);
 
 						if (unitForEvent?.StationGroupId == null)
 							return false;
 
 						var acceptableUnitStates = setting.CurrentData.Split(char.Parse(","));
-						var unitsInGroup = _unitsService.GetAllUnitsForGroup(unitForEvent.StationGroupId.Value);
+						var unitsInGroup = await _unitsService.GetAllUnitsForGroupAsync(unitForEvent.StationGroupId.Value);
 
 						if (unitsForType != null && !unitsForType.Any())
 							return false;
 
-						var staffingLevels = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(setting.DepartmentId);
+						var staffingLevels = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(setting.DepartmentId);
 
 						foreach (var unit in unitsForType)
 						{
@@ -677,13 +676,13 @@ namespace Resgrid.Services
 					if (!String.IsNullOrWhiteSpace(setting.CurrentData) && !String.IsNullOrWhiteSpace(setting.Data))
 					{
 						int count = 0;
-						var unitsForType = _unitsService.GetAllUnitsForType(setting.DepartmentId, setting.Data);
+						var unitsForType = await _unitsService.GetAllUnitsForTypeAsync(setting.DepartmentId, setting.Data);
 						var acceptableUnitStates = setting.CurrentData.Split(char.Parse(","));
 
 						if (unitsForType != null && !unitsForType.Any())
 							return false;
 
-						var staffingLevels = _unitsService.GetAllLatestStatusForUnitsByDepartmentId(setting.DepartmentId);
+						var staffingLevels = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(setting.DepartmentId);
 
 						foreach (var unit in unitsForType)
 						{
@@ -740,7 +739,7 @@ namespace Resgrid.Services
 			}
 		}
 
-		public string GetMessageForType(ProcessedNotification notification)
+		public async Task<string> GetMessageForTypeAsync(ProcessedNotification notification)
 		{
 			try
 			{
@@ -749,8 +748,8 @@ namespace Resgrid.Services
 				switch (notification.Type)
 				{
 					case EventTypes.UnitStatusChanged:
-						var unitEvent = _unitsService.GetUnitStateById((int)data.StateId);
-						var unitStatus = _customStateService.GetCustomUnitState(unitEvent);
+						var unitEvent = await _unitsService.GetUnitStateByIdAsync((int)data.StateId);
+						var unitStatus = await _customStateService.GetCustomUnitStateAsync(unitEvent);
 
 						if (unitEvent != null && unitEvent.Unit != null)
 							return String.Format("Unit {0} is now {1}", unitEvent.Unit.Name, unitStatus.ButtonText);
@@ -759,21 +758,21 @@ namespace Resgrid.Services
 						else
 							return "A unit's status changed";
 					case EventTypes.PersonnelStaffingChanged:
-						var userStaffing = _userStateService.GetUserStateById((int)data.StateId);
-						var userProfile = _userProfileService.GetProfileByUserId(userStaffing.UserId);
-						var userStaffingText = _customStateService.GetCustomPersonnelStaffing(data.DepartmentId, userStaffing);
+						var userStaffing = await _userStateService.GetUserStateByIdAsync((int)data.StateId);
+						var userProfile = await _userProfileService.GetProfileByUserIdAsync(userStaffing.UserId);
+						var userStaffingText = await _customStateService.GetCustomPersonnelStaffingAsync(data.DepartmentId, userStaffing);
 
 						return String.Format("{0} staffing is now {1}", userProfile.FullName.AsFirstNameLastName, userStaffingText.ButtonText);
 					case EventTypes.PersonnelStatusChanged:
-						var actionLog = _actionLogsService.GetActionlogById(data.StateId);
+						var actionLog = await _actionLogsService.GetActionLogByIdAsync(data.StateId);
 
 						UserProfile profile = null;
 						if (actionLog != null)
-							profile = _userProfileService.GetProfileByUserId(actionLog.UserId);
+							profile = await _userProfileService.GetProfileByUserIdAsync(actionLog.UserId);
 						else if (data.UserId != String.Empty)
-							profile = _userProfileService.GetProfileByUserId(data.UserId);
+							profile = await _userProfileService.GetProfileByUserIdAsync(data.UserId);
 
-						var userStatusText = _customStateService.GetCustomPersonnelStatus(data.DepartmentId, actionLog);
+						var userStatusText = await _customStateService.GetCustomPersonnelStatusAsync(data.DepartmentId, actionLog);
 
 						if (profile != null && userStatusText != null)
 							return String.Format("{0} status is now {1}", profile.FullName.AsFirstNameLastName, userStatusText.ButtonText);
@@ -782,7 +781,7 @@ namespace Resgrid.Services
 
 						return String.Empty;
 					case EventTypes.UserCreated:
-						var newUserprofile = _userProfileService.GetProfileByUserId(data.UserId);
+						var newUserprofile = await _userProfileService.GetProfileByUserIdAsync(data.UserId);
 
 						if (newUserprofile != null)
 							return String.Format("{0} has been added to your department", newUserprofile.FullName.AsFirstNameLastName);
@@ -794,7 +793,7 @@ namespace Resgrid.Services
 						try
 						{
 							if (data.UserId != String.Empty)
-								groupUserprofile = _userProfileService.GetProfileByUserId(data.UserId);
+								groupUserprofile = await _userProfileService.GetProfileByUserIdAsync(data.UserId);
 						}
 						catch { }
 
@@ -802,7 +801,7 @@ namespace Resgrid.Services
 						try
 						{
 							if (data.GroupId != 0)
-								newGroup = _departmentGroupsService.GetGroupById((int)data.GroupId, false);
+								newGroup = await _departmentGroupsService.GetGroupByIdAsync((int)data.GroupId, false);
 						}
 						catch { }
 
@@ -815,27 +814,27 @@ namespace Resgrid.Services
 						else
 							return String.Format("A has been assigned to a group");
 					case EventTypes.CalendarEventUpcoming:
-						var calandarItem = _calendarService.GetCalendarItemById((int)data.ItemId);
+						var calandarItem = await _calendarService.GetCalendarItemByIdAsync((int)data.ItemId);
 						return String.Format("Event {0} is upcoming", calandarItem.Title);
 					case EventTypes.DocumentAdded:
-						var document = _documentsService.GetDocumentById((int)data.ItemId);
+						var document = await _documentsService.GetDocumentByIdAsync((int)data.ItemId);
 						return String.Format("Document {0} has been added", document.Name);
 					case EventTypes.NoteAdded:
-						var note = _notesService.GetNoteById((int)data.ItemId);
+						var note = await _notesService.GetNoteByIdAsync((int)data.ItemId);
 
 						if (note != null)
 							return String.Format("Message {0} has been added", note.Title);
 
 						break;
 					case EventTypes.UnitAdded:
-						var unit = _unitsService.GetUnitById((int)data.UnitId);
+						var unit = await _unitsService.GetUnitByIdAsync((int)data.UnitId);
 						return String.Format("Unit {0} has been added", unit.Name);
 					case EventTypes.LogAdded:
-						var log = _workLogsService.GetWorkLogById((int)data.ItemId);
+						var log = await _workLogsService.GetWorkLogByIdAsync((int)data.ItemId);
 
 						if (log != null)
 						{
-							var logUserProfile = _userProfileService.GetProfileByUserId(log.LoggedByUserId);
+							var logUserProfile = await _userProfileService.GetProfileByUserIdAsync(log.LoggedByUserId);
 							return String.Format("{0} created log {1}", logUserProfile.FullName.AsFirstNameLastName, log.LogId);
 						}
 						else
@@ -846,15 +845,15 @@ namespace Resgrid.Services
 						return String.Format("Settings have been updated for your department");
 					case EventTypes.RolesInGroupAvailabilityAlert:
 
-						var userStateChanged = _userStateService.GetUserStateById(int.Parse(notification.Value));
-						var roleForGroup = _personnelRolesService.GetRoleById(notification.PersonnelRoleTargeted);
-						var groupForRole = _departmentGroupsService.GetGroupForUser(userStateChanged.UserId, notification.DepartmentId);
+						var userStateChanged = await _userStateService.GetUserStateByIdAsync(int.Parse(notification.Value));
+						var roleForGroup = await _personnelRolesService.GetRoleByIdAsync(notification.PersonnelRoleTargeted);
+						var groupForRole = await _departmentGroupsService.GetGroupForUserAsync(userStateChanged.UserId, notification.DepartmentId);
 
 						return String.Format("Availability for role {0} in group {1} is at or below the lower limit", roleForGroup.Name, groupForRole.Name);
 					case EventTypes.RolesInDepartmentAvailabilityAlert:
 						if (notification != null)
 						{
-							var roleForDep = _personnelRolesService.GetRoleById(notification.PersonnelRoleTargeted);
+							var roleForDep = await _personnelRolesService.GetRoleByIdAsync(notification.PersonnelRoleTargeted);
 
 							if (roleForDep != null)
 								return String.Format("Availability for role {0} for the department is at or below the lower limit", roleForDep.Name);
@@ -863,11 +862,11 @@ namespace Resgrid.Services
 					case EventTypes.UnitTypesInGroupAvailabilityAlert:
 						if (data.UnitId != 0)
 						{
-							var unitForGroup = _unitsService.GetUnitById(data.UnitId);
+							var unitForGroup = await _unitsService.GetUnitByIdAsync(data.UnitId);
 
 							if (unitForGroup != null && unitForGroup.StationGroupId.HasValue)
 							{
-								var groupForUnit = _departmentGroupsService.GetGroupById(unitForGroup.StationGroupId.Value);
+								var groupForUnit = await _departmentGroupsService.GetGroupByIdAsync(unitForGroup.StationGroupId.Value);
 
 								return String.Format("Availability for unit type {0} in group {1} is at or below the lower limit",
 									unitForGroup.Type, groupForUnit.Name);
@@ -877,8 +876,8 @@ namespace Resgrid.Services
 					case EventTypes.UnitTypesInDepartmentAvailabilityAlert:
 						return String.Format("Availability for unit type {0} for the department is at or below the lower limit", notification.UnitTypeTargeted);
 					case EventTypes.CalendarEventAdded:
-						var calEvent = _calendarService.GetCalendarItemById(notification.ItemId);
-						var department = _departmentsService.GetDepartmentById(calEvent.DepartmentId);
+						var calEvent = await _calendarService.GetCalendarItemByIdAsync(notification.ItemId);
+						var department = await _departmentsService.GetDepartmentByIdAsync(calEvent.DepartmentId);
 
 						if (calEvent != null)
 						{
@@ -896,8 +895,8 @@ namespace Resgrid.Services
 						else
 							return String.Empty;
 					case EventTypes.CalendarEventUpdated:
-						var calUpdatedEvent = _calendarService.GetCalendarItemById(notification.ItemId);
-						var calUpdatedEventDepartment = _departmentsService.GetDepartmentById(calUpdatedEvent.DepartmentId);
+						var calUpdatedEvent = await _calendarService.GetCalendarItemByIdAsync(notification.ItemId);
+						var calUpdatedEventDepartment = await _departmentsService.GetDepartmentByIdAsync(calUpdatedEvent.DepartmentId);
 
 						if (calUpdatedEvent != null)
 							return $"Calendar Event {calUpdatedEvent.Title} on {calUpdatedEvent.Start.TimeConverter(calUpdatedEventDepartment).ToShortDateString()} has changed";
@@ -916,15 +915,17 @@ namespace Resgrid.Services
 			return String.Empty;
 		}
 
-		public void DeleteDepartmentNotificationById(int notifiationId)
+		public async Task<bool> DeleteDepartmentNotificationByIdAsync(int notificationId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var notification =
-				_departmentNotificationRepository.GetAll().FirstOrDefault(x => x.DepartmentNotificationId == notifiationId);
+			var notification = await 
+				_departmentNotificationRepository.GetByIdAsync(notificationId);
 
 			if (notification != null)
 			{
-				_departmentNotificationRepository.DeleteOnSubmit(notification);
+				return await _departmentNotificationRepository.DeleteAsync(notification, cancellationToken);
 			}
+
+			return false;
 		}
 	}
 }

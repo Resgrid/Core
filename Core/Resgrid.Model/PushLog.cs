@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -36,10 +37,19 @@ namespace Resgrid.Model
 		public DateTime Timestamp { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return PushLogId; }
 			set { PushLogId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "PushLogs";
+
+		[NotMapped]
+		public string IdName => "PushLogId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
 	}
 }

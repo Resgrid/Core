@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Resgrid.Model.Providers;
 using System.IO;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Remotion.Linq.Parsing.ExpressionVisitors.Transformation.PredefinedTransformations;
 using Resgrid.WebCore.Areas.User.Models.Types;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -19,27 +22,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICustomStateService _customStateService;
 		private readonly ICallsService _callsService;
 		private readonly IAudioValidatorProvider _audioValidatorProvider;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
-		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IAudioValidatorProvider audioValidatorProvider)
+		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IAudioValidatorProvider audioValidatorProvider,
+			IDepartmentSettingsService departmentSettingsService)
 		{
 			_unitsService = unitsService;
 			_customStateService = customStateService;
 			_callsService = callsService;
 			_audioValidatorProvider = audioValidatorProvider;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
+		#region Edit Unit Type
 		[HttpGet]
-		public IActionResult EditUnitType(int unitTypeId)
+		public async Task<IActionResult> EditUnitType(int unitTypeId)
 		{
 			var model = new EditUnitTypeView();
-			model.UnitType = _unitsService.GetUnitTypeById(unitTypeId);
+			model.UnitType = await _unitsService.GetUnitTypeByIdAsync(unitTypeId);
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
 			{
 				Name = "Standard Actions"
 			});
-			states.AddRange(_customStateService.GetAllActiveUnitStatesForDepartment(DepartmentId));
+			states.AddRange(await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId));
 			model.States = states;
 			model.UnitCustomStatesId = model.UnitType.CustomStatesId.GetValueOrDefault();
 
@@ -47,23 +54,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult EditUnitType(EditUnitTypeView model)
+		public async Task<IActionResult> EditUnitType(EditUnitTypeView model, CancellationToken cancellationToken)
 		{
 			var states = new List<CustomState>();
 			states.Add(new CustomState
 			{
 				Name = "Standard Actions"
 			});
-			states.AddRange(_customStateService.GetAllActiveUnitStatesForDepartment(DepartmentId));
+			states.AddRange(await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId));
 			model.States = states;
 
-			var unitTypes = _unitsService.GetUnitTypesForDepartment(DepartmentId);
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			if (unitTypes.Any(x => x.Type == model.UnitType.Type && x.UnitTypeId != model.UnitType.UnitTypeId))
 				ModelState.AddModelError("Type", string.Format("A Unit Type of ({0}) already exists.", model.UnitType.Type));
 
 			if (ModelState.IsValid)
 			{
-				var unitType = _unitsService.GetUnitTypeById(model.UnitType.UnitTypeId);
+				var unitType = await _unitsService.GetUnitTypeByIdAsync(model.UnitType.UnitTypeId);
 				unitType.Type = model.UnitType.Type;
 
 				if (model.UnitCustomStatesId != 0)
@@ -71,16 +78,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					unitType.CustomStatesId = null;
 
-				_unitsService.SaveUnitType(unitType);
+				await _unitsService.SaveUnitTypeAsync(unitType, cancellationToken);
 
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 			}
 
 			return View(model);
 		}
+		#endregion Edit Unit Type
 
+		#region Call Priority
 		[HttpGet]
-		public IActionResult NewCallPriority()
+		public async Task<IActionResult> NewCallPriority()
 		{
 			var model = new NewCallPriorityView();
 			model.CallPriority = new DepartmentCallPriority();
@@ -90,9 +99,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult NewCallPriority(NewCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload)
+		public async Task<IActionResult> NewCallPriority(NewCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload, CancellationToken cancellationToken)
 		{
-			var priotiries = _callsService.GetCallPrioritesForDepartment(DepartmentId, true);
+			var priotiries = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId, true);
 
 			if (model.CallPriority.IsDefault && priotiries.Any(x => x.IsDefault && x.DepartmentId == DepartmentId && x.IsDeleted == false))
 			{
@@ -139,7 +148,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (iOSPushfileToUpload.Length > 1000000)
 					ModelState.AddModelError("iOSPushfileToUpload", "iOS Push Audio file is too large, must be smaller then 1MB.");
 
-				//var fileAudioLength = _audioValidatorProvider.GetWavFileDuration(pushfileToUpload.OpenReadStream());
+				//var fileAudioLength = await _audioValidatorProvider.GetWavFileDuration(pushfileToUpload.OpenReadStream());
 				//if (fileAudioLength == null)
 				//	ModelState.AddModelError("iOSPushfileToUpload", string.Format("Audio file type ({0}) is not supported for Push Notifications. CAF Files are required.", extenion));
 				//else if (fileAudioLength != null && fileAudioLength.Value > new TimeSpan(0, 0, 25))
@@ -199,7 +208,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.CallPriority.DepartmentId = DepartmentId;
 
-				_callsService.SaveCallPriority(model.CallPriority);
+				await _callsService.SaveCallPriorityAsync(model.CallPriority, cancellationToken);
 
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 			}
@@ -209,24 +218,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult DeleteCallPriority(int priorityId)
+		public async Task<IActionResult> DeleteCallPriority(int priorityId, CancellationToken cancellationToken)
 		{
-			var priority = _callsService.GetCallPrioritesById(DepartmentId, priorityId, true);
+			var priority = await _callsService.GetCallPrioritiesByIdAsync(DepartmentId, priorityId, true);
 
 			if (priority != null)
 			{
 				priority.IsDeleted = true;
-				_callsService.SaveCallPriority(priority);
+				await _callsService.SaveCallPriorityAsync(priority, cancellationToken);
 			}
 
 			return RedirectToAction("Types", "Department", new { Area = "User" });
 		}
 
 		[HttpGet]
-		public IActionResult EditCallPriority(int priorityId)
+		public async Task<IActionResult> EditCallPriority(int priorityId)
 		{
 			var model = new EditCallPriorityView();
-			model.CallPriority = _callsService.GetCallPrioritesById(DepartmentId, priorityId, true);
+			model.CallPriority = await _callsService.GetCallPrioritiesByIdAsync(DepartmentId, priorityId, true);
 
 			if (model.CallPriority == null || model.CallPriority.DepartmentId != DepartmentId)
 				Unauthorized();
@@ -237,9 +246,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult EditCallPriority(EditCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload)
+		public async Task<IActionResult> EditCallPriority(EditCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload, CancellationToken cancellationToken)
 		{
-			var priotiries = _callsService.GetCallPrioritesForDepartment(DepartmentId, true);
+			var priotiries = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId, true);
 			if (model.CallPriority.IsDefault && priotiries.Any(x => x.IsDefault && x.DepartmentCallPriorityId != model.CallPriority.DepartmentCallPriorityId))
 			{
 				model.Message = "ERROR: Can only have 1 default call priorty and there already is a call priority marked as default for your department.";
@@ -279,7 +288,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (iOSPushfileToUpload.Length > 1000000)
 					ModelState.AddModelError("iOSPushfileToUpload", "iOS Push Audio file is too large, must be smaller then 1MB.");
 
-				//var fileAudioLength = _audioValidatorProvider.GetWavFileDuration(pushfileToUpload.OpenReadStream());
+				//var fileAudioLength = await _audioValidatorProvider.GetWavFileDuration(pushfileToUpload.OpenReadStream());
 				//if (fileAudioLength == null)
 				//	ModelState.AddModelError("iOSPushfileToUpload", string.Format("Audio file type ({0}) is not supported for Push Notifications. CAF Files are required.", extenion));
 				//else if (fileAudioLength != null && fileAudioLength.Value > new TimeSpan(0, 0, 25))
@@ -299,7 +308,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (alertfileToUpload.Length > 1000000)
 					ModelState.AddModelError("alertfileToUpload", "Push Audio file is too large, must be smaller then 1MB.");
 
-				var fileAudioLength = _audioValidatorProvider.GetWavFileDuration(alertfileToUpload.OpenReadStream());
+				var fileAudioLength =  _audioValidatorProvider.GetWavFileDuration(alertfileToUpload.OpenReadStream());
 				if (fileAudioLength == null)
 					ModelState.AddModelError("alertfileToUpload", string.Format("Audio file type ({0}) is not supported for Browser Alert Notifications. WAV Files are required.", extenion));
 				else if (fileAudioLength != null && fileAudioLength.Value > new TimeSpan(0, 0, 5))
@@ -308,7 +317,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var priority = _callsService.GetCallPrioritesById(DepartmentId, model.CallPriority.DepartmentCallPriorityId, true);
+				var priority = await _callsService.GetCallPrioritiesByIdAsync(DepartmentId, model.CallPriority.DepartmentCallPriorityId, true);
 				priority.Name = model.CallPriority.Name;
 				priority.Color = model.CallPriority.Color;
 				priority.IsDefault = model.CallPriority.IsDefault;
@@ -342,11 +351,87 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.CallPriority.IOSPushNotificationSound = uploadedFile;
 				}
 
-				_callsService.SaveCallPriority(priority);
+				await _callsService.SaveCallPriorityAsync(priority, cancellationToken);
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 			}
 
 			return View(model);
 		}
+		#endregion Call Priority
+
+		#region List Ordering
+		[HttpGet]
+		public async Task<IActionResult> ListOrdering()
+		{
+			var model = new ListOrderingView();
+			model.AllPersonnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
+			model.PersonnelStatusOrders = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
+
+			if (model.PersonnelStatusOrders == null)
+				model.PersonnelStatusOrders = new List<PersonnelListStatusOrder>();
+
+			if (model.AllPersonnelStatuses != null)
+			{
+				var availableStatuses = from status in model.AllPersonnelStatuses
+					where !model.PersonnelStatusOrders.Select(x => x.StatusId).Contains(status.CustomStateDetailId)
+					select status;
+
+				model.AvailablePersonnelStatuses = availableStatuses.ToList();
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> SavePersonnelStatusListOrdering(IFormCollection form, CancellationToken cancellationToken)
+		{
+			List<int> options = (from object key in form.Keys
+				where key.ToString().StartsWith("personnelStatus_")
+				select int.Parse(key.ToString().Replace("personnelStatus_", ""))).ToList();
+
+			if (options != null || options.Any())
+			{
+				var personnelStatusOrdering = new List<PersonnelListStatusOrder>();
+
+				foreach (var i in options)
+				{
+					if (form.ContainsKey("personnelStatus_" + i))
+					{
+						var weight = form["personnelStatus_" + i];
+						var statusId = form["personnelStatusValue_" + i];
+
+						var statusOrder = new PersonnelListStatusOrder();
+						statusOrder.Weight = int.Parse(weight);
+						statusOrder.StatusId = int.Parse(statusId);
+
+						personnelStatusOrdering.Add(statusOrder);
+					}
+				}
+
+				if (personnelStatusOrdering.Any())
+					personnelStatusOrdering = personnelStatusOrdering.OrderBy(x => x.Weight).ToList();
+
+				await _departmentSettingsService.SetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId, personnelStatusOrdering, cancellationToken);
+			}
+
+			return RedirectToAction("ListOrdering");
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> DeletePersonnelListStatus(int statusId, CancellationToken cancellationToken)
+		{
+
+			var personnelStatusOrders = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
+
+			personnelStatusOrders.RemoveAll(x => x.StatusId == statusId);
+
+			if (personnelStatusOrders.Any())
+				personnelStatusOrders = personnelStatusOrders.OrderBy(x => x.Weight).ToList();
+
+			await _departmentSettingsService.SetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId, personnelStatusOrders, cancellationToken);
+
+			return RedirectToAction("ListOrdering");
+		}
+		#endregion List Ordering
 	}
 }

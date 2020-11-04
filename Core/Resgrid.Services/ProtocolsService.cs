@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -9,36 +11,49 @@ namespace Resgrid.Services
 {
 	public class ProtocolsService : IProtocolsService
 	{
-		private readonly IGenericDataRepository<DispatchProtocol> _dispatchProtocolRepository;
-		private readonly IGenericDataRepository<DispatchProtocolAttachment> _dispatchProtocolAttachmentlRepository;
+		private readonly IDispatchProtocolRepository _dispatchProtocolRepository;
+		private readonly IDispatchProtocolAttachmentRepository _dispatchProtocolAttachmentRepository;
+		private readonly IDispatchProtocolQuestionsRepository _dispatchProtocolQuestionsRepository;
 
-		public ProtocolsService(IGenericDataRepository<DispatchProtocol> dispatchProtocolRepository, IGenericDataRepository<DispatchProtocolAttachment> dispatchProtocolAttachmentlRepository)
+		public ProtocolsService(IDispatchProtocolRepository dispatchProtocolRepository, IDispatchProtocolAttachmentRepository dispatchProtocolAttachmentRepository,
+			IDispatchProtocolQuestionsRepository dispatchProtocolQuestionsRepository)
 		{
 			_dispatchProtocolRepository = dispatchProtocolRepository;
-			_dispatchProtocolAttachmentlRepository = dispatchProtocolAttachmentlRepository;
+			_dispatchProtocolAttachmentRepository = dispatchProtocolAttachmentRepository;
+			_dispatchProtocolQuestionsRepository = dispatchProtocolQuestionsRepository;
 		}
 
-		public List<DispatchProtocol> GetAllProtocolsForDepartment(int departmentId)
+		public async Task<List<DispatchProtocol>> GetAllProtocolsForDepartmentAsync(int departmentId)
 		{
-			return _dispatchProtocolRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var items = await _dispatchProtocolRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			foreach (var dispatchProtocol in items)
+			{
+				dispatchProtocol.Attachments = (await _dispatchProtocolAttachmentRepository.GetDispatchProtocolAttachmentByProtocolIdAsync(dispatchProtocol.DispatchProtocolId)).ToList();
+				dispatchProtocol.Questions = (await _dispatchProtocolQuestionsRepository.GetDispatchProtocolQuestionsByProtocolIdAsync(dispatchProtocol.DispatchProtocolId)).ToList();
+			}
+
+			return items.ToList();
 		}
 
-		public DispatchProtocol SaveProtocol(DispatchProtocol protocol)
+		public async Task<DispatchProtocol> SaveProtocolAsync(DispatchProtocol protocol, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_dispatchProtocolRepository.SaveOrUpdate(protocol);
+			return await _dispatchProtocolRepository.SaveOrUpdateAsync(protocol, cancellationToken);
+		}
+
+		public async Task<DispatchProtocol> GetProtocolByIdAsync(int id)
+		{
+			var protocol = await _dispatchProtocolRepository.GetDispatchProtocolByIdAsync(id);
+			protocol.Attachments = (await _dispatchProtocolAttachmentRepository.GetDispatchProtocolAttachmentByProtocolIdAsync(id)).ToList();
+			protocol.Questions = (await _dispatchProtocolQuestionsRepository.GetDispatchProtocolQuestionsByProtocolIdAsync(id)).ToList();
 
 			return protocol;
 		}
 
-		public DispatchProtocol GetProcotolById(int id)
+		public async Task<bool> DeleteProtocol(int id, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _dispatchProtocolRepository.GetAll().FirstOrDefault(x => x.DispatchProtocolId == id);
-		}
-
-		public void DeleteProtocol(int id)
-		{
-			var procotol = GetProcotolById(id);
-			_dispatchProtocolRepository.DeleteOnSubmit(procotol);
+			var procotol = await GetProtocolByIdAsync(id);
+			return await _dispatchProtocolRepository.DeleteAsync(procotol, cancellationToken);
 		}
 
 		public List<DispatchProtocol> ProcessTriggers(List<DispatchProtocol> protocols, Call call)
@@ -66,9 +81,9 @@ namespace Resgrid.Services
 			return protocols;
 		}
 
-		public DispatchProtocolAttachment GetAttachmentById(int protocolAttachmentId)
+		public async Task<DispatchProtocolAttachment> GetAttachmentByIdAsync(int protocolAttachmentId)
 		{
-			return _dispatchProtocolAttachmentlRepository.GetAll().FirstOrDefault(x => x.DispatchProtocolAttachmentId == protocolAttachmentId);
+			return await _dispatchProtocolAttachmentRepository.GetByIdAsync(protocolAttachmentId);
 		}
 
 		public List<DispatchProtocolTrigger> DetermineActiveTriggers(DispatchProtocol protocol, Call call)

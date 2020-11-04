@@ -36,6 +36,12 @@ _UpgradeReport_Files/
 csx/
 rcf/
 .vs/
+.crt
+.key
+.pem
+.pfx
+.cache
+obj/
 
 #Tooling
 _ReSharper*/
@@ -43,6 +49,9 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.Tests.VisualState.xml
 *.vs10x
+.idea/
+*.DotSettings
+
 
 #Project and build files
 [Bb]uild/Packages/

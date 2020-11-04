@@ -1,92 +1,240 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Data.SqlServerCe;
-using System.Linq;
+using System.Data.Common;
+using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model;
-using Resgrid.Model.Custom;
 using Resgrid.Model.Repositories;
-using Resgrid.Repositories.DataRepository.Contexts;
-using Resgrid.Repositories.DataRepository.Transactions;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.DepartmentSettings;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class DepartmentSettingsRepository : RepositoryBase<DepartmentSetting>, IDepartmentSettingsRepository
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		private readonly IConnectionProvider _connectionProvider;
+		private readonly SqlConfiguration _sqlConfiguration;
+		private readonly IQueryFactory _queryFactory;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentSettingsRepository(DataContext context, IISolationLevel isolationLevel)
-			: base(context, isolationLevel) { }
-
-		public DepartmentSetting GetDepartmentSettingByUserIdType(string userId, DepartmentSettingTypes type)
+		public DepartmentSettingsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-//			if (IsSqlCe)
-//			{
-//				var data = db.SqlQuery<DepartmentSetting>(@"SELECT ds.* FROM DepartmentSettings ds
-//																	INNER JOIN DepartmentMembers dm ON ds.DepartmentId = dm.DepartmentId
-//																	WHERE dm.UserId = @UserId AND ds.SettingType = @SettingType",
-//					new SqlCeParameter("@UserId", userId),
-//					new SqlCeParameter("@SettingType", (int)type));
-
-//				return data.FirstOrDefault();
-//			}
-//			else
-//			{
-				var data = db.SqlQuery<DepartmentSetting>(@"SELECT ds.* FROM DepartmentSettings ds
-																	INNER JOIN DepartmentMembers dm ON ds.DepartmentId = dm.DepartmentId
-																	WHERE dm.UserId = @UserId AND ds.SettingType = @SettingType",
-					new SqlParameter("@UserId", userId),
-					new SqlParameter("@SettingType", (int) type));
-
-				return data.FirstOrDefault();
-			//}
+			_connectionProvider = connectionProvider;
+			_sqlConfiguration = sqlConfiguration;
+			_queryFactory = queryFactory;
+			_unitOfWork = unitOfWork;
 		}
 
-		public DepartmentSetting GetDepartmentSettingByIdType(int departmentId, DepartmentSettingTypes type)
+		public async Task<DepartmentSetting> GetDepartmentSettingByUserIdTypeAsync(string userId, DepartmentSettingTypes type)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				return db.Query<DepartmentSetting>(@"SELECT ds.* FROM DepartmentSettings ds
-													WHERE ds.DepartmentId = @departmentId AND ds.SettingType = @settingType", 
-						new { departmentId = departmentId, settingType = type }).FirstOrDefault();
+				var selectFunction = new Func<DbConnection, Task<DepartmentSetting>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("SettingType", (int)type);
+
+					var query = _queryFactory.GetQuery<SelectBySettingTypeUserIdQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<DepartmentSetting>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+
+			return null;
+		}
+
+		public async Task<DepartmentSetting> GetDepartmentSettingByIdTypeAsync(int departmentId, DepartmentSettingTypes type)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<DepartmentSetting>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("SettingType", (int)type);
+
+					var query = _queryFactory.GetQuery<SelectBySettingTypeDepartmentIdQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<DepartmentSetting>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public DepartmentSetting GetDepartmentSettingBySettingType(string setting, DepartmentSettingTypes type)
+		public async Task<DepartmentSetting> GetDepartmentSettingBySettingTypeAsync(string setting, DepartmentSettingTypes type)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				return db.Query<DepartmentSetting>(@"SELECT ds.* FROM DepartmentSettings ds
-													WHERE ds.Setting = @setting AND ds.SettingType = @settingType",
-						new { setting = setting, settingType = type }).FirstOrDefault();
+				var selectFunction = new Func<DbConnection, Task<DepartmentSetting>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Setting", setting);
+					dynamicParameters.Add("SettingType", (int)type);
+
+					var query = _queryFactory.GetQuery<SelectBySettingAndTypeQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<DepartmentSetting>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public List<DepartmentManagerInfo> GetAllDepartmentManagerInfo()
+		public async Task<List<DepartmentManagerInfo>> GetAllDepartmentManagerInfoAsync()
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				return db.Query<DepartmentManagerInfo>(@"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email FROM Departments d
-													 INNER JOIN AspNetUsers u ON u.Id = d.ManagingUserId
-													 LEFT OUTER JOIN UserProfiles up ON up.UserId = d.ManagingUserId").ToList();
+				var selectFunction = new Func<DbConnection, Task<List<DepartmentManagerInfo>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+
+					var query = _queryFactory.GetQuery<SelectAllManagerInfoQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<List<DepartmentManagerInfo>>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 
-		public DepartmentManagerInfo GetDepartmentManagerInfoByEmail(string emailAddress)
+		public async Task<DepartmentManagerInfo> GetDepartmentManagerInfoByEmailAsync(string emailAddress)
 		{
-			using (IDbConnection db = new SqlConnection(connectionString))
+			try
 			{
-				return db.Query<DepartmentManagerInfo>(@"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email FROM Departments d
-													 INNER JOIN AspNetUsers u ON u.Id = d.ManagingUserId
-													 LEFT OUTER JOIN UserProfiles up ON up.UserId = d.ManagingUserId
-													 WHERE u.Email = @emailAddress",
-						new { emailAddress = emailAddress}).FirstOrDefault();
+				var selectFunction = new Func<DbConnection, Task<DepartmentManagerInfo>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("EmailAddress", emailAddress);
+
+					var query = _queryFactory.GetQuery<SelectManagerInfoByEmailQuery>();
+
+					return await x.QueryFirstOrDefaultAsync<DepartmentManagerInfo>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 	}

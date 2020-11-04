@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Quidjibo.Attributes;
 using Quidjibo.Commands;
 
 namespace Resgrid.Workers.Console.Commands

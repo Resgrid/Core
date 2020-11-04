@@ -42,10 +42,20 @@ namespace Resgrid.Model
 		public virtual ICollection<IncidentLog> Logs { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return IncidentId; }
 			set { IncidentId = (int)value; }
 		}
+
+		
+		[NotMapped]
+		public string TableName => "Incidents";
+
+		[NotMapped]
+		public string IdName => "IncidentId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Call", "Definition", "Logs" };
 	}
 }

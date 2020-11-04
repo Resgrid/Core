@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Resgrid.Model;
-using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
@@ -10,23 +11,24 @@ namespace Resgrid.Services
 {
 	public class DocumentsService : IDocumentsService
 	{
-		private readonly IGenericDataRepository<Document> _documentRepository;
+		private readonly IDocumentRepository _documentRepository;
 		private readonly IEventAggregator _eventAggregator;
 
-		public DocumentsService(IGenericDataRepository<Document> documentRepository, IEventAggregator eventAggregator)
+		public DocumentsService(IDocumentRepository documentRepository, IEventAggregator eventAggregator)
 		{
 			_documentRepository = documentRepository;
 			_eventAggregator = eventAggregator;
 		}
 
-		public List<Document> GetAllDocumentsByDepartmentId(int departmentId)
+		public async Task<List<Document>> GetAllDocumentsByDepartmentIdAsync(int departmentId)
 		{
-			return _documentRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var documents = await _documentRepository.GetAllByDepartmentIdAsync(departmentId);
+			return documents.ToList();
 		}
 
-		public List<Document> GetFilteredDocumentsByDepartmentId(int departmentId, string type, string category)
+		public async Task<List<Document>> GetFilteredDocumentsByDepartmentIdAsync(int departmentId, string type, string category)
 		{
-			var result = _documentRepository.GetAll().Where(x => x.DepartmentId == departmentId).ToList();
+			var result = await GetAllDocumentsByDepartmentIdAsync(departmentId);
 
 			if (!string.IsNullOrWhiteSpace(type))
 			{
@@ -57,30 +59,27 @@ namespace Resgrid.Services
 			return result;
 		}
 
-		public Document SaveDocument(Document document)
+		public async Task<Document> SaveDocumentAsync(Document document, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_documentRepository.SaveOrUpdate(document);
-			
-			return document;
+			return await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
 		}
 
-		public List<string> GetDistinctCategoriesByDepartmentId(int departmentId)
+		public async Task<List<string>> GetDistinctCategoriesByDepartmentIdAsync(int departmentId)
 		{
-			var categories = (from doc in _documentRepository.GetAll()
-				where doc.DepartmentId == departmentId
+			var categories = (from doc in await GetAllDocumentsByDepartmentIdAsync(departmentId)
 				select doc.Category).Distinct().ToList();
 
 			return categories;
 		}
 
-		public Document GetDocumentById(int documentId)
+		public async Task<Document> GetDocumentByIdAsync(int documentId)
 		{
-			return _documentRepository.GetAll().FirstOrDefault(x => x.DocumentId == documentId);
+			return await _documentRepository.GetByIdAsync(documentId);
 		}
 
-		public void DeleteDocument(Document document)
+		public async Task<bool> DeleteDocumentAsync(Document document, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			_documentRepository.DeleteOnSubmit(document);
+			return await _documentRepository.DeleteAsync(document, cancellationToken);
 		}
 	}
 }

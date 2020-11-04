@@ -1,305 +1,38 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{80FB64B4-62F9-4F06-9549-C519B4360DFC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Resgrid.Services</RootNamespace>
-    <AssemblyName>Resgrid.Services</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Cloud|AnyCPU'">
-    <OutputPath>bin\Cloud\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Azure|AnyCPU'">
-    <OutputPath>bin\Azure\</OutputPath>
-    <DefineConstants>TRACE;AZURE,RELEASE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
-    <OutputPath>bin\Staging\</OutputPath>
-    <DefineConstants>TRACE;STAGING,RELEASE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="AsyncEnumerable, Version=2.2.2.0, Culture=neutral, PublicKeyToken=0426b068161bd1d1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AsyncEnumerator.2.2.2\lib\net45\AsyncEnumerable.dll</HintPath>
-    </Reference>
-    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.2.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>..\..\packages\BouncyCastle.1.8.2\lib\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonServiceLocator.1.4.0\lib\net45\CommonServiceLocator.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="jose-jwt, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\jose-jwt.2.4.0\lib\net461\jose-jwt.dll</HintPath>
-    </Reference>
-    <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=3.9.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CompareNETObjects.3.09.0.0\lib\net46\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="MimeKit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MimeKit.2.0.4\lib\net45\MimeKit.dll</HintPath>
-    </Reference>
-    <Reference Include="MoreLinq, Version=2.8.21218.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\morelinq.2.8.0\lib\net40\MoreLinq.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenPop, Version=2.0.4.369, Culture=neutral, PublicKeyToken=6bdb97f144b7efc8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\References\OpenPop.NET-2.0.5\binaries\OpenPop.dll</HintPath>
-    </Reference>
-    <Reference Include="Postmark, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Postmark.4.3.0\lib\netstandard2.0\Postmark.dll</HintPath>
-    </Reference>
-    <Reference Include="Stripe.net, Version=33.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Stripe.net.33.3.0\lib\net45\Stripe.net.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Device" />
-    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security" />
-    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\Common\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ActionLogsService.cs" />
-    <Compile Include="AddressService.cs" />
-    <Compile Include="AffiliateService.cs" />
-    <Compile Include="AuditService.cs" />
-    <Compile Include="AuthorizationService.cs" />
-    <Compile Include="CalendarService.cs" />
-    <Compile Include="CallEmailTemplates\ConnectTemplate.cs" />
-    <Compile Include="CallEmailTemplates\CalFireScuTemplate.cs" />
-    <Compile Include="CallEmailTemplates\ParklandCounty2Template.cs" />
-    <Compile Include="CallEmailTemplates\PortJervisTemplate.cs" />
-    <Compile Include="CallEmailTemplates\FourPartPipeTemplate.cs" />
-    <Compile Include="CallEmailTemplates\YellowHeadTemplate.cs" />
-    <Compile Include="CallEmailTemplates\SpottedDogTemplate.cs" />
-    <Compile Include="CallEmailTemplates\HancockTemplate.cs" />
-    <Compile Include="CallEmailTemplates\BrockportTemplate.cs" />
-    <Compile Include="CallEmailTemplates\CalFireEccTemplate.cs" />
-    <Compile Include="CallEmailTemplates\CallEmailFactory.cs" />
-    <Compile Include="CallEmailTemplates\CarencroFireTemplate.cs" />
-    <Compile Include="CallEmailTemplates\GenericPageTemplate.cs" />
-    <Compile Include="CallEmailTemplates\ParklandCountyTemplate.cs" />
-    <Compile Include="CallEmailTemplates\UnionFireTemplate.cs" />
-    <Compile Include="CallEmailTemplates\LowestoftCoastGuardTemplate.cs" />
-    <Compile Include="CallEmailTemplates\GenericTemplate.cs" />
-    <Compile Include="CallEmailTemplates\GrandBlancTemplate.cs" />
-    <Compile Include="CallEmailTemplates\ResgridEmailTemplate.cs" />
-    <Compile Include="CallsService.cs" />
-    <Compile Include="CertificationService.cs" />
-    <Compile Include="CommandsService.cs" />
-    <Compile Include="CommunicationService.cs" />
-    <Compile Include="CoreEventService.cs" />
-    <Compile Include="CoreWeb\IWebEventPublisher.cs" />
-    <Compile Include="CustomStateService.cs" />
-    <Compile Include="DeleteService.cs" />
-    <Compile Include="DepartmentGroupsService.cs" />
-    <Compile Include="DepartmentLinksService.cs" />
-    <Compile Include="DepartmentProfileService.cs" />
-    <Compile Include="DepartmentSettingsService.cs" />
-    <Compile Include="DepartmentsService.cs" />
-    <Compile Include="DistributionListsService.cs" />
-    <Compile Include="DocumentsService.cs" />
-    <Compile Include="EmailService.cs" />
-    <Compile Include="Facades\Stripe\StripeChargeServiceFacade.cs" />
-    <Compile Include="Facades\Stripe\StripeInvoiceServiceFacade.cs" />
-    <Compile Include="Facades\Stripe\StripeSubscriptionServiceFacade.cs" />
-    <Compile Include="FirebaseService.cs" />
-    <Compile Include="HealthService.cs" />
-    <Compile Include="ResourceOrdersService.cs" />
-    <Compile Include="FileService.cs" />
-    <Compile Include="GeoService.cs" />
-    <Compile Include="ImageService.cs" />
-    <Compile Include="IncidentService.cs" />
-    <Compile Include="InternalCacheService.cs" />
-    <Compile Include="InventoryService.cs" />
-    <Compile Include="InvitesService.cs" />
-    <Compile Include="JobsService.cs" />
-    <Compile Include="LimitsService.cs" />
-    <Compile Include="LogService.cs" />
-    <Compile Include="MappingService.cs" />
-    <Compile Include="MessageService.cs" />
-    <Compile Include="NotesService.cs" />
-    <Compile Include="NotificationService.cs" />
-    <Compile Include="NumbersService.cs" />
-    <Compile Include="PaymentProviderService.cs" />
-    <Compile Include="PermissionsService.cs" />
-    <Compile Include="PushLogsService.cs" />
-    <Compile Include="PushService.cs" />
-    <Compile Include="PushUriService.cs" />
-    <Compile Include="QueueService.cs" />
-    <Compile Include="PersonnelRolesService.cs" />
-    <Compile Include="ScheduledTasksService.cs" />
-    <Compile Include="ServicesModule.cs" />
-    <Compile Include="ShiftsService.cs" />
-    <Compile Include="SmsService.cs" />
-    <Compile Include="SubscriptionsService.cs" />
-    <Compile Include="ProtocolsService.cs" />
-    <Compile Include="TextCommandService.cs" />
-    <Compile Include="TemplatesService.cs" />
-    <Compile Include="TrainingService.cs" />
-    <Compile Include="UnitsService.cs" />
-    <Compile Include="UserProfileService.cs" />
-    <Compile Include="UsersService.cs" />
-    <Compile Include="UserStateService.cs" />
-    <Compile Include="WorkLogsService.cs" />
+    <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
+    <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Stripe.net" Version="37.35.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj">
-      <Project>{d551040a-69be-4b9b-9f33-000ac41dad53}</Project>
-      <Name>Resgrid.Providers.Bus</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.EmailProvider\Resgrid.Providers.EmailProvider.csproj">
-      <Project>{BF6D6F80-3424-4EA1-BAF3-A815856E155C}</Project>
-      <Name>Resgrid.Providers.EmailProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj">
-      <Project>{dd9e37af-9af3-4cbb-ba7f-b66158c61222}</Project>
-      <Name>Resgrid.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj">
-      <Project>{21B7C3A0-BD8B-4F05-B5DD-4D2E6B1893FA}</Project>
-      <Name>Resgrid.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Resgrid.Model\Resgrid.Model.csproj">
-      <Project>{8B7997EC-67A2-42AB-9FBD-F8ED2C2997C8}</Project>
-      <Name>Resgrid.Model</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+    <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\Resgrid.Model\Resgrid.Model.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk">
-      <Link>Resgrid-PubPriv-KeyFile.snk</Link>
-    </None>
-    <EmbeddedResource Include="..\..\Common\resgrid.com.crt">
-      <Link>resgrid.com.crt</Link>
-    </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

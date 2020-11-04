@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model.Providers;
 using StackExchange.Redis;
@@ -28,7 +29,7 @@ namespace Resgrid.Providers.Cache
 				{
 					cache = _connection.GetDatabase();
 
-					var cacheValue = cache.StringGet(cacheKey);
+					var cacheValue = cache.StringGet(SetCacheKeyForEnv(cacheKey));
 
 					try
 					{
@@ -37,7 +38,7 @@ namespace Resgrid.Providers.Cache
 					}
 					catch
 					{
-						Remove(cacheKey);
+						Remove(SetCacheKeyForEnv(cacheKey));
 						throw;
 					}
 
@@ -60,7 +61,7 @@ namespace Resgrid.Providers.Cache
 				{
 					try
 					{
-						cache.StringSet(cacheKey, ObjectSerialization.Serialize(data), expiration);
+						cache.StringSet(SetCacheKeyForEnv(cacheKey), ObjectSerialization.Serialize(data), expiration);
 					}
 					catch (TimeoutException)
 					{ }
@@ -81,7 +82,7 @@ namespace Resgrid.Providers.Cache
 				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
 				{
 					IDatabase cache = _connection.GetDatabase();
-					cache.KeyDelete(cacheKey);
+					cache.KeyDelete(SetCacheKeyForEnv(cacheKey));
 				}
 			}
 			catch (Exception ex)
@@ -103,7 +104,7 @@ namespace Resgrid.Providers.Cache
 				{
 					cache = _connection.GetDatabase();
 
-					var cacheValue = await cache.StringGetAsync(cacheKey);
+					var cacheValue = await cache.StringGetAsync(SetCacheKeyForEnv(cacheKey));
 
 					try
 					{
@@ -112,7 +113,7 @@ namespace Resgrid.Providers.Cache
 					}
 					catch
 					{
-						await RemoveAsync(cacheKey);
+						await RemoveAsync(SetCacheKeyForEnv(cacheKey));
 						throw;
 					}
 
@@ -135,7 +136,7 @@ namespace Resgrid.Providers.Cache
 				{
 					try
 					{
-						await cache.StringSetAsync(cacheKey, ObjectSerialization.Serialize(data), expiration);
+						await cache.StringSetAsync(SetCacheKeyForEnv(cacheKey), ObjectSerialization.Serialize(data), expiration);
 					}
 					catch (TimeoutException)
 					{ }
@@ -156,7 +157,7 @@ namespace Resgrid.Providers.Cache
 				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
 				{
 					IDatabase cache = _connection.GetDatabase();
-					await cache.KeyDeleteAsync(cacheKey);
+					await cache.KeyDeleteAsync(SetCacheKeyForEnv(cacheKey));
 
 					return true;
 				}
@@ -174,6 +175,18 @@ namespace Resgrid.Providers.Cache
 			EstablishRedisConnection();
 
 			return _connection.IsConnected;
+		}
+
+		private string SetCacheKeyForEnv(string cacheKey)
+		{
+			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
+				return $"DEV{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
+				return $"QA{cacheKey}";
+			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
+				return $"ST{cacheKey}";
+
+			return cacheKey;
 		}
 
 		private void EstablishRedisConnection()

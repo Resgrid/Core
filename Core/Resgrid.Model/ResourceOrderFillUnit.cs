@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Resgrid.Model
@@ -8,7 +9,6 @@ namespace Resgrid.Model
 	{
 		[Key]
 		[Required]
-		[Dapper.IgnoreInsert]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int ResourceOrderFillUnitId { get; set; }
 
@@ -25,10 +25,19 @@ namespace Resgrid.Model
 		public virtual Unit Unit { get; set; }
 
 		[NotMapped]
-		public object Id
+		public object IdValue
 		{
 			get { return ResourceOrderFillUnitId; }
 			set { ResourceOrderFillUnitId = (int)value; }
 		}
+
+		[NotMapped]
+		public string TableName => "ResourceOrderFillUnits";
+
+		[NotMapped]
+		public string IdName => "ResourceOrderFillUnitId";
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "OrderFill", "Unit" };
 	}
 }

@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Resgrid.Workers.Console": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "environmentVariables": {
+        "Key": "Value",
+        "RESGRID__DataConfig__ConnectionString": "Server=192.168.1.71;Database=Resgrid;User Id=resgrid_app;Password=resgrid123;MultipleActiveResultSets=True;"
+      }
+    }
+  }
+}

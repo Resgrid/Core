@@ -91,7 +91,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				result.FirebaseApiToken = await _firebaseService.CreateTokenAsync(UserId, null);
 			}
 
-			return Ok(result);
+			return result;
 		}
 	}
 }

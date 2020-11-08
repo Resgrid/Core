@@ -688,7 +688,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _userProfileService.SaveProfileAsync(DepartmentId, savedProfile, cancellationToken);
 
 				auditEvent.After = savedProfile.CloneJson();
-				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				var depMember = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
 				if (depMember != null)

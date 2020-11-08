@@ -273,7 +273,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				calendarItem = await _calendarService.SaveCalendarItemAsync(calendarItem, cancellationToken);
 
-				await _eventAggregator.SendMessage<CalendarEventAddedEvent>(new CalendarEventAddedEvent() { DepartmentId = DepartmentId, Item = calendarItem});
+				_eventAggregator.SendMessage<CalendarEventAddedEvent>(new CalendarEventAddedEvent() { DepartmentId = DepartmentId, Item = calendarItem});
 
 				return Json(item);
 			}
@@ -336,7 +336,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					calendarItem = await _calendarService.SaveCalendarItemAsync(calendarItem, cancellationToken);
 
-					await _eventAggregator.SendMessage<CalendarEventUpdatedEvent>(new CalendarEventUpdatedEvent() { DepartmentId = DepartmentId, Item = calendarItem });
+					_eventAggregator.SendMessage<CalendarEventUpdatedEvent>(new CalendarEventUpdatedEvent() { DepartmentId = DepartmentId, Item = calendarItem });
 
 					return Json(item);
 				}

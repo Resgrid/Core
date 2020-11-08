@@ -345,12 +345,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					cqi.Profiles = new List<UserProfile>();
 
-
 				if (dispatchingUserIds.Any() || dispatchingGroupIds.Any() || dispatchingUnitIds.Any() || dispatchingRoleIds.Any())
 					await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 
-
-				await _eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 			}
@@ -577,7 +575,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 
 
-					await _eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+					_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 				}
 
 				//	scope.Complete();

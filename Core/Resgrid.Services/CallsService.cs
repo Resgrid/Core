@@ -92,7 +92,7 @@ namespace Resgrid.Services
 		{
 			int year = DateTime.UtcNow.Year;
 
-			var count = (await _callsRepository.GetAllByDepartmentIdAsync(departmentId)).Count(x => x.LoggedOn.Year == year) + 1;
+			var count = (await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, new DateTime(year - 1, 12, 30), new DateTime(year, 12, 31))).Count(x => x.LoggedOn.Year == year) + 1;
 
 			return string.Format("{0}-{1}", year % 100, count);
 		}

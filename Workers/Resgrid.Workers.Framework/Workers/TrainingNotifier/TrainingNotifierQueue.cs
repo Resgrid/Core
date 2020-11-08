@@ -7,6 +7,7 @@ using Autofac;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 
@@ -111,7 +112,7 @@ namespace Resgrid.Workers.Framework.Workers.TrainingNotifier
 		{
 			var items = new List<TrainingNotifierQueueItem>();
 
-			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.TrainingNotifier, Timestamp = DateTime.UtcNow});
+			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.TrainingNotifier, Timestamp = DateTime.UtcNow});
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

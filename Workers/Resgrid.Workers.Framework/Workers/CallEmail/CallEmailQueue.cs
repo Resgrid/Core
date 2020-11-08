@@ -6,6 +6,7 @@ using Autofac;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 
@@ -107,7 +108,7 @@ namespace Resgrid.Workers.Framework
 		public async Task<IEnumerable<CallEmailQueueItem>> GetItems(int maxItemsToReturn)
 		{
 			var items = new List<CallEmailQueueItem>();
-			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CallEmail, Timestamp = DateTime.UtcNow });
+			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.CallEmail, Timestamp = DateTime.UtcNow });
 
 			int count = 0;
 			if (_queue.Count < maxItemsToReturn)

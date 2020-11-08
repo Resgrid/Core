@@ -8,6 +8,7 @@ using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Message = Microsoft.Azure.ServiceBus.Message;
@@ -168,7 +169,7 @@ namespace Resgrid.Workers.Framework.Workers.Notification
 		{
 			var items = new List<NotificationQueueItem>();
 
-			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.Notification, Timestamp = DateTime.UtcNow });
+			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.Notification, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

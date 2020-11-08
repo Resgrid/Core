@@ -156,9 +156,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.UnitAdded;
 				auditEvent.After = model.Unit.CloneJson();
-				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				await _eventAggregator.SendMessage<UnitAddedEvent>(new UnitAddedEvent() { DepartmentId = DepartmentId, Unit = model.Unit });
+				_eventAggregator.SendMessage<UnitAddedEvent>(new UnitAddedEvent() { DepartmentId = DepartmentId, Unit = model.Unit });
 
 				return RedirectToAction("Index");
 			}
@@ -247,7 +247,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _unitsService.ClearRolesForUnitAsync(unit.UnitId, cancellationToken);
 
 				auditEvent.After = unit.CloneJson();
-				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index");
 			}
@@ -361,7 +361,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.UserId = UserId;
 			auditEvent.Type = AuditLogTypes.UnitRemoved;
 			auditEvent.Before = unit.CloneJson();
-			await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			await _unitsService.DeleteUnitAsync(unitId, cancellationToken);
 

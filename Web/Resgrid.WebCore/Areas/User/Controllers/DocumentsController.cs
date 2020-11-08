@@ -11,6 +11,7 @@ using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Documents;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -148,7 +149,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _documentsService.SaveDocumentAsync(doc, cancellationToken);
 
-				await _eventAggregator.SendMessage<DocumentAddedEvent>(new DocumentAddedEvent() { DepartmentId = DepartmentId, Document = doc });
+				_eventAggregator.SendMessage<DocumentAddedEvent>(new DocumentAddedEvent() { DepartmentId = DepartmentId, Document = doc });
 
 				return RedirectToAction("Index", "Documents", new { Area = "User" });
 			}

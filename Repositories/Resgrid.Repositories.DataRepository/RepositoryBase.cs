@@ -420,7 +420,7 @@ namespace Resgrid.Repositories.DataRepository
 										if (idFields.Count() == 1)
 										{
 											idFields.First().SetValue(item, idValue, null);
-											await genericSave.InvokeAsync(baseRepo, new[] { item, cancellationToken, false });
+											await genericSave.InvokeAsync(baseRepo, new[] { item, cancellationToken, true });
 										}
 
 									}
@@ -446,7 +446,7 @@ namespace Resgrid.Repositories.DataRepository
 								ReflectionHelpers.SetProperty($"{property.Name}.{idFields.First().Name}", entity, idValue);
 								var subObj = property.GetValue(entity, null);
 
-								await genericSave.InvokeAsync(baseRepo, new[] { subObj, cancellationToken, false });
+								await genericSave.InvokeAsync(baseRepo, new[] { subObj, cancellationToken, true });
 							}
 
 						}

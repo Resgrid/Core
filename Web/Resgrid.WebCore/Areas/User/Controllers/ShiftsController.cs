@@ -18,6 +18,7 @@ using Resgrid.Web.Areas.User.Models.Calendar;
 using Resgrid.Web.Areas.User.Models.Shifts;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Resgrid.Model.Providers;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models;
 
@@ -158,7 +159,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _shiftsService.UpdateShiftPersonnel(shift, personnel, cancellationToken);
 
 				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
-				await _eventAggregator.SendMessage<ShiftUpdatedEvent>(new ShiftUpdatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
+				_eventAggregator.SendMessage<ShiftUpdatedEvent>(new ShiftUpdatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
 
 				return RedirectToAction("Index");
 			}
@@ -298,7 +299,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var newShift = await _shiftsService.SaveShiftAsync(model.Shift, cancellationToken);
 
 				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
-				await _eventAggregator.SendMessage<ShiftCreatedEvent>(new ShiftCreatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = newShift });
+				_eventAggregator.SendMessage<ShiftCreatedEvent>(new ShiftCreatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = newShift });
 
 				return RedirectToAction("Index");
 			}
@@ -362,7 +363,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 				tradeRequestedEvent.DepartmentNumber = number;
 
-				await _eventAggregator.SendMessage<ShiftTradeRequestedEvent>(tradeRequestedEvent);
+				_eventAggregator.SendMessage<ShiftTradeRequestedEvent>(tradeRequestedEvent);
 
 				return RedirectToAction("YourShifts");
 			}
@@ -422,7 +423,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _shiftsService.UpdateShiftDatesAsync(shift, days, cancellationToken);
 
 			var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
-			await _eventAggregator.SendMessage<ShiftDaysAddedEvent>(new ShiftDaysAddedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
+			_eventAggregator.SendMessage<ShiftDaysAddedEvent>(new ShiftDaysAddedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
 
 			return RedirectToAction("Index");
 		}
@@ -651,7 +652,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 			shiftTradeProposed.DepartmentNumber = number;
 
-			await _eventAggregator.SendMessage<ShiftTradeProposedEvent>(shiftTradeProposed);
+			_eventAggregator.SendMessage<ShiftTradeProposedEvent>(shiftTradeProposed);
 
 			return RedirectToAction("YourShifts");
 
@@ -677,7 +678,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 			shiftTradeRejected.DepartmentNumber = number;
 
-			await _eventAggregator.SendMessage<ShiftTradeRejectedEvent>(shiftTradeRejected);
+			_eventAggregator.SendMessage<ShiftTradeRejectedEvent>(shiftTradeRejected);
 
 			return RedirectToAction("YourShifts");
 		}
@@ -728,7 +729,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _shiftsService.SaveTradeAsync(tradeRequest, cancellationToken);
 
-				await _eventAggregator.SendMessage<ShiftTradeFilledEvent>(shiftTradeFilled);
+				_eventAggregator.SendMessage<ShiftTradeFilledEvent>(shiftTradeFilled);
 
 				return RedirectToAction("YourShifts");
 			}

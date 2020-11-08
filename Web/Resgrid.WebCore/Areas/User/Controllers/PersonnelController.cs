@@ -309,14 +309,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					var userObject = _usersService.GetUserById(user.UserId);
 
-					await _eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent() { DepartmentId = DepartmentId, Name = string.Format("{0} {1}", model.FirstName, model.LastName), User = userObject });
+					_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent() { DepartmentId = DepartmentId, Name = string.Format("{0} {1}", model.FirstName, model.LastName), User = userObject });
 
 					var auditEvent = new AuditEvent();
 					auditEvent.DepartmentId = DepartmentId;
 					auditEvent.UserId = UserId;
 					auditEvent.Type = AuditLogTypes.UserAdded;
 					auditEvent.After = userObject;
-					await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					if (model.UserGroup != 0)
 						await _departmentGroupsService.MoveUserIntoGroupAsync(user.UserId, model.UserGroup, model.IsUserGroupAdmin, DepartmentId, cancellationToken);
@@ -395,7 +395,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					_departmentsService.InvalidateDepartmentMembers();
 					_usersService.ClearCacheForDepartment(DepartmentId);
 
-					await _eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
+					_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
 
 					if (member != null && member.IsDeleted)
 					{

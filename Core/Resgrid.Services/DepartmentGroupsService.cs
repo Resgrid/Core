@@ -336,7 +336,7 @@ namespace Resgrid.Services
 			var saved = await _departmentGroupMembersRepository.SaveOrUpdateAsync(depMember, cancellationToken);
 			InvalidateGroupInCache(groupId);
 
-			await _eventAggregator.SendMessage<UserAssignedToGroupEvent>(new UserAssignedToGroupEvent() { DepartmentId = departmentGroup.DepartmentId, UserId = userId, Group = departmentGroup });
+			_eventAggregator.SendMessage<UserAssignedToGroupEvent>(new UserAssignedToGroupEvent() { DepartmentId = departmentGroup.DepartmentId, UserId = userId, Group = departmentGroup });
 
 			return saved;
 		}

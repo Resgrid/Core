@@ -21,6 +21,7 @@ using System.Security.Claims;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
+using Elastic.Apm.NetCoreAll;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -226,8 +227,8 @@ namespace Resgrid.Web.ServicesCore
 
 			services.Configure<ForwardedHeadersOptions>(options =>
 			{
-				options.ForwardedHeaders =
-					ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+				options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+				//options.ForwardedHeaders = ForwardedHeaders.All;
 				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
 			});
 
@@ -392,7 +393,11 @@ namespace Resgrid.Web.ServicesCore
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			app.UseForwardedHeaders();
+			var forwardOpts = new ForwardedHeadersOptions
+			{
+				ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
+			};
+			app.UseForwardedHeaders(forwardOpts);
 
 			//loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 			//loggerFactory.AddDebug();
@@ -427,7 +432,8 @@ namespace Resgrid.Web.ServicesCore
 			app.UseStaticFiles();
 
 			app.UseAuthentication();
-			app.UseAuthorization(); 
+			app.UseAuthorization();
+			app.UseAuthorization();
 
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
@@ -442,6 +448,8 @@ namespace Resgrid.Web.ServicesCore
 
 				endpoints.MapHub<EventingHub>("/eventingHub");
 			});
+
+			app.UseAllElasticApm(Configuration);
 		}
 	}
 }

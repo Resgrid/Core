@@ -20,26 +20,26 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			string serializedObject = String.Empty;
 
-			try
-			{
-				serializedObject = ObjectSerialization.Serialize(callQueue);
+			//try
+			//{
+			//	serializedObject = ObjectSerialization.Serialize(callQueue);
 
-				// We are limited to 256KB in azure queue messages
-				var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
-				if (size > 220000)
-				{
-					callQueue.Profiles = null;
-					serializedObject = ObjectSerialization.Serialize(callQueue);
-				}
-			}
-			catch { }
+			//	// We are limited to 256KB in azure queue messages
+			//	var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
+			//	if (size > 220000)
+			//	{
+			//		callQueue.Profiles = null;
+			//		serializedObject = ObjectSerialization.Serialize(callQueue);
+			//	}
+			//}
+			//catch { }
 
-			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
-			if (String.IsNullOrWhiteSpace(serializedObject))
-			{
-				callQueue.Profiles = null;
+			//// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			//if (String.IsNullOrWhiteSpace(serializedObject))
+			//{
+			//	callQueue.Profiles = null;
 				serializedObject = ObjectSerialization.Serialize(callQueue);
-			}
+			//}
 
 			return SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
 		}
@@ -51,33 +51,33 @@ namespace Resgrid.Providers.Bus.Rabbit
 			if (messageQueue != null && messageQueue.Message != null && messageQueue.MessageId == 0 && messageQueue.Message.MessageId != 0)
 				messageQueue.MessageId = messageQueue.Message.MessageId;
 
-			try
-			{
+			//try
+			//{
+			//	serializedObject = ObjectSerialization.Serialize(messageQueue);
+
+			//	// We are limited to 256KB in azure queue messages
+			//	var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
+			//	if (size > 220000)
+			//	{
+			//		messageQueue.Profiles = null;
+			//		serializedObject = ObjectSerialization.Serialize(messageQueue);
+			//	}
+
+			//	if (ASCIIEncoding.Unicode.GetByteCount(serializedObject) > 220000)
+			//	{
+			//		messageQueue.Message.MessageRecipients = null;
+			//		serializedObject = ObjectSerialization.Serialize(messageQueue);
+			//	}
+			//}
+			//catch { }
+
+			//// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			//if (String.IsNullOrWhiteSpace(serializedObject))
+			//{
+			//	messageQueue.Profiles = null;
+			//	messageQueue.Message.MessageRecipients = null;
 				serializedObject = ObjectSerialization.Serialize(messageQueue);
-
-				// We are limited to 256KB in azure queue messages
-				var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
-				if (size > 220000)
-				{
-					messageQueue.Profiles = null;
-					serializedObject = ObjectSerialization.Serialize(messageQueue);
-				}
-
-				if (ASCIIEncoding.Unicode.GetByteCount(serializedObject) > 220000)
-				{
-					messageQueue.Message.MessageRecipients = null;
-					serializedObject = ObjectSerialization.Serialize(messageQueue);
-				}
-			}
-			catch { }
-
-			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
-			if (String.IsNullOrWhiteSpace(serializedObject))
-			{
-				messageQueue.Profiles = null;
-				messageQueue.Message.MessageRecipients = null;
-				serializedObject = ObjectSerialization.Serialize(messageQueue);
-			}
+			//}
 
 			return SendMessage(ServiceBusConfig.MessageBroadcastQueueName, serializedObject);
 		}
@@ -86,34 +86,34 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			string serializedObject = String.Empty;
 
-			try
-			{
+			//try
+			//{
+			//	serializedObject = ObjectSerialization.Serialize(distributionListQueue);
+
+			//	// We are limited to 256KB in azure queue messages
+			//	var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
+			//	if (size > 220000)
+			//	{
+			//		distributionListQueue.Users = null;
+			//		serializedObject = ObjectSerialization.Serialize(distributionListQueue);
+			//	}
+
+			//	// If were still too big, strip out some attachments
+			//	if (size > 220000)
+			//	{
+			//		distributionListQueue.Message.Attachments = null;
+			//		serializedObject = ObjectSerialization.Serialize(distributionListQueue);
+			//	}
+			//}
+			//catch { }
+
+			//// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
+			//if (String.IsNullOrWhiteSpace(serializedObject))
+			//{
+			//	distributionListQueue.Users = null;
+			//	distributionListQueue.Message.Attachments = null;
 				serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-
-				// We are limited to 256KB in azure queue messages
-				var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
-				if (size > 220000)
-				{
-					distributionListQueue.Users = null;
-					serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-				}
-
-				// If were still too big, strip out some attachments
-				if (size > 220000)
-				{
-					distributionListQueue.Message.Attachments = null;
-					serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-				}
-			}
-			catch { }
-
-			// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
-			if (String.IsNullOrWhiteSpace(serializedObject))
-			{
-				distributionListQueue.Users = null;
-				distributionListQueue.Message.Attachments = null;
-				serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-			}
+			//}
 
 			return SendMessage(ServiceBusConfig.EmailBroadcastQueueName, serializedObject);
 		}
@@ -219,8 +219,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private bool SendMessage(string queueName, string message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
+			//if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			//{
 				try
 				{
 					// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
@@ -243,9 +243,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 					Logging.LogException(ex);
 					return false;
 				}
-			}
+			//}
 
-			return false;
+			//return false;
 		}
 
 		private static string SetQueueNameForEnv(string cacheKey)

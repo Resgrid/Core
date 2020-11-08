@@ -20,34 +20,50 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 			_cqrsProvider = cqrsProvider;
 
-			_eventAggregator.AddListener(new DepartmentSettingsUpdateHandler(), true);
-			_eventAggregator.AddListener(new AuditEventHandler(), true);
+			_eventAggregator.AddListener(departmentSettingsUpdateHandler);
+			_eventAggregator.AddListener(auditEventHandler);
 		}
 
-		public class DepartmentSettingsUpdateHandler : IListener<DepartmentSettingsUpdateEvent>
+		private Action<DepartmentSettingsUpdateEvent> departmentSettingsUpdateHandler = async delegate(DepartmentSettingsUpdateEvent message)
 		{
-			public async Task<bool> Handle(DepartmentSettingsUpdateEvent message)
-			{
-				var departmentSettingsService = ServiceLocator.Current.GetInstance<IDepartmentSettingsService>();
-				var result = await departmentSettingsService.SaveOrUpdateSettingAsync(message.DepartmentId, DateTime.UtcNow.ToString("G"), DepartmentSettingTypes.UpdateTimestamp);
+			var departmentSettingsService = ServiceLocator.Current.GetInstance<IDepartmentSettingsService>();
+			var result = await departmentSettingsService.SaveOrUpdateSettingAsync(message.DepartmentId, DateTime.UtcNow.ToString("G"), DepartmentSettingTypes.UpdateTimestamp);
+		};
 
-				if (result != null)
-					return true;
 
-				return false;
-			}
-		}
+		//public class DepartmentSettingsUpdateHandler : IListener<DepartmentSettingsUpdateEvent>
+		//{
+		//	public async Task<bool> Handle(DepartmentSettingsUpdateEvent message)
+		//	{
+		//		var departmentSettingsService = ServiceLocator.Current.GetInstance<IDepartmentSettingsService>();
+		//		var result = await departmentSettingsService.SaveOrUpdateSettingAsync(message.DepartmentId, DateTime.UtcNow.ToString("G"), DepartmentSettingTypes.UpdateTimestamp);
 
-		public class AuditEventHandler : IListener<AuditEvent>
+		//		if (result != null)
+		//			return true;
+
+		//		return false;
+		//	}
+		//}
+
+		private Action<AuditEvent> auditEventHandler = async delegate(AuditEvent message)
 		{
-			public async Task<bool> Handle(AuditEvent message)
-			{
-				CqrsEvent cqrsEvent = new CqrsEvent();
-				cqrsEvent.Type = (int)CqrsEventTypes.AuditLog;
-				cqrsEvent.Data = ObjectSerialization.Serialize(message);
+			CqrsEvent cqrsEvent = new CqrsEvent();
+			cqrsEvent.Type = (int)CqrsEventTypes.AuditLog;
+			cqrsEvent.Data = ObjectSerialization.Serialize(message);
 
-				return await _cqrsProvider.EnqueueCqrsEventAsync(cqrsEvent);
-			}
-		}
+			await _cqrsProvider.EnqueueCqrsEventAsync(cqrsEvent);
+		};
+
+		//public class AuditEventHandler : IListener<AuditEvent>
+		//{
+		//	public async Task<bool> Handle(AuditEvent message)
+		//	{
+		//		CqrsEvent cqrsEvent = new CqrsEvent();
+		//		cqrsEvent.Type = (int)CqrsEventTypes.AuditLog;
+		//		cqrsEvent.Data = ObjectSerialization.Serialize(message);
+
+		//		return await _cqrsProvider.EnqueueCqrsEventAsync(cqrsEvent);
+		//	}
+		//}
 	}
 }

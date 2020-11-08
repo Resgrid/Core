@@ -29,37 +29,37 @@ namespace Resgrid.Providers.Bus
 
 			_rabbitTopicProvider = new RabbitTopicProvider();
 
-			_eventAggregator.AddListener(new UnitStatusHandler(), true);
-			_eventAggregator.AddListener(new UnitTypeGroupAvailabilityHandler(), true);
-			_eventAggregator.AddListener(new UnitTypeDepartmentAvailabilityHandler(), true);
-			_eventAggregator.AddListener(new UserStaffingHandler(), true);
-			_eventAggregator.AddListener(new UserRoleGroupAvailabilityHandler(), true);
-			_eventAggregator.AddListener(new UserRoleDepartmentAvailabilityHandler(), true);
-			_eventAggregator.AddListener(new PersonnelStatusChangedHandler(), true);
-			_eventAggregator.AddListener(new UserCreatedHandler(), true);
-			_eventAggregator.AddListener(new UserAssignedToGroupHandler(), true);
-			_eventAggregator.AddListener(new CalendarEventUpcomingHandler(), true);
-			_eventAggregator.AddListener(new CalendarEventAddedHandler(), true);
-			_eventAggregator.AddListener(new CalendarEventUpdatedHandler(), true);
-			_eventAggregator.AddListener(new DocumentAddedHandler(), true);
-			_eventAggregator.AddListener(new NoteAddedHandler(), true);
-			_eventAggregator.AddListener(new UnitAddedHandler(), true);
-			_eventAggregator.AddListener(new LogAddedHandler(), true);
-			_eventAggregator.AddListener(new DepartmentSettingsChangedHandler(), true);
-			_eventAggregator.AddListener(new WorkerHeartbeatHandler(), true);
-			_eventAggregator.AddListener(new DListCheckHandler(), true);
-			_eventAggregator.AddListener(new ShiftTradeRequestedHandler(), true);
-			_eventAggregator.AddListener(new ShiftTradeRejectedEventHandler(), true);
-			_eventAggregator.AddListener(new ShiftTradeFilledEventHandler(), true);
-			_eventAggregator.AddListener(new ShiftCreatedEventHandler(), true);
-			_eventAggregator.AddListener(new ShiftUpdatedEventHandler(), true);
-			_eventAggregator.AddListener(new ShiftDaysAddedEventHandler(), true);
+			_eventAggregator.AddListener(unitStatusHandler);
+			_eventAggregator.AddListener(unitTypeGroupAvailabilityHandler);
+			_eventAggregator.AddListener(unitTypeDepartmentAvailabilityHandler);
+			_eventAggregator.AddListener(userStaffingHandler);
+			_eventAggregator.AddListener(userRoleGroupAvailabilityHandler);
+			_eventAggregator.AddListener(userRoleDepartmentAvailabilityHandler);
+			_eventAggregator.AddListener(personnelStatusChangedHandler);
+			_eventAggregator.AddListener(userCreatedHandler);
+			_eventAggregator.AddListener(userAssignedToGroupHandler);
+			_eventAggregator.AddListener(calendarEventUpcomingHandler);
+			_eventAggregator.AddListener(calendarEventAddedHandler);
+			_eventAggregator.AddListener(calendarEventUpdatedHandler);
+			_eventAggregator.AddListener(documentAddedHandler);
+			_eventAggregator.AddListener(noteAddedHandler);
+			_eventAggregator.AddListener(unitAddedHandler);
+			_eventAggregator.AddListener(logAddedHandler);
+			_eventAggregator.AddListener(resourceOrderAddedHandler);
+			_eventAggregator.AddListener(workerHeartbeatHandler);
+			_eventAggregator.AddListener(dListCheckHandler);
+			_eventAggregator.AddListener(shiftTradeRequestedHandler);
+			_eventAggregator.AddListener(shiftTradeRejectedEventHandler);
+			_eventAggregator.AddListener(shiftTradeFilledEventHandler);
+			_eventAggregator.AddListener(shiftCreatedEventHandler);
+			_eventAggregator.AddListener(shiftUpdatedEventHandler);
+			_eventAggregator.AddListener(shiftDaysAddedEventHandler);
 
 			// Topics (SignalR Integration)
-			_eventAggregator.AddListener(new PersonnelStatusChangedTopicHandler(), true);
-			_eventAggregator.AddListener(new PersonnelStaffingChangedTopicHandler(), true);
-			_eventAggregator.AddListener(new UnitStatusTopicHandler(), true);
-			_eventAggregator.AddListener(new CallAddedTopicHandler(), true);
+			_eventAggregator.AddListener(personnelStatusChangedTopicHandler);
+			_eventAggregator.AddListener(personnelStaffingChangedTopicHandler);
+			_eventAggregator.AddListener(unitStatusTopicHandler);
+			_eventAggregator.AddListener(callAddedTopicHandler);
 		}
 
 		#region Private Helpers
@@ -75,785 +75,1406 @@ namespace Resgrid.Providers.Bus
 		}
 		#endregion Private Helpers
 
-
-		public class UnitStatusHandler : IListener<UnitStatusEvent>
+		public Action<UnitStatusEvent> unitStatusHandler = async delegate(UnitStatusEvent message)
 		{
-			public async Task<bool> Handle(UnitStatusEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousState = 0;
-				if (message.PreviousStatus != null)
-					previousState = message.PreviousStatus.UnitStateId;
+			int previousState = 0;
+			if (message.PreviousStatus != null)
+				previousState = message.PreviousStatus.UnitStateId;
 
-				nqi.Type = (int)EventTypes.UnitStatusChanged;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.StateId = message.Status.UnitStateId;
-				nqi.PreviousStateId = previousState;
-				nqi.Value = message.Status.State.ToString();
+			nqi.Type = (int)EventTypes.UnitStatusChanged;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.StateId = message.Status.UnitStateId;
+			nqi.PreviousStateId = previousState;
+			nqi.Value = message.Status.State.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
-				await _signalrProvider.UnitStatusUpdated(message.DepartmentId, message.Status);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _signalrProvider.UnitStatusUpdated(message.DepartmentId, message.Status);
+		};
 
-				return true;
-			}
-		}
 
-		public class UnitTypeGroupAvailabilityHandler : IListener<UnitStatusEvent>
+		//public class UnitStatusHandler : IListener<UnitStatusEvent>
+		//{
+		//	public async Task<bool> Handle(UnitStatusEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
+
+		//		int previousState = 0;
+		//		if (message.PreviousStatus != null)
+		//			previousState = message.PreviousStatus.UnitStateId;
+
+		//		nqi.Type = (int)EventTypes.UnitStatusChanged;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.StateId = message.Status.UnitStateId;
+		//		nqi.PreviousStateId = previousState;
+		//		nqi.Value = message.Status.State.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+		//		await _signalrProvider.UnitStatusUpdated(message.DepartmentId, message.Status);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UnitStatusEvent> unitTypeGroupAvailabilityHandler = async delegate(UnitStatusEvent message)
 		{
-			public async Task<bool> Handle(UnitStatusEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousState = 0;
-				if (message.PreviousStatus != null)
-					previousState = message.PreviousStatus.UnitStateId;
+			int previousState = 0;
+			if (message.PreviousStatus != null)
+				previousState = message.PreviousStatus.UnitStateId;
 
-				nqi.Type = (int)EventTypes.UnitTypesInGroupAvailabilityAlert;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.StateId = message.Status.UnitStateId;
-				nqi.PreviousStateId = previousState;
-				nqi.Value = message.Status.State.ToString();
-				nqi.UnitId = message.Status.UnitId;
+			nqi.Type = (int)EventTypes.UnitTypesInGroupAvailabilityAlert;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.StateId = message.Status.UnitStateId;
+			nqi.PreviousStateId = previousState;
+			nqi.Value = message.Status.State.ToString();
+			nqi.UnitId = message.Status.UnitId;
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class UnitTypeGroupAvailabilityHandler : IListener<UnitStatusEvent>
+		//{
+		//	public async Task<bool> Handle(UnitStatusEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class UnitTypeDepartmentAvailabilityHandler : IListener<UnitStatusEvent>
+		//		int previousState = 0;
+		//		if (message.PreviousStatus != null)
+		//			previousState = message.PreviousStatus.UnitStateId;
+
+		//		nqi.Type = (int)EventTypes.UnitTypesInGroupAvailabilityAlert;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.StateId = message.Status.UnitStateId;
+		//		nqi.PreviousStateId = previousState;
+		//		nqi.Value = message.Status.State.ToString();
+		//		nqi.UnitId = message.Status.UnitId;
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UnitStatusEvent> unitTypeDepartmentAvailabilityHandler = async delegate(UnitStatusEvent message)
 		{
-			public async Task<bool> Handle(UnitStatusEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousState = 0;
-				if (message.PreviousStatus != null)
-					previousState = message.PreviousStatus.UnitStateId;
+			int previousState = 0;
+			if (message.PreviousStatus != null)
+				previousState = message.PreviousStatus.UnitStateId;
 
-				nqi.Type = (int)EventTypes.UnitTypesInDepartmentAvailabilityAlert;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.StateId = message.Status.UnitStateId;
-				nqi.PreviousStateId = previousState;
-				nqi.Value = message.Status.State.ToString();
-				nqi.UnitId = message.Status.UnitId;
+			nqi.Type = (int)EventTypes.UnitTypesInDepartmentAvailabilityAlert;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.StateId = message.Status.UnitStateId;
+			nqi.PreviousStateId = previousState;
+			nqi.Value = message.Status.State.ToString();
+			nqi.UnitId = message.Status.UnitId;
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class UnitTypeDepartmentAvailabilityHandler : IListener<UnitStatusEvent>
+		//{
+		//	public async Task<bool> Handle(UnitStatusEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class UserStaffingHandler : IListener<UserStaffingEvent>
+		//		int previousState = 0;
+		//		if (message.PreviousStatus != null)
+		//			previousState = message.PreviousStatus.UnitStateId;
+
+		//		nqi.Type = (int)EventTypes.UnitTypesInDepartmentAvailabilityAlert;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.StateId = message.Status.UnitStateId;
+		//		nqi.PreviousStateId = previousState;
+		//		nqi.Value = message.Status.State.ToString();
+		//		nqi.UnitId = message.Status.UnitId;
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UserStaffingEvent> userStaffingHandler = async delegate(UserStaffingEvent message)
 		{
-			public async Task<bool> Handle(UserStaffingEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousStaffing = 0;
-				if (message.PreviousStaffing != null)
-					previousStaffing = message.PreviousStaffing.UserStateId;
+			int previousStaffing = 0;
+			if (message.PreviousStaffing != null)
+				previousStaffing = message.PreviousStaffing.UserStateId;
 
-				nqi.Type = (int)EventTypes.PersonnelStaffingChanged;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.StateId = message.Staffing.UserStateId;
-				nqi.PreviousStateId = previousStaffing;
-				nqi.Value = message.Staffing.State.ToString();
+			nqi.Type = (int)EventTypes.PersonnelStaffingChanged;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.StateId = message.Staffing.UserStateId;
+			nqi.PreviousStateId = previousStaffing;
+			nqi.Value = message.Staffing.State.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class UserStaffingHandler : IListener<UserStaffingEvent>
+		//{
+		//	public async Task<bool> Handle(UserStaffingEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class UserRoleGroupAvailabilityHandler : IListener<UserStaffingEvent>
+		//		int previousStaffing = 0;
+		//		if (message.PreviousStaffing != null)
+		//			previousStaffing = message.PreviousStaffing.UserStateId;
+
+		//		nqi.Type = (int)EventTypes.PersonnelStaffingChanged;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.StateId = message.Staffing.UserStateId;
+		//		nqi.PreviousStateId = previousStaffing;
+		//		nqi.Value = message.Staffing.State.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UserStaffingEvent> userRoleGroupAvailabilityHandler = async delegate(UserStaffingEvent message)
 		{
-			public async Task<bool> Handle(UserStaffingEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousStaffing = 0;
-				if (message.PreviousStaffing != null)
-					previousStaffing = message.PreviousStaffing.UserStateId;
+			int previousStaffing = 0;
+			if (message.PreviousStaffing != null)
+				previousStaffing = message.PreviousStaffing.UserStateId;
 
-				nqi.Type = (int)EventTypes.RolesInGroupAvailabilityAlert;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.StateId = message.Staffing.UserStateId;
-				nqi.PreviousStateId = previousStaffing;
-				//nqi.Value = message.Staffing.State.ToString();
-				nqi.Value = message.Staffing.UserStateId.ToString();
+			nqi.Type = (int)EventTypes.RolesInGroupAvailabilityAlert;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.StateId = message.Staffing.UserStateId;
+			nqi.PreviousStateId = previousStaffing;
+			//nqi.Value = message.Staffing.State.ToString();
+			nqi.Value = message.Staffing.UserStateId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class UserRoleGroupAvailabilityHandler : IListener<UserStaffingEvent>
+		//{
+		//	public async Task<bool> Handle(UserStaffingEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class UserRoleDepartmentAvailabilityHandler : IListener<UserStaffingEvent>
+		//		int previousStaffing = 0;
+		//		if (message.PreviousStaffing != null)
+		//			previousStaffing = message.PreviousStaffing.UserStateId;
+
+		//		nqi.Type = (int)EventTypes.RolesInGroupAvailabilityAlert;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.StateId = message.Staffing.UserStateId;
+		//		nqi.PreviousStateId = previousStaffing;
+		//		//nqi.Value = message.Staffing.State.ToString();
+		//		nqi.Value = message.Staffing.UserStateId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UserStaffingEvent> userRoleDepartmentAvailabilityHandler = async delegate(UserStaffingEvent message)
 		{
-			public async Task<bool> Handle(UserStaffingEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousStaffing = 0;
-				if (message.PreviousStaffing != null)
-					previousStaffing = message.PreviousStaffing.UserStateId;
+			int previousStaffing = 0;
+			if (message.PreviousStaffing != null)
+				previousStaffing = message.PreviousStaffing.UserStateId;
 
-				nqi.Type = (int)EventTypes.RolesInDepartmentAvailabilityAlert;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.StateId = message.Staffing.UserStateId;
-				nqi.PreviousStateId = previousStaffing;
-				//nqi.Value = message.Staffing.State.ToString();
-				nqi.Value = message.Staffing.UserStateId.ToString();
+			nqi.Type = (int)EventTypes.RolesInDepartmentAvailabilityAlert;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.StateId = message.Staffing.UserStateId;
+			nqi.PreviousStateId = previousStaffing;
+			//nqi.Value = message.Staffing.State.ToString();
+			nqi.Value = message.Staffing.UserStateId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
-				await _signalrProvider.PersonnelStaffingUpdated(message.Staffing.DepartmentId, message.Staffing);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _signalrProvider.PersonnelStaffingUpdated(message.Staffing.DepartmentId, message.Staffing);
+		};
 
-				return true;
-			}
-		}
+		//public class UserRoleDepartmentAvailabilityHandler : IListener<UserStaffingEvent>
+		//{
+		//	public async Task<bool> Handle(UserStaffingEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class PersonnelStatusChangedHandler : IListener<UserStatusEvent>
+		//		int previousStaffing = 0;
+		//		if (message.PreviousStaffing != null)
+		//			previousStaffing = message.PreviousStaffing.UserStateId;
+
+		//		nqi.Type = (int)EventTypes.RolesInDepartmentAvailabilityAlert;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.StateId = message.Staffing.UserStateId;
+		//		nqi.PreviousStateId = previousStaffing;
+		//		//nqi.Value = message.Staffing.State.ToString();
+		//		nqi.Value = message.Staffing.UserStateId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+		//		await _signalrProvider.PersonnelStaffingUpdated(message.Staffing.DepartmentId, message.Staffing);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UserStatusEvent> personnelStatusChangedHandler = async delegate(UserStatusEvent message)
 		{
-			public async Task<bool> Handle(UserStatusEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousStatus = 0;
-				if (message.PreviousStatus != null)
-					previousStatus = message.PreviousStatus.ActionLogId;
+			int previousStatus = 0;
+			if (message.PreviousStatus != null)
+				previousStatus = message.PreviousStatus.ActionLogId;
 
-				nqi.Type = (int)EventTypes.PersonnelStatusChanged;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.StateId = message.Status.ActionLogId;
-				nqi.PreviousStateId = previousStatus;
-				nqi.Value = message.Status.ActionTypeId.ToString();
+			nqi.Type = (int)EventTypes.PersonnelStatusChanged;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.StateId = message.Status.ActionLogId;
+			nqi.PreviousStateId = previousStatus;
+			nqi.Value = message.Status.ActionTypeId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
-				await _signalrProvider.PersonnelStatusUpdated(message.Status.DepartmentId, message.Status);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _signalrProvider.PersonnelStatusUpdated(message.Status.DepartmentId, message.Status);
+		};
 
-				return true;
-			}
-		}
+		//public class PersonnelStatusChangedHandler : IListener<UserStatusEvent>
+		//{
+		//	public async Task<bool> Handle(UserStatusEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class UserCreatedHandler : IListener<UserCreatedEvent>
+		//		int previousStatus = 0;
+		//		if (message.PreviousStatus != null)
+		//			previousStatus = message.PreviousStatus.ActionLogId;
+
+		//		nqi.Type = (int)EventTypes.PersonnelStatusChanged;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.StateId = message.Status.ActionLogId;
+		//		nqi.PreviousStateId = previousStatus;
+		//		nqi.Value = message.Status.ActionTypeId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+		//		await _signalrProvider.PersonnelStatusUpdated(message.Status.DepartmentId, message.Status);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UserCreatedEvent> userCreatedHandler = async delegate(UserCreatedEvent message)
 		{
-			public async Task<bool> Handle(UserCreatedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.UserCreated;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.UserId = message.User.UserId;
-				nqi.Value = message.User.UserId.ToString();
+			nqi.Type = (int)EventTypes.UserCreated;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.UserId = message.User.UserId;
+			nqi.Value = message.User.UserId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class UserCreatedHandler : IListener<UserCreatedEvent>
+		//{
+		//	public async Task<bool> Handle(UserCreatedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class UserAssignedToGroupHandler : IListener<UserAssignedToGroupEvent>
+		//		nqi.Type = (int)EventTypes.UserCreated;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.UserId = message.User.UserId;
+		//		nqi.Value = message.User.UserId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UserAssignedToGroupEvent> userAssignedToGroupHandler = async delegate(UserAssignedToGroupEvent message)
 		{
-			public async Task<bool> Handle(UserAssignedToGroupEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				int previousGroup = 0;
-				if (message.PreviousGroup != null)
-					previousGroup = message.PreviousGroup.DepartmentGroupId;
+			int previousGroup = 0;
+			if (message.PreviousGroup != null)
+				previousGroup = message.PreviousGroup.DepartmentGroupId;
 
-				nqi.Type = (int)EventTypes.UserAssignedToGroup;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.UserId = message.UserId;
-				nqi.GroupId = message.Group.DepartmentGroupId;
-				nqi.PreviousGroupId = previousGroup;
-				nqi.Value = message.UserId.ToString();
+			nqi.Type = (int)EventTypes.UserAssignedToGroup;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.UserId = message.UserId;
+			nqi.GroupId = message.Group.DepartmentGroupId;
+			nqi.PreviousGroupId = previousGroup;
+			nqi.Value = message.UserId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class UserAssignedToGroupHandler : IListener<UserAssignedToGroupEvent>
+		//{
+		//	public async Task<bool> Handle(UserAssignedToGroupEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class CalendarEventUpcomingHandler : IListener<CalendarEventUpcomingEvent>
+		//		int previousGroup = 0;
+		//		if (message.PreviousGroup != null)
+		//			previousGroup = message.PreviousGroup.DepartmentGroupId;
+
+		//		nqi.Type = (int)EventTypes.UserAssignedToGroup;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.UserId = message.UserId;
+		//		nqi.GroupId = message.Group.DepartmentGroupId;
+		//		nqi.PreviousGroupId = previousGroup;
+		//		nqi.Value = message.UserId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<CalendarEventUpcomingEvent> calendarEventUpcomingHandler = async delegate(CalendarEventUpcomingEvent message)
 		{
-			public async Task<bool> Handle(CalendarEventUpcomingEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.CalendarEventUpcoming;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.ItemId = message.Item.CalendarItemId;
-				nqi.Value = message.Item.CalendarItemId.ToString();
+			nqi.Type = (int)EventTypes.CalendarEventUpcoming;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.ItemId = message.Item.CalendarItemId;
+			nqi.Value = message.Item.CalendarItemId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class CalendarEventUpcomingHandler : IListener<CalendarEventUpcomingEvent>
+		//{
+		//	public async Task<bool> Handle(CalendarEventUpcomingEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class CalendarEventAddedHandler : IListener<CalendarEventAddedEvent>
+		//		nqi.Type = (int)EventTypes.CalendarEventUpcoming;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.ItemId = message.Item.CalendarItemId;
+		//		nqi.Value = message.Item.CalendarItemId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<CalendarEventAddedEvent> calendarEventAddedHandler = async delegate(CalendarEventAddedEvent message)
 		{
-			public async Task<bool> Handle(CalendarEventAddedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.CalendarEventAdded;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.ItemId = message.Item.CalendarItemId;
-				nqi.Value = message.Item.CalendarItemId.ToString();
+			nqi.Type = (int)EventTypes.CalendarEventAdded;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.ItemId = message.Item.CalendarItemId;
+			nqi.Value = message.Item.CalendarItemId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class CalendarEventAddedHandler : IListener<CalendarEventAddedEvent>
+		//{
+		//	public async Task<bool> Handle(CalendarEventAddedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class CalendarEventUpdatedHandler : IListener<CalendarEventUpdatedEvent>
+		//		nqi.Type = (int)EventTypes.CalendarEventAdded;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.ItemId = message.Item.CalendarItemId;
+		//		nqi.Value = message.Item.CalendarItemId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<CalendarEventUpdatedEvent> calendarEventUpdatedHandler = async delegate(CalendarEventUpdatedEvent message)
 		{
-			public async Task<bool> Handle(CalendarEventUpdatedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.CalendarEventUpdated;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.ItemId = message.Item.CalendarItemId;
-				nqi.Value = message.Item.CalendarItemId.ToString();
+			nqi.Type = (int)EventTypes.CalendarEventUpdated;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.ItemId = message.Item.CalendarItemId;
+			nqi.Value = message.Item.CalendarItemId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class CalendarEventUpdatedHandler : IListener<CalendarEventUpdatedEvent>
+		//{
+		//	public async Task<bool> Handle(CalendarEventUpdatedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class DocumentAddedHandler : IListener<DocumentAddedEvent>
+		//		nqi.Type = (int)EventTypes.CalendarEventUpdated;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.ItemId = message.Item.CalendarItemId;
+		//		nqi.Value = message.Item.CalendarItemId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<DocumentAddedEvent> documentAddedHandler = async delegate(DocumentAddedEvent message)
 		{
-			public async Task<bool> Handle(DocumentAddedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.DocumentAdded;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.ItemId = message.Document.DocumentId;
-				nqi.Value = message.Document.DocumentId.ToString();
+			nqi.Type = (int)EventTypes.DocumentAdded;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.ItemId = message.Document.DocumentId;
+			nqi.Value = message.Document.DocumentId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class DocumentAddedHandler : IListener<DocumentAddedEvent>
+		//{
+		//	public async Task<bool> Handle(DocumentAddedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class NoteAddedHandler : IListener<NoteAddedEvent>
+		//		nqi.Type = (int)EventTypes.DocumentAdded;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.ItemId = message.Document.DocumentId;
+		//		nqi.Value = message.Document.DocumentId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<NoteAddedEvent> noteAddedHandler = async delegate(NoteAddedEvent message)
 		{
-			public async Task<bool> Handle(NoteAddedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.NoteAdded;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.ItemId = message.Note.NoteId;
-				nqi.Value = message.Note.NoteId.ToString();
+			nqi.Type = (int)EventTypes.NoteAdded;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.ItemId = message.Note.NoteId;
+			nqi.Value = message.Note.NoteId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class NoteAddedHandler : IListener<NoteAddedEvent>
+		//{
+		//	public async Task<bool> Handle(NoteAddedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class UnitAddedHandler : IListener<UnitAddedEvent>
+		//		nqi.Type = (int)EventTypes.NoteAdded;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.ItemId = message.Note.NoteId;
+		//		nqi.Value = message.Note.NoteId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UnitAddedEvent> unitAddedHandler = async delegate(UnitAddedEvent message)
 		{
-			public async Task<bool> Handle(UnitAddedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.UnitAdded;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.UnitId = message.Unit.UnitId;
-				nqi.Value = message.Unit.UnitId.ToString();
+			nqi.Type = (int)EventTypes.UnitAdded;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.UnitId = message.Unit.UnitId;
+			nqi.Value = message.Unit.UnitId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class UnitAddedHandler : IListener<UnitAddedEvent>
+		//{
+		//	public async Task<bool> Handle(UnitAddedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class LogAddedHandler : IListener<LogAddedEvent>
+		//		nqi.Type = (int)EventTypes.UnitAdded;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.UnitId = message.Unit.UnitId;
+		//		nqi.Value = message.Unit.UnitId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<LogAddedEvent> logAddedHandler = async delegate(LogAddedEvent message)
 		{
-			public async Task<bool> Handle(LogAddedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.LogAdded;
-				nqi.DepartmentId = message.DepartmentId;
-				nqi.ItemId = message.Log.LogId;
-				nqi.Value = message.Log.LogId.ToString();
+			nqi.Type = (int)EventTypes.LogAdded;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.ItemId = message.Log.LogId;
+			nqi.Value = message.Log.LogId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class LogAddedHandler : IListener<LogAddedEvent>
+		//{
+		//	public async Task<bool> Handle(LogAddedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class ResourceOrderAddedHandler : IListener<ResourceOrderAddedEvent>
+		//		nqi.Type = (int)EventTypes.LogAdded;
+		//		nqi.DepartmentId = message.DepartmentId;
+		//		nqi.ItemId = message.Log.LogId;
+		//		nqi.Value = message.Log.LogId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ResourceOrderAddedEvent> resourceOrderAddedHandler = async delegate(ResourceOrderAddedEvent message)
 		{
-			public async Task<bool> Handle(ResourceOrderAddedEvent message)
-			{
-				var nqi = new NotificationItem();
+			var nqi = new NotificationItem();
 
-				nqi.Type = (int)EventTypes.ResourceOrderAdded;
-				nqi.DepartmentId = message.Order.DepartmentId;
-				nqi.ItemId = message.Order.ResourceOrderId;
-				nqi.Value = message.Order.ResourceOrderId.ToString();
+			nqi.Type = (int)EventTypes.ResourceOrderAdded;
+			nqi.DepartmentId = message.Order.DepartmentId;
+			nqi.ItemId = message.Order.ResourceOrderId;
+			nqi.Value = message.Order.ResourceOrderId.ToString();
 
-				await _outboundQueueProvider.EnqueueNotification(nqi);
+			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
 
-				return true;
-			}
-		}
+		//public class ResourceOrderAddedHandler : IListener<ResourceOrderAddedEvent>
+		//{
+		//	public async Task<bool> Handle(ResourceOrderAddedEvent message)
+		//	{
+		//		var nqi = new NotificationItem();
 
-		public class ShiftTradeRequestedHandler : IListener<ShiftTradeRequestedEvent>
+		//		nqi.Type = (int)EventTypes.ResourceOrderAdded;
+		//		nqi.DepartmentId = message.Order.DepartmentId;
+		//		nqi.ItemId = message.Order.ResourceOrderId;
+		//		nqi.Value = message.Order.ResourceOrderId.ToString();
+
+		//		await _outboundQueueProvider.EnqueueNotification(nqi);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ShiftTradeRequestedEvent> shiftTradeRequestedHandler = async delegate(ShiftTradeRequestedEvent message)
 		{
-			public async Task<bool> Handle(ShiftTradeRequestedEvent message)
-			{
-				if (_outboundQueueProvider == null)
-					_outboundQueueProvider = new OutboundQueueProvider();
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
 
-				var item = new ShiftQueueItem();
-				item.DepartmentId = message.DepartmentId;
-				item.ShiftSignupTradeId = message.ShiftSignupTradeId;
-				item.DepartmentNumber = message.DepartmentNumber;
-				item.Type = (int)ShiftQueueTypes.TradeRequested;
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.Type = (int)ShiftQueueTypes.TradeRequested;
 
-				await _outboundQueueProvider.EnqueueShiftNotification(item);
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
 
-				return true;
-			}
-		}
+		//public class ShiftTradeRequestedHandler : IListener<ShiftTradeRequestedEvent>
+		//{
+		//	public async Task<bool> Handle(ShiftTradeRequestedEvent message)
+		//	{
+		//		if (_outboundQueueProvider == null)
+		//			_outboundQueueProvider = new OutboundQueueProvider();
 
-		public class ShiftTradeRejectedEventHandler : IListener<ShiftTradeRejectedEvent>
+		//		var item = new ShiftQueueItem();
+		//		item.DepartmentId = message.DepartmentId;
+		//		item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+		//		item.DepartmentNumber = message.DepartmentNumber;
+		//		item.Type = (int)ShiftQueueTypes.TradeRequested;
+
+		//		await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ShiftTradeRejectedEvent> shiftTradeRejectedEventHandler = async delegate(ShiftTradeRejectedEvent message)
 		{
-			public async Task<bool> Handle(ShiftTradeRejectedEvent message)
-			{
-				if (_outboundQueueProvider == null)
-					_outboundQueueProvider = new OutboundQueueProvider();
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
 
-				var item = new ShiftQueueItem();
-				item.DepartmentId = message.DepartmentId;
-				item.ShiftSignupTradeId = message.ShiftSignupTradeId;
-				item.DepartmentNumber = message.DepartmentNumber;
-				item.Type = (int)ShiftQueueTypes.TradeRejected;
-				item.SourceUserId = message.UserId;
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.Type = (int)ShiftQueueTypes.TradeRejected;
+			item.SourceUserId = message.UserId;
 
-				await _outboundQueueProvider.EnqueueShiftNotification(item);
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
 
-				return true;
-			}
-		}
+		//public class ShiftTradeRejectedEventHandler : IListener<ShiftTradeRejectedEvent>
+		//{
+		//	public async Task<bool> Handle(ShiftTradeRejectedEvent message)
+		//	{
+		//		if (_outboundQueueProvider == null)
+		//			_outboundQueueProvider = new OutboundQueueProvider();
 
-		public class ShiftTradeProposedEventHandler : IListener<ShiftTradeProposedEvent>
+		//		var item = new ShiftQueueItem();
+		//		item.DepartmentId = message.DepartmentId;
+		//		item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+		//		item.DepartmentNumber = message.DepartmentNumber;
+		//		item.Type = (int)ShiftQueueTypes.TradeRejected;
+		//		item.SourceUserId = message.UserId;
+
+		//		await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ShiftTradeProposedEvent> shiftTradeProposedEventHandler = async delegate(ShiftTradeProposedEvent message)
 		{
-			public async Task<bool> Handle(ShiftTradeProposedEvent message)
-			{
-				if (_outboundQueueProvider == null)
-					_outboundQueueProvider = new OutboundQueueProvider();
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
 
-				var item = new ShiftQueueItem();
-				item.DepartmentId = message.DepartmentId;
-				item.ShiftSignupTradeId = message.ShiftSignupTradeId;
-				item.DepartmentNumber = message.DepartmentNumber;
-				item.Type = (int)ShiftQueueTypes.TradeProposed;
-				item.SourceUserId = message.UserId;
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.Type = (int)ShiftQueueTypes.TradeProposed;
+			item.SourceUserId = message.UserId;
 
-				await _outboundQueueProvider.EnqueueShiftNotification(item);
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
 
-				return true;
-			}
-		}
+		//public class ShiftTradeProposedEventHandler : IListener<ShiftTradeProposedEvent>
+		//{
+		//	public async Task<bool> Handle(ShiftTradeProposedEvent message)
+		//	{
+		//		if (_outboundQueueProvider == null)
+		//			_outboundQueueProvider = new OutboundQueueProvider();
 
-		public class ShiftTradeFilledEventHandler : IListener<ShiftTradeFilledEvent>
+		//		var item = new ShiftQueueItem();
+		//		item.DepartmentId = message.DepartmentId;
+		//		item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+		//		item.DepartmentNumber = message.DepartmentNumber;
+		//		item.Type = (int)ShiftQueueTypes.TradeProposed;
+		//		item.SourceUserId = message.UserId;
+
+		//		await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ShiftTradeFilledEvent> shiftTradeFilledEventHandler = async delegate(ShiftTradeFilledEvent message)
 		{
-			public async Task<bool> Handle(ShiftTradeFilledEvent message)
-			{
-				if (_outboundQueueProvider == null)
-					_outboundQueueProvider = new OutboundQueueProvider();
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
 
-				var item = new ShiftQueueItem();
-				item.DepartmentId = message.DepartmentId;
-				item.ShiftSignupTradeId = message.ShiftSignupTradeId;
-				item.DepartmentNumber = message.DepartmentNumber;
-				item.Type = (int)ShiftQueueTypes.TradeFilled;
-				item.SourceUserId = message.UserId;
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.Type = (int)ShiftQueueTypes.TradeFilled;
+			item.SourceUserId = message.UserId;
 
-				await _outboundQueueProvider.EnqueueShiftNotification(item);
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
 
-				return true;
-			}
-		}
+		//public class ShiftTradeFilledEventHandler : IListener<ShiftTradeFilledEvent>
+		//{
+		//	public async Task<bool> Handle(ShiftTradeFilledEvent message)
+		//	{
+		//		if (_outboundQueueProvider == null)
+		//			_outboundQueueProvider = new OutboundQueueProvider();
 
-		public class ShiftCreatedEventHandler : IListener<ShiftCreatedEvent>
+		//		var item = new ShiftQueueItem();
+		//		item.DepartmentId = message.DepartmentId;
+		//		item.ShiftSignupTradeId = message.ShiftSignupTradeId;
+		//		item.DepartmentNumber = message.DepartmentNumber;
+		//		item.Type = (int)ShiftQueueTypes.TradeFilled;
+		//		item.SourceUserId = message.UserId;
+
+		//		await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ShiftCreatedEvent> shiftCreatedEventHandler = async delegate(ShiftCreatedEvent message)
 		{
-			public async Task<bool> Handle(ShiftCreatedEvent message)
-			{
-				if (_outboundQueueProvider == null)
-					_outboundQueueProvider = new OutboundQueueProvider();
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
 
-				var item = new ShiftQueueItem();
-				item.DepartmentId = message.DepartmentId;
-				item.DepartmentNumber = message.DepartmentNumber;
-				item.ShiftId = message.Item.ShiftId;
-				item.Type = (int)ShiftQueueTypes.ShiftCreated;
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.ShiftId = message.Item.ShiftId;
+			item.Type = (int)ShiftQueueTypes.ShiftCreated;
 
-				await _outboundQueueProvider.EnqueueShiftNotification(item);
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
 
-				return true;
-			}
-		}
+		//public class ShiftCreatedEventHandler : IListener<ShiftCreatedEvent>
+		//{
+		//	public async Task<bool> Handle(ShiftCreatedEvent message)
+		//	{
+		//		if (_outboundQueueProvider == null)
+		//			_outboundQueueProvider = new OutboundQueueProvider();
 
-		public class ShiftUpdatedEventHandler : IListener<ShiftUpdatedEvent>
+		//		var item = new ShiftQueueItem();
+		//		item.DepartmentId = message.DepartmentId;
+		//		item.DepartmentNumber = message.DepartmentNumber;
+		//		item.ShiftId = message.Item.ShiftId;
+		//		item.Type = (int)ShiftQueueTypes.ShiftCreated;
+
+		//		await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ShiftUpdatedEvent> shiftUpdatedEventHandler = async delegate(ShiftUpdatedEvent message)
 		{
-			public async Task<bool> Handle(ShiftUpdatedEvent message)
-			{
-				if (_outboundQueueProvider == null)
-					_outboundQueueProvider = new OutboundQueueProvider();
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
 
-				var item = new ShiftQueueItem();
-				item.DepartmentId = message.DepartmentId;
-				item.DepartmentNumber = message.DepartmentNumber;
-				item.ShiftId = message.Item.ShiftId;
-				item.Type = (int)ShiftQueueTypes.ShiftUpdated;
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.ShiftId = message.Item.ShiftId;
+			item.Type = (int)ShiftQueueTypes.ShiftUpdated;
 
-				await _outboundQueueProvider.EnqueueShiftNotification(item);
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
 
-				return true;
-			}
-		}
+		//public class ShiftUpdatedEventHandler : IListener<ShiftUpdatedEvent>
+		//{
+		//	public async Task<bool> Handle(ShiftUpdatedEvent message)
+		//	{
+		//		if (_outboundQueueProvider == null)
+		//			_outboundQueueProvider = new OutboundQueueProvider();
 
-		public class ShiftDaysAddedEventHandler : IListener<ShiftDaysAddedEvent>
+		//		var item = new ShiftQueueItem();
+		//		item.DepartmentId = message.DepartmentId;
+		//		item.DepartmentNumber = message.DepartmentNumber;
+		//		item.ShiftId = message.Item.ShiftId;
+		//		item.Type = (int)ShiftQueueTypes.ShiftUpdated;
+
+		//		await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<ShiftDaysAddedEvent> shiftDaysAddedEventHandler = async delegate(ShiftDaysAddedEvent message)
 		{
-			public async Task<bool> Handle(ShiftDaysAddedEvent message)
-			{
-				if (_outboundQueueProvider == null)
-					_outboundQueueProvider = new OutboundQueueProvider();
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
 
-				var item = new ShiftQueueItem();
-				item.DepartmentId = message.DepartmentId;
-				item.DepartmentNumber = message.DepartmentNumber;
-				item.ShiftId = message.Item.ShiftId;
-				item.Type = (int)ShiftQueueTypes.ShiftDaysAdded;
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.ShiftId = message.Item.ShiftId;
+			item.Type = (int)ShiftQueueTypes.ShiftDaysAdded;
 
-				await _outboundQueueProvider.EnqueueShiftNotification(item);
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
 
-				return true;
-			}
-		}
+		//public class ShiftDaysAddedEventHandler : IListener<ShiftDaysAddedEvent>
+		//{
+		//	public async Task<bool> Handle(ShiftDaysAddedEvent message)
+		//	{
+		//		if (_outboundQueueProvider == null)
+		//			_outboundQueueProvider = new OutboundQueueProvider();
+
+		//		var item = new ShiftQueueItem();
+		//		item.DepartmentId = message.DepartmentId;
+		//		item.DepartmentNumber = message.DepartmentNumber;
+		//		item.ShiftId = message.Item.ShiftId;
+		//		item.Type = (int)ShiftQueueTypes.ShiftDaysAdded;
+
+		//		await _outboundQueueProvider.EnqueueShiftNotification(item);
+
+		//		return true;
+		//	}
+		//}
 
 
 		#region Topic Based Events
-		public class DepartmentSettingsChangedHandler : IListener<DepartmentSettingsChangedEvent>
+		public Action<DepartmentSettingsChangedEvent> departmentSettingsChangedHandler = async delegate(DepartmentSettingsChangedEvent message)
 		{
-			public async Task<bool> Handle(DepartmentSettingsChangedEvent message)
+			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusConnectionString, Topics.GenericTopic);
+
+			var messageBus = CreateMessage(Guid.NewGuid(), new { DepartmentId = message.DepartmentId }.SerializeJson());
+			messageBus.CorrelationId = message.DepartmentId.ToString();
+			messageBus.UserProperties.Add("Type", (int)EventTypes.DepartmentSettingsChanged);
+			messageBus.UserProperties.Add("Value", message.DepartmentId);
+			messageBus.UserProperties.Add("DepartmentId", message.DepartmentId);
+
+			while (true)
 			{
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusConnectionString, Topics.GenericTopic);
-
-				var messageBus = CreateMessage(Guid.NewGuid(), new { DepartmentId = message.DepartmentId }.SerializeJson());
-				messageBus.CorrelationId = message.DepartmentId.ToString();
-				messageBus.UserProperties.Add("Type", (int)EventTypes.DepartmentSettingsChanged);
-				messageBus.UserProperties.Add("Value", message.DepartmentId);
-				messageBus.UserProperties.Add("DepartmentId", message.DepartmentId);
-
-				while (true)
+				try
 				{
-					try
+					await topicClient.SendAsync(messageBus);
+					break;
+				}
+				catch (MessagingCommunicationException e)
+				{
+					if (!e.IsTransient)
+						throw;
+					else
+						HandleTransientErrors(e);
+				}
+			}
+		};
+
+		//public class DepartmentSettingsChangedHandler : IListener<DepartmentSettingsChangedEvent>
+		//{
+		//	public async Task<bool> Handle(DepartmentSettingsChangedEvent message)
+		//	{
+		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusConnectionString, Topics.GenericTopic);
+
+		//		var messageBus = CreateMessage(Guid.NewGuid(), new { DepartmentId = message.DepartmentId }.SerializeJson());
+		//		messageBus.CorrelationId = message.DepartmentId.ToString();
+		//		messageBus.UserProperties.Add("Type", (int)EventTypes.DepartmentSettingsChanged);
+		//		messageBus.UserProperties.Add("Value", message.DepartmentId);
+		//		messageBus.UserProperties.Add("DepartmentId", message.DepartmentId);
+
+		//		while (true)
+		//		{
+		//			try
+		//			{
+		//				await topicClient.SendAsync(messageBus);
+		//				break;
+		//			}
+		//			catch (MessagingCommunicationException e)
+		//			{
+		//				if (!e.IsTransient)
+		//					throw;
+		//				else
+		//					HandleTransientErrors(e);
+		//			}
+		//		}
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<WorkerHeartbeatEvent> workerHeartbeatHandler = async delegate(WorkerHeartbeatEvent message)
+		{
+			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+
+			var messageBus = CreateMessage(Guid.NewGuid(), new { WorkerType = message.WorkerType, TimeStamp = message.Timestamp }.SerializeJson());
+			messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.Worker);
+
+			while (true)
+			{
+				int retryCount = 0;
+
+				try
+				{
+					await topicClient.SendAsync(messageBus);
+					break;
+				}
+				catch (MessagingException e)
+				{
+					if (!e.IsTransient)
+						throw;
+					else
+						HandleTransientErrors(e);
+				}
+				catch (TimeoutException)
+				{
+					if (retryCount < 3)
 					{
-						await topicClient.SendAsync(messageBus);
+						retryCount++;
+						Thread.Sleep(2000);
+					}
+					else
+						throw;
+				}
+			}
+		};
+
+		//public class WorkerHeartbeatHandler : IListener<WorkerHeartbeatEvent>
+		//{
+		//	public async Task<bool> Handle(WorkerHeartbeatEvent message)
+		//	{
+		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+
+		//		var messageBus = CreateMessage(Guid.NewGuid(), new { WorkerType = message.WorkerType, TimeStamp = message.Timestamp }.SerializeJson());
+		//		messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.Worker);
+
+		//		while (true)
+		//		{
+		//			int retryCount = 0;
+
+		//			try
+		//			{
+		//				await topicClient.SendAsync(messageBus);
+		//				break;
+		//			}
+		//			catch (MessagingException e)
+		//			{
+		//				if (!e.IsTransient)
+		//					throw;
+		//				else
+		//					HandleTransientErrors(e);
+		//			}
+		//			catch (TimeoutException)
+		//			{
+		//				if (retryCount < 3)
+		//				{
+		//					retryCount++;
+		//					Thread.Sleep(2000);
+		//				}
+		//				else
+		//					throw;
+		//			}
+		//		}
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<DistributionListCheckEvent> dListCheckHandler = async delegate(DistributionListCheckEvent message)
+		{
+			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+
+			var messageBus = CreateMessage(Guid.NewGuid(), new { ListId = message.DistributionListId, TimeStamp = message.Timestamp, IsFailure = message.IsFailure, ErrorMessage = message.ErrorMessage }.SerializeJson());
+			messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.DListCheck);
+
+			while (true)
+			{
+				int retryCount = 0;
+
+				try
+				{
+					await topicClient.SendAsync(messageBus);
+					break;
+				}
+				catch (MessagingException e)
+				{
+					if (!e.IsTransient)
+						throw;
+					else
+						HandleTransientErrors(e);
+				}
+				catch (TimeoutException)
+				{
+					if (retryCount < 3)
+					{
+						retryCount++;
+						Thread.Sleep(2000);
+					}
+					else
+						throw;
+				}
+			}
+		};
+
+		//public class DListCheckHandler : IListener<DistributionListCheckEvent>
+		//{
+		//	public async Task<bool> Handle(DistributionListCheckEvent message)
+		//	{
+		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+
+		//		var messageBus = CreateMessage(Guid.NewGuid(), new { ListId = message.DistributionListId, TimeStamp = message.Timestamp, IsFailure = message.IsFailure, ErrorMessage = message.ErrorMessage }.SerializeJson());
+		//		messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.DListCheck);
+
+		//		while (true)
+		//		{
+		//			int retryCount = 0;
+
+		//			try
+		//			{
+		//				await topicClient.SendAsync(messageBus);
+		//				break;
+		//			}
+		//			catch (MessagingException e)
+		//			{
+		//				if (!e.IsTransient)
+		//					throw;
+		//				else
+		//					HandleTransientErrors(e);
+		//			}
+		//			catch (TimeoutException)
+		//			{
+		//				if (retryCount < 3)
+		//				{
+		//					retryCount++;
+		//					Thread.Sleep(2000);
+		//				}
+		//				else
+		//					throw;
+		//			}
+		//		}
+
+		//		return true;
+		//	}
+		//}
+
+		public Action<UserStatusEvent> personnelStatusChangedTopicHandler = async delegate(UserStatusEvent message)
+		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				_rabbitTopicProvider.PersonnelStatusChanged(message);
+
+
+			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+			var topicMessage = CreateMessage(Guid.NewGuid(),
+				new
+				{
+					Type = EventingTypes.PersonnelStatusUpdated,
+					TimeStamp = DateTime.UtcNow,
+					DepartmentId = message.Status.DepartmentId,
+					ItemId = message.Status.ActionLogId
+				}.SerializeJson());
+			topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStatusUpdated);
+			topicMessage.UserProperties.Add("DepartmentId", message.Status.DepartmentId);
+			topicMessage.UserProperties.Add("ItemId", message.Status.ActionLogId);
+
+
+			int retry = 0;
+			bool sent = false;
+
+			while (!sent)
+			{
+				try
+				{
+					await topicClient.SendAsync(topicMessage);
+					sent = true;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, message.ToString());
+
+					if (retry >= 5)
 						break;
-					}
-					catch (MessagingCommunicationException e)
-					{
-						if (!e.IsTransient)
-							throw;
-						else
-							HandleTransientErrors(e);
-					}
+
+					Thread.Sleep(1000);
+					retry++;
 				}
-
-				return true;
 			}
-		}
+		};
 
-		public class WorkerHeartbeatHandler : IListener<WorkerHeartbeatEvent>
+
+		//public class PersonnelStatusChangedTopicHandler : IListener<UserStatusEvent>
+		//{
+		//	public async Task<bool> Handle(UserStatusEvent message)
+		//	{
+		//		if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+		//			return _rabbitTopicProvider.PersonnelStatusChanged(message);
+
+
+		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+		//		var topicMessage = CreateMessage(Guid.NewGuid(),
+		//			new
+		//			{
+		//				Type = EventingTypes.PersonnelStatusUpdated,
+		//				TimeStamp = DateTime.UtcNow,
+		//				DepartmentId = message.Status.DepartmentId,
+		//				ItemId = message.Status.ActionLogId
+		//			}.SerializeJson());
+		//		topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStatusUpdated);
+		//		topicMessage.UserProperties.Add("DepartmentId", message.Status.DepartmentId);
+		//		topicMessage.UserProperties.Add("ItemId", message.Status.ActionLogId);
+
+
+		//		int retry = 0;
+		//		bool sent = false;
+
+		//		while (!sent)
+		//		{
+		//			try
+		//			{
+		//				await topicClient.SendAsync(topicMessage);
+		//				sent = true;
+		//			}
+		//			catch (Exception ex)
+		//			{
+		//				Logging.LogException(ex, message.ToString());
+
+		//				if (retry >= 5)
+		//					return false;
+
+		//				Thread.Sleep(1000);
+		//				retry++;
+		//			}
+		//		}
+
+		//		return sent;
+		//	}
+		//}
+
+		public Action<UserStaffingEvent> personnelStaffingChangedTopicHandler = async delegate(UserStaffingEvent message)
 		{
-			public async Task<bool> Handle(WorkerHeartbeatEvent message)
-			{
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				_rabbitTopicProvider.PersonnelStaffingChanged(message);
 
-				var messageBus = CreateMessage(Guid.NewGuid(), new { WorkerType = message.WorkerType, TimeStamp = message.Timestamp }.SerializeJson());
-				messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.Worker);
-
-				while (true)
+			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+			var topicMessage = CreateMessage(Guid.NewGuid(),
+				new
 				{
-					int retryCount = 0;
+					Type = EventingTypes.PersonnelStaffingUpdated,
+					TimeStamp = DateTime.UtcNow,
+					DepartmentId = message.DepartmentId,
+					ItemId = message.Staffing.UserStateId
+				}.SerializeJson());
+			topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStaffingUpdated);
+			topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+			topicMessage.UserProperties.Add("ItemId", message.Staffing.UserStateId);
 
-					try
-					{
-						await topicClient.SendAsync(messageBus);
+
+			int retry = 0;
+			bool sent = false;
+
+			while (!sent)
+			{
+				try
+				{
+					await topicClient.SendAsync(topicMessage);
+					sent = true;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, message.ToString());
+
+					if (retry >= 5)
 						break;
-					}
-					catch (MessagingException e)
-					{
-						if (!e.IsTransient)
-							throw;
-						else
-							HandleTransientErrors(e);
-					}
-					catch (TimeoutException)
-					{
-						if (retryCount < 3)
-						{
-							retryCount++;
-							Thread.Sleep(2000);
-						}
-						else
-							throw;
-					}
+
+					Thread.Sleep(1000);
+					retry++;
 				}
-
-				return true;
 			}
-		}
+		};
 
-		public class DListCheckHandler : IListener<DistributionListCheckEvent>
+		//public class PersonnelStaffingChangedTopicHandler : IListener<UserStaffingEvent>
+		//{
+		//	public async Task<bool> Handle(UserStaffingEvent message)
+		//	{
+		//		if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+		//			return _rabbitTopicProvider.PersonnelStaffingChanged(message);
+
+		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+		//		var topicMessage = CreateMessage(Guid.NewGuid(),
+		//			new
+		//			{
+		//				Type = EventingTypes.PersonnelStaffingUpdated,
+		//				TimeStamp = DateTime.UtcNow,
+		//				DepartmentId = message.DepartmentId,
+		//				ItemId = message.Staffing.UserStateId
+		//			}.SerializeJson());
+		//		topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStaffingUpdated);
+		//		topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+		//		topicMessage.UserProperties.Add("ItemId", message.Staffing.UserStateId);
+
+
+		//		int retry = 0;
+		//		bool sent = false;
+
+		//		while (!sent)
+		//		{
+		//			try
+		//			{
+		//				await topicClient.SendAsync(topicMessage);
+		//				sent = true;
+		//			}
+		//			catch (Exception ex)
+		//			{
+		//				Logging.LogException(ex, message.ToString());
+
+		//				if (retry >= 5)
+		//					return false;
+
+		//				Thread.Sleep(1000);
+		//				retry++;
+		//			}
+		//		}
+
+		//		return sent;
+		//	}
+		//}
+
+		public Action<UnitStatusEvent> unitStatusTopicHandler = async delegate(UnitStatusEvent message)
 		{
-			public async Task<bool> Handle(DistributionListCheckEvent message)
-			{
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				_rabbitTopicProvider.UnitStatusChanged(message);
 
-				var messageBus = CreateMessage(Guid.NewGuid(), new { ListId = message.DistributionListId, TimeStamp = message.Timestamp, IsFailure = message.IsFailure, ErrorMessage = message.ErrorMessage }.SerializeJson());
-				messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.DListCheck);
-
-				while (true)
+			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+			var topicMessage = CreateMessage(Guid.NewGuid(),
+				new
 				{
-					int retryCount = 0;
+					Type = EventingTypes.UnitStatusUpdated,
+					TimeStamp = DateTime.UtcNow,
+					DepartmentId = message.DepartmentId,
+					ItemId = message.Status.UnitStateId
+				}.SerializeJson());
+			topicMessage.UserProperties.Add("Type", (int)EventingTypes.UnitStatusUpdated);
+			topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+			topicMessage.UserProperties.Add("ItemId", message.Status.UnitStateId);
 
-					try
-					{
-						await topicClient.SendAsync(messageBus);
+
+			int retry = 0;
+			bool sent = false;
+
+			while (!sent)
+			{
+				try
+				{
+					await topicClient.SendAsync(topicMessage);
+					sent = true;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, message.ToString());
+
+					if (retry >= 5)
 						break;
-					}
-					catch (MessagingException e)
-					{
-						if (!e.IsTransient)
-							throw;
-						else
-							HandleTransientErrors(e);
-					}
-					catch (TimeoutException)
-					{
-						if (retryCount < 3)
-						{
-							retryCount++;
-							Thread.Sleep(2000);
-						}
-						else
-							throw;
-					}
+
+					Thread.Sleep(1000);
+					retry++;
 				}
-
-				return true;
 			}
-		}
+		};
+
+		//public class UnitStatusTopicHandler : IListener<UnitStatusEvent>
+		//{
+		//	public async Task<bool> Handle(UnitStatusEvent message)
+		//	{
+		//		if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+		//			return _rabbitTopicProvider.UnitStatusChanged(message);
+
+		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+		//		var topicMessage = CreateMessage(Guid.NewGuid(),
+		//			new
+		//			{
+		//				Type = EventingTypes.UnitStatusUpdated,
+		//				TimeStamp = DateTime.UtcNow,
+		//				DepartmentId = message.DepartmentId,
+		//				ItemId = message.Status.UnitStateId
+		//			}.SerializeJson());
+		//		topicMessage.UserProperties.Add("Type", (int)EventingTypes.UnitStatusUpdated);
+		//		topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+		//		topicMessage.UserProperties.Add("ItemId", message.Status.UnitStateId);
 
 
-		public class PersonnelStatusChangedTopicHandler : IListener<UserStatusEvent>
+		//		int retry = 0;
+		//		bool sent = false;
+
+		//		while (!sent)
+		//		{
+		//			try
+		//			{
+		//				await topicClient.SendAsync(topicMessage);
+		//				sent = true;
+		//			}
+		//			catch (Exception ex)
+		//			{
+		//				Logging.LogException(ex, message.ToString());
+
+		//				if (retry >= 5)
+		//					return false;
+
+		//				Thread.Sleep(1000);
+		//				retry++;
+		//			}
+		//		}
+
+		//		return sent;
+		//	}
+		//}
+
+		public Action<CallAddedEvent> callAddedTopicHandler = async delegate(CallAddedEvent message)
 		{
-			public async Task<bool> Handle(UserStatusEvent message)
-			{
-				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-					return _rabbitTopicProvider.PersonnelStatusChanged(message);
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				_rabbitTopicProvider.CallAdded(message);
 
 
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-				var topicMessage = CreateMessage(Guid.NewGuid(),
-					new
-					{
-						Type = EventingTypes.PersonnelStatusUpdated,
-						TimeStamp = DateTime.UtcNow,
-						DepartmentId = message.Status.DepartmentId,
-						ItemId = message.Status.ActionLogId
-					}.SerializeJson());
-				topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStatusUpdated);
-				topicMessage.UserProperties.Add("DepartmentId", message.Status.DepartmentId);
-				topicMessage.UserProperties.Add("ItemId", message.Status.ActionLogId);
-
-
-				int retry = 0;
-				bool sent = false;
-
-				while (!sent)
+			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+			var topicMessage = CreateMessage(Guid.NewGuid(),
+				new
 				{
-					try
-					{
-						await topicClient.SendAsync(topicMessage);
-						sent = true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
+					Type = EventingTypes.CallsUpdated,
+					TimeStamp = DateTime.UtcNow,
+					DepartmentId = message.DepartmentId,
+					ItemId = message.Call.CallId
+				}.SerializeJson());
+			topicMessage.UserProperties.Add("Type", (int)EventingTypes.CallsUpdated);
+			topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+			topicMessage.UserProperties.Add("ItemId", message.Call.CallId);
 
-						if (retry >= 5)
-							return false;
+			int retry = 0;
+			bool sent = false;
 
-						Thread.Sleep(1000);
-						retry++;
-					}
-				}
-
-				return sent;
-			}
-		}
-
-		public class PersonnelStaffingChangedTopicHandler : IListener<UserStaffingEvent>
-		{
-			public async Task<bool> Handle(UserStaffingEvent message)
+			while (!sent)
 			{
-				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-					return _rabbitTopicProvider.PersonnelStaffingChanged(message);
-
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-				var topicMessage = CreateMessage(Guid.NewGuid(),
-					new
-					{
-						Type = EventingTypes.PersonnelStaffingUpdated,
-						TimeStamp = DateTime.UtcNow,
-						DepartmentId = message.DepartmentId,
-						ItemId = message.Staffing.UserStateId
-					}.SerializeJson());
-				topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStaffingUpdated);
-				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
-				topicMessage.UserProperties.Add("ItemId", message.Staffing.UserStateId);
-
-
-				int retry = 0;
-				bool sent = false;
-
-				while (!sent)
+				try
 				{
-					try
-					{
-						await topicClient.SendAsync(topicMessage);
-						sent = true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
-
-						if (retry >= 5)
-							return false;
-
-						Thread.Sleep(1000);
-						retry++;
-					}
+					await topicClient.SendAsync(topicMessage);
+					sent = true;
 				}
-
-				return sent;
-			}
-		}
-
-		public class UnitStatusTopicHandler : IListener<UnitStatusEvent>
-		{
-			public async Task<bool> Handle(UnitStatusEvent message)
-			{
-				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-					return _rabbitTopicProvider.UnitStatusChanged(message);
-
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-				var topicMessage = CreateMessage(Guid.NewGuid(),
-					new
-					{
-						Type = EventingTypes.UnitStatusUpdated,
-						TimeStamp = DateTime.UtcNow,
-						DepartmentId = message.DepartmentId,
-						ItemId = message.Status.UnitStateId
-					}.SerializeJson());
-				topicMessage.UserProperties.Add("Type", (int)EventingTypes.UnitStatusUpdated);
-				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
-				topicMessage.UserProperties.Add("ItemId", message.Status.UnitStateId);
-
-
-				int retry = 0;
-				bool sent = false;
-
-				while (!sent)
+				catch (Exception ex)
 				{
-					try
-					{
-						await topicClient.SendAsync(topicMessage);
-						sent = true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
+					Logging.LogException(ex, message.ToString());
 
-						if (retry >= 5)
-							return false;
+					if (retry >= 5)
+						break;
 
-						Thread.Sleep(1000);
-						retry++;
-					}
+					Thread.Sleep(1000);
+					retry++;
 				}
-
-				return sent;
 			}
-		}
+		};
 
-		public class CallAddedTopicHandler : IListener<CallAddedEvent>
-		{
-			public async Task<bool> Handle(CallAddedEvent message)
-			{
-				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-					return _rabbitTopicProvider.CallAdded(message);
+		//public class CallAddedTopicHandler : IListener<CallAddedEvent>
+		//{
+		//	public async Task<bool> Handle(CallAddedEvent message)
+		//	{
+		//		if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+		//			return _rabbitTopicProvider.CallAdded(message);
 
 
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-				var topicMessage = CreateMessage(Guid.NewGuid(),
-					new
-					{
-						Type = EventingTypes.CallsUpdated,
-						TimeStamp = DateTime.UtcNow,
-						DepartmentId = message.DepartmentId,
-						ItemId = message.Call.CallId
-					}.SerializeJson());
-				topicMessage.UserProperties.Add("Type", (int)EventingTypes.CallsUpdated);
-				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
-				topicMessage.UserProperties.Add("ItemId", message.Call.CallId);
+		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
+		//		var topicMessage = CreateMessage(Guid.NewGuid(),
+		//			new
+		//			{
+		//				Type = EventingTypes.CallsUpdated,
+		//				TimeStamp = DateTime.UtcNow,
+		//				DepartmentId = message.DepartmentId,
+		//				ItemId = message.Call.CallId
+		//			}.SerializeJson());
+		//		topicMessage.UserProperties.Add("Type", (int)EventingTypes.CallsUpdated);
+		//		topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
+		//		topicMessage.UserProperties.Add("ItemId", message.Call.CallId);
 
-				int retry = 0;
-				bool sent = false;
+		//		int retry = 0;
+		//		bool sent = false;
 
-				while (!sent)
-				{
-					try
-					{
-						await topicClient.SendAsync(topicMessage);
-						sent = true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
+		//		while (!sent)
+		//		{
+		//			try
+		//			{
+		//				await topicClient.SendAsync(topicMessage);
+		//				sent = true;
+		//			}
+		//			catch (Exception ex)
+		//			{
+		//				Logging.LogException(ex, message.ToString());
 
-						if (retry >= 5)
-							return false;
+		//				if (retry >= 5)
+		//					return false;
 
-						Thread.Sleep(1000);
-						retry++;
-					}
-				}
+		//				Thread.Sleep(1000);
+		//				retry++;
+		//			}
+		//		}
 
-				return sent;
-			}
-		}
+		//		return sent;
+		//	}
+		//}
 		#endregion Topic Based Events
 	}
 }

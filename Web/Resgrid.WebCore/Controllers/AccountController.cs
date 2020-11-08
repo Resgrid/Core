@@ -387,7 +387,7 @@ namespace Resgrid.Web.Controllers
 					_usersService.InitUserExtInfo(user.Id);
 					await _departmentsService.AddUserToDepartmentAsync(model.Invite.DepartmentId, user.Id, false, cancellationToken);
 
-					await _eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent()
+					_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent()
 					{
 						DepartmentId = model.Invite.Department.DepartmentId,
 						Name = $"{model.FirstName} {model.LastName}",

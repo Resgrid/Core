@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Web.Services.Controllers.Version3.Models.Units;
@@ -28,6 +29,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUserStateService _userStateService;
 		private readonly IUnitsService _unitsService;
+		private readonly IEventAggregator _eventAggregator;
 
 		public UnitStateController(
 									IUsersService usersService,
@@ -35,7 +37,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 									IDepartmentsService departmentsService,
 									IUserProfileService userProfileService,
 									IUserStateService userStateService,
-									IUnitsService unitsService
+									IUnitsService unitsService,
+									IEventAggregator eventAggregator
 	)
 		{
 			_usersService = usersService;
@@ -44,6 +47,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_userProfileService = userProfileService;
 			_userStateService = userStateService;
 			_unitsService = unitsService;
+			_eventAggregator = eventAggregator;
 		}
 
 		/// <summary>
@@ -167,8 +171,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						await _unitsService.AddAllUnitStateRolesAsync(roles);
 					}
 
-					OutboundEventProvider.UnitStatusTopicHandler handler = new OutboundEventProvider.UnitStatusTopicHandler();
-					handler.Handle(new UnitStatusEvent() { DepartmentId = DepartmentId, Status = savedState });
+					//OutboundEventProvider.UnitStatusTopicHandler handler = new OutboundEventProvider.UnitStatusTopicHandler();
+					//handler.Handle(new UnitStatusEvent() { DepartmentId = DepartmentId, Status = savedState });
+					_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent() { DepartmentId = DepartmentId, Status = savedState });
 
 					if (savedState.UnitStateId > 0)
 						return CreatedAtAction("SetUnitState", new { id = savedState.UnitStateId }, savedState);

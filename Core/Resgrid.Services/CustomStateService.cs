@@ -151,7 +151,7 @@ namespace Resgrid.Services
 
 			_cacheProvider.Remove(string.Format(CacheKey, customState.DepartmentId));
 
-			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customState.DepartmentId });
+			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customState.DepartmentId });
 
 			return saved;
 		}
@@ -164,7 +164,7 @@ namespace Resgrid.Services
 		public async Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _customStateDetailRepository.SaveOrUpdateAsync(customStateDetail, cancellationToken);
-			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customStateDetail.CustomState.DepartmentId });
+			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customStateDetail.CustomState.DepartmentId });
 
 			return saved;
 		}

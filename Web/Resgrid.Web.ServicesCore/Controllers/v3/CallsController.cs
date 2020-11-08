@@ -48,6 +48,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IProtocolsService _protocolsService;
 		private readonly IOptions<AppOptions> _appSettingsAccessor;
+		private readonly IEventAggregator _eventAggregator;
 
 		public CallsController(
 			ICallsService callsService,
@@ -62,7 +63,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
 			IProtocolsService protocolsService,
-			IOptions<AppOptions> appSettingsAccessor
+			IOptions<AppOptions> appSettingsAccessor,
+			IEventAggregator eventAggregator
 			)
 		{
 			_callsService = callsService;
@@ -78,6 +80,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_personnelRolesService = personnelRolesService;
 			_protocolsService = protocolsService;
 			_appSettingsAccessor = appSettingsAccessor;
+			_eventAggregator = eventAggregator;
 		}
 		#endregion Members and Constructors
 
@@ -784,8 +787,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
-			OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
-			await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+			//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
+			//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 
 			var profiles = new List<string>();
 
@@ -967,8 +971,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
 
-				OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
-				await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+				//OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
+				//await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 
 				var cqi = new CallQueueItem();
 				cqi.Call = savedCall;
@@ -1026,8 +1031,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			await _callsService.SaveCallAsync(call, cancellationToken);
 
-			OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
-			await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+			//OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
+			//await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
 			return Ok();
 		}
@@ -1067,8 +1073,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			await _callsService.SaveCallAsync(call, cancellationToken);
 
-			OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
-			await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+			//OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
+			//await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
 			return Ok();
 		}

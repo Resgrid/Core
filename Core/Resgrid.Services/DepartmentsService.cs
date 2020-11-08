@@ -119,7 +119,7 @@ namespace Resgrid.Services
 			var dep = await _departmentRepository.SaveOrUpdateAsync(department, cancellationToken);
 			_cacheProvider.Remove(string.Format(CacheKey, department.DepartmentId));
 
-			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
+			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 			{
 				DepartmentId = department.DepartmentId
 			});
@@ -290,7 +290,7 @@ namespace Resgrid.Services
 					auditEvent.UserId = deletingUserId;
 					auditEvent.Type = AuditLogTypes.UserRemoved;
 					auditEvent.After = member2.CloneJson();
-					await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					InvalidateAllDepartmentsCache(departmentId);
 					InvalidateDepartmentUsersInCache(departmentId);
@@ -329,7 +329,7 @@ namespace Resgrid.Services
 				dm.IsDefault = false;
 
 				var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
-				await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 				{
 					DepartmentId = d.DepartmentId
 				});
@@ -405,7 +405,7 @@ namespace Resgrid.Services
 				dm.IsActive = true;
 
 				var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
-				await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 				{
 					DepartmentId = departmentId
 				});

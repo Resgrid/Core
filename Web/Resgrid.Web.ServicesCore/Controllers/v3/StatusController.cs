@@ -12,6 +12,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Web.Services.Controllers.Version3.Models.Status;
+using Stripe;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 using StatusResult = Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusResult;
 
@@ -33,6 +34,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IUserStateService _userStateService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IOutboundEventProvider _outboundEventProvider;
+		private readonly IEventAggregator _eventAggregator;
 
 		public StatusController(
 			IUsersService usersService,
@@ -42,7 +44,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			IDepartmentGroupsService departmentGroupsService,
 			IUserStateService userStateService,
 			IAuthorizationService authorizationService,
-			IOutboundEventProvider outboundEventProvider)
+			IOutboundEventProvider outboundEventProvider,
+			IEventAggregator eventAggregator)
 		{
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -52,6 +55,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_departmentGroupsService = departmentGroupsService;
 			_authorizationService = authorizationService;
 			_outboundEventProvider = outboundEventProvider;
+			_eventAggregator = eventAggregator;
 		}
 
 		/// <summary>
@@ -161,8 +165,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					else
 						log = await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, statusInput.Typ, statusInput.Geo, statusInput.Rto, statusInput.Dtp, statusInput.Not, cancellationToken);
 
-					OutboundEventProvider.PersonnelStatusChangedTopicHandler handler = new OutboundEventProvider.PersonnelStatusChangedTopicHandler();
-					await handler.Handle(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
+					//OutboundEventProvider.PersonnelStatusChangedTopicHandler handler = new OutboundEventProvider.PersonnelStatusChangedTopicHandler();
+					//await handler.Handle(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
+					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
 
 					return CreatedAtAction(nameof(SetCurrentStatus), new { id = log.ActionLogId }, log);
 				}
@@ -183,9 +188,11 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
 		//[System.Web.Http.AcceptVerbs(new string[] { "PUT", "POST"})]
 		[HttpPut("SetStatusForUser")]
+		[HttpPost("SetStatusForUser")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult> SetStatusForUser(StatusInput statusInput, CancellationToken cancellationToken)
 		{
 			if (this.ModelState.IsValid)
@@ -216,8 +223,10 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					else
 						log = await _actionLogsService.SetUserActionAsync(statusInput.Uid, DepartmentId, statusInput.Typ, statusInput.Geo, statusInput.Rto, cancellationToken);
 
-					OutboundEventProvider.PersonnelStatusChangedTopicHandler handler = new OutboundEventProvider.PersonnelStatusChangedTopicHandler();
-					await handler.Handle(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
+
+					//OutboundEventProvider.PersonnelStatusChangedTopicHandler handler = new OutboundEventProvider.PersonnelStatusChangedTopicHandler();
+					//await handler.Handle(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
+					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
 
 					return CreatedAtAction(nameof(SetStatusForUser), new { id = log.ActionLogId }, log);
 				}
@@ -272,8 +281,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					else
 						log = await _actionLogsService.SetUserActionAsync(statusInput.Uid, DepartmentId, statusInput.Typ, statusInput.Geo, statusInput.Rto);
 
-					OutboundEventProvider.PersonnelStatusChangedTopicHandler handler = new OutboundEventProvider.PersonnelStatusChangedTopicHandler();
-					await handler.Handle(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
+					//OutboundEventProvider.PersonnelStatusChangedTopicHandler handler = new OutboundEventProvider.PersonnelStatusChangedTopicHandler();
+					//await handler.Handle(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
+					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { DepartmentId = DepartmentId, Status = log });
 
 					return CreatedAtAction(nameof(SetStatusForUser), new { id = log.ActionLogId }, log);
 				}

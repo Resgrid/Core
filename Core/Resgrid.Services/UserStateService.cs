@@ -76,7 +76,7 @@ namespace Resgrid.Services
 			us.Timestamp = DateTime.Now.ToUniversalTime();
 
 			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
-			await _eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
+			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
 			return saved;
@@ -92,7 +92,7 @@ namespace Resgrid.Services
 			us.Note = note;
 
 			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
-			await _eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
+			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
 			return saved;
@@ -108,7 +108,7 @@ namespace Resgrid.Services
 			us.Note = note;
 
 			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
-			await _eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
+			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = us });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
 			return saved;

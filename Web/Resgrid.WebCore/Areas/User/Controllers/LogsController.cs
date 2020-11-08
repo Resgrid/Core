@@ -20,6 +20,7 @@ using Resgrid.Web.Areas.User.Models.Logs;
 using Resgrid.Web.Areas.User.Models.Personnel;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -297,7 +298,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				catch { }
 
-				await _eventAggregator.SendMessage<LogAddedEvent>(new LogAddedEvent() { DepartmentId = DepartmentId, Log = model.Log });
+				_eventAggregator.SendMessage<LogAddedEvent>(new LogAddedEvent() { DepartmentId = DepartmentId, Log = model.Log });
 			}
 			catch (Exception ex)
 			{

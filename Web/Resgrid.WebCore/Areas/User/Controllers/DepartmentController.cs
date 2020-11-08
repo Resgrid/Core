@@ -425,7 +425,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentsService.UpdateDepartmentAsync(d, cancellationToken);
 				auditEvent.After = d;
 
-				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 				model.Message = "Department settings save successful, you may have to log out and log back in for everything to take effect.";
 
 				model.Department = d;
@@ -530,7 +530,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId, cancellationToken);
 				}
 
-				await _eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent(){DepartmentId = DepartmentId});
+				_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent(){DepartmentId = DepartmentId});
 
 				_departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
 

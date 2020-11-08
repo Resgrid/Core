@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
@@ -38,7 +39,7 @@ namespace Resgrid.Services
 		public async Task<Note> SaveAsync(Note note, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _notesRepository.SaveOrUpdateAsync(note, cancellationToken);
-			await _eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent() { DepartmentId = note.DepartmentId, Note = note });
+			_eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent() { DepartmentId = note.DepartmentId, Note = note });
 
 			return saved;
 		}

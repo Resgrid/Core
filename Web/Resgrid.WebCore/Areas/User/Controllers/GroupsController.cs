@@ -232,7 +232,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.GroupAdded;
 				auditEvent.After = model.NewGroup.CloneJson();
-				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
 			}
@@ -330,7 +330,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.GroupRemoved;
 				auditEvent.Before = group.CloneJson();
-				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				await _deleteService.DeleteGroupAsync(group.DepartmentGroupId, UserId);
 			}
@@ -534,7 +534,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentGroupsService.UpdateAsync(group, cancellationToken);
 
 				auditEvent.After = group.CloneJson();
-				await _eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
 			}

@@ -19,7 +19,7 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 
-		public QueueService(IQueueItemsRepository queueItemsRepository, IOutboundQueueProvider outboundQueueProvider, IDepartmentSettingsService departmentSettingsService, 
+		public QueueService(IQueueItemsRepository queueItemsRepository, IOutboundQueueProvider outboundQueueProvider, IDepartmentSettingsService departmentSettingsService,
 			IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider)
 		{
 			_queueItemsRepository = queueItemsRepository;
@@ -36,7 +36,7 @@ namespace Resgrid.Services
 
 		public async Task<List<QueueItem>> DequeueAsync(QueueTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var items = await _queueItemsRepository.GetPendingQueueItemsByTypeIdAsync((int) type);
+			var items = await _queueItemsRepository.GetPendingQueueItemsByTypeIdAsync((int)type);
 
 			foreach (var i in items)
 			{
@@ -113,64 +113,64 @@ namespace Resgrid.Services
 
 		public async Task<bool> EnqueueCallBroadcastAsync(CallQueueItem cqi, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if (Config.SystemBehaviorConfig.IsAzure)
+			//if (Config.SystemBehaviorConfig.IsAzure)
+			//{
+			// If we have geolocation data, lets get the approx address now.
+			if (!string.IsNullOrEmpty(cqi.Call.GeoLocationData) && String.IsNullOrWhiteSpace(cqi.Call.Address))
 			{
-				// If we have geolocation data, lets get the approx address now.
-				if (!string.IsNullOrEmpty(cqi.Call.GeoLocationData) && String.IsNullOrWhiteSpace(cqi.Call.Address))
+				try
 				{
-					try
-					{
-						string[] points = cqi.Call.GeoLocationData.Split(char.Parse(","));
+					string[] points = cqi.Call.GeoLocationData.Split(char.Parse(","));
 
-						if (points != null && points.Length == 2)
-						{
-							cqi.Address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
-						}
-					}
-					catch { /* Ignore */ }
-				}
-				else
-				{
-					cqi.Address = cqi.Call.Address;
-				}
-
-				if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
-				{
-					foreach (var dispatch in cqi.Call.Dispatches)
+					if (points != null && points.Length == 2)
 					{
-						if (dispatch.User == null)
-						{
-							var user = cqi.Profiles.FirstOrDefault(x => x.UserId == dispatch.UserId);
-						}
+						cqi.Address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 					}
 				}
-
-				if (cqi.Call.Attachments != null &&
-				    cqi.Call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
-				{
-					var audio = cqi.Call.Attachments.FirstOrDefault(x =>
-						x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
-
-					if (audio != null)
-						cqi.CallDispatchAttachmentId = audio.CallAttachmentId;
-				}
-
-				// We can't queue up any attachment data as it'll be too large. 
-				cqi.Call.Attachments = null;
-
-				return await _outboundQueueProvider.EnqueueCall(cqi);
+				catch { /* Ignore */ }
 			}
 			else
 			{
-				QueueItem item = new QueueItem();
-				item.QueueType = (int)QueueTypes.CallBroadcast;
-				item.SourceId = cqi.Call.CallId.ToString();
-				item.QueuedOn = DateTime.UtcNow;
-
-				await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
+				cqi.Address = cqi.Call.Address;
 			}
 
-			return true;
+			//if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
+			//{
+			//	foreach (var dispatch in cqi.Call.Dispatches)
+			//	{
+			//		if (dispatch.User == null)
+			//		{
+			//			var user = cqi.Profiles.FirstOrDefault(x => x.UserId == dispatch.UserId);
+			//		}
+			//	}
+			//}
+
+			if (cqi.Call.Attachments != null &&
+				cqi.Call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
+			{
+				var audio = cqi.Call.Attachments.FirstOrDefault(x =>
+					x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
+
+				if (audio != null)
+					cqi.CallDispatchAttachmentId = audio.CallAttachmentId;
+			}
+
+			// We can't queue up any attachment data as it'll be too large. 
+			cqi.Call.Attachments = null;
+
+			return await _outboundQueueProvider.EnqueueCall(cqi);
+			//}
+			//else
+			//{
+			//	QueueItem item = new QueueItem();
+			//	item.QueueType = (int)QueueTypes.CallBroadcast;
+			//	item.SourceId = cqi.Call.CallId.ToString();
+			//	item.QueuedOn = DateTime.UtcNow;
+
+			//	await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
+			//}
+
+			//return true;
 		}
 
 		public async Task<bool> EnqueueDistributionListBroadcastAsync(DistributionListQueueItem dlqi, CancellationToken cancellationToken = default(CancellationToken))

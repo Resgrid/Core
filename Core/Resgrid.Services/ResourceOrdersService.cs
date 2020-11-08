@@ -7,6 +7,7 @@ using Resgrid.Model.Services;
 using System.Threading.Tasks;
 using GeoCoordinatePortable;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus;
 
 namespace Resgrid.Services
@@ -73,7 +74,7 @@ namespace Resgrid.Services
 		{
 			var savedOrder = await _resourceOrdersRepository.SaveOrderAsync(order, cancellationToken);
 
-			await _eventAggregator.SendMessage<ResourceOrderAddedEvent>(new ResourceOrderAddedEvent()
+			_eventAggregator.SendMessage<ResourceOrderAddedEvent>(new ResourceOrderAddedEvent()
 			{
 				Order = savedOrder
 			});

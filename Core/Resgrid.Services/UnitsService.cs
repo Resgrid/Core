@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
@@ -52,7 +53,7 @@ namespace Resgrid.Services
 		public async Task<Unit> SaveUnitAsync(Unit unit, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
-			await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
+			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
 
 			return saved;
 		}
@@ -108,7 +109,7 @@ namespace Resgrid.Services
 				}
 
 				await _unitsRepository.DeleteAsync(unit, cancellationToken);
-				await _eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
 
 				return true;
 			}
@@ -253,7 +254,7 @@ namespace Resgrid.Services
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
-			await _eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
+			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
 
 			return saved;
 		}
@@ -265,7 +266,7 @@ namespace Resgrid.Services
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
-			await _eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
+			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
 			
 			return state;
 		}

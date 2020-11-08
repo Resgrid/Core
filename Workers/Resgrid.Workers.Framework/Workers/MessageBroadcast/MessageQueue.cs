@@ -7,6 +7,7 @@ using Autofac;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
@@ -155,7 +156,7 @@ namespace Resgrid.Workers.Framework.Workers.MessageBroadcast
 		{
 			var items = new List<MessageQueueItem>();
 
-			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.MessageBroadcast, Timestamp = DateTime.UtcNow });
+			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.MessageBroadcast, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

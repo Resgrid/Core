@@ -8,6 +8,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 
@@ -138,7 +139,7 @@ namespace Resgrid.Workers.Framework
 		{
 			var items = new List<StaffingScheduleQueueItem>();
 
-			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.StaffingChange, Timestamp = DateTime.UtcNow });
+			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.StaffingChange, Timestamp = DateTime.UtcNow });
 
 			if (_queue.Count <= 0)
 				PopulateQueue();

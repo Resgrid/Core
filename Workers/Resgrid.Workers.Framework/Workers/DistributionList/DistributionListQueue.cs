@@ -6,6 +6,7 @@ using Autofac;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 
@@ -108,7 +109,7 @@ namespace Resgrid.Workers.Framework.Workers.DistributionList
 		{
 			List<DistributionListQueueItem> items = new List<DistributionListQueueItem>();
 
-			await _eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.DistributionList, Timestamp = DateTime.UtcNow });
+			_eventAggregator.SendMessage<WorkerHeartbeatEvent>(new WorkerHeartbeatEvent() { WorkerType = (int)JobTypes.DistributionList, Timestamp = DateTime.UtcNow });
 
 			int count = 0;
 			if (_queue.Count < maxItemsToReturn)

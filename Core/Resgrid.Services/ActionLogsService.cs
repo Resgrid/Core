@@ -178,11 +178,11 @@ namespace Resgrid.Services
 		public async Task<ActionLog> SaveActionLogAsync(ActionLog actionLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			actionLog.Timestamp = actionLog.Timestamp.ToUniversalTime();
-			var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
+			var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken, true);
 
-			InvalidateActionLogs(actionLog.DepartmentId);
+			//InvalidateActionLogs(actionLog.DepartmentId);
 			
-			await _eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { Status = actionLog });
+			_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { Status = actionLog });
 
 			return actionLog;
 		}
@@ -197,7 +197,7 @@ namespace Resgrid.Services
 				{
 					var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
 					InvalidateActionLogs(actionLog.DepartmentId);
-					await _eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() {Status = saved});
+					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() {Status = saved});
 				}
 
 				return true;

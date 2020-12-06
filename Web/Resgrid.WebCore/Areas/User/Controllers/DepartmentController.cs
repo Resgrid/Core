@@ -216,6 +216,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
 			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
 
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
+			model.PersonnelSort = (int) personnelSortOrder;
+
+			var callSortOrder = await _departmentSettingsService.GetDepartmentCallSortOrderAsync(DepartmentId);
+			model.CallsSort = (int) callSortOrder;
+
+			var unitsSortOrder = await _departmentSettingsService.GetDepartmentUnitsSortOrderAsync(DepartmentId);
+			model.UnitsSort = (int) unitsSortOrder;
+
 			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{

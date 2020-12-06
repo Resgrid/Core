@@ -13,6 +13,7 @@ namespace Resgrid.Providers.NumberProvider
 								);
 
 
+				//return $"<?xml version=\"1.0\" encoding=\"UTF-8\"?>{laml.ToString()}";
 				return laml.ToString();
 			}
 		}

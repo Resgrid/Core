@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 
@@ -21,13 +22,13 @@ namespace Resgrid.Providers.Bus
 			try
 			{
 				await Connect();
-				await _hubConnection.InvokeAsync("PersonnelStatusUpdated", departmentId, actionLog.ActionLogId);
+				await _hubConnection.InvokeAsync("personnelStatusUpdated", departmentId, actionLog.ActionLogId);
 				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				//Logging.LogException(e);
+				Logging.LogException(e);
 			}
 
 			return false;
@@ -38,13 +39,13 @@ namespace Resgrid.Providers.Bus
 			try
 			{
 				await Connect();
-				await _hubConnection.InvokeAsync("PersonnelStaffingUpdated", departmentId, userState.UserStateId);
+				await _hubConnection.InvokeAsync("personnelStaffingUpdated", departmentId, userState.UserStateId);
 				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				//Logging.LogException(e);
+				Logging.LogException(e);
 			}
 
 			return false;
@@ -55,13 +56,13 @@ namespace Resgrid.Providers.Bus
 			try
 			{
 				await Connect();
-				await _hubConnection.InvokeAsync("UnitStatusUpdated", departmentId, unitState.UnitStateId);
+				await _hubConnection.InvokeAsync("unitStatusUpdated", departmentId, unitState.UnitStateId);
 				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				//Logging.LogException(e);
+				Logging.LogException(e);
 			}
 
 			return false;
@@ -72,13 +73,13 @@ namespace Resgrid.Providers.Bus
 			try
 			{
 				await Connect();
-				await _hubConnection.InvokeAsync("CallsUpdated", departmentId, call.CallId);
+				await _hubConnection.InvokeAsync("callsUpdated", departmentId, call.CallId);
 				return true;
 			}
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				//Logging.LogException(e);
+				Logging.LogException(e);
 			}
 
 			return false;
@@ -87,7 +88,7 @@ namespace Resgrid.Providers.Bus
 		private void Create()
 		{
 			_hubConnection = new HubConnectionBuilder()
-				.WithUrl($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/eventingHub")
+				.WithUrl($"{Config.SystemBehaviorConfig.ResgridEventingBaseUrl}/eventingHub")
 				.WithAutomaticReconnect()
 				.Build();
 
@@ -102,12 +103,13 @@ namespace Resgrid.Providers.Bus
 		{
 			try
 			{
-				if (_hubConnection.State == HubConnectionState.Disconnected)
+				if (_hubConnection.State != HubConnectionState.Connected)
 					await _hubConnection.StartAsync();
 			}
-			catch
+			catch (Exception ex)
 			{
-				Create();
+				Logging.LogException(ex);
+				//Create();
 			}
 		}
 	}

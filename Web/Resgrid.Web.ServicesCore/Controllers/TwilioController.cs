@@ -1,22 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
-using Resgrid.Providers.NumberProvider;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Mime;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Resgrid.Framework;
+using Resgrid.Web.Services.Models;
+using Twilio.AspNet.Common;
+using Twilio.TwiML;
 
 namespace Resgrid.Web.Services.Controllers
 {
@@ -24,7 +23,7 @@ namespace Resgrid.Web.Services.Controllers
 	[Route("[controller]")]
 	[Produces("application/xml")]
 	[ApiExplorerSettings(IgnoreApi = true)]
-	public class SignalWireController : ControllerBase
+	public class TwilioController : ControllerBase
 	{
 		#region Private Readonly Properties and Constructors
 		private readonly IDepartmentSettingsService _departmentSettingsService;
@@ -43,7 +42,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly ICustomStateService _customStateService;
 		private readonly IUnitsService _unitsService;
 
-		public SignalWireController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
+		public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
@@ -67,37 +66,22 @@ namespace Resgrid.Web.Services.Controllers
 		}
 		#endregion Private Readonly Properties and Constructors
 
-		[HttpGet]
-		public ActionResult Test()
-		{
-
-			return Ok();
-		}
-
-
-		[HttpGet("Receive")]
+		[HttpGet("IncomingMessage")]
 		[Produces("application/xml")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult> Receive(CancellationToken cancellationToken)
+		public async Task<ActionResult> IncomingMessage([FromQuery]TwilioMessage request)
 		{
-			var queryValues = Request.Query.ToDictionary(x => x.Key, y => y.Value.ToString());//.RequestUri.ParseQueryString();
+			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From) || string.IsNullOrWhiteSpace(request.Body))
+				return BadRequest();
+
+			var response = new MessagingResponse();
 
 			var textMessage = new TextMessage();
-			//textMessage.Type = queryValues["type"];
-			textMessage.To = queryValues["To"].Replace("+", "");
-			textMessage.Msisdn = queryValues["From"].Replace("+", ""); //queryValues["SmsSid"];
-			textMessage.NetworkCode = queryValues["AccountSid"];
-			textMessage.MessageId = queryValues["MessageSid"];
+			textMessage.To = request.To.Replace("+", "");
+			textMessage.Msisdn = request.From.Replace("+", "");
+			textMessage.MessageId = request.MessageSid;
 			textMessage.Timestamp = DateTime.UtcNow.ToLongDateString();
-			//textMessage.Concat = queryValues["concat"];
-			//textMessage.ConcatRef = queryValues["concat-ref"];
-			//textMessage.ConcatTotal = queryValues["concat-total"];
-			//textMessage.ConcatPart = queryValues["concat-part"];
-			textMessage.Data = queryValues["Body"];
-			//textMessage.Udh = queryValues["udh"];
-			textMessage.Text = queryValues["Body"];
+			textMessage.Data = request.Body;
+			textMessage.Text = request.Body;
 
 			var messageEvent = new InboundMessageEvent();
 			messageEvent.MessageType = (int)InboundMessageTypes.TextMessage;
@@ -107,20 +91,18 @@ namespace Resgrid.Web.Services.Controllers
 			messageEvent.Processed = false;
 			messageEvent.CustomerId = "";
 
-			string response = "";
-
 			try
 			{
-				UserProfile profile = null;
+				UserProfile userProfile = null;
 				var departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
 
 				if (!departmentId.HasValue)
 				{
-					profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
+					userProfile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
-					if (profile != null)
+					if (userProfile != null)
 					{
-						var department = await _departmentsService.GetDepartmentByUserIdAsync(profile.UserId);
+						var department = await _departmentsService.GetDepartmentByUserIdAsync(userProfile.UserId);
 
 						if (department != null)
 							departmentId = department.DepartmentId;
@@ -172,20 +154,22 @@ namespace Resgrid.Web.Services.Controllers
 								c.Dispatches.Add(cd);
 							}
 
-							var savedCall = await _callsService.SaveCallAsync(c, cancellationToken);
+							var savedCall = await _callsService.SaveCallAsync(c);
 
 							var cqi = new CallQueueItem();
 							cqi.Call = savedCall;
 							cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(users.Select(x => x.UserId).ToList());
 							cqi.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(cqi.Call.DepartmentId);
 
-							await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+							_queueService.EnqueueCallBroadcastAsync(cqi);
 
 							messageEvent.Processed = true;
 						}
 
 						if (!isDispatchSource && textCommandEnabled)
 						{
+							var profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
+
 							if (profile != null)
 							{
 								var payload = _textCommandService.DetermineType(textMessage.Text);
@@ -195,8 +179,7 @@ namespace Resgrid.Web.Services.Controllers
 								switch (payload.Type)
 								{
 									case TextCommandTypes.None:
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.", department.DepartmentId, textMessage.To, profile);
-										response = LaMLResponse.Message.Respond("Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.");
+										response.Message("Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.");
 										break;
 									case TextCommandTypes.Help:
 										messageEvent.Processed = true;
@@ -253,87 +236,53 @@ namespace Resgrid.Web.Services.Controllers
 											help.Append("onshift or s4: On Shift Staffing" + Environment.NewLine);
 										}
 
-										response = LaMLResponse.Message.Respond(help.ToString());
+										response.Message(help.ToString());
+
 										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Action:
 										messageEvent.Processed = true;
-
-										var activeResponseCalls = (await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId)).Where(x => DateTime.Now == x.LoggedOn.Within(TimeSpan.FromMinutes(15)));
-
-										if (activeResponseCalls != null && activeResponseCalls.Any())
-										{
-											await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, (int)payload.GetActionType(), null, activeResponseCalls.First().CallId, cancellationToken);
-											response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0} to call {1}", payload.GetActionType(), activeResponseCalls.First().Name));
-										}
-										else
-										{
-											await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, (int)payload.GetActionType(), cancellationToken);
-											response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()));
-											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
-										}
+										await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
+										response.Message(string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()));
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Status", string.Format("Resgrid recieved your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Staffing:
 										messageEvent.Processed = true;
-										await _userStateService.CreateUserStateAsync(profile.UserId, department.DepartmentId, (int)payload.GetStaffingType(), null, DateTime.UtcNow, cancellationToken: cancellationToken);
-										response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()));
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
+										await _userStateService.CreateUserState(profile.UserId, department.DepartmentId, (int)payload.GetStaffingType());
+										response.Message(string.Format("Resgrid received your text command. Staffing level changed to: {0}", payload.GetStaffingType()));
+										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Staffing", string.Format("Resgrid recieved your text command. Staffing level changed to: {0}", payload.GetStaffingType()), department.DepartmentId, textMessage.To, profile);
 										break;
 									case TextCommandTypes.Stop:
 										messageEvent.Processed = true;
-										await _userProfileService.DisableTextMessagesForUserAsync(profile.UserId, cancellationToken);
-										response = LaMLResponse.Message.Respond("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
+										await _userProfileService.DisableTextMessagesForUserAsync(profile.UserId);
+										response.Message("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
 										break;
 									case TextCommandTypes.CustomAction:
 										messageEvent.Processed = true;
-
-										var activeResponseCalls2 = (await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId)).Where(x => DateTime.Now == x.LoggedOn.Within(TimeSpan.FromMinutes(15)));
-
-										if (activeResponseCalls2 != null && activeResponseCalls2.Any())
-										{
-											await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, payload.GetCustomActionType(), null, activeResponseCalls2.First().CallId, cancellationToken);
-										}
-										else
-										{
-											await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, payload.GetCustomActionType(), cancellationToken);
-										}
+										await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, payload.GetCustomActionType());
 
 										if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any() && customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType()) != null)
 										{
 											var detail = customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType());
-
-											if (activeResponseCalls2 != null && activeResponseCalls2.Any())
-											{
-												response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0} to call {1}", detail.ButtonText, activeResponseCalls2.First().Name));
-												//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
-											}
-											else
-											{
-												response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText));
-												//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
-											}
+											response.Message(string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText));
 										}
 										else
 										{
-											response = LaMLResponse.Message.Respond("Resgrid received your text command and updated your status");
-											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your status", department.DepartmentId, textMessage.To, profile);
+											response.Message("Resgrid received your text command and updated your status");
 										}
 										break;
 									case TextCommandTypes.CustomStaffing:
 										messageEvent.Processed = true;
-										await _userStateService.CreateUserState(profile.UserId, department.DepartmentId, payload.GetCustomStaffingType(), cancellationToken);
+										await _userStateService.CreateUserState(profile.UserId, department.DepartmentId, payload.GetCustomStaffingType());
 
 										if (customStaffing != null && customStaffing.IsDeleted == false && customStaffing.GetActiveDetails() != null && customStaffing.GetActiveDetails().Any() && customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType()) != null)
 										{
 											var detail = customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType());
-											response = LaMLResponse.Message.Respond(string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText));
-											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText), department.DepartmentId, textMessage.To, profile);
+											response.Message(string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText));
 										}
 										else
 										{
-											response = LaMLResponse.Message.Respond("Resgrid received your text command and updated your staffing");
-											//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Resgrid received your text command and updated your staffing", department.DepartmentId, textMessage.To, profile);
+											response.Message("Resgrid received your text command and updated your staffing");
 										}
 										break;
 									case TextCommandTypes.MyStatus:
@@ -346,28 +295,23 @@ namespace Resgrid.Web.Services.Controllers
 										var customStatusLevel = await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, userStatus);
 										var customStaffingLevel = await _customStateService.GetCustomPersonnelStaffingAsync(department.DepartmentId, userStaffing);
 
-										response = LaMLResponse.Message.Respond($"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.");
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", $"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.", department.DepartmentId, textMessage.To, profile);
+										response.Message($"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.");
 										break;
 									case TextCommandTypes.Calls:
 										messageEvent.Processed = true;
 
 										var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId);
 
-										if (activeCalls.Count > 10)
-											activeCalls = activeCalls.Take(10).ToList();
-
 										var activeCallText = new StringBuilder();
-										activeCallText.Append($"Top 10 Active Calls for {department.Name}" + Environment.NewLine);
+										activeCallText.Append($"Active Calls for {department.Name}" + Environment.NewLine);
 										activeCallText.Append("---------------------" + Environment.NewLine);
 
 										foreach (var activeCall in activeCalls)
 										{
-											activeCallText.Append($"CallId: {activeCall.CallId} Name: {activeCall.Name.Truncate(15)} Nature:{activeCall.NatureOfCall.Truncate(30)}" + Environment.NewLine);
+											activeCallText.Append($"CallId: {activeCall.CallId} Name: {activeCall.Name} Nature:{activeCall.NatureOfCall}" + Environment.NewLine);
 										}
 
-										response = LaMLResponse.Message.Respond(activeCallText.ToString());
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", activeCallText.ToString(), department.DepartmentId, textMessage.To, profile);
+										response.Message(activeCallText.ToString().Truncate(1200));
 										break;
 									case TextCommandTypes.Units:
 										messageEvent.Processed = true;
@@ -384,8 +328,7 @@ namespace Resgrid.Web.Services.Controllers
 											unitStatusesText.Append($"{unit.Unit.Name} is {unitState.ButtonText}" + Environment.NewLine);
 										}
 
-										response = LaMLResponse.Message.Respond(unitStatusesText.ToString());
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", unitStatusesText.ToString(), department.DepartmentId, textMessage.To, profile);
+										response.Message(unitStatusesText.ToString().Truncate(1200));
 										break;
 									case TextCommandTypes.CallDetail:
 										messageEvent.Processed = true;
@@ -420,55 +363,44 @@ namespace Resgrid.Web.Services.Controllers
 											}
 										}
 
-										response = LaMLResponse.Message.Respond(callText.ToString());
-										//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", callText.ToString(), department.DepartmentId, textMessage.To, profile);
+										response.Message(callText.ToString());
 										break;
 								}
 							}
 						}
 					}
-					else if (textMessage.To == Config.NumberProviderConfig.SignalWireResgridNumber.Replace("+", "")) // Resgrid master text number
+				}
+				else if (textMessage.To == "17753765253") // Resgrid master text number
+				{
+					var profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
+					var payload = _textCommandService.DetermineType(textMessage.Text);
+
+					switch (payload.Type)
 					{
-						var payload = _textCommandService.DetermineType(textMessage.Text);
+						case TextCommandTypes.None:
+							response.Message("Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.");
+							break;
+						case TextCommandTypes.Help:
+							messageEvent.Processed = true;
 
-						switch (payload.Type)
-						{
-							case TextCommandTypes.None:
-								await _communicationService.SendTextMessageAsync(profile.UserId, "Resgrid TCI Help", "Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.", department.DepartmentId, textMessage.To, profile);
-								break;
-							case TextCommandTypes.Help:
-								messageEvent.Processed = true;
+							var help = new StringBuilder();
+							help.Append("Resgrid Text Commands" + Environment.NewLine);
+							help.Append("---------------------" + Environment.NewLine);
+							help.Append("This is the Resgrid system for first responders (https://resgrid.com) automated text system. Your department isn't signed up for inbound text messages, but you can send the following commands." + Environment.NewLine);
+							help.Append("---------------------" + Environment.NewLine);
+							help.Append("STOP: To turn off all text messages" + Environment.NewLine);
+							help.Append("HELP: This help text" + Environment.NewLine);
 
-								var help = new StringBuilder();
-								help.Append("Resgrid Text Commands" + Environment.NewLine);
-								help.Append("---------------------" + Environment.NewLine);
-								help.Append("This is the Resgrid system for first responders (https://resgrid.com) automated text system. Your department isn't signed up for inbound text messages, but you can send the following commands." + Environment.NewLine);
-								help.Append("---------------------" + Environment.NewLine);
-								help.Append("STOP: To turn off all text messages" + Environment.NewLine);
-								help.Append("HELP: This help text" + Environment.NewLine);
+							response.Message(help.ToString());
 
-								response = LaMLResponse.Message.Respond(help.ToString());
-								//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
-
-								break;
-							case TextCommandTypes.Stop:
-								messageEvent.Processed = true;
-								await _userProfileService.DisableTextMessagesForUserAsync(profile.UserId, cancellationToken);
-
-								response = LaMLResponse.Message.Respond("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
-								//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
-								break;
-						}
+							break;
+						case TextCommandTypes.Stop:
+							messageEvent.Processed = true;
+							await _userProfileService.DisableTextMessagesForUserAsync(profile.UserId);
+							response.Message("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
+							break;
 					}
 				}
-
-				//return Ok(new StringContent(response, Encoding.UTF8, "application/xml"));
-				return new ContentResult
-				{
-					Content = response,
-					ContentType = "application/xml",
-					StatusCode = 200
-				};
 			}
 			catch (Exception ex)
 			{
@@ -479,9 +411,208 @@ namespace Resgrid.Web.Services.Controllers
 				await _numbersService.SaveInboundMessageEventAsync(messageEvent);
 			}
 
+			//Ok();
 
-			return Ok();
+			//var response = new TwilioResponse();
+
+			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
+			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
 		}
 
+		[HttpGet("VoiceCall")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> VoiceCall(string userId, int callId)
+		{
+			var response = new VoiceResponse();
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+			{
+				response.Say("This call has been closed. Goodbye.").Hangup();
+				//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
+				return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
+			}
+
+			if (call.State == (int)CallStates.Cancelled || call.State == (int)CallStates.Closed || call.IsDeleted)
+			{
+				response.Say(string.Format("This call, Id {0} has been closed. Goodbye.", call.Number)).Hangup();
+				//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
+				return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
+			}
+
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
+
+			string address = call.Address;
+			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData))
+			{
+				try
+				{
+					string[] points = call.GeoLocationData.Split(char.Parse(","));
+
+					if (points != null && points.Length == 2)
+					{
+						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+					}
+				}
+				catch { }
+			}
+
+			if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
+				address = call.Address;
+
+			StringBuilder sb = new StringBuilder();
+
+			if (!String.IsNullOrWhiteSpace(address))
+				sb.Append(string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), call.Address, call.NatureOfCall));
+			else
+				sb.Append(string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), call.NatureOfCall));
+
+
+			sb.Append(", Press 0 to repeat, Press 1 to respond to the scene");
+
+			for (int i = 0; i < stations.Count; i++)
+			{
+				if (i >= 8)
+					break;
+
+				sb.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
+			}
+
+			// TODO: FIIIIX
+			//response.Gather(new { numDigits = 1, timeout = 10, method = "GET", action = string.Format("{0}/Twilio/VoiceCallAction/{1}/{2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId) }).Say(sb.ToString()).EndGather().Pause(10).Hangup();
+
+			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
+			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		[HttpGet("VoiceCallAction")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> VoiceCallAction(string userId, int callId, [FromQuery]TwilioGatherRequest twilioRequest)
+		{
+			var response = new VoiceResponse();
+
+			if (twilioRequest.Digits == "0")
+				response.Redirect(new Uri(string.Format("{0}/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), "GET");
+			else if (twilioRequest.Digits == "1")
+			{
+				var call = await _callsService.GetCallByIdAsync(callId);
+				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId);
+
+				response.Say("You have been marked responding to the scene, goodbye.").Hangup();
+			}
+			else
+			{
+				var call = await _callsService.GetCallByIdAsync(callId);
+				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
+
+				int index = int.Parse(twilioRequest.Digits) - 2;
+
+				if (index >= 0 && index < 8)
+				{
+					var station = stations[index];
+
+					if (station != null)
+					{
+						await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null,
+							station.DepartmentGroupId);
+
+						response.Say(string.Format("You have been marked responding to {0}, goodbye.", station.Name)).Hangup();
+					}
+
+				}
+			}
+
+			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
+			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		[HttpGet("InboundVoice")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> InboundVoice([FromQuery]TwilioGatherRequest request)
+		{
+			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From))
+				return BadRequest();
+
+			var response = new VoiceResponse();
+			var departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(request.To.Replace("+", ""));
+
+			if (departmentId.HasValue)
+			{
+				var authroized = await _limitsService.CanDepartmentProvisionNumberAsync(departmentId.Value);
+
+
+				request.From.Replace("+", "");
+				if (authroized)
+				{
+					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId.Value, false);
+
+					UserProfile profile = null;
+					profile = await _userProfileService.GetProfileByMobileNumberAsync(request.From.Replace("+", ""));
+
+					if (profile == null)
+						profile = await _userProfileService.GetProfileByHomeNumberAsync(request.From.Replace("+", ""));
+
+					if (department != null && profile != null)
+					{
+						StringBuilder sb = new StringBuilder();
+						sb.Append($@"Hello {profile.FirstName}, this is the Automated Voice System for {department.Name}. Please select from the following options. 
+											To list current active calls press 1, 
+											To list current user statuses press 2, 
+											To list current unit statuses press 3, 
+											To list upcoming Calendar events press 4,
+											To list upcoming Shifts press 5");
+
+						response.Say(sb.ToString());
+					}
+					else
+					{
+						response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
+					}
+				}
+				else
+				{
+					response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
+				}
+			}
+			else
+			{
+				response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
+			}
+
+			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
+			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+	}
+
+	[Serializable]
+	public class TwilioMessage : TwilioRequest
+	{
+		public string MessageSid { get; set; }
+		public string SmsMessageSid { get; set; }
+		public string Body { get; set; }
 	}
 }

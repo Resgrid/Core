@@ -2,6 +2,7 @@ var resgrid;
 (function (resgrid) {
     resgrid.absoluteBaseUrl = "";
     resgrid.absoluteApiBaseUrl = "";
+    resgrid.absoluteEventingBaseUrl = "";
 
     function init() {
         $.validator.setDefaults({

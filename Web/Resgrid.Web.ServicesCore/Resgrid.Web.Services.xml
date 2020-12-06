@@ -2074,6 +2074,16 @@
             The timestamp of the last staffing level in UTC.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Gid">
+            <summary>
+            Group Id for the user, 0 if not in a group
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Personnel.PersonnelStatusResult.Weight">
+            <summary>
+            Sorting weight
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Profile.MobileCarriersResult">
             <summary>
             Information about mobile carriers in the Resgrid system. If you need mobile carriers added contact team@resgrid.com.

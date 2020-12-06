@@ -65,7 +65,7 @@ namespace Resgrid.Model.Services
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="departmentName">Name of the department.</param>
 		/// <returns>Session.</returns>
-		Session CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId,
+		Task<Session> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId,
 			string emailAddress, string departmentName);
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace Resgrid.Model.Services
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="departmentName">Name of the department.</param>
 		/// <returns>Session.</returns>
-		Session CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress,
+		Task<Session> CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress,
 			string departmentName);
 
 		/// <summary>

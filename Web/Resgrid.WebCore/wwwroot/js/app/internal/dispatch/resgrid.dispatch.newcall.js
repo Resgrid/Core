@@ -131,7 +131,7 @@ var resgrid;
 							});
 						}
 						else {
-							alert("What3Words was unable to find a location for those workds. Ensure its 3 words seperated by periods.");
+							alert("What3Words was unable to find a location for those words. Ensure its 3 words separated by periods.");
 						}
 					});
 					evt.preventDefault();

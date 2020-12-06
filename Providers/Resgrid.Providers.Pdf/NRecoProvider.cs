@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using NReco.PdfGenerator;
+using Resgrid.Config;
 using Resgrid.Model.Providers;
 
 namespace Resgrid.Providers.PdfProvider
@@ -9,6 +11,10 @@ namespace Resgrid.Providers.PdfProvider
 		public byte[] ConvertHtmlToPdf(string html)
 		{
 			var converter = new HtmlToPdfConverter();
+
+			if (!String.IsNullOrWhiteSpace(PrintConfig.NRecoPdfOwner) && !String.IsNullOrWhiteSpace(PrintConfig.NRecoPdfKey))
+				converter.License.SetLicenseKey(PrintConfig.NRecoPdfOwner, PrintConfig.NRecoPdfKey);
+
 			//converter.Quiet = false;
 			//converter.LogReceived += (sender, e) =>
 			//{

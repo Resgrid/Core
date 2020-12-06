@@ -101,34 +101,19 @@ namespace Resgrid.Services
 			string numberToTest =
 				number.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
 
-			//var profiles = _userProfileRepository.GetProfileByMobileNumberAsync().Where(x => x.MobileNumber != null).ToList();
-			//var profile = from p in profiles
-			//			  where
-			//				  p.MobileNumber != null &&
-			//				  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-			//			  select p;
+			var profile = await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
 
-			//if (profile.Count() == 1)
-			//	return profile.First();
-			//else
-			//{
-			//	if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
-			//	{
-			//		numberToTest = numberToTest.Remove(0, 1);
+			if (profile != null)
+				return profile;
 
-			//		profile = from p in profiles
-			//				  where
-			//					  p.MobileNumber != null &&
-			//					  p.MobileNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-			//				  select p;
+			if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
+			{
+				numberToTest = numberToTest.Remove(0, 1);
 
-			//		return profile.FirstOrDefault();
-			//	}
-			//}
+				return await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
+			}
 
-			//return null;
-
-			return await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
+			return null;
 		}
 
 		public async Task<UserProfile> GetProfileByHomeNumberAsync(string number)
@@ -136,32 +121,19 @@ namespace Resgrid.Services
 			string numberToTest =
 				number.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
 
-			//var profiles = _userProfileRepository.GetAll().Where(x => x.HomeNumber != null).ToList();
-			//var profile = from p in profiles
-			//			  where
-			//				  p.HomeNumber != null &&
-			//				  p.HomeNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-			//			  select p;
+			var profile = await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
 
-			//if (profile.Count() == 1)
-			//	return profile.First();
-			//else
-			//{
-			//	if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
-			//	{
-			//		numberToTest = numberToTest.Remove(0, 1);
+			if (profile != null)
+				return profile;
 
-			//		profile = from p in profiles
-			//				  where
-			//					  p.HomeNumber != null &&
-			//					  p.HomeNumber.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim() == numberToTest
-			//				  select p;
+			if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
+			{
+				numberToTest = numberToTest.Remove(0, 1);
 
-			//		return profile.FirstOrDefault();
-			//	}
-			//}
+				return await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
+			}
 
-			return await _userProfileRepository.GetProfileByHomeNumberAsync(numberToTest);
+			return null;
 		}
 
 		public async Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds)

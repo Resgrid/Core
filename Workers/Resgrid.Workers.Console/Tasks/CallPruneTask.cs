@@ -43,6 +43,8 @@ namespace Resgrid.Workers.Console.Tasks
 						item.PruneSettings = i;
 
 						_logger.LogInformation("CallPrune::Pruning Calls for DepartmentId:" + item.PruneSettings.DepartmentId);
+						item.PruneSettings.Department =
+							await _departmentsService.GetDepartmentByIdAsync(item.PruneSettings.DepartmentId);
 
 						var result = await logic.Process(item);
 

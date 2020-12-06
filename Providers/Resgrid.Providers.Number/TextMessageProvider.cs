@@ -100,7 +100,7 @@ namespace Resgrid.Providers.NumberProvider
 			}
 		}
 
-		private bool SendTextMessageViaTwillio(string number, string message, string departmentNumber)
+		public bool SendTextMessageViaTwillio(string number, string message, string departmentNumber)
 		{
 			TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
 			MessageResource messageResource;
@@ -146,7 +146,7 @@ namespace Resgrid.Providers.NumberProvider
 
 		}
 
-		private bool SendTextMessageViaSignalWire(string number, string message, string departmentNumber)
+		public bool SendTextMessageViaSignalWire(string number, string message, string departmentNumber)
 		{
 			try
 			{
@@ -191,7 +191,7 @@ namespace Resgrid.Providers.NumberProvider
 					return false;
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
 				return false;
 			}

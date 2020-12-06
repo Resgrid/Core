@@ -20,7 +20,9 @@ using Resgrid.Model.Providers;
 namespace Resgrid.Web.Services.Controllers
 {
 	[Produces("application/json")]
-	[EnableCors("_resgridWebsiteAllowSpecificOrigins")]
+	[ApiController]
+	[Route("api/[controller]")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public class EmailController : ControllerBase
 	{
 		#region Private Readonly Properties and Constructors
@@ -73,6 +75,12 @@ namespace Resgrid.Web.Services.Controllers
 		}
 		#endregion Private Readonly Properties and Constructors
 
+		[HttpGet("Test")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public ActionResult Test()
+		{
+			return Ok();
+		}
 
 		/// <summary>
 		/// The receiver API method call
@@ -80,7 +88,7 @@ namespace Resgrid.Web.Services.Controllers
 		/// <param name="message">A Postmark Inbound message http://developer.postmarkapp.com/developer-inbound-parse.html#example-hook</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns><br /></returns>
-		[HttpPost]
+		[HttpPost("Receive")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]

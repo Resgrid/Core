@@ -298,7 +298,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					_usersService.AddUserToUserRole(user.Id);
 
-					// Don't know why this is stil erroring out.
+					// Don't know why this is still erroring out.
 					try
 					{
 						_usersService.InitUserExtInfo(user.Id);
@@ -424,6 +424,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
 
 			var personGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 
 			foreach (var user in personGroupRoles)
 			{
@@ -431,11 +432,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				person.UserId = user.UserId;
 				//person.Name = UserHelper.GetFullNameForUser(personnelNames, null, user.UserId);
 				person.Name = user.Name;
+				person.FirstName = user.FirstName;
+				person.LastName = user.LastName;
 
 				//var group = await _departmentGroupsService.GetGroupForUser(user.UserId);
 				//if (group != null)
 				//	person.Group = group.Name;
 				person.Group = user.DepartmentGroupName;
+				person.GroupId = user.DepartmentGroupId.GetValueOrDefault();
 
 				//var roles = await _personnelRolesService.GetRolesForUser(user.UserId);
 				person.Roles = new List<string>();
@@ -445,6 +449,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				personnelJson.Add(person);
+			}
+
+			switch (personnelSortOrder)
+			{
+				case PersonnelSortOrders.FirstName:
+					personnelJson = personnelJson.OrderBy(x => x.FirstName).ToList();
+					break;
+				case PersonnelSortOrders.LastName:
+					personnelJson = personnelJson.OrderBy(x => x.LastName).ToList();
+					break;
+				case PersonnelSortOrders.Group:
+					personnelJson = personnelJson.OrderBy(x => x.GroupId).ToList();
+					break;
 			}
 
 			return Json(personnelJson);
@@ -461,6 +478,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
+
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
+			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
 
 			foreach (var user in users)
 			{
@@ -524,7 +544,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 						person.Eta = "N/A";
 				}
 
+				if (currentStatus != null)
+				{
+					if (personnelStatusSortOrder != null && personnelStatusSortOrder.Any())
+					{
+						var statusSorting = personnelStatusSortOrder.FirstOrDefault(x => x.StatusId == currentStatus.ActionTypeId);
+						if (statusSorting != null)
+							person.Weight = statusSorting.Weight;
+						else
+							person.Weight = 9000;
+					}
+					else
+					{
+						person.Weight = 9000;
+					}
+				}
+				else
+					person.Weight = 9000;
+
 				personnelJson.Add(person);
+			}
+
+			switch (personnelSortOrder)
+			{
+				case PersonnelSortOrders.Default:
+					personnelJson = personnelJson.OrderBy(x => x.Weight).ToList();
+					break;
+				case PersonnelSortOrders.FirstName:
+					personnelJson = personnelJson.OrderBy(x => x.Weight).ThenBy(x => x.FirstName).ToList();
+					break;
+				case PersonnelSortOrders.LastName:
+					personnelJson = personnelJson.OrderBy(x => x.Weight).ThenBy(x => x.LastName).ToList();
+					break;
+				case PersonnelSortOrders.Group:
+					personnelJson = personnelJson.OrderBy(x => x.Weight).ThenBy(x => x.GroupId).ToList();
+					break;
+				default:
+					personnelJson = personnelJson.OrderBy(x => x.Weight).ToList();
+					break;
 			}
 
 			return Json(personnelJson);
@@ -620,6 +677,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (group.IsUserGroupAdmin(UserId) || department.IsUserAnAdmin(UserId))
 						person.CanEditUser = true;
+
+					person.GroupId = group.DepartmentGroupId;
 				}
 				else
 				{
@@ -689,6 +748,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return Json(personnelJson.OrderBy(x => x.FirstName));
 				case PersonnelSortOrders.LastName:
 					return Json(personnelJson.OrderBy(x => x.LastName));
+				case PersonnelSortOrders.Group:
+					return Json(personnelJson.OrderBy(x => x.GroupId));
 				default:
 					return Json(personnelJson);
 			}

@@ -13,7 +13,9 @@ using RestSharp;
 namespace Resgrid.Web.Services.Controllers
 {
 	[Produces("application/json")]
-	//[EnableCors("_resgridWebsiteAllowSpecificOrigins")]
+	[ApiController]
+	[Route("[controller]")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public class DepartmentRegistrationController : ControllerBase
 	{
 		private readonly IDepartmentsService _departmentsService;
@@ -42,7 +44,7 @@ namespace Resgrid.Web.Services.Controllers
 		}
 
 		// TODO: Rate limit
-		[HttpGet]
+		[HttpGet("CheckIfEmailInUse")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public ActionResult<EmailCheckResult> CheckIfEmailInUse(string emailAddress)
@@ -63,7 +65,7 @@ namespace Resgrid.Web.Services.Controllers
 		}
 
 		// TODO: Rate limit
-		[HttpGet]
+		[HttpGet("CheckIfDepartmentNameUsed")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<DepartmentCheckResult>> CheckIfDepartmentNameUsed(string departmentName)
@@ -81,7 +83,7 @@ namespace Resgrid.Web.Services.Controllers
 		}
 
 		// TODO: Rate limit
-		[HttpGet]
+		[HttpGet("CheckIfUserNameUsed")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<UsernameCheckResult>> CheckIfUserNameUsed(string userName)
@@ -103,7 +105,7 @@ namespace Resgrid.Web.Services.Controllers
 			return BadRequest();
 		}
 
-		[HttpPost]
+		[HttpPost("Register")]
 		public async Task<ActionResult<DepartmentCreationResult>> Register(DepartmentCreationInput model)
 		{
 			var result = new DepartmentCreationResult();

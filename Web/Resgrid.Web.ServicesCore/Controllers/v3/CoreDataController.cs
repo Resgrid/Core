@@ -90,6 +90,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var personnelListStatusOrderings = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
 			var personnelListSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 
+
 			if (personnelListStatusOrderings != null)
 				results.PersonnelListStatusOrders = personnelListStatusOrderings;
 

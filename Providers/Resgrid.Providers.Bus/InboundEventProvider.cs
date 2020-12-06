@@ -24,18 +24,22 @@ namespace Resgrid.Providers.Bus
 		{
 			_eventAggregator = eventAggregator;
 
-			_topicClient = new SubscriptionClient(ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic, ServiceBusConfig.EventingTopicQueueName);
-
-			var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+			if (SystemBehaviorConfig.ServiceBusType != ServiceBusTypes.Rabbit)
 			{
+				_topicClient = new SubscriptionClient(ServiceBusConfig.AzureEventingTopicConnectionString,
+					Topics.EventingTopic, ServiceBusConfig.EventingTopicQueueName);
 
-				MaxConcurrentCalls = 1,
-				AutoComplete = true,
-				MaxAutoRenewDuration = TimeSpan.FromMinutes(1)
-			};
+				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+				{
 
-			// Register the function that processes messages.
-			_topicClient.RegisterMessageHandler(ProcessMessagesAsync, messageHandlerOptions);
+					MaxConcurrentCalls = 1,
+					AutoComplete = true,
+					MaxAutoRenewDuration = TimeSpan.FromMinutes(1)
+				};
+
+				// Register the function that processes messages.
+				_topicClient.RegisterMessageHandler(ProcessMessagesAsync, messageHandlerOptions);
+			}
 		}
 
 		private async Task ProcessMessagesAsync(Message message, CancellationToken token)

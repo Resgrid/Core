@@ -1,21 +1,40 @@
 ﻿using System.Threading.Tasks;
 using CommonServiceLocator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Eventing.Hubs
 {
+	public interface IEventingHub
+	{
+		Task Connect(int departmentId);
+
+		Task SubscribeToDepartmentLink(int linkId);
+
+		Task UnsubscribeToDepartmentLink(int linkId);
+
+		Task PersonnelStatusUpdated(int departmentId, int id);
+
+		Task PersonnelStaffingUpdated(int departmentId, int id);
+
+		Task UnitStatusUpdated(int departmentId, int id);
+
+		Task CallsUpdated(int departmentId, int id);
+
+		Task DepartmentUpdated(int departmentId);
+	}
+
+	[AllowAnonymous]
+	//[HubName("stockTickerMini")]
 	public class EventingHub : Hub
 	{
-		private readonly IInboundEventProvider _inboundEventProvider;
 		private readonly IDepartmentLinksService _departmentLinksService;
 
 		public EventingHub()
 		{
-			_inboundEventProvider = ServiceLocator.Current.GetInstance<IInboundEventProvider>();
 			_departmentLinksService = ServiceLocator.Current.GetInstance<IDepartmentLinksService>();
-			_inboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated, PersonnelStaffingUpdated);
 		}
 
 		public async Task Connect(int departmentId)

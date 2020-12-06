@@ -38,6 +38,7 @@ using Resgrid.Repositories.DataRepository.Stores;
 using Resgrid.Services;
 using Resgrid.Web.Options;
 using StackExchange.Redis;
+using Stripe;
 
 namespace Resgrid.Web
 {
@@ -55,6 +56,16 @@ namespace Resgrid.Web
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 					.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 					.AddEnvironmentVariables();
+
+			if (env.IsDevelopment() || env.IsStaging())
+			{
+				// For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+				//builder.AddUserSecrets();
+
+				// This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
+				builder.AddApplicationInsightsSettings(developerMode: true);
+			}
+
 			this.Configuration = builder.Build();
 		}
 
@@ -291,6 +302,8 @@ namespace Resgrid.Web
 			//			.ScanIn(typeof(Providers.Migrations.Migrations.M0001_InitialMigration).Assembly).For
 			//			.Migrations());
 
+			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
+
 			this.Services = services;
 		}
 
@@ -367,6 +380,7 @@ namespace Resgrid.Web
 				 * communication channels. -SJ
 				 */
 				//app.UseHsts();
+				//app.UseHttpsRedirection();
 			}
 
 
@@ -386,9 +400,6 @@ namespace Resgrid.Web
 
 			};
 
-//#if (RELEASE)
-//			app.UseHttpsRedirection();
-//#endif
 			app.UseCookiePolicy(cookiePolicyOptions);
 
 			app.UseStaticFiles();

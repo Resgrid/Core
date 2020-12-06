@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Services;
 using Resgrid.Web.Eventing.Models;
 
-namespace Resgrid.Web.Controllers
+namespace Resgrid.Web.Eventing.Controllers
 {
 	/// <summary>
 	/// Health Check system to get information and health status of the services
 	/// </summary>
 	[AllowAnonymous]
+	[Route("health/")]
 	public class HealthController: Controller
 	{
 		#region Members and Constructors
@@ -28,15 +29,16 @@ namespace Resgrid.Web.Controllers
 		}
 		#endregion Members and Constructors
 
+		[HttpGet("GetCurrent")]
 		public async Task<IActionResult> GetCurrent()
 		{
 			var result = new HealthResult();
-			var path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\Resgrid.WebCore.dll";
+			var path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\Resgrid.Web.Eventing.dll";
 
 			result.WebsiteVersion = AssemblyName.GetAssemblyName(path).Version.ToString();
 			result.SiteId = "0";
-			result.CacheOnline = _healthService.IsCacheProviderConnected();
-			result.ServiceBusOnline = _healthService.IsCacheProviderConnected();
+			result.CacheOnline = false;//_healthService.IsCacheProviderConnected();
+			result.ServiceBusOnline = false;//_healthService.IsCacheProviderConnected();
 
 			var dbTime = await _healthService.GetDatabaseTimestamp();
 

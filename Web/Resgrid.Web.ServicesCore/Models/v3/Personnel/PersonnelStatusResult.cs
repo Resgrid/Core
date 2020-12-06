@@ -46,5 +46,15 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.Personnel
 		/// The timestamp of the last staffing level in UTC.
 		/// </summary>
 		public DateTime SUtc { get; set; }
+
+		/// <summary>
+		/// Group Id for the user, 0 if not in a group
+		/// </summary>
+		public int Gid { get; set; }
+
+		/// <summary>
+		/// Sorting weight
+		/// </summary>
+		public int Weight { get; set; }
 	}
 }

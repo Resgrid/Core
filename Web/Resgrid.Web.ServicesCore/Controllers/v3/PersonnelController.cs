@@ -30,6 +30,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IUserStateService _userStateService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
 		public PersonnelController(
 			IUsersService usersService,
@@ -38,7 +39,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			IUserProfileService userProfileService,
 			IUserStateService userStateService,
 			IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService
+			IPersonnelRolesService personnelRolesService,
+			IDepartmentSettingsService departmentSettingsService
 			)
 		{
 			_usersService = usersService;
@@ -48,81 +50,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_userStateService = userStateService;
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
+			_departmentSettingsService = departmentSettingsService;
 		}
 		#endregion Members and Constructors
-
-		///// <summary>
-		///// Get's all the personnel in a department and their current status and staffing information
-		///// </summary>
-		///// <example>
-		///// $ curl https://api.resgrid.com/api/v2/Personnel/GetPersonnelStatuses -u VXNlck5hbWV8MXxBQkNE:
-		///// </example>
-		///// <returns>List of PersonnelStatusResult objects, with status and staffing information for each user.</returns>
-		//[HttpGet("GetPersonnelStatuses")]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//public async Task<ActionResult<List<PersonnelStatusResult>>> GetPersonnelStatuses()
-		//{
-		//	var results = new List<PersonnelStatusResult>();
-
-		//	var actionLogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(DepartmentId);
-		//	var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
-		//	var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
-		//	Department department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-
-		//	foreach (var u in users)
-		//	{
-		//		var log = (from l in actionLogs
-		//				   where l.UserId == u.UserId
-		//				   select l).FirstOrDefault();
-
-		//		var state = (from l in userStates
-		//					 where l.UserId == u.UserId
-		//					 select l).FirstOrDefault();
-
-		//		var s = new PersonnelStatusResult();
-		//		s.Uid = u.UserId.ToString();
-
-		//		if (log != null)
-		//		{
-		//			s.Atp = log.ActionTypeId;
-		//			s.Atm = log.Timestamp.TimeConverter(department);
-		//			s.AUtc = log.Timestamp;
-
-		//			if (log.DestinationId.HasValue)
-		//			{
-		//				if (log.ActionTypeId == (int)ActionTypes.RespondingToScene)
-		//					s.Did = log.DestinationId.Value.ToString();
-		//				else if (log.ActionTypeId == (int)ActionTypes.RespondingToStation)
-		//					s.Did = log.DestinationId.Value.ToString();
-		//				else if (log.ActionTypeId == (int)ActionTypes.AvailableStation)
-		//					s.Did = log.DestinationId.Value.ToString();
-		//			}
-		//		}
-		//		else
-		//		{
-		//			s.Atp = (int)ActionTypes.StandingBy;
-		//			s.Atm = DateTime.UtcNow.TimeConverter(department);
-		//			s.AUtc = DateTime.UtcNow;
-		//		}
-
-		//		if (state != null)
-		//		{
-		//			s.Ste = state.State;
-		//			s.Stm = state.Timestamp.TimeConverter(department);
-		//			s.SUtc = state.Timestamp;
-		//		}
-		//		else
-		//		{
-		//			s.Ste = (int)UserStateTypes.Available;
-		//			s.Stm = DateTime.UtcNow.TimeConverter(department);
-		//			s.SUtc = DateTime.UtcNow;
-		//		}
-		//		results.Add(s);
-		//	}
-
-
-		//	return Ok(results);
-		//}
 
 		/// <summary>
 		/// Get's all the personnel in a department and their current status and staffing information with a filter
@@ -147,10 +77,17 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var filters = await GetFilterOptions();
 			var actionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
-			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			//var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+
+			var users = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+
+
 			Department department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-			var allGroups = await _departmentGroupsService.GetAllDepartmentGroupsForDepartmentAsync(DepartmentId);
-			var allRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
+			//var allGroups = await _departmentGroupsService.GetAllDepartmentGroupsForDepartmentAsync(DepartmentId);
+			//var allRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
+
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
+			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
 
 			foreach (var u in users)
 			{
@@ -197,13 +134,34 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					s.Stm = DateTime.UtcNow.TimeConverter(department);
 				}
 
-				DepartmentGroup userGroup = null;
-				if (allGroups.ContainsKey(u.UserId))
-					userGroup = allGroups[u.UserId];
+				//DepartmentGroup userGroup = null;
+				//if (allGroups.ContainsKey(u.UserId))
+				//	userGroup = allGroups[u.UserId];
 
-				var roles = new List<PersonnelRole>();
-				if (allRoles.ContainsKey(u.UserId))
-					roles = allRoles[u.UserId];
+				//var roles = new List<PersonnelRole>();
+				//if (allRoles.ContainsKey(u.UserId))
+				//	roles = allRoles[u.UserId];
+
+				if (u.DepartmentGroupId.HasValue)
+					s.Gid = u.DepartmentGroupId.Value;
+				
+				if (log != null)
+				{
+					if (personnelStatusSortOrder != null && personnelStatusSortOrder.Any())
+					{
+						var statusSorting = personnelStatusSortOrder.FirstOrDefault(x => x.StatusId == log.ActionTypeId);
+						if (statusSorting != null)
+							s.Weight = statusSorting.Weight;
+						else
+							s.Weight = 9000;
+					}
+					else
+					{
+						s.Weight = 9000;
+					}
+				}
+				else
+					s.Weight = 9000;
 
 				if (activeFilter != null && activeFilter.Any())
 				{
@@ -213,7 +171,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 						if (afilter.Substring(0, 2) == "G:")
 						{
-							if (userGroup != null && text == userGroup.Name)
+							if (u.DepartmentGroupName != null && text == u.DepartmentGroupName)
 							{
 								results.Add(s);
 								break;
@@ -221,7 +179,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						}
 						else if (afilter.Substring(0, 2) == "R:")
 						{
-							if (roles.Any(x => x.Name == text))
+							if (u.RoleNamesList.Any(x => x == text))
 							{
 								results.Add(s);
 								break;
@@ -242,6 +200,25 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				{
 					results.Add(s);
 				}
+			}
+
+			switch (personnelSortOrder)
+			{
+				case PersonnelSortOrders.Default:
+					results =results.OrderBy(x => x.Weight).ToList();
+					break;
+				case PersonnelSortOrders.FirstName:
+					results = results.OrderBy(x => x.Weight).ThenBy(x => users.First().FirstName).ToList();
+					break;
+				case PersonnelSortOrders.LastName:
+					results = results.OrderBy(x => x.Weight).ThenBy(x => users.First().LastName).ToList();
+					break;
+				case PersonnelSortOrders.Group:
+					results = results.OrderBy(x => x.Weight).ThenBy(x => x.Gid).ToList();
+					break;
+				default:
+					results = results.OrderBy(x => x.Weight).ToList();
+					break;
 			}
 
 			return Ok(results);
@@ -284,7 +261,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			}
 			else
 			{
-				result.Fnm = "Unknwon";
+				result.Fnm = "Unknown";
 				result.Lnm = "Check Profile";
 				result.Id = "";
 				result.Mnu = "";

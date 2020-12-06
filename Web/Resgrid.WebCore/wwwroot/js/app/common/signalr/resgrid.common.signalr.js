@@ -21,12 +21,13 @@ var resgrid;
                 }
 
                 var options = {
+                    //transport: signalR.HttpTransportType.ServerSentEvents,
                     transport: signalR.HttpTransportType.None,
-                    logging: signalR.LogLevel.Trace 
+                    logging: signalR.LogLevel.Trace
                 };
 
-                eventHub = new signalR.HubConnectionBuilder().withUrl(resgrid.absoluteApiBaseUrl + '/eventingHub', options).build();
-                eventHub.serverTimeoutInMilliseconds = 10000;
+                eventHub = new signalR.HubConnectionBuilder().withUrl(resgrid.absoluteEventingBaseUrl + '/eventingHub', options).build();
+                eventHub.serverTimeoutInMilliseconds = 9999999999999;
                 eventHub.keepAliveIntervalInMilliseconds = 1000;
 
                 registerClientMethods();
@@ -41,8 +42,8 @@ var resgrid;
             }
             signalr.init = init;
             function startConnection() {
-              Object.defineProperty(WebSocket, 'OPEN', { value: 1, }); 
                 if (departmentId && departmentId > 0) {
+                    Object.defineProperty(WebSocket, 'OPEN', { value: 1 });
                     eventHub.start().then(function () {
                         console.log('connected');
                         eventHub.invoke("Connect", Number(departmentId)).catch(function (err) {
@@ -105,30 +106,30 @@ var resgrid;
 
                 });
 
-               // if (eventHub && eventHub.client) {
-                    //eventHub.client.onConnected = function (id) {
-                    //    connectionId = id;
-                    //};
-                    //eventHub.client.callsUpdated = function (id) {
-                    //    if (callsUpdatedCallback) {
-                    //        callsUpdatedCallback(id);
-                    //    }
-                    //};
-                    //eventHub.client.personnelStatusUpdated = function (id) {
-                    //    if (personnelActionUpdatedCallback) {
-                    //        personnelActionUpdatedCallback();
-                    //    }
-                    //};
-                    //eventHub.client.unitStatusUpdated = function (id) {
-                    //    if (unitStatusUpdatedCallback) {
-                    //        unitStatusUpdatedCallback();
-                    //    }
-                    //};
-                    //eventHub.client.personnelStaffingUpdated = function (id) {
-                    //    if (personnelStaffingUpdatedCallback) {
-                    //        personnelStaffingUpdatedCallback();
-                    //    }
-                    //};
+                // if (eventHub && eventHub.client) {
+                //eventHub.client.onConnected = function (id) {
+                //    connectionId = id;
+                //};
+                //eventHub.client.callsUpdated = function (id) {
+                //    if (callsUpdatedCallback) {
+                //        callsUpdatedCallback(id);
+                //    }
+                //};
+                //eventHub.client.personnelStatusUpdated = function (id) {
+                //    if (personnelActionUpdatedCallback) {
+                //        personnelActionUpdatedCallback();
+                //    }
+                //};
+                //eventHub.client.unitStatusUpdated = function (id) {
+                //    if (unitStatusUpdatedCallback) {
+                //        unitStatusUpdatedCallback();
+                //    }
+                //};
+                //eventHub.client.personnelStaffingUpdated = function (id) {
+                //    if (personnelStaffingUpdatedCallback) {
+                //        personnelStaffingUpdatedCallback();
+                //    }
+                //};
                 //}
             }
         })(signalr = common.signalr || (common.signalr = {}));

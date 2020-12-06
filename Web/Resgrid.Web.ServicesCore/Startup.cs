@@ -18,6 +18,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
+using AspNetCoreRateLimit;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
@@ -107,10 +108,6 @@ namespace Resgrid.Web.ServicesCore
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
 
-			//Database.SetInitializer(new MigrateDatabaseToLatestVersion<Repositories.DataRepository.Contexts.DataContext, Configuration>());
-			//var migrator = new DbMigrator(new Repositories.DataRepository.Migrations.Configuration());
-			//migrator.Update();
-			
 			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
 			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();
 			services.AddScoped<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>, ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
@@ -129,58 +126,7 @@ namespace Resgrid.Web.ServicesCore
 				config.Password.RequiredLength = 6;
 			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
-			//services.AddCors(options =>
-			//{
-			//	options.AddPolicy("_resgridWebsiteAllowSpecificOrigins",
-			//	builder =>
-			//	{
-			//		builder.WithOrigins("http://resgrid.com",
-			//				"http://www.resgrid.com",
-			//				"https://resgrid.com",
-			//				"https://www.resgrid.com",
-			//				"https://qaweb.resgrid.com",
-			//				"https://qaapi.resgrid.com",
-			//				"http://qaweb.resgrid.com",
-			//				"http://qaapi.resgrid.com",
-			//				"https://s3.amazonaws.com",
-			//				"https://resgrid.freshdesk.com",
-			//				"https://www.google.com",
-			//				"https://js.stripe.com",
-			//				"https://wchat.freshchat.com",
-			//				"https://q.stripe.com",
-			//				"https://cdn.plyr.io",
-			//				"https://unit.resgrid.com",
-			//				"https://responder.resgrid.com",
-			//				"https://dispatch.resgrid.com",
-			//				"https://command.resgrid.com",
-			//				"https://eventing.resgrid.com",
-			//				"https://qaeventing.resgrid.com",
-			//				"http://eventing.resgrid.com",
-			//				"http://qaeventing.resgrid.com",
-			//				"https://cdn.jsdelivr.net",
-			//				"https://ajax.googleapis.com",
-			//				"https://maps.googleapis.com",
-			//				"https://assetscdn-wchat.freshchat.com",
-			//				"https://assets.freshdesk.com",
-			//				"https://assets1.freshdesk.com",
-			//				"https://assets2.freshdesk.com",
-			//				"https://assets3.freshdesk.com",
-			//				"https://assets4.freshdesk.com",
-			//				"https://assets5.freshdesk.com",
-			//				"https://assets6.freshdesk.com",
-			//				"https://az416426.vo.msecnd.net",
-			//				"https://localhost",
-			//				"http://localhost",
-			//				"http://localhost:8100",
-			//				"https://localhost:8100",
-			//				"http://localhost:44319",
-			//				"https://localhost:44319")
-			//			.AllowAnyMethod()
-			//			.AllowAnyHeader()
-			//			.AllowCredentials();
-			//	});
-			//});
-
+			services.AddApplicationInsightsTelemetry();
 			services.AddCors();
 
 			services.AddControllers().AddNewtonsoftJson(options =>
@@ -193,7 +139,13 @@ namespace Resgrid.Web.ServicesCore
 				x.DefaultApiVersion = new ApiVersion(3, 0);  
 				x.AssumeDefaultVersionWhenUnspecified = true;  
 				x.ReportApiVersions = true;  
-			});  
+			});
+
+			services.AddMemoryCache();
+			services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+			services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+			services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+			services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 			services.AddSwaggerGen();
 			services.AddSwaggerGenNewtonsoftSupport();
@@ -206,7 +158,7 @@ namespace Resgrid.Web.ServicesCore
 						Version = "v3",
 						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference",
 						Contact = new OpenApiContact() {Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com")},
-						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
+						TermsOfService = new Uri("https://resgrid.com/Public/Terms") 
 					}
 				);
  
@@ -228,7 +180,6 @@ namespace Resgrid.Web.ServicesCore
 			services.Configure<ForwardedHeadersOptions>(options =>
 			{
 				options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-				//options.ForwardedHeaders = ForwardedHeaders.All;
 				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
 			});
 
@@ -351,10 +302,7 @@ namespace Resgrid.Web.ServicesCore
 			var configOptions = Configuration.GetSection("AppOptions").Get<AppOptions>();
 			services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
 
-			if (Config.PaymentProviderConfig.IsTestMode)
-				StripeConfiguration.SetApiKey(PaymentProviderConfig.TestApiKey);
-			else
-				StripeConfiguration.SetApiKey(PaymentProviderConfig.ProductionApiKey);
+			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
 
 			this.Services = services;
 		}
@@ -402,8 +350,6 @@ namespace Resgrid.Web.ServicesCore
 			//loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 			//loggerFactory.AddDebug();
 
-			//app.UseApplicationInsightsRequestTelemetry();
-
 			this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 			var eventAggregator = this.AutofacContainer.Resolve<IEventAggregator>();
 			var outbound = this.AutofacContainer.Resolve<IOutboundEventProvider>();
@@ -417,8 +363,6 @@ namespace Resgrid.Web.ServicesCore
 				context.Request.Scheme = "https";
 				await next.Invoke();
 			});
-
-			//app.UseApplicationInsightsExceptionTelemetry();
 
 			//app.UseCors("_resgridWebsiteAllowSpecificOrigins");
 			// global cors policy
@@ -442,14 +386,14 @@ namespace Resgrid.Web.ServicesCore
 				c.RoutePrefix = string.Empty;
 			});
 
+			app.UseIpRateLimiting();
+
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
 
 				endpoints.MapHub<EventingHub>("/eventingHub");
 			});
-
-			app.UseAllElasticApm(Configuration);
 		}
 	}
 }

@@ -212,6 +212,7 @@ namespace Resgrid.Workers.Console
 
 			if (String.IsNullOrWhiteSpace(isEventsOnly) || isEventsOnly == "False")
 			{
+				_logger.Log(LogLevel.Information, "Starting Scheduled Jobs");
 				// Scheduled Jobs
 
 				_logger.Log(LogLevel.Information, "Scheduling Calendar Notifications");

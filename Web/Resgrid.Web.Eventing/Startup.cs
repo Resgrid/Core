@@ -1,24 +1,32 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Resgrid.Providers.Claims;
+using Resgrid.Repositories.DataRepository.Stores;
+using Stripe;
+using System.Configuration;
+using System.IO;
+using System.Net;
+using System.Reflection;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.CommonServiceLocator;
+using CommonServiceLocator;
+using Microsoft.AspNetCore.HttpOverrides;
+using Newtonsoft.Json.Serialization;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
 using Resgrid.Providers.Audio;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
-using Resgrid.Providers.Claims;
 using Resgrid.Providers.EmailProvider;
 using Resgrid.Providers.Firebase;
 using Resgrid.Providers.GeoLocationProvider;
@@ -26,37 +34,75 @@ using Resgrid.Providers.Marketing;
 using Resgrid.Providers.NumberProvider;
 using Resgrid.Providers.PdfProvider;
 using Resgrid.Repositories.DataRepository;
-using Resgrid.Repositories.DataRepository.Stores;
 using Resgrid.Services;
 using Resgrid.Web.Eventing.Hubs;
+using Resgrid.Web.Eventing.Services;
 
 namespace Resgrid.Web.Eventing
 {
 	public class Startup
 	{
-		public Startup(IConfiguration configuration)
-		{
-			Configuration = configuration;
-		}
+		public IConfigurationRoot Configuration { get; private set; }
+		public ILifetimeScope AutofacContainer { get; private set; }
+		public AutofacServiceLocator Locator { get; private set; }
+		public IServiceCollection Services { get; private set; }
 
-		public IConfiguration Configuration { get; }
+		public Startup(IHostingEnvironment env)
+		{
+			var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+				.SetBasePath(env.ContentRootPath)
+				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+				.AddEnvironmentVariables();
+
+			this.Configuration = builder.Build();
+			Configuration = builder.Build();
+		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
+			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
+
+			Framework.Logging.Initialize(Configuration["AppOptions:SentryKey"]);
+
+			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
+			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+
+			element.SetValue(settings, false);
+			collection.SetValue(settings, false);
+
+			if (!configResult && !envConfigResult)
+				settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+			else
+				settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
+
+			// Repeat above line as necessary
+
+			collection.SetValue(settings, true);
+			element.SetValue(settings, true);
+
+			services.AddCors();
+
+			services.AddControllers().AddNewtonsoftJson(options =>
+			{
+				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+			});
+
 			services.AddSignalR(hubOptions =>
 			{
 				hubOptions.EnableDetailedErrors = true;
 			}).AddStackExchangeRedis(CacheConfig.RedisConnectionString, options => {
 				options.Configuration.ChannelPrefix = $"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-evt-sr";
 			});
-
-			services.AddControllers();
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)
 		{
 			builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
+			builder.RegisterType<EventingHubService>().As<EventingHubService>().SingleInstance();
 
 			builder.RegisterModule(new DataModule());
 			builder.RegisterModule(new ServicesModule());
@@ -88,12 +134,28 @@ namespace Resgrid.Web.Eventing
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			if (env.IsDevelopment())
+			var forwardOpts = new ForwardedHeadersOptions
 			{
-				app.UseDeveloperExceptionPage();
-			}
+				ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
+			};
+			app.UseForwardedHeaders(forwardOpts);
+
+			this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+			var eventAggregator = this.AutofacContainer.Resolve<IEventAggregator>();
+			var outbound = this.AutofacContainer.Resolve<IOutboundEventProvider>();
+			var eventService = this.AutofacContainer.Resolve<ICoreEventService>();
+			var eventingHubService = this.AutofacContainer.Resolve<EventingHubService>();
+
+			this.Locator = new AutofacServiceLocator(this.AutofacContainer);
+			ServiceLocator.SetLocatorProvider(() => this.Locator);
 
 			//app.UseHttpsRedirection();
+
+			app.UseCors(x => x
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+				.SetIsOriginAllowed(origin => true) // allow any origin
+				.AllowCredentials()); // allow credentials
 
 			app.UseRouting();
 

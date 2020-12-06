@@ -16,10 +16,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public bool PersonnelStatusChanged(UserStatusEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new
+			return SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
-				Type = EventingTypes.PersonnelStatusUpdated,
+				Type = (int)EventingTypes.PersonnelStatusUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.Status.DepartmentId,
 				ItemId = message.Status.ActionLogId
@@ -28,10 +28,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public bool PersonnelStaffingChanged(UserStaffingEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new
+			return SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
-				Type = EventingTypes.PersonnelStaffingUpdated,
+				Type = (int)EventingTypes.PersonnelStaffingUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
 				ItemId = message.Staffing.UserStateId
@@ -40,10 +40,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public bool UnitStatusChanged(UnitStatusEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new
+			return SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
-				Type = EventingTypes.UnitStatusUpdated,
+				Type = (int)EventingTypes.UnitStatusUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
 				ItemId = message.Status.UnitStateId
@@ -52,10 +52,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public bool CallAdded(CallAddedEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new
+			return SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
-				Type = EventingTypes.CallsUpdated,
+				Type = (int)EventingTypes.CallsUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
 				ItemId = message.Call.CallId

@@ -4,6 +4,7 @@
 	{
 		Default = 0,
 		LastName = 1,
-		FirstName = 2
+		FirstName = 2,
+		Group = 3
 	}
 }

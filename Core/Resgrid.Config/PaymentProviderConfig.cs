@@ -9,5 +9,8 @@
 
 		public static string ProductionClientKey = "";
 		public static string TestClientKey = "";
+
+		public static string ProductionWebhookSigningKey = "";
+		public static string TestWebhookSigningKey = "";
 	}
 }

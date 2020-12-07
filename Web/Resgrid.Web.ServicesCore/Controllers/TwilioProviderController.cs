@@ -565,11 +565,11 @@ namespace Resgrid.Web.Services.Controllers
 		}
 	}
 
-	[Serializable]
-	public class TwilioMessage : TwilioRequest
-	{
-		public string MessageSid { get; set; }
-		public string SmsMessageSid { get; set; }
-		public string Body { get; set; }
-	}
+	//[Serializable]
+	//public class TwilioMessage : TwilioRequest
+	//{
+	//	public string MessageSid { get; set; }
+	//	public string SmsMessageSid { get; set; }
+	//	public string Body { get; set; }
+	//}
 }

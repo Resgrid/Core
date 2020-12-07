@@ -25,6 +25,11 @@ namespace Resgrid.Config
 		public static string ResgridApiBaseUrl = "https://resgridapi.local";
 
 		/// <summary>
+		/// The base url to where the Resgrid signalr lives
+		/// </summary>
+		public static string ResgridEventingBaseUrl = "https://events.resgrid.com";
+
+		/// <summary>
 		/// This will prevent the system from sending any outbound messages, for example 
 		/// email, push, text or call. Allows for testing the system without risk of sending
 		/// out a broadcast to unknowing users.

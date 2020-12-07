@@ -50,12 +50,12 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public Session CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string emailAddress, string departmentName)
+		public async Task<Session> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string emailAddress, string departmentName)
 		{
 			return null;
 		}
 
-		public Session CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress, string departmentName)
+		public async Task<Session> CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress, string departmentName)
 		{
 			return null;
 		}

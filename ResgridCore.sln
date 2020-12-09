@@ -53,8 +53,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Repositories.DataRe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Audio", "Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj", "{2BCB42D0-EEEA-4295-8733-9BF9C77190C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resgrid.Config", "Core\Resgrid.Config\Resgrid.Config.csproj", "{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CA1CBFB1-B5B3-4D74-BE2D-DDC2C9474F17}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Console", "Tools\Resgrid.Console\Resgrid.Console.csproj", "{2FDEA826-779C-4A24-A94B-698F51C68DA9}"
@@ -78,6 +76,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Number", "Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj", "{ACF2D240-01A9-4855-BF61-548B11C7D224}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Migrations", "Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj", "{B09CFEB5-E24D-4199-BB00-92C73D42762D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Config", "Core\Resgrid.Config\Resgrid.Config.csproj", "{59E794E0-A247-4A7F-BCA1-DB928D59D876}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -267,22 +267,6 @@ Global
 		{2BCB42D0-EEEA-4295-8733-9BF9C77190C3}.Staging|Any CPU.Build.0 = Release|Any CPU
 		{2BCB42D0-EEEA-4295-8733-9BF9C77190C3}.Staging|x86.ActiveCfg = Release|Any CPU
 		{2BCB42D0-EEEA-4295-8733-9BF9C77190C3}.Staging|x86.Build.0 = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Debug|x86.Build.0 = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Docker|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Docker|Any CPU.Build.0 = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Docker|x86.ActiveCfg = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Docker|x86.Build.0 = Debug|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Release|x86.ActiveCfg = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Release|x86.Build.0 = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Staging|Any CPU.Build.0 = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Staging|x86.ActiveCfg = Release|Any CPU
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222}.Staging|x86.Build.0 = Release|Any CPU
 		{2FDEA826-779C-4A24-A94B-698F51C68DA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FDEA826-779C-4A24-A94B-698F51C68DA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FDEA826-779C-4A24-A94B-698F51C68DA9}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -459,6 +443,22 @@ Global
 		{B09CFEB5-E24D-4199-BB00-92C73D42762D}.Staging|Any CPU.Build.0 = Release|Any CPU
 		{B09CFEB5-E24D-4199-BB00-92C73D42762D}.Staging|x86.ActiveCfg = Release|Any CPU
 		{B09CFEB5-E24D-4199-BB00-92C73D42762D}.Staging|x86.Build.0 = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Debug|x86.Build.0 = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Docker|Any CPU.ActiveCfg = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Docker|Any CPU.Build.0 = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Docker|x86.ActiveCfg = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Docker|x86.Build.0 = Debug|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Release|x86.ActiveCfg = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Release|x86.Build.0 = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Staging|x86.ActiveCfg = Release|Any CPU
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876}.Staging|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -477,7 +477,6 @@ Global
 		{D867D4CA-D348-4485-A7B0-5293DF8F93D5} = {53B024F9-E293-42F1-BA67-7F68C3F3C243}
 		{DB5DED75-669D-485C-A093-736E02115892} = {206D5D48-99B0-4913-B1E2-4BA11D021740}
 		{2BCB42D0-EEEA-4295-8733-9BF9C77190C3} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
-		{DD9E37AF-9AF3-4CBB-BA7F-B66158C61222} = {D43D1D6B-66A9-4A57-9EA3-8DECC92FA583}
 		{2FDEA826-779C-4A24-A94B-698F51C68DA9} = {CA1CBFB1-B5B3-4D74-BE2D-DDC2C9474F17}
 		{7EEF606F-04E4-4744-AD16-F68C796C5F41} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{EEE91CFE-5F8D-4157-B0BA-07A763CA31D3} = {DBB9862A-C008-4C3F-A9DB-320429E4A07F}
@@ -489,11 +488,12 @@ Global
 		{D4D8C3BC-A26B-4EEE-BE57-76960A216B6A} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{ACF2D240-01A9-4855-BF61-548B11C7D224} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{B09CFEB5-E24D-4199-BB00-92C73D42762D} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
+		{59E794E0-A247-4A7F-BCA1-DB928D59D876} = {D43D1D6B-66A9-4A57-9EA3-8DECC92FA583}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {156116FF-243E-45E8-8717-DB72E95F56AF}
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35;packages\Unity.Interception.2.1.505.2\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\DesignTime
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45
+		SolutionGuid = {156116FF-243E-45E8-8717-DB72E95F56AF}
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 73e3ec62-fcea-43a4-b9ac-380e73a81ae7

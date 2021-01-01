@@ -15,7 +15,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Shifts
 
 		public string GetQuery()
 		{
-			var query = _sqlConfiguration.SelectShiftAndDaysByDIdQuery
+			var query = _sqlConfiguration.SelectShiftsByDidJSONQuery
 										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
 																 string.Empty,
 																 _sqlConfiguration.ParameterNotation,

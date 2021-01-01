@@ -366,7 +366,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			UpdateCallView model = new UpdateCallView();
 			model = await FillUpdateCallView(model);
 			model.Call = await _callsService.GetCallByIdAsync(callId);
-			model.CallPriority = (CallPriority)model.Call.Priority;
+			model.CallPriority = model.Call.Priority;
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
 			{

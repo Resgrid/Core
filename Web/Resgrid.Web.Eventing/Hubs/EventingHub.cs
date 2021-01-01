@@ -27,7 +27,6 @@ namespace Resgrid.Web.Eventing.Hubs
 	}
 
 	[AllowAnonymous]
-	//[HubName("stockTickerMini")]
 	public class EventingHub : Hub
 	{
 		private readonly IDepartmentLinksService _departmentLinksService;

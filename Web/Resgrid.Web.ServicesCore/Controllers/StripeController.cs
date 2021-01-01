@@ -14,7 +14,7 @@ using Stripe.Checkout;
 namespace Resgrid.Web.Services.Controllers
 {
 	[ApiController]
-	[Route("[controller]")]
+	[Route("api/[controller]")]
 	[ApiExplorerSettings(IgnoreApi = true)]
 	public class StripeHandlerController : ControllerBase
 	{

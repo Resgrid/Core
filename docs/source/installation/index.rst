@@ -4,23 +4,42 @@ Installation
 
 In this section we will go over all the steps needed to get Resgrid running on your own environment. 
 
-.. important:: Resgrid requires working **RabbitMQ** and **SQL** servers, more info in :ref:`installation_prerequisites` below and currently only runs on Microsoft Windows operating systems
+.. important:: Resgrid requires working **RabbitMQ**, **Redis** and **SQL** servers, more info in :ref:`installation_prerequisites` below and currently only runs on Microsoft Windows operating systems
+
+This documentation is for installation of Resgrid from compile source. If you want to install Resgrid from Docker containers please review that section instead.
+
+.. _requirements:
+
+Requirements Notice
+****************************
+
+It is highly recommended that Resgrid is installed and setup by an IT Professional. There is a large amount of system configuration, tweaking and setup that is required to be done before you install Resgrid. Below is a list of technologies that you should have skilled professionals available to you or requisite knowledge before installing Resgrid. Resgrid does not provide support or configuration guidance for those systems outside of the minimum needed to get the system functional. The steps outlined below will get the system in a bare minimum functional state to ensure it's working on your enviroment, to be production ready will reqire more effort then is outlined in this documentation.
+
+* Windows or Linux
+* Docker, Kubernetes, Rancher, K8s
+* SQL Server or PostgreSQL
+* DNS, hostname mapping, proxy configuration
+* RabbitMQ
+* Redis
+* Elastic
+* Mail Server SMTP, POP3
+* Firewall and system hardning
 
 .. _installation_prerequisites:
 
 Prerequisites & Dependencies
 ****************************
 
-`Resgrid <https://resgrid.com/>`_ requires Microsoft .Net Framework 4.7.2 and .Net Core 1.1. and running on a Windows environment, Windows Server is recommended but not required. 
+`Resgrid <https://resgrid.com/>`_ requires Microsoft .Net Core 3.1. and running on a Windows environment, Windows Server is recommended but not required. 
 
 .. note:: Please ensure your Windows system is up to date with all Windows and Microsoft updates before installing the Resgrid System.
 
 The following server dependencies need to be installed, configured and functional:
 
-* `.Net Framework <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Framework 4.7.2 (Developer Pack)
-* `.Net Core <https://dotnet.microsoft.com/download/visual-studio-sdks?utm_source=getdotnetsdk&utm_medium=referral>`_ .NET Core 1.1 (Runtime for your architecture x86 or x64)
+* `.Net Core 3.1 <https://dotnet.microsoft.com/download/dotnet-core/3.1>`_ Runtime for your architecture x86 or x64
 * `Erlang <https://www.erlang.org/downloads>`_, needed for RabbitMQ
 * `RabbitMQ Server <https://www.rabbitmq.com>`_, version 3.6.0 or newer
+* `Redis Server <https://redis.io>`_, version 6.0.0 or newer
 * `Microsoft SQL Server <https://www.microsoft.com/en-us/sql-server/default.aspx>`_, version 12.0 (SQL 2014) or newer
 * `Microsoft IIS <https://www.iis.net/>`_ version installed on Windows 8 or newer or Windows Server 2012 or newer
 * `Elastic ELK <https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html>`_ 6.6.0 or newer

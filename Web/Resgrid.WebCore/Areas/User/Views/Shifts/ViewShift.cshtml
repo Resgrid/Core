@@ -3,8 +3,8 @@
 @using RestSharp.Extensions
 @model Resgrid.Web.Areas.User.Models.Shifts.ShiftSignupView
 @{
-	ViewBag.Title = "Resgrid | View Shift";
-	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+  ViewBag.Title = "Resgrid | View Shift";
+  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
 {
@@ -13,235 +13,239 @@
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>View Shift</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
-			</li>
-			<li class="active">
-				<strong>View Shift</strong>
-			</li>
-		</ol>
-	</div>
+  <div class="col-sm-4">
+    <h2>View Shift</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+      </li>
+      <li class="active">
+        <strong>View Shift</strong>
+      </li>
+    </ol>
+  </div>
 </div>
 
 <div class="wrapper wrapper-content">
-	<div class="row animated fadeInRight">
-		<div class="col-md-4">
-			<div class="widget style1 navy-bg">
-				<div class="row">
-					<div class="col-xs-2">
-						<i class="fa fa-calendar fa-5x"></i>
-					</div>
-					<div class="col-xs-10 text-right">
-						<span> Shift Start </span>
-						<h2 class="font-bold">
-							<time datetime="@Model.Day.Day.ToShortDateString()">
-								<span class="day">@Model.Day.Day.Day</span>
-								<span class="month">@DateTimeHelpers.MonthToShortString(Model.Day.Day.Month)</span>
-								<span class="year">@Model.Day.Day.Year</span>
-								<span class="time">@Model.Day.Shift.StartTime</span>
-							</time>
-						</h2>
-					</div>
-				</div>
-			</div>
-			<div class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Shift Day Detail</h5>
-				</div>
-				<div>
-					<div class="ibox-content profile-content">
-						<h4><strong>@Model.Day.Shift.Name</strong></h4>
-						<div class="row">
-							<div class="col-lg-10">
-								<dl class="dl-horizontal">
-									<dt>Type:</dt>
+  <div class="row animated fadeInRight">
+    <div class="col-md-4">
+      <div class="widget style1 navy-bg">
+        <div class="row">
+          <div class="col-xs-2">
+            <i class="fa fa-calendar fa-5x"></i>
+          </div>
+          <div class="col-xs-10 text-right">
+            <span> Shift Start </span>
+            <h2 class="font-bold">
+              <time datetime="@Model.Day.Day.ToShortDateString()">
+                <span class="day">@Model.Day.Day.Day</span>
+                <span class="month">@DateTimeHelpers.MonthToShortString(Model.Day.Day.Month)</span>
+                <span class="year">@Model.Day.Day.Year</span>
+                <span class="time">@Model.Day.Shift.StartTime</span>
+              </time>
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Shift Day Detail</h5>
+        </div>
+        <div>
+          <div class="ibox-content profile-content">
+            <h4><strong>@Model.Day.Shift.Name</strong></h4>
+            <div class="row">
+              <div class="col-lg-10">
+                <dl class="dl-horizontal">
+                  <dt>Type:</dt>
 
-									@if (Model.Day.Shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
-									{
-										<dd>Assigned</dd>
-									}
-									else
-									{
-										<dd>Signup</dd>
-									}
-									<dt>Status:</dt>
-									@if (Model.Day.Day > DateTime.UtcNow)
-									{
-										<dd>Upcoming</dd>
-									}
-									else
-									{
-										<dd>Completed</dd>
-									}
-									<dt>Start:</dt>
-									<dd>@Model.Day.Shift.StartTime</dd>
-									<dt>End:</dt>
-									@if (Model.Day.Shift.EndTime.HasValue())
-									{
-										<dd>@Model.Day.Shift.EndTime</dd>
-									}
-									else
-									{
-										<dd>No End Time</dd>
-									}
-								</dl>
-
-
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-8">
-			<div class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Groups</h5>
-				</div>
-				<div class="ibox-content">
-
-					<div>
-						<div class="feed-activity-list">
-							@foreach (var group in Model.Day.Shift.Groups)
-							{
-								<div class="feed-element">
-									<div class="media-body">
-										<strong>@group.DepartmentGroup.Name</strong><br>
-										<table class="table">
-											<thead>
-												<tr>
-													<th>
-														Role
-													</th>
-													<th>
-														Required
-													</th>
-													<th>
-														Optional
-													</th>
-													<th>
-														Needed
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												@foreach (var role in group.Roles)
-												{
-													<tr>
-														<td>
-															@role.Role.Name
-														</td>
-														<td>
-															@role.Required
-														</td>
-														<td>
-															@role.Optional
-														</td>
-														<td>
-															@if (Model.Needs != null && Model.Needs.ContainsKey(group.DepartmentGroupId))
-															{
-																var needsForGroup = Model.Needs[group.DepartmentGroupId];
-
-																if (needsForGroup.ContainsKey(role.PersonnelRoleId))
-																{
-																	<span>@needsForGroup[role.PersonnelRoleId]</span>			}
-															}
-														</td>
-													</tr>
-												}
-											</tbody>
-										</table>
-										<h4>Signups</h4>
-										<table class="table">
-											<thead>
-												<tr>
-													<th>
-														Name
-													</th>
-													<th>
-														Roles
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												@foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId))
-												{
-													var person = Model.UserProfiles[signup.UserId];
-													var roles = Model.PersonnelRoles[signup.UserId];
-
-													<tr>
-														<td>
-															@person.FullName.AsFirstNameLastName
-														</td>
-														<td>
-															@string.Join(", ", roles.Select(x => x.Name))
-														</td>
-													</tr>
-												}
-											</tbody>
-										</table>
-										<h4>Trades</h4>
-										<table class="table">
-											<thead>
-												<tr>
-													<th>
-														Trade
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												@foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId && (x.Trade != null && x.Trade.IsTradeComplete())))
-												{
-													var person = Model.UserProfiles[signup.UserId];
-													UserProfile person2;
-													string message = String.Empty;
-
-													if (!String.IsNullOrWhiteSpace(signup.Trade.UserId))
-													{
-														person2 = Model.UserProfiles[signup.Trade.UserId];
-
-														message = String.Format("{0} tradded with {1}", person.FullName.AsFirstNameLastName, person2.FullName.AsFirstNameLastName);
-													}
-													else if (signup.GetTradeType() == ShiftTradeTypes.Source)
-													{
-														person2 = Model.UserProfiles[signup.Trade.TargetShiftSignup.UserId];
-
-														message = String.Format("{0} tradded with {1}", person.FullName.AsFirstNameLastName, person2.FullName.AsFirstNameLastName);
-													}
-													else if (signup.GetTradeType() == ShiftTradeTypes.Target)
-													{
-														person2 = Model.UserProfiles[signup.Trade.SourceShiftSignup.UserId];
-
-														message = String.Format("{0} tradded with {1}", person2.FullName.AsFirstNameLastName, person.FullName.AsFirstNameLastName);
-													}
+                  @if (Model.Day.Shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
+				  {
+                    <dd>Assigned</dd>
+				  }
+				  else
+				  {
+                    <dd>Signup</dd>
+				  }
+                  <dt>Status:</dt>
+                  @if (Model.Day.Day > DateTime.UtcNow)
+				  {
+                    <dd>Upcoming</dd>
+				  }
+				  else
+				  {
+                    <dd>Completed</dd>
+				  }
+                  <dt>Start:</dt>
+                  <dd>@Model.Day.Shift.StartTime</dd>
+                  <dt>End:</dt>
+                  @if (Model.Day.Shift.EndTime.HasValue())
+				  {
+                    <dd>@Model.Day.Shift.EndTime</dd>
+				  }
+				  else
+				  {
+                    <dd>No End Time</dd>
+				  }
+                </dl>
 
 
-													<tr>
-														<td>
-															@message
-														</td>
-													</tr>
-												}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Groups</h5>
+        </div>
+        <div class="ibox-content">
 
-						</div>
+          <div>
+            <div class="feed-activity-list">
+              @foreach (var group in Model.Day.Shift.Groups)
+			  {
+                <div class="feed-element">
+                  <div class="media-body">
+                    <strong>@group.DepartmentGroup.Name</strong><br>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Role
+                          </th>
+                          <th>
+                            Required
+                          </th>
+                          <th>
+                            Optional
+                          </th>
+                          <th>
+                            Needed
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @if (group.Roles != null)
+						{
+                          @foreach (var role in group.Roles)
+						  {
+                            <tr>
+                              <td>
+                                @role.Role.Name
+                              </td>
+                              <td>
+                                @role.Required
+                              </td>
+                              <td>
+                                @role.Optional
+                              </td>
+                              <td>
+                                @if (Model.Needs != null && Model.Needs.ContainsKey(group.DepartmentGroupId))
+								{
+								  var needsForGroup = Model.Needs[group.DepartmentGroupId];
 
-					</div>
-				</div>
+								  if (needsForGroup.ContainsKey(role.PersonnelRoleId))
+								  {
+                                    <span>@needsForGroup[role.PersonnelRoleId]</span>
+								  }
+								}
+                              </td>
+                            </tr>
+						  }
+						}
+                      </tbody>
+                    </table>
+                    <h4>Signups</h4>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Name
+                          </th>
+                          <th>
+                            Roles
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId))
+						{
+						  var person = Model.UserProfiles[signup.UserId];
+						  var roles = Model.PersonnelRoles[signup.UserId];
 
-			</div>
-		</div>
-	</div>
+                          <tr>
+                            <td>
+                              @person.FullName.AsFirstNameLastName
+                            </td>
+                            <td>
+                              @string.Join(", ", roles.Select(x => x.Name))
+                            </td>
+                          </tr>
+						}
+                      </tbody>
+                    </table>
+                    <h4>Trades</h4>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Trade
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId && (x.Trade != null && x.Trade.IsTradeComplete())))
+						{
+						  var person = Model.UserProfiles[signup.UserId];
+						  UserProfile person2;
+						  string message = String.Empty;
+
+						  if (!String.IsNullOrWhiteSpace(signup.Trade.UserId))
+						  {
+							person2 = Model.UserProfiles[signup.Trade.UserId];
+
+							message = String.Format("{0} tradded with {1}", person.FullName.AsFirstNameLastName, person2.FullName.AsFirstNameLastName);
+						  }
+						  else if (signup.GetTradeType() == ShiftTradeTypes.Source)
+						  {
+							person2 = Model.UserProfiles[signup.Trade.TargetShiftSignup.UserId];
+
+							message = String.Format("{0} tradded with {1}", person.FullName.AsFirstNameLastName, person2.FullName.AsFirstNameLastName);
+						  }
+						  else if (signup.GetTradeType() == ShiftTradeTypes.Target)
+						  {
+							person2 = Model.UserProfiles[signup.Trade.SourceShiftSignup.UserId];
+
+							message = String.Format("{0} tradded with {1}", person2.FullName.AsFirstNameLastName, person.FullName.AsFirstNameLastName);
+						  }
+
+
+                          <tr>
+                            <td>
+                              @message
+                            </td>
+                          </tr>
+						}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+			  }
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>
 
 @section Scripts

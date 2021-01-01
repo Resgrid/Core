@@ -26,10 +26,12 @@ namespace Resgrid.Workers.Console.Tasks
 
 		public async Task ProcessAsync(CalendarNotificationCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
-			progress.Report(1, $"Starting the {Name} Task");
-
-			await Task.Run(async () =>
+			try
 			{
+				progress.Report(1, $"Starting the {Name} Task");
+
+				//await Task.Run(async () =>
+				//{
 				var _calendarService = Bootstrapper.GetKernel().Resolve<ICalendarService>();
 				var logic = new CalendarNotifierLogic();
 
@@ -62,9 +64,15 @@ namespace Resgrid.Workers.Console.Tasks
 				{
 					progress.Report(6, "CalendarNotification::No Calendar Items to Notify");
 				}
-			}, cancellationToken);
+				//}, cancellationToken);
 
-			progress.Report(100, $"Finishing the {Name} Task");
+				progress.Report(100, $"Finishing the {Name} Task");
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+				_logger.LogError(ex.ToString());
+			}
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
@@ -13,7 +14,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string Message { get; set; }
 		public List<DepartmentGroup> Groups { get; set; }
 		public List<IdentityUser> UnGroupedUsers { get; set; }
-		public CallPriority CallPriority { get; set; }
+		public int CallPriority { get; set; }
 		public SelectList CallPriorities { get; set; }
 		public SelectList CallTypes { get; set; }
 		public string Latitude { get; set; }

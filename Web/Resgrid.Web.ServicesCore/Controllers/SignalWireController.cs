@@ -21,7 +21,7 @@ using Resgrid.Framework;
 namespace Resgrid.Web.Services.Controllers
 {
 	[ApiController]
-	[Route("[controller]")]
+	[Route("api/[controller]")]
 	[Produces("application/xml")]
 	[ApiExplorerSettings(IgnoreApi = true)]
 	public class SignalWireController : ControllerBase

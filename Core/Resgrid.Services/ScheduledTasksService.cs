@@ -205,6 +205,13 @@ namespace Resgrid.Services
 			return await GetUpcomingScheduledTasksAsync(DateTime.UtcNow, tasks.ToList());
 		}
 
+		public async Task<List<ScheduledTask>> GetAllUpcomingStatusScheduledTasksAsync()
+		{
+			var tasks = await _scheduledTaskRepository.GetAllActiveTasksForTypesAsync(new[] { (int)TaskTypes.DepartmentStatusReset }.ToList());
+
+			return await GetUpcomingScheduledTasksAsync(DateTime.UtcNow, tasks.ToList());
+		}
+
 		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksAsync()
 		{
 			return await GetUpcomingScheduledTasksAsync(DateTime.UtcNow, null);

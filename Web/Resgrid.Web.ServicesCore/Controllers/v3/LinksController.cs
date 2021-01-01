@@ -71,9 +71,11 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				if (link.LinkedDepartmentId == DepartmentId && link.LinkEnabled)
 				{
+					var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId);
+
 					var result = new DepartmentLinkResult();
 					result.LinkId = link.DepartmentLinkId;
-					result.DepartmentName = link.Department.Name;
+					result.DepartmentName = department.Name;
 					result.Color = link.DepartmentColor;
 					result.ShareCalls = link.DepartmentShareCalls;
 					result.ShareOrders = link.DepartmentShareOrders;

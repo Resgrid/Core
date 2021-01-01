@@ -72,7 +72,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			var hideUnavailable = await _departmentSettingsService.GetBigBoardHideUnavailableDepartmentAsync(DepartmentId);
-			var lastUserActionlogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(DepartmentId);
+			//var lastUserActionlogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(DepartmentId);
+			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			var departmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			var lastUserStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
@@ -106,7 +107,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				let groupName = userGroup == null ? "" : userGroup.Name
 				//let roles = _personnelRolesService.GetRolesForUserAsync(u.UserId, DepartmentId).Result
 				//let name = (ProfileBase.Create(mu.UserName, true)).GetPropertyValue("Name").ToString()
-				let name = names[u.UserId]
+				let name = names.ContainsKey(u.UserId) ? names[u.UserId] : "Unknown User"
 				let weight = lastUserActionlogs.Where(x => x.UserId == u.UserId).FirstOrDefault().GetWeightForAction()
 				orderby groupName, weight, name ascending
 				select new

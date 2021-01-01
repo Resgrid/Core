@@ -21,5 +21,6 @@
 		//Broadcast2 = 16,
 		ShiftNotification = 17,
 		CalendarNotifier = 18,
+		StatusChange = 19,
 	}
 }

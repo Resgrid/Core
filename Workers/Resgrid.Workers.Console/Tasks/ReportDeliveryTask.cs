@@ -30,10 +30,12 @@ namespace Resgrid.Workers.Console.Tasks
 
 		public async Task ProcessAsync(ReportDeliveryTaskCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
-			progress.Report(1, $"Starting the {Name} Task");
-
-			await Task.Run(async () =>
+			try
 			{
+				progress.Report(1, $"Starting the {Name} Task");
+
+				//await Task.Run(async () =>
+				//{
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var _scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
 				var _usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
@@ -87,9 +89,15 @@ namespace Resgrid.Workers.Console.Tasks
 
 					}
 				}
-			}, cancellationToken);
+				//}, cancellationToken);
 
-			progress.Report(100, $"Finishing the {Name} Task");
+				progress.Report(100, $"Finishing the {Name} Task");
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+				_logger.LogError(ex.ToString());
+			}
 		}
 	}
 }

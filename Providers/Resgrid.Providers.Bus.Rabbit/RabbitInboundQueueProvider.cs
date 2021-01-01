@@ -22,6 +22,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<NotificationItem, Task> NotificationQueueReceived;
 		public Func<ShiftQueueItem, Task> ShiftNotificationQueueReceived;
 		public Func<CqrsEvent, Task> CqrsEventQueueReceived;
+		public Func<CqrsEvent, Task> PaymentEventQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -60,7 +61,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 							if (cqi != null)
 							{
 								if (CallQueueReceived != null)
+								{
 									await CallQueueReceived.Invoke(cqi);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -68,8 +72,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 							Logging.LogException(ex);
 						}
 					}
-
-					_channel.BasicAck(ea.DeliveryTag, false);
 				};
 
 				var messageQueueReceivedConsumer = new EventingBasicConsumer(_channel);
@@ -87,7 +89,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 							if (mqi != null)
 							{
 								if (MessageQueueReceived != null)
+								{
 									await MessageQueueReceived.Invoke(mqi);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -95,8 +100,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 							Logging.LogException(ex);
 						}
 					}
-
-					_channel.BasicAck(ea.DeliveryTag, false);
 				};
 
 				var distributionListQueueReceivedConsumer = new EventingBasicConsumer(_channel);
@@ -114,7 +117,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 							if (dlqi != null)
 							{
 								if (DistributionListQueueReceived != null)
+								{
 									await DistributionListQueueReceived.Invoke(dlqi);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -122,8 +128,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 							Logging.LogException(ex);
 						}
 					}
-
-					_channel.BasicAck(ea.DeliveryTag, false);
 				};
 
 				var notificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
@@ -141,7 +145,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 							if (ni != null)
 							{
 								if (NotificationQueueReceived != null)
+								{
 									await NotificationQueueReceived.Invoke(ni);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -149,8 +156,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 							Logging.LogException(ex);
 						}
 					}
-
-					_channel.BasicAck(ea.DeliveryTag, false);
 				};
 
 				var shiftNotificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
@@ -168,7 +173,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 							if (sqi != null)
 							{
 								if (ShiftNotificationQueueReceived != null)
+								{
 									await ShiftNotificationQueueReceived.Invoke(sqi);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -176,8 +184,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 							Logging.LogException(ex);
 						}
 					}
-
-					_channel.BasicAck(ea.DeliveryTag, false);
 				};
 
 				var cqrsEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
@@ -195,7 +201,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 							if (cqrs != null)
 							{
 								if (CqrsEventQueueReceived != null)
+								{
 									await CqrsEventQueueReceived.Invoke(cqrs);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -203,8 +212,34 @@ namespace Resgrid.Providers.Bus.Rabbit
 							Logging.LogException(ex);
 						}
 					}
+				};
 
-					_channel.BasicAck(ea.DeliveryTag, false);
+				var paymentEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				paymentEventQueueReceivedConsumer.Received += async (model, ea) =>
+				{
+					if (ea != null && ea.Body.Length > 0)
+					{
+						var body = ea.Body;
+						var message = Encoding.UTF8.GetString(body.ToArray());
+
+						try
+						{
+							var cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+
+							if (cqrs != null)
+							{
+								if (PaymentEventQueueReceived != null)
+								{
+									await PaymentEventQueueReceived.Invoke(cqrs);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+						}
+					}
 				};
 
 
@@ -237,6 +272,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 					queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 					autoAck: false,
 					consumer: cqrsEventQueueReceivedConsumer);
+
+				String paymentEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
+					autoAck: false,
+					consumer: paymentEventQueueReceivedConsumer);
 			}
 		}
 

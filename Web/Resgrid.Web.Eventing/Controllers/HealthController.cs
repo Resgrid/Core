@@ -40,11 +40,11 @@ namespace Resgrid.Web.Eventing.Controllers
 			result.CacheOnline = false;//_healthService.IsCacheProviderConnected();
 			result.ServiceBusOnline = false;//_healthService.IsCacheProviderConnected();
 
-			var dbTime = await _healthService.GetDatabaseTimestamp();
+			//var dbTime = await _healthService.GetDatabaseTimestamp();
 
-			if (!string.IsNullOrWhiteSpace(dbTime))
-				result.DatabaseOnline = true;
-			else
+			//if (!string.IsNullOrWhiteSpace(dbTime))
+			//	result.DatabaseOnline = true;
+			//else
 				result.DatabaseOnline = false;
 
 			return Json(result);

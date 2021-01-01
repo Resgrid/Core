@@ -45,7 +45,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
-				return await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as'DepartmentTimeZone'
+				return await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
 																					FROM ScheduledTasks st
 																					INNER JOIN DepartmentMembers dm on dm.UserId = st.UserId
 																					INNER JOIN Departments d ON d.DepartmentId = dm.DepartmentId

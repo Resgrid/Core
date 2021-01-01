@@ -23,7 +23,7 @@ namespace Resgrid.Model
 		[Required]
 		public int DepartmentGroupId { get; set; }
 
-		[JsonIgnore]
+		//[JsonIgnore]
 		public virtual DepartmentGroup DepartmentGroup { get; set; }
 
 		public virtual ICollection<ShiftGroupRole> Roles { get; set; }

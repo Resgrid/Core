@@ -103,7 +103,7 @@ namespace Resgrid.Providers.Bus
 		{
 			try
 			{
-				if (_hubConnection.State != HubConnectionState.Connected)
+				if (_hubConnection.State == HubConnectionState.Disconnected)
 					await _hubConnection.StartAsync();
 			}
 			catch (Exception ex)

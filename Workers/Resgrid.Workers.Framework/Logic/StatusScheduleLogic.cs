@@ -7,14 +7,14 @@ using Autofac;
 
 namespace Resgrid.Workers.Framework.Logic
 {
-	public class StaffingScheduleLogic
+	public class StatusScheduleLogic
 	{
 		private IUserStateService _userStateService;
 		private IScheduledTasksService _scheduledTasksService;
 		private IDepartmentsService _departmentsService;
 		private IActionLogsService _actionLogsService;
 
-		public StaffingScheduleLogic()
+		public StatusScheduleLogic()
 		{
 			_userStateService = Bootstrapper.GetKernel().Resolve<IUserStateService>();
 			_scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
@@ -22,7 +22,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_actionLogsService = Bootstrapper.GetKernel().Resolve<IActionLogsService>();
 		}
 
-		public async Task<Tuple<bool, string>> Process(StaffingScheduleQueueItem item)
+		public async Task<Tuple<bool, string>> Process(StatusScheduleQueueItem item)
 		{
 			bool success = true;
 			string result = "";
@@ -31,18 +31,9 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					if (item.ScheduledTask.TaskType == (int)TaskTypes.UserStaffingLevel)
-						await _userStateService.CreateUserState(item.ScheduledTask.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data), item.ScheduledTask.Note);
-					else if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStaffingReset)
+					if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStatusReset)
 					{
-						//var department = _departmentsService.GetDepartmentByUserId(item.ScheduledTask.UserId);
-						//var users = _departmentsService.GetAllUsersForDepartment(department.DepartmentId, true);
-						var users = _departmentsService.GetAllUsersForDepartment(item.ScheduledTask.DepartmentId, true);
-
-						foreach (var user in users)
-						{
-							await _userStateService.CreateUserState(user.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
-						}
+						await _actionLogsService.SetActionForEntireDepartmentAsync(item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
 					}
 				}
 				catch (Exception ex)

@@ -260,6 +260,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectShiftDaysByShiftIdQuery { get; set; }
 		public string SelectShiftAndDaysByShiftIdQuery { get; set; }
 		public string SelectShiftAndDaysQuery { get; set; }
+		public string SelectShiftAndDaysJSONQuery { get; set; }
 		public string SelectShiftSignupByUserIdQuery { get; set; }
 		public string SelectShiftSignupTradeByUserIdQuery { get; set; }
 		public string SelectOpenShiftSignupTradesByUserIdQuery { get; set; }
@@ -271,6 +272,8 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectShiftSignupByShiftIdDateQuery { get; set; }
 		public string SelectShiftGroupRolesByGroupIdQuery { get; set; }
 		public string SelectShiftTradeAndSourceByUserIdQuery { get; set; }
+		public string SelectShiftByShiftIdJSONQuery { get; set; }
+		public string SelectShiftsByDidJSONQuery { get; set; }
 		#endregion Shifts
 
 		#region Calls

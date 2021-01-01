@@ -13,18 +13,18 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Workers.Console.Tasks
 {
-	public class StaffingScheduleTask : IQuidjiboHandler<Commands.StaffingScheduleCommand>
+	public class StatusScheduleTask : IQuidjiboHandler<Commands.StatusScheduleCommand>
 	{
-		public string Name => "Staffing Scheduler";
+		public string Name => "Status Scheduler";
 		public int Priority => 1;
 		public ILogger _logger;
 
-		public StaffingScheduleTask(ILogger logger)
+		public StatusScheduleTask(ILogger logger)
 		{
 			_logger = logger;
 		}
 
-		public async Task ProcessAsync(Commands.StaffingScheduleCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
+		public async Task ProcessAsync(Commands.StatusScheduleCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -37,7 +37,7 @@ namespace Resgrid.Workers.Console.Tasks
 				var logic = new StaffingScheduleLogic();
 
 				var allDepartments = await _departmentsService.GetAllAsync();
-				var allItems = await _scheduledTasksService.GetAllUpcomingStaffingScheduledTasksAsync();
+				var allItems = await _scheduledTasksService.GetAllUpcomingStatusScheduledTasksAsync();
 
 				if (allItems != null && allItems.Any())
 				{
@@ -56,7 +56,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 					if (items != null && items.Any())
 					{
-						_logger.LogInformation("StaffingSchedule::Staffing Levels to Change: " + items.Count());
+						_logger.LogInformation("StatusSchedule::Status Levels to Change: " + items.Count());
 
 						foreach (var i in items)
 						{
@@ -64,17 +64,17 @@ namespace Resgrid.Workers.Console.Tasks
 							qi.ScheduledTask = i.ScheduledTask;
 							qi.Department = i.Department;
 
-							_logger.LogInformation("StaffingSchedule::Processing Staffing Schedule:" + qi.ScheduledTask.ScheduledTaskId);
+							_logger.LogInformation("StatusSchedule::Processing Status Schedule:" + qi.ScheduledTask.ScheduledTaskId);
 
 							var result = await logic.Process(qi);
 
 							if (result.Item1)
 							{
-								_logger.LogInformation($"StaffingSchedule::Processed Staffing Schedule {qi.ScheduledTask.ScheduledTaskId} successfully.");
+								_logger.LogInformation($"StatusSchedule::Processed Status Schedule {qi.ScheduledTask.ScheduledTaskId} successfully.");
 							}
 							else
 							{
-								_logger.LogInformation($"StaffingSchedule::Failed to Process staffing schedule {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
+								_logger.LogInformation($"StatusSchedule::Failed to Process status schedule {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
 							}
 						}
 					}

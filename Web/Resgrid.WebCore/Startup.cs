@@ -123,6 +123,7 @@ namespace Resgrid.Web
 					options.Cookie.SecurePolicy = CookieSecurePolicy.None;//.SameAsRequest;
 					options.Cookie.SameSite = SameSiteMode.Strict;//.None;
 					options.Cookie.Name = "RGSITEAUTHCOOKIE";
+					options.ExpireTimeSpan = new TimeSpan(48, 0, 0);
 				});
 
 			services.ConfigureApplicationCookie(options =>

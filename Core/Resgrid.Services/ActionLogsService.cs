@@ -196,9 +196,10 @@ namespace Resgrid.Services
 				foreach (var actionLog in actionLogs)
 				{
 					var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
-					InvalidateActionLogs(actionLog.DepartmentId);
 					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() {Status = saved});
 				}
+
+				InvalidateActionLogs(actionLogs[0].DepartmentId);
 
 				return true;
 			}

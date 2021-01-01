@@ -6,6 +6,7 @@ using Resgrid.Model.Services;
 using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,10 +25,12 @@ namespace Resgrid.Workers.Console.Tasks
 
 		public async Task ProcessAsync(CallPruneCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
-			progress.Report(1, $"Starting the {Name} Task");
-
-			await Task.Run(async () =>
+			try
 			{
+				progress.Report(1, $"Starting the {Name} Task");
+
+				//await Task.Run(async () =>
+				//{
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var logic = new CallPruneLogic();
 
@@ -58,10 +61,15 @@ namespace Resgrid.Workers.Console.Tasks
 						}
 					}
 				}
-			}, cancellationToken);
+				//}, cancellationToken);
 
-
-			progress.Report(100, $"Finishing the {Name} Task");
+				progress.Report(100, $"Finishing the {Name} Task");
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+				_logger.LogError(ex.ToString());
+			}
 		}
 	}
 }

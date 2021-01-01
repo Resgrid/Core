@@ -276,5 +276,22 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Shift&gt;.</returns>
 		Task<Shift> PopulateShiftData(Shift shift, bool getDepartment, bool getPersonnel, bool getGroups,
 			bool getSignups, bool getAdmins);
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="shift"></param>
+		/// <param name="shiftDay"></param>
+		/// <returns></returns>
+		Task<bool> IsShiftDayFilledWithObjAsync(Shift shift, ShiftDay shiftDay);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="shift"></param>
+		/// <param name="shiftDay"></param>
+		/// <returns></returns>
+		Task<Dictionary<int, Dictionary<int, int>>> GetShiftDayNeedsObjAsync(Shift shift, ShiftDay shiftDay);
 	}
 }

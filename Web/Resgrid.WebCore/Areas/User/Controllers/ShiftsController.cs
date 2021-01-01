@@ -98,6 +98,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
+			shift = await _shiftsService.PopulateShiftData(shift, true, true, true, true, true);
+
 			model.Shift = shift;
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
@@ -439,6 +441,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
 
+			shift = await _shiftsService.PopulateShiftData(shift, true, true, true, true, true);
+
 			model.Shift = shift;
 
 			return View(model);
@@ -553,6 +557,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Day.Shift.DepartmentId != DepartmentId)
 				Unauthorized();
+
+			model.Day.Shift = await _shiftsService.GetShiftByIdAsync(model.Day.ShiftId); //await _shiftsService.PopulateShiftData(model.Day.Shift, true, true, true, true, true);
 
 			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
 			model.Needs = await _shiftsService.GetShiftDayNeedsAsync(shiftDayId);
@@ -892,10 +898,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					item.ItemType = day.ShiftId; // The Color in the calendar
 					item.SignupType = shift.AssignmentType;
 					item.ShiftId = day.ShiftId;
-					item.Filled = await _shiftsService.IsShiftDayFilledAsync(day.ShiftDayId);
+					item.Filled = await _shiftsService.IsShiftDayFilledWithObjAsync(shift, day);
 					item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId);
 
-					var shiftGroups = await _shiftsService.GetShiftDayNeedsAsync(day.ShiftDayId);
+					var shiftGroups = await _shiftsService.GetShiftDayNeedsObjAsync(shift, day);
 
 					if (shiftGroups != null)
 					{
@@ -1103,6 +1109,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (shift.DepartmentId != DepartmentId)
 				return null;
 
+			shift = await _shiftsService.PopulateShiftData(shift, true, true, true, true, true);
+
 			foreach (var user in shift.Personnel)
 			{
 				var userJson = new UserJson();
@@ -1171,6 +1179,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (shift.DepartmentId != DepartmentId)
 				return null;
+
+			shift = await _shiftsService.PopulateShiftData(shift, true, true, true, true, true);
 
 			var shiftJson = JsonConvert.SerializeObject(shift);
 

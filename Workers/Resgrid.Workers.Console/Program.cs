@@ -25,6 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Resgrid.Workers.Console.Tasks;
 using Serilog.Formatting.Json;
+using Stripe;
 
 namespace Resgrid.Workers.Console
 {
@@ -56,7 +57,8 @@ namespace Resgrid.Workers.Console
 				{
 					services.AddOptions();
 					services.AddSingleton<IHostedService, QueuesProcessingService>();
-					services.AddSingleton<IHostedService, SystemProcessingService>();
+					//services.AddSingleton<IHostedService, SystemProcessingService>();
+					//services.AddSingleton<IHostedService, PaymentProcessingService>();
 					services.AddSingleton<IHostedService, ScheduledJobsService>();
 				})
 				.ConfigureLogging((hostingContext, logging) => {
@@ -83,6 +85,12 @@ namespace Resgrid.Workers.Console
 			var coreEventService = Bootstrapper.GetKernel().Resolve<ICoreEventService>();
 
 			SerializerHelper.WarmUpProtobufSerializer();
+
+			if (Resgrid.Config.PaymentProviderConfig.IsTestMode)
+				StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.TestApiKey);
+			else
+				StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.ProductionApiKey);
+
 			System.Console.WriteLine("Finished Initializing Dependencies.");
 		}
 
@@ -141,28 +149,51 @@ namespace Resgrid.Workers.Console
 		}
 	}
 
-	public class SystemProcessingService : BackgroundService
-	{
-		private ILogger _logger;
+	//public class SystemProcessingService : BackgroundService
+	//{
+	//	private ILogger _logger;
 
-		public SystemProcessingService(ILogger<SystemProcessingService> logger)
-		{
-			_logger = logger;
-		}
+	//	public SystemProcessingService(ILogger<SystemProcessingService> logger)
+	//	{
+	//		_logger = logger;
+	//	}
 
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
-		{
-			_logger.Log(LogLevel.Information, "Starting Queues Event Watcher");
+	//	protected override Task ExecuteAsync(CancellationToken stoppingToken)
+	//	{
+	//		_logger.Log(LogLevel.Information, "Starting Queues Event Watcher");
 
-			Task.Run(async () =>
-			{
-				var queuesTask = new QueuesProcessorTask(_logger);
-				await queuesTask.ProcessAsync(new QueuesProcessorCommand(4), null, stoppingToken);
-			}, stoppingToken);
+	//		Task.Run(async () =>
+	//		{
+	//			var queuesTask = new QueuesProcessorTask(_logger);
+	//			await queuesTask.ProcessAsync(new SystemQueueProcessorCommand(8), null, stoppingToken);
+	//		}, stoppingToken);
 
-			return Task.CompletedTask;
-		}
-	}
+	//		return Task.CompletedTask;
+	//	}
+	//}
+
+	//public class PaymentProcessingService : BackgroundService
+	//{
+	//	private ILogger _logger;
+
+	//	public PaymentProcessingService(ILogger<PaymentProcessingService> logger)
+	//	{
+	//		_logger = logger;
+	//	}
+
+	//	protected override Task ExecuteAsync(CancellationToken stoppingToken)
+	//	{
+	//		_logger.Log(LogLevel.Information, "Starting Payment Event Watcher");
+
+	//		Task.Run(async () =>
+	//		{
+	//			var queuesTask = new PaymentQueueProcessorTask(_logger);
+	//			await queuesTask.ProcessAsync(new PaymentQueueProcessorCommand(10), null, stoppingToken);
+	//		}, stoppingToken);
+
+	//		return Task.CompletedTask;
+	//	}
+	//}
 
 	public class ScheduledJobsService : BackgroundService
 	{
@@ -210,7 +241,7 @@ namespace Resgrid.Workers.Console
 
 			var isEventsOnly = Environment.GetEnvironmentVariable("RESGRID__EVENTSONLY");
 
-			if (String.IsNullOrWhiteSpace(isEventsOnly) || isEventsOnly == "False")
+			if (String.IsNullOrWhiteSpace(isEventsOnly) || isEventsOnly.ToLower() == "false")
 			{
 				_logger.Log(LogLevel.Information, "Starting Scheduled Jobs");
 				// Scheduled Jobs
@@ -236,25 +267,31 @@ namespace Resgrid.Workers.Console
 				_logger.Log(LogLevel.Information, "Scheduling Report Delivery");
 				await client.ScheduleAsync("Report Delivery",
 					new ReportDeliveryTaskCommand(5),
-					Cron.MinuteIntervals(60),
+					Cron.MinuteIntervals(14),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Shift Notifier");
 				await client.ScheduleAsync("Shift Notifier",
 					new ShiftNotiferCommand(6),
-					Cron.MinuteIntervals(60),
+					Cron.MinuteIntervals(720),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Staffing Schedule");
 				await client.ScheduleAsync("Staffing Schedule",
 					new Commands.StaffingScheduleCommand(7),
-					Cron.MinuteIntervals(15),
+					Cron.MinuteIntervals(5),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Training Notifier");
 				await client.ScheduleAsync("Training Notifier",
 					new TrainingNotiferCommand(9),
-					Cron.MinuteIntervals(60),
+					Cron.MinuteIntervals(30),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Status Schedule");
+				await client.ScheduleAsync("Status Schedule",
+					new Commands.StatusScheduleCommand(11),
+					Cron.MinuteIntervals(5),
 					stoppingToken);
 			}
 			else

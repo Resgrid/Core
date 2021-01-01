@@ -174,7 +174,7 @@ namespace Resgrid.Web.ServicesCore
 			{
 				hubOptions.EnableDetailedErrors = true;
 			}).AddStackExchangeRedis(CacheConfig.RedisConnectionString, options => {
-				options.Configuration.ChannelPrefix = $"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-api-sr";
+				options.Configuration.ChannelPrefix = $"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-evt-sr";
 			});
 
 			services.Configure<ForwardedHeadersOptions>(options =>

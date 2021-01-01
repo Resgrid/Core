@@ -186,3 +186,11 @@ Web/Resgrid.WebCore/wwwroot/videos/*
 Workers/Resgrid.Workers.BackendWorkers/*
 Workers/Resgrid.Workers.BroadcastWorker/*
 Workers/WebJobs/*
+Common/resgrid.com.crt
+Common/resgrid.local.crt
+Common/resgrid.local.key
+Common/resgrid.local.pem
+Common/resgrid.local.pfx
+Web/Resgrid.Web.ServicesCore/Properties/serviceDependencies.json
+Web/Resgrid.Web.ServicesCore/Properties/serviceDependencies.local.json
+Web/Resgrid.Web.ServicesCore/Properties/ServiceDependencies/local/appInsights1.arm.json

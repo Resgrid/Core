@@ -7,45 +7,49 @@
   <title>@ViewData["Title"]</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"
+		asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+		asp-fallback-test-class="sr-only"
+		asp-fallback-test-property="position"
+		asp-fallback-test-value="absolute" />
+
   <environment names="Development">
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="~/lib/metisMenu/metisMenu.min.css" />
-    <link rel="stylesheet" href="~/css/animate.css" />
-    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
-    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
-    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
-    <link rel="stylesheet" href="~/lib/toastr/toastr.css" />
-    <link rel="stylesheet" href="~/lib/jqueryui/themes/cupertino/jquery-ui.css" />
-    <link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
-    <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
-    <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
-    <link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+	<link rel="stylesheet" href="~/lib/metisMenu/metisMenu.min.css" />
+	<link rel="stylesheet" href="~/css/animate.css" />
+	<link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
+	<link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
+	<link rel="stylesheet" href="~/lib/toastr/toastr.css" />
+	<link rel="stylesheet" href="~/lib/jqueryui/themes/cupertino/jquery-ui.css" />
+	<link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
+	<link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
+	<link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
+	<link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
+	<link rel="stylesheet" href="~/lib/leaflet/leaflet.css" />
+	<link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
+	<link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
+	<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
   </environment>
   <environment names="Staging,Production">
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="~/lib/metisMenu/metisMenu.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
-    <link rel="stylesheet" href="~/css/animate.css" />
-    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
-    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
-    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
-    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
-    <link rel="stylesheet" href="~/lib/jqueryui/themes/cupertino/jquery-ui.css" />
-    <link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
-    <link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
-    <link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
-    <link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
-    <link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="~/lib/metisMenu/metisMenu.min.css" />
+	<link rel="stylesheet" href="~/lib/bootstrap-tour/css/bootstrap-tour.min.css" />
+	<link rel="stylesheet" href="~/css/animate.css" />
+	<link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.material.min.css" />
+	<link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+	<link rel="stylesheet" href="~/lib/jqueryui/themes/cupertino/jquery-ui.css" />
+	<link rel="stylesheet" href="~/lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
+	<link rel="stylesheet" href="~/clib/picEdit/css/picedit.min.css" />
+	<link rel="stylesheet" href="~/clib/bootstrap-wizard/bootstrap-wizard.css" />
+	<link rel="stylesheet" href="~/lib/quill/quill.snow.min.css" />
+	<link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
+	<link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.min.css" />
+	<link rel="stylesheet" href="~/lib/fullcalendar/fullcalendar.print.min.css" media="print" />
+	<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
   </environment>
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -53,7 +57,7 @@
   <!-- Add local styles, mostly for plugins css file -->
   @if (IsSectionDefined("Styles"))
   {
-    @RenderSection("Styles", required: false)
+	@RenderSection("Styles", required: false)
   }
 
   @Html.Raw(JavaScriptSnippet.FullScript)
@@ -63,82 +67,90 @@
   <!-- Wrapper-->
   <div id="wrapper" class="md-skin">
 
-    <!-- Navigation -->
-    @await Html.PartialAsync("_Navigation")
+	<!-- Navigation -->
+	@await Html.PartialAsync("_Navigation")
 
-    <!-- Page wraper -->
-    <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
+	<!-- Page wraper -->
+	<div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
 
-      <!-- Top Navbar -->
-      @await Html.PartialAsync("_TopNavbar")
+	  <!-- Top Navbar -->
+	  @await Html.PartialAsync("_TopNavbar")
 
-      <!-- Main view  -->
-      @RenderBody()
+	  <!-- Main view  -->
+	  @RenderBody()
 
-      <div id="setupWizard"></div>
+	  <div id="setupWizard"></div>
 
-      <!-- Footer -->
-      @await Html.PartialAsync("_Footer")
-    </div>
-    <!-- End page wrapper-->
+	  <!-- Footer -->
+	  @await Html.PartialAsync("_Footer")
+	</div>
+	<!-- End page wrapper-->
   </div>
   <!-- End wrapper-->
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
 
-  <!-- Latest compiled and minified JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"
+		  asp-fallback-src="lib/jquery/jquery-1.12.3.min.js"
+		  asp-fallback-test="window.jQuery"
+		  crossorigin="anonymous"
+		  integrity="sha384-ugqypGWrzPLdx2zEQTF17cVktjb01piRKaDNnbYGRSxyEoeAm+MKZVtbDUYjxfZ6">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/js/bootstrap.min.js"
+		  asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
+		  asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+		  crossorigin="anonymous"
+		  integrity="sha384-vhJnz1OVIdLktyixHY4Uk3OHEwdQqPppqYR8+5mjsauETgLOcEynD9oPHhhz18Nw">
+  </script>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
 
   <environment names="Development">
-    <script src="~/lib/angular/angular.js"></script>
-    <script src="~/lib/metisMenu/metisMenu.min.js"></script>
-    <script src="~/lib/slimScroll/jquery.slimscroll.js"></script>
-    <script src="~/lib/pace/pace.js"></script>
-    <script src="~/lib/select2/js/select2.full.min.js"></script>
-    <script src="~/clib/kendo/js/kendo.web.min.js"></script>
-    <script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
-    <script src="~/lib/toastr/toastr.min.js"></script>
-    <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
-    <script src="~/clib/ujs/jquery-ujs.js"></script>
-    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
-    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-    <script src="~/clib/picEdit/js/picedit.min.js"></script>
-    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
-    <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
-    <script src="~/lib/quill/quill.min.js"></script>
-    <script src="~/lib/moment/moment.min.js"></script>
-    <script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
-    <script src="~/lib/leaflet/leaflet.js"></script>
-    <script src="~/js/site.min.js"></script>
+	<script src="~/lib/angular/angular.js"></script>
+	<script src="~/lib/metisMenu/metisMenu.min.js"></script>
+	<script src="~/lib/slimScroll/jquery.slimscroll.js"></script>
+	<script src="~/lib/pace/pace.js"></script>
+	<script src="~/lib/select2/js/select2.full.min.js"></script>
+	<script src="~/clib/kendo/js/kendo.web.min.js"></script>
+	<script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
+	<script src="~/lib/toastr/toastr.min.js"></script>
+	<script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
+	<script src="~/clib/ujs/jquery-ujs.js"></script>
+	<script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+	<script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+	<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+	<script src="~/clib/picEdit/js/picedit.min.js"></script>
+	<script src="~/lib/sweetalert/sweetalert.min.js"></script>
+	<script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
+	<script src="~/lib/quill/quill.min.js"></script>
+	<script src="~/lib/moment/moment.min.js"></script>
+	<script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
+	<script src="~/lib/leaflet/leaflet.js"></script>
+	<script src="~/js/site.min.js"></script>
   </environment>
   <environment names="Staging,Production">
-    <script src="~/lib/angular/angular.min.js"></script>
-    <script src="~/lib/metisMenu/metisMenu.min.js"></script>
-    <script src="~/lib/pace/pace.min.js"></script>
-    <script src="~/lib/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="~/lib/select2/js/select2.full.min.js"></script>
-    <script src="~/clib/kendo/js/kendo.web.min.js"></script>
-    <script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
-    <script src="~/lib/toastr/toastr.min.js"></script>
-    <script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
-    <script src="~/clib/ujs/jquery-ujs.js"></script>
-    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+	<script src="~/lib/angular/angular.min.js"></script>
+	<script src="~/lib/metisMenu/metisMenu.min.js"></script>
+	<script src="~/lib/pace/pace.min.js"></script>
+	<script src="~/lib/slimScroll/jquery.slimscroll.min.js"></script>
+	<script src="~/lib/select2/js/select2.full.min.js"></script>
+	<script src="~/clib/kendo/js/kendo.web.min.js"></script>
+	<script src="~/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
+	<script src="~/lib/toastr/toastr.min.js"></script>
+	<script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
+	<script src="~/clib/ujs/jquery-ujs.js"></script>
+	<script src="~/lib/jqueryui/jquery-ui.min.js"></script>
 	<script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
-    <script src="~/clib/picEdit/js/picedit.min.js"></script>
-    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
-    <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
-    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
-    <script src="~/lib/quill/quill.min.js"></script>
-    <script src="~/lib/moment/moment.min.js"></script>
-    <script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/lib/leaflet/leaflet.min.js"></script>
-    <script src="~/js/site.min.js" asp-append-version="true"></script>
+	<script src="~/clib/picEdit/js/picedit.min.js"></script>
+	<script src="~/lib/sweetalert/sweetalert.min.js"></script>
+	<script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
+	<script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+	<script src="~/lib/quill/quill.min.js"></script>
+	<script src="~/lib/moment/moment.min.js"></script>
+	<script src="~/lib/fullcalendar/fullcalendar.min.js"></script>
+	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+	<script src="~/lib/leaflet/leaflet.min.js"></script>
+	<script src="~/js/site.min.js" asp-append-version="true"></script>
   </environment>
 
   <script src="~/js/app/resgrid.js"></script>
@@ -157,7 +169,7 @@
 
   @if (IsSectionDefined("Scripts"))
   {
-    @RenderSection("Scripts", required: false)
+	@RenderSection("Scripts", required: false)
   }
 
   @Html.Raw(ViewBag.BodyObjects)

@@ -58,28 +58,34 @@ namespace Resgrid.Providers.Bus
 
 			if (pushUri.PlatformType == (int)Platforms.WindowsPhone7 || pushUri.PlatformType == (int)Platforms.WindowsPhone8)
 			{
-				try
+				if (!String.IsNullOrWhiteSpace(pushUri.PushLocation))
 				{
-					var result = await hubClient.CreateMpnsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
-				}
-				catch (ArgumentException ex)
-				{
-					Framework.Logging.LogException(ex,
-						string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-							tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					try
+					{
+						var result = await hubClient.CreateMpnsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
+					}
+					catch (ArgumentException ex)
+					{
+						Framework.Logging.LogException(ex,
+							string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+								tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					}
 				}
 			}
 			else if (pushUri.PlatformType == (int)Platforms.Windows8)
 			{
-				try
+				if (!String.IsNullOrWhiteSpace(pushUri.PushLocation))
 				{
-					var result = await hubClient.CreateWindowsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
-				}
-				catch (ArgumentException ex)
-				{
-					Framework.Logging.LogException(ex,
-						string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-							tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					try
+					{
+						var result = await hubClient.CreateWindowsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
+					}
+					catch (ArgumentException ex)
+					{
+						Framework.Logging.LogException(ex,
+							string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+								tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					}
 				}
 			}
 			else if (pushUri.PlatformType == (int)Platforms.Android)

@@ -74,17 +74,17 @@ namespace Resgrid.Services
 		public async Task<Shift> PopulateShiftData(Shift shift, bool getDepartment, bool getPersonnel, bool getGroups,
 			bool getSignups, bool getAdmins)
 		{
-			if (getDepartment && shift.Department == null)
-				shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
+			//if (getDepartment && shift.Department == null)
+			//	shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
 
-			if (getPersonnel && shift.Personnel == null)
-				shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId)).ToList();
+			//if (getPersonnel && shift.Personnel == null)
+			//	shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId)).ToList();
 
-			if (getGroups && shift.Groups == null)
-				shift.Groups = await GetShiftGroupsForShift(shift.ShiftId);
+			//if (getGroups && shift.Groups == null)
+			//	shift.Groups = await GetShiftGroupsForShift(shift.ShiftId);
 
-			if (getSignups && shift.Signups == null)
-				shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId)).ToList();
+			//if (getSignups && shift.Signups == null)
+			//	shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId)).ToList();
 
 			return shift;
 		}
@@ -144,9 +144,9 @@ namespace Resgrid.Services
 
 			// Removing Days
 			var daysToRemove = from sd in shift.Days
-												 let day = days.FirstOrDefault(x => x.Day.Day == sd.Day.Day && x.Day.Month == sd.Day.Month && x.Day.Year == sd.Day.Year)
-												 where day == null
-												 select sd;
+							   let day = days.FirstOrDefault(x => x.Day.Day == sd.Day.Day && x.Day.Month == sd.Day.Month && x.Day.Year == sd.Day.Year)
+							   where day == null
+							   select sd;
 
 			if (daysToRemove != null && daysToRemove.Any())
 			{
@@ -165,7 +165,7 @@ namespace Resgrid.Services
 			{
 				await _shiftGroupsRepository.DeleteAsync(shiftGroup, cancellationToken);
 			}
-			
+
 
 			foreach (var group in groups)
 			{
@@ -247,7 +247,7 @@ namespace Resgrid.Services
 							await _shiftSignupTradeUserShiftsRepository.SaveOrUpdateAsync(shiftSignup, cancellationToken);
 						}
 					}
-						
+
 				}
 
 				return true;
@@ -255,7 +255,7 @@ namespace Resgrid.Services
 
 			return false;
 		}
-		
+
 		public async Task<List<Shift>> GetShiftsStartingNextDayAsync(DateTime currentTime)
 		{
 			var upcomingShifts = new List<Shift>();
@@ -266,41 +266,47 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					var shiftData = await PopulateShiftData(shift, true, true, true, true, true);
+					//var shiftData = await PopulateShiftData(shift, true, true, true, true, true);
 
-					var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shiftData.Department);
-
-					var shiftStart = shiftData.StartTime;
-
-					if (String.IsNullOrWhiteSpace(shiftStart))
-						shiftStart = "12:00 AM";
-
-					var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shiftData.Department.Use24HourTime.GetValueOrDefault());
-
-					var shiftDays = from sd in shiftData.Days
-									let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shiftData.Department.Use24HourTime.GetValueOrDefault())
-									let nextDayShiftTime = localizedDate.AddDays(1)
-									where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
-									select sd;
-
-					//List<ShiftDay> shiftDays = new List<ShiftDay>();
-					//foreach (var sd in shift.Days)
-					//{
-					//	var shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault());
-					//	var nextDayShiftTime = localizedDate.AddDays(1);
-
-					//	if (shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15)))
-					//		shiftDays.Add(sd);
-					//}
-
-					if (shiftDays.Any())
+					if (shift.Days != null && shift.Days.Any())
 					{
-						var previousShift = from sd in shiftData.Days
-											where sd.Day.ToShortDateString() == startTime.ToShortDateString()
-											select sd;
+						if (shift.Department == null)
+							shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId, false);
 
-						if (!previousShift.Any())
-							upcomingShifts.Add(shiftData);
+						var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shift.Department);
+
+						var shiftStart = shift.StartTime;
+
+						if (String.IsNullOrWhiteSpace(shiftStart))
+							shiftStart = "12:00 AM";
+
+						var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shift.Department.Use24HourTime.GetValueOrDefault());
+
+						var shiftDays = from sd in shift.Days
+										let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault())
+										let nextDayShiftTime = localizedDate.AddDays(1)
+										where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
+										select sd;
+
+						//List<ShiftDay> shiftDays = new List<ShiftDay>();
+						//foreach (var sd in shift.Days)
+						//{
+						//	var shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault());
+						//	var nextDayShiftTime = localizedDate.AddDays(1);
+
+						//	if (shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15)))
+						//		shiftDays.Add(sd);
+						//}
+
+						if (shiftDays.Any())
+						{
+							var previousShift = from sd in shift.Days
+												where sd.Day.ToShortDateString() == startTime.ToShortDateString()
+												select sd;
+
+							if (!previousShift.Any())
+								upcomingShifts.Add(shift);
+						}
 					}
 				}
 				catch (Exception ex)
@@ -333,10 +339,10 @@ namespace Resgrid.Services
 				var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, department.Use24HourTime.GetValueOrDefault());
 
 				var days = from sd in shift.Days
-								let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, department.Use24HourTime.GetValueOrDefault())
-								let nextDayShiftTime = localizedDate
-								where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromHours(12))
-								select sd;
+						   let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, department.Use24HourTime.GetValueOrDefault())
+						   let nextDayShiftTime = localizedDate
+						   where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromHours(12))
+						   select sd;
 
 				shiftDays.AddRange(days);
 			}
@@ -398,6 +404,76 @@ namespace Resgrid.Services
 			}
 
 			return isFilled;
+		}
+
+		public async Task<bool> IsShiftDayFilledWithObjAsync(Shift shift, ShiftDay shiftDay)
+		{
+			bool isFilled = true;
+			var shiftGroups = await GetShiftDayNeedsObjAsync(shift, shiftDay);
+
+			if (shiftGroups == null)
+				return true;
+
+			foreach (var group in shiftGroups)
+			{
+				foreach (var role in group.Value)
+				{
+					if (role.Value > 0)
+						isFilled = false;
+				}
+			}
+
+			return isFilled;
+		}
+
+		public async Task<Dictionary<int, Dictionary<int, int>>> GetShiftDayNeedsObjAsync(Shift shift, ShiftDay shiftDay)
+		{
+			//var shiftDay = await _shiftDaysRepository.GetShiftDayByIdAsync(shiftDayId);
+			var shiftGroups = new Dictionary<int, Dictionary<int, int>>();
+
+			if (shiftDay != null)
+			{
+				if (shiftDay.Shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
+					return null;
+
+				//shiftDay.Shift.Groups = (await _shiftGroupsRepository.GetShiftGroupsByShiftIdAsync(shiftDay.ShiftId)).ToList();
+				if (shiftDay.Shift.Groups == null || shiftDay.Shift.Groups.Count() <= 0)
+					return null;
+
+				var shiftSignups =
+					(await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAndDateAsync(shiftDay.ShiftId,
+						shiftDay.Day)).ToList();
+
+
+				foreach (var group in shiftDay.Shift.Groups)
+				{
+					var roleRequirements = new Dictionary<int, int>();
+
+					foreach (var role in group.Roles)
+					{
+						roleRequirements.Add(role.PersonnelRoleId, role.Required);
+					}
+
+					if (shiftSignups != null && shiftSignups.Any())
+					{
+						var groupSignups = shiftSignups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId);
+
+						foreach (var signup in groupSignups)
+						{
+							var roles = await _personnelRolesService.GetRolesForUserAsync(signup.UserId, shiftDay.Shift.DepartmentId);
+							foreach (var personnelRole in roles)
+							{
+								if (roleRequirements.ContainsKey(personnelRole.PersonnelRoleId))
+									roleRequirements[personnelRole.PersonnelRoleId]--;
+							}
+						}
+					}
+
+					shiftGroups.Add(group.DepartmentGroupId, roleRequirements);
+				}
+			}
+
+			return shiftGroups;
 		}
 
 		public async Task<Dictionary<int, Dictionary<int, int>>> GetShiftDayNeedsAsync(int shiftDayId)
@@ -481,7 +557,7 @@ namespace Resgrid.Services
 		public async Task<bool> IsUserSignedUpForShiftDayAsync(ShiftDay shiftDay, string userId)
 		{
 			var signups = await GetShiftSignpsForShiftDayAsync(shiftDay.ShiftDayId);
-			
+
 			if (shiftDay.Shift.Personnel != null && shiftDay.Shift.Personnel.Any())
 			{
 				if (shiftDay.Shift.Personnel.Any(x => x.UserId == userId))
@@ -497,7 +573,7 @@ namespace Resgrid.Services
 					return true;
 
 				if (shiftSignup.Trade != null && shiftSignup.Trade.TargetShiftSignup != null &&
-				    shiftSignup.Trade.TargetShiftSignup.UserId == userId)
+					shiftSignup.Trade.TargetShiftSignup.UserId == userId)
 					return true;
 			}
 
@@ -509,8 +585,8 @@ namespace Resgrid.Services
 			var shiftDay = await _shiftDaysRepository.GetShiftDayByIdAsync(shiftDayId);
 
 			var signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shiftDay.ShiftId)).Where(x => x.ShiftDay.Year == shiftDay.Day.Year &&
-			                                                                                                          x.ShiftDay.Month == shiftDay.Day.Month &&
-			                                                                                                          x.ShiftDay.Day == shiftDay.Day.Day).ToList();
+																													  x.ShiftDay.Month == shiftDay.Day.Month &&
+																													  x.ShiftDay.Day == shiftDay.Day.Day).ToList();
 
 			if (signups != null && signups.Any())
 			{
@@ -528,8 +604,8 @@ namespace Resgrid.Services
 			var shiftSignup = await _shiftSignupRepository.GetByIdAsync(shiftSignupId);
 
 			var shiftDay = (await _shiftDaysRepository.GetAllShiftDaysByShiftIdAsync(shiftSignup.ShiftId)).FirstOrDefault(x => x.Day.Year == shiftSignup.ShiftDay.Year &&
-			                                                                                                           x.Day.Month == shiftSignup.ShiftDay.Month &&
-			                                                                                                           x.Day.Day == shiftSignup.ShiftDay.Day);
+																													   x.Day.Month == shiftSignup.ShiftDay.Month &&
+																													   x.Day.Day == shiftSignup.ShiftDay.Day);
 			return shiftDay;
 		}
 

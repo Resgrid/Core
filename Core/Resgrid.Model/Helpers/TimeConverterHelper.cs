@@ -66,10 +66,11 @@ namespace Resgrid.Model.Helpers
 
 				var ianaTz = TZConvert.WindowsToIana(timeZone);
 
-				var localTime = LocalDateTime.FromDateTime(timestamp);
-				var zonedDateTime = localTime.InZoneLeniently(DateTimeZoneProviders.Tzdb[ianaTz]);
+				var localTime = Instant.FromDateTimeUtc(DateTime.SpecifyKind(timestamp, DateTimeKind.Utc));   //LocalDateTime.FromDateTime(timestamp);
+				//var zonedDateTime = localTime.InZoneLeniently(DateTimeZoneProviders.Tzdb[ianaTz]);
+				var zonedDateTime = localTime.InZone(DateTimeZoneProviders.Tzdb[ianaTz]);
 
-				return zonedDateTime.ToDateTimeUtc().FormatForDepartment(department);
+				return zonedDateTime.ToDateTimeUnspecified().FormatForDepartment(department);
 			}
 			catch (Exception ex)
 			{

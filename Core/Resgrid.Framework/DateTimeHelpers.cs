@@ -52,11 +52,14 @@ namespace Resgrid.Framework
 		// This will return the "primary" IANA zone that matches the given windows zone.
 		public static string WindowsToIana(string windowsZoneId)
 		{
-			var tzdbSource = NodaTime.TimeZones.TzdbDateTimeZoneSource.Default;
-			var tzi = TimeZoneInfo.FindSystemTimeZoneById(windowsZoneId);
-			var aliases = tzdbSource.WindowsMapping.PrimaryMapping[tzi.Id]; //.MapTimeZoneId(tzi);
+			//var tzdbSource = NodaTime.TimeZones.TzdbDateTimeZoneSource.Default;
+			//var tzi = TimeZoneInfo.FindSystemTimeZoneById(windowsZoneId);
+			//var aliases = tzdbSource.WindowsMapping.PrimaryMapping[tzi.Id]; //.MapTimeZoneId(tzi);
 
-			return aliases;
+			//return aliases;
+			var ianaTz = TZConvert.WindowsToIana(windowsZoneId);
+
+			return ianaTz;
 		}
 
 		public static DateTime GetNextWeekday(DateTime start, DayOfWeek day)

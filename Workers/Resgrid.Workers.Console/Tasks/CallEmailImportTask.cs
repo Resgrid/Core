@@ -10,6 +10,7 @@ using Resgrid.Workers.Framework.Logic;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
+using System;
 
 namespace Resgrid.Workers.Console.Tasks
 {
@@ -28,8 +29,10 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			progress.Report(1, $"Starting the {Name} Task");
 
-			await Task.Run(async () =>
+			try
 			{
+				//await Task.Run(async () =>
+				//{
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var logic = new CallEmailImporterLogic();
 
@@ -59,9 +62,15 @@ namespace Resgrid.Workers.Console.Tasks
 						}
 					}
 				}
-			}, cancellationToken);
+				//}, cancellationToken);
 
-			progress.Report(100, $"Finishing the {Name} Task");
+				progress.Report(100, $"Finishing the {Name} Task");
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+				_logger.LogError(ex.ToString());
+			}
 		}
 	}
 }

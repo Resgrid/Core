@@ -2,27 +2,33 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ProtoBuf;
 
 namespace Resgrid.Model
 {
 	[Table("DepartmentSettings")]
+	[ProtoContract]
 	public class DepartmentSetting : IEntity
 	{
 		[Key]
 		[Required]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[ProtoMember(1)]
 		public int DepartmentSettingId { get; set; }
 
 		[Required]
+		[ProtoMember(2)]
 		public int DepartmentId { get; set; }
 
 		[ForeignKey("DepartmentId")]
 		public Department Department { get; set; }
 
 		[Required]
+		[ProtoMember(3)]
 		public int SettingType { get; set; }
 
 		[Required]
+		[ProtoMember(4)]
 		public string Setting { get; set; }
 
 		[NotMapped]

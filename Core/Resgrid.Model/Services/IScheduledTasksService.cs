@@ -148,5 +148,11 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;ScheduledTaskLog&gt;.</returns>
 		Task<ScheduledTaskLog> CreateScheduleTaskLogAsync(ScheduledTask task,
 			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Gets all upcoming status scheduled tasks asynchronous.
+		/// </summary>
+		/// <returns>Task&lt;List&lt;ScheduledTask&gt;&gt;.</returns>
+		Task<List<ScheduledTask>> GetAllUpcomingStatusScheduledTasksAsync();
 	}
 }

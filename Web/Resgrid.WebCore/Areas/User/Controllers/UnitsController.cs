@@ -767,6 +767,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			foreach (var unit in units)
 			{
@@ -775,8 +776,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitJson.Type = unit.Type;
 				unitJson.UnitId = unit.UnitId;
 
-				if (unit.StationGroup != null)
-					unitJson.Station = unit.StationGroup.Name;
+				if (unit.StationGroupId.HasValue)
+				{
+					var group = groups.FirstOrDefault(x => x.DepartmentGroupId == unit.StationGroupId.Value);
+
+					if (group != null)
+						unitJson.Station = group.Name;
+				}
 
 				var state = states.FirstOrDefault(x => x.UnitId == unit.UnitId);
 

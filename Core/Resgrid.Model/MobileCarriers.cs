@@ -65,7 +65,7 @@ namespace Resgrid.Model
 		TracFone = 17, //number@mmst5.tracfone.com
 
 		[Description("Koodo Mobile")]
-		Koodo = 18, //number@msg.koodomobile.com
+		Koodo = 18, //SMS Direct Send //number@msg.koodomobile.com
 
 		[Description("Bell Mobility")]
 		BellMobility = 19, //number@txt.bell.ca 
@@ -241,7 +241,8 @@ namespace Resgrid.Model
 			MobileCarriers.Fido,
 			MobileCarriers.BellMobility,
 			MobileCarriers.SaskTel,
-			MobileCarriers.Spark
+			MobileCarriers.Spark,
+			MobileCarriers.Koodo
 		};
 
 		public static HashSet<MobileCarriers> OnPremSmsGatewayCarriers = new HashSet<MobileCarriers>()

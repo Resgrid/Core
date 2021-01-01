@@ -62,9 +62,10 @@ namespace Resgrid.Services
 			return await _departmentNotificationRepository.SaveOrUpdateAsync(notification, cancellationToken);
 		}
 
-		public List<DepartmentNotification> GetNotificationsByDepartmentAsync(int departmentId)
+		public async Task<List<DepartmentNotification>> GetNotificationsByDepartmentAsync(int departmentId)
 		{
-			return _departmentNotificationRepository.GetNotificationsByDepartment(departmentId);
+			var items = await _departmentNotificationRepository.GetAllByDepartmentIdAsync(departmentId);
+			return items.ToList();
 		}
 
 		public async Task<int> GetDepartmentIdForTypeAsync(NotificationItem ni)

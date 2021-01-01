@@ -40,7 +40,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Index()
 		{
 			var model = new NotificationIndexView();
-			model.Notifications =  _notificationService.GetNotificationsByDepartmentAsync(DepartmentId);
+			model.Notifications =  await _notificationService.GetNotificationsByDepartmentAsync(DepartmentId);
 			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			var allRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
 			model.CustomStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(DepartmentId);

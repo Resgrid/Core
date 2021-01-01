@@ -31,7 +31,7 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>List&lt;DepartmentNotification&gt;.</returns>
-		List<DepartmentNotification> GetNotificationsByDepartmentAsync(int departmentId);
+		Task<List<DepartmentNotification>> GetNotificationsByDepartmentAsync(int departmentId);
 
 		/// <summary>
 		/// Gets the department identifier for type asynchronous.

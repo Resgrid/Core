@@ -22,16 +22,5 @@ namespace Resgrid.Repositories.DataRepository
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
 		}
-
-		public List<DepartmentNotification> GetNotificationsByDepartment(int departmentId)
-		{
-			//using (IDbConnection db = new SqlConnection(connectionString))
-			//{
-			//	var result = db.Query<DepartmentNotification>($"SELECT * FROM DepartmentNotifications WHERE DepartmentId = @departmentId", new { departmentId = departmentId });
-			//	return result.ToList();
-			//}
-
-			return null;
-		}
 	}
 }

@@ -139,7 +139,7 @@ namespace Resgrid.Workers.Framework.Logic
 				var queueItem = new NotificationQueueItem();
 				queueItem.Department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId, false);
 				queueItem.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.DepartmentId);
-				queueItem.NotificationSettings = _notificationService.GetNotificationsByDepartmentAsync(item.DepartmentId);
+				queueItem.NotificationSettings = await _notificationService.GetNotificationsByDepartmentAsync(item.DepartmentId);
 				queueItem.Profiles = await  _userProfileService.GetAllProfilesForDepartmentAsync(item.DepartmentId);
 
 				queueItem.Notifications = new List<ProcessedNotification>();

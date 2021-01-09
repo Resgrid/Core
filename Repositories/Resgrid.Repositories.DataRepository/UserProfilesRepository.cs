@@ -45,8 +45,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: (up, u) => { up.User = u; return up; },
-						splitOn: "Id");
+						map: (up, u) => { up.User = u; return up; }/*,
+						splitOn: "Id"*/);
 
 					return result.FirstOrDefault();
 				});
@@ -89,8 +89,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: (up, u) => { up.User = u; return up; },
-						splitOn: "Id");
+						map: (up, u) => { up.User = u; return up; }//,
+						/*splitOn: "Id"*/);
 
 					return result.FirstOrDefault();
 				});
@@ -133,8 +133,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: (up, u) => { up.User = u; return up; },
-						splitOn: "Id");
+						map: (up, u) => { up.User = u; return up; }/*,
+						splitOn: "Id"*/);
 
 					return result.FirstOrDefault();
 				});
@@ -178,8 +178,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: UserProfileMapping(dictionary),
-						splitOn: "Id");
+						map: UserProfileMapping(dictionary)/*,
+						splitOn: "Id"*/);
 
 					if (dictionary.Count > 0)
 						return dictionary.Select(y => y.Value);
@@ -228,8 +228,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: UserProfileMapping(dictionary),
-						splitOn: "Id");
+						map: UserProfileMapping(dictionary)/*,
+						splitOn: "Id"*/);
 
 					if (dictionary.Count > 0)
 						return dictionary.Select(y => y.Value);
@@ -278,8 +278,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: UserProfileMapping(dictionary),
-						splitOn: "Id");
+						map: UserProfileMapping(dictionary)/*,
+						splitOn: "Id"*/);
 
 					if (dictionary.Count > 0)
 						return dictionary.Select(y => y.Value);

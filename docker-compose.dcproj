@@ -28,5 +28,6 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="docker-resgrid.env" />
   </ItemGroup>
 </Project>

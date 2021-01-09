@@ -12,3 +12,9 @@ services:
     build:
       context: .
       dockerfile: Web/Resgrid.Web.ServicesCore/Dockerfile
+
+  resgrid.workers.console:
+    image: ${DOCKER_REGISTRY-}resgridworkersconsole
+    build:
+      context: .
+      dockerfile: Workers/Resgrid.Workers.Console/Dockerfile

@@ -56,8 +56,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<IdentityUser, IdentityUserRole, IdentityUser>(sql: query,
 																			 param: dynamicParameters,
 																			 transaction: _unitOfWork.Transaction,
-																			 map: UserRoleMapping(userDictionary),
-																			 splitOn: "Id");
+																			 map: UserRoleMapping(userDictionary)/*,
+						splitOn: "Id"*/);
 
 					if (userDictionary.Count > 0)
 						return userDictionary.FirstOrDefault().Value;
@@ -104,8 +104,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<IdentityUser, IdentityUserRole, IdentityUser>(sql: query,
 																			 param: dynamicParameters,
 																			 transaction: _unitOfWork.Transaction,
-																			 map: UserRoleMapping(userDictionary),
-																			 splitOn: "Id");
+																			 map: UserRoleMapping(userDictionary)/*,
+						splitOn: "Id"*/);
 
 					if (userDictionary.Count > 0)
 						return userDictionary.FirstOrDefault().Value;
@@ -154,8 +154,8 @@ namespace Resgrid.Repositories.DataRepository
 						var result = await x.QueryAsync(sql: query,
 														param: dynamicParameters,
 														transaction: _unitOfWork.Transaction,
-														map: UserRoleMapping(userDictionary),
-														splitOn: "Id");
+														map: UserRoleMapping(userDictionary)/*,
+						splitOn: "Id"*/);
 
 						if (userDictionary.Count > 0)
 							return userDictionary.FirstOrDefault().Value;
@@ -553,8 +553,8 @@ namespace Resgrid.Repositories.DataRepository
 															ProviderKey = providerKey
 														},
 														transaction: _unitOfWork.Transaction,
-														map: UserRoleMapping(userDictionary),
-														splitOn: "Id");
+														map: UserRoleMapping(userDictionary)/*,
+						splitOn: "Id"*/);
 
 						if (userDictionary.Count > 0)
 							return userDictionary.FirstOrDefault().Value;

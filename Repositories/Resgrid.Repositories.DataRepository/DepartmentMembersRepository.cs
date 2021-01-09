@@ -45,8 +45,8 @@ namespace Resgrid.Repositories.DataRepository
 					return await x.QueryAsync<DepartmentMember, IdentityUser, DepartmentMember>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: (up, u) => { up.User = u; return up; },
-						splitOn: "Id");
+						map: (up, u) => { up.User = u; return up; }/*,
+						splitOn: "Id"*/);
 				});
 
 				DbConnection conn = null;
@@ -88,8 +88,8 @@ namespace Resgrid.Repositories.DataRepository
 					return await x.QueryAsync<DepartmentMember, IdentityUser, DepartmentMember>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: (up, u) => { up.User = u; return up; },
-						splitOn: "Id");
+						map: (up, u) => { up.User = u; return up; }/*,
+						splitOn: "Id"*/);
 				});
 
 				DbConnection conn = null;
@@ -132,8 +132,8 @@ namespace Resgrid.Repositories.DataRepository
 					var result = await x.QueryAsync<DepartmentMember, IdentityUser, DepartmentMember>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
-						map: (up, u) => { up.User = u; return up; },
-						splitOn: "Id");
+						map: (up, u) => { up.User = u; return up; }/*,
+						splitOn: "Id"*/);
 
 					return result.FirstOrDefault();
 				});

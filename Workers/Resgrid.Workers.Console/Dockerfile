@@ -5,6 +5,7 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
+
 COPY ["Workers/Resgrid.Workers.Console/Resgrid.Workers.Console.csproj", "Workers/Resgrid.Workers.Console/"]
 COPY ["Providers/Resgrid.Providers.Bus.Rabbit/Resgrid.Providers.Bus.Rabbit.csproj", "Providers/Resgrid.Providers.Bus.Rabbit/"]
 COPY ["Core/Resgrid.Framework/Resgrid.Framework.csproj", "Core/Resgrid.Framework/"]
@@ -35,5 +36,25 @@ RUN dotnet publish "Resgrid.Workers.Console.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
+
+## START - INSTALL WKHTMLTOPDF
+ENV WKHTMLTOX wkhtmltox_0.12.6-1.buster_amd64.deb
+ENV BUILD_PACKAGES build-essential
+ENV MAIN_PACKAGES fontconfig libfreetype6 libjpeg62-turbo libxext6 libpng16-16 libx11-6 libxcb1 libxrender1 xfonts-75dpi xfonts-base libgdiplus libc6-dev wget
+
+RUN set -xe \
+    && apt-get update -qq \
+    && apt-get install --no-install-recommends -yq $BUILD_PACKAGES $MAIN_PACKAGES \
+    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb \
+    && dpkg -i ${WKHTMLTOX} \
+    && apt-get remove -y $BUILD_PACKAGES \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && rm -rf ${WKHTMLTOX} \
+    && truncate -s 0 /var/log/*log
+## END - INSTALL WKHTMLTPDF
+
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "Resgrid.Workers.Console.dll"]

@@ -34,6 +34,7 @@ Getting started
    :columns: 2
 
    * :doc:`/installation/index` -- Install and run the Resgrid system
+   * :doc:`/docker/index` -- Install and run the Resgrid system with Docker
    * :doc:`/development/index` -- Start developing with Resgrid
    * :doc:`/contributing/index` -- Contribution guidelines and information
    * :doc:`/system/index` -- Overview of the Resgrid system and features
@@ -55,6 +56,7 @@ Documentation Contents
 
    /overview/index
    /installation/index
+   /docker/index
    /setup/index
    /configuration/index
    /providers/index

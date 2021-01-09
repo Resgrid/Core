@@ -22,7 +22,6 @@ namespace Resgrid.Web.Eventing
 					logging.ClearProviders();
 					logging.AddConsole();
 				})
-				//.UseIISIntegration()
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
 					webBuilder.UseStartup<Startup>();

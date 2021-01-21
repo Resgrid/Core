@@ -11,6 +11,7 @@ using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.Messages;
+using System.Text;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -304,6 +305,123 @@ namespace Resgrid.Repositories.DataRepository
 				Logging.LogException(ex);
 
 				return null;
+			}
+		}
+
+		public async Task<bool> UpdateRecievedMessagesAsDeletedAsync(string userId, List<string> messageIds)
+		{
+			try
+			{
+				var ids = new StringBuilder();
+
+				foreach (var id in messageIds)
+				{
+					if (ids.Length == 0)
+					{
+						ids.Append($"{id}");
+					}
+					else
+					{
+						ids.Append($",{id}");
+					}
+				}
+
+				var selectFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<UpdateRecievedMessagesAsDeletedQuery>();
+					query = query.Replace("%MESSAGEIDS%", ids.ToString());
+
+					var result = await x.QueryAsync(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+
+					return true;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<bool> UpdateRecievedMessagesAsReadAsync(string userId, List<string> messageIds)
+		{
+			try
+			{
+				var ids = new StringBuilder();
+
+				foreach (var id in messageIds)
+				{
+					if (ids.Length == 0)
+					{
+						ids.Append($"{id}");
+					}
+					else
+					{
+						ids.Append($",{id}");
+					}
+				}
+
+				var selectFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("ReadOn", DateTime.UtcNow);
+
+					var query = _queryFactory.GetQuery<UpdateRecievedMessagesAsReadQuery>();
+					query = query.Replace("%MESSAGEIDS%", ids.ToString());
+
+					var result = await x.QueryAsync(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+
+					return true;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 

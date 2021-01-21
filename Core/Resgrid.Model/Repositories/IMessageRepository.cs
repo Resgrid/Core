@@ -44,5 +44,21 @@ namespace Resgrid.Model.Repositories
 		/// <param name="messageId">The message identifier.</param>
 		/// <returns>Task&lt;Message&gt;.</returns>
 		Task<Message> GetMessagesByMessageIdAsync(int messageId);
+
+		/// <summary>
+		/// Updates multiple recieved (inbox) messages as deleted asynchronous.
+		/// </summary>
+		/// <param name="userId">UserId of the user to delete for.</param>
+		/// <param name="messageIds">The message identifiers.</param>
+		/// <returns>Task&lt;bool&gt;.</returns>
+		Task<bool> UpdateRecievedMessagesAsDeletedAsync(string userId, List<string> messageIds);
+
+		/// <summary>
+		/// Updates multiple recieved (inbox) messages as read asynchronous.
+		/// </summary>
+		/// <param name="userId">UserId of the user to read.</param>
+		/// <param name="messageIds">The message identifiers.</param>
+		/// <returns>Task&lt;bool&gt;.</returns>
+		Task<bool> UpdateRecievedMessagesAsReadAsync(string userId, List<string> messageIds);
 	}
 }

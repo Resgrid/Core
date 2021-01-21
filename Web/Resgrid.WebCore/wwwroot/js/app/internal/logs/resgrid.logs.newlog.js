@@ -75,7 +75,7 @@ var resgrid;
                     modal: true,
                     visible: false,
                     resizable: false,
-                    content: resgrid.absoluteBaseUrl + '/User/Dispatch/SmallCallGrid',
+                    content: '/User/Dispatch/SmallCallGrid',
                     width: 750,
                     height: 465
                 }).data("kendoWindow");
@@ -85,7 +85,7 @@ var resgrid;
                     modal: true,
                     visible: false,
                     resizable: false,
-                    content: resgrid.absoluteBaseUrl + '/User/Units/SmallUnitsGrid',
+                    content: '/User/Units/SmallUnitsGrid',
                     width: 750,
                     height: 465
                 }).data("kendoWindow");

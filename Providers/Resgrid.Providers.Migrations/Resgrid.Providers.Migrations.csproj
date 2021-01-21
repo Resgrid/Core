@@ -21,8 +21,4 @@
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
-  </ItemGroup>
-
 </Project>

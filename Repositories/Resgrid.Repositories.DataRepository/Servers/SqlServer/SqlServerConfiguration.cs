@@ -311,6 +311,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%MESSAGESTABLE% m
 					LEFT JOIN %SCHEMA%.%MESSAGERECIPIENTSTABLE% mr ON mr.[MessageId] =  m.[MessageId]
 					WHERE m.[SendingUserId] = %USERID% AND m.[IsDeleted] = 0";
+			UpdateRecievedMessagesAsDeletedQuery = @"
+					UPDATE %SCHEMA%.%TABLENAME%
+					SET [IsDeleted] = 1
+					WHERE [MessageId] IN (%MESSAGEIDS%) AND [UserId] = %USERID%";
+			UpdateRecievedMessagesAsReadQuery = @"
+					UPDATE %SCHEMA%.%TABLENAME%
+					SET [ReadOn] = %READON%
+					WHERE [MessageId] IN (%MESSAGEIDS%) AND [UserId] = %USERID%";
 			#endregion Messages
 
 			#region Identity

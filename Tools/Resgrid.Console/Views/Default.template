@@ -1,10 +1,10 @@
 
 NAME
-	Resgrid.Console Version: 0.1.0
+	Resgrid.Console Version: 1.0.0
 
 SYNTAX
 	Resgrid.Console [args] [options]
 
 DESCRIPTION
-	The  program does...
+	The Resgrid.Console app is a command line tool for interacting with the Resgrid system.
 

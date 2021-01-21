@@ -5,6 +5,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,13 +52,21 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					if (ea != null && ea.Body.Length > 0)
 					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body.ToArray());
+						CallQueueItem cqi = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							cqi = ObjectSerialization.Deserialize<CallQueueItem>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
 
 						try
 						{
-							var cqi = ObjectSerialization.Deserialize<CallQueueItem>(message);
-
 							if (cqi != null)
 							{
 								if (CallQueueReceived != null)
@@ -70,6 +79,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 						catch (Exception ex)
 						{
 							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
 						}
 					}
 				};
@@ -79,13 +92,21 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					if (ea != null && ea.Body.Length > 0)
 					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body.ToArray());
+						MessageQueueItem mqi = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							mqi = ObjectSerialization.Deserialize<MessageQueueItem>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
 
 						try
 						{
-							var mqi = ObjectSerialization.Deserialize<MessageQueueItem>(message);
-
 							if (mqi != null)
 							{
 								if (MessageQueueReceived != null)
@@ -98,6 +119,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 						catch (Exception ex)
 						{
 							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicAck(ea.DeliveryTag, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
 						}
 					}
 				};
@@ -107,13 +132,21 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					if (ea != null && ea.Body.Length > 0)
 					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body.ToArray());
+						DistributionListQueueItem dlqi = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							dlqi = ObjectSerialization.Deserialize<DistributionListQueueItem>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
 
 						try
 						{
-							var dlqi = ObjectSerialization.Deserialize<DistributionListQueueItem>(message);
-
 							if (dlqi != null)
 							{
 								if (DistributionListQueueReceived != null)
@@ -126,6 +159,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 						catch (Exception ex)
 						{
 							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicAck(ea.DeliveryTag, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
 						}
 					}
 				};
@@ -135,13 +172,21 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					if (ea != null && ea.Body.Length > 0)
 					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body.ToArray());
+						NotificationItem ni = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							ni = ObjectSerialization.Deserialize<NotificationItem>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
 
 						try
 						{
-							var ni = ObjectSerialization.Deserialize<NotificationItem>(message);
-
 							if (ni != null)
 							{
 								if (NotificationQueueReceived != null)
@@ -154,6 +199,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 						catch (Exception ex)
 						{
 							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicAck(ea.DeliveryTag, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
 						}
 					}
 				};
@@ -163,12 +212,21 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					if (ea != null && ea.Body.Length > 0)
 					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body.ToArray());
+						ShiftQueueItem sqi = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							sqi = ObjectSerialization.Deserialize<ShiftQueueItem>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
 
 						try
 						{
-							var sqi = ObjectSerialization.Deserialize<ShiftQueueItem>(message);
 
 							if (sqi != null)
 							{
@@ -182,6 +240,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 						catch (Exception ex)
 						{
 							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicAck(ea.DeliveryTag, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
 						}
 					}
 				};
@@ -191,13 +253,21 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					if (ea != null && ea.Body.Length > 0)
 					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body.ToArray());
+						CqrsEvent cqrs = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
 
 						try
 						{
-							var cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
-
 							if (cqrs != null)
 							{
 								if (CqrsEventQueueReceived != null)
@@ -210,6 +280,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 						catch (Exception ex)
 						{
 							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicAck(ea.DeliveryTag, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
 						}
 					}
 				};
@@ -219,13 +293,21 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					if (ea != null && ea.Body.Length > 0)
 					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body.ToArray());
+						CqrsEvent cqrs = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
 
 						try
 						{
-							var cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
-
 							if (cqrs != null)
 							{
 								if (PaymentEventQueueReceived != null)
@@ -238,6 +320,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 						catch (Exception ex)
 						{
 							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicAck(ea.DeliveryTag, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
 						}
 					}
 				};
@@ -286,6 +372,50 @@ namespace Resgrid.Providers.Bus.Rabbit
 				return false;
 
 			return _channel.IsOpen;
+		}
+
+		private bool RetryQueueItem(BasicDeliverEventArgs ea, Exception mex)
+		{
+			try
+			{
+				int currentDeliveryCount = 0;
+
+				if (ea.BasicProperties != null && ea.BasicProperties.Headers != null && ea.BasicProperties.Headers.Count > 0 &&
+					ea.BasicProperties.Headers.ContainsKey("x-redelivered-count"))
+					currentDeliveryCount = int.Parse(ea.BasicProperties.Headers["x-redelivered-count"].ToString());
+
+				if (currentDeliveryCount >= 3)
+					return true;
+
+				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				using (var connection = factory.CreateConnection())
+				{
+					using (var channel = connection.CreateModel())
+					{
+						IBasicProperties props = channel.CreateBasicProperties();
+						props.DeliveryMode = 2;
+						props.Expiration = "36000000";
+						props.Headers = new Dictionary<string, object>();
+						props.Headers.Add("x-redelivered-count", currentDeliveryCount++);
+						props.Headers.Add("x-previous-error", mex.Message);
+
+						// https://github.com/rabbitmq/rabbitmq-delayed-message-exchange
+						props.Headers.Add("x-delay", 5000);
+
+						channel.BasicPublish(exchange: ea.Exchange,
+									 routingKey: ea.RoutingKey,
+									 basicProperties: props,
+									 body: ea.Body);
+					}
+
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
 		}
 
 		private static string SetQueueNameForEnv(string cacheKey)

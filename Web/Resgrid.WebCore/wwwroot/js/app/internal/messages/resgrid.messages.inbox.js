@@ -82,12 +82,25 @@ var resgrid;
                 var values = $("input[name=message]:checked").map(function () {
                     return this.value;
                 }).get().join(",");
+
                 if (values && values.length > 0) {
-                    $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Messages/DeleteMessages?messageIds=' + values,
-                        type: 'DELETE',
-                        success: function (result) {
-                            window.location.assign(resgrid.absoluteBaseUrl + '/User/Messages/Inbox');
+                    swal({
+                        title: "Are you sure?",
+                        text: "Do you want to permanently delete the selected messages.",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            kendo.ui.progress($("#inboxPageList"), true);
+                            $.ajax({
+                                url: resgrid.absoluteBaseUrl + '/User/Messages/DeleteMessages?messageIds=' + values,
+                                type: 'DELETE',
+                                success: function (result) {
+                                    kendo.ui.progress($("#inboxPageList"), false);
+                                    window.location.assign(resgrid.absoluteBaseUrl + '/User/Messages/Inbox');
+                                }
+                            });
                         }
                     });
                 }
@@ -102,11 +115,23 @@ var resgrid;
                     return this.value;
                 }).get().join(",");
                 if (values && values.length > 0) {
-                    $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Messages/MarkMessagesAsRead?messageIds=' + values,
-                        type: 'PUT',
-                        success: function (result) {
-                            window.location.assign(resgrid.absoluteBaseUrl + '/User/Messages/Inbox');
+                    swal({
+                        title: "Are you sure?",
+                        text: "Do you want to mark the selected messages as read?",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            kendo.ui.progress($("#inboxPageList"), true);
+                            $.ajax({
+                                url: resgrid.absoluteBaseUrl + '/User/Messages/MarkMessagesAsRead?messageIds=' + values,
+                                type: 'PUT',
+                                success: function (result) {
+                                    kendo.ui.progress($("#inboxPageList"), false);
+                                    window.location.assign(resgrid.absoluteBaseUrl + '/User/Messages/Inbox');
+                                }
+                            });
                         }
                     });
                 }

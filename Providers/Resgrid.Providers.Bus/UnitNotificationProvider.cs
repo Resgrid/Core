@@ -39,13 +39,17 @@ namespace Resgrid.Providers.Bus
 				}
 
 				// Loop through all Azure registrations for this Hashed DeviceId and remove them
-				if (registrations != null)
+				if (registrations != null && registrations.Any())
 				{
 					foreach (var registration in registrations)
 					{
 						try
 						{
 							await hubClient.DeleteRegistrationAsync(registration);
+						}
+						catch (Microsoft.Azure.NotificationHubs.Messaging.MessagingEntityNotFoundException menfe)
+						{
+							// Eat me
 						}
 						catch (Exception ex)
 						{

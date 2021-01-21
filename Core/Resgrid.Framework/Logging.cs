@@ -75,7 +75,7 @@ namespace Resgrid.Framework
 			if (_logger != null)
 				_logger.Fatal(exception, msgToLog);
 
-			Console.WriteLine(exception.ToString());
+			Console.WriteLine(exception.ToString() + $" {extraMessage}");
 		}
 
 		public static void LogError(string message)

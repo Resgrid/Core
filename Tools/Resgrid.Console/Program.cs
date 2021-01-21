@@ -9,16 +9,21 @@ using SimpleInjector;
 using System.Configuration;
 using Consolas2.Core;
 using Consolas2.ViewEngines;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace Resgrid.Console
 {
 	public class Program : ConsoleApp<Program>
 	{
+		public static IConfigurationRoot Configuration { get; private set; }
+
 		static void Main(string[] args)
 		{
 			System.Console.WriteLine("Resgrid Console");
 			System.Console.WriteLine("-----------------------------------------");
 
+			LoadConfiguration(args);
 			Prime();
 
 			Match(args);
@@ -34,12 +39,6 @@ namespace Resgrid.Console
 
 		private static void Prime()
 		{
-			var configPath = ConfigurationManager.AppSettings.Get("ConfigPath");
-			if (ConfigProcessor.LoadAndProcessConfig(configPath))
-			{
-				System.Console.WriteLine($"Loaded Config: {configPath}");
-			}
-
 			SetConnectionString();
 
 			Bootstrapper.Initialize();
@@ -51,11 +50,41 @@ namespace Resgrid.Console
 			SerializerHelper.WarmUpProtobufSerializer();
 		}
 
+		private static void LoadConfiguration(string[] args)
+		{
+			System.Console.WriteLine("Loading Configuration...");
+
+			var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				.AddCommandLine(args)
+				.AddEnvironmentVariables();
+
+			Configuration = builder.Build();
+			System.Console.WriteLine("Finished Loading Configuration.");
+		}
+
 		private static void SetConnectionString()
 		{
-
 			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
+
+			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
+			if (configResult)
+			{
+				System.Console.WriteLine($"Loaded Config: {Configuration["AppOptions:ConfigPath"]}");
+			}
+
+			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
+			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+
+			element.SetValue(settings, false);
+			collection.SetValue(settings, false);
+
+			if (!configResult)
+				settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+			else
+				settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
 
 			if (connectionStringsSection.ConnectionStrings["ResgridContext"] != null)
 				connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = DataConfig.ConnectionString;
@@ -64,6 +93,8 @@ namespace Resgrid.Console
 
 			config.Save();
 			ConfigurationManager.RefreshSection("connectionStrings");
+			collection.SetValue(settings, true);
+			element.SetValue(settings, true);
 		}
 	}
 }

@@ -50,25 +50,25 @@ var resgrid;
 				viewcall.player = new Plyr('#player');
 
 				resgrid.common.signalr.init(notifyCallUpdated, null, null, null);
-                viewcall.getCallNotes(false);
+				viewcall.getCallNotes(false);
 
-                $('#protocolTextWindow').on('show.bs.modal', function (event) {
-                    var protocolId = $(event.relatedTarget).data('protocolid');
+				$('#protocolTextWindow').on('show.bs.modal', function (event) {
+					var protocolId = $(event.relatedTarget).data('protocolid');
 
-                    var modal = $(this);
+					var modal = $(this);
 
-                    $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Protocols/GetTextForProtocol?id=' + protocolId,
-                        contentType: 'application/json; charset=utf-8',
-                        type: 'GET'
-                    }).done(function (result) {
-                        if (result) {
-                            modal.find('.modal-title').text(`Protocol Text for ${result.Name}`);
-                            modal.find('.modal-body').empty();
-                            modal.find('.modal-body').append(result.Text);
-                        }
-                    });
-                });
+					$.ajax({
+						url: resgrid.absoluteBaseUrl + '/User/Protocols/GetTextForProtocol?id=' + protocolId,
+						contentType: 'application/json; charset=utf-8',
+						type: 'GET'
+					}).done(function (result) {
+						if (result) {
+							modal.find('.modal-title').text(`Protocol Text for ${result.Name}`);
+							modal.find('.modal-body').empty();
+							modal.find('.modal-body').append(result.Text);
+						}
+					});
+				});
 			});
 			function notifyCallUpdated(id) {
 				if (id == callId) {
@@ -134,7 +134,7 @@ var resgrid;
 								scrollTop: $('#note-messages-inner')[0].scrollHeight
 							},
 								1400,
-	                            "easeOutQuint"
+								"easeOutQuint"
 							);
 						}
 					}
@@ -145,13 +145,11 @@ var resgrid;
 				swal({
 					title: "Are you sure?",
 					text: "Are you sure you want to re-open this call? This was delete all the associated close data (i.e. who closed the call, when, it's close state and any notes on the close).",
-					type: "warning",
-					showCancelButton: true,
-					confirmButtonColor: "#DD6B55",
-					confirmButtonText: "Yes, re-open the call",
-					closeOnConfirm: false
-				},
-					function () {
+					icon: "warning",
+					buttons: true,
+					dangerMode: true
+				}).then((willDelete) => {
+					if (willDelete) {
 						$.ajax({
 							url: resgrid.absoluteBaseUrl + '/User/Dispatch/ReOpenCall?callId=' + callId,
 							contentType: 'application/json',
@@ -160,7 +158,7 @@ var resgrid;
 							swal("Request Sent!", "Your request to re-open the call is being processed. Please check the Open Calls (Disaptch) dashboard page to now view the call.", "success");
 						});
 					}
-				);
+				});
 			}
 			viewcall.reOpenCall = reOpenCall;
 		})(viewcall = dispatch.viewcall || (dispatch.viewcall = {}));

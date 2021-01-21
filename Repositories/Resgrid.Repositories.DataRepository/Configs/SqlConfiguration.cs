@@ -131,8 +131,10 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectMessageRecpByMessageUsQuery { get; set; }
 		public string SelectMessageRecpsByUserQuery { get; set; }
 		public string SelectMessageByIdQuery { get; set; }
+		public string UpdateRecievedMessagesAsDeletedQuery { get; set; }
+		public string UpdateRecievedMessagesAsReadQuery { get; set; }
 		#endregion Messages
-		
+
 		#region Resource Orders
 		public string ResourceOrdersTable { get; set; }
 		public string ResourceOrderFillsTable { get;set; }

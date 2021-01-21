@@ -116,5 +116,23 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;MessageRecipient&gt;.</returns>
 		Task<MessageRecipient> SaveMessageRecipientAsync(MessageRecipient messageRecipient, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Marks multiple inbox messages as deleted asynchronous.
+		/// </summary>
+		/// <param name="userId">The message recipient.</param>
+		/// <param name="messageIds">The message ids to delete.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;MessageRecipient&gt;.</returns>
+		Task<bool> MarkMessagesAsDeletedAsync(string userId, List<string> messageIds, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Marks multiple inbox messages as read asynchronous.
+		/// </summary>
+		/// <param name="userId">The message recipient.</param>
+		/// <param name="messageIds">The message ids to mark as read.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;MessageRecipient&gt;.</returns>
+		Task<bool> MarkMessagesAsReadAsync(string userId, List<string> messageIds, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

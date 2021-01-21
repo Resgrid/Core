@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Resgrid.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "-ClearCache --DepartmentId=1"
+    }
+  }
+}

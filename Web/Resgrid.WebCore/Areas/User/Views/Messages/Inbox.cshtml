@@ -7,45 +7,45 @@
 
 <div class="wrapper wrapper-content">
   <div class="row">
-    <div class="col-lg-3">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content mailbox-content">
-          <div class="file-manager">
-            <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">Compose Message</a>
+	<div class="col-lg-3">
+	  <div class="ibox float-e-margins">
+		<div class="ibox-content mailbox-content">
+		  <div class="file-manager">
+			<a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">Compose Message</a>
 
-            <div class="space-25"></div>
-            <h5>Folders</h5>
-            <ul class="folder-list m-b-md" style="padding: 0">
-              <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> Inbox <span class="label label-warning pull-right">@Model.UnreadMessages</span> </a></li>
-              <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> Sent Messages</a></li>
-            </ul>
-            <div class="clearfix"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-9 animated fadeInRight">
-      <div class="mail-box-header">
-	      <div class="pull-right tooltip-demo">
-		      <a title="Mark selected messages as read" class="btn btn-info btn-sm" onclick="resgrid.message.inbox.markMessagesAsRead()">Mark Selected as Read</a>
-		      <a title="Delete selected messages" class="btn btn-danger btn-sm" onclick="resgrid.message.inbox.deleteMessages()">Delete Selected</a>
-	      </div>
-        <h2>
-          Inbox (@Model.UnreadMessages)
-        </h2>
-      </div>
-      <div class="mail-box">
-        <div id="inboxMailList"></div>
-      </div>
-    </div>
+			<div class="space-25"></div>
+			<h5>Folders</h5>
+			<ul class="folder-list m-b-md" style="padding: 0">
+			  <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> Inbox <span class="label label-warning pull-right">@Model.UnreadMessages</span> </a></li>
+			  <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> Sent Messages</a></li>
+			</ul>
+			<div class="clearfix"></div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<div id="inboxPageList" class="col-lg-9 animated fadeInRight">
+	  <div class="mail-box-header">
+		  <div class="pull-right tooltip-demo">
+			  <a title="Mark selected messages as read" class="btn btn-info btn-sm" onclick="resgrid.message.inbox.markMessagesAsRead()">Mark Selected as Read</a>
+			  <a title="Delete selected messages" class="btn btn-danger btn-sm" onclick="resgrid.message.inbox.deleteMessages()">Delete Selected</a>
+		  </div>
+		<h2>
+		  Inbox (@Model.UnreadMessages)
+		</h2>
+	  </div>
+	  <div class="mail-box">
+		<div id="inboxMailList"></div>
+	  </div>
+	</div>
   </div>
 </div>
 
 @section Scripts
   {
   <script id="inboxCommand-template" type="text/x-kendo-template">
-    <a href="@Url.Action("ViewMessage", "Messages", new { area = "User"})?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> View</a>
-    <a href="@Url.Action("DeleteMessage", "Messages", new {area = "User"})?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="WARNING: This will permanently delete this message. Are you sure you want to delete the message #=Subject#?" rel="nofollow">Delete</a>
+	<a href="@Url.Action("ViewMessage", "Messages", new { area = "User"})?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> View</a>
+	<a href="@Url.Action("DeleteMessage", "Messages", new {area = "User"})?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="WARNING: This will permanently delete this message. Are you sure you want to delete the message #=Subject#?" rel="nofollow">Delete</a>
   </script>
 
   <script src="~/js/app/internal/messages/resgrid.messages.inbox.js" type="text/javascript"></script>

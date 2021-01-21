@@ -273,13 +273,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
 				Unauthorized();
 
-			var message = await _messageService.GetMessageByIdAsync(messageId);
+			await _messageService.MarkMessagesAsDeletedAsync(UserId, new List<string>() { messageId.ToString() }, cancellationToken);
 
-			if (!String.IsNullOrWhiteSpace(message.ReceivingUserId))
-				await _messageService.MarkMessageAsDeletedAsync(messageId, cancellationToken);
-			else
-				await _messageService.MarkMessageAsDeletedAsync(messageId, cancellationToken);
-			
 			return RedirectToAction("Inbox");
 		}
 
@@ -295,14 +290,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
 					Unauthorized();
-
-				var message = await _messageService.GetMessageByIdAsync(id);
-
-				if (!String.IsNullOrWhiteSpace(message.ReceivingUserId))
-					await _messageService.MarkMessageAsDeletedAsync(id, cancellationToken);
-				else
-					await _messageService.MarkMessageAsDeletedAsync(id, cancellationToken);
 			}
+
+			await _messageService.MarkMessagesAsDeletedAsync(UserId, messages.ToList(), cancellationToken);
 
 			return RedirectToAction("Inbox");
 		}
@@ -319,9 +309,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
 					Unauthorized();
-
-				await _messageService.ReadMessageRecipientAsync(id, UserId, cancellationToken);
 			}
+
+			await _messageService.MarkMessagesAsReadAsync(UserId, messages.ToList(), cancellationToken);
 
 			return RedirectToAction("Inbox");
 		}

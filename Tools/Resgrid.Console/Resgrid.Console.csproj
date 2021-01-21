@@ -8,7 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
     <None Remove="Views\Default.template" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +27,14 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Consolas2" Version="1.0.0" />
+    <PackageReference Include="FluentMigrator" Version="3.2.9" />
+    <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="3.2.9" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
+    <PackageReference Include="FluentMigrator.Runner.Core" Version="3.2.9" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.2.9" />
+    <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
@@ -46,10 +63,6 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
     <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

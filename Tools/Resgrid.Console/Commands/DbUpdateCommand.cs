@@ -3,6 +3,9 @@ using System;
 using System.Configuration;
 using System.Data.SqlClient;
 using Consolas2.Core;
+using Microsoft.Extensions.DependencyInjection;
+using Resgrid.Providers.Migrations.Migrations;
+using FluentMigrator.Runner;
 
 namespace Resgrid.Console.Commands
 {
@@ -24,9 +27,14 @@ namespace Resgrid.Console.Commands
 
 			try
 			{
-				//Database.SetInitializer(new MigrateDatabaseToLatestVersion<Repositories.DataRepository.Contexts.DataContext, Repositories.DataRepository.Migrations.Configuration>());
-				//var migrator = new DbMigrator(new Repositories.DataRepository.Migrations.Configuration());
-				//migrator.Update();
+				var serviceProvider = CreateServices();
+
+				// Put the database update into a scope to ensure
+				// that all resources will be disposed.
+				using (var scope = serviceProvider.CreateScope())
+				{
+					UpdateDatabase(scope.ServiceProvider);
+				}
 
 				_console.WriteLine("Completed updating the Resgrid Database!");
 			}
@@ -38,6 +46,39 @@ namespace Resgrid.Console.Commands
 
 
 			return "";
+		}
+
+		/// <summary>
+		/// Configure the dependency injection services
+		/// </summary>
+		private static IServiceProvider CreateServices()
+		{
+			return new ServiceCollection()
+				// Add common FluentMigrator services
+				.AddFluentMigratorCore()
+				.ConfigureRunner(rb => rb
+					// Add SQL Server support to FluentMigrator
+					.AddSqlServer()
+					// Set the connection string
+					.WithGlobalConnectionString(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
+					// Define the assembly containing the migrations
+					.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations())
+				// Enable logging to console in the FluentMigrator way
+				.AddLogging(lb => lb.AddFluentMigratorConsole())
+				// Build the service provider
+				.BuildServiceProvider(false);
+		}
+
+		/// <summary>
+		/// Update the database
+		/// </summary>
+		private static void UpdateDatabase(IServiceProvider serviceProvider)
+		{
+			// Instantiate the runner
+			var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
+
+			// Execute the migrations
+			runner.MigrateUp();
 		}
 
 		private void WriteConnectionString()

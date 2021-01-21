@@ -486,14 +486,17 @@ namespace Resgrid.Services
 						UnitState beforeState = null;
 						UnitState currentState = null;
 
-						currentState = await _unitsService.GetUnitStateByIdAsync((int)dynamicData.StateId);
+						currentState = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
 
-						if (!beforeAny)
-							beforeState = await _unitsService.GetLastUnitStateBeforeIdAsync(currentState.UnitId, currentState.UnitStateId);
+						if (currentState != null)
+						{
+							if (!beforeAny)
+								beforeState = await _unitsService.GetLastUnitStateBeforeIdAsync(currentState.UnitId, currentState.UnitStateId);
 
-						if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
-							(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
-							return true;
+							if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
+								(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
+								return true;
+						}
 					}
 					else
 					{
@@ -514,12 +517,17 @@ namespace Resgrid.Services
 
 						currentState = await _userStateService.GetUserStateByIdAsync((int)dynamicData.StateId);
 
-						if (!beforeAny)
-							beforeState = await _userStateService.GetPreviousUserStateAsync(currentState.UserId, currentState.UserStateId);
+						if (currentState != null)
+						{
+							if (!beforeAny)
+								beforeState = await _userStateService.GetPreviousUserStateAsync(currentState.UserId, currentState.UserStateId);
 
-						if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
-							(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
-							return true;
+							if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
+								(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
+								return true;
+						}
+
+						return false;
 					}
 					else
 					{
@@ -752,18 +760,26 @@ namespace Resgrid.Services
 						var unitEvent = await _unitsService.GetUnitStateByIdAsync((int)data.StateId);
 						var unitStatus = await _customStateService.GetCustomUnitStateAsync(unitEvent);
 
-						if (unitEvent != null && unitEvent.Unit != null)
+						if (unitEvent != null && unitEvent.Unit != null && unitStatus != null)
 							return String.Format("Unit {0} is now {1}", unitEvent.Unit.Name, unitStatus.ButtonText);
-						else if (unitEvent != null)
+						else if (unitEvent != null && unitStatus != null)
 							return String.Format("A Unit's status is now {0}", unitStatus.ButtonText);
+						else if (unitEvent != null)
+							return String.Format("{0} status has changed", unitEvent.Unit.Name);
 						else
-							return "A unit's status changed";
+							return String.Empty;
 					case EventTypes.PersonnelStaffingChanged:
 						var userStaffing = await _userStateService.GetUserStateByIdAsync((int)data.StateId);
-						var userProfile = await _userProfileService.GetProfileByUserIdAsync(userStaffing.UserId);
-						var userStaffingText = await _customStateService.GetCustomPersonnelStaffingAsync(data.DepartmentId, userStaffing);
 
-						return String.Format("{0} staffing is now {1}", userProfile.FullName.AsFirstNameLastName, userStaffingText.ButtonText);
+						if (userStaffing != null)
+						{
+							var userProfile = await _userProfileService.GetProfileByUserIdAsync(userStaffing.UserId);
+							var userStaffingText = await _customStateService.GetCustomPersonnelStaffingAsync(data.DepartmentId, userStaffing);
+
+							return String.Format("{0} staffing is now {1}", userProfile.FullName.AsFirstNameLastName, userStaffingText.ButtonText);
+						}
+						else
+							return String.Empty;
 					case EventTypes.PersonnelStatusChanged:
 						var actionLog = await _actionLogsService.GetActionLogByIdAsync(data.StateId);
 

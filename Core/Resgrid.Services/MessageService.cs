@@ -79,6 +79,16 @@ namespace Resgrid.Services
 			return await SaveMessageAsync(message, cancellationToken);
 		}
 
+		public async Task<bool> MarkMessagesAsDeletedAsync(string userId, List<string> messageIds, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _messageRepository.UpdateRecievedMessagesAsDeletedAsync(userId, messageIds);
+		}
+
+		public async Task<bool> MarkMessagesAsReadAsync(string userId, List<string> messageIds, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _messageRepository.UpdateRecievedMessagesAsReadAsync(userId, messageIds);
+		}
+
 		public async Task<MessageRecipient> MarkMessageRecipientAsDeletedAsync(int messageId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await GetMessageRecipientByMessageAndUserAsync(messageId, userId);

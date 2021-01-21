@@ -26,7 +26,7 @@ var resgrid;
                     modal: true,
                     visible: false,
                     resizable: false,
-                    content: resgrid.absoluteBaseUrl + '/User/Department/RecipientsGrid',
+                    content: '/User/Department/RecipientsGrid',
                     width: 750,
                     height: 465
                 }).data("kendoWindow");

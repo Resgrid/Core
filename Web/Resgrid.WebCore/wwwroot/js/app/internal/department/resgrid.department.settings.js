@@ -71,15 +71,13 @@ var resgrid;
 
 			function refreshDepartmentCache() {
 				swal({
-					    title: "Are you sure?",
-					    text: "This request can take up to 15 minutes to process. Once processed some of your operations may be slower until the cache rebuilds, which could take another 15 minutes. This could result in slow responses or even timeouts for any of your users on slower connections (i.e. Mobile 3G).",
-					    type: "warning",
-					    showCancelButton: true,
-					    confirmButtonColor: "#DD6B55",
-					    confirmButtonText: "Yes, clear the cache",
-					    closeOnConfirm: false
-				    },
-					function () {
+					title: "Are you sure?",
+					text: "This request can take up to 15 minutes to process. Once processed some of your operations may be slower until the cache rebuilds, which could take another 15 minutes. This could result in slow responses or even timeouts for any of your users on slower connections (i.e. Mobile 3G).",
+					icon: "warning",
+					buttons: true,
+					dangerMode: true
+				}).then((willDelete) => {
+					if (willDelete) {
 						$.ajax({
 							url: resgrid.absoluteBaseUrl + '/User/Department/ClearDepartmentCache',
 							contentType: 'application/json',
@@ -87,8 +85,8 @@ var resgrid;
 						}).done(function (data) {
 							swal("Request Sent!", "Your request to have your departments data cache cleared has been sent. Please note it may take up to 15 minutes to clear the data.", "success");
 						});
-				    }
-				);
+					}
+				});
 			}
 			settings.refreshDepartmentCache = refreshDepartmentCache;
 		})(settings = department.settings || (department.settings = {}));

@@ -7,16 +7,16 @@ using Consolas2.Core;
 namespace Resgrid.Console.Commands
 {
 	public class AddHostsCommand : Command
-    {
-	    private readonly IConsole _console;
+	{
+		private readonly IConsole _console;
 
-	    public AddHostsCommand(IConsole console)
-	    {
-		    _console = console;
-	    }
+		public AddHostsCommand(IConsole console)
+		{
+			_console = console;
+		}
 
 		public string Execute(AddHostsArgs args)
-        {
+		{
 			_console.WriteLine("Adding Resgrid local Urls to the hostfile");
 			_console.WriteLine("Please Wait...");
 
@@ -50,5 +50,5 @@ namespace Resgrid.Console.Commands
 				}
 			}
 		}
-    }
+	}
 }

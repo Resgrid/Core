@@ -6,10 +6,11 @@ using System;
 using RabbitMQ.Client;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using System.Collections.Generic;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
-	public class RabbitOutboundQueueProvider: IRabbitOutboundQueueProvider
+	public class RabbitOutboundQueueProvider : IRabbitOutboundQueueProvider
 	{
 		public RabbitOutboundQueueProvider()
 		{
@@ -38,7 +39,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			//if (String.IsNullOrWhiteSpace(serializedObject))
 			//{
 			//	callQueue.Profiles = null;
-				serializedObject = ObjectSerialization.Serialize(callQueue);
+			serializedObject = ObjectSerialization.Serialize(callQueue);
 			//}
 
 			return SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
@@ -76,7 +77,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			//{
 			//	messageQueue.Profiles = null;
 			//	messageQueue.Message.MessageRecipients = null;
-				serializedObject = ObjectSerialization.Serialize(messageQueue);
+			serializedObject = ObjectSerialization.Serialize(messageQueue);
 			//}
 
 			return SendMessage(ServiceBusConfig.MessageBroadcastQueueName, serializedObject);
@@ -112,7 +113,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			//{
 			//	distributionListQueue.Users = null;
 			//	distributionListQueue.Message.Attachments = null;
-				serializedObject = ObjectSerialization.Serialize(distributionListQueue);
+			serializedObject = ObjectSerialization.Serialize(distributionListQueue);
 			//}
 
 			return SendMessage(ServiceBusConfig.EmailBroadcastQueueName, serializedObject);
@@ -221,28 +222,34 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			//if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			//{
-				try
+			try
+			{
+				// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
+				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				using (var connection = factory.CreateConnection())
 				{
-					// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
-					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					using (var connection = factory.CreateConnection())
+					using (var channel = connection.CreateModel())
 					{
-						using (var channel = connection.CreateModel())
-						{
-							channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
-										 routingKey: SetQueueNameForEnv(queueName),
-										 basicProperties: null,
-										 body: Encoding.ASCII.GetBytes(message));
-						}
+						IBasicProperties props = channel.CreateBasicProperties();
+						props.DeliveryMode = 2;
+						props.Expiration = "36000000";
+						props.Headers = new Dictionary<string, object>();
+						props.Headers.Add("x-redelivered-count", 0);
 
-						return true;
+						channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
+										 routingKey: SetQueueNameForEnv(queueName),
+										 basicProperties: props,
+										 body: Encoding.ASCII.GetBytes(message));
 					}
+
+					return true;
 				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-					return false;
-				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
 			//}
 
 			//return false;

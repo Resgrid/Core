@@ -23,7 +23,11 @@ namespace Resgrid.Services
 		public async Task<List<LogEntry>> GetAllAsync()
 		{
 			var items = await _logEntriesRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<LogEntry>();
 		}
 
 		public async Task<LogEntry> GetLogByIdAsync(int logId)

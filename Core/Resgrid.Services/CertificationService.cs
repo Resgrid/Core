@@ -22,7 +22,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentCertificationType>> GetAllCertificationTypesByDepartmentAsync(int departmentId)
 		{
 			var items = await _departmentCertificationTypeRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentCertificationType>();
 		}
 
 		public async Task<DepartmentCertificationType> GetCertificationTypeByIdAsync(int certificationTypeId)
@@ -52,7 +56,11 @@ namespace Resgrid.Services
 		public async Task<List<PersonnelCertification>> GetCertificationsByUserIdAsync(string userId)
 		{
 			var items = await _personnelCertificationRepository.GetCertificationsByUserAsync(userId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<PersonnelCertification>();
 		}
 
 		public async Task<List<string>> GetDepartmentCertificationTypesAsync(int departmentId)

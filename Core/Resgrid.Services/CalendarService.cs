@@ -51,7 +51,11 @@ namespace Resgrid.Services
 		public async Task<List<CalendarItemType>> GetAllCalendarItemTypesForDepartmentAsync(int departmentId)
 		{
 			var items = await _calendarItemTypeRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<CalendarItemType>();
 		}
 
 		public async Task<List<CalendarItem>> GetUpcomingCalendarItemsAsync(int departmentId, DateTime start)
@@ -204,7 +208,11 @@ namespace Resgrid.Services
 		public async Task<List<CalendarItem>> GetAllCalendarItemRecurrencesAsync(int calendarItemId)
 		{
 			var items = await _calendarItemRepository.GetCalendarItemsByRecurrenceIdAsync(calendarItemId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<CalendarItem>();
 		}
 
 		public async Task<bool> DeleteCalendarItemAndRecurrences(int calendarItemId, CancellationToken cancellationToken = default(CancellationToken))

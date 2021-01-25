@@ -20,7 +20,11 @@ namespace Resgrid.Services
 		public async Task<List<CommandDefinition>> GetAllCommandsForDepartmentAsync(int departmentId)
 		{
 			var items = await _commandDefinitionRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<CommandDefinition>();
 		}
 
 		public async Task<CommandDefinition> Save(CommandDefinition command, CancellationToken cancellationToken = default(CancellationToken))

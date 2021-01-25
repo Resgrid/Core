@@ -365,9 +365,9 @@ Your IIS Server should look like this for the Websites and Application Pools vie
 DotNetCore Hosting Module
 =======================
 
-Once your IIS Server is setup and you've created the web applications you will need to install the .Net Core 1.1 Server Hosting bundle, this allows the Resgrid web application to run under IIS. 
+Once your IIS Server is setup and you've created the web applications you will need to install the .Net Core 3.1 Server Hosting bundle, this allows the Resgrid web application to run under IIS. 
 
-You can download the Hosting Bundle from the `Microsoft Download Center <https://go.microsoft.com/fwlink/?linkid=844461>`_
+You can download the Hosting Bundle from the `Microsoft Download Center <https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-aspnetcore-3.1.11-windows-hosting-bundle-installer>`_
 
 
 Initial Web Login

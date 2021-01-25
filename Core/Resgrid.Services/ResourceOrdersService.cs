@@ -38,13 +38,21 @@ namespace Resgrid.Services
 		public async Task<List<ResourceOrder>> GetAllAsync()
 		{
 			var items = await _resourceOrdersRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<ResourceOrder>();
 		}
 
 		public async Task<List<ResourceOrder>> GetAllOpenAsync()
 		{
 			var items = await _resourceOrdersRepository.GetAllOpenOrdersAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<ResourceOrder>();
 		}
 
 		public async Task<List<ResourceOrder>> GetOpenOrdersByDepartmentIdAsync(int departmentId)
@@ -56,13 +64,21 @@ namespace Resgrid.Services
 		public async Task<List<ResourceOrder>> GetAllOrdersByDepartmentIdAsync(int departmentId)
 		{
 			var items = await _resourceOrdersRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<ResourceOrder>();
 		}
 
 		public async Task<ResourceOrderSetting> GetSettingsByDepartmentIdAsync(int departmentId)
 		{
 			var items = await _resourceOrderSettingsRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.FirstOrDefault();
+
+			if (items != null && items.Any())
+				return items.FirstOrDefault();
+
+			return null;
 		}
 
 		public async Task<ResourceOrderSetting> SaveSettingsAsync(ResourceOrderSetting settings, CancellationToken cancellationToken = default(CancellationToken))

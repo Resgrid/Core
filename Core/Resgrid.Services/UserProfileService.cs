@@ -45,7 +45,11 @@ namespace Resgrid.Services
 			async Task<List<UserProfile>> getAllUserProfilesAsync()
 			{
 				var items = await _userProfileRepository.GetAllUserProfilesForDepartmentAsync(departmentId);
-				return items.ToList();
+
+				if (items != null && items.Any())
+					return items.ToList();
+
+				return new List<UserProfile>();
 			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
@@ -139,7 +143,11 @@ namespace Resgrid.Services
 		public async Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds)
 		{
 			var items = await _userProfileRepository.GetSelectedUserProfilesAsync(userIds);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<UserProfile>();
 		}
 	}
 }

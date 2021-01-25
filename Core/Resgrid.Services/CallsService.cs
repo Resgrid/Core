@@ -127,7 +127,11 @@ namespace Resgrid.Services
 		public async Task<List<Call>> GetActiveCallsByDepartmentAsync(int departmentId)
 		{
 			var items = await _callsRepository.GetAllOpenCallsByDepartmentAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<Call>();
 		}
 
 		public async Task<List<Call>> GetLatest10ActiveCallsByDepartmentAsync(int departmentId)
@@ -294,7 +298,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentCallPriority>> GetAllCallPrioritiesAsync()
 		{
 			var items = await _departmentCallPriorityRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentCallPriority>();
 		}
 
 		public async Task<DepartmentCallPriority> GetCallPrioritiesByIdAsync(int departmentId, int priorityId, bool bypassCache = false)
@@ -310,7 +318,11 @@ namespace Resgrid.Services
 			async Task<List<DepartmentCallPriority>> getCallPriorities()
 			{
 				var items = await _departmentCallPriorityRepository.GetAllByDepartmentIdAsync(departmentId);
-				return items.ToList();
+
+				if (items != null && items.Any())
+					return items.ToList();
+
+				return new List<DepartmentCallPriority>();
 			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
@@ -498,7 +510,11 @@ namespace Resgrid.Services
 		public async Task<List<CallProtocol>> GetCallProtocolsByCallIdAsync(int callId)
 		{
 			var items = await _callProtocolsRepository.GetCallProtocolsByCallIdAsync(callId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<CallProtocol>();
 		}
 
 		public void InvalidateCallPrioritiesForDepartmentInCache(int departmentId)

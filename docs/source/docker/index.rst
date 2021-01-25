@@ -30,16 +30,28 @@ It is highly recommended that Resgrid is installed and setup by an IT Profession
 Docker Container Images
 ****************************
 
-Resgrid is split into 3 distinct Docker containers. All of our container images are available under the Resgrid, LLC organization on the Docker Hub <https://hub.docker.com/orgs/resgridllc>.
+Resgrid is split into 3 distinct Docker containers. All of our container images are available under the Resgrid, LLC organization on the  `Docker Hub <https://hub.docker.com/u/resgridllc>`_.
 
 **resgridwebcore**
 This is the web application docker image and is used to host the website application that users will interact with.
 
+Docker Pull Command::
+
+  docker pull resgridllc/resgridwebcore
+
 **resgridwebservices**
 This is the web api that is used by the website and applications to communicate with the Resgrid system
 
+Docker Pull Command::
+
+  docker pull resgridllc/resgridwebservices
+
 **resgridworkersconsole**
 This is the backend workers that are used to process operations from RabbitMQ or scheduled tasks. 
+
+Docker Pull Command::
+
+  docker pull resgridllc/resgridworkersconsole
 
 .. _settings:
 

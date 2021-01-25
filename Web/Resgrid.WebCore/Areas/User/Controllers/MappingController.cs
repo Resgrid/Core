@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -320,35 +321,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (input.ShowStations)
 			{
+
 				foreach (var station in stations)
 				{
-					MapMakerInfo info = new MapMakerInfo();
-					info.ImagePath = "Station";
-					info.Title = station.Name;
-					info.InfoWindowContent = station.Name;
-
-					if (station.Address != null)
+					try
 					{
-						string coordinates =
-							await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", station.Address.Address1,
-								station.Address.City,
-								station.Address.State,
-								station.Address.PostalCode));
+						MapMakerInfo info = new MapMakerInfo();
+						info.ImagePath = "Station";
+						info.Title = station.Name;
+						info.InfoWindowContent = station.Name;
 
-						if (!String.IsNullOrEmpty(coordinates))
+						if (station.Address != null)
 						{
-							info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
-							info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
+							string coordinates =
+								await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", station.Address.Address1,
+									station.Address.City,
+									station.Address.State,
+									station.Address.PostalCode));
+
+							if (!String.IsNullOrEmpty(coordinates))
+							{
+								info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
+								info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
+
+								dataJson.Markers.Add(info);
+							}
+						}
+						else if (!String.IsNullOrWhiteSpace(station.Latitude) && !String.IsNullOrWhiteSpace(station.Longitude))
+						{
+							info.Latitude = double.Parse(station.Latitude);
+							info.Longitude = double.Parse(station.Longitude);
 
 							dataJson.Markers.Add(info);
 						}
 					}
-					else if (!String.IsNullOrWhiteSpace(station.Latitude) && !String.IsNullOrWhiteSpace(station.Longitude))
+					catch (Exception ex)
 					{
-						info.Latitude = double.Parse(station.Latitude);
-						info.Longitude = double.Parse(station.Longitude);
-
-						dataJson.Markers.Add(info);
+						//Logging.LogException(ex);	
 					}
 				}
 			}

@@ -47,7 +47,11 @@ namespace Resgrid.Services
 		public async Task<List<Unit>> GetAllAsync()
 		{
 			var items = await _unitsRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<Unit>();
 		}
 
 		public async Task<Unit> SaveUnitAsync(Unit unit, CancellationToken cancellationToken = default(CancellationToken))
@@ -464,7 +468,11 @@ namespace Resgrid.Services
 		public async Task<List<UnitStateRole>> GetCurrentRolesForUnitAsync(int unitId)
 		{
 			var items = await _unitStateRoleRepository.GetCurrentRolesForUnitAsync(unitId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<UnitStateRole>();
 		}
 	}
 }

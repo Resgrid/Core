@@ -32,7 +32,11 @@ namespace Resgrid.Services
 		public async Task<List<PersonnelRole>> GetRolesForDepartmentUnlimitedAsync(int departmentId)
 		{
 			var items = await _personnelRolesRepository.GetPersonnelRolesByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<PersonnelRole>();
 		}
 
 		public async Task<PersonnelRole> GetRoleByIdAsync(int roleId)
@@ -43,7 +47,11 @@ namespace Resgrid.Services
 		public async Task<List<PersonnelRole>> GetAllRolesForDepartmentAsync(int departmentId)
 		{
 			var items = await _personnelRolesRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<PersonnelRole>();
 		}
 
 		public async Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken))

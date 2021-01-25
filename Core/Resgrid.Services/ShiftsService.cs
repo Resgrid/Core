@@ -56,7 +56,11 @@ namespace Resgrid.Services
 		public async Task<List<Shift>> GetAllShiftsByDepartmentAsync(int departmentId)
 		{
 			var items = await _shiftsRepository.GetShiftAndDaysByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<Shift>();
 		}
 
 		public async Task<Shift> GetShiftByIdAsync(int shiftId)
@@ -687,13 +691,21 @@ namespace Resgrid.Services
 		public async Task<List<ShiftStaffing>> GetAllShiftStaffingsAsync()
 		{
 			var items = await _shiftStaffingRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<ShiftStaffing>();
 		}
 
 		public async Task<List<ShiftStaffing>> GetAllShiftStaffingsForDepartmentAsync(int departmentId)
 		{
 			var items = await _shiftStaffingRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<ShiftStaffing>();
 		}
 
 		public async Task<ShiftStaffing> GetShiftStaffingByShiftDayAsync(int shiftId, DateTime shiftDay)
@@ -709,7 +721,11 @@ namespace Resgrid.Services
 		public async Task<List<ShiftGroup>> GetShiftGroupsByGroupIdAsync(int departmentGroupId)
 		{
 			var items = await _shiftGroupsRepository.GetShiftGroupsByGroupIdAsync(departmentGroupId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<ShiftGroup>();
 		}
 	}
 }

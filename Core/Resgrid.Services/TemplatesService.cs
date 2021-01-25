@@ -20,7 +20,11 @@ namespace Resgrid.Services
 		public async Task<List<CallQuickTemplate>> GetAllCallQuickTemplatesForDepartmentAsync(int departmentId)
 		{
 			var items = await _callQuickTemplateRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<CallQuickTemplate>();
 		}
 
 		public async Task<CallQuickTemplate> SaveCallQuickTemplateAsync(CallQuickTemplate template, CancellationToken cancellationToken = default(CancellationToken))

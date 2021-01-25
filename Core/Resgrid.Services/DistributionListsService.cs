@@ -22,7 +22,11 @@ namespace Resgrid.Services
 		public async Task<List<DistributionList>> GetAllAsync()
 		{
 			var items = await _distributionListRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DistributionList>();
 		}
 
 		public async Task<DistributionList> GetDistributionListByIdAsync(int distributionListId)
@@ -33,7 +37,11 @@ namespace Resgrid.Services
 		public async Task<List<DistributionList>> GetDistributionListsByDepartmentIdAsync(int departmentId)
 		{
 			var items = await _distributionListRepository.GetDispatchProtocolsByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DistributionList>();
 		}
 
 		public async Task<DistributionList> GetDistributionListByAddressAsync(string emailAddress)
@@ -71,13 +79,21 @@ namespace Resgrid.Services
 		public async Task<List<DistributionList>> GetAllActiveDistributionListsAsync()
 		{
 			var items = await _distributionListRepository.GetAllActiveDistributionListsAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DistributionList>();
 		}
 
 		public async Task<List<DistributionListMember>> GetAllListMembersByListIdAsync(int listId)
 		{
 			var items = await _distributionListMemberRepository.GetDistributionListMemberByListIdAsync(listId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DistributionListMember>();
 		}
 
 		public async Task<bool> RemoveUserFromAllListsAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))

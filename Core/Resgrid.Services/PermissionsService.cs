@@ -23,7 +23,11 @@ namespace Resgrid.Services
 		public async Task<List<Permission>> GetAllPermissionsForDepartmentAsync(int departmentId)
 		{
 			var items = await _permissionsRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<Permission>();
 		}
 
 		public async Task<Permission> GetPermissionByDepartmentTypeAsync(int departmentId, PermissionTypes type)

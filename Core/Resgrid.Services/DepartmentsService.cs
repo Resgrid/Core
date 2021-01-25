@@ -623,7 +623,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentCallEmail>> GetAllDepartmentEmailSettingsAsync()
 		{
 			var items = await _departmentCallEmailsRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentCallEmail>();
 		}
 
 		public async Task<DepartmentCallPruning> GetDepartmentCallPruningSettingsAsync(int departmentId)
@@ -634,7 +638,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentCallPruning>> GetAllDepartmentCallPruningsAsync()
 		{
 			var items = await _departmentCallPruningDapperRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentCallPruning>();
 		}
 
 		public async Task<DepartmentCallPruning> SaveDepartmentCallPruningAsync(DepartmentCallPruning callPruning, CancellationToken cancellationToken = default(CancellationToken))

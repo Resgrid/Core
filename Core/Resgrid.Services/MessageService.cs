@@ -63,7 +63,11 @@ namespace Resgrid.Services
 		public async Task<List<Message>> GetSentMessagesByUserIdAsync(string userId)
 		{
 			var items = await _messageRepository.GetSentMessagesByUserIdAsync(userId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<Message>();
 		}
 
 		public async Task<int> GetUnreadMessagesCountByUserIdAsync(string userId)

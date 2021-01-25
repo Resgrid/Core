@@ -54,7 +54,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentNotification>> GetAllAsync()
 		{
 			var items = await _departmentNotificationRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentNotification>();
 		}
 
 		public async Task<DepartmentNotification> SaveAsync(DepartmentNotification notification, CancellationToken cancellationToken = default(CancellationToken))
@@ -65,7 +69,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentNotification>> GetNotificationsByDepartmentAsync(int departmentId)
 		{
 			var items = await _departmentNotificationRepository.GetAllByDepartmentIdAsync(departmentId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentNotification>();
 		}
 
 		public async Task<int> GetDepartmentIdForTypeAsync(NotificationItem ni)

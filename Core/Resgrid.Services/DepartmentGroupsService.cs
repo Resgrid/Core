@@ -49,7 +49,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentGroup>> GetAllAsync()
 		{
 			var items = await _departmentGroupsRepository.GetAllAsync();
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentGroup>();
 		}
 
 		public async Task<DepartmentGroup> SaveAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
@@ -344,7 +348,11 @@ namespace Resgrid.Services
 		public async Task<List<DepartmentGroupMember>> GetAllMembersForGroupAsync(int groupId)
 		{
 			var items = await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(groupId);
-			return items.ToList();
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<DepartmentGroupMember>();
 		}
 
 		public List<DepartmentGroupMember> GetAllMembersForGroupAndChildGroups(DepartmentGroup group)

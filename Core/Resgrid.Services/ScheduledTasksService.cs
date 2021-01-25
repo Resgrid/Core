@@ -184,7 +184,11 @@ namespace Resgrid.Services
 			async Task<List<ScheduledTask>> getAllScheduledTasks()
 			{
 				var items = await _scheduledTaskRepository.GetAllAsync();
-				return items.ToList();
+
+				if (items != null && items.Any())
+					return items.ToList();
+
+				return new List<ScheduledTask>();
 			}
 
 

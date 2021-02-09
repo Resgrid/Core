@@ -84,15 +84,40 @@ namespace Resgrid.Services
 		public async Task<List<Log>> GetLogsForCallAsync(int callId)
 		{
 			var logs = await _logsRepository.GetLogsForCallAsync(callId);
-			return logs.ToList();
+
+			if (logs != null && logs.Any())
+			{
+				var items = logs.ToList();
+
+				for (int i = 0; i < items.Count; i++)
+				{
+					items[i] = await PopulateLogData(items[i], true, true);
+				}
+
+				return items;
+			}
+
+			return new List<Log>();
 		}
 
 
 		public async Task<List<Log>> GetAllLogsByDepartmentDateRangeAsync(int departmentId, LogTypes logType, DateTime start, DateTime end)
 		{
-			return (from c in await _logsRepository.GetAllByDepartmentIdAsync(departmentId)
+			var items = (from c in await _logsRepository.GetAllByDepartmentIdAsync(departmentId)
 						 where c.DepartmentId == departmentId && c.LogType == (int)logType && c.StartedOn >= start && c.StartedOn <= end
 						 select c).ToList();
+
+			if (items != null && items.Any())
+			{
+				for (int i = 0; i < items.Count; i++)
+				{
+					items[i] = await PopulateLogData(items[i], true, true);
+				}
+
+				return items;
+			}
+
+			return new List<Log>();
 		}
 
 
@@ -168,6 +193,31 @@ namespace Resgrid.Services
 			}
 
 			return false;
+		}
+
+		public async Task<Log> PopulateLogData(Log log, bool getUsers, bool getUnits)
+		{
+			if (getUsers && log.Users == null)
+			{
+				var items = await _logUsersRepository.GetLogsByLogIdAsync(log.LogId);
+
+				if (items != null)
+					log.Users = items.ToList();
+				else
+					log.Users = new List<LogUser>();
+			}
+
+			if (getUnits && log.Units == null)
+			{
+				var items = await _logUnitsRepository.GetLogsByLogIdAsync(log.LogId);
+
+				if (items != null)
+					log.Units = items.ToList();
+				else
+					log.Units = new List<LogUnit>();
+			}
+
+			return log;
 		}
 	}
 }

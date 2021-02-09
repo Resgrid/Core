@@ -225,8 +225,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.NewGroup.DispatchEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 				model.NewGroup.MessageEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 
-				model.NewGroup.Latitude = model.NewGroup.Latitude.Replace(" ", "");
-				model.NewGroup.Longitude = model.NewGroup.Longitude.Replace(" ", "");
+				if (!String.IsNullOrWhiteSpace(model.NewGroup.Latitude))
+					model.NewGroup.Latitude = model.NewGroup.Latitude.Replace(" ", "");
+
+				if (!String.IsNullOrWhiteSpace(model.NewGroup.Longitude))
+					model.NewGroup.Longitude = model.NewGroup.Longitude.Replace(" ", "");
 
 				await _departmentGroupsService.SaveAsync(model.NewGroup, cancellationToken);
 
@@ -534,8 +537,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				group.DispatchToPrinter = model.EditGroup.DispatchToPrinter;
 
-				group.Latitude = group.Latitude.Replace(" ", "");
-				group.Longitude = group.Longitude.Replace(" ", "");
+				if (!String.IsNullOrWhiteSpace(group.Latitude))
+					group.Latitude = group.Latitude.Replace(" ", "");
+
+				if (!String.IsNullOrWhiteSpace(group.Longitude))
+					group.Longitude = group.Longitude.Replace(" ", "");
 
 				await _departmentGroupsService.UpdateAsync(group, cancellationToken);
 

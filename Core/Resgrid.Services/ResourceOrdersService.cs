@@ -9,6 +9,7 @@ using GeoCoordinatePortable;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus;
+using Resgrid.Framework;
 
 namespace Resgrid.Services
 {
@@ -66,7 +67,14 @@ namespace Resgrid.Services
 			var items = await _resourceOrdersRepository.GetAllByDepartmentIdAsync(departmentId);
 
 			if (items != null && items.Any())
-				return items.ToList();
+			{
+				var orders = items.ToList();
+
+				for (int i = 0; i < orders.Count; i++)
+				{
+					orders[i].Department = await _departmentsService.GetDepartmentByIdAsync(orders[i].DepartmentId);
+				}
+			}
 
 			return new List<ResourceOrder>();
 		}
@@ -88,6 +96,9 @@ namespace Resgrid.Services
 
 		public async Task<ResourceOrder> CreateOrderAsync(ResourceOrder order, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			order.Summary = StringHelpers.SanitizeHtmlInString(order.Summary);
+			order.SpecialInstructions = StringHelpers.SanitizeHtmlInString(order.SpecialInstructions);
+
 			var savedOrder = await _resourceOrdersRepository.SaveOrderAsync(order, cancellationToken);
 
 			_eventAggregator.SendMessage<ResourceOrderAddedEvent>(new ResourceOrderAddedEvent()
@@ -100,7 +111,21 @@ namespace Resgrid.Services
 
 		public async Task<ResourceOrder> GetOrderByIdAsync(int orderId)
 		{
-			return await _resourceOrdersRepository.GetByIdAsync(orderId);
+			var order = await _resourceOrdersRepository.GetByIdAsync(orderId);
+
+			if (order != null)
+			{
+				order.Department = await _departmentsService.GetDepartmentByIdAsync(order.DepartmentId);
+
+				var items = await _resourceOrderItemRepository.GetAllItemsByResourceItemIdAsync(orderId);
+
+				if (items != null && items.Any())
+					order.Items = items.ToList();
+				else
+					order.Items = new List<ResourceOrderItem>();
+			}
+
+			return order;
 		}
 
 		public async Task<ResourceOrderItem> GetOrderItemByIdAsync(int orderItemId)
@@ -136,6 +161,17 @@ namespace Resgrid.Services
 				return orders;
 
 			var allRangeOrders = await _resourceOrdersRepository.GetAllNonDepartmentOpenVisibleOrdersAsync(departmentId);
+
+			if (allRangeOrders != null && allRangeOrders.Any())
+			{
+				var allOrders = allRangeOrders.ToList();
+
+				for (int i = 0; i < allOrders.Count; i++)
+				{
+					allOrders[i].Department = await _departmentsService.GetDepartmentByIdAsync(allOrders[i].DepartmentId);
+				}
+			}
+
 			orders.AddRange(allRangeOrders.Where(x => (x.OriginLocation.GetDistanceTo(new GeoCoordinate(mapCenterLocation.Latitude.Value, mapCenterLocation.Longitude.Value)) / 1609.344) <= x.Range));
 
 			// TODO: Yea :-(

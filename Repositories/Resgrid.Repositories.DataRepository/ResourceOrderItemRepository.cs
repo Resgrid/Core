@@ -1,8 +1,17 @@
-﻿using Resgrid.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.ResourceOrders;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -20,6 +29,49 @@ namespace Resgrid.Repositories.DataRepository
 			_sqlConfiguration = sqlConfiguration;
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
+		}
+
+		public async Task<IEnumerable<ResourceOrderItem>> GetAllItemsByResourceItemIdAsync(int resourceOrderId)
+		{
+			try
+			{
+
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrderItem>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("ResourceOrderId", resourceOrderId);
+
+					var query = _queryFactory.GetQuery<SelectAllItemsByOrderIdQuery>();
+
+					return await x.QueryAsync<ResourceOrderItem>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+
 		}
 	}
 }

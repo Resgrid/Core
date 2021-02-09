@@ -130,5 +130,7 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> ClearGroupForLogsAsync(int departmentGroupId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<Log> PopulateLogData(Log log, bool getUsers, bool getUnits);
 	}
 }

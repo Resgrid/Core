@@ -10,160 +10,160 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Resource Orders</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li class="active">
-        <strong>Resource Orders</strong>
-      </li>
-    </ol>
+	<h2>Resource Orders</h2>
+	<ol class="breadcrumb">
+	  <li>
+		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+	  </li>
+	  <li class="active">
+		<strong>Resource Orders</strong>
+	  </li>
+	</ol>
   </div>
   @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
   {
-    <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float: right; padding-right: 15px;">
-        <a title="Updated Resource Order Settings" class="btn btn-info" asp-controller="Orders" asp-action="Settings" asp-route-area="User">Update Settings</a>
-        <a title="Create a new Resource Order" class="btn btn-success" asp-controller="Orders" asp-action="New" asp-route-area="User">Create Order</a>
-      </div>
-    </div>
+	<div class="col-sm-8">
+	  <div class="btn-group top-page-buttons" style="float: right; padding-right: 15px;">
+		<a title="Updated Resource Order Settings" class="btn btn-info" asp-controller="Orders" asp-action="Settings" asp-route-area="User">Update Settings</a>
+		<a title="Create a new Resource Order" class="btn btn-success" asp-controller="Orders" asp-action="New" asp-route-area="User">Create Order</a>
+	  </div>
+	</div>
   }
 </div>
 
 <div class="row m-t-lg">
   <div class="col-lg-12">
-    <div class="tabs-container">
-      <ul class="nav nav-tabs">
-        <li class="active">
-          <a href="#tab-1" data-toggle="tab">
-            Your Orders
+	<div class="tabs-container">
+	  <ul class="nav nav-tabs">
+		<li class="active">
+		  <a href="#tab-1" data-toggle="tab">
+			Your Orders
 
-            @if (Model.YourOrders != null && Model.YourOrders.Count > 0)
+			@if (Model.YourOrders != null && Model.YourOrders.Count > 0)
 			{
-              <span class="label label-warning">@Model.YourOrders.Count</span>
+			  <span class="label label-warning">@Model.YourOrders.Count</span>
 			}
-          </a>
-        </li>
-        <li>
-          <a aria-expanded="false" href="#tab-2" data-toggle="tab">
-            Available Orders
+		  </a>
+		</li>
+		<li>
+		  <a aria-expanded="false" href="#tab-2" data-toggle="tab">
+			Available Orders
 
-            @if (Model.OthersOrders != null && Model.OthersOrders.Count > 0)
+			@if (Model.OthersOrders != null && Model.OthersOrders.Count > 0)
 			{
-              <span class="label label-warning">@Model.OthersOrders.Count</span>
+			  <span class="label label-warning">@Model.OthersOrders.Count</span>
 			}
-          </a>
-        </li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane active" id="tab-1">
-          <div class="panel-body">
-            <div class="project-list">
-              <table class="table table-hover">
-                <tbody>
-                  @foreach (var order in Model.YourOrders)
+		  </a>
+		</li>
+	  </ul>
+	  <div class="tab-content">
+		<div class="tab-pane active" id="tab-1">
+		  <div class="panel-body">
+			<div class="project-list">
+			  <table class="table table-hover">
+				<tbody>
+				  @foreach (var order in Model.YourOrders)
 				  {
-                    <tr>
-                      <td class="project-status">
-                        @if (order.CloseDate.HasValue)
+					<tr>
+					  <td class="project-status">
+						@if (order.CloseDate.HasValue)
 						{
-                          <span class="label label-info">Closed</span>
+						  <span class="label label-info">Closed</span>
 						}
 						else
 						{
 						  if (order.IsFilled())
 						  {
-                            <span class="label label-success">Filled</span>
+							<span class="label label-success">Filled</span>
 						  }
 						  else
 						  {
-                            <span class="label label-primary">Open</span>
+							<span class="label label-primary">Open</span>
 						  }
 						}
-                      </td>
-                      <td class="project-title">
-                        <a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Title</a>
-                        <br>
-                        <small>Created @order.OpenDate.TimeConverterToString(Model.Department)</small>
-                      </td>
-                      <td class="project-completion">
-                        <small>Fill Percentage: @order.FilledPrecentage()%</small>
-                        <div class="progress progress-mini">
-                          <div style="width: @order.FilledPrecentage()%;" class="progress-bar"></div>
-                        </div>
-                      </td>
-                      <td class="project-people"></td>
-                      <td class="project-actions">
-                        <a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
-                      </td>
-                    </tr>
+					  </td>
+					  <td class="project-title">
+						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Title</a>
+						<br>
+						<small>Created @order.OpenDate.TimeConverterToString(Model.Department)</small>
+					  </td>
+					  <td class="project-completion">
+						<small>Fill Percentage: @order.FilledPrecentage()%</small>
+						<div class="progress progress-mini">
+						  <div style="width: @order.FilledPrecentage()%;" class="progress-bar"></div>
+						</div>
+					  </td>
+					  <td class="project-people"></td>
+					  <td class="project-actions">
+						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+					  </td>
+					</tr>
 				  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane" id="tab-2">
-          <div class="panel-body">
-            <div class="project-list">
-              <table class="table table-hover">
-                <tbody>
-                  @foreach (var order in Model.OthersOrders)
+				</tbody>
+			  </table>
+			</div>
+		  </div>
+		</div>
+		<div class="tab-pane" id="tab-2">
+		  <div class="panel-body">
+			<div class="project-list">
+			  <table class="table table-hover">
+				<tbody>
+				  @foreach (var order in Model.OthersOrders)
 				  {
-                    <tr>
-                      <td class="project-status">
-                        @if (order.CloseDate.HasValue)
+					<tr>
+					  <td class="project-status">
+						@if (order.CloseDate.HasValue)
 						{
-                          <span class="label label-info">Closed</span>
+						  <span class="label label-info">Closed</span>
 						}
 						else
 						{
 						  if (order.IsFilled())
 						  {
-                            <span class="label label-success">Filled</span>
+							<span class="label label-success">Filled</span>
 						  }
 						  else
 						  {
-                            <span class="label label-primary">Open</span>
+							<span class="label label-primary">Open</span>
 						  }
 						}
-                      </td>
-                      <td class="project-title">
-                        <a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Title</a>
-                        <br>
-                        <small>Created @order.OpenDate.TimeConverterToString(Model.Department)</small>
-                      </td>
-                      <td class="project-title">
-                        <a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Department.Name</a>
-                        <br>
-                        <small>Location @order.IncidentAddress</small>
-                      </td>
-                      <td class="project-title">
-                        Distance
-                        <br>
-                        <small>@order.GetDistanceTo(Model.Coordinates.Latitude.Value, Model.Coordinates.Longitude.Value) mi</small>
-                      </td>
-                      <td class="project-completion">
-                        <small>Fill Percentage: @order.FilledPrecentage()%</small>
-                        <div class="progress progress-mini">
-                          <div style="width: @order.FilledPrecentage()%;" class="progress-bar"></div>
-                        </div>
-                      </td>
-                      <td class="project-people"></td>
-                      <td class="project-actions">
-                        <a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
-                      </td>
-                    </tr>
+					  </td>
+					  <td class="project-title">
+						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Title</a>
+						<br>
+						<small>Created @order.OpenDate.TimeConverterToString(Model.Department)</small>
+					  </td>
+					  <td class="project-title">
+						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Department.Name</a>
+						<br>
+						<small>Location @order.IncidentAddress</small>
+					  </td>
+					  <td class="project-title">
+						Distance
+						<br>
+						<small>@order.GetDistanceTo(Model.Coordinates.Latitude.Value, Model.Coordinates.Longitude.Value) mi</small>
+					  </td>
+					  <td class="project-completion">
+						<small>Fill Percentage: @order.FilledPrecentage()%</small>
+						<div class="progress progress-mini">
+						  <div style="width: @order.FilledPrecentage()%;" class="progress-bar"></div>
+						</div>
+					  </td>
+					  <td class="project-people"></td>
+					  <td class="project-actions">
+						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+					  </td>
+					</tr>
 				  }
-                </tbody>
-              </table>
-            </div>
+				</tbody>
+			  </table>
+			</div>
 
-          </div>
-        </div>
-      </div>
-    </div>
+		  </div>
+		</div>
+	  </div>
+	</div>
   </div>
 </div>
 

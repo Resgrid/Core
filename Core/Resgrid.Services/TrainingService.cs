@@ -48,7 +48,45 @@ namespace Resgrid.Services
 			training.Description = StringHelpers.SanitizeHtmlInString(training.Description);
 			training.TrainingText = StringHelpers.SanitizeHtmlInString(training.TrainingText);
 
-			return await _trainingRepository.SaveOrUpdateAsync(training, cancellationToken);
+			var saved = await _trainingRepository.SaveOrUpdateAsync(training, cancellationToken, true);
+
+			if (saved.Questions != null && saved.Questions.Any())
+			{
+				var questions = saved.Questions.ToList();
+				for (int i = 0; i < questions.Count; i++)
+				{
+					questions[i].TrainingId = saved.TrainingId;
+					questions[i] = await _trainingQuestionRepository.SaveOrUpdateAsync(questions[i], cancellationToken);
+				}
+
+				saved.Questions = questions;
+			}
+
+			if (saved.Attachments != null && saved.Attachments.Any())
+			{
+				var attachments = saved.Attachments.ToList();
+				for (int i = 0; i < attachments.Count; i++)
+				{
+					attachments[i].TrainingId = saved.TrainingId;
+					attachments[i] = await _trainingAttachmentRepository.SaveOrUpdateAsync(attachments[i], cancellationToken);
+				}
+
+				saved.Attachments = attachments;
+			}
+
+			if (saved.Users != null && saved.Users.Any())
+			{
+				var users = saved.Users.ToList();
+				for (int i = 0; i < users.Count; i++)
+				{
+					users[i].TrainingId = saved.TrainingId;
+					users[i] = await _trainingUserRepository.SaveOrUpdateAsync(users[i], cancellationToken);
+				}
+
+				saved.Users = users;
+			}
+
+			return saved;
 		}
 
 		public async Task<Training> GetTrainingByIdAsync(int trainingId)

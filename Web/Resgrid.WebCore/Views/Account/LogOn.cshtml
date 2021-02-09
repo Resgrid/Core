@@ -29,72 +29,72 @@
 <body class="gray-bg">
 
   <div class="loginColumns animated fadeInDown">
-    <div class="row">
+	<div class="row">
 
-      <div class="col-md-6">
-        <div style="text-align: center;">
-          <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
-        </div>
-        <p>
-          Enter your username and password to login.
-        </p>
+	  <div class="col-md-6">
+		<div style="text-align: center;">
+		  <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+		</div>
+		<p>
+		  Enter your username and password to login.
+		</p>
 
-        <p>
-          If your department has already signed up ask that departments admin for an invite.
-        </p>
+		<p>
+		  If your department has already signed up ask that departments admin for an invite.
+		</p>
 
-        <p>
-          If your department has not yet signed up for Resgrid you can create a new account which will create the department for you.
-        </p>
+		<p>
+		  If your department has not yet signed up for Resgrid you can create a new account which will create the department for you.
+		</p>
 
-        <p>
-          <small>Maintenance is performed weekly on Saturday starting at 2000 hours Pacific.</small>
-        </p>
+		<p>
+		  <small>Maintenance is performed weekly on Saturday starting at 2000 hours Pacific.</small>
+		</p>
 
-        <p>
-          <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
-        </p>
-      </div>
-      <div class="col-md-6">
-        <div class="ibox-content">
-          <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="">
-            </div>
-            <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+		<p>
+		  <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
+		</p>
+	  </div>
+	  <div class="col-md-6">
+		<div class="ibox-content">
+		  <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
+			<div class="form-group">
+			  <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
+			</div>
+			<div class="form-group">
+			  <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="">
+			</div>
+			<button type="submit" class="btn btn-primary block full-width m-b">Login</button>
 
-            <div asp-validation-summary="All" class="text-danger"></div>
+			<div asp-validation-summary="All" class="text-danger"></div>
 
-            <a asp-controller="Account" asp-action="ForgotPassword" asp-route-area="">
-              <small>Forgot your username or password?</small>
-            </a>
+			<a asp-controller="Account" asp-action="ForgotPassword" asp-route-area="">
+			  <small>Forgot your username or password?</small>
+			</a>
 
-            @if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
+			@if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
 			{
-              <p class="text-muted text-center">
-                <small>Do not have an account?</small>
-              </p>
-              <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">Create an account</a>
+			  <p class="text-muted text-center">
+				<small>Do not have an account?</small>
+			  </p>
+			  <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">Create an account</a>
 			}
-          </form>
-          <p class="m-t">
+		  </form>
+		  <p class="m-t">
 
-          </p>
-        </div>
-      </div>
-    </div>
-    <hr />
-    <div class="row">
-      <div class="col-md-6">
-        Resgrid, LLC.
-      </div>
-      <div class="col-md-6 text-right">
-        <small>© @DateTime.Now.Year</small>
-      </div>
-    </div>
+		  </p>
+		</div>
+	  </div>
+	</div>
+	<hr />
+	<div class="row">
+	  <div class="col-md-6">
+		Resgrid, LLC.
+	  </div>
+	  <div class="col-md-6 text-right">
+		<small>© @DateTime.Now.Year</small>
+	  </div>
+	</div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>

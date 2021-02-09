@@ -5,22 +5,22 @@ using Resgrid.Repositories.DataRepository.Extensions;
 
 namespace Resgrid.Repositories.DataRepository.Queries.ResourceOrders
 {
-	public class SelectAllOpenNonDVisibleOrdersQuery : ISelectQuery
+	public class SelectAllItemsByOrderIdQuery : ISelectQuery
 	{
 		private readonly SqlConfiguration _sqlConfiguration;
-		public SelectAllOpenNonDVisibleOrdersQuery(SqlConfiguration sqlConfiguration)
+		public SelectAllItemsByOrderIdQuery(SqlConfiguration sqlConfiguration)
 		{
 			_sqlConfiguration = sqlConfiguration;
 		}
 
 		public string GetQuery()
 		{
-			var query = _sqlConfiguration.SelectAllOpenNonDVisibleOrdersQuery
+			var query = _sqlConfiguration.SelectAllItemsByOrderIdQuery
 				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.ResourceOrdersTable,
+					_sqlConfiguration.ResourceOrderItemsTable,
 					_sqlConfiguration.ParameterNotation,
-					new string[] { "%DID%", "%DATE%" },
-					new string[] { "DepartmentId", "CurrentDate" });
+					new string[] { "%ID%" },
+					new string[] { "ResourceOrderId" });
 
 			return query;
 		}

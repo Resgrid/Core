@@ -1159,15 +1159,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var days = new List<dynamic>();
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
-			foreach (var day in shift.Days)
+			if (shift != null && shift.Days != null)
 			{
-				days.Add(new
+				foreach (var day in shift.Days)
 				{
-					Processed = day.Processed.GetValueOrDefault(),
-					Day = day.Day.ToShortDateString()
-				});
+					days.Add(new
+					{
+						Processed = day.Processed.GetValueOrDefault(),
+						Day = day.Day.ToShortDateString()
+					});
+				}
 			}
-
 			return Json(days);
 		}
 

@@ -16,6 +16,7 @@ using Resgrid.Model.Services;
 using Resgrid.Web.Services.Models;
 using Twilio.AspNet.Common;
 using Twilio.TwiML;
+using Twilio.TwiML.Voice;
 
 namespace Resgrid.Web.Services.Controllers
 {
@@ -431,6 +432,7 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			var response = new VoiceResponse();
 			var call = await _callsService.GetCallByIdAsync(callId);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 
 			if (call == null)
 			{
@@ -447,6 +449,47 @@ namespace Resgrid.Web.Services.Controllers
 			}
 
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
+
+			if (call.Attachments != null &&
+				call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
+			{
+				var audio = call.Attachments.FirstOrDefault(x =>
+					x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
+
+				if (audio != null)
+				{
+					var url = await _callsService.GetShortenedAudioUrlAsync(call.CallId, audio.CallAttachmentId);
+
+					Play playResponse = new Play();
+					playResponse.Url = new Uri(url);
+
+					Gather gatherResponse1 = new Gather();
+					gatherResponse1.NumDigits = 1;
+					gatherResponse1.Timeout = 10;
+					gatherResponse1.Method = "GET";
+					gatherResponse1.Action = new Uri(string.Format("{0}/Twilio/VoiceCallAction/{1}/{2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
+
+					StringBuilder sb1 = new StringBuilder();
+					sb1.Append("Press 0 to repeat, Press 1 to respond to the scene");
+
+					for (int i = 0; i < stations.Count; i++)
+					{
+						if (i >= 8)
+							break;
+
+						sb1.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
+					}
+
+					response.Play(playResponse).Say(sb1.ToString()).Gather(gatherResponse1).Pause(10).Hangup();
+
+					return new ContentResult
+					{
+						Content = response.ToString(),
+						ContentType = "application/xml",
+						StatusCode = 200
+					};
+				}
+			}
 
 			string address = call.Address;
 			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData))
@@ -484,11 +527,14 @@ namespace Resgrid.Web.Services.Controllers
 				sb.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
 			}
 
-			// TODO: FIIIIX
-			//response.Gather(new { numDigits = 1, timeout = 10, method = "GET", action = string.Format("{0}/Twilio/VoiceCallAction/{1}/{2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId) }).Say(sb.ToString()).EndGather().Pause(10).Hangup();
+			Gather gatherResponse = new Gather();
+			gatherResponse.NumDigits = 1;
+			gatherResponse.Timeout = 10;
+			gatherResponse.Method = "GET";
+			gatherResponse.Action = new Uri(string.Format("{0}/Twilio/VoiceCallAction/{1}/{2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
 
-			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
+			response.Gather(gatherResponse).Say(sb.ToString()).Pause(10).Hangup();
+
 			return new ContentResult
 			{
 				Content = response.ToString(),
@@ -534,8 +580,6 @@ namespace Resgrid.Web.Services.Controllers
 				}
 			}
 
-			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
 			return new ContentResult
 			{
 				Content = response.ToString(),
@@ -597,8 +641,6 @@ namespace Resgrid.Web.Services.Controllers
 				response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
 			}
 
-			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
 			return new ContentResult
 			{
 				Content = response.ToString(),

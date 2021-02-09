@@ -90,6 +90,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParameters();
 					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("CurrentDate", DateTime.UtcNow.AddDays(-7));
 
 					var query = _queryFactory.GetQuery<SelectAllOpenNonDVisibleOrdersQuery>();
 

@@ -143,6 +143,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllOpenOrdersQuery { get; set; }
 		public string UpdateOrderFillStatusQuery {get;set;}
 		public string SelectAllOpenNonDVisibleOrdersQuery { get; set; }
+		public string SelectAllItemsByOrderIdQuery { get; set; }
 		#endregion Resource Orders
 
 		#region Distribution Lists

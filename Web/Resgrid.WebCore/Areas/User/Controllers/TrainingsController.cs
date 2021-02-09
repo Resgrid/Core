@@ -211,7 +211,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				_trainingService.SaveAsync(model.Training);
+				await _trainingService.SaveAsync(model.Training);
 
 				return RedirectToAction("Index");
 			}
@@ -229,7 +229,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_trainingService.SetTrainingAsViewedAsync(trainingId, UserId);
+			await _trainingService.SetTrainingAsViewedAsync(trainingId, UserId);
 
 			return View(model);
 		}
@@ -284,7 +284,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
-			_trainingService.RecordTrainingQuizResultAsync(training.TrainingId, UserId, correctAnswers);
+			await _trainingService.RecordTrainingQuizResultAsync(training.TrainingId, UserId, correctAnswers);
 
 			return RedirectToAction("Index");
 		}
@@ -298,7 +298,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_trainingService.DeleteTrainingAsync(trainingId);
+			await _trainingService.DeleteTrainingAsync(trainingId);
 
 			return RedirectToAction("Index");
 		}
@@ -312,7 +312,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Training.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_trainingService.ResetUserAsync(trainingId, userId);
+			await _trainingService.ResetUserAsync(trainingId, userId);
 
 			return RedirectToAction("Report", new { trainingId = model.Training.TrainingId});
 		}

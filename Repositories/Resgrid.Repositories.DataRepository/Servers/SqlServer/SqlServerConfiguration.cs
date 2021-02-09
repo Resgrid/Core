@@ -367,7 +367,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectAllOpenOrdersQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CloseDate] IS NULL";
 			UpdateOrderFillStatusQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE [ResourceOrderFillId] = %ID%";
 			SelectAllOpenNonDVisibleOrdersQuery =
-				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CloseDate] IS NULL AND [Visibility] = 0 AND [DepartmentId] != %DID%";
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CloseDate] IS NULL AND [Visibility] = 0 AND [DepartmentId] != %DID% AND [NeededBy] > %DATE%";
+			SelectAllItemsByOrderIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [ResourceOrderId] = %ID%";
 			#endregion Resource Orders
 
 			#region Distribution Lists

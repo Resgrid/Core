@@ -33,22 +33,27 @@
 <div class="row">
 	<div class="col-xs-12">
 		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Archived Calls</h5>
-					<div class="ibox-tools">
-						@if (ClaimsAuthorizationHelper.CanCreateCall())
-						{
-							<div class="buttons-actions">
-								<a id="addOldCall" title="Add a old call" class="btn btn-primary" asp-controller="Dispatch" asp-action="AddArchivedCall" asp-route-area="User">Add Archived Call</a>
-							</div>
-						}
-					</div>
-				</div>
-				<div class="ibox-content">
-					<div id="archiveCallsList"></div>
-				</div>
-			</div>
+		  <div class="ibox float-e-margins">
+		    <div class="ibox-title">
+		      <h5>Archived Calls</h5>
+		      <div class="ibox-tools">
+		        @if (ClaimsAuthorizationHelper.CanCreateCall())
+				{
+		          <div class="buttons-actions">
+		            <a id="addOldCall" title="Add an archived call" class="btn btn-primary" asp-controller="Dispatch" asp-action="AddArchivedCall" asp-route-area="User">Add Archived Call</a>
+		          </div>
+				}
+		      </div>
+		    </div>
+		    <div class="ibox-tools">
+		      <div class="buttons-actions" style="padding-left: 12px; text-align:left;">
+		        Calls for Year: @Html.DropDownListFor(m => m.Year, Model.Years, new { @style = "margin-left: 4px; width: 60px;" })
+		      </div>
+		    </div>
+		    <div class="ibox-content">
+		      <div id="archiveCallsList"></div>
+		    </div>
+		  </div>
 		</div>
 	</div>
 </div>

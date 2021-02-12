@@ -304,6 +304,8 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllCallGroupDispsByCallIdQuery { get; set; }
 		public string SelectAllCallUnitDispsByCallIdQuery { get; set; }
 		public string SelectAllCallRoleDispsByCallIdQuery { get; set; }
+		public string SelectCallYearsByDeptQuery { get; set; }
+		public string SelectAllClosedCallsByDidYearQuery { get; set; }
 		#endregion Calls
 
 		#region Dispatch Protocols

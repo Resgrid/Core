@@ -150,6 +150,13 @@ namespace Resgrid.Services
 			return calls.ToList();
 		}
 
+		public async Task<List<Call>> GetClosedCallsByDepartmentYearAsync(int departmentId, string year)
+		{
+			var calls = await _callsRepository.GetAllClosedCallsByDepartmentYearAsync(departmentId, year);
+
+			return calls.ToList();
+		}
+
 		public async Task<bool> DeleteCallByIdAsync(int callId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var call = await GetCallByIdAsync(callId);
@@ -515,6 +522,16 @@ namespace Resgrid.Services
 				return items.ToList();
 
 			return new List<CallProtocol>();
+		}
+
+		public async Task<List<string>> GetCallYearsByDeptartmentAsync(int departmentId)
+		{
+			var items = await _callsRepository.SelectCallYearsByDeptAsync(departmentId);
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<string>();
 		}
 
 		public void InvalidateCallPrioritiesForDepartmentInCache(int departmentId)

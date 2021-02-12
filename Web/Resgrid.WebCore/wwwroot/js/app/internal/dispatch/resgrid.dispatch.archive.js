@@ -7,11 +7,18 @@ var resgrid;
         (function (archive) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Dispatch Archive');
+
                 $("#archiveCallsList").kendoGrid({
                     dataSource: {
                         type: "json",
                         transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Dispatch/GetArchivedCallsList'
+                            read: {
+                                url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetArchivedCallsList',
+                                dataType: "json",
+                                data: {
+                                    year: $("#Year").val()
+                                }
+                            }
                         },
                         schema: {
                             model: {
@@ -61,6 +68,10 @@ var resgrid;
                             template: kendo.template($("#archiveCallCommand-template").html())
                         }
                     ]
+                });
+
+                $("#Year").change(function () {
+                    $("#archiveCallsList").data("kendoGrid").dataSource.read({ year: $("#Year").val() });
                 });
             });
         })(archive = dispatch.archive || (dispatch.archive = {}));

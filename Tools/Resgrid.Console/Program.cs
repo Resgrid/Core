@@ -84,7 +84,12 @@ namespace Resgrid.Console
 			if (!configResult)
 				settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
 			else
-				settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
+			{
+				if (settings["ResgridContext"] == null)
+				{
+					settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
+				}
+			}
 
 			if (connectionStringsSection.ConnectionStrings["ResgridContext"] != null)
 				connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = DataConfig.ConnectionString;

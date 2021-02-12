@@ -140,6 +140,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ArchivedCalls()
 		{
 			var model = new CallsDashboardModel();
+			model.Years = new List<SelectListItem>();
+
+			var years = await _callsService.GetCallYearsByDeptartmentAsync(DepartmentId);
+			foreach (var year in years)
+			{
+				model.Years.Add(new SelectListItem(year, year));
+			}
+			model.Year = years[0];
 
 			return View(model);
 		}
@@ -1428,11 +1436,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<IActionResult> GetArchivedCallsList()
+		public async Task<IActionResult> GetArchivedCallsList(string year)
 		{
 			List<CallListJson> callsJson = new List<CallListJson>();
 
-			var calls = await _callsService.GetClosedCallsByDepartmentAsync(DepartmentId);
+			List<Call> calls;
+			if (String.IsNullOrWhiteSpace(year))
+				calls = await _callsService.GetClosedCallsByDepartmentAsync(DepartmentId);
+			else
+				calls = await _callsService.GetClosedCallsByDepartmentYearAsync(DepartmentId, year);
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			foreach (var call in calls)

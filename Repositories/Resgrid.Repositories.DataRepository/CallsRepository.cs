@@ -113,6 +113,48 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<Call>> GetAllClosedCallsByDepartmentYearAsync(int departmentId, string year)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Call>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("Year", year);
+
+					var query = _queryFactory.GetQuery<SelectAllClosedCallsByDidYearQuery>();
+
+					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
 		public async Task<IEnumerable<Call>> GetAllOpenCallsByDepartmentAsync(int departmentId)
 		{
 			try
@@ -167,6 +209,47 @@ namespace Resgrid.Repositories.DataRepository
 					var query = _queryFactory.GetQuery<SelectAllCallsByDidLoggedOnQuery>();
 
 					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<string>> SelectCallYearsByDeptAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<string>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectCallYearsByDeptQuery>();
+
+					return await x.QueryAsync<string>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction);
 				});

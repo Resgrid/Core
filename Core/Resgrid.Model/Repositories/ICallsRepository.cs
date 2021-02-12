@@ -28,6 +28,14 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Call>> GetAllClosedCallsByDepartmentAsync(int departmentId);
 
 		/// <summary>
+		/// Gets all closed calls by department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// /// <param name="year">The year.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Call&gt;&gt;.</returns>
+		Task<IEnumerable<Call>> GetAllClosedCallsByDepartmentYearAsync(int departmentId, string year);
+
+		/// <summary>
 		/// Gets all open calls by department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
@@ -41,5 +49,12 @@ namespace Resgrid.Model.Repositories
 		/// <param name="loggedOn">The logged on.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Call&gt;&gt;.</returns>
 		Task<IEnumerable<Call>> GetAllCallsByDepartmentIdLoggedOnAsync(int departmentId, DateTime loggedOn);
+
+		/// <summary>
+		/// Gets all years a call was logged in for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;string&gt;&gt;.</returns>
+		Task<IEnumerable<string>> SelectCallYearsByDeptAsync(int departmentId);
 	}
 }

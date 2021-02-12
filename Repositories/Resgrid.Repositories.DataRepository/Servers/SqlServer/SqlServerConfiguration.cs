@@ -916,6 +916,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectAllCallUnitDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
 			SelectAllCallRoleDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
 			SelectCallNotesByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
+			SelectCallYearsByDeptQuery = @"
+					SELECT DISTINCT YEAR(c.LoggedOn)
+					FROM Calls c WHERE c.DepartmentId = %DID%
+					ORDER BY 1 DESC";
+			SelectAllClosedCallsByDidYearQuery = @"
+					SELECT * FROM %SCHEMA%.%TABLENAME%
+					WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0 AND year(LoggedOn) = %YEAR%
+					ORDER BY LoggedOn DESC";
 			#endregion Calls
 
 			#region Department Groups

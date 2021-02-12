@@ -73,6 +73,14 @@ namespace Resgrid.Model.Services
 		Task<List<Call>> GetClosedCallsByDepartmentAsync(int departmentId);
 
 		/// <summary>
+		/// Gets the closed calls by department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// /// <param name="year">The year.</param>
+		/// <returns>Task&lt;List&lt;Call&gt;&gt;.</returns>
+		Task<List<Call>> GetClosedCallsByDepartmentYearAsync(int departmentId, string year);
+
+		/// <summary>
 		/// Deletes the call by identifier asynchronous.
 		/// </summary>
 		/// <param name="callId">The call identifier.</param>
@@ -289,6 +297,13 @@ namespace Resgrid.Model.Services
 		/// <param name="callId">The call identifier.</param>
 		/// <returns>Task&lt;List&lt;CallProtocol&gt;&gt;.</returns>
 		Task<List<CallProtocol>> GetCallProtocolsByCallIdAsync(int callId);
+
+		/// <summary>
+		/// Gets all the years that contain calls for department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;string&gt;&gt;.</returns>
+		Task<List<string>> GetCallYearsByDeptartmentAsync(int departmentId);
 
 		/// <summary>
 		/// Invalidates the call priorities for department in cache.

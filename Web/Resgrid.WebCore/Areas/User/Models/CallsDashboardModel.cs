@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
 
@@ -19,5 +20,7 @@ namespace Resgrid.Web.Areas.User.Models
 		public string EditModalCssClass { get; set; }
 		public string EditModalStyle { get; set; }
 		public string Message { get; set; }
+		public string Year { get; set; }
+		public List<SelectListItem> Years { get; set; }
 	}
 }

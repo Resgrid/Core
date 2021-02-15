@@ -62,7 +62,7 @@ namespace Resgrid.Console.Commands
 					// Set the connection string
 					.WithGlobalConnectionString(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
 					// Define the assembly containing the migrations
-					.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations())
+					.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
 				// Enable logging to console in the FluentMigrator way
 				.AddLogging(lb => lb.AddFluentMigratorConsole())
 				// Build the service provider

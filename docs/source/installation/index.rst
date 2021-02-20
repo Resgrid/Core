@@ -153,6 +153,10 @@ Installing Microsoft IIS (Webserver) will differ based on what version of Window
 
 .. note:: Depending on the requirements of your web server, environment and other factors your installed IIS options may be different. Resgrid requires at a minimum the .NET Extensibility and ASP.NET Options to run minimally. 
 
+Install .Net Core
+****************************
+Once you have IIS Installed you need to install .Net Core 3.1 and the .Net Core 3.1 IIS Hosting bundle. You can download the bundle here `.Net Core 3.1 Hosting Bundle <https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-3.1.12-windows-hosting-bundle-installer>`_.
+
 Install Resgrid
 ****************************
 

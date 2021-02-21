@@ -109,5 +109,5 @@
   "ExternalErrorConfig.ExternalErrorServiceUrl": "",
   "ExternalErrorConfig.ExternalErrorServiceUrlForWebsite": "",
 
-  "CacheConfig.RedisConnectionString": ""
+  "CacheConfig.RedisConnectionString": "rgdevinfaserver,abortConnect=false,syncTimeout=10000"
 }

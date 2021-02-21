@@ -2,6 +2,6 @@
 {
 	public static class CacheConfig
 	{
-		public static string RedisConnectionString = "";
+		public static string RedisConnectionString = "rgdevinfaserver,abortConnect=false,syncTimeout=10000";
 	}
 }

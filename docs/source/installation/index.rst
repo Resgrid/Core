@@ -84,7 +84,12 @@ Redis
 
 Redis is an standalone, resilient in memory data store that Redis uses to cache data that is shared across multiple servers. Redis is an optional dependency but is highly recommended for production installations of Resgrid. Redis does not run well on Windows and thus needs to be installed a Unix or Linux based system. You can get `Redis Server <http://redis.io/>`_ from their website. Version 4.0 or newer is recommended. 
 
-.. important:: Although Redis is optional, it's recommended for production installations or multi server installations of Resgrid.
+Redis for Windows is not natively supported. To run on Windows you will need to install and configure WSL 2 and install and run Redis on that.
+
+`How to Install WSL 2 on Windows Server 2019 <https://4sysops.com/archives/install-and-activate-windows-subsystem-for-linux-wsl-2-on-windows-server-2019/>`_
+`How to install Redis on WSL <https://medium.com/@RedisLabs/windows-subsystem-for-linux-wsl-10e3ca4d434e`_
+
+You will need to ensure WSL is running when you run Resgrid, so open up a command prompt and type in 'wsl' to start up your installed Linux distro and verify that Redis is running.
 
 Elastic ELK 
 =======================
@@ -192,6 +197,7 @@ Run Notepad as Administrator, open up the hosts file in the following directory 
   |  127.0.0.1	resgrid.local
   |  127.0.0.1	resgridapi.local
   |  127.0.0.1  rgdevserver
+  |  127.0.0.1  rgdevinfaserver
 
 This will allow you to access locally on the box using the above domain names. If you have your own names you can use those in the IIS configuration below. If you already have the entries into your hosts file you do not need to add them again.
 
@@ -311,6 +317,27 @@ That will start the Resgrid Database Update process and either Update or Install
 
 This will be run when your upgrading your Resgrid installation as well. If you installed (unzipped and copied) Resgrid to another path other then C:\\Resgrid ensure you are opening the command prompt to that directory instead of C:\\Resgrid.
 
+Windows User Creation
+****************************
+
+You will need to create a local Windows User and grant that user access to the Resgrid directory and all sub-directories. Open Computer Management (or any tool where you can add a new local user) and create a new user. In the example below we used the username 'resgrid' for this user and set a password that meeting the local security policy.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/WindowsUserCreation1.png
+  :width: 600
+  :alt: Windows Create User 1
+
+Ensure this account's password won't expire automatically and doesn't need to be reset at first login.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/WindowsUserCreation2.png
+  :width: 600
+  :alt: Windows Create User 2
+
+Once the user has been created navigate to the location of where you extracted the Resgrid zip file, C:\\Resgrid by default. Right click the Resgrid folder, select Properties, select the Security tab and then click edit. You'll want to add the user you created above to this directory and give it "Full Control".
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/WindowsSetDirectoryPerms.png
+  :width: 600
+  :alt: Windows Create User 2
+
 IIS Installation
 ****************************
 
@@ -336,6 +363,24 @@ Run the 'Internet Information Services (IIS) Manager' and expand the top server 
   :width: 600
   :alt: IIS Site Setup
 
+Click the "Connect As" button and supply the credentials for the Windows Local user you created in the section above.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetupConntectAs.png
+  :width: 600
+  :alt: IIS Site Connect As
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetupConntectAs2.png
+  :width: 600
+  :alt: IIS Site Connect As 2
+
+  You can press the "Test Settings" button and both options should be green.
+
+  .. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetupConntectAsTest.png
+  :width: 600
+  :alt: IIS Site Connect As Test
+
+  If one or both of those options in the "Test Settings" are not green, there is an access issue reading the directory on disk. You'll need to reset the permissions on the folder and all sub-folders and ensure the correct user is given access.
+
 .. list-table:: Resgrid API Website Options
    :header-rows: 1
 
@@ -352,6 +397,24 @@ Run the 'Internet Information Services (IIS) Manager' and expand the top server 
   :width: 800
   :alt: IIS API Site Setup
 
+Click the "Connect As" button and supply the credentials for the Windows Local user you created in the section above.
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetupConntectAs.png
+  :width: 600
+  :alt: IIS Site Connect As
+
+.. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetupConntectAs2.png
+  :width: 600
+  :alt: IIS Site Connect As 2
+
+  You can press the "Test Settings" button and both options should be green.
+
+  .. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISSetupConntectAsTest.png
+  :width: 600
+  :alt: IIS Site Connect As Test
+
+  If one or both of those options in the "Test Settings" are not green, there is an access issue reading the directory on disk. You'll need to reset the permissions on the folder and all sub-folders and ensure the correct user is given access.
+
 Your IIS Server should look like this for the Websites and Application Pools views:
 
 .. image:: https://raw.githubusercontent.com/resgrid/core/master/misc/images/IISOverview.png
@@ -366,13 +429,12 @@ Your IIS Server should look like this for the Websites and Application Pools vie
 
 .. note:: If you are using a Self Signed or Development SSL certificate you will get a Certificate Warning using any modern web browser. If your url is pointing to localhost,127.0.0.1,resgrid.local or resgridapi.local it is safe to proceed to the website and bypass that certificate error. We do not recommend doing that on public websites.
 
-DotNetCore Hosting Module
-=======================
+.. warning:: The above IIS configuration is to give you a started place to access the Resgrid Application and API locally, it not a valid configuration for an externally exposed service. You will need to harden your IIS installation, setup SSL, reduce permissions and grant least privlige users (in addition to other steps) to expore Resgrid externally.
 
-Once your IIS Server is setup and you've created the web applications you will need to install the .Net Core 3.1 Server Hosting bundle, this allows the Resgrid web application to run under IIS. 
+Important Note About Support
+****************************
 
-You can download the Hosting Bundle from the `Microsoft Download Center <https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-aspnetcore-3.1.11-windows-hosting-bundle-installer>`_
-
+Resgrid is a complex system that can scale from a single instance to dozens of systems to service thousands of users. These installation setups get your system into a state where you can test and validate locally on the install system. To get Resgrid up and running to service non-local users you will need to reconfigure and harden the system. To complete those steps and configuration the system to your orginizational needs you will require an IT professional. We do not provide installation support outside this guide via our Github page.
 
 Initial Web Login
 ****************************

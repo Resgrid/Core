@@ -357,10 +357,16 @@
             <param name="input">Input to deregister the device for</param>
             <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
             <summary>
             Operations to support Dispatch operations
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetCallPriorites">
+            <summary>
+            Returns all the active calls for the department
+            </summary>
+            <returns>Array of CallResult objects for each active call in the department</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.GeoController">
             <summary>

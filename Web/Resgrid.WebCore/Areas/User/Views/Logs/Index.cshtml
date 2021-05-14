@@ -3,54 +3,59 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Logs.LogsIndexView
 @{
-	ViewBag.Title = "Resgrid | Logs";
+  ViewBag.Title = "Resgrid | Logs";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Logs</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li class="active">
-				<strong>Logs</strong>
-			</li>
-		</ol>
-	</div>
-	@if (ClaimsAuthorizationHelper.CanCreateLog())
-	{
-		<div class="col-sm-8">
-			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a new log" class="btn btn-success" asp-controller="Logs" asp-action="NewLog" asp-route-area="User"><i class="icon-plus"></i> New Log</a>
-			</div>
-		</div>
-	}
+  <div class="col-sm-4">
+    <h2>Logs</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Logs</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.CanCreateLog())
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a title="Add a new log" class="btn btn-success" asp-controller="Logs" asp-action="NewLog" asp-route-area="User"><i class="icon-plus"></i> New Log</a>
+      </div>
+    </div>
+  }
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins" id="personnelContainer">
-				<div class="ibox-content">
-					<div id="logsIndexList"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins" id="personnelContainer">
+        <div class="ibox-tools">
+          <div class="buttons-actions" style="padding-left: 12px; text-align:left;">
+            Logs for Year: @Html.DropDownListFor(m => m.Year, Model.Years, new { @style = "margin-left: 4px; width: 60px;" })
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div id="logsIndexList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 
 @section Scripts
 {
-	<script id="logsCommand-template" type="text/x-kendo-template">
+  <script id="logsCommand-template" type="text/x-kendo-template">
 		<a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("LogReport", "Reports", new { area = "User" })?logId=#=LogId#">View</a>
 
 		#if(CanDelete){#
 		<a style="text-decoration:none;" class="btn btn-xs btn-danger" href="@Url.Action("DeleteWorkLog", "Logs", new { area = "User" })?logId=#=LogId#" data-confirm="WARNING: This will permanently delete this log. Are you sure you want to delete the log?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
 		#}#
-	</script>
+  </script>
 
 
-	<script src="~/js/app/internal/logs/resgrid.logs.index.js" type="text/javascript"></script>
+  <script src="~/js/app/internal/logs/resgrid.logs.index.js" type="text/javascript"></script>
 }

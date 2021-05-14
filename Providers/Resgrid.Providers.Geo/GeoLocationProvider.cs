@@ -294,7 +294,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 				var response = client.Execute<dynamic>(request);
 
-				if (response.Data != null)
+				if (response.IsSuccessful && response.Data != null)
 				{
 					var geocode = response.Data[0];
 

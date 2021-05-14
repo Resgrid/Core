@@ -63,6 +63,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.WorkLogs = await _workLogsService.GetAllLogsForUserAsync(UserId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
+			model.Years = new List<SelectListItem>();
+
+			var years = await _workLogsService.GetLogYearsByDeptartmentAsync(DepartmentId);
+
+			if (years != null && years.Any())
+			{
+				foreach (var year in years)
+				{
+					model.Years.Add(new SelectListItem(year, year));
+				}
+				model.Year = years[0];
+			}
+
 			return View(model);
 		}
 
@@ -165,6 +178,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						call.Address = model.Call.Address;
 						call.LoggedOn = model.Call.LoggedOn;
 						call.Name = model.Call.Name;
+
+						if (model.Call.Type == "No Type")
+							call.Type = null;
+						else
+							call.Type = model.Call.Type;
 
 						model.Call = await _callsService.SaveCallAsync(call, cancellationToken);
 						model.Log.CallId = model.Call.CallId;
@@ -313,12 +331,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_View)]
-		public async Task<IActionResult> GetLogsList()
+		public async Task<IActionResult> GetLogsList(string year)
 		{
 			List<LogForListJson> logsJson = new List<LogForListJson>();
 
-			var logs = await _workLogsService.GetAllLogsForDepartmentAsync(DepartmentId);
+			//var logs = await _workLogsService.GetAllLogsForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			List<Log> logs;
+			if (String.IsNullOrWhiteSpace(year))
+				logs = await _workLogsService.GetAllLogsForDepartmentAsync(DepartmentId);
+			else
+				logs = await _workLogsService.GetAllLogsForDepartmentAndYearAsync(DepartmentId, year);
 
 			foreach (var log in logs)
 			{
@@ -349,7 +373,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Log_Delete)]
 		public async Task<IActionResult> DeleteWorkLog(int logId, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserViewAndEditWorkLogAsync(UserId, logId))
+			if (!await _authorizationService.CanUserDeleteWorkLogAsync(UserId, logId))
 				Unauthorized();
 
 			await _workLogsService.DeleteLogAsync(logId, cancellationToken);

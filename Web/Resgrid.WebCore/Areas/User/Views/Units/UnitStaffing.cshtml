@@ -1,0 +1,118 @@
+﻿@using Resgrid.Framework
+@model Resgrid.WebCore.Areas.User.Models.Units.UnitStaffingView
+@{
+  ViewBag.Title = "Resgrid | Unit Staffing";
+  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Unit Staffing</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
+      </li>
+      <li class="active">
+        <strong>Units Staffing</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <form class="form-horizontal" role="form" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User" method="post">
+
+            <div class="row">
+              <div class="col-md-8 col-md-offset-1">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+              </div>
+            </div>
+
+            @foreach (var unit in Model.Units)
+			{
+			  if (unit.Roles.Any())
+			  {
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">@unit.Name</label>
+                  <div class="col-sm-10" id="unitAssignments">
+                    @foreach (var role in unit.Roles)
+					{
+					  var activeRole = Model.ActiveRoles.FirstOrDefault(x => x.UnitId == role.UnitId && x.Role == role.Name);
+
+                      <div class="row">
+                        <div class="col-md-4">@role.Name</div>
+                        <div class="col-md-8">
+						  <select id="Role_@role.UnitRoleId" name="Role_@role.UnitRoleId">
+
+						    @if (activeRole == null)
+							{
+						      <option value="" selected>Not Occupied</option>
+							}
+							else
+							{
+						      <option value="">Not Occupied</option>
+							}
+						    @foreach (var user in Model.Users)
+							{
+							  if (activeRole != null && activeRole.UserId == user.UserId)
+							  {
+						        <option value="@user.UserId" selected>@user.Name</option>
+							  }
+							  else
+							  {
+						        <option value="@user.UserId">@user.Name</option>
+							  }
+							}
+						  </select>
+                        </div>
+                      </div>
+					}
+                  </div>
+                </div>
+			  }
+			}
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
+                <button class="btn btn-primary" type="submit">Set Unit Staffing</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+
+  @if (Model.IsDepartmentAdmin)
+  {
+    <script>
+	  var groupId = 0;
+	  var isAdmin = true;
+    </script>
+  }
+  else
+  {
+    <script>
+			var groupId = '@Model.GroupId';
+			var isAdmin = false;
+    </script>
+  }
+
+<script src="~/js/app/internal/units/resgrid.units.setstaffing.js"></script>
+}

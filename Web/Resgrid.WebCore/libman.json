@@ -83,7 +83,7 @@
       "destination": "wwwroot/lib/cropper/"
     },
     {
-      "library": "select2@4.0.5",
+      "library": "select2@4.0.13",
       "destination": "wwwroot/lib/select2/"
     },
     {

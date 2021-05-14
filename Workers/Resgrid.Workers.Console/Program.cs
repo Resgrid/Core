@@ -26,6 +26,8 @@ using Microsoft.Extensions.Hosting;
 using Resgrid.Workers.Console.Tasks;
 using Serilog.Formatting.Json;
 using Stripe;
+using FluentMigrator.Runner;
+using Resgrid.Providers.Migrations.Migrations;
 
 namespace Resgrid.Workers.Console
 {
@@ -56,10 +58,18 @@ namespace Resgrid.Workers.Console
 				.ConfigureServices((hostContext, services) =>
 				{
 					services.AddOptions();
-					services.AddSingleton<IHostedService, QueuesProcessingService>();
-					//services.AddSingleton<IHostedService, SystemProcessingService>();
-					//services.AddSingleton<IHostedService, PaymentProcessingService>();
-					services.AddSingleton<IHostedService, ScheduledJobsService>();
+
+					var upgradeDatabase = Environment.GetEnvironmentVariable("RESGRID__DODBUPGRADE");
+
+					if (!String.IsNullOrWhiteSpace(upgradeDatabase) && upgradeDatabase.ToLower() == "true")
+					{
+						services.AddSingleton<IHostedService, DatabaseUpgradeService>();
+					}
+					else
+					{
+						services.AddSingleton<IHostedService, QueuesProcessingService>();
+						services.AddSingleton<IHostedService, ScheduledJobsService>();
+					}
 				})
 				.ConfigureLogging((hostingContext, logging) => {
 					logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
@@ -312,6 +322,74 @@ namespace Resgrid.Workers.Console
 			//{
 			//	await Task.Delay(TimeSpan.FromSeconds(1));
 			//}
+		}
+	}
+
+	public class DatabaseUpgradeService : BackgroundService
+	{
+		private ILogger _logger;
+
+		public DatabaseUpgradeService(ILogger<ScheduledJobsService> logger)
+		{
+			_logger = logger;
+		}
+
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+		{
+			_logger.Log(LogLevel.Information, "Starting Database Upgrade");
+			var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+
+			var logger = loggerFactory.CreateLogger<Program>();
+
+			try
+			{
+				var serviceProvider = CreateServices();
+
+				// Put the database update into a scope to ensure
+				// that all resources will be disposed.
+				using (var scope = serviceProvider.CreateScope())
+				{
+					UpdateDatabase(scope.ServiceProvider);
+				}
+
+				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
+			}
+			catch (Exception ex)
+			{
+				_logger.Log(LogLevel.Information, "There was an error trying to update the Resgrid Database, see the error output below:");
+				_logger.Log(LogLevel.Information, ex.ToString());
+			}
+
+		}
+
+		/// <summary>
+		/// Update the database
+		/// </summary>
+		private static void UpdateDatabase(IServiceProvider serviceProvider)
+		{
+			// Instantiate the runner
+			var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
+
+			// Execute the migrations
+			runner.MigrateUp();
+		}
+
+		private static IServiceProvider CreateServices()
+		{
+			return new ServiceCollection()
+				// Add common FluentMigrator services
+				.AddFluentMigratorCore()
+				.ConfigureRunner(rb => rb
+					// Add SQL Server support to FluentMigrator
+					.AddSqlServer()
+					// Set the connection string
+					.WithGlobalConnectionString(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
+					// Define the assembly containing the migrations
+					.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
+				// Enable logging to console in the FluentMigrator way
+				.AddLogging(lb => lb.AddFluentMigratorConsole())
+				// Build the service provider
+				.BuildServiceProvider(false);
 		}
 	}
 }

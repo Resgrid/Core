@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />
+    <None Remove="Properties\PublishProfiles\https___registry.resgrid.com_resgrid_.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -15,11 +16,14 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="Properties\PublishProfiles\https___registry.resgrid.com_resgrid_.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.5" />
+    <PackageReference Include="FluentMigrator" Version="3.2.9" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.7" />
@@ -54,6 +58,11 @@
     <ProjectReference Include="..\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="deps\" />
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="deps\**">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
   </ItemGroup>
 </Project>

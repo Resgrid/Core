@@ -7,9 +7,9 @@ var resgrid;
 		(function (newcall) {
 			$(document).ready(function () {
 				marker = null;
-                userSuppliedAddress = false;
-                resgrid.dispatch.newcall.protocolCount = 0;
-                resgrid.dispatch.newcall.protocolData = {};
+				userSuppliedAddress = false;
+				resgrid.dispatch.newcall.protocolCount = 0;
+				resgrid.dispatch.newcall.protocolData = {};
 
 				$("#NatureOfCall").kendoEditor();
 				$("#CallNotes").kendoEditor();
@@ -26,16 +26,22 @@ var resgrid;
 						$("#findw3wButton").click();
 						return false;
 					}
-                });
+				});
 
-                $("#CallPriority").change(function () {
-                    checkForProtocols();
+				$("#CallPriority").change(function () {
+					checkForProtocols();
+				});
 
-                });
+				$("#Call_Type").change(function () {
+					checkForProtocols();
+				});
 
-                $("#Call_Type").change(function () {
-                    checkForProtocols();
+                //$('#UnitCustomStatesId').select2();
+                //$('#CallTemplateId').select2();
 
+                //$.fn.modal.Constructor.prototype._enforceFocus = function () { };
+                $("#CallTemplateId").select2({
+                    dropdownParent: $("#callQuickTemplateWindow")
                 });
 
 				var mapCenter = new google.maps.LatLng(centerLat, centerLng);
@@ -294,80 +300,80 @@ var resgrid;
 							title: "Personnel Count"
 						}
 					]
-                });
+				});
 
-                $('#protocolQuestionWindow').on('show.bs.modal', function (event) {
-                    var protocolId = $(event.relatedTarget).data('protocolid');
-                    //var protocolId = button.data('protocolId');
+				$('#protocolQuestionWindow').on('show.bs.modal', function (event) {
+					var protocolId = $(event.relatedTarget).data('protocolid');
+					//var protocolId = button.data('protocolId');
 
-                    var protocol = null;
+					var protocol = null;
 
-                    for (var i = 0; i < resgrid.dispatch.newcall.protocolData.length; i++) {
-                        if (resgrid.dispatch.newcall.protocolData[i].Id === protocolId) {
-                            protocol = resgrid.dispatch.newcall.protocolData[i];
-                            break;
-                        }
-                    }
+					for (var i = 0; i < resgrid.dispatch.newcall.protocolData.length; i++) {
+						if (resgrid.dispatch.newcall.protocolData[i].Id === protocolId) {
+							protocol = resgrid.dispatch.newcall.protocolData[i];
+							break;
+						}
+					}
 
-                    var modal = $(this);
-                    modal.find('.modal-title').text(`Questions for ${protocol.Name}`);
+					var modal = $(this);
+					modal.find('.modal-title').text(`Questions for ${protocol.Name}`);
 
-                    var questionHtml = "";
-                    for (var t = 0; t < protocol.Questions.length; t++) {
-                        var question = protocol.Questions[t];
-                        questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${question.Question}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
+					var questionHtml = "";
+					for (var t = 0; t < protocol.Questions.length; t++) {
+						var question = protocol.Questions[t];
+						questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${question.Question}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
 
-                        for (var r = 0; r < protocol.Questions[t].Answers.length; r++) {
-                            var answer = protocol.Questions[t].Answers[r];
+						for (var r = 0; r < protocol.Questions[t].Answers.length; r++) {
+							var answer = protocol.Questions[t].Answers[r];
 
-                            if (r === 0) {
-                                questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${answer.Answer}</option>`;
-                            } else {
-                                questionHtml = questionHtml + `<option value="${answer.Weight}">${answer.Answer}</option>`;
-                            }
-                        }
+							if (r === 0) {
+								questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${answer.Answer}</option>`;
+							} else {
+								questionHtml = questionHtml + `<option value="${answer.Weight}">${answer.Answer}</option>`;
+							}
+						}
 
-                        questionHtml = questionHtml + '</select></div></div>';
-                    }
-                    modal.find('.modal-body').empty();
-                    modal.find('.modal-body').append(questionHtml);
+						questionHtml = questionHtml + '</select></div></div>';
+					}
+					modal.find('.modal-body').empty();
+					modal.find('.modal-body').append(questionHtml);
 
-                    $('#processQuestionAnswers').removeAttr("data-protocolid");
-                    $('#processQuestionAnswers').attr('data-protocolid', protocol.Id);
-                });
+					$('#processQuestionAnswers').removeAttr("data-protocolid");
+					$('#processQuestionAnswers').attr('data-protocolid', protocol.Id);
+				});
 
-                $('#processQuestionAnswers').click(function () {
-                    var buttonProtocolId = $('#processQuestionAnswers').attr('data-protocolid');
-                    $('#protocolQuestionWindow').modal('hide');
+				$('#processQuestionAnswers').click(function () {
+					var buttonProtocolId = $('#processQuestionAnswers').attr('data-protocolid');
+					$('#protocolQuestionWindow').modal('hide');
 
-                    var protocol = null;
-                    for (var i = 0; i < resgrid.dispatch.newcall.protocolData.length; i++) {
-                        if (resgrid.dispatch.newcall.protocolData[i].Id === Number(buttonProtocolId)) {
-                            protocol = resgrid.dispatch.newcall.protocolData[i];
-                            break;
-                        }
-                    }
+					var protocol = null;
+					for (var i = 0; i < resgrid.dispatch.newcall.protocolData.length; i++) {
+						if (resgrid.dispatch.newcall.protocolData[i].Id === Number(buttonProtocolId)) {
+							protocol = resgrid.dispatch.newcall.protocolData[i];
+							break;
+						}
+					}
 
-                    var totalAnswerWeight = 0;
-                    for (var t = 0; t < protocol.Questions.length; t++) {
-                        var question = protocol.Questions[t];
+					var totalAnswerWeight = 0;
+					for (var t = 0; t < protocol.Questions.length; t++) {
+						var question = protocol.Questions[t];
 
-                        var answerWeight = $(`#questionAnswer_${question.Id}`).val();
+						var answerWeight = $(`#questionAnswer_${question.Id}`).val();
 
-                        if (answerWeight) {
-                            totalAnswerWeight = totalAnswerWeight + Number(answerWeight);
-                        }
-                    }
+						if (answerWeight) {
+							totalAnswerWeight = totalAnswerWeight + Number(answerWeight);
+						}
+					}
 
-                    $(`#answerProcotolQuestions_${protocol.Id}`).removeClass("btn-warning btn-success btn-inverse");
+					$(`#answerProcotolQuestions_${protocol.Id}`).removeClass("btn-warning btn-success btn-inverse");
 
-                    if (totalAnswerWeight >= protocol.MinimumWeight) {
-                        $(`#pendingProtocol_${protocol.Id}`).val('1');
-                        $(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-success");
-                    } else {
-                        $(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-inverse");
-                    }
-                });
+					if (totalAnswerWeight >= protocol.MinimumWeight) {
+						$(`#pendingProtocol_${protocol.Id}`).val('1');
+						$(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-success");
+					} else {
+						$(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-inverse");
+					}
+				});
 
 				function fillCallTemplate() {
 					var templateId = $('#CallTemplateId').val();
@@ -474,60 +480,60 @@ var resgrid;
 			function checkAllUnits(gridName, item) {
 				$('#' + gridName).find(':checkbox').trigger('click');//.prop('checked', item.value);
 			}
-            newcall.checkAllUnits = checkAllUnits;
-            function checkForProtocols() {
-                var callPriorityVal = $('#CallPriority').val();
-                var callTypeVal = $('#Call_Type').val();
+			newcall.checkAllUnits = checkAllUnits;
+			function checkForProtocols() {
+				var callPriorityVal = $('#CallPriority').val();
+				var callTypeVal = $('#Call_Type').val();
 
-                $("#protocols tr").remove();
+				$("#protocols tr").remove();
 
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + `/User/Protocols/GetProtocolsForPrioType?priority=${callPriorityVal}&type=${callTypeVal}`,
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        resgrid.dispatch.newcall.protocolCount = 0;
+				$.ajax({
+					url: resgrid.absoluteBaseUrl + `/User/Protocols/GetProtocolsForPrioType?priority=${callPriorityVal}&type=${callTypeVal}`,
+					contentType: 'application/json',
+					type: 'GET'
+				}).done(function (data) {
+					if (data) {
+						resgrid.dispatch.newcall.protocolCount = 0;
 
-                        if (data) {
-                            resgrid.dispatch.newcall.protocolData = data;
-                            for (var i = 0; i < data.length; i++) {
-                                var pendingProtocol = data[i];
+						if (data) {
+							resgrid.dispatch.newcall.protocolData = data;
+							for (var i = 0; i < data.length; i++) {
+								var pendingProtocol = data[i];
 
-                                if (pendingProtocol.State === 1 || pendingProtocol.State === 2) {
-                                    resgrid.dispatch.newcall.addProtocol(pendingProtocol.Id, pendingProtocol.Name, pendingProtocol.Code, pendingProtocol.State);
-                                }
-                                
-                            }
-                        }
-                    }
-                });
-            }
-            newcall.checkForProtocols = checkForProtocols;
-            function addProtocol(id, name, code, state) {
-                resgrid.dispatch.newcall.protocolCount++;
-                $('#protocols tbody').first().append(`<tr>
-                    <td style='max-width: 50px;'>${code}</td>
-                    <td>${name}</td>"
-                    <td>${resgrid.dispatch.newcall.getStatusField(id, state, code)}</td>"
-                </tr>`);
-            }
-            newcall.addProtocol = addProtocol;
+								if (pendingProtocol.State === 1 || pendingProtocol.State === 2) {
+									resgrid.dispatch.newcall.addProtocol(pendingProtocol.Id, pendingProtocol.Name, pendingProtocol.Code, pendingProtocol.State);
+								}
+								
+							}
+						}
+					}
+				});
+			}
+			newcall.checkForProtocols = checkForProtocols;
+			function addProtocol(id, name, code, state) {
+				resgrid.dispatch.newcall.protocolCount++;
+				$('#protocols tbody').first().append(`<tr>
+					<td style='max-width: 50px;'>${code}</td>
+					<td>${name}</td>"
+					<td>${resgrid.dispatch.newcall.getStatusField(id, state, code)}</td>"
+				</tr>`);
+			}
+			newcall.addProtocol = addProtocol;
 
-            function getStatusField(id, state, code) {
-                if (state === 0) {
-                    return "Inactive";
-                } else if (state === 1) {
-                    return `Active <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
-                } else if (state === 2) {
-                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">Answer Questions</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
-                } else {
-                    return "Unknown";
-                }
-            }
-            newcall.getStatusField = getStatusField;
+			function getStatusField(id, state, code) {
+				if (state === 0) {
+					return "Inactive";
+				} else if (state === 1) {
+					return `Active <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+				} else if (state === 2) {
+					return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">Answer Questions</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+				} else {
+					return "Unknown";
+				}
+			}
+			newcall.getStatusField = getStatusField;
 
-            checkForProtocols();
+			checkForProtocols();
 		})(newcall = dispatch.newcall || (dispatch.newcall = {}));
 	})(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));
 })(resgrid || (resgrid = {}));

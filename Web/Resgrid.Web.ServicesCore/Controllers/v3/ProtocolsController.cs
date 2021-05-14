@@ -67,7 +67,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var result = ProtocolResult.Convert(protocol);
 
 
-			return Ok(JsonConvert.SerializeObject(result));
+			return Ok(result);
 		}
 
 		/// <summary>

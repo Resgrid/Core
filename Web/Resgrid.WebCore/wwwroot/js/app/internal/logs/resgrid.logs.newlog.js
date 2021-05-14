@@ -104,7 +104,12 @@ var resgrid;
                                 var editor = $("#NatureOfCall").data("kendoEditor");
                                 editor.value(data.Nature);
                                 $("#Call_Address").val(data.Address);
-                                $("#CallPriority").select2("val", data.Priority);
+                                $("#CallPriority").val(data.Priority);
+
+                                if (data.Type) {
+                                    $("#Call_Type").val(data.Type);
+                                }
+
                                 $("#Call_LoggedOn").val(moment(data.DispatchTime).format('YYYY/MM/DD hh:mm A'));
                             }
                         });

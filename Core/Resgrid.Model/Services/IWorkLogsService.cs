@@ -132,5 +132,20 @@ namespace Resgrid.Model.Services
 		Task<bool> ClearGroupForLogsAsync(int departmentGroupId, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<Log> PopulateLogData(Log log, bool getUsers, bool getUnits);
+
+		/// <summary>
+		/// Gets the log years for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;string&gt;&gt;.</returns>
+		Task<List<string>> GetLogYearsByDeptartmentAsync(int departmentId);
+
+		/// <summary>
+		/// Gets all logs for department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="year">The year.</param>
+		/// <returns>Task&lt;List&lt;Log&gt;&gt;.</returns>
+		Task<List<Log>> GetAllLogsForDepartmentAndYearAsync(int departmentId, string year);
 	}
 }

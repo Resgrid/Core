@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model.Providers;
+using Resgrid.WebCore.Areas.User.Models.Units;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -83,6 +84,83 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
+			if (model.Department.IsUserAnAdmin(UserId))
+				model.IsUserAdminOrGroupAdmin = true;
+			else
+			{
+				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+
+				foreach (var group in groups)
+				{
+					if (group.IsUserGroupAdmin(UserId))
+					{
+						model.IsUserAdminOrGroupAdmin = true;
+						break;
+					}
+				}
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public async Task<IActionResult> UnitStaffing()
+		{
+			var model = new UnitStaffingView();
+			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			model.Users = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public async Task<IActionResult> UnitStaffing(UnitStaffingView model, IFormCollection form, CancellationToken cancellationToken)
+		{
+			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			model.Users = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
+
+
+			if (ModelState.IsValid)
+			{
+				List<int> unitRoles = (from object key in form.Keys
+									   where key.ToString().StartsWith("Role_")
+									   select int.Parse(key.ToString().Replace("Role_", ""))).ToList();
+
+				foreach (var unit in model.Units)
+				{
+					await _unitsService.DeleteActiveRolesForUnitAsync(unit.UnitId, cancellationToken);
+				}
+
+				foreach (var unitRole in unitRoles)
+				{
+					var unitRoleStaffingUserId = form[$"Role_{unitRole}"];
+
+					if (!String.IsNullOrWhiteSpace(unitRoleStaffingUserId))
+					{
+						var role = await _unitsService.GetRoleByIdAsync(unitRole);
+
+						if (role != null)
+						{
+							UnitActiveRole activeRole = new UnitActiveRole();
+							activeRole.UnitId = role.UnitId;
+							activeRole.Role = role.Name;
+							activeRole.UserId = unitRoleStaffingUserId;
+							activeRole.DepartmentId = DepartmentId;
+							activeRole.UpdatedBy = UserId;
+							activeRole.UpdatedOn = DateTime.UtcNow;
+
+							await _unitsService.SaveActiveRoleAsync(activeRole);
+						}
+					}
+				}
+
+				return RedirectToAction("Index");
+			}
+
 			return View(model);
 		}
 
@@ -125,6 +203,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("Name", "Unit with that name already exists.");
 
 			var unitRoleNames = (from object key in form.Keys where key.ToString().StartsWith("unitRole_") select form[key.ToString()]).ToList();
+
+			var query = unitRoleNames.GroupBy(x => x)
+			  .Where(g => g.Count() > 1)
+			  .Select(y => new { Element = y.Key, Counter = y.Count() })
+			  .ToList();
+
+			if (query.Any(x => x.Counter > 1))
+				ModelState.AddModelError("", "Role Names need to be Unique, please ensure each name is not repeated.");
+
+			//if (!model.Unit.StationGroupId.HasValue || model.Unit.StationGroupId.Value == 0)
+			//	ModelState.AddModelError("", "You must select a Station Group to assign this unit to.");
 
 			if (ModelState.IsValid)
 			{
@@ -208,6 +297,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var unitRoleNames = (from object key in form.Keys where key.ToString().StartsWith("unitRole_") select form[key.ToString()]).ToList();
 
+			var query = unitRoleNames.GroupBy(x => x)
+									  .Where(g => g.Count() > 1)
+									  .Select(y => new { Element = y.Key, Counter = y.Count() })
+									  .ToList();
+
+			if (query.Any(x => x.Counter > 1))
+				ModelState.AddModelError("", "Role Names need to be Unique, please ensure each name is not repeated.");
+
+			//if (!model.Unit.StationGroupId.HasValue || model.Unit.StationGroupId.Value == 0)
+			//	ModelState.AddModelError("", "You must select a Station Group to assign this unit to.");
+
 			var unit = await _unitsService.GetUnitByIdAsync(model.Unit.UnitId);
 
 			var auditEvent = new AuditEvent();
@@ -251,6 +351,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("Index");
 			}
+
+			model.Unit = await _unitsService.GetUnitByIdAsync(model.Unit.UnitId);
+
+			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+
+			var groups = new List<DepartmentGroup>();
+			groups.Add(new DepartmentGroup
+			{
+				Name = "No Station"
+			});
+			groups.AddRange(await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId));
+			model.Stations = groups;
+
+			model.UnitRoles = await _unitsService.GetRolesForUnitAsync(model.Unit.UnitId);
 
 			return View(model);
 		}
@@ -731,6 +845,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (unit.StationGroup != null)
 					unitJson.Station = unit.StationGroup.Name;
+
+				units.Add(unitJson);
+			}
+
+			return Json(units);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+
+		public async Task<IActionResult> GetUnitsAndRolesForGroup(int groupId)
+		{
+			var units = new List<UnitJson>();
+			var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
+
+			if (group == null || group.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			var savedUnits = await _unitsService.GetAllUnitsForGroupAsync(groupId);
+
+			foreach (var unit in savedUnits)
+			{
+				var unitJson = new UnitJson();
+				unitJson.UnitId = unit.UnitId;
+				unitJson.Name = unit.Name;
+				unitJson.Type = unit.Type;
+				unitJson.GroupId = unit.StationGroupId.GetValueOrDefault();
+
+				if (unit.StationGroup != null)
+					unitJson.Station = unit.StationGroup.Name;
+
+				var unitRoles = await _unitsService.GetRolesForUnitAsync(unit.UnitId);
+
+				if (unitRoles != null && unitRoles.Any())
+				{
+					unitJson.Roles = new List<WebCore.Areas.User.Models.Units.UnitRoleJson>();
+
+					foreach (var unitRole in unitRoles)
+					{
+						var role = new WebCore.Areas.User.Models.Units.UnitRoleJson();
+						role.UnitId = unitRole.UnitId;
+						role.UnitRoleId = unitRole.UnitRoleId;
+						role.Name = unitRole.Name;
+
+						unitJson.Roles.Add(role);
+					}
+				}
 
 				units.Add(unitJson);
 			}

@@ -232,6 +232,19 @@
 								</tr>
 							  }
 							}
+
+							if (Model.Call.GroupDispatches != null && Model.Call.GroupDispatches.Any())
+							{
+							  var isGroupDispatched = Model.Call.GroupDispatches.FirstOrDefault(x => x.DepartmentGroupId == g.DepartmentGroupId);
+
+							  if (isGroupDispatched != null)
+							  {
+											<tr>
+											  <td>All of @g.Name Dispatched</td>
+											  <td>(Group Selected)</td>
+											</tr>
+							  }
+							}
 						  }
 
 						  @{
@@ -318,7 +331,7 @@
 								}
 								else
 								{
-								  <span>@UserHelper.GetFullNameForUser(al.UserId)</span>
+							  <span>@(await UserHelper.GetFullNameForUser(al.UserId))</span>
 								}
 							  </td>
 							  <td>

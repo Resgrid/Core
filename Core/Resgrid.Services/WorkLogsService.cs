@@ -34,6 +34,16 @@ namespace Resgrid.Services
 			_callsService = callsService;
 		}
 
+		public async Task<List<string>> GetLogYearsByDeptartmentAsync(int departmentId)
+		{
+			var items = await _logsRepository.SelectLogYearsByDeptAsync(departmentId);
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<string>();
+		}
+
 		public async Task<List<Log>> GetAllLogsForUserAsync(string userId)
 		{
 			var calls = await _logsRepository.GetLogsForUserAsync(userId);
@@ -42,8 +52,22 @@ namespace Resgrid.Services
 
 		public async Task<List<Log>> GetAllLogsForDepartmentAsync(int departmentId)
 		{
-			var calls = await _logsRepository.GetAllByDepartmentIdAsync(departmentId);
-			return calls.ToList();
+			var logs = await _logsRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			if (logs != null && logs.Any())
+				return logs.ToList();
+			else
+				return new List<Log>();
+		}
+
+		public async Task<List<Log>> GetAllLogsForDepartmentAndYearAsync(int departmentId, string year)
+		{
+			var logs = await _logsRepository.GetAllLogsByDepartmentIdYearAsync(departmentId, year);
+
+			if (logs != null && logs.Any())
+				return logs.ToList();
+			else
+				return new List<Log>();
 		}
 
 		public async Task<List<CallLog>> GetAllCallLogsForUserAsync(string userId)
@@ -78,7 +102,21 @@ namespace Resgrid.Services
 		{
 			log.LoggedOn = DateTime.UtcNow;
 
-			return await _logsRepository.SaveOrUpdateAsync(log, cancellationToken);
+			var savedLog = await _logsRepository.SaveOrUpdateAsync(log, cancellationToken, true);
+
+			foreach (var unit in savedLog.Units)
+			{
+				unit.LogId = savedLog.LogId;
+				var savedLogUnit = _logUnitsRepository.SaveOrUpdateAsync(unit, cancellationToken, true);
+			}
+
+			foreach (var user in savedLog.Users)
+			{
+				user.LogId = savedLog.LogId;
+				var savedLogUser = _logUsersRepository.SaveOrUpdateAsync(user, cancellationToken, true);
+			}
+
+			return savedLog;
 		}
 
 		public async Task<List<Log>> GetLogsForCallAsync(int callId)

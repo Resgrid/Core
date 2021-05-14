@@ -125,7 +125,7 @@ namespace Resgrid.Services
 						}
 						else
 						{
-							newLocation = points[1];
+							newLocation = newLocation + points[1];
 						}
 					}
 

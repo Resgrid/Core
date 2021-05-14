@@ -37,6 +37,7 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.BigBoard
 
 		public class UnitViewModel
 		{
+			public int UnitId { get; set; }
 			public string Name { get; set; }
 			public string Type { get; set; }
 			public string State { get; set; }

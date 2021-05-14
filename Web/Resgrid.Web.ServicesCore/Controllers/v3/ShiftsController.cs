@@ -105,7 +105,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				if (shift.DepartmentId != DepartmentId)
 					return Unauthorized();
 
-			return Ok(JsonConvert.SerializeObject(shift));
+			return Ok(shift);
 		}
 
 		/// <summary>

@@ -143,13 +143,43 @@ namespace Resgrid.Services
 			if (department == null || log == null)
 				return false;
 
-			if (department.IsUserAnAdmin(userId))
-				return true;
+			var logDepartment = await _departmentsService.GetDepartmentByIdAsync(log.DepartmentId);
 
-			if (log.LoggedByUserId != userId)
+			if (department.DepartmentId != logDepartment.DepartmentId)
 				return false;
 
-			return true;
+			if (logDepartment.IsUserAnAdmin(userId))
+				return true;
+
+			if (log.LoggedByUserId == userId)
+				return true;
+
+			if (log.Users.Any(x => x.UserId == userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserDeleteWorkLogAsync(string userId, int logId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var log = await _workLogsService.GetWorkLogByIdAsync(logId);
+
+			if (department == null || log == null)
+				return false;
+
+			var logDepartment = await _departmentsService.GetDepartmentByIdAsync(log.DepartmentId);
+
+			if (department.DepartmentId != logDepartment.DepartmentId)
+				return false;
+
+			if (logDepartment.IsUserAnAdmin(userId))
+				return true;
+
+			if (log.LoggedByUserId == userId)
+				return true;
+
+			return false;
 		}
 
 		public async Task<bool> CanUserViewPaymentAsync(string userId, int paymentId)

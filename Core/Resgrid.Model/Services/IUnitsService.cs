@@ -315,5 +315,18 @@ namespace Resgrid.Model.Services
 		/// <param name="unitId">The unit identifier.</param>
 		/// <returns>Task&lt;List&lt;UnitStateRole&gt;&gt;.</returns>
 		Task<List<UnitStateRole>> GetCurrentRolesForUnitAsync(int unitId);
+
+		/// <summary>
+		/// Gets the active roles for unit asynchronous.
+		/// </summary>
+		/// <param name="unitId">The unit identifier.</param>
+		/// <returns>Task&lt;List&lt;UnitActiveRole&gt;&gt;.</returns>
+		Task<List<UnitActiveRole>> GetActiveRolesForUnitAsync(int unitId);
+
+		Task<UnitActiveRole> SaveActiveRoleAsync(UnitActiveRole role, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<UnitActiveRole>> GetAllActiveRolesForUnitsByDepartmentIdAsync(int departmentId);
 	}
 }

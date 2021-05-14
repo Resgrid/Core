@@ -68,7 +68,7 @@ namespace Resgrid.Services
 			var shift = await _shiftsRepository.GetShiftAndDaysByShiftIdAsync(shiftId);
 			//shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shiftId)).ToList();
 			//shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
-			//shift.Groups = await GetShiftGroupsForShift(shiftId);
+			shift.Groups = await GetShiftGroupsForShift(shiftId);
 			//shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shiftId)).ToList();
 			//shift.Admins = (await _shift
 
@@ -78,17 +78,19 @@ namespace Resgrid.Services
 		public async Task<Shift> PopulateShiftData(Shift shift, bool getDepartment, bool getPersonnel, bool getGroups,
 			bool getSignups, bool getAdmins)
 		{
-			//if (getDepartment && shift.Department == null)
-			//	shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
+			if (getDepartment && shift.Department == null)
+				shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
 
-			//if (getPersonnel && shift.Personnel == null)
-			//	shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId)).ToList();
+			if (getPersonnel && shift.Personnel == null)
+				shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId)).ToList();
+			else
+				shift.Personnel = new List<ShiftPerson>();
 
-			//if (getGroups && shift.Groups == null)
-			//	shift.Groups = await GetShiftGroupsForShift(shift.ShiftId);
+			if (getGroups && shift.Groups == null)
+				shift.Groups = await GetShiftGroupsForShift(shift.ShiftId);
 
-			//if (getSignups && shift.Signups == null)
-			//	shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId)).ToList();
+			if (getSignups && shift.Signups == null)
+				shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId)).ToList();
 
 			return shift;
 		}
@@ -453,9 +455,12 @@ namespace Resgrid.Services
 				{
 					var roleRequirements = new Dictionary<int, int>();
 
-					foreach (var role in group.Roles)
+					if (group.Roles != null && group.Roles.Any())
 					{
-						roleRequirements.Add(role.PersonnelRoleId, role.Required);
+						foreach (var role in group.Roles)
+						{
+							roleRequirements.Add(role.PersonnelRoleId, role.Required);
+						}
 					}
 
 					if (shiftSignups != null && shiftSignups.Any())

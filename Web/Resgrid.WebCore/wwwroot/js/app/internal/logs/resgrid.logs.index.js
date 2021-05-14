@@ -11,7 +11,13 @@ var resgrid;
                     dataSource: {
                         type: "json",
                         transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Logs/GetLogsList'
+                            read: {
+                                url: resgrid.absoluteBaseUrl + '/User/Logs/GetLogsList',
+                                dataType: "json",
+                                data: {
+                                    year: $("#Year").val()
+                                }
+                            }
                         },
                         schema: {
                             model: {
@@ -48,6 +54,9 @@ var resgrid;
                             template: kendo.template($("#logsCommand-template").html())
                         }
                     ]
+                });
+                $("#Year").change(function () {
+                    $("#logsIndexList").data("kendoGrid").dataSource.read({ year: $("#Year").val() });
                 });
             });
         })(index = logs.index || (logs.index = {}));

@@ -11,6 +11,7 @@ using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Newtonsoft.Json;
 using Message = Microsoft.Azure.ServiceBus.Message;
+using System.Collections.Generic;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -150,7 +151,10 @@ namespace Resgrid.Workers.Framework.Logic
 
 					if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
 					{
-						mqi.Profiles = await userProfileService.GetSelectedUserProfilesAsync(mqi.Message.MessageRecipients.Select(x => x.UserId).ToList());
+						List<string> profilesToGet = new List<string>(mqi.Message.MessageRecipients.Select(x => x.UserId));
+						profilesToGet.Add(mqi.Message.SendingUserId);
+
+						mqi.Profiles = (await userProfileService.GetSelectedUserProfilesAsync(profilesToGet)).ToList();
 					}
 					else
 					{

@@ -6,7 +6,7 @@
 <div class="table-responsive">
 	<table class='table table-striped'>
 		<tbody>
-			@foreach (var g in Model.UserStatusGroups.Where(x => x.Group != null && x.Group.Parent == null))
+			@foreach (var g in Model.UserStatusGroups.Where(x => x.Group != null && x.Group.ParentDepartmentGroupId == null))
 			{
 				var groupClass = "";
 				if (Model.UsersGroup != null && g.Group.Name == Model.UsersGroup.Name)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dasync.Collections;
+using System.Text.RegularExpressions;
 
 namespace Resgrid.Services
 {
@@ -98,64 +99,76 @@ namespace Resgrid.Services
 			// Send a Push Notification
 			if (profile == null || profile.SendPush)
 			{
-				var spc = new StandardPushCall();
-				spc.CallId = call.CallId;
-				spc.Title = string.Format("Call {0}", call.Name);
-				spc.Priority = call.Priority;
-				spc.ActiveCallCount = 1;
-				spc.DepartmentId = departmentId;
+				try
+				{
+					var spc = new StandardPushCall();
+					spc.CallId = call.CallId;
+					spc.Title = string.Format("Call {0}", call.Name);
+					spc.Priority = call.Priority;
+					spc.ActiveCallCount = 1;
+					spc.DepartmentId = departmentId;
 
-				if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
-				{
-					spc.Color = call.CallPriority.Color;
-				}
-				else
-				{
-					spc.Color = "#000000";
-				}
-
-				string subTitle = String.Empty;
-
-				if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
-				{
-					subTitle = call.Address;
-				}
-				else if (!String.IsNullOrWhiteSpace(address))
-				{
-					subTitle = address;
-				}
-				else if (!string.IsNullOrEmpty(call.GeoLocationData))
-				{
-					try
+					if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
 					{
-						string[] points = call.GeoLocationData.Split(char.Parse(","));
-
-						if (points != null && points.Length == 2)
-						{
-							subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
-						}
+						spc.Color = call.CallPriority.Color;
 					}
-					catch
-					{ }
-				}
+					else
+					{
+						spc.Color = "#000000";
+					}
 
-				if (!string.IsNullOrEmpty(subTitle))
+					string subTitle = String.Empty;
+
+					if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
+					{
+						subTitle = call.Address;
+					}
+					else if (!String.IsNullOrWhiteSpace(address))
+					{
+						subTitle = address;
+					}
+					else if (!string.IsNullOrEmpty(call.GeoLocationData))
+					{
+						try
+						{
+							string[] points = call.GeoLocationData.Split(char.Parse(","));
+
+							if (points != null && points.Length == 2)
+							{
+								subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+							}
+						}
+						catch
+						{ }
+					}
+
+					if (!string.IsNullOrEmpty(subTitle))
+					{
+						spc.SubTitle = subTitle.Truncate(200);
+					}
+					else
+					{
+						if (!string.IsNullOrEmpty(call.NatureOfCall))
+							spc.SubTitle = call.NatureOfCall.Truncate(200);
+					}
+
+					if (!String.IsNullOrWhiteSpace(spc.SubTitle))
+						spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
+
+					spc.SubTitle = Regex.Replace(spc.SubTitle, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
+
+					spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
+					spc.Title = Regex.Replace(spc.Title, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
+
+					spc.Title = spc.Title.Replace(char.Parse("/"), char.Parse(" "));
+					spc.SubTitle = spc.SubTitle.Replace(char.Parse("/"), char.Parse(" "));
+
+					await _pushService.PushCall(spc, dispatch.UserId, profile, call.CallPriority);
+				}
+				catch (Exception ex)
 				{
-					spc.SubTitle = subTitle.Truncate(200);
+					Logging.LogException(ex);
 				}
-				else
-				{
-					if (!string.IsNullOrEmpty(call.NatureOfCall))
-						spc.SubTitle = call.NatureOfCall.Truncate(200);
-				}
-
-				if (!String.IsNullOrWhiteSpace(spc.SubTitle))
-					spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
-
-				spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
-
-
-				await _pushService.PushCall(spc, dispatch.UserId, profile, call.CallPriority);
 			}
 
 			// Send an SMS Message
@@ -262,18 +275,6 @@ namespace Resgrid.Services
 		{
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
-
-			if (profile == null || profile.SendNotificationSms)
-			{
-				try
-				{
-					await _smsService.SendNotificationAsync(userId, departmentId, $"{title} {message}", departmentNumber, profile);
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-				}
-			}
 
 			if (profile == null || profile.SendNotificationEmail)
 			{

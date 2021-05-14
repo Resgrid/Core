@@ -273,6 +273,7 @@ namespace Resgrid.Repositories.DataRepository
 					dynamicParameters.Add("UserIds", usersToQuery);
 
 					var query = _queryFactory.GetQuery<SelectProfilesByIdsQuery>();
+					query = query.Replace("@UserIds", usersToQuery);
 
 					var dictionary = new Dictionary<int, UserProfile>();
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,

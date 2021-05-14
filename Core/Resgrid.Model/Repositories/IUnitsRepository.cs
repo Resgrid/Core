@@ -32,5 +32,12 @@ namespace Resgrid.Model.Repositories
 		/// <param name="type">The type.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Unit&gt;&gt;.</returns>
 		Task<IEnumerable<Unit>> GetAllUnitsForTypeAsync(int departmentId, string type);
+
+		/// <summary>
+		/// Gets all units by group identifier asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Unit&gt;&gt;.</returns>
+		Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdAsync(int departmentId);
 	}
 }

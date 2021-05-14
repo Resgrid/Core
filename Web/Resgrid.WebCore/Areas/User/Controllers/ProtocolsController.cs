@@ -315,48 +315,57 @@ namespace Resgrid.Web.Areas.User.Controllers
 				protocol.Attachments = new List<ProtocolTriggerAttachmentJson>();
 				protocol.Questions = new List<ProtocolTriggerQuestionJson>();
 
-				foreach (var t in dp.Triggers)
+				if (dp.Triggers != null && dp.Triggers.Any())
 				{
-					var trigger = new ProtocolTriggerJson();
-					trigger.Id = t.DispatchProtocolTriggerId;
-					trigger.Type = t.Type;
-					trigger.StartsOn = t.StartsOn;
-					trigger.EndsOn = t.EndsOn;
-					trigger.Priority = t.Priority;
-					trigger.CallType = t.CallType;
-					trigger.Geofence = t.Geofence;
-
-					protocol.Triggers.Add(trigger);
-				}
-
-				foreach (var a in dp.Attachments)
-				{
-					var attachment = new ProtocolTriggerAttachmentJson();
-					attachment.Id = a.DispatchProtocolAttachmentId;
-					attachment.FileName = a.FileName;
-					attachment.FileType = a.FileType;
-
-					protocol.Attachments.Add(attachment);
-				}
-
-				foreach (var q in dp.Questions)
-				{
-					var question = new ProtocolTriggerQuestionJson();
-					question.Id = q.DispatchProtocolQuestionId;
-					question.Question = q.Question;
-					question.Answers = new List<ProtocolQuestionAnswerJson>();
-
-					foreach (var a in q.Answers)
+					foreach (var t in dp.Triggers)
 					{
-						var answer = new ProtocolQuestionAnswerJson();
-						answer.Id = a.DispatchProtocolQuestionAnswerId;
-						answer.Answer = a.Answer;
-						answer.Weight = a.Weight;
+						var trigger = new ProtocolTriggerJson();
+						trigger.Id = t.DispatchProtocolTriggerId;
+						trigger.Type = t.Type;
+						trigger.StartsOn = t.StartsOn;
+						trigger.EndsOn = t.EndsOn;
+						trigger.Priority = t.Priority;
+						trigger.CallType = t.CallType;
+						trigger.Geofence = t.Geofence;
 
-						question.Answers.Add(answer);
+						protocol.Triggers.Add(trigger);
 					}
+				}
 
-					protocol.Questions.Add(question);
+				if (dp.Attachments != null && dp.Attachments.Any())
+				{
+					foreach (var a in dp.Attachments)
+					{
+						var attachment = new ProtocolTriggerAttachmentJson();
+						attachment.Id = a.DispatchProtocolAttachmentId;
+						attachment.FileName = a.FileName;
+						attachment.FileType = a.FileType;
+
+						protocol.Attachments.Add(attachment);
+					}
+				}
+
+				if (dp.Questions != null && dp.Questions.Any())
+				{
+					foreach (var q in dp.Questions)
+					{
+						var question = new ProtocolTriggerQuestionJson();
+						question.Id = q.DispatchProtocolQuestionId;
+						question.Question = q.Question;
+						question.Answers = new List<ProtocolQuestionAnswerJson>();
+
+						foreach (var a in q.Answers)
+						{
+							var answer = new ProtocolQuestionAnswerJson();
+							answer.Id = a.DispatchProtocolQuestionAnswerId;
+							answer.Answer = a.Answer;
+							answer.Weight = a.Weight;
+
+							question.Answers.Add(answer);
+						}
+
+						protocol.Questions.Add(question);
+					}
 				}
 
 				protocols.Add(protocol);

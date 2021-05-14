@@ -213,6 +213,8 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCallLogsByCallIdQuery { get;set; }
 		public string SelectLogUsersByLogIdQuery { get; set; }
 		public string SelectLogUnitsByLogIdQuery { get; set; }
+		public string SelectLogYearsByDeptQuery { get; set; }
+		public string SelecAllLogsByDidYearQuery { get; set; }
 		#endregion Logs
 
 		#region Units
@@ -223,6 +225,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string UnitStatesTable { get; set; }
 		public string UnitStateRolesTable { get; set; }
 		public string UnitLocationsTable { get; set; }
+		public string UnitActiveRolesTable { get; set; }
 		public string SelectUnitStatesByUnitIdQuery { get; set; }
 		public string SelectLastUnitStateByUnitIdQuery { get; set; }
 		public string SelectLastUnitStateByUnitIdTimeQuery { get; set; }
@@ -238,6 +241,10 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectUnitByDIdTypeQuery { get; set; }
 		public string SelectLastUnitStatesByDidQuery { get; set; }
 		public string SelectUnitStateByUnitStateIdQuery { get; set; }
+		public string SelectUnitActiveRolesByUnitIdQuery { get; set; }
+		public string DeleteUnitActiveRolesByUnitIdQuery { get; set; }
+		public string SelectActiveRolesForUnitsByDidQuery { get; set; }
+		public string SelectUnitsByDIdQuery { get; set; }
 		#endregion Units
 
 		#region Shifts

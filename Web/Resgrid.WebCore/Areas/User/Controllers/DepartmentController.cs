@@ -301,6 +301,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.ResetStaffingTo = result;
 			}
+			else
+			{
+				model.EnableStaffingReset = false;
+			}
 
 			// Status Reset
 			var statusTask = await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(model.Department.ManagingUserId, (int)TaskTypes.DepartmentStatusReset);
@@ -313,6 +317,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				int.TryParse(statusTask[0].Data, out result);
 
 				model.ResetStatusTo = result;
+			}
+			else
+			{
+				model.EnableStatusReset = false;
 			}
 
 			return View(model);

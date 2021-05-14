@@ -78,7 +78,7 @@
 											}
 											@if (!String.IsNullOrWhiteSpace(a.UserId))
 											{
-												<td>@UserHelper.GetFullNameForUser(a.UserId)</td>
+												<td>@(await UserHelper.GetFullNameForUser(a.UserId))</td>
 
 											}
 											else

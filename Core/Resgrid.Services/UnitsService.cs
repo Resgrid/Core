@@ -25,11 +25,13 @@ namespace Resgrid.Services
 		private readonly IUserStateService _userStateService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICustomStateService _customStateService;
+		private readonly IUnitActiveRolesRepository _unitActiveRolesRepository;
 
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
-			IEventAggregator eventAggregator, ICustomStateService customStateService, IUnitLocationRepository unitLocationRepository)
+			IEventAggregator eventAggregator, ICustomStateService customStateService, IUnitLocationRepository unitLocationRepository,
+			IUnitActiveRolesRepository unitActiveRolesRepository)
 		{
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
@@ -42,6 +44,7 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 			_customStateService = customStateService;
 			_unitLocationRepository = unitLocationRepository;
+			_unitActiveRolesRepository = unitActiveRolesRepository;
 		}
 
 		public async Task<List<Unit>> GetAllAsync()
@@ -70,7 +73,7 @@ namespace Resgrid.Services
 		public async Task<List<Unit>> GetUnitsForDepartmentAsync(int departmentId)
 		{
 			List<Unit> systemUnts = new List<Unit>();
-			var units = (await _unitsRepository.GetAllByDepartmentIdAsync(departmentId)).ToList();
+			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdAsync(departmentId)).ToList();
 
 			int limit = (await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId)).GetLimitForTypeAsInt(PlanLimitTypes.Units);
 			int count = units.Count < limit ? units.Count : limit;
@@ -78,6 +81,7 @@ namespace Resgrid.Services
 			// Only return units up to the plans unit limit
 			for (int i = 0; i < count; i++)
 			{
+				units[i].Roles = await GetRolesForUnitAsync(units[i].UnitId);
 				systemUnts.Add(units[i]);
 			}
 
@@ -86,7 +90,7 @@ namespace Resgrid.Services
 
 		public async Task<List<Unit>> GetUnitsForDepartmentUnlimitedAsync(int departmentId)
 		{
-			var units = await _unitsRepository.GetAllByDepartmentIdAsync(departmentId);
+			var units = await _unitsRepository.GetAllUnitsByDepartmentIdAsync(departmentId);
 
 			return units.ToList();
 		}
@@ -256,6 +260,21 @@ namespace Resgrid.Services
 			state.State = unitStateType;
 			state.Timestamp = DateTime.UtcNow;
 
+			var activeRoles = await GetActiveRolesForUnitAsync(state.UnitId);
+
+			if (activeRoles != null && activeRoles.Any())
+			{
+				state.Roles = new List<UnitStateRole>();
+				foreach (var activeRole in activeRoles)
+				{
+					UnitStateRole role = new UnitStateRole();
+					role.Role = activeRole.Role;
+					role.UserId = activeRole.UserId;
+
+					state.Roles.Add(role);
+				}
+			}
+
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
 			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
@@ -267,6 +286,24 @@ namespace Resgrid.Services
 		{
 			if (state.Accuracy > 100000)
 				state.Accuracy = 100000;
+
+			if (state.Roles == null || !state.Roles.Any())
+			{
+				var activeRoles = await GetActiveRolesForUnitAsync(state.UnitId);
+
+				if (activeRoles != null && activeRoles.Any())
+				{
+					state.Roles = new List<UnitStateRole>();
+					foreach (var activeRole in activeRoles)
+					{
+						UnitStateRole role = new UnitStateRole();
+						role.Role = activeRole.Role;
+						role.UserId = activeRole.UserId;
+
+						state.Roles.Add(role);
+					}
+				}
+			}
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
@@ -285,7 +322,11 @@ namespace Resgrid.Services
 		public async Task<List<UnitRole>> GetRolesForUnitAsync(int unitId)
 		{
 			var roles = await _unitRolesRepository.GetAllRolesByUnitIdAsync(unitId);
-			return roles.ToList();
+
+			if (roles != null && roles.Any())
+				return roles.ToList();
+			else
+				return new List<UnitRole>();
 		}
 
 		public async Task<UnitRole> GetRoleByIdAsync(int unitRoleId)
@@ -473,6 +514,36 @@ namespace Resgrid.Services
 				return items.ToList();
 
 			return new List<UnitStateRole>();
+		}
+
+		public async Task<List<UnitActiveRole>> GetActiveRolesForUnitAsync(int unitId)
+		{
+			var items = await _unitActiveRolesRepository.GetActiveRolesByUnitIdAsync(unitId);
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<UnitActiveRole>();
+		}
+
+		public async Task<List<UnitActiveRole>> GetAllActiveRolesForUnitsByDepartmentIdAsync(int departmentId)
+		{
+			var items = await _unitActiveRolesRepository.GetAllActiveRolesForUnitsByDepartmentIdAsync(departmentId);
+
+			if (items != null && items.Any())
+				return items.ToList();
+
+			return new List<UnitActiveRole>();
+		}
+
+		public async Task<UnitActiveRole> SaveActiveRoleAsync(UnitActiveRole role, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _unitActiveRolesRepository.SaveOrUpdateAsync(role, cancellationToken, true);
+		}
+
+		public async Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unitId, cancellationToken);
 		}
 	}
 }

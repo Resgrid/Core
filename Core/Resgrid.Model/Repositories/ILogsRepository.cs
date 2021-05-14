@@ -30,5 +30,20 @@ namespace Resgrid.Model.Repositories
 		/// <param name="groupId">The group identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Log&gt;&gt;.</returns>
 		Task<IEnumerable<Log>> GetLogsForGroupAsync(int groupId);
+
+		/// <summary>
+		/// Gets the log years for department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;string&gt;&gt;.</returns>
+		Task<IEnumerable<string>> SelectLogYearsByDeptAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the logs for a department by year asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="year">The year to get logs for.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Log&gt;&gt;.</returns>
+		Task<IEnumerable<Log>> GetAllLogsByDepartmentIdYearAsync(int departmentId, string year);
 	}
 }

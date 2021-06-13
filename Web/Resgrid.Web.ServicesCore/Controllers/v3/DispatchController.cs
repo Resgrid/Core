@@ -18,6 +18,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Web.Services.Models.v3.Dispatch;
 using Resgrid.Framework;
 using System;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -40,6 +41,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly ICustomStateService _customStateService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly ICqrsProvider _cqrsProvider;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
 		public DispatchController(
 			IUsersService usersService,
@@ -53,7 +55,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			IPersonnelRolesService personnelRolesService,
 			ICustomStateService customStateService,
 			IGeoLocationProvider geoLocationProvider,
-			ICqrsProvider cqrsProvider
+			ICqrsProvider cqrsProvider,
+			IDepartmentSettingsService departmentSettingsService
 			)
 		{
 			_usersService = usersService;
@@ -68,6 +71,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_customStateService = customStateService;
 			_geoLocationProvider = geoLocationProvider;
 			_cqrsProvider = cqrsProvider;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
 		[HttpGet("GetNewCallData")]
@@ -510,18 +514,181 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		}
 
 		/// <summary>
-		/// Returns all the active calls for the department
+		/// Returns all the personnel for display in the new call personnel table
 		/// </summary>
-		/// <returns>Array of CallResult objects for each active call in the department</returns>
-		[HttpGet("GetCallPriorites")]
+		/// <returns>Array of PersonnelForCallResult objects for each person in the department</returns>
+		[HttpGet("GetPersonnelForCallGrid")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<List<CallPriorityDataResult>>> GetCallPriorites()
+		public async Task<ActionResult<List<PersonnelForCallResult>>> GetPersonnelForCallGrid()
 		{
-			var result = new List<CallPriorityDataResult>();
+			var result = new List<PersonnelForCallResult>();
+
+			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);//.GetAllUsersForDepartmentUnlimitedMinusDisabled(DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+
+			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
+			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
+
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
+			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
+
+			foreach (var user in users)
+			{
+				PersonnelForCallResult person = new PersonnelForCallResult();
+				person.UserId = user.UserId;
+				person.Name = await UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
+
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+				if (group != null)
+					person.Group = group.Name;
+
+				var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
+				person.Roles = new List<string>();
+				foreach (var role in roles)
+				{
+					person.Roles.Add(role.Name);
+				}
+
+				var currentStaffing = userStates.FirstOrDefault(x => x.UserId == user.UserId);
+				if (currentStaffing != null)
+				{
+					var staffing = await CustomStatesHelper.GetCustomPersonnelStaffing(DepartmentId, currentStaffing);
+
+					if (staffing != null)
+					{
+						person.Staffing = staffing.ButtonText;
+						person.StaffingColor = staffing.ButtonClassToColor();
+					}
+				}
+				else
+				{
+					person.Staffing = "Available";
+					person.StaffingColor = "#000";
+				}
+
+				var currentStatus = lastUserActionlogs.FirstOrDefault(x => x.UserId == user.UserId);
+				if (currentStatus != null)
+				{
+					var status = await CustomStatesHelper.GetCustomPersonnelStatus(DepartmentId, currentStatus);
+					if (status != null)
+					{
+						person.Status = status.ButtonText;
+						person.StatusColor = status.ButtonClassToColor();
+					}
+				}
+				else
+				{
+					person.Status = "Standing By";
+					person.StatusColor = "#000";
+				}
+
+				person.Eta = "N/A";
+
+				if (currentStatus != null)
+				{
+					if (personnelStatusSortOrder != null && personnelStatusSortOrder.Any())
+					{
+						var statusSorting = personnelStatusSortOrder.FirstOrDefault(x => x.StatusId == currentStatus.ActionTypeId);
+						if (statusSorting != null)
+							person.Weight = statusSorting.Weight;
+						else
+							person.Weight = 9000;
+					}
+					else
+					{
+						person.Weight = 9000;
+					}
+				}
+				else
+					person.Weight = 9000;
+
+				result.Add(person);
+			}
+
+			switch (personnelSortOrder)
+			{
+				case PersonnelSortOrders.Default:
+					result = result.OrderBy(x => x.Weight).ToList();
+					break;
+				case PersonnelSortOrders.FirstName:
+					result = result.OrderBy(x => x.Weight).ThenBy(x => x.FirstName).ToList();
+					break;
+				case PersonnelSortOrders.LastName:
+					result = result.OrderBy(x => x.Weight).ThenBy(x => x.LastName).ToList();
+					break;
+				case PersonnelSortOrders.Group:
+					result = result.OrderBy(x => x.Weight).ThenBy(x => x.GroupId).ToList();
+					break;
+				default:
+					result = result.OrderBy(x => x.Weight).ToList();
+					break;
+			}
 
 			return Ok(result);
+		}
+
+
+		/// <summary>
+		/// Returns all the groups for display in the new call groups table
+		/// </summary>
+		/// <returns>Array of GroupsForCallResult objects for each group in the department</returns>
+		[HttpGet("GetGroupsForCallGrid")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+		public async Task<ActionResult<List<GroupsForCallResult>>> GetGroupsForCallGrid()
+		{
+			List<GroupsForCallResult> groupsJson = new List<GroupsForCallResult>();
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+
+			foreach (var group in groups)
+			{
+				GroupsForCallResult groupJson = new GroupsForCallResult();
+				groupJson.GroupId = group.DepartmentGroupId;
+				groupJson.Name = group.Name;
+
+				if (group.Members != null)
+					groupJson.Count = group.Members.Count;
+				else
+					groupJson.Count = 0;
+
+				groupsJson.Add(groupJson);
+			}
+
+			return Ok(groupsJson);
+		}
+
+		/// <summary>
+		/// Returns all the roles for display in the new call groups table
+		/// </summary>
+		/// <returns>Array of RolesForCallResult objects for each role in the department</returns>
+		[HttpGet("GetRolesForCallGrid")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult<List<RolesForCallResult>>> GetRolesForCallGrid()
+		{
+			List<RolesForCallResult> rolesJson = new List<RolesForCallResult>();
+			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+
+			foreach (var role in roles)
+			{
+				RolesForCallResult roleJson = new RolesForCallResult();
+				roleJson.RoleId = role.PersonnelRoleId;
+				roleJson.Name = role.Name;
+
+				if (role.Users != null)
+					roleJson.Count = role.Users.Count;
+				else
+					roleJson.Count = 0;
+
+				rolesJson.Add(roleJson);
+			}
+
+			return Ok(rolesJson);
 		}
 	}
 }

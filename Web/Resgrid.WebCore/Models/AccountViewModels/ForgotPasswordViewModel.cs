@@ -5,11 +5,14 @@ namespace Resgrid.Web.Models.AccountViewModels
 {
     public class ForgotPasswordViewModel: GoogleReCaptchaModelBase
 	{
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+		public string CaptchaId { get; set; }
+		public string UserEnteredCaptchaCode { get; set; }
 
 		public string SiteKey { get; set; }
+
+		[Required]
+        [EmailAddress]
+        public string Email { get; set; }
 
 	}
 }

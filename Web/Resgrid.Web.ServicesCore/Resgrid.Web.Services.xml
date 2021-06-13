@@ -362,11 +362,23 @@
             Operations to support Dispatch operations
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetCallPriorites">
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetPersonnelForCallGrid">
             <summary>
-            Returns all the active calls for the department
+            Returns all the personnel for display in the new call personnel table
             </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
+            <returns>Array of PersonnelForCallResult objects for each person in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetGroupsForCallGrid">
+            <summary>
+            Returns all the groups for display in the new call groups table
+            </summary>
+            <returns>Array of GroupsForCallResult objects for each group in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetRolesForCallGrid">
+            <summary>
+            Returns all the roles for display in the new call groups table
+            </summary>
+            <returns>Array of RolesForCallResult objects for each role in the department</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.GeoController">
             <summary>

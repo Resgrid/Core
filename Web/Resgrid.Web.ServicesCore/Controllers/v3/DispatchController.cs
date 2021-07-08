@@ -42,6 +42,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly ICqrsProvider _cqrsProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly ITemplatesService _templatesService;
 
 		public DispatchController(
 			IUsersService usersService,
@@ -56,7 +57,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			ICustomStateService customStateService,
 			IGeoLocationProvider geoLocationProvider,
 			ICqrsProvider cqrsProvider,
-			IDepartmentSettingsService departmentSettingsService
+			IDepartmentSettingsService departmentSettingsService,
+			ITemplatesService templatesService
 			)
 		{
 			_usersService = usersService;
@@ -72,6 +74,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_geoLocationProvider = geoLocationProvider;
 			_cqrsProvider = cqrsProvider;
 			_departmentSettingsService = departmentSettingsService;
+			_templatesService = templatesService;
 		}
 
 		[HttpGet("GetNewCallData")]
@@ -689,6 +692,38 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			}
 
 			return Ok(rolesJson);
+		}
+
+		/// <summary>
+		/// Returns all the call quick templates
+		/// </summary>
+		/// <returns>Array of CallTemplateResult objects for each role in the department</returns>
+		[HttpGet("GetCallTemplates")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult<List<CallTemplateResult>>> GetCallTemplates()
+		{
+			List<CallTemplateResult> templatesJson = new List<CallTemplateResult>();
+			var templates = await _templatesService.GetAllCallQuickTemplatesForDepartmentAsync(DepartmentId);
+
+			foreach (var template in templates)
+			{
+				CallTemplateResult templateJson = new CallTemplateResult();
+				templateJson.Id = template.CallQuickTemplateId;
+				templateJson.IsDisabled = template.IsDisabled;
+				templateJson.Name = template.Name;
+				templateJson.CallName = template.CallName;
+				templateJson.CallNature = template.CallNature;
+				templateJson.CallType = template.CallType;
+				templateJson.CallPriority = template.CallPriority;
+				templateJson.CreatedByUserId = template.CreatedByUserId;
+				templateJson.CreatedOn = template.CreatedOn;
+
+				templatesJson.Add(templateJson);
+			}
+
+			return Ok(templatesJson);
 		}
 	}
 }

@@ -14,13 +14,18 @@ namespace Resgrid.Services
 		private readonly IDispatchProtocolRepository _dispatchProtocolRepository;
 		private readonly IDispatchProtocolAttachmentRepository _dispatchProtocolAttachmentRepository;
 		private readonly IDispatchProtocolQuestionsRepository _dispatchProtocolQuestionsRepository;
+		private readonly IDispatchProtocolTriggersRepository _dispatchProtocolTriggersRepository;
+		private readonly IDispatchProtocolQuestionAnswersRepository _dispatchProtocolQuestionAnswersRepository;
 
 		public ProtocolsService(IDispatchProtocolRepository dispatchProtocolRepository, IDispatchProtocolAttachmentRepository dispatchProtocolAttachmentRepository,
-			IDispatchProtocolQuestionsRepository dispatchProtocolQuestionsRepository)
+			IDispatchProtocolQuestionsRepository dispatchProtocolQuestionsRepository, IDispatchProtocolTriggersRepository dispatchProtocolTriggersRepository,
+			IDispatchProtocolQuestionAnswersRepository dispatchProtocolQuestionAnswersRepository)
 		{
 			_dispatchProtocolRepository = dispatchProtocolRepository;
 			_dispatchProtocolAttachmentRepository = dispatchProtocolAttachmentRepository;
 			_dispatchProtocolQuestionsRepository = dispatchProtocolQuestionsRepository;
+			_dispatchProtocolTriggersRepository = dispatchProtocolTriggersRepository;
+			_dispatchProtocolQuestionAnswersRepository = dispatchProtocolQuestionAnswersRepository;
 		}
 
 		public async Task<List<DispatchProtocol>> GetAllProtocolsForDepartmentAsync(int departmentId)
@@ -31,6 +36,7 @@ namespace Resgrid.Services
 			{
 				dispatchProtocol.Attachments = (await _dispatchProtocolAttachmentRepository.GetDispatchProtocolAttachmentByProtocolIdAsync(dispatchProtocol.DispatchProtocolId)).ToList();
 				dispatchProtocol.Questions = (await _dispatchProtocolQuestionsRepository.GetDispatchProtocolQuestionsByProtocolIdAsync(dispatchProtocol.DispatchProtocolId)).ToList();
+				dispatchProtocol.Triggers = (await _dispatchProtocolTriggersRepository.GetDispatchProtocolTriggersByProtocolIdAsync(dispatchProtocol.DispatchProtocolId)).ToList();
 			}
 
 			return items.ToList();
@@ -38,7 +44,27 @@ namespace Resgrid.Services
 
 		public async Task<DispatchProtocol> SaveProtocolAsync(DispatchProtocol protocol, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _dispatchProtocolRepository.SaveOrUpdateAsync(protocol, cancellationToken);
+			var saved = await _dispatchProtocolRepository.SaveOrUpdateAsync(protocol, cancellationToken);
+
+			if (saved.Questions != null)
+			{
+				foreach (var q in saved.Questions)
+				{
+					if (q.Answers != null)
+					{
+						foreach (var a in q.Answers)
+						{
+							if (a.DispatchProtocolQuestionAnswerId <= 0)
+							{
+								a.DispatchProtocolQuestionId = q.DispatchProtocolQuestionId;
+								await _dispatchProtocolQuestionAnswersRepository.SaveOrUpdateAsync(a, cancellationToken, true);
+							}
+						}	
+					}	
+				}
+			}
+
+			return saved;
 		}
 
 		public async Task<DispatchProtocol> GetProtocolByIdAsync(int id)
@@ -46,6 +72,7 @@ namespace Resgrid.Services
 			var protocol = await _dispatchProtocolRepository.GetDispatchProtocolByIdAsync(id);
 			protocol.Attachments = (await _dispatchProtocolAttachmentRepository.GetDispatchProtocolAttachmentByProtocolIdAsync(id)).ToList();
 			protocol.Questions = (await _dispatchProtocolQuestionsRepository.GetDispatchProtocolQuestionsByProtocolIdAsync(id)).ToList();
+			protocol.Triggers = (await _dispatchProtocolTriggersRepository.GetDispatchProtocolTriggersByProtocolIdAsync(id)).ToList();
 
 			return protocol;
 		}

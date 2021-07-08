@@ -380,6 +380,12 @@
             </summary>
             <returns>Array of RolesForCallResult objects for each role in the department</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetCallTemplates">
+            <summary>
+            Returns all the call quick templates
+            </summary>
+            <returns>Array of CallTemplateResult objects for each role in the department</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.GeoController">
             <summary>
             Geolocation API methods for gps and other functions (like what3words)

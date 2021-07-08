@@ -325,6 +325,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectProtocolsByDIdQuery { get; set; }
 		public string SelectProtocolQuestionsByProIdQuery { get; set; }
 		public string SelectProtocolAttachmentsByProIdQuery { get; set; }
+		public string SelectProtocolTriggersByProIdQuery { get; set; }
 		#endregion Dispatch Protocols
 
 		#region Department Groups

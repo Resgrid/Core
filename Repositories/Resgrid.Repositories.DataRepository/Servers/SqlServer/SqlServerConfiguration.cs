@@ -902,6 +902,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					LEFT OUTER JOIN %SCHEMA%.%PROTOCOLQUESTIONANSWERSTABLE% pqa ON pqa.[DispatchProtocolQuestionId] = pq.[DispatchProtocolQuestionId]
 					WHERE pq.[DispatchProtocolId] = %PROTOCOLID%";
 			SelectProtocolAttachmentsByProIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DispatchProtocolId] = %PROTOCOLID%";
+			SelectProtocolTriggersByProIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%PROTOCOLTRIGGERSTABLE% pt
+					WHERE pt.[DispatchProtocolId] = %PROTOCOLID%";
 			#endregion Dispatch Protocols
 
 			#region Calls

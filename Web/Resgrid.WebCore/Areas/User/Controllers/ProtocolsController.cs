@@ -188,7 +188,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 
-				_protocolsService.SaveProtocolAsync(model.Protocol);
+				await _protocolsService.SaveProtocolAsync(model.Protocol);
 
 				return RedirectToAction("Index");
 			}

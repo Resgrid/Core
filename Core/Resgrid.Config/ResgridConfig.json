@@ -3,8 +3,9 @@
 
   "DataConfig.ConnectionString": "Server=rgdevserver;Database=Resgrid;User Id=resgrid_app;Password=resgrid123;MultipleActiveResultSets=True;",
 
-  "SystemBehaviorConfig.ResgridBaseUrl": "http://resgrid.local",
-  "SystemBehaviorConfig.ResgridApiBaseUrl": "http://resgridapi.local",
+  "SystemBehaviorConfig.ResgridBaseUrl": "https://resgrid.local",
+  "SystemBehaviorConfig.ResgridApiBaseUrl": "https://resgridapi.local",
+  "SystemBehaviorConfig.ResgridEventingBaseUrl": "https://rgdevinfaserver.local",
   "SystemBehaviorConfig.DoNotBroadcast": "false",
   "SystemBehaviorConfig.RedirectHomeToLogin": "true",
   "SystemBehaviorConfig.IsAzure": "false",

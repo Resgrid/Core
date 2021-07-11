@@ -17,10 +17,17 @@ namespace Resgrid.Repositories.DataRepository.Queries.Calendar
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.DeleteCalendarItemQuery
-				.ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.CalendarItemsTable,
-					"CalendarItemId", // TODO: Fix MEEEE!
-					$"{_sqlConfiguration.ParameterNotation}Id");
+										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+																 _sqlConfiguration.CalendarItemsTable,
+																 _sqlConfiguration.ParameterNotation,
+																 new string[]
+																 {
+																	 "%ID%"
+																 },
+																 new string[]
+																 {
+																	 "CalendarItemId"
+																 });
 
 			return query;
 		}

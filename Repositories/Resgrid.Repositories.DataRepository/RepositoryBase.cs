@@ -243,42 +243,47 @@ namespace Resgrid.Repositories.DataRepository
 
 		public virtual async Task<bool> DeleteAsync(T entity, CancellationToken cancellationToken)
 		{
-			try
+			if (entity != null)
 			{
-				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+				try
 				{
-					var dynamicParameters = new DynamicParameters();
-					dynamicParameters.Add("Id", ((IEntity)entity).IdValue);
-
-					var query = _queryFactory.GetDeleteQuery<DeleteQuery, T>(entity);
-
-					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
-
-					return result > 0;
-				});
-
-				DbConnection conn = null;
-				if (_unitOfWork?.Connection == null)
-				{
-					using (conn = _connectionProvider.Create())
+					var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
 					{
-						await conn.OpenAsync(cancellationToken);
+						var dynamicParameters = new DynamicParameters();
+						dynamicParameters.Add("Id", ((IEntity)entity).IdValue);
 
+						var query = _queryFactory.GetDeleteQuery<DeleteQuery, T>(entity);
+
+						var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+						return result > 0;
+					});
+
+					DbConnection conn = null;
+					if (_unitOfWork?.Connection == null)
+					{
+						using (conn = _connectionProvider.Create())
+						{
+							await conn.OpenAsync(cancellationToken);
+
+							return await removeFunction(conn);
+						}
+					}
+					else
+					{
+						conn = _unitOfWork.CreateOrGetConnection();
 						return await removeFunction(conn);
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					conn = _unitOfWork.CreateOrGetConnection();
-					return await removeFunction(conn);
+					Logging.LogException(ex);
+
+					throw;
 				}
 			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
 
-				throw;
-			}
+			return false;
 		}
 
 		public virtual async Task<T> SaveOrUpdateAsync(T entity, CancellationToken cancellationToken, bool firstLevelOnly = false)

@@ -116,7 +116,9 @@ namespace Resgrid.Services
 					}
 				}
 
+				await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unit.UnitId, cancellationToken);
 				await _unitsRepository.DeleteAsync(unit, cancellationToken);
+
 				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
 
 				return true;

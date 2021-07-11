@@ -205,13 +205,13 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			switch (personnelSortOrder)
 			{
 				case PersonnelSortOrders.Default:
-					results =results.OrderBy(x => x.Weight).ToList();
+					results = results.OrderBy(x => x.Weight).ToList();
 					break;
 				case PersonnelSortOrders.FirstName:
-					results = results.OrderBy(x => x.Weight).ThenBy(x => users.First().FirstName).ToList();
+					results = results.OrderBy(x => x.Weight).ThenBy(x => users.First(y => y.UserId == x.Uid).FirstName).ToList();
 					break;
 				case PersonnelSortOrders.LastName:
-					results = results.OrderBy(x => x.Weight).ThenBy(x => users.First().LastName).ToList();
+					results = results.OrderBy(x => x.Weight).ThenBy(x => users.First(y => y.UserId == x.Uid).LastName).ToList();
 					break;
 				case PersonnelSortOrders.Group:
 					results = results.OrderBy(x => x.Weight).ThenBy(x => x.Gid).ToList();

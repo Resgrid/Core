@@ -63,6 +63,7 @@
 	<PackageReference Include="PaulMiami.AspNetCore.Mvc.Recaptcha" Version="1.2.2" />
 	<PackageReference Include="protobuf-net" Version="3.0.29" />
 	<PackageReference Include="Remotion.Linq" Version="2.2.0" />
+	<PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
 	<PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
 	<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
 	<PackageReference Include="System.Reflection.Metadata" Version="1.8.1" />

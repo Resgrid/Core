@@ -268,56 +268,59 @@ namespace Resgrid.Services
 
 			var shifts = await _shiftsRepository.GetAllShiftAndDaysAsync();
 
-			foreach (var shift in shifts)
+			if (shifts != null && shifts.Any())
 			{
-				try
+				foreach (var shift in shifts)
 				{
-					//var shiftData = await PopulateShiftData(shift, true, true, true, true, true);
-
-					if (shift.Days != null && shift.Days.Any())
+					try
 					{
-						if (shift.Department == null)
-							shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId, false);
+						//var shiftData = await PopulateShiftData(shift, true, true, true, true, true);
 
-						var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shift.Department);
-
-						var shiftStart = shift.StartTime;
-
-						if (String.IsNullOrWhiteSpace(shiftStart))
-							shiftStart = "12:00 AM";
-
-						var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shift.Department.Use24HourTime.GetValueOrDefault());
-
-						var shiftDays = from sd in shift.Days
-										let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault())
-										let nextDayShiftTime = localizedDate.AddDays(1)
-										where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
-										select sd;
-
-						//List<ShiftDay> shiftDays = new List<ShiftDay>();
-						//foreach (var sd in shift.Days)
-						//{
-						//	var shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault());
-						//	var nextDayShiftTime = localizedDate.AddDays(1);
-
-						//	if (shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15)))
-						//		shiftDays.Add(sd);
-						//}
-
-						if (shiftDays.Any())
+						if (shift.Days != null && shift.Days.Any())
 						{
-							var previousShift = from sd in shift.Days
-												where sd.Day.ToShortDateString() == startTime.ToShortDateString()
-												select sd;
+							if (shift.Department == null)
+								shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId, false);
 
-							if (!previousShift.Any())
-								upcomingShifts.Add(shift);
+							var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shift.Department);
+
+							var shiftStart = shift.StartTime;
+
+							if (String.IsNullOrWhiteSpace(shiftStart))
+								shiftStart = "12:00 AM";
+
+							var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shift.Department.Use24HourTime.GetValueOrDefault());
+
+							var shiftDays = from sd in shift.Days
+											let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault())
+											let nextDayShiftTime = localizedDate.AddDays(1)
+											where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
+											select sd;
+
+							//List<ShiftDay> shiftDays = new List<ShiftDay>();
+							//foreach (var sd in shift.Days)
+							//{
+							//	var shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault());
+							//	var nextDayShiftTime = localizedDate.AddDays(1);
+
+							//	if (shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15)))
+							//		shiftDays.Add(sd);
+							//}
+
+							if (shiftDays.Any())
+							{
+								var previousShift = from sd in shift.Days
+													where sd.Day.ToShortDateString() == startTime.ToShortDateString()
+													select sd;
+
+								if (!previousShift.Any())
+									upcomingShifts.Add(shift);
+							}
 						}
 					}
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, $"DepartmentId:{shift.DepartmentId}");
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, $"DepartmentId:{shift.DepartmentId}");
+					}
 				}
 			}
 

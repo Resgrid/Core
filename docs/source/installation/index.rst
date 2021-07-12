@@ -8,6 +8,8 @@ In this section we will go over all the steps needed to get Resgrid running on y
 
 This documentation is for installation of Resgrid from compile source. If you want to install Resgrid from Docker containers please review that section instead.
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AVvw97WKY64" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 .. _requirements:
 
 Requirements Notice

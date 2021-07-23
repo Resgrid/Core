@@ -33,7 +33,6 @@ namespace Resgrid.Providers.EmailProvider
 
 				var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 
-				message.From = null;
 				var response = await newClient.SendMessageAsync(message);
 
 				if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&

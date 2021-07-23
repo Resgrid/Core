@@ -26,11 +26,11 @@ namespace Resgrid.Repositories.DataRepository.Queries.Logs
 						"LogId"
 					},
 					new string[] {
-						"%LOGUSERSTABLE%",
+						"%LOGUNITSTABLE%",
 						"%UNITSTABLE%"
 					},
 					new string[] {
-						_sqlConfiguration.LogUsersTable,
+						_sqlConfiguration.LogUnitsTable,
 						_sqlConfiguration.UnitsTable
 					}
 				);

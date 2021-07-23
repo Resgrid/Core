@@ -133,7 +133,12 @@ namespace Resgrid.Workers.Framework.Logic
 				item.Type = (EventTypes)ni.Type;
 				item.Value = ni.Value;
 				item.MessageId = messageId;
-				item.Data = body;
+
+				if (!String.IsNullOrWhiteSpace(body))
+					item.Data = body;
+				else
+					item.Data = ObjectSerialization.Serialize(ni);
+
 				item.ItemId = ni.ItemId;
 
 				var queueItem = new NotificationQueueItem();

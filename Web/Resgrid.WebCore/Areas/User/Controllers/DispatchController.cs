@@ -143,11 +143,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Years = new List<SelectListItem>();
 
 			var years = await _callsService.GetCallYearsByDeptartmentAsync(DepartmentId);
-			foreach (var year in years)
+
+			if (years != null && years.Any())
 			{
-				model.Years.Add(new SelectListItem(year, year));
+				foreach (var year in years)
+				{
+					model.Years.Add(new SelectListItem(year, year));
+				}
+				model.Year = years[0];
 			}
-			model.Year = years[0];
 
 			return View(model);
 		}
@@ -245,11 +249,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				model.Call.Dispatches = new Collection<CallDispatch>();
+
 				// Add all users dispatch's
 				if (dispatchingUserIds.Any())
 				{
-					model.Call.Dispatches = new Collection<CallDispatch>();
-
 					foreach (var userId in dispatchingUserIds)
 					{
 						CallDispatch cd = new CallDispatch();
@@ -327,6 +331,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 							protocol.Data = collection[$"protocolCode_{id}"];
 
 						model.Call.Protocols.Add(protocol);
+					}
+				}
+
+				if (model.Call.UnitDispatches != null && model.Call.UnitDispatches.Any())
+				{
+					foreach (var unitDispatch in model.Call.UnitDispatches)
+					{
+						var unitRoleAssignments = await _unitsService.GetActiveRolesForUnitAsync(unitDispatch.UnitId);
+
+						if (unitRoleAssignments != null && unitRoleAssignments.Any())
+						{
+							foreach(var unitRoleAssignment in unitRoleAssignments)
+							{
+								if (!model.Call.Dispatches.Any(x => x.UserId == unitRoleAssignment.UserId))
+								{
+									CallDispatch cd = new CallDispatch();
+									cd.UserId = unitRoleAssignment.UserId;
+
+									model.Call.Dispatches.Add(cd);
+								}
+							}
+						}	
 					}
 				}
 
@@ -1570,7 +1596,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(model.Department.DepartmentId);
 
-			var priorites = await _callsService.GetCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
+			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
 			//model.CallPriorities = model.CallPriority.ToSelectList();
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 			model.UnGroupedUsers = new List<IdentityUser>();
@@ -1619,7 +1645,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId);
 			model.UnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId);
 
-			var priorites = await _callsService.GetCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
+			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 			model.UnGroupedUsers = new List<IdentityUser>();
 

@@ -82,9 +82,54 @@ namespace Resgrid.Repositories.DataRepository
 
 					var query = _queryFactory.GetQuery<SelectUnitsByGroupIdQuery>();
 
-					return await x.QueryAsync<Unit>(sql: query,
+					return await x.QueryAsync<Unit, DepartmentGroup, Unit>(sql: query,
 						param: dynamicParameters,
-						transaction: _unitOfWork.Transaction);
+						transaction: _unitOfWork.Transaction,
+						map: (u, dg) => { u.StationGroup = dg; return u; },
+						splitOn: "DepartmentGroupId");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Unit>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectUnitsByDIdQuery>();
+
+					return await x.QueryAsync<Unit, DepartmentGroup, Unit>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (u, dg) => { u.StationGroup = dg; return u; },
+						splitOn: "DepartmentGroupId");
 				});
 
 				DbConnection conn = null;

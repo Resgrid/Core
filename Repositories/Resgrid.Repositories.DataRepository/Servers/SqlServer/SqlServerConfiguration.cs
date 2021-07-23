@@ -245,7 +245,12 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT * FROM [PersonnelRoles] pr
 					INNER JOIN [PersonnelRoleUsers] pru ON pr.[PersonnelRoleId] = pru.[PersonnelRoleId]
 					WHERE pru.[UserId] = %USERID% AND pr.[DepartmentId] = %DID%";
-			SelectRoleUsersByRoleQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [PersonnelRoleId] = %ROLEID%";
+			//SelectRoleUsersByRoleQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [PersonnelRoleId] = %ROLEID%";
+			SelectRoleUsersByRoleQuery = @"
+					SELECT * FROM [PersonnelRoleUsers] pru
+					INNER JOIN [dbo].DepartmentMembers dm ON dm.UserId = pru.UserId AND dm.[DepartmentId] = pru.[DepartmentId]
+					WHERE pru.[PersonnelRoleId] = %ROLEID% AND dm.[IsDisabled] = 0 AND dm.[IsDeleted] = 0";
+
 			SelectRoleUsersByUserQuery = @"
 					SELECT * FROM [PersonnelRoleUsers] pru
 					INNER JOIN [PersonnelRoles] pr ON pru.[PersonnelRoleId] = pr.[PersonnelRoleId]
@@ -498,9 +503,17 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectLogUsersByLogIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [LogId] = %LOGID%";
 			SelectLogUnitsByLogIdQuery = @"
 					SELECT lu.*, u.*
-					FROM %SCHEMA%.%LOGUSERSTABLE% lu
+					FROM %SCHEMA%.%LOGUNITSTABLE% lu
 					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = lu.[UnitId]
 					WHERE lu.[LogId] = %LOGID%";
+			SelectLogYearsByDeptQuery = @"
+					SELECT DISTINCT YEAR(l.LoggedOn)
+					FROM Logs l WHERE l.DepartmentId = %DID%
+					ORDER BY 1 DESC";
+			SelecAllLogsByDidYearQuery = @"
+					SELECT * FROM %SCHEMA%.%TABLENAME%
+					WHERE [DepartmentId] = %DID% AND year(LoggedOn) = %YEAR%
+					ORDER BY LoggedOn DESC";
 			#endregion Logs
 
 			#region Units
@@ -511,6 +524,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			UnitStatesTable = "UnitStates";
 			UnitStateRolesTable = "UnitStateRoles";
 			UnitLocationsTable = "UnitLocations";
+			UnitActiveRolesTable = "UnitActiveRoles";
 			SelectUnitStatesByUnitIdQuery = @"
 					SELECT us.*, u.*
 					FROM %SCHEMA%.%UNITSTATESTABLE% us
@@ -534,7 +548,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectUnitTypeByDIdNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPENAME%";
 			SelectUnitLogsByUnitIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% ORDER BY Timestamp DESC";
 			SelectUnitRolesByUnitIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID%";
-			SelectUnitsByGroupIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [StationGroupId] = %GROUPID%";
+			SelectUnitsByGroupIdQuery = @"
+					SELECT u.*, dg.*
+					FROM [dbo].[Units] u
+					INNER JOIN [dbo].[DepartmentGroups] dg ON dg.[DepartmentGroupId] = u.[StationGroupId]
+					WHERE u.[StationGroupId] = %GROUPID%";
 			SelectCurrentRolesByUnitIdQuery = @"
 					SELECT * FROM %SCHEMA%.%UNITSTATESTABLE% us
 					INNER JOIN %SCHEMA%.%UNITSTATEROLESSTABLE% ON %SCHEMA%.%UNITSTATEROLESSTABLE%.[UnitStateId] = us.[UnitStateId]
@@ -560,6 +578,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%UNITSTATESTABLE% us
 					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = us.[UnitId]
 					WHERE us.[UnitStateId] = %UNITSTATEID%";
+			SelectUnitActiveRolesByUnitIdQuery = @"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID%";
+			DeleteUnitActiveRolesByUnitIdQuery = @"DELETE FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID%";
+			SelectActiveRolesForUnitsByDidQuery = @"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID%";
+			SelectUnitsByDIdQuery = @"
+					SELECT u.*, dg.*
+					FROM [dbo].[Units] u
+					LEFT JOIN [dbo].[DepartmentGroups] dg ON dg.[DepartmentGroupId] = u.[StationGroupId]
+					WHERE u.[DepartmentId] = %DID%";
 			#endregion Units
 
 			#region Shifts
@@ -876,6 +902,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					LEFT OUTER JOIN %SCHEMA%.%PROTOCOLQUESTIONANSWERSTABLE% pqa ON pqa.[DispatchProtocolQuestionId] = pq.[DispatchProtocolQuestionId]
 					WHERE pq.[DispatchProtocolId] = %PROTOCOLID%";
 			SelectProtocolAttachmentsByProIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DispatchProtocolId] = %PROTOCOLID%";
+			SelectProtocolTriggersByProIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%PROTOCOLTRIGGERSTABLE% pt
+					WHERE pt.[DispatchProtocolId] = %PROTOCOLID%";
 			#endregion Dispatch Protocols
 
 			#region Calls
@@ -930,7 +960,15 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 
 			DepartmentGroupsTable = "DepartmentGroups";
 			DepartmentGroupMembersTable = "DepartmentGroupMembers";
-			SelectGroupMembersByGroupIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID%";
+			//SelectGroupMembersByGroupIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID%";
+
+			SelectGroupMembersByGroupIdQuery = @"
+					SELECT dgm.*
+					FROM [dbo].DepartmentGroupMembers dgm
+					INNER JOIN [dbo].DepartmentGroups dg ON dg.[DepartmentGroupId] =  dgm.[DepartmentGroupId]
+					INNER JOIN [dbo].DepartmentMembers dm ON dm.UserId = dgm.UserId AND dm.[DepartmentId] = dg.[DepartmentId]
+					WHERE dgm.[DepartmentGroupId] = %GROUPID% AND dm.[IsDisabled] = 0 AND dm.[IsDeleted] = 0";
+
 			SelectGroupMembersByUserDidQuery = @"
 					SELECT dgm.*, dg.*
 					FROM %SCHEMA%.%GROUPMEMBERSSTABLE% dgm

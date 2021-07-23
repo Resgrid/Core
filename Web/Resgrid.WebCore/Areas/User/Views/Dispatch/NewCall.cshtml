@@ -5,178 +5,186 @@
 }
 @section Styles
 {
+  <style>
+	.select2-close-mask {
+	z-index: 2099;
+	}
 
+	.select2-dropdown {
+	z-index: 3051;
+	}
+  </style>
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-	<h2>New Call</h2>
-	<ol class="breadcrumb">
-	  <li>
-		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-	  </li>
-	  <li>
-		<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
-	  </li>
-	  <li class="active">
-		<strong>New Call</strong>
-	  </li>
-	</ol>
+    <h2>New Call</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+      </li>
+      <li class="active">
+        <strong>New Call</strong>
+      </li>
+    </ol>
   </div>
   <div class="col-sm-8">
-	<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-	  <div class="buttons-actions">
-		<a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">Template</a>
-	  </div>
-	</div>
+    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+      <div class="buttons-actions">
+        <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">Template</a>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="row">
   <div class="col-xs-12">
-	<div class="wrapper wrapper-content">
-	  <div class="ibox float-e-margins">
-		<div class="ibox-content">
-		  <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="NewCall" asp-route-area="User" method="post">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="NewCall" asp-route-area="User" method="post">
 
-			<div class="row">
-			  <div class="col-md-8 col-md-offset-1">
-				@Html.AntiForgeryToken()
-				@Html.HiddenFor(m => m.Latitude)
-				@Html.HiddenFor(m => m.Longitude)
-				@Html.HiddenFor(m => m.Call.ReportingUserId)
-				<div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+              <div class="col-md-8 col-md-offset-1">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Latitude)
+                @Html.HiddenFor(m => m.Longitude)
+                @Html.HiddenFor(m => m.Call.ReportingUserId)
+                <div asp-validation-summary="All" class="text-danger"></div>
 
-				@if (!String.IsNullOrEmpty(Model.Message))
+                @if (!String.IsNullOrEmpty(Model.Message))
 				{
-				  <div class="alert alert-success">
-					@Model.Message
-				  </div>
+                  <div class="alert alert-success">
+                    @Model.Message
+                  </div>
 				}
-			  </div>
-			</div>
+              </div>
+            </div>
 
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Name</label>
-			  <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Call" asp-for="Call.Name"></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Priority</label>
-			  <div class="col-sm-10">@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { @style = "width: 120px;", tabindex = "2" })</div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Type</label>
-			  <div class="col-sm-10">@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 120px;", tabindex = "3" })</div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Reporter Name</label>
-			  <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Person Reporting the call" asp-for="Call.ContactName"></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Reporter Contact Info</label>
-			  <div class="col-sm-10"><input type="text" class="form-control" placeholder="Phone or Email address of the Reporter" asp-for="Call.ContactNumber"></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Call Id</label>
-			  <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Inbound Call System Id" asp-for="Call.ExternalIdentifier"></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Incident Id</label>
-			  <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Incident Grouping Id (can be same as Call Id)" asp-for="Call.IncidentNumber"></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Reference Id</label>
-			  <div class="col-sm-10"><input type="text" class="form-control" placeholder="Partner or Reference Number" asp-for="Call.ReferenceNumber"></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Nature of the Call</label>
-			  <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the nature of the call" asp-for="Call.NatureOfCall"></textarea></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Notes</label>
-			  <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="Notes for the call" asp-for="Call.Notes"></textarea></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Map Page</label>
-			  <div class="col-sm-10"><input type="text" class="form-control" placeholder="Map Book Page" asp-for="Call.MapPage"></div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Location</label>
-			  <div class="col-sm-10">
-				<div class="row">
-				  <div class="col-md-5">
-					<div class="input-group input-group-sm">
-					  <input type="text" class="form-control" placeholder="Full Address of the call (Street, City, State, Zip)" asp-for="Call.Address" name="Call_Address">
-					  <span class="input-group-btn">
-						<a id="searchButton" href="#" class="btn btn-info">Find Address</a>
-					  </span>
-					</div>
-				  </div>
-				  <div class="col-md-6" style="padding-left: 0px;">
-					<div class="input-group input-group-sm">
-					  <input type="text" class="form-control" placeholder="what.three.words" asp-for="What3Word" style="width:250px;">
-					  <span class="input-group-btn" style="float: left;">
-						<a id="findw3wButton" href="#" class="btn btn-info">Find w3w Location</a>
-					  </span>
-					</div>
-					<span class="help-inline">This is a what3words address. <a href="https://what3words.com/about/" target="_blank">Learn More.</a></span>
-				  </div>
-				</div>
-				<div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px;"></div>
-			  </div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Protocols</label>
-			  <div class="col-sm-10">
-				<table id="protocols" class="table table-striped table-bordered">
-				  <thead>
-					<tr>
-					  <th style="max-width: 100px;font-size: 14px;">Code</th>
-					  <th style="max-width: 350px;font-size: 14px;">Name</th>
-					  <th style="max-width: 350px;font-size: 14px;">Status</th>
-					</tr>
-				  </thead>
-				  <tbody></tbody>
-				</table>
-			  </div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Personnel</label>
-			  <div class="col-sm-10">
-				<div>
-				  <ul class="nav nav-tabs" role="tablist">
-					<li role="presentation" class="active"><a href="#personnelTab" aria-controls="home" role="tab" data-toggle="tab">Personnel</a></li>
-					<li role="presentation"><a href="#groupsTab" aria-controls="profile" role="tab" data-toggle="tab">Groups</a></li>
-					<li role="presentation"><a href="#rolesTab" aria-controls="settings" role="tab" data-toggle="tab">Roles</a></li>
-				  </ul>
-				  <div class="tab-content" style="height: 600px;">
-					<div role="tabpanel" class="tab-pane active" id="personnelTab">
-					  <div id="personnelGrid"></div>
-					</div>
-					<div role="tabpanel" class="tab-pane" id="groupsTab">
-					  <div id="groupsGrid"></div>
-					</div>
-					<div role="tabpanel" class="tab-pane" id="rolesTab">
-					  <div id="rolesGrid"></div>
-					</div>
-				  </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Name</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Call" asp-for="Call.Name"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Priority</label>
+              <div class="col-sm-10">@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { @style = "width: 120px;", tabindex = "2" })</div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Type</label>
+              <div class="col-sm-10">@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 120px;", tabindex = "3" })</div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Reporter Name</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Person Reporting the call" asp-for="Call.ContactName"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Reporter Contact Info</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Phone or Email address of the Reporter" asp-for="Call.ContactNumber"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Call Id</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Inbound Call System Id" asp-for="Call.ExternalIdentifier"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Incident Id</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="CAD Id or Incident Grouping Id (can be same as Call Id)" asp-for="Call.IncidentNumber"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Reference Id</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Partner or Reference Number" asp-for="Call.ReferenceNumber"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Nature of the Call</label>
+              <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the nature of the call" asp-for="Call.NatureOfCall"></textarea></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Notes</label>
+              <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="Notes for the call" asp-for="Call.Notes"></textarea></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Map Page</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Map Book Page" asp-for="Call.MapPage"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Location</label>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control" placeholder="Full Address of the call (Street, City, State, Zip)" asp-for="Call.Address" name="Call_Address">
+                      <span class="input-group-btn">
+                        <a id="searchButton" href="#" class="btn btn-info">Find Address</a>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-6" style="padding-left: 0px;">
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control" placeholder="what.three.words" asp-for="What3Word" style="width:250px;">
+                      <span class="input-group-btn" style="float: left;">
+                        <a id="findw3wButton" href="#" class="btn btn-info">Find w3w Location</a>
+                      </span>
+                    </div>
+                    <span class="help-inline">This is a what3words address. <a href="https://what3words.com/about/" target="_blank">Learn More.</a></span>
+                  </div>
+                </div>
+                <div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px;"></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Protocols</label>
+              <div class="col-sm-10">
+                <table id="protocols" class="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="max-width: 100px;font-size: 14px;">Code</th>
+                      <th style="max-width: 350px;font-size: 14px;">Name</th>
+                      <th style="max-width: 350px;font-size: 14px;">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Personnel</label>
+              <div class="col-sm-10">
+                <div>
+                  <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#personnelTab" aria-controls="home" role="tab" data-toggle="tab">Personnel</a></li>
+                    <li role="presentation"><a href="#groupsTab" aria-controls="profile" role="tab" data-toggle="tab">Groups</a></li>
+                    <li role="presentation"><a href="#rolesTab" aria-controls="settings" role="tab" data-toggle="tab">Roles</a></li>
+                  </ul>
+                  <div class="tab-content" style="height: 600px;">
+                    <div role="tabpanel" class="tab-pane active" id="personnelTab">
+                      <div id="personnelGrid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="groupsTab">
+                      <div id="groupsGrid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="rolesTab">
+                      <div id="rolesGrid"></div>
+                    </div>
+                  </div>
 
-				</div>
-			  </div>
-			</div>
-			<div class="form-group">
-			  <label class="col-sm-2 control-label">Units</label>
-			  <div class="col-sm-10">
-				<div>
-				  <ul class="nav nav-tabs" role="tablist">
-					@{
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Units</label>
+              <div class="col-sm-10">
+                <div>
+                  <ul class="nav nav-tabs" role="tablist">
+                    @{
 					  var count = 0;
 
 					  var ungroupedUnits = Model.Units.Where(x => x.StationGroupId == null);
 
 					  if (ungroupedUnits != null && ungroupedUnits.Any())
 					  {
-						@Html.Raw("<li role='presentation' class='active'><a href='#unitsTab0' aria-controls='home' role='tab' data-toggle='tab'>Units</a></li>");
+                        @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab0' aria-controls='home' role='tab' data-toggle='tab'>Units</a></li>");
 						count++;
 					  }
 
@@ -189,28 +197,28 @@
 						{
 						  if (count == 0)
 						  {
-							@Html.Raw("<li role='presentation' class='active'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
+                            @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
 						  }
 						  else
 						  {
-							@Html.Raw("<li role='presentation'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
+                            @Html.Raw("<li role='presentation'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
 						  }
 
 						  count++;
 						}
 					  }
-					}
-				  </ul>
-				  <div class="tab-content">
-					@{
+                    }
+                  </ul>
+                  <div class="tab-content">
+                    @{
 					  var count2 = 0;
 
 					  var ungroupedUnits2 = Model.Units.Where(x => x.StationGroupId == null);
 
 					  if (ungroupedUnits2 != null && ungroupedUnits2.Any())
 					  {
-						@Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>");
-						@Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_0\", this)'/></th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody id='unitGroups_0'>");
+                        @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>");
+                        @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_0\", this)'/></th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody id='unitGroups_0'>");
 
 						if (ungroupedUnits2 != null && ungroupedUnits2.Any())
 						{
@@ -233,10 +241,10 @@
 							  }
 							}
 
-							@Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>");
+                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>");
 						  }
 						}
-						@Html.Raw("</tbody></table></div></div>");
+                        @Html.Raw("</tbody></table></div></div>");
 						count2++;
 					  }
 
@@ -248,14 +256,14 @@
 						{
 						  if (count2 == 0)
 						  {
-							@Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
+                            @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
 						  }
 						  else
 						  {
-							@Html.Raw("<div role='tabpanel' class='tab-pane' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
+                            @Html.Raw("<div role='tabpanel' class='tab-pane' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
 						  }
 
-						  @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_" + Model.Groups[i].DepartmentGroupId + "\", this)'/></th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>");
+                          @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_" + Model.Groups[i].DepartmentGroupId + "\", this)'/></th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>");
 
 						  if (groupUnits != null && groupUnits.Any())
 						  {
@@ -278,74 +286,74 @@
 								}
 							  }
 
-							  @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>");
+                              @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>");
 							}
 						  }
-						  @Html.Raw("</tbody></table></div></div>");
+                          @Html.Raw("</tbody></table></div></div>");
 
 						  count2++;
 						}
 					  }
-					}
-				  </div>
-				</div>
-			  </div>
-			</div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
 
-			<div class="form-group">
-			  <div class="col-sm-4 col-sm-offset-2">
-				<a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Cancel</a>
-				<button class="btn btn-primary" type="submit">Create and Dispatch Call</button>
-			  </div>
-			</div>
-		  </form>
-		</div>
-	  </div>
-	</div>
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Cancel</a>
+                <button class="btn btn-primary" type="submit">Create and Dispatch Call</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="callQuickTemplateWindow">
+<div class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="callQuickTemplateWindow">
   <div class="modal-dialog">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Select Call Template</h4>
-	  </div>
-	  <div class="modal-body">
-		<div class="form-group">
-		  <label class=" control-label">
-			Call Templates
-		  </label>
-		  <div class="controls">
-			@Html.DropDownListFor(m => m.CallTemplateId, Model.CallTemplates)
-		  </div>
-		</div>
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="resgrid.dispatch.newcall.fillCallTemplate();">Set Template</button>
-	  </div>
-	</div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Select Call Template</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class=" control-label">
+            Call Templates
+          </label>
+          <div class="controls">
+            <select asp-for="CallTemplateId" asp-items="Model.CallTemplates" style="padding-left: 0; width: 100%;"></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="resgrid.dispatch.newcall.fillCallTemplate();">Set Template</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="protocolQuestionWindow">
   <div class="modal-dialog">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Select Call Template</h4>
-	  </div>
-	  <div class="modal-body">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Select Call Template</h4>
+      </div>
+      <div class="modal-body">
 
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button id="processQuestionAnswers" type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Process</button>
-	  </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button id="processQuestionAnswers" type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Process</button>
+      </div>
 
-	</div>
+    </div>
   </div>
 </div>
 
@@ -353,10 +361,10 @@
 {
   @if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
   {
-	<script type="text/javascript">
+    <script type="text/javascript">
 			var centerLat = @(Model.CenterCoordinates.Latitude.Value);
 			var centerLng = @(Model.CenterCoordinates.Longitude.Value);
-	</script>
+    </script>
   }
 
   <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>

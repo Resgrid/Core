@@ -151,5 +151,88 @@ namespace Resgrid.Repositories.DataRepository
 				throw;
 			}
 		}
+
+		public async Task<IEnumerable<string>> SelectLogYearsByDeptAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<string>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectLogYearsByDeptQuery>();
+
+					return await x.QueryAsync<string>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<Log>> GetAllLogsByDepartmentIdYearAsync(int departmentId, string year)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Log>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("Year", year);
+
+					var query = _queryFactory.GetQuery<SelecAllLogsByDidYearQuery>();
+
+					return await x.QueryAsync<Log>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
 	}
 }

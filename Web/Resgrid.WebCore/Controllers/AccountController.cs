@@ -204,7 +204,7 @@ namespace Resgrid.Web.Controllers
 					_departmentsService.InvalidateDepartmentMembers();
 
 					_emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
-					_emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, model.Password, department.DepartmentId);
+					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, model.Password, department.DepartmentId);
 
 					var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
 					if (loginResult.Succeeded)
@@ -248,7 +248,6 @@ namespace Resgrid.Web.Controllers
 		// GET: /Account/ForgotPassword
 		[HttpGet]
 		[AllowAnonymous]
-		[ValidateAntiForgeryToken]
 		public IActionResult ForgotPassword()
 		{
 			ForgotPasswordViewModel model = new ForgotPasswordViewModel();
@@ -263,6 +262,8 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model, CancellationToken cancellationToken)
 		{
+			model.SiteKey = WebConfig.RecaptchaPublicKey;
+
 			if (ModelState.IsValid)
 			{
 				var user = await _userManager.FindByEmailAsync(model.Email);
@@ -281,7 +282,7 @@ namespace Resgrid.Web.Controllers
 
 				if (result.Succeeded)
 				{
-					_emailService.SendPasswordResetEmail(user.Email, profile.FullName.AsFirstNameLastName, user.UserName, newPassword, department.Name);
+					await _emailService.SendPasswordResetEmail(user.Email, profile.FullName.AsFirstNameLastName, user.UserName, newPassword, department.Name);
 				}
 
 				return View("ForgotPasswordConfirmation");

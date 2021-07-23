@@ -31,12 +31,14 @@ namespace Resgrid.Providers.AddressVerification
 
 				if (response.Data.results.Count <= 0)
 					result.ServiceSuccess = false;
+				else
+				{
+					var code = new VerificationCode(response.Data.results[0].AVC);
+					result.ServiceSuccess = true;
 
-				var code = new VerificationCode(response.Data.results[0].AVC);
-				result.ServiceSuccess = true;
-
-				if (code.WasAddressVerified() && code.WasAddressedParsed() && code.VerifiedToPremises())
-					result.AddressValid = true;
+					if (code.WasAddressVerified() && code.WasAddressedParsed() && code.VerifiedToPremises())
+						result.AddressValid = true;
+				}
 			}
 			catch (Exception ex)
 			{

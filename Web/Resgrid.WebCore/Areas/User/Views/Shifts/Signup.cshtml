@@ -127,8 +127,10 @@
 											</tr>
 										</thead>
 										<tbody>
+					  @if (group.Roles != null && group.Roles.Any())
+					  {
 											@foreach (var role in group.Roles)
-												{
+											{
 												<tr>
 													<td>
 														@role.Role.Name
@@ -141,16 +143,17 @@
 													</td>
 													<td>
 														@if (Model.Needs != null && Model.Needs.ContainsKey(group.DepartmentGroupId))
-															{
-																var needsForGroup = Model.Needs[group.DepartmentGroupId];
+														{
+														  var needsForGroup = Model.Needs[group.DepartmentGroupId];
 
-																if (needsForGroup.ContainsKey(role.PersonnelRoleId))
-																{
+														  if (needsForGroup.ContainsKey(role.PersonnelRoleId))
+														  {
 															<span>@needsForGroup[role.PersonnelRoleId]</span>			}
-															}
+														}
 													</td>
 												</tr>
-												}
+											}
+					  }
 										</tbody>
 									</table>
 									<h4>Signups</h4>

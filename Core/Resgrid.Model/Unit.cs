@@ -47,6 +47,9 @@ namespace Resgrid.Model
 		public virtual Department Department { get; set; }
 
 		[NotMapped]
+		public virtual List<UnitRole> Roles { get; set; }
+
+		[NotMapped]
 		public object IdValue
 		{
 			get { return UnitId; }
@@ -60,6 +63,6 @@ namespace Resgrid.Model
 		public string IdName => "UnitId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "StationGroup", "Department" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "StationGroup", "Department", "Roles" };
 	}
 }

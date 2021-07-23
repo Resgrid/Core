@@ -68,7 +68,7 @@ namespace Resgrid.Services
 			var shift = await _shiftsRepository.GetShiftAndDaysByShiftIdAsync(shiftId);
 			//shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shiftId)).ToList();
 			//shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
-			//shift.Groups = await GetShiftGroupsForShift(shiftId);
+			shift.Groups = await GetShiftGroupsForShift(shiftId);
 			//shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shiftId)).ToList();
 			//shift.Admins = (await _shift
 
@@ -78,17 +78,19 @@ namespace Resgrid.Services
 		public async Task<Shift> PopulateShiftData(Shift shift, bool getDepartment, bool getPersonnel, bool getGroups,
 			bool getSignups, bool getAdmins)
 		{
-			//if (getDepartment && shift.Department == null)
-			//	shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
+			if (getDepartment && shift.Department == null)
+				shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
 
-			//if (getPersonnel && shift.Personnel == null)
-			//	shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId)).ToList();
+			if (getPersonnel && shift.Personnel == null)
+				shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId)).ToList();
+			else
+				shift.Personnel = new List<ShiftPerson>();
 
-			//if (getGroups && shift.Groups == null)
-			//	shift.Groups = await GetShiftGroupsForShift(shift.ShiftId);
+			if (getGroups && shift.Groups == null)
+				shift.Groups = await GetShiftGroupsForShift(shift.ShiftId);
 
-			//if (getSignups && shift.Signups == null)
-			//	shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId)).ToList();
+			if (getSignups && shift.Signups == null)
+				shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId)).ToList();
 
 			return shift;
 		}
@@ -266,56 +268,59 @@ namespace Resgrid.Services
 
 			var shifts = await _shiftsRepository.GetAllShiftAndDaysAsync();
 
-			foreach (var shift in shifts)
+			if (shifts != null && shifts.Any())
 			{
-				try
+				foreach (var shift in shifts)
 				{
-					//var shiftData = await PopulateShiftData(shift, true, true, true, true, true);
-
-					if (shift.Days != null && shift.Days.Any())
+					try
 					{
-						if (shift.Department == null)
-							shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId, false);
+						//var shiftData = await PopulateShiftData(shift, true, true, true, true, true);
 
-						var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shift.Department);
-
-						var shiftStart = shift.StartTime;
-
-						if (String.IsNullOrWhiteSpace(shiftStart))
-							shiftStart = "12:00 AM";
-
-						var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shift.Department.Use24HourTime.GetValueOrDefault());
-
-						var shiftDays = from sd in shift.Days
-										let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault())
-										let nextDayShiftTime = localizedDate.AddDays(1)
-										where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
-										select sd;
-
-						//List<ShiftDay> shiftDays = new List<ShiftDay>();
-						//foreach (var sd in shift.Days)
-						//{
-						//	var shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault());
-						//	var nextDayShiftTime = localizedDate.AddDays(1);
-
-						//	if (shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15)))
-						//		shiftDays.Add(sd);
-						//}
-
-						if (shiftDays.Any())
+						if (shift.Days != null && shift.Days.Any())
 						{
-							var previousShift = from sd in shift.Days
-												where sd.Day.ToShortDateString() == startTime.ToShortDateString()
-												select sd;
+							if (shift.Department == null)
+								shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId, false);
 
-							if (!previousShift.Any())
-								upcomingShifts.Add(shift);
+							var localizedDate = TimeConverterHelper.TimeConverter(currentTime, shift.Department);
+
+							var shiftStart = shift.StartTime;
+
+							if (String.IsNullOrWhiteSpace(shiftStart))
+								shiftStart = "12:00 AM";
+
+							var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, shift.Department.Use24HourTime.GetValueOrDefault());
+
+							var shiftDays = from sd in shift.Days
+											let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault())
+											let nextDayShiftTime = localizedDate.AddDays(1)
+											where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15))
+											select sd;
+
+							//List<ShiftDay> shiftDays = new List<ShiftDay>();
+							//foreach (var sd in shift.Days)
+							//{
+							//	var shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, shift.Department.Use24HourTime.GetValueOrDefault());
+							//	var nextDayShiftTime = localizedDate.AddDays(1);
+
+							//	if (shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromMinutes(15)))
+							//		shiftDays.Add(sd);
+							//}
+
+							if (shiftDays.Any())
+							{
+								var previousShift = from sd in shift.Days
+													where sd.Day.ToShortDateString() == startTime.ToShortDateString()
+													select sd;
+
+								if (!previousShift.Any())
+									upcomingShifts.Add(shift);
+							}
 						}
 					}
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, $"DepartmentId:{shift.DepartmentId}");
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, $"DepartmentId:{shift.DepartmentId}");
+					}
 				}
 			}
 
@@ -453,9 +458,12 @@ namespace Resgrid.Services
 				{
 					var roleRequirements = new Dictionary<int, int>();
 
-					foreach (var role in group.Roles)
+					if (group.Roles != null && group.Roles.Any())
 					{
-						roleRequirements.Add(role.PersonnelRoleId, role.Required);
+						foreach (var role in group.Roles)
+						{
+							roleRequirements.Add(role.PersonnelRoleId, role.Required);
+						}
 					}
 
 					if (shiftSignups != null && shiftSignups.Any())

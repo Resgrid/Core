@@ -254,6 +254,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 				var unitViewModel = new UnitViewModel
 				{
+					UnitId = unit.Unit.UnitId,
 					Name = unit.Unit.Name,
 					Type = unit.Unit.Type,
 					State = state,

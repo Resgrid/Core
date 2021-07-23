@@ -14,8 +14,9 @@ using Resgrid.Web.Areas.User.Models.Profile;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
-using System.Drawing;
-using System.Net.Mime;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System.Threading;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Options;
@@ -25,6 +26,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Web.Areas.User.Models.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
+using SixLabors.ImageSharp.Formats;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -1170,7 +1172,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 							if (nextDepartmentUp != null)
 							{
-								_departmentsService.SetDefaultDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
+								await _departmentsService.SetDefaultDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
 									user, cancellationToken);
 							}
 						}
@@ -1186,6 +1188,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region Avatar
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> GetAvatar(string id, int? type)
 		{
 			if (type == null)
@@ -1221,6 +1224,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> Upload(string id, int? type, CancellationToken cancellationToken)
 		{
 			if (Request.Form.Files == null || !Request.Form.Files.Any()) { return BadRequest(); }
@@ -1229,21 +1233,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// check for a valid mediatype
 			if (!file.ContentType.StartsWith("image/"))
-				return StatusCode(500);
+				return StatusCode(400);
 
-			// load the image from the upload and generate a new filename
-			var image = Image.FromStream(file.OpenReadStream());
 			var extension = Path.GetExtension(file.FileName);
+			byte[] imgArray = null;
+			int width = 0;
+			int height = 0;
 
-			ImageConverter converter = new ImageConverter();
-			byte[] imgArray = (byte[])converter.ConvertTo(image, typeof(byte[]));
+			using (Image image = Image.Load(file.OpenReadStream()))
+			{
+				using (MemoryStream stream = new MemoryStream())
+				{
+					IImageFormat imageFormat = Configuration.Default.ImageFormatsManager.FindFormatByFileExtension("png");
+					image.Save(stream, imageFormat);
+
+					width = image.Width;
+					height = image.Height;
+
+					stream.Position = 0;
+					imgArray = stream.ToArray();
+				}
+			}
 
 			if (type == null)
 				await _imageService.SaveImageAsync(ImageTypes.Avatar, id, imgArray, cancellationToken);
 			else
 				await _imageService.SaveImageAsync((ImageTypes)type.Value, id, imgArray, cancellationToken);
-
-			var baseUrl= Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 
 			string url;
 
@@ -1256,32 +1271,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				status = CroppicStatuses.Success,
 				url = url,
-				width = image.Width,
-				height = image.Height
+				width = width,
+				height = height
 			};
 
 			return Json(obj);
 		}
 
 		[HttpPut]
+		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> Crop([FromBody]CropRequest model, CancellationToken cancellationToken)
 		{
 			// extract original image ID and generate a new filename for the cropped result
 			var originalUri = new Uri(model.imgUrl);
 			var originalId = originalUri.Query.Replace("?id=", "");
+			byte[] imgArray = null;
 
 			try
 			{
 				var ms = new MemoryStream(await _imageService.GetImageAsync(ImageTypes.Avatar, originalId));
-				var img = Image.FromStream(ms);
 
-				// load the original picture and resample it to the scaled values
-				var bitmap = ImageUtils.Resize(img, (int)model.imgW, (int)model.imgH);
+				using (Image image = Image.Load(ms))
+				{
+					using (MemoryStream stream = new MemoryStream())
+					{
+						IImageFormat imageFormat = Configuration.Default.ImageFormatsManager.FindFormatByFileExtension("png");
+						image.Mutate(x => x
+						 .Resize((int)model.imgW, (int)model.imgH));
 
-				var croppedBitmap = ImageUtils.Crop(bitmap, model.imgX1, model.imgY1, model.cropW, model.cropH);
+						Rectangle rectangle = new Rectangle(model.imgX1, model.imgY1, model.cropW, model.cropH);
+						image.Mutate(ctx => ctx.Crop(rectangle));
 
-				ImageConverter converter = new ImageConverter();
-				byte[] imgArray = (byte[])converter.ConvertTo(croppedBitmap, typeof(byte[]));
+						image.Save(stream, imageFormat);
+
+						stream.Position = 0;
+						imgArray = stream.ToArray();
+					}
+				}
 
 				await _imageService.SaveImageAsync(ImageTypes.Avatar, originalId, imgArray, cancellationToken);
 			}
@@ -1293,7 +1319,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var obj = new
 			{
 				status = CroppicStatuses.Success,
-				url = originalId
+				url = model.imgUrl
 			};
 
 			return Json(obj);

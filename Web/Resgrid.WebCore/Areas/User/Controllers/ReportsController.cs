@@ -22,6 +22,7 @@ using Resgrid.Web.Areas.User.Models.Reports.Params;
 using Resgrid.Web.Areas.User.Models.Reports.Personnel;
 using Resgrid.Web.Areas.User.Models.Reports.Shifts;
 using Resgrid.Web.Helpers;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -45,12 +46,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICallsService _callsService;
 		private readonly IWorkLogsService _workLogsService;
 		private readonly ICustomStateService _customStateService;
+		private readonly IAuthorizationService _authorizationService;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 				IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUserProfileService userProfileService,
 	IAddressService addressService, IUserStateService userStateService, IScheduledTasksService scheduledTasksService,
 	ICertificationService certificationService, IWorkLogsService logService, IShiftsService shiftsService, ICallsService callsService, IWorkLogsService workLogsService,
-	ICustomStateService customStateService)
+	ICustomStateService customStateService, IAuthorizationService authorizationService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -67,6 +69,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_callsService = callsService;
 			_workLogsService = workLogsService;
 			_customStateService = customStateService;
+			_authorizationService = authorizationService;
 		}
 		#endregion Private Members and Constructors
 
@@ -228,6 +231,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		
 		public async Task<IActionResult> LogReport(int logId)
 		{
+			if (!await _authorizationService.CanUserViewAndEditWorkLogAsync(UserId, logId))
+				Unauthorized();
+
 			return View(await CreateLogReportModel(logId));
 		}
 

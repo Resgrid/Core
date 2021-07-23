@@ -230,7 +230,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
-				return db.Query<UserGroupRole>(@"SELECT dgm.DepartmentGroupId, u.Id as 'UserId',
+				var query = db.Query<UserGroupRole>(@"SELECT dgm.DepartmentGroupId, u.Id as 'UserId',
 												(SELECT STUFF((
 														SELECT ',' +  CONVERT(varchar, pru.PersonnelRoleId)
 														FROM PersonnelRoleUsers pru
@@ -247,14 +247,14 @@ namespace Resgrid.Repositories.DataRepository
 												up.LastName AS 'LastName'
 												FROM DepartmentMembers dm
 												INNER JOIN AspNetUsers u ON u.Id = dm.UserId
-												LEFT OUTER JOIN DepartmentGroupMembers dgm ON u.Id = dgm.UserId
+												LEFT OUTER JOIN DepartmentGroupMembers dgm ON u.Id = dgm.UserId AND dgm.DepartmentId = @departmentId
 												LEFT OUTER JOIN DepartmentGroups dg ON dg.DepartmentGroupId = dgm.DepartmentGroupId
 												INNER JOIN UserProfiles up ON up.UserId = u.Id
 												WHERE dm.DepartmentId = @departmentId AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (@retrieveDisabled = 1 OR (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)) AND (@retrieveDeleted = 1 OR (dm.IsDeleted = 0 OR dm.IsDeleted IS NULL))",
-								new { departmentId = departmentId, retrieveHidden = retrieveHidden, retrieveDisabled = retrieveDisabled, retrieveDeleted = retrieveDeleted }).ToList();
-			}
+								new { departmentId = departmentId, retrieveHidden = retrieveHidden, retrieveDisabled = retrieveDisabled, retrieveDeleted = retrieveDeleted });
 
-			return null;
+				return query.ToList();
+			}
 		}
 	}
 }

@@ -10,5 +10,7 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public bool IsDepartmentAdmin { get; set; }
 		public int GroupId { get; set; }
 		public string Note { get; set; }
+
+		public Dictionary<int, List<UnitStateRole>> CurrentUnitRoles { get; set; }
 	}
 }

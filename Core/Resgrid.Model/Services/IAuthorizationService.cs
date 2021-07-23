@@ -222,5 +222,13 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> CanUserManageSubscriptionAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can delete work log asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="logId">The log identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserDeleteWorkLogAsync(string userId, int logId);
 	}
 }

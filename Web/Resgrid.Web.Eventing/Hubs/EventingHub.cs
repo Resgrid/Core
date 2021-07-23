@@ -24,6 +24,12 @@ namespace Resgrid.Web.Eventing.Hubs
 		Task CallsUpdated(int departmentId, int id);
 
 		Task DepartmentUpdated(int departmentId);
+
+		Task SubscribeToCall(int callId);
+
+		Task UnsubscribeToCall(int callId);
+
+		Task CallDataUpdated(int callId);
 	}
 
 	[AllowAnonymous]
@@ -97,6 +103,24 @@ namespace Resgrid.Web.Eventing.Hubs
 
 			if (group != null)
 				await group.SendAsync("departmentUpdated");
+		}
+
+		public async Task SubscribeToCall(int callId)
+		{
+			await Groups.AddToGroupAsync(Context.ConnectionId, $"CallUpdated:${callId}");
+		}
+
+		public async Task UnsubscribeToCall(int callId)
+		{
+			await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"CallUpdated:${callId}");
+		}
+
+		public async Task CallDataUpdated(int callId)
+		{
+			var group = Clients.Group($"CallUpdated:${callId}");
+
+			if (group != null)
+				await group.SendAsync("callDataUpdated", callId);
 		}
 	}
 }

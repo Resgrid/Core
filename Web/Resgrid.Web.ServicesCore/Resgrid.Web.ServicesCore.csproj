@@ -55,6 +55,7 @@
 	<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.8" />
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
 	<PackageReference Include="protobuf-net" Version="3.0.29" />
+	<PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 	<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3" />
 	<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.6.3" />

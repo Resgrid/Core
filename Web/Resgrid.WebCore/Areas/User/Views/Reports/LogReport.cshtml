@@ -266,7 +266,7 @@
 								</td>
 								<td>
 									<strong><small>Priority</small></strong>
-									<span style="display: block;">@(((CallPriority)Model.Log.Call.Priority).ToString())</span>
+									<span style="display: block;">@(await CallPriorityHelper.CallPriorityToString(Model.Log.DepartmentId, Model.Log.Call.Priority))</span>
 								</td>
 							}
 							else

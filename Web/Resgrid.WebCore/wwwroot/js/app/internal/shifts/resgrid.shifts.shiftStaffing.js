@@ -68,15 +68,28 @@ var resgrid;
                     contentType: 'application/json; charset=utf-8',
                     type: 'GET'
                 }).done(function (data) {
+                    var ids = new Array();
+
                     if (isAdmin) {
                         html = '<div class="form-group"><label class="control-label">Non - Group Personnel</label><div class="controls"><div class="col-xs-6"><select id="shiftPersonnel" name="shiftPersonnel"></select></div></div></div>';
                     }
                     for (var i = 0; i < data.length; i++) {
                         if (isAdmin || data[i].Id == groupId) {
-                            html = html + '<div class="form-group"><label class="control-label">' + data[i].Name + '</label><div class="controls"><div class="col-md-6"><select id="groupPersonnel_' + data[i].Id + '" name= "groupPersonnel_' + data[i].Id + '" class="groupPersonnelSelect"></select></div></div></div>';
+                            var itemHtml = '<div class="form-group"><label class="control-label">' + data[i].Name + '</label><div class="controls"><div class="col-md-6">';
+
+                            itemHtml = itemHtml + '<div class="row"><div class="col-sm-10"><select id="groupPersonnel_' + data[i].Id + '" name="groupPersonnel_' + data[i].Id + '" class="groupPersonnelSelect"></select></div></div>';
+                            itemHtml = itemHtml + `<div id="groupUnits_${data[i].Id}"></div></div></div></div>`;
+
+                            ids.push(data[i].Id);
+                            html = html + itemHtml;
                         }
                     }
                     $('#groupStaffing').empty().append(html);
+
+                    //for (var i = 0; i < ids.length; i++) {
+                    //    createUnitInputs(ids[i]);
+                    //}
+
                     if (isAdmin) {
                         $("#shiftPersonnel").kendoMultiSelect({
                             placeholder: "Select Non-Group Personnel...",
@@ -139,6 +152,57 @@ var resgrid;
                 });
             }
             shiftStaffing.createGroupInputs = createGroupInputs;
+
+
+            function createUnitInputs(groupId) {
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsAndRolesForGroup?groupId=' + groupId,
+                    contentType: 'application/json; charset=utf-8',
+                    type: 'GET'
+                }).done(function (data2) {
+                    if (data2) {
+                        $(`#groupUnits_${groupId}`).empty();
+
+                        for (var j = 0; j < data2.length; j++) {
+                            if (data2[j] && data2[j].Roles) {
+                                //var unitsHtml = `<div class="col-sm-10">${data2[j].Name}</div>`;
+                                var unitsHtml = `<div class="form-group"><label class="control-label">${data2[j].Name}</label><div class="controls"><div class="col-md-6">`
+
+                                var roleIds = new Array();
+                                for (var k = 0; k < data2[j].Roles.length; k++) {
+                                    roleIds.push(data2[j].Roles[k].UnitRoleId);
+                                    unitsHtml = unitsHtml + `<div class="row"><div class="col-sm-5">${data2[j].Roles[k].Name}</div>`;
+                                    unitsHtml = unitsHtml + `<div class="col-sm-5"><select id="unitRole_${data2[j].UnitId}_${data2[j].Roles[k].UnitRoleId}" name="unitRole_${data2[j].UnitId}_${data2[j].Roles[k].RoleId}" class="unitRoleSelect"></select></div></div>`;
+                                }
+
+                                unitsHtml = unitsHtml + `</div>`;
+
+                                if (data2[j].GroupId && data2[j].GroupId > 0) {
+                                    $(`#groupUnits_${data2[j].GroupId}`).append(unitsHtml);
+
+                                    for (var l = 0; l < roleIds.length; l++) {
+                                        $(`#unitRole_${data2[j].UnitId}_${roleIds[l]}`).each(function (i, obj) {
+                                            var that = this;
+                                            $(that).kendoComboBox({
+                                                placeholder: "Select Person...",
+                                                dataTextField: "Name",
+                                                dataValueField: "UserId",
+                                                autoBind: false,
+                                                dataSource: {
+                                                    type: "json",
+                                                    transport: {
+                                                        read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+                                                    }
+                                                }
+                                            });
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         })(shiftStaffing = shifts.shiftStaffing || (shifts.shiftStaffing = {}));
     })(shifts = resgrid.shifts || (resgrid.shifts = {}));
 })(resgrid || (resgrid = {}));

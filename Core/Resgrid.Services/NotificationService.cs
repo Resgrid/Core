@@ -517,8 +517,13 @@ namespace Resgrid.Services
 						if (setting.BeforeData.Contains("-1") && setting.CurrentData.Contains("-1"))
 							return true;
 
-						bool beforeAny = setting.BeforeData.Contains("-1");
-						bool currentAny = setting.CurrentData.Contains("-1");
+						bool beforeAny = false;
+						if (!string.IsNullOrWhiteSpace(setting.BeforeData))
+							beforeAny = setting.BeforeData.Contains("-1");
+
+						bool currentAny = false;
+						if (!string.IsNullOrWhiteSpace(setting.CurrentData))
+							currentAny = setting.CurrentData.Contains("-1");
 
 						UserState beforeState = null;
 						UserState currentState = null;

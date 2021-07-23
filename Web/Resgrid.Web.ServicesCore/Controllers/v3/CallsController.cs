@@ -782,6 +782,20 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				{
 					Logging.LogException(ex);
 				}
+
+				try
+				{
+					var unitsToDispatch = dispatch.Where(x => x.StartsWith("U:")).Select(y => int.Parse(y.Replace("U:", "")));
+					foreach (var unit in unitsToDispatch)
+					{
+						var cdu = new CallDispatchUnit { UnitId = unit };
+						call.UnitDispatches.Add(cdu);
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
 			}
 			
 

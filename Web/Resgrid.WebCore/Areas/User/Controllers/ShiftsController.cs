@@ -34,9 +34,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserProfileService _userProfileService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IUnitsService _unitsService;
 
 		public ShiftsController(IShiftsService shiftsService, IDepartmentGroupsService departmentGroupsService, IDepartmentsService departmentService,
-			IPersonnelRolesService personnelRolesService, IUserProfileService userProfileService, IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService)
+			IPersonnelRolesService personnelRolesService, IUserProfileService userProfileService, IEventAggregator eventAggregator,
+			IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService)
 		{
 			_shiftsService = shiftsService;
 			_departmentGroupsService = departmentGroupsService;
@@ -45,6 +47,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userProfileService = userProfileService;
 			_eventAggregator = eventAggregator;
 			_departmentSettingsService = departmentSettingsService;
+			_unitsService = unitsService;
 		}
 
 		[HttpGet]
@@ -753,7 +756,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new ShiftStaffingView();
 
-			SetShiftStaffingModel(model);
+			await SetShiftStaffingModel(model);
 
 			return View(model);
 		}
@@ -761,10 +764,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private async Task<ShiftStaffingView> SetShiftStaffingModel(ShiftStaffingView model)
 		{
 			model.Shifts = new List<Shift>();
+			model.CurrentUnitRoles = new Dictionary<int, List<UnitStateRole>>();
 
 			var department = await _departmentService.GetDepartmentByIdAsync(DepartmentId);
 			var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 
 			if (department.IsUserAnAdmin(UserId))
 			{
@@ -782,6 +787,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
+			foreach (var unit in units)
+			{
+				model.CurrentUnitRoles.Add(unit.UnitId, await _unitsService.GetCurrentRolesForUnitAsync(unit.UnitId));
+			}
+
 			return model;
 		}
 
@@ -791,7 +801,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (String.IsNullOrWhiteSpace(form["shiftDayPicker"]))
 			{
-				SetShiftStaffingModel(model);
+				await SetShiftStaffingModel(model);
 				ModelState.AddModelError("shiftDayPicker", "You must select a valid shift day");
 			}
 
@@ -839,6 +849,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				//List<string> unitRoles = (from object key in form.Keys where key.ToString().StartsWith("unitRole_") select key.ToString()).ToList();
+				//foreach (var i in unitRoles)
+				//{
+				//	var iTrimmed = i.Replace("unitRole_", "");
+				//	var middleUnderscrore = iTrimmed.IndexOf(char.Parse("_"));
+				//	var unitId = int.Parse(iTrimmed.Substring(0, middleUnderscrore));
+				//	var roleId = int.Parse(iTrimmed.Substring(middleUnderscrore, iTrimmed.Length));
+
+				//	if (form.ContainsKey(i))
+				//	{
+				//		var personId = form[i].ToString();
+
+						
+
+				//	}
+				//}
+
 				var savedStaffing = await _shiftsService.SaveShiftStaffingAsync(staffing, cancellationToken);
 
 				return RedirectToAction("Index");
@@ -861,103 +888,106 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var shift in shifts)
 			{
-				foreach (var day in shift.Days)
+				if (shift.Days != null && shift.Days.Any())
 				{
-					day.Shift = shift;
-
-					var item = new ShiftCalendarItemJson();
-					item.CalendarItemId = day.ShiftDayId;
-
-					if (String.IsNullOrWhiteSpace(shift.EndTime))
-						item.IsAllDay = true;
-					else
-						item.IsAllDay = false;
-
-					DateTime startResult;
-					if (!String.IsNullOrWhiteSpace(shift.StartTime) && DateTime.TryParse(shift.StartTime, out startResult))
+					foreach (var day in shift.Days)
 					{
-						item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, startResult.Hour, startResult.Minute, 0, DateTimeKind.Local);
-					}
-					else
-					{
-						item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 0, 0, 0, DateTimeKind.Local);
-					}
+						day.Shift = shift;
 
-					DateTime endResult;
-					if (!String.IsNullOrWhiteSpace(shift.EndTime) && DateTime.TryParse(shift.EndTime, out endResult))
-					{
-						item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, endResult.Hour, endResult.Minute, 0, DateTimeKind.Local);
-					}
-					else
-					{
-						item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 23, 59, 59, DateTimeKind.Local);
-					}
+						var item = new ShiftCalendarItemJson();
+						item.CalendarItemId = day.ShiftDayId;
 
-					item.Title = shift.Name;
-					item.Description = shift.Name;
-					item.ItemType = day.ShiftId; // The Color in the calendar
-					item.SignupType = shift.AssignmentType;
-					item.ShiftId = day.ShiftId;
-					item.Filled = await _shiftsService.IsShiftDayFilledWithObjAsync(shift, day);
-					item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId);
+						if (String.IsNullOrWhiteSpace(shift.EndTime))
+							item.IsAllDay = true;
+						else
+							item.IsAllDay = false;
 
-					var shiftGroups = await _shiftsService.GetShiftDayNeedsObjAsync(shift, day);
-
-					if (shiftGroups != null)
-					{
-						foreach (var shiftGroup in shiftGroups)
+						DateTime startResult;
+						if (!String.IsNullOrWhiteSpace(shift.StartTime) && DateTime.TryParse(shift.StartTime, out startResult))
 						{
-							var group = new ShiftGroupNeeds();
+							item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, startResult.Hour, startResult.Minute, 0, DateTimeKind.Local);
+						}
+						else
+						{
+							item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 0, 0, 0, DateTimeKind.Local);
+						}
 
-							var departmentGroup = allGroups.FirstOrDefault(x => x.DepartmentGroupId == shiftGroup.Key);
-							if (departmentGroup != null)
+						DateTime endResult;
+						if (!String.IsNullOrWhiteSpace(shift.EndTime) && DateTime.TryParse(shift.EndTime, out endResult))
+						{
+							item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, endResult.Hour, endResult.Minute, 0, DateTimeKind.Local);
+						}
+						else
+						{
+							item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 23, 59, 59, DateTimeKind.Local);
+						}
+
+						item.Title = shift.Name;
+						item.Description = shift.Name;
+						item.ItemType = day.ShiftId; // The Color in the calendar
+						item.SignupType = shift.AssignmentType;
+						item.ShiftId = day.ShiftId;
+						item.Filled = await _shiftsService.IsShiftDayFilledWithObjAsync(shift, day);
+						item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId);
+
+						var shiftGroups = await _shiftsService.GetShiftDayNeedsObjAsync(shift, day);
+
+						if (shiftGroups != null)
+						{
+							foreach (var shiftGroup in shiftGroups)
 							{
-								group.ShiftGroupId = departmentGroup.DepartmentGroupId;
-								group.Name = departmentGroup.Name;
+								var group = new ShiftGroupNeeds();
 
-								foreach (var shiftGroupNeed in shiftGroup.Value)
+								var departmentGroup = allGroups.FirstOrDefault(x => x.DepartmentGroupId == shiftGroup.Key);
+								if (departmentGroup != null)
 								{
-									var role = allRoles.FirstOrDefault(x => x.PersonnelRoleId == shiftGroupNeed.Key);
+									group.ShiftGroupId = departmentGroup.DepartmentGroupId;
+									group.Name = departmentGroup.Name;
 
-									if (role != null)
+									foreach (var shiftGroupNeed in shiftGroup.Value)
 									{
-										var shiftGroupNeedRole = new ShiftGroupNeedRole();
-										shiftGroupNeedRole.RoleId = shiftGroupNeed.Key;
-										shiftGroupNeedRole.Name = role.Name;
-										shiftGroupNeedRole.Needed = shiftGroupNeed.Value;
+										var role = allRoles.FirstOrDefault(x => x.PersonnelRoleId == shiftGroupNeed.Key);
 
-										group.Needs.Add(shiftGroupNeedRole);
+										if (role != null)
+										{
+											var shiftGroupNeedRole = new ShiftGroupNeedRole();
+											shiftGroupNeedRole.RoleId = shiftGroupNeed.Key;
+											shiftGroupNeedRole.Name = role.Name;
+											shiftGroupNeedRole.Needed = shiftGroupNeed.Value;
+
+											group.Needs.Add(shiftGroupNeedRole);
+										}
 									}
+
+									item.Groups.Add(group);
 								}
 
-								item.Groups.Add(group);
 							}
-
 						}
-					}
 
-					if (shift.Personnel != null)
-					{
-						foreach (var person in shift.Personnel)
+						if (shift.Personnel != null)
 						{
-							var name = allUserNames.FirstOrDefault(x => x.UserId == person.UserId);
-							if (name != null)
+							foreach (var person in shift.Personnel)
 							{
-								var shiftUser = new ShiftUser();
-								shiftUser.UserId = person.UserId;
-								shiftUser.Name = name.Name;
+								var name = allUserNames.FirstOrDefault(x => x.UserId == person.UserId);
+								if (name != null)
+								{
+									var shiftUser = new ShiftUser();
+									shiftUser.UserId = person.UserId;
+									shiftUser.Name = name.Name;
 
-								if (person.UserId == UserId)
-									shiftUser.IsYouOnShift = true;
-								else
-									shiftUser.IsYouOnShift = false;
+									if (person.UserId == UserId)
+										shiftUser.IsYouOnShift = true;
+									else
+										shiftUser.IsYouOnShift = false;
 
-								item.Users.Add(shiftUser);
+									item.Users.Add(shiftUser);
+								}
 							}
 						}
-					}
 
-					calendarItems.Add(item);
+						calendarItems.Add(item);
+					}
 				}
 			}
 

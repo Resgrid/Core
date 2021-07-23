@@ -8,6 +8,8 @@ In this section we will go over all the steps needed to get Resgrid running on y
 
 This documentation is for installation of Resgrid from compile source. If you want to install Resgrid from Docker containers please review that section instead.
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AVvw97WKY64" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 .. _requirements:
 
 Requirements Notice
@@ -87,7 +89,25 @@ Redis is an standalone, resilient in memory data store that Redis uses to cache 
 Redis for Windows is not natively supported. To run on Windows you will need to install and configure WSL 2 and install and run Redis on that.
 
 `How to Install WSL 2 on Windows Server 2019 <https://4sysops.com/archives/install-and-activate-windows-subsystem-for-linux-wsl-2-on-windows-server-2019/>`_
-`How to install Redis on WSL <https://medium.com/@RedisLabs/windows-subsystem-for-linux-wsl-10e3ca4d434e`_
+
+Once you have WSL 2 installed and running with an Ubuntu 18.04 instance that's been upgraded you will need to install Redis server onto it.
+
+  | sudo apt-get install redis-server
+
+When that command is done you can run the following to ensure that the cli got installed.
+
+  | redis-cli -v
+
+For good measure, restart the redis-server to ensure that the service is running.
+
+  | sudo service redis-server restart
+
+You can execute the following commands to test Redis server.
+
+  | $ redis-cli 
+  | 127.0.0.1:6379> set user:1 "Jane"
+  | 127.0.0.1:6379> get user:1
+  | "Jane"
 
 You will need to ensure WSL is running when you run Resgrid, so open up a command prompt and type in 'wsl' to start up your installed Linux distro and verify that Redis is running.
 
@@ -196,6 +216,7 @@ Run Notepad as Administrator, open up the hosts file in the following directory 
 
   |  127.0.0.1	resgrid.local
   |  127.0.0.1	resgridapi.local
+  |  127.0.0.1	rgdevinfaserver.local
   |  127.0.0.1  rgdevserver
   |  127.0.0.1  rgdevinfaserver
 
@@ -430,6 +451,21 @@ Your IIS Server should look like this for the Websites and Application Pools vie
 .. note:: If you are using a Self Signed or Development SSL certificate you will get a Certificate Warning using any modern web browser. If your url is pointing to localhost,127.0.0.1,resgrid.local or resgridapi.local it is safe to proceed to the website and bypass that certificate error. We do not recommend doing that on public websites.
 
 .. warning:: The above IIS configuration is to give you a started place to access the Resgrid Application and API locally, it not a valid configuration for an externally exposed service. You will need to harden your IIS installation, setup SSL, reduce permissions and grant least privlige users (in addition to other steps) to expore Resgrid externally.
+
+Running the Workers
+****************************
+
+Resgrid uses a worker application(s) to do back end, out of band processing. The worker must be work for automated processes to function and for operations like dispatching to work correctly.
+
+Open up the Windows Command Prompt (cmd) and type:
+
+    cd C:\\Resgrid\\Workers\\ 
+
+Your command prompt should now read "C:\\Resgrid\\Workers>". You can now type the following command into the command prompt:
+
+    Resgrid.Workers.Console.exe run
+
+Like the command prompt running Redis you need to leave this window open to keep the workers process active. 
 
 Important Note About Support
 ****************************

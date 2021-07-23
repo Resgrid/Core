@@ -20,13 +20,15 @@ namespace Resgrid.Framework
 			if (string.IsNullOrEmpty(source))
 				return string.Empty;
 
-			char[] array = new char[source.Length];
+			var strippedSource = source.Replace("\n", "").Replace("\r", "");
+
+			char[] array = new char[strippedSource.Length];
 			int arrayIndex = 0;
 			bool inside = false;
 
-			for (int i = 0; i < source.Length; i++)
+			for (int i = 0; i < strippedSource.Length; i++)
 			{
-				char let = source[i];
+				char let = strippedSource[i];
 				if (let == '<')
 				{
 					inside = true;

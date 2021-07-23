@@ -129,6 +129,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ShiftGroupRolesRepository>().As<IShiftGroupRolesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchProtocolQuestionsRepository>().As<IDispatchProtocolQuestionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchProtocolTriggersRepository>().As<IDispatchProtocolTriggersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitActiveRolesRepository>().As<IUnitActiveRolesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchProtocolQuestionAnswersRepository>().As<IDispatchProtocolQuestionAnswersRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

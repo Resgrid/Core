@@ -17,10 +17,25 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentGroups
 		{
 			var query = _sqlConfiguration.SelectGroupMembersByGroupIdQuery
 				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.DepartmentGroupMembersTable,
+					string.Empty,
 					_sqlConfiguration.ParameterNotation,
-					new string[] { "%GROUPID%" },
-					new string[] { "GroupId" });
+					new string[] {
+						"%GROUPID%"
+					},
+					new string[] {
+						"GroupId"
+					},
+					new string[] {
+						"%GROUPSTABLE%",
+						"%GROUPMEMBERSSTABLE%",
+						"%DEPARTMENTMEMBERSTABLE%"
+					},
+					new string[] {
+						_sqlConfiguration.DepartmentGroupsTable,
+						_sqlConfiguration.DepartmentGroupMembersTable,
+						_sqlConfiguration.DepartmentMembersTable
+					}
+				);
 
 			return query;
 		}

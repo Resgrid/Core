@@ -90,6 +90,15 @@
     <div class="col-sm-8">
       <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
         <a title="Add a new unit" class="btn btn-success" asp-controller="Units" asp-action="NewUnit" asp-route-area="User">New Unit</a>
+        <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
+      </div>
+    </div>
+  }
+  else if (Model.IsUserAdminOrGroupAdmin)
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+		<a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
       </div>
     </div>
   }
@@ -283,19 +292,19 @@
 @section Scripts
   {
   <script id="state-template" type="text/x-kendo-template">
-    #if(StateId <= 25){#
-    <span class='label #=StateColor#'>#=State#</span>
-    #}else{#
-    <span class='label label-default' style="color:#=TextColor#;background-color:#=StateColor#;">#=State#</span>
-    #}#
+	#if(StateId <= 25){#
+	<span class='label #=StateColor#'>#=State#</span>
+	#}else{#
+	<span class='label label-default' style="color:#=TextColor#;background-color:#=StateColor#;">#=State#</span>
+	#}#
   </script>
 
   <script id="unitstatus-template" type="text/x-kendo-template">
-    <div class="btn-group" style="position: absolute;" data-id="#=UnitId#">
-      <a class="btn btn-xs btn-primary dropdown-toggle stateDropdown" data-toggle="dropdown" data-id="#=UnitId#" href="" style="top: -14px;">
-        Set State <span class="caret"></span>
-      </a>
-    </div>
+	<div class="btn-group" style="position: absolute;" data-id="#=UnitId#">
+	  <a class="btn btn-xs btn-primary dropdown-toggle stateDropdown" data-toggle="dropdown" data-id="#=UnitId#" href="" style="top: -14px;">
+		Set State <span class="caret"></span>
+	  </a>
+	</div>
   </script>
 
   <script id="unitcommand-template" type="text/x-kendo-template">

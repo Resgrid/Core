@@ -351,7 +351,15 @@ namespace Resgrid.Services
 		{
 			var priorities = await GetCallPrioritiesForDepartmentAsync(departmentId, bypassCache);
 
-			return priorities.Where(x => x.IsDeleted == false).ToList();
+			if (priorities == null || !priorities.Any())
+				return GetDefaultCallPriorities();
+
+			var activePriorities = priorities.Where(x => x.IsDeleted == false).ToList();
+
+			if (activePriorities == null || !activePriorities.Any())
+				return GetDefaultCallPriorities();
+
+			return activePriorities;
 		}
 
 		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols)

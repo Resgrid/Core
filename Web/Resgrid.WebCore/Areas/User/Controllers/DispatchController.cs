@@ -1596,7 +1596,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(model.Department.DepartmentId);
 
-			var priorites = await _callsService.GetCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
+			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
 			//model.CallPriorities = model.CallPriority.ToSelectList();
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 			model.UnGroupedUsers = new List<IdentityUser>();
@@ -1645,7 +1645,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId);
 			model.UnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId);
 
-			var priorites = await _callsService.GetCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
+			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 			model.UnGroupedUsers = new List<IdentityUser>();
 

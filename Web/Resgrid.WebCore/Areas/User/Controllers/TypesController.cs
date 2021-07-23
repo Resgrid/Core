@@ -101,7 +101,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		public async Task<IActionResult> NewCallPriority(NewCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload, CancellationToken cancellationToken)
 		{
-			var priotiries = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId, true);
+			var priotiries = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, true);
 
 			if (model.CallPriority.IsDefault && priotiries.Any(x => x.IsDefault && x.DepartmentId == DepartmentId && x.IsDeleted == false))
 			{
@@ -248,7 +248,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		public async Task<IActionResult> EditCallPriority(EditCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload, CancellationToken cancellationToken)
 		{
-			var priotiries = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId, true);
+			var priotiries = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, true);
 			if (model.CallPriority.IsDefault && priotiries.Any(x => x.IsDefault && x.DepartmentCallPriorityId != model.CallPriority.DepartmentCallPriorityId))
 			{
 				model.Message = "ERROR: Can only have 1 default call priorty and there already is a call priority marked as default for your department.";

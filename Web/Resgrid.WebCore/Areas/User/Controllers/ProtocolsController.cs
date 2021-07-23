@@ -48,7 +48,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new NewProtocolModel();
 			model.Protocol = new DispatchProtocol();
 
-			var priorites = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId);
+			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
 
 			List<CallType> types = new List<CallType>();

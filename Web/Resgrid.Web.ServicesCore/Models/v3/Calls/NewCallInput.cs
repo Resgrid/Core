@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Resgrid.Web.Services.Controllers.Version3.Models.Calls
 {
@@ -20,5 +21,10 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.Calls
 		public string Dis { get; set; }
 		public string CNme { get; set; }
 		public string CNum { get; set; }
+
+		public string CId { get; set; }
+		public string InI { get; set; }
+		public string RId { get; set; }
+		public DateTime Don { get; set; }
 	}
 }

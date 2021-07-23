@@ -101,7 +101,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var allGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
-			var callPriorites = await _callsService.GetCallPrioritiesForDepartmentAsync(DepartmentId);
+			var callPriorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 

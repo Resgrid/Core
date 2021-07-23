@@ -80,7 +80,7 @@
 	  <PrivateAssets>All</PrivateAssets>
 	</PackageReference>
 	<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-	<PackageReference Include="RestSharp" Version="106.11.4" />
+	<PackageReference Include="RestSharp" Version="106.12.0" />
 	<PackageReference Include="Stripe.net" Version="39.2.0" />
 	<PackageReference Include="Twilio" Version="5.46.2" />
 	<PackageReference Include="JWT" Version="7.2.1" />

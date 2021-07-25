@@ -72,6 +72,11 @@ The Resgrid Relay is a console based application to monitor an audio input, for 
 
 ![Relay](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Relay.png)
 
+###### [Dispatch](https://github.com/Resgrid/Dispatch)
+The Resgrid is web application that allows Dispatchers a single UI to create calls, set unit statuses, modify and close calls, and monitor activities without ever leaving that single screen. The Dispatch application is intended to streamline live dispatcher operations and avoid excess page navigations and manual page refreshing to get current statuses.
+
+![Dispatch](https://raw.githubusercontent.com/resgrid/core/master/misc/images/Dispatch.png)
+
 ## Status
 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/resgrid/core?svg=true)](https://ci.appveyor.com/project/ShawnJackson/core)
@@ -80,6 +85,13 @@ The Resgrid Relay is a console based application to monitor an audio input, for 
 <a href="https://discord.gg/YDs7tHB"><img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" /></a>
 <a href="https://github.com/Resgrid/Core/blob/master/LICENSE"><img src="https://img.shields.io/github/license/resgrid/core.svg" alt="License" /></a>
 
+## Priority Support
+
+We provide support for all of Resgrid's open-source products via GitHub issues without charge. Me make our best effort to address and close issues in a timely fashion. If your organization needs priority support for critical issues please take a look at our Priority Support packages on our Open-Source page.
+
+[View Paid Support Options](https://resgrid.com/Home/OpenSource)
+
+
 ## Copyright and License
 
-Code and documentation copyright 2020 the [Resgrid Core Authors](https://github.com/Resgrid/Core/graphs/contributors) and [Resgrid, LLC.](https://resgrid.com) Code released under the [Apache License 2.0](https://github.com/Resgrid/Core/blob/master/LICENSE).
+Code and documentation copyright 2021 the [Resgrid Core Authors](https://github.com/Resgrid/Core/graphs/contributors) and [Resgrid, LLC.](https://resgrid.com) Code released under the [Apache License 2.0](https://github.com/Resgrid/Core/blob/master/LICENSE).

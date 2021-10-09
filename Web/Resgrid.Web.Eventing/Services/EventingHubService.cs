@@ -20,7 +20,7 @@ namespace Resgrid.Web.Eventing.Services
 			_rabbitInboundEventProvider = rabbitInboundEventProvider;
 
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated, PersonnelStaffingUpdated);
+				_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated, PersonnelStaffingUpdated, CallAdded, CallClosed);
 			else
 				_inboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated, PersonnelStaffingUpdated);
 		}
@@ -63,6 +63,22 @@ namespace Resgrid.Web.Eventing.Services
 
 			if (group != null)
 				await group.SendAsync("departmentUpdated");
+		}
+
+		public async Task CallAdded(int departmentId, int id)
+		{
+			var group = _eventingHub.Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("callAdded", id);
+		}
+
+		public async Task CallClosed(int departmentId, int id)
+		{
+			var group = _eventingHub.Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("callClosed", id);
 		}
 	}
 }

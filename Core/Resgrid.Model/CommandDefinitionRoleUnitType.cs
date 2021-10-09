@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,6 +26,7 @@ namespace Resgrid.Model
 		public virtual UnitType UnitType { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return CommandDefinitionRoleUnitTypeId; }
@@ -38,6 +40,9 @@ namespace Resgrid.Model
 		public string IdName => "CommandDefinitionRoleUnitTypeId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "CommandRole", "UnitType" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "CommandRole", "UnitType" };
 	}
 }

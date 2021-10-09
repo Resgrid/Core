@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using System.Linq;
 using ProtoBuf;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -60,7 +61,7 @@ namespace Resgrid.Model
 
 		[ProtoMember(12)]
 		public int Type { get; set; }
-		
+
 		[ProtoMember(13)]
 		public DateTime? ExpireOn { get; set; }
 
@@ -68,6 +69,7 @@ namespace Resgrid.Model
 		public virtual ICollection<MessageRecipient> MessageRecipients { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return MessageId; }
@@ -81,7 +83,10 @@ namespace Resgrid.Model
 		public string IdName => "MessageId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "SendingUser", "ReceivingUser", "MessageRecipients" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "SendingUser", "ReceivingUser", "MessageRecipients" };
 
 		public List<string> GetRecipients()
 		{

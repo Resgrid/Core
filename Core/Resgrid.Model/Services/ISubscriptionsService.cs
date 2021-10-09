@@ -175,5 +175,20 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Payment&gt;.</returns>
 		Task<Payment> CreateFreePlanPaymentAsync(int departmentId, string userId,
 			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Gets a current addon payment by department identifier asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="planAddonIds">The addon plan identifiers.</param>
+		/// <returns>Task&lt;PaymentAddon&gt;.</returns>
+		Task<List<PaymentAddon>> GetCurrentPaymentAddonsForDepartmentAsync(int departmentId, List<string> planAddonIds);
+
+		/// <summary>
+		/// Gets all plan addons by plan addon type asynchronous.
+		/// </summary>
+		/// <param name="planAddonType">The type of plan addon.</param>
+		/// <returns>Task&lt;PlanAddon&gt;.</returns>
+		Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -59,6 +60,7 @@ namespace Resgrid.Model
 		public bool IsSystemPriority { get; set; }
 		
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DepartmentCallPriorityId; }
@@ -73,6 +75,9 @@ namespace Resgrid.Model
 		public string IdName => "DepartmentCallPriorityId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "IsSystemPriority" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "IsSystemPriority" };
 	}
 }

@@ -67,9 +67,12 @@ namespace Resgrid.Services
 			builder.RegisterType<FirebaseService>().As<IFirebaseService>().InstancePerLifetimeScope();
 			builder.RegisterType<TemplatesService>().As<ITemplatesService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolsService>().As<IProtocolsService>().InstancePerLifetimeScope();
+			builder.RegisterType<FormsService>().As<IFormsService>().InstancePerLifetimeScope();
+			builder.RegisterType<VoiceService>().As<IVoiceService>().InstancePerLifetimeScope();
 
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();
+			builder.RegisterType<AuditEventService>().As<IAuditEventService>().SingleInstance();
 
 
 			// Stripe Services

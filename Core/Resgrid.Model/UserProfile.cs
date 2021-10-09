@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using ProtoBuf;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -133,6 +134,7 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return UserProfileId; }
@@ -146,7 +148,10 @@ namespace Resgrid.Model
 		public string IdName => "UserProfileId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "User", "MembershipEmail" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "MembershipEmail" };
 
 		[NotMapped]
 		public FullNameFormat FullName

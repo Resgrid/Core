@@ -1,5 +1,4 @@
-﻿@using Microsoft.ApplicationInsights.AspNetCore
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -59,8 +58,6 @@
   {
 	@RenderSection("Styles", required: false)
   }
-
-  @Html.Raw(JavaScriptSnippet.FullScript)
   <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>

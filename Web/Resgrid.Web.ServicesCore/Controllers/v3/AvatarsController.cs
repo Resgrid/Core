@@ -21,6 +21,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	//[EnableCors("_resgridWebsiteAllowSpecificOrigins")]
 	public class AvatarsController : ControllerBase
 	{

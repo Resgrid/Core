@@ -37,7 +37,7 @@ namespace Resgrid.Model
 		public virtual DepartmentGroup Group { get; set; }
 
 		[NotMapped]
-		public object IdValue
+		[JsonIgnore]public object IdValue
 		{
 			get { return ShiftStaffingPersonId; }
 			set { ShiftStaffingPersonId = (int)value; }
@@ -50,6 +50,9 @@ namespace Resgrid.Model
 		public string IdName => "ShiftStaffingPersonId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ShiftStaffing", "User", "Group" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ShiftStaffing", "User", "Group" };
 	}
 }

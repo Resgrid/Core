@@ -404,7 +404,7 @@ namespace Resgrid.Web.Services.Controllers
 
 										if (!String.IsNullOrWhiteSpace(call.Address))
 											callText.Append(call.Address + Environment.NewLine);
-										else if (!string.IsNullOrEmpty(call.GeoLocationData))
+										else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 										{
 											try
 											{

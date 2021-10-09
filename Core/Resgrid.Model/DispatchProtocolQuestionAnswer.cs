@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +24,7 @@ namespace Resgrid.Model
 		public int Weight { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DispatchProtocolQuestionAnswerId; }
@@ -36,6 +38,9 @@ namespace Resgrid.Model
 		public string IdName => "DispatchProtocolQuestionAnswerId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Question" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Question" };
 	}
 }

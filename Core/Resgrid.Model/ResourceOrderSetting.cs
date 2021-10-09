@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 
 namespace Resgrid.Model
@@ -57,10 +58,11 @@ namespace Resgrid.Model
 		public string UserIdsToNotifyOnOrders { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return ResourceOrderSettingId; }
-			set { ResourceOrderSettingId = (int) value; }
+			set { ResourceOrderSettingId = (int)value; }
 		}
 
 		[NotMapped]
@@ -70,15 +72,18 @@ namespace Resgrid.Model
 		public string IdName => "ResourceOrderSettingId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "RoleAllowedToFulfilOrders" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "RoleAllowedToFulfilOrders" };
 	}
 
 
 	public enum ResourceOrderVisibilites
 	{
-		Range		 = 0,
+		Range = 0,
 		//Geofence	 = 1,
-		Linked		 = 2,
+		Linked = 2,
 		Unrestricted = 3
 	}
 }

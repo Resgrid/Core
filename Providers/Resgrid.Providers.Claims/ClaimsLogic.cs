@@ -1043,5 +1043,29 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Delete));
 			}
 		}
+
+		public static void AddFormsClaims(ClaimsIdentity identity, bool isAdmin)
+		{
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.View));
+
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Delete));
+			}
+		}
+
+		public static void AddVoiceClaims(ClaimsIdentity identity, bool isAdmin)
+		{
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.View));
+
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Delete));
+			}
+		}
 	}
 }

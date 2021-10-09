@@ -44,7 +44,7 @@ namespace Resgrid.Model
 		public virtual ShiftSignupTrade Trade { get; set; }
 
 		[NotMapped]
-		public object IdValue
+		[JsonIgnore]public object IdValue
 		{
 			get { return ShiftSignupId; }
 			set { ShiftSignupId = (int)value; }
@@ -57,7 +57,10 @@ namespace Resgrid.Model
 		public string IdName => "ShiftSignupId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Shift", "User", "Group", "Trade" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Shift", "User", "Group", "Trade" };
 
 		public ShiftTradeTypes GetTradeType()
 		{

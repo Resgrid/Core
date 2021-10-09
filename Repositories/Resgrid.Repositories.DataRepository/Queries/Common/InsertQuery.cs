@@ -18,17 +18,24 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
 		public string GetQuery<TEntity>(TEntity entity)
 		{
 			List<string> ignoredProperties = new List<string>(((IEntity)entity).IgnoredProperties);
-			ignoredProperties.Add(((IEntity)entity).IdName);
+			string returnId = "";
+
+			if (((IEntity)entity).IdType == 0)
+			{
+				ignoredProperties.Add(((IEntity)entity).IdName);
+				returnId = _sqlConfiguration.InsertGetReturnIdCommand;
+			}
 
 			var columns = entity.GetColumns(_sqlConfiguration, ignoreProperties: ignoredProperties);
 
 			var valuesArray = new List<string>(columns.Count());
 			valuesArray = valuesArray.InsertQueryValuesFragment(_sqlConfiguration.ParameterNotation, columns);
 
+
 			var query = _sqlConfiguration.InsertQuery
 										 .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
 											((IEntity)entity).TableName,
-											_sqlConfiguration.InsertGetReturnIdCommand,
+											returnId,
 											columns.GetCommaSeparatedColumns(),
 											string.Join(", ", valuesArray));
 

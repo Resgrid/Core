@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -58,13 +59,14 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return ResourceOrderItemId; }
 			set { ResourceOrderItemId = (int)value; }
 		}
 
-		
+
 		[NotMapped]
 		public string TableName => "ResourceOrderItems";
 
@@ -72,6 +74,9 @@ namespace Resgrid.Model
 		public string IdName => "ResourceOrderItemId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Order", "Fills" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Order", "Fills" };
 	}
 }

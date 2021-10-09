@@ -28,6 +28,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// <seealso cref="Resgrid.Web.Services.Controllers.Version3.V3AuthenticatedApiControllerbase" />
 	[Produces("application/json")]
 	[Route("api/v{version:ApiVersion}/[controller]")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class CalendarController : V3AuthenticatedApiControllerbase
 	{
 		private readonly ICalendarService _calendarService;

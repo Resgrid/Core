@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
-using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {

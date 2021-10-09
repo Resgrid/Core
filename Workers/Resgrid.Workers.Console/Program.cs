@@ -90,6 +90,8 @@ namespace Resgrid.Workers.Console
 
 			Bootstrapper.Initialize();
 
+			Resgrid.Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs);
+
 			var eventAggragator = Bootstrapper.GetKernel().Resolve<IEventAggregator>();
 			var outbound = Bootstrapper.GetKernel().Resolve<IOutboundEventProvider>();
 			var coreEventService = Bootstrapper.GetKernel().Resolve<ICoreEventService>();
@@ -301,6 +303,12 @@ namespace Resgrid.Workers.Console
 				_logger.Log(LogLevel.Information, "Scheduling Status Schedule");
 				await client.ScheduleAsync("Status Schedule",
 					new Commands.StatusScheduleCommand(11),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Dispatch Scheduled Calls");
+				await client.ScheduleAsync("Scheduled Calls",
+					new Commands.StatusScheduleCommand(12),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 			}

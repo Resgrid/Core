@@ -24,6 +24,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	[ApiVersion("3.0")]
 	[ApiController]
 	[AllowAnonymous]
+	[ApiExplorerSettings(GroupName = "v3")]
 	//[EnableCors("_resgridWebsiteAllowSpecificOrigins")]
 	public class AuthController : ControllerBase
 	{

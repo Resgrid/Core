@@ -105,7 +105,7 @@ namespace Resgrid.Model.Helpers
 				if (!String.IsNullOrEmpty(department.TimeZone))
 					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
 				else
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");    // Default to Pacific as it's better then UTC
+					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.WindowsToIana("Pacific Standard Time"));    // Default to Pacific as it's better then UTC
 
 				timeSpan = timeZoneInfo.BaseUtcOffset;
 				var currentDateTime = DateTime.UtcNow.TimeConverter(department);

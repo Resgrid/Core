@@ -5,6 +5,7 @@ using Resgrid.Model.Identity;
 using System.Linq;
 using ProtoBuf;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -65,6 +66,7 @@ namespace Resgrid.Model
 		public virtual Department Department { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return ActionLogId; }
@@ -78,7 +80,10 @@ namespace Resgrid.Model
 		public string IdName => "ActionLogId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "User", "EtaPulledOn", "Eta" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "User", "EtaPulledOn", "Eta" };
 
 		public string GetActionText()
 		{

@@ -1,5 +1,5 @@
 {
-  "name": "personnel-list",
+  "name": "resgrid-react",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
@@ -12,7 +12,9 @@
   },
   "scripts": {
     "buildPersonnelList": "webpack --config ./PersonnelList/webpack.config.js --mode production",
-    "buildPersonnelListDev": "webpack --config ./PersonnelList/webpack.config.js --mode development"
+    "buildPersonnelListDev": "webpack --config ./PersonnelList/webpack.config.js --mode development",
+    "buildNewForm": "webpack --config ./NewForm/webpack.config.js --mode production",
+    "buildNewFormDev": "webpack --config ./NewForm/webpack.config.js --mode development"
   },
   "devDependencies": {
     "@babel/cli": "7.1.2",
@@ -26,6 +28,7 @@
     "babel-loader": "^8.0.4",
     "babel-polyfill": "^6.26.0",
     "buble": "0.19.3",
+    "css-loader": "5.2.7",
     "eslint": "5.7.0",
     "eslint-config-defaults": "9.0.0",
     "eslint-config-standard": "12.0.0",
@@ -34,8 +37,10 @@
     "eslint-plugin-promise": "4.0.1",
     "eslint-plugin-react": "7.11.1",
     "eslint-plugin-standard": "4.0.0",
+    "file-loader": "^6.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "style-loader": "2.0.0",
     "typescript": "^3.2.2",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
@@ -44,6 +49,12 @@
   "dependencies": {
     "@material-ui/core": "^4.0.1",
     "@material-ui/pickers": "^3.0.0",
-    "material-table": "^1.37.0"
+    "material-table": "^1.37.0",
+    "survey-analytics": "^1.8.58",
+    "survey-creator": "^1.8.58",
+    "survey-knockout": "^1.8.58",
+    "survey-pdf": "^1.8.58",
+    "survey-react": "^1.8.58",
+    "surveyjs-widgets": "^1.8.58"
   }
 }

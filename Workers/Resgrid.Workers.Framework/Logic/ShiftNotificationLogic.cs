@@ -1,109 +1,15 @@
-﻿using Resgrid.Framework;
-using Resgrid.Model;
+﻿using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.InteropExtensions;
-using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
 	public class ShiftNotificationLogic
 	{
-		private QueueClient _client = null;
-
-		public ShiftNotificationLogic()
-		{
-			while (_client == null)
-			{
-				try
-				{
-					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueShiftsConnectionString, Config.ServiceBusConfig.ShiftNotificationsQueueName);
-					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueShiftsConnectionString, Config.ServiceBusConfig.ShiftNotificationsQueueName);
-				}
-				catch (TimeoutException) { }
-			}
-		}
-
-		public void Process(ShiftQueueItem item)
-		{
-			if (Config.SystemBehaviorConfig.IsAzure)
-			{
-				//ProcessQueueMessage(_client.Receive());
-
-				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-				{
-					MaxConcurrentCalls = 1,
-					AutoComplete = false
-				};
-
-				// Register the function that will process messages
-				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
-			}
-			else
-			{
-				ProcessShiftQueueItem(item);
-			}
-		}
-
-		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
-		{
-			bool success = true;
-			string result = "";
-
-			if (message != null)
-			{
-				try
-				{
-					var body = message.GetBody<string>();
-
-					if (!String.IsNullOrWhiteSpace(body))
-					{
-						ShiftQueueItem sqi = null;
-						try
-						{
-							sqi = ObjectSerialization.Deserialize<ShiftQueueItem>(body);
-						}
-						catch (Exception ex)
-						{
-							success = false;
-							result = "Unable to parse message body Exception: " + ex.ToString();
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-							//message.Complete();
-						}
-
-						ProcessShiftQueueItem(sqi);
-					}
-
-					try
-					{
-						if (success)
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-							//message.Complete();
-					}
-					catch (MessageLockLostException)
-					{
-
-					}
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-					await _client.AbandonAsync(message.SystemProperties.LockToken); 
-					//message.Abandon();
-					success = false;
-					result = ex.ToString();
-				}
-			}
-
-			return new Tuple<bool, string>(success, result);
-		}
-
 		public static async Task<bool> ProcessShiftQueueItem(ShiftQueueItem sqi)
 		{
 			if (sqi != null)
@@ -122,7 +28,7 @@ namespace Resgrid.Workers.Framework.Logic
 					foreach (var user in tradeRequest.Users)
 					{
 						UserProfile profile = userProfiles.FirstOrDefault(x => x.UserId == user.UserId);
-						_communicationService.SendNotificationAsync(user.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+						await _communicationService.SendNotificationAsync(user.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
 							tradeRequest.SourceShiftSignup.Shift.Name, profile);
 					}
 				}
@@ -208,17 +114,6 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return true;
-		}
-
-		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
-		{
-			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-			//Console.WriteLine("Exception context for troubleshooting:");
-			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
-			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
-			//Console.WriteLine($"- Executing Action: {context.Action}");
-			return Task.CompletedTask;
 		}
 	}
 }

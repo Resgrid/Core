@@ -19,181 +19,185 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-	<h2>View Call</h2>
-	<ol class="breadcrumb">
-	  <li>
-		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-	  </li>
-	  <li>
-		<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
-	  </li>
-	  <li class="active">
-		<strong>View Call</strong>
-	  </li>
-	</ol>
+    <h2>View Call</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+      </li>
+      <li class="active">
+        <strong>View Call</strong>
+      </li>
+    </ol>
   </div>
   <div class="col-sm-8">
-	<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-	  <div class="buttons-actions">
-		@if (ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State != 0)
+    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+      <div class="buttons-actions">
+        @if (ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State != 0)
 		{
-		  <button class="btn btn-danger" onclick="resgrid.dispatch.viewcall.reOpenCall();">Re-Open Call</button>
+          <button class="btn btn-danger" onclick="resgrid.dispatch.viewcall.reOpenCall();">Re-Open Call</button>
 		}
-	  </div>
-	</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="row">
   <div class="col-lg-8">
-	<div class="wrapper wrapper-content animated fadeInUp">
-	  <div class="ibox">
-		<div class="ibox-content">
-		  <div class="row">
-			<div class="col-lg-12">
-			  <div class="m-b-md">
-				<a asp-controller="Dispatch" asp-action="CallExport" asp-route-area="User" asp-route-callId="@Model.Call.CallId" class="btn btn-info btn-xs pull-right">Print (Export) View</a>
-				<h2>@Model.Call.Name</h2>
-			  </div>
-			  <dl class="dl-horizontal" style="margin-bottom: 0px;">
-				<dt>Status:</dt>
-				<dd>
-				  @if (Model.Call.State == (int)CallStates.Active)
+    <div class="wrapper wrapper-content animated fadeInUp">
+      <div class="ibox">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="m-b-md">
+                <a asp-controller="Dispatch" asp-action="CallExport" asp-route-area="User" asp-route-callId="@Model.Call.CallId" class="btn btn-info btn-xs pull-right">Print (Export) View</a>
+                <h2>@Model.Call.Name</h2>
+              </div>
+              <dl class="dl-horizontal" style="margin-bottom: 0px;">
+                <dt>Status:</dt>
+                <dd>
+                  @if (Model.Call.State == (int)CallStates.Active)
 				  {
-					<span style="display: block; color: green;">Active</span>
+                    <span style="display: block; color: green;">Active</span>
 				  }
 				  else if (Model.Call.State == (int)CallStates.Cancelled)
 				  {
-					<span style="display: block; color: gray;">Canceled</span>
+                    <span style="display: block; color: gray;">Canceled</span>
 				  }
 				  else if (Model.Call.State == (int)CallStates.Closed)
 				  {
-					<span style="display: block; color: black;">Closed</span>
+                    <span style="display: block; color: black;">Closed</span>
 				  }
 				  else if (Model.Call.State == (int)CallStates.Unfounded)
 				  {
-					<span style="display: block; color: blue;">Unfounded</span>
+                    <span style="display: block; color: blue;">Unfounded</span>
 				  }
-				</dd>
-			  </dl>
-			</div>
-		  </div>
-		  <div class="row">
-			<div class="col-lg-5">
-			  <dl class="dl-horizontal">
-				<dt>Number:</dt>
-				<dd>@Model.Call.Number</dd>
-				<dt>Type:</dt>
-				<dd>
-				  @if (!String.IsNullOrWhiteSpace(Model.Call.Type))
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-5">
+              <dl class="dl-horizontal">
+                <dt>Number:</dt>
+                <dd>@Model.Call.Number</dd>
+                <dt>Type:</dt>
+                <dd>
+                  @if (!String.IsNullOrWhiteSpace(Model.Call.Type))
 				  {
-					<span style="display: block;">@Model.Call.Type</span>
+                    <span style="display: block;">@Model.Call.Type</span>
 				  }
 				  else
 				  {
-					<span style="display: block;">No Type</span>
+                    <span style="display: block;">No Type</span>
 				  }
-				</dd>
-				<dt>Priority:</dt>
-				<dd><span style="display: block;">@(((CallPriority)Model.Call.Priority).ToString())</span></dd>
-				<dt>Call Address:</dt>
-				<dd>@Model.Call.Address</dd>
-			  </dl>
-			</div>
-			<div class="col-lg-7" id="cluster_info">
-			  <dl class="dl-horizontal">
-				<dt>Incident Id:</dt>
-				<dd>@Model.Call.IncidentNumber</dd>
-				<dt>Logged By:</dt>
-				<dd>@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</dd>
-				<dt>Logged On:</dt>
-				<dd>@Model.Call.LoggedOn.TimeConverterToString(Model.Department)</dd>
-				@if (Model.Call.ClosedOn.HasValue)
+                </dd>
+                <dt>Priority:</dt>
+                <dd><span style="display: block;">@(((CallPriority)Model.Call.Priority).ToString())</span></dd>
+                <dt>Call Address:</dt>
+                <dd>@Model.Call.Address</dd>
+              </dl>
+            </div>
+            <div class="col-lg-7" id="cluster_info">
+              <dl class="dl-horizontal">
+                <dt>Incident Id:</dt>
+                <dd>@Model.Call.IncidentNumber</dd>
+                <dt>Logged By:</dt>
+                <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</dd>
+                <dt>Logged On:</dt>
+                <dd>@Model.Call.LoggedOn.TimeConverterToString(Model.Department)</dd>
+                @if (Model.Call.ClosedOn.HasValue)
 				{
-				  <dt>Closed By:</dt>
-				  <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ClosedByUserId))</dd>
-				  <dt>Closed On:</dt>
-				  <dd>@Model.Call.ClosedOn.Value.TimeConverterToString(Model.Department)</dd>
+                  <dt>Closed By:</dt>
+                  <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ClosedByUserId))</dd>
+                  <dt>Closed On:</dt>
+                  <dd>@Model.Call.ClosedOn.Value.TimeConverterToString(Model.Department)</dd>
 				}
 				else
 				{
-				  <dt>Closed By:</dt>
-				  <dd>N/A</dd>
-				  <dt>Closed On:</dt>
-				  <dd>N/A</dd>
+                  <dt>Closed By:</dt>
+                  <dd>N/A</dd>
+                  <dt>Closed On:</dt>
+                  <dd>N/A</dd>
 				}
-			  </dl>
-			</div>
-		  </div>
-		  <div class="row">
-			<div class="col-lg-12">
-			  <dl class="dl-horizontal">
-				<dt>Nature of Call:</dt>
-				<dd>
-				  @Html.Raw(Model.Call.NatureOfCall)
-				</dd>
-			  </dl>
-			</div>
-		  </div>
-		  <div class="row">
-			<div class="col-lg-12">
-			  <dl class="dl-horizontal">
-				<dt>Notes:</dt>
-				<dd>
-				  @Html.Raw(Model.Call.Notes)
-				</dd>
-			  </dl>
-			</div>
-		  </div>
-		  <div class="row">
-			<div class="col-lg-12">
-			  <dl class="dl-horizontal">
-				<dt>Close Notes:</dt>
-				<dd>
-				  @Html.Raw(Model.Call.CompletedNotes)
-				</dd>
-			  </dl>
-			</div>
-		  </div>
-		  <div class="row m-t-sm">
-			<div class="col-lg-12">
-			  <div class="panel blank-panel">
-				<div class="panel-heading">
-				  <div class="panel-options">
-					<ul class="nav nav-tabs">
-					  <li class="@Model.IsMapTabActive()"><a href="#tab-1" data-toggle="tab" aria-expanded="false">Map</a></li>
-					  <li class="@Model.IsDispatchTabActive()"><a href="#tab-2" data-toggle="tab" aria-expanded="true">Dispatched</a></li>
-					  <li class=""><a href="#tab-3" data-toggle="tab" aria-expanded="false">Personnel Activity</a></li>
-					  <li class=""><a href="#tab-4" data-toggle="tab" aria-expanded="false">Unit Activity</a></li>
-					  <li class=""><a href="#tab-5" data-toggle="tab" aria-expanded="false">Images</a></li>
-					  <li class=""><a href="#tab-7" data-toggle="tab" aria-expanded="false">Files</a></li>
-					  <li class=""><a href="#tab-6" data-toggle="tab" aria-expanded="false">Notes</a></li>
-					  <li class=""><a href="#tab-8" data-toggle="tab" aria-expanded="false">Protocols</a></li>
-					</ul>
-				  </div>
-				</div>
-				<div class="panel-body">
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Nature of Call:</dt>
+                <dd>
+                  @Html.Raw(Model.Call.NatureOfCall)
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Notes:</dt>
+                <dd>
+                  @Html.Raw(Model.Call.Notes)
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <dl class="dl-horizontal">
+                <dt>Close Notes:</dt>
+                <dd>
+                  @Html.Raw(Model.Call.CompletedNotes)
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row m-t-sm">
+            <div class="col-lg-12">
+              <div class="panel blank-panel">
+                <div class="panel-heading">
+                  <div class="panel-options">
+                    <ul class="nav nav-tabs">
+                      <li class="@Model.IsMapTabActive()"><a href="#tab-1" data-toggle="tab" aria-expanded="false">Map</a></li>
+                      <li class="@Model.IsDispatchTabActive()"><a href="#tab-2" data-toggle="tab" aria-expanded="true">Dispatched</a></li>
+                      <li class=""><a href="#tab-3" data-toggle="tab" aria-expanded="false">Personnel Activity</a></li>
+                      <li class=""><a href="#tab-4" data-toggle="tab" aria-expanded="false">Unit Activity</a></li>
+                      <li class=""><a href="#tab-5" data-toggle="tab" aria-expanded="false">Images</a></li>
+                      <li class=""><a href="#tab-7" data-toggle="tab" aria-expanded="false">Files</a></li>
+                      <li class=""><a href="#tab-6" data-toggle="tab" aria-expanded="false">Notes</a></li>
+                      <li class=""><a href="#tab-8" data-toggle="tab" aria-expanded="false">Protocols</a></li>
+                      @if (!String.IsNullOrWhiteSpace(Model.Call.CallFormData))
+					  {
+                        <li class=""><a href="#tab-9" data-toggle="tab" aria-expanded="false">Call Form</a></li>
+					  }
+                    </ul>
+                  </div>
+                </div>
+                <div class="panel-body">
 				  <div class="tab-content">
-					<div class="tab-pane @Model.IsMapTabActive()" id="tab-1">
-					  <div id="callMap" name="callMap" style="position: relative; width: 500px; height: 500px;"></div>
-					</div>
-					<div class="tab-pane @Model.IsDispatchTabActive()" id="tab-2">
-					  <table class="table table-bordered table-striped">
-						<thead>
-						  <tr>
-							<th>
+				    <div class="tab-pane @Model.IsMapTabActive()" id="tab-1">
+				      <div id="callMap" name="callMap" style="position: relative; width: 500px; height: 500px;"></div>
+				    </div>
+				    <div class="tab-pane @Model.IsDispatchTabActive()" id="tab-2">
+				      <table class="table table-bordered table-striped">
+				        <thead>
+				          <tr>
+				            <th>
 
-							</th>
-							<th>
+				            </th>
+				            <th>
 
-							</th>
-						  </tr>
-						</thead>
-						<tbody>
-						  @foreach (var g in Model.Groups)
+				            </th>
+				          </tr>
+				        </thead>
+				        <tbody>
+				          @foreach (var g in Model.Groups)
 						  {
 							var unitsForGroup = Model.Units.Where(x => x.StationGroupId == g.DepartmentGroupId);
-							
+
 
 							var sortedUsers = from u in g.Members
 											  let name = Model.UserGroupRoles.FirstOrDefault(x => x.UserId == u.UserId).Name
@@ -203,9 +207,9 @@
 												Name = name,
 												User = u
 											  };
-							<tr>
-							  <td colspan="2"><b>@g.Name</b></td>
-							</tr>
+				            <tr>
+				              <td colspan="2"><b>@g.Name</b></td>
+				            </tr>
 
 							if (unitsForGroup != null && unitsForGroup.Any())
 							{
@@ -213,10 +217,10 @@
 							  {
 								if (Model.Call.HasUnitBeenDispatched(unit.UnitId))
 								{
-								  <tr>
-									<td>@unit.Name</td>
-									<td>@unit.Type</td>
-								  </tr>
+				                  <tr>
+				                    <td>@unit.Name</td>
+				                    <td>@unit.Type</td>
+				                  </tr>
 								}
 							  }
 							}
@@ -226,10 +230,10 @@
 							{
 							  if (Model.Call.HasUserBeenDispatched(u.User.UserId))
 							  {
-								<tr>
-								  <td></td>
-								  <td>@u.Name</td>
-								</tr>
+				                <tr>
+				                  <td></td>
+				                  <td>@u.Name</td>
+				                </tr>
 							  }
 							}
 
@@ -239,15 +243,15 @@
 
 							  if (isGroupDispatched != null)
 							  {
-											<tr>
-											  <td>All of @g.Name Dispatched</td>
-											  <td>(Group Selected)</td>
-											</tr>
+				                <tr>
+				                  <td>All of @g.Name Dispatched</td>
+				                  <td>(Group Selected)</td>
+				                </tr>
 							  }
 							}
 						  }
 
-						  @{
+				          @{
 
 
 							var sortedUngroupedUsers = from u in Model.UnGroupedUsers
@@ -258,12 +262,12 @@
 														 Name = name,
 														 User = u
 													   };
-						  }
+				          }
 
-						  <tr>
-							<td colspan="2"><b>Ungrouped Users\Units</b></td>
-						  </tr>
-						  @{
+				          <tr>
+				            <td colspan="2"><b>Ungrouped Users\Units</b></td>
+				          </tr>
+				          @{
 							var units = Model.Units.Where(x => x.StationGroupId == null);
 
 							if (units != null && units.Any())
@@ -272,365 +276,389 @@
 							  {
 								if (Model.Call.HasUnitBeenDispatched(unit.UnitId))
 								{
-								  <tr>
-									<td>@unit.Name</td>
-									<td>@unit.Type</td>
-								  </tr>
+				                  <tr>
+				                    <td>@unit.Name</td>
+				                    <td>@unit.Type</td>
+				                  </tr>
 								}
 							  }
 							}
-						  }
-						  @foreach (var u in sortedUngroupedUsers)
+				          }
+				          @foreach (var u in sortedUngroupedUsers)
 						  {
 							if (Model.Call.HasUserBeenDispatched(u.User.UserId))
 							{
-							  <tr>
-								<td></td>
-								<td>@u.Name</td>
-							  </tr>
+				              <tr>
+				                <td></td>
+				                <td>@u.Name</td>
+				              </tr>
 							}
 						  }
-						</tbody>
-					  </table>
-					</div>
-					<div class="tab-pane" id="tab-3">
-					  <table class="table table-striped">
-						<thead>
-						  <tr>
-							<th>Timestamp</th>
-							<th>Status</th>
-							<th>Name</th>
-							<th>Group</th>
-							<th>Note</th>
-						  </tr>
-						</thead>
-						<tbody>
-						  @foreach (var al in Model.ActionLogs)
+				        </tbody>
+				      </table>
+				    </div>
+				    <div class="tab-pane" id="tab-3">
+				      <table class="table table-striped">
+				        <thead>
+				          <tr>
+				            <th>Timestamp</th>
+				            <th>Status</th>
+				            <th>Name</th>
+				            <th>Group</th>
+				            <th>Note</th>
+				          </tr>
+				        </thead>
+				        <tbody>
+				          @foreach (var al in Model.ActionLogs)
 						  {
 							var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
 							var userInfo = Model.UserGroupRoles.FirstOrDefault(x => x.UserId == al.UserId);
 
-							<tr>
-							  <td>
-								@al.Timestamp.TimeConverterToString(Model.Department)
-							  </td>
-							  <td>
-								@if (al.ActionTypeId <= 25)
+				            <tr>
+				              <td>
+				                @al.Timestamp.TimeConverterToString(Model.Department)
+				              </td>
+				              <td>
+				                @if (al.ActionTypeId <= 25)
 								{
-								  <span class='label @customState.ButtonColor'>@customState.ButtonText</span>
+				                  <span class='label @customState.ButtonColor'>@customState.ButtonText</span>
 								}
 								else
 								{
-								  <span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>
+				                  <span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>
 								}
-							  </td>
-							  <td>
-								@if (userInfo != null)
+				              </td>
+				              <td>
+				                @if (userInfo != null)
 								{
-								  <span>@userInfo.Name</span>
+				                  <span>@userInfo.Name</span>
 								}
 								else
 								{
-							  <span>@(await UserHelper.GetFullNameForUser(al.UserId))</span>
+				                  <span>@(await UserHelper.GetFullNameForUser(al.UserId))</span>
 								}
-							  </td>
-							  <td>
-								@if (userInfo != null)
+				              </td>
+				              <td>
+				                @if (userInfo != null)
 								{
-								  <span>@userInfo.DepartmentGroupName</span>
+				                  <span>@userInfo.DepartmentGroupName</span>
 								}
 								else
 								{
-								  <span></span>
+				                  <span></span>
 								}
-							  </td>
-							  <td>
-								<p class="small">
-								  @Html.Raw(al.Note)
-								</p>
-							  </td>
-							</tr>
+				              </td>
+				              <td>
+				                <p class="small">
+				                  @Html.Raw(al.Note)
+				                </p>
+				              </td>
+				            </tr>
 						  }
-						</tbody>
-					  </table>
-					</div>
-					<div class="tab-pane" id="tab-4">
-					  <table class="table table-striped">
-						<thead>
-						  <tr>
-							<th>Timestamp</th>
-							<th>Status</th>
-							<th>Name</th>
-							<th>Group</th>
-							<th>Note</th>
-						  </tr>
-						</thead>
-						<tbody>
-						  @foreach (var us in Model.UnitStates)
+				        </tbody>
+				      </table>
+				    </div>
+				    <div class="tab-pane" id="tab-4">
+				      <table class="table table-striped">
+				        <thead>
+				          <tr>
+				            <th>Timestamp</th>
+				            <th>Status</th>
+				            <th>Name</th>
+				            <th>Group</th>
+				            <th>Note</th>
+				          </tr>
+				        </thead>
+				        <tbody>
+				          @foreach (var us in Model.UnitStates)
 						  {
 							var customState = await CustomStatesHelper.GetCustomUnitState(us);
 
-							<tr>
-							  <td>@us.Timestamp.TimeConverterToString(Model.Department)</td>
-							  <td>
-								@if (us.State <= 25)
+				            <tr>
+				              <td>@us.Timestamp.TimeConverterToString(Model.Department)</td>
+				              <td>
+				                @if (us.State <= 25)
 								{
-								  <span class='label @customState.ButtonColor'>@customState.ButtonText</span>
+				                  <span class='label @customState.ButtonColor'>@customState.ButtonText</span>
 								}
 								else
 								{
-								  <span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>
+				                  <span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>
 								}
-							  </td>
-							  <td>@us.Unit.Name</td>
-							  <td>
-								@if (us.Unit.StationGroup != null)
+				              </td>
+				              <td>@us.Unit.Name</td>
+				              <td>
+				                @if (us.Unit.StationGroup != null)
 								{
-								  @us.Unit.StationGroup.Name
+				                  @us.Unit.StationGroup.Name
 								}
-							  </td>
-							  <td>
-								<p class="small">
-								  @Html.Raw(us.Note)
-								</p>
-							  </td>
-							</tr>
+				              </td>
+				              <td>
+				                <p class="small">
+				                  @Html.Raw(us.Note)
+				                </p>
+				              </td>
+				            </tr>
 						  }
-						</tbody>
-					  </table>
-					</div>
-					<div class="tab-pane" id="tab-7">
-					  <table class="table table-striped">
-						<thead>
-						  <tr>
-							<th>Type</th>
-							<th>File Name</th>
-							<th>File Type</th>
-							<th>Timestamp</th>
-							<th><a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 1, resourceId = Model.Call.CallId})">Add File</a></th>
-						  </tr>
-						</thead>
-						<tbody>
-						  @foreach (var file in Model.Call.Attachments.Where(x => x.CallAttachmentType == 1 || x.CallAttachmentType == 3 || x.CallAttachmentType == 4))
+				        </tbody>
+				      </table>
+				    </div>
+				    <div class="tab-pane" id="tab-7">
+				      <table class="table table-striped">
+				        <thead>
+				          <tr>
+				            <th>Type</th>
+				            <th>File Name</th>
+				            <th>File Type</th>
+				            <th>Timestamp</th>
+				            <th><a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 1, resourceId = Model.Call.CallId})">Add File</a></th>
+				          </tr>
+				        </thead>
+				        <tbody>
+				          @foreach (var file in Model.Call.Attachments.Where(x => x.CallAttachmentType == 1 || x.CallAttachmentType == 3 || x.CallAttachmentType == 4))
 						  {
-							<tr>
-							  <td>
-								@if (file.CallAttachmentType == 1)
+				            <tr>
+				              <td>
+				                @if (file.CallAttachmentType == 1)
 								{
-								  <span>Dispatch Audio</span>
+				                  <span>Dispatch Audio</span>
 								}
 								else if (file.CallAttachmentType == 3)
 								{
-								  <span>File</span>
+				                  <span>File</span>
 								}
 								else if (file.CallAttachmentType == 4)
 								{
-								  <span>Video</span>
+				                  <span>Video</span>
 								}
-							  </td>
-							  <td>
-								<span>@file.FileName</span>
-							  </td>
-							  <td></td>
-							  <td>
-								@if (file.Timestamp.HasValue)
+				              </td>
+				              <td>
+				                <span>@file.FileName</span>
+				              </td>
+				              <td></td>
+				              <td>
+				                @if (file.Timestamp.HasValue)
 								{
-								  <span>@file.Timestamp.Value.TimeConverterToString(Model.Department)</span>
+				                  <span>@file.Timestamp.Value.TimeConverterToString(Model.Department)</span>
 								}
-							  </td>
-							  <td>
-								@if (file.CallAttachmentType == 1)
+				              </td>
+				              <td>
+				                @if (file.CallAttachmentType == 1)
 								{
-								  <audio id="player" controls>
-									<source src="@Url.Action("GetCallDispatchAudio", "Dispatch", new { Area = "User", callId = Model.Call.CallId })" type="audio/mp3">
-								  </audio>
+				                  <audio id="player" controls>
+				                    <source src="@Url.Action("GetCallDispatchAudio", "Dispatch", new { Area = "User", callId = Model.Call.CallId })" type="audio/mp3">
+				                  </audio>
 								}
 								else if (file.CallAttachmentType == 3)
 								{
-								  <span><a style="text-decoration:none;" class="btn btn-xs btn-success" asp-controller="Dispatch" asp-action="GetCallFile" asp-route-area="User" asp-route-callAttachmentId="@file.CallAttachmentId">Download</a></span>
+				                  <span><a style="text-decoration:none;" class="btn btn-xs btn-success" asp-controller="Dispatch" asp-action="GetCallFile" asp-route-area="User" asp-route-callAttachmentId="@file.CallAttachmentId">Download</a></span>
 								}
-							  </td>
-							</tr>
+				              </td>
+				            </tr>
 						  }
-						</tbody>
-					  </table>
-					</div>
-					<div class="tab-pane" id="tab-5">
-					  <div class="callImages">
-						@foreach (var image in Model.Call.Attachments.Where(x => x.CallAttachmentType == 2))
+				        </tbody>
+				      </table>
+				    </div>
+				    <div class="tab-pane" id="tab-5">
+				      <div class="callImages">
+				        @foreach (var image in Model.Call.Attachments.Where(x => x.CallAttachmentType == 2))
 						{
-						  <div>
-							<div class="ibox-content">
-							  <div>
-								<dl class="dl-horizontal">
-								  <dt>Name:</dt>
-								  <dd>@image.Name</dd>
-								  <dt>Timestamp:</dt>
-								  @if (image.Timestamp.HasValue)
+				          <div>
+				            <div class="ibox-content">
+				              <div>
+				                <dl class="dl-horizontal">
+				                  <dt>Name:</dt>
+				                  <dd>@image.Name</dd>
+				                  <dt>Timestamp:</dt>
+				                  @if (image.Timestamp.HasValue)
 								  {
-									<dd>@image.Timestamp.Value.TimeConverterToString(Model.Department)</dd>
+				                    <dd>@image.Timestamp.Value.TimeConverterToString(Model.Department)</dd>
 								  }
 								  else
 								  {
-									<dd>Unknown</dd>
+				                    <dd>Unknown</dd>
 								  }
-								  <dt>Location:</dt>
-								  <dd>Unknown</dd>
-								</dl>
+				                  <dt>Location:</dt>
+				                  <dd>Unknown</dd>
+				                </dl>
 
-							  </div>
-							  <div>
-								<img src="@Url.Action("GetCallImage", "Dispatch", new {Area = "User", callId = image.CallId, attachmentId = image.CallAttachmentId})" />
-							  </div>
-							</div>
-						  </div>
+				              </div>
+				              <div>
+				                <img src="@Url.Action("GetCallImage", "Dispatch", new {Area = "User", callId = image.CallId, attachmentId = image.CallAttachmentId})" />
+				              </div>
+				            </div>
+				          </div>
 						}
-					  </div>
-					</div>
-					<div class="tab-pane" id="tab-6">
-					  <div class="chat-content">
-						<div id="note-messages-inner1" class="feed-activity-list chat-messages">
+				      </div>
+				    </div>
+				    <div class="tab-pane" id="tab-6">
+				      <div class="chat-content">
+				        <div id="note-messages-inner1" class="feed-activity-list chat-messages">
 
-						</div>
+				        </div>
 
-						<div class="chat-message well">
-						  <span class="input-box input-group">
-							<input placeholder="Enter note here..." type="text" class="form-control input-small" name="note-box1" id="note-box1" />
-							<span class="input-group-btn">
-							  <button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.viewcall.addCallNote1()" id="note-box-submit1">Add Note</button>
-							</span>
-						  </span>
-						</div>
-					  </div>
-					</div>
-					<div class="tab-pane" id="tab-8">
-					  <table class="table table-striped">
-						<thead>
-						  <tr>
-							<th>Code</th>
-							<th>Name</th>
-							<th>Text</th>
-							<th>Attachments</th>
-						  </tr>
-						</thead>
-						<tbody>
-						  @foreach (var callProtocol in Model.Call.Protocols)
+				        <div class="chat-message well">
+				          <span class="input-box input-group">
+				            <input placeholder="Enter note here..." type="text" class="form-control input-small" name="note-box1" id="note-box1" />
+				            <span class="input-group-btn">
+				              <button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.viewcall.addCallNote1()" id="note-box-submit1">Add Note</button>
+				            </span>
+				          </span>
+				        </div>
+				      </div>
+				    </div>
+				    <div class="tab-pane" id="tab-8">
+				      <table class="table table-striped">
+				        <thead>
+				          <tr>
+				            <th>Code</th>
+				            <th>Name</th>
+				            <th>Text</th>
+				            <th>Attachments</th>
+				          </tr>
+				        </thead>
+				        <tbody>
+				          @foreach (var callProtocol in Model.Call.Protocols)
 						  {
 							var protocol = Model.Protocols.FirstOrDefault(x => x.DispatchProtocolId == callProtocol.DispatchProtocolId);
 
 							if (protocol != null)
 							{
-							  <tr>
-								<td>
-								  <span>@protocol.Code</span>
-								</td>
-								<td>
-								  <span>@protocol.Name</span>
-								</td>
-								<td>
-								  <a data-toggle="modal" data-target="#protocolTextWindow" data-protocolId="@protocol.DispatchProtocolId">View Text</a>
-								</td>
-								<td>
-								  @if (protocol.Attachments != null && protocol.Attachments.Any())
+				              <tr>
+				                <td>
+				                  <span>@protocol.Code</span>
+				                </td>
+				                <td>
+				                  <span>@protocol.Name</span>
+				                </td>
+				                <td>
+				                  <a data-toggle="modal" data-target="#protocolTextWindow" data-protocolId="@protocol.DispatchProtocolId">View Text</a>
+				                </td>
+				                <td>
+				                  @if (protocol.Attachments != null && protocol.Attachments.Any())
 								  {
 									foreach (var attachment in protocol.Attachments)
 									{
-									  <dl>
-										<dt>@attachment.FileName</dt>
-										<dd> <a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@attachment.DispatchProtocolAttachmentId">View</a></dd>
-									  </dl>
+				                      <dl>
+				                        <dt>@attachment.FileName</dt>
+				                        <dd> <a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@attachment.DispatchProtocolAttachmentId">View</a></dd>
+				                      </dl>
 									}
 								  }
 								  else
 								  {
-									<span>No Attachments</span>
+				                    <span>No Attachments</span>
 								  }
-								</td>
-							  </tr>
+				                </td>
+				              </tr>
 							}
 						  }
-						</tbody>
-					  </table>
-					</div>
+				        </tbody>
+				      </table>
+				    </div>
+				    @if (!String.IsNullOrWhiteSpace(Model.Call.CallFormData))
+					{
+				      <div class="tab-pane" id="tab-9">
+						<div id="fb-template"></div>
+				      </div>
+					}
 				  </div>
-				</div>
-			  </div>
-			</div>
-		  </div>
-		</div>
-	  </div>
-	</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="col-lg-4">
-	<div class="wrapper wrapper-content animated fadeInUp">
-	  <div class="ibox float-e-margins">
-		<div class="ibox-content">
-		  @if (!String.IsNullOrWhiteSpace(Model.Call.GeoLocationData))
+    <div class="wrapper wrapper-content animated fadeInUp">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          @if (!String.IsNullOrWhiteSpace(Model.Call.GeoLocationData))
 		  {
-			<div class="row">
-			  <div class="col-sm-10 col-lg-offset-2" style="text-align: center;">
-				<div class="btn-group" style="display: inherit;">
-				  <a class="btn btn-large btn-block btn-success" style="width: 75%;" asp-controller="Mapping" asp-action="LiveRouting" asp-route-area="User" asp-route-callId="@Model.Call.CallId" style="color: #fff;">Route</a>
-				  <button class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-				  <ul class="dropdown-menu">
-					@foreach (var station in Model.Stations)
+            <div class="row">
+              <div class="col-sm-10 col-lg-offset-2" style="text-align: center;">
+                <div class="btn-group" style="display: inherit;">
+                  <a class="btn btn-large btn-block btn-success" style="width: 75%;" asp-controller="Mapping" asp-action="LiveRouting" asp-route-area="User" asp-route-callId="@Model.Call.CallId" style="color: #fff;">Route</a>
+                  <button class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    @foreach (var station in Model.Stations)
 					{
-					  <li><a asp-controller="Mapping" asp-action="StationRouting" asp-route-area="User" asp-route-callId="@Model.Call.CallId" asp-route-stationId="@station.DepartmentGroupId">Route from @station.Name</a></li>
+                      <li><a asp-controller="Mapping" asp-action="StationRouting" asp-route-area="User" asp-route-callId="@Model.Call.CallId" asp-route-stationId="@station.DepartmentGroupId">Route from @station.Name</a></li>
 					}
-				  </ul>
-				</div>
-			  </div>
-			</div>
+                  </ul>
+                </div>
+              </div>
+            </div>
 		  }
-		  <div class="row">
-			<div class="col-sm-12">
-			  <h3>Notes</h3>
-			  <div class="chat-content">
-				<div id="note-messages-inner" class="feed-activity-list chat-messages" style="overflow-y: scroll;overflow-x: hidden;max-height: 450px;">
+          <div class="row">
+            <div class="col-sm-12">
+              <h3>Notes</h3>
+              <div class="chat-content">
+                <div id="note-messages-inner" class="feed-activity-list chat-messages" style="overflow-y: scroll;overflow-x: hidden;max-height: 450px;">
 
-				</div>
+                </div>
 
-				<div class="chat-message well">
-				  <span class="input-box input-group">
-					<input placeholder="Enter note here..." type="text" class="form-control input-small" name="note-box" id="note-box" />
-					<span class="input-group-btn">
-					  <button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.viewcall.addCallNote()" id="note-box-submit">Add Note</button>
-					</span>
-				  </span>
-				</div>
-			  </div>
-			</div>
-		  </div>
-		</div>
-	  </div>
-	</div>
+                <div class="chat-message well">
+                  <span class="input-box input-group">
+                    <input placeholder="Enter note here..." type="text" class="form-control input-small" name="note-box" id="note-box" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.viewcall.addCallNote()" id="note-box-submit">Add Note</button>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="protocolTextWindow">
   <div class="modal-dialog">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Protocol Text</h4>
-	  </div>
-	  <div class="modal-body">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Protocol Text</h4>
+      </div>
+      <div class="modal-body">
 
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-	  </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
 
-	</div>
+    </div>
   </div>
 </div>
 
 @section Scripts
   {
+  <script src="@Url.Content("~/lib/formBuilder/dist/form-render.min.js")" type="text/javascript"></script>
   <script src="https://cdn.plyr.io/3.3.22/plyr.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
   <script type="text/javascript">
 	var callId = @(Model.Call.CallId);
+
+	var newCallForm = $('#fb-template').formRender({
+	  dataType: 'json',
+	  formData: '@Html.Raw(Model.Call.CallFormData)',
+	  notify: {
+		error: function (message) {
+		  
+		},
+		success: function (message) {
+		  $('input, textarea, select', '.rendered-form').attr('readonly', true).attr('disabled', true)
+		},
+		warning: function (message) {
+		  
+		}
+	  }
+
+	});
   </script>
 
   <script src="~/js/app/common/signalr/resgrid.common.signalr.js" type="text/javascript"></script>

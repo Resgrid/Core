@@ -53,5 +53,10 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.Calls
 		/// (Optional) Note Longitude
 		/// </summary>
 		public decimal? Lng { get; set; }
+
+		/// <summary>
+		/// Full name of the user who submitted the note
+		/// </summary>
+		public string Fnm { get; set; }
 	}
 }

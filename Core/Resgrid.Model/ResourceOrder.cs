@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using GeoCoordinatePortable;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 
 namespace Resgrid.Model
@@ -38,7 +39,7 @@ namespace Resgrid.Model
 
 		[DecimalPrecision(10, 7)]
 		public decimal? IncidentLongitude { get; set; }
-		
+
 		public string Summary { get; set; }
 
 		public DateTime OpenDate { get; set; }
@@ -79,7 +80,7 @@ namespace Resgrid.Model
 				if (OriginLatitude.HasValue && OriginLongitude.HasValue)
 					return new GeoCoordinate(OriginLatitude.Value, OriginLongitude.Value);
 
-				return new GeoCoordinate(0,0);
+				return new GeoCoordinate(0, 0);
 			}
 		}
 
@@ -94,6 +95,7 @@ namespace Resgrid.Model
 		public virtual ICollection<ResourceOrderItem> Items { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return ResourceOrderId; }
@@ -107,7 +109,10 @@ namespace Resgrid.Model
 		public string IdName => "ResourceOrderId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "OriginLocation" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "OriginLocation" };
 
 		public bool IsFilled()
 		{
@@ -139,6 +144,6 @@ namespace Resgrid.Model
 		OpenUntilClosed = 0,
 		OpenUntilFilled = 1,
 		OpenUntilDatePartial = 2,
-		OpenUntilDateCancel	= 3
+		OpenUntilDateCancel = 3
 	}
 }

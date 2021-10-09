@@ -7,11 +7,14 @@ using RabbitMQ.Client;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using System.Collections.Generic;
+using Resgrid.Model.Events;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitOutboundQueueProvider : IRabbitOutboundQueueProvider
 	{
+		private static bool _hasBeenInitialized = false;
+
 		public RabbitOutboundQueueProvider()
 		{
 			VerifyAndCreateClients();
@@ -19,102 +22,24 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public bool EnqueueCall(CallQueueItem callQueue)
 		{
-			string serializedObject = String.Empty;
-
-			//try
-			//{
-			//	serializedObject = ObjectSerialization.Serialize(callQueue);
-
-			//	// We are limited to 256KB in azure queue messages
-			//	var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
-			//	if (size > 220000)
-			//	{
-			//		callQueue.Profiles = null;
-			//		serializedObject = ObjectSerialization.Serialize(callQueue);
-			//	}
-			//}
-			//catch { }
-
-			//// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
-			//if (String.IsNullOrWhiteSpace(serializedObject))
-			//{
-			//	callQueue.Profiles = null;
-			serializedObject = ObjectSerialization.Serialize(callQueue);
-			//}
+			string serializedObject = ObjectSerialization.Serialize(callQueue);
 
 			return SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
 		}
 
 		public bool EnqueueMessage(MessageQueueItem messageQueue)
 		{
-			string serializedObject = String.Empty;
+			string serializedObject = ObjectSerialization.Serialize(messageQueue);
 
 			if (messageQueue != null && messageQueue.Message != null && messageQueue.MessageId == 0 && messageQueue.Message.MessageId != 0)
 				messageQueue.MessageId = messageQueue.Message.MessageId;
-
-			//try
-			//{
-			//	serializedObject = ObjectSerialization.Serialize(messageQueue);
-
-			//	// We are limited to 256KB in azure queue messages
-			//	var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
-			//	if (size > 220000)
-			//	{
-			//		messageQueue.Profiles = null;
-			//		serializedObject = ObjectSerialization.Serialize(messageQueue);
-			//	}
-
-			//	if (ASCIIEncoding.Unicode.GetByteCount(serializedObject) > 220000)
-			//	{
-			//		messageQueue.Message.MessageRecipients = null;
-			//		serializedObject = ObjectSerialization.Serialize(messageQueue);
-			//	}
-			//}
-			//catch { }
-
-			//// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
-			//if (String.IsNullOrWhiteSpace(serializedObject))
-			//{
-			//	messageQueue.Profiles = null;
-			//	messageQueue.Message.MessageRecipients = null;
-			serializedObject = ObjectSerialization.Serialize(messageQueue);
-			//}
 
 			return SendMessage(ServiceBusConfig.MessageBroadcastQueueName, serializedObject);
 		}
 
 		public bool EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
 		{
-			string serializedObject = String.Empty;
-
-			//try
-			//{
-			//	serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-
-			//	// We are limited to 256KB in azure queue messages
-			//	var size = ASCIIEncoding.Unicode.GetByteCount(serializedObject);
-			//	if (size > 220000)
-			//	{
-			//		distributionListQueue.Users = null;
-			//		serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-			//	}
-
-			//	// If were still too big, strip out some attachments
-			//	if (size > 220000)
-			//	{
-			//		distributionListQueue.Message.Attachments = null;
-			//		serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-			//	}
-			//}
-			//catch { }
-
-			//// If we get an Exception, i.e. OutOfMemmory, lets just strip out the heavy data and try.
-			//if (String.IsNullOrWhiteSpace(serializedObject))
-			//{
-			//	distributionListQueue.Users = null;
-			//	distributionListQueue.Message.Attachments = null;
-			serializedObject = ObjectSerialization.Serialize(distributionListQueue);
-			//}
+			string serializedObject = ObjectSerialization.Serialize(distributionListQueue);
 
 			return SendMessage(ServiceBusConfig.EmailBroadcastQueueName, serializedObject);
 		}
@@ -151,71 +76,129 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return SendMessage(ServiceBusConfig.PaymentQueueName, serializedObject);
 		}
 
+		public bool EnqueueAuditEvent(AuditEvent auditEvent)
+		{
+			var serializedObject = ObjectSerialization.Serialize(auditEvent);
+
+			return SendMessage(ServiceBusConfig.AuditQueueName, serializedObject);
+		}
+
 		public bool VerifyAndCreateClients()
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			if (!_hasBeenInitialized)
 			{
-				try
+				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 				{
-					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					using (var connection = factory.CreateConnection())
+					try
 					{
-						using (var channel = connection.CreateModel())
+						//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						using (var connection = CreateConnection())
 						{
-							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
-										 durable: true,
-										 exclusive: false,
-										 autoDelete: false,
-										 arguments: null);
+							using (var channel = connection.CreateModel())
+							{
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
 
-							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
-										 durable: true,
-										 exclusive: false,
-										 autoDelete: false,
-										 arguments: null);
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
 
-							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
-										 durable: true,
-										 exclusive: false,
-										 autoDelete: false,
-										 arguments: null);
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
 
-							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
-										 durable: true,
-										 exclusive: false,
-										 autoDelete: false,
-										 arguments: null);
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
 
-							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
-										 durable: true,
-										 exclusive: false,
-										 autoDelete: false,
-										 arguments: null);
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
 
-							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
-										 durable: true,
-										 exclusive: false,
-										 autoDelete: false,
-										 arguments: null);
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
 
-							channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
-										 durable: true,
-										 exclusive: false,
-										 autoDelete: false,
-										 arguments: null);
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
+
+								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
+											 durable: true,
+											 exclusive: false,
+											 autoDelete: false,
+											 arguments: null);
+							}
 						}
-					}
 
-					return true;
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-					return false;
+						_hasBeenInitialized = true;
+
+						return true;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+						return false;
+					}
 				}
 			}
 
 			return false;
+		}
+
+		private IConnection CreateConnection()
+		{
+			ConnectionFactory factory;
+			IConnection connection;
+
+			// I know....I know.....
+			try
+			{
+				factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				connection = factory.CreateConnection();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				try
+				{
+					factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					connection = factory.CreateConnection();
+				}
+				catch (Exception ex2)
+				{
+					Logging.LogException(ex2);
+
+					try
+					{
+						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						connection = factory.CreateConnection();
+					}
+					catch (Exception ex3)
+					{
+						Logging.LogException(ex3);
+						throw;
+					}
+				}
+			}
+
+			return connection;
 		}
 
 		private bool SendMessage(string queueName, string message)
@@ -225,8 +208,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 			try
 			{
 				// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
-				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = factory.CreateConnection())
+				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				using (var connection = CreateConnection())
 				{
 					using (var channel = connection.CreateModel())
 					{

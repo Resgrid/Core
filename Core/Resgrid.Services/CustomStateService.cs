@@ -4,12 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
-using Resgrid.Model.Cache;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
-using Resgrid.Providers.Bus;
 
 namespace Resgrid.Services
 {
@@ -99,6 +97,27 @@ namespace Resgrid.Services
 			}
 		}
 
+		public async Task<List<CustomStateDetail>> GetCustomPersonnelStaffingsOrDefaultsAsync(int departmentId)
+		{
+			var statuses = await GetActiveStaffingLevelsForDepartmentAsync(departmentId);
+
+			if (statuses != null && statuses.GetActiveDetails().Any())
+			{
+				return statuses.GetActiveDetails();
+			}
+			else
+			{
+				List<CustomStateDetail> details = new List<CustomStateDetail>();
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Available, ButtonText = "Available" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Delayed, ButtonText = "Delayed" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Unavailable, ButtonText = "Unavailable" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Committed, ButtonText = "Committed" });
+				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.OnShift, ButtonText = "On Shift" });
+
+				return details;
+			}
+		}
+
 		public async Task<CustomState> GetActiveStaffingLevelsForDepartmentAsync(int departmentId)
 		{
 			CustomState state = null;
@@ -147,7 +166,7 @@ namespace Resgrid.Services
 
 		public async Task<CustomState> SaveAsync(CustomState customState, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var saved = await _customStateRepository.SaveOrUpdateAsync(customState,cancellationToken);
+			var saved = await _customStateRepository.SaveOrUpdateAsync(customState, cancellationToken);
 
 			_cacheProvider.Remove(string.Format(CacheKey, customState.DepartmentId));
 
@@ -278,6 +297,27 @@ namespace Resgrid.Services
 
 				return stateDetail;
 			}
+		}
+
+		public List<CustomStateDetail> GetDefaultUnitStatuses()
+		{
+			List<CustomStateDetail> details = new List<CustomStateDetail>();
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Responding, ButtonText = "Responding", ButtonColor = "#32db64" });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Available, ButtonText = "Available", ButtonColor = "#222222" });
+			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Unavailable, ButtonText = "Unavailable", ButtonColor = "" });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Committed, ButtonText = "Committed", ButtonColor = "#50b8de" });
+			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Delayed, ButtonText = "Delayed", ButtonColor = "" });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.OnScene, ButtonText = "On Scene", ButtonColor = "#69BB7B" });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Staging, ButtonText = "Staging", ButtonColor = "#ffc900" });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Returning, ButtonText = "Returning", ButtonColor = "#387ef5" });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.OutOfService, ButtonText = "Out of Service", ButtonColor = "#ff6b69" });
+			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Cancelled, ButtonText = "Cancelled", ButtonColor = "#ff6b69" });
+			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Released, ButtonText = "Released", ButtonColor = "" });
+			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Manual, ButtonText = "Manual", ButtonColor = "" });
+			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Enroute, ButtonText = "Enroute", ButtonColor = "" });
+
+			return details;
+
 		}
 	}
 }

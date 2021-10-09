@@ -50,6 +50,7 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.BigBoard
 			public decimal? Longitude { get; set; }
 			public string GroupName { get; set; }
 			public int GroupId { get; set; }
+			public string DestinationName { get; set; }
 		}
 
 		public class CallViewModel

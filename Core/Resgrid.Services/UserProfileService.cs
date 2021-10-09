@@ -72,6 +72,7 @@ namespace Resgrid.Services
 
 		public async Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			profile.LastUpdated = DateTime.UtcNow;
 			var savedProfile = await _userProfileRepository.SaveOrUpdateAsync(profile, cancellationToken);
 
 			ClearUserProfileFromCache(savedProfile.UserId);
@@ -142,6 +143,9 @@ namespace Resgrid.Services
 
 		public async Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds)
 		{
+			if (userIds == null || userIds.Count <= 0)
+				return new List<UserProfile>();
+
 			var items = await _userProfileRepository.GetSelectedUserProfilesAsync(userIds);
 
 			if (items != null && items.Any())

@@ -19,6 +19,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 {
 	[Produces("application/json")]
 	[Route("api/v{version:ApiVersion}/[controller]")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class CoreDataController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;

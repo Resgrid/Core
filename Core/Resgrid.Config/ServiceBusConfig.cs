@@ -12,6 +12,7 @@
 		public static string EmailBroadcastQueueName = "resgridemails";
 		public static string SystemQueueName = "resgridsys";
 		public static string PaymentQueueName = "payment";
+		public static string AuditQueueName = "audit";
 
 		#region Azure Service Bus Values
 		public static string SignalRServiceBusConnectionString = "";
@@ -49,6 +50,8 @@
 
 		#region RabbitMQ Bus Values
 		public static string RabbitHostname = "localhost";
+		public static string RabbitHostname2 = ""; // For 3 host cluster, node 2
+		public static string RabbitHostname3 = ""; // For 3 host cluster, node 3
 		public static string RabbitUsername = "guest";
 		public static string RabbbitPassword = "guest";
 		public static string RabbbitExchange = "";

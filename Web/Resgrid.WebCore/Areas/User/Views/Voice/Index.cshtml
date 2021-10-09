@@ -1,0 +1,123 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.WebCore.Areas.User.Models.Voice.VoiceIndexModel
+@{
+  ViewBag.Title = "Resgrid | Push-To-Talk";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Push-To-Talk</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Push-To-Talk</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanUseVoice)
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a title="Create PTT Channel" class="btn btn-success" asp-controller="Voice" asp-action="New" asp-route-area="User">New Channel</a>
+      </div>
+    </div>
+  }
+</div>
+
+@if (!Model.CanUseVoice)
+{
+  <div class="row">
+	<div class="col-xs-8 col-xs-offset-2">
+    &nbsp;
+	  <div class="alert alert-danger fade in">
+	    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+	    <h4>Push-To-Talk Addon Not Purchased</h4>
+		<p>Your department has not purchased the Push-To-Talk addon. Your departments Managing Member can purchase the addon from the Subscription and Billing page. Push-To-Talk allows your department to enable real-time voice communications though the Resgrid applications.</p>
+	  </div>
+	</div>
+  </div>
+}
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>
+                    Channel Name
+                  </th>
+                  <th>
+                    Is Default
+                  </th>
+				  <th>
+				    Participants
+				  </th>
+                  <th>
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var c in Model.Voice.Channels)
+				{
+                  <tr>
+                    <td>
+                      @c.Name
+                    </td>
+                    <td>
+                      @if (c.IsDefault)
+					  {
+                        <span>Yes</span>
+					  }
+					  else
+					  {
+                        <span>No</span>
+					  }
+                    </td>
+                    <td>
+                     0
+                    </td>
+                    <td>
+                      @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+					  {
+						if (c.IsDefault)
+						{
+                          <a href="@Url.Action("DisableDefault", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-info' rel="nofollow">Turn Off Default</a>
+						}
+						else
+						{
+                          <a href="@Url.Action("EnableDefault", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-info' rel="nofollow">Turn On Default</a>
+						}
+                        <a href="@Url.Action("Delete", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this channel. Are you sure you want to delete the channel @c.Name ?" rel="nofollow">Delete</a>
+					  }
+                    </td>
+                  </tr>
+				}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="alert alert-warning">
+      You can only have 1 channel set as the default at a time. To make another channel the default you must first turn the default channel option off.
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+
+}

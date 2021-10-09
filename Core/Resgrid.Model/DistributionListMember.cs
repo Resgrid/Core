@@ -3,12 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using ProtoBuf;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
 	[ProtoContract]
 	[Table("DistributionListMembers")]
-	public class DistributionListMember: IEntity
+	public class DistributionListMember : IEntity
 	{
 		[Key]
 		[Required]
@@ -31,6 +32,7 @@ namespace Resgrid.Model
 		public virtual IdentityUser User { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DistributionListMemberId; }
@@ -44,6 +46,9 @@ namespace Resgrid.Model
 		public string IdName => "DistributionListMemberId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "DistributionList", "User" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "DistributionList", "User" };
 	}
 }

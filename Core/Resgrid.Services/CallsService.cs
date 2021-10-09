@@ -69,6 +69,10 @@ namespace Resgrid.Services
 			if (String.IsNullOrWhiteSpace(call.Name))
 				call.Name = "New Call " + DateTime.UtcNow.ToShortDateString();
 
+			// Got some bad data where geolocation is "," which passes some checks.
+			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length == 1)
+				call.GeoLocationData = "";
+
 			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 		}
 
@@ -685,6 +689,26 @@ namespace Resgrid.Services
 			}
 
 			return true;
+		}
+
+		public async Task<List<Call>> GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime startDate, DateTime endDate)
+		{
+			var calls = await _callsRepository.GetAllNonDispatchedScheduledCallsWithinDateRange(startDate, endDate);
+
+			if (calls != null && calls.Any())
+				return calls.ToList();
+
+			return new List<Call>();
+		}
+
+		public async Task<List<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId)
+		{
+			var calls = await _callsRepository.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(departmentId);
+
+			if (calls != null && calls.Any())
+				return calls.ToList();
+
+			return new List<Call>();
 		}
 
 		public string CallStateToString(CallStates state)

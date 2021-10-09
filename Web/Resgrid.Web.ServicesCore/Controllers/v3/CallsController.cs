@@ -24,6 +24,7 @@ using Resgrid.Web.Services.Controllers.Version3.Models.CallPriorities;
 using Resgrid.Web.Services.Controllers.Version3.Models.Protocols;
 using Resgrid.Web.ServicesCore.Options;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -32,6 +33,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class CallsController : V3AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
@@ -134,7 +137,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Fls = 0;
 				}
 
-				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+				if (String.IsNullOrWhiteSpace(c.Address) && (!String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1))
 				{
 					var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -207,7 +210,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Fls = 0;
 				}
 
-				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
 				{
 					var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -411,7 +414,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 				if (call.Aud > 0)
 				{
-					var audio = c.Attachments.FirstOrDefault(x => x.CallAttachmentType == (int) CallAttachmentTypes.DispatchAudio);
+					var audio = c.Attachments.FirstOrDefault(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
 
 					if (audio != null)
 						call.Aid = SymmetricEncryption.Encrypt(audio.CallAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase);
@@ -424,12 +427,16 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				call.Fls = 0;
 			}
 
-			if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+			if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
 			{
 				var geo = c.GeoLocationData.Split(char.Parse(","));
 
 				if (geo.Length == 2)
+				{
 					call.Add = await _geoLocationProvider.GetAddressFromLatLong(double.Parse(geo[0]), double.Parse(geo[1]));
+					call.Gla = geo[0].Trim();
+					call.Glo = geo[1].Trim();
+				}
 			}
 			else
 				call.Add = c.Address;
@@ -439,6 +446,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			call.Utc = c.LoggedOn;
 			call.Ste = c.State;
 			call.Num = c.Number;
+
+			if (c.DispatchOn.HasValue)
+				call.Don = c.DispatchOn.Value.TimeConverter(department);
 
 			if (!String.IsNullOrWhiteSpace(c.W3W))
 				call.w3w = c.W3W;
@@ -461,6 +471,10 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var result = new CallDataResult();
 
 			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call.DepartmentId != DepartmentId)
+				Unauthorized();
+
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
@@ -469,6 +483,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 			var names = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, true);
 			var priority = await _callsService.GetCallPrioritiesByIdAsync(call.DepartmentId, call.Priority, false);
+			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(call.DepartmentId);
 
 			if (priority != null)
 			{
@@ -586,7 +601,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						eventResult.Name = name.Name;
 						eventResult.GroupId = name.DepartmentGroupId;
 						eventResult.Group = name.Name;
-						
+
 					}
 					else
 					{
@@ -635,6 +650,32 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				}
 			}
 
+			if (call.RoleDispatches != null && call.RoleDispatches.Any())
+			{
+				foreach (var roleDispatch in call.RoleDispatches)
+				{
+					var eventResult = new DispatchedEventResult();
+					eventResult.Id = roleDispatch.RoleId.ToString();
+					if (roleDispatch.LastDispatchedOn.HasValue)
+					{
+						eventResult.Timestamp = roleDispatch.LastDispatchedOn.Value;
+					}
+					eventResult.Type = "Role";
+
+					var role = roles.FirstOrDefault(x => x.PersonnelRoleId == roleDispatch.RoleId);
+					if (role != null)
+					{
+						eventResult.Name = role.Name;
+					}
+					else
+					{
+						eventResult.Name = "Unknown Role";
+					}
+
+					result.Dispatches.Add(eventResult);
+				}
+			}
+
 			if (call.Protocols != null && call.Protocols.Any())
 			{
 				foreach (var callProtocol in call.Protocols)
@@ -654,6 +695,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// Saves a call in the Resgrid system
 		/// </summary>
 		/// <param name="newCallInput"></param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns></returns>
 		[HttpPost("SaveCall")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -663,6 +705,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		{
 			if (!ModelState.IsValid)
 				return BadRequest();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			var call = new Call
 			{
@@ -679,14 +723,31 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (!string.IsNullOrWhiteSpace(newCallInput.CNum))
 				call.ContactName = newCallInput.CNum;
 
-			if (!string.IsNullOrWhiteSpace(newCallInput.Cid))
-				call.IncidentNumber = newCallInput.Cid;
+			if (!string.IsNullOrWhiteSpace(newCallInput.EId))
+				call.ExternalIdentifier = newCallInput.EId;
+
+			if (!string.IsNullOrWhiteSpace(newCallInput.InI))
+				call.IncidentNumber = newCallInput.InI;
+
+			if (!string.IsNullOrWhiteSpace(newCallInput.RId))
+				call.ReferenceNumber = newCallInput.RId;
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.Add))
 				call.Address = newCallInput.Add;
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.W3W))
 				call.W3W = newCallInput.W3W;
+
+			if (!string.IsNullOrWhiteSpace(newCallInput.Cfd))
+				call.CallFormData = newCallInput.Cfd;
+
+			if (newCallInput.Don.HasValue)
+			{
+				call.DispatchOn = newCallInput.Don.Value;
+
+				call.DispatchOn = DateTimeHelpers.ConvertToUtc(newCallInput.Don.Value, department.TimeZone);
+				call.HasBeenDispatched = false;
+			}
 
 			//if (call.Address.Equals("Current Coordinates", StringComparison.InvariantCultureIgnoreCase))
 			//	call.Address = "";
@@ -697,7 +758,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (!string.IsNullOrWhiteSpace(newCallInput.Geo))
 				call.GeoLocationData = newCallInput.Geo;
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
+			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address) && call.GeoLocationData.Length > 1)
 				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
 			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
@@ -727,12 +788,12 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			call.GroupDispatches = new List<CallDispatchGroup>();
 			call.RoleDispatches = new List<CallDispatchRole>();
 
-			if (string.IsNullOrWhiteSpace(newCallInput.Dis) || newCallInput.Dis == "0")
+			if (newCallInput.Dis == "0")
 			{
 				// Use case, existing clients and non-ionic2 app this will be null dispatch all users. Or we've specified everyone (0).
 				foreach (var u in users)
 				{
-					var cd = new CallDispatch {UserId = u.UserId};
+					var cd = new CallDispatch { UserId = u.UserId };
 
 					call.Dispatches.Add(cd);
 				}
@@ -797,7 +858,10 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					Logging.LogException(ex);
 				}
 			}
-			
+
+			// Call is in the past or is now, were dispatching now (at the end of this func)
+			if (call.DispatchOn.HasValue && call.DispatchOn.Value <= DateTime.UtcNow)
+				call.HasBeenDispatched = true;
 
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
@@ -840,9 +904,12 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			var cqi = new CallQueueItem();
 			cqi.Call = savedCall;
-			cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(profiles);
 
-			await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+			if (profiles.Any())
+				cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(profiles);
+
+			if (!savedCall.DispatchOn.HasValue || savedCall.DispatchOn.Value <= DateTime.UtcNow)
+				await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 
 			return CreatedAtAction(nameof(SaveCall), new { id = savedCall.CallId }, savedCall);
 		}
@@ -858,6 +925,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
+		[Obsolete]
 		public async Task<ActionResult<AddCallInput>> AddCall([FromBody] AddCallInput callInput, CancellationToken cancellationToken)
 		{
 			try
@@ -895,7 +963,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					ReferenceNumber = callInput.ReferenceNumber
 				};
 
-				if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
+				if (!string.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1 && !string.IsNullOrWhiteSpace(call.Address))
 					call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
 				if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
@@ -932,7 +1000,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				{
 					foreach (var u in users)
 					{
-						var cd = new CallDispatch {UserId = u.UserId};
+						var cd = new CallDispatch { UserId = u.UserId };
 
 						call.Dispatches.Add(cd);
 					}
@@ -949,7 +1017,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 							if (groupsToDispatch != null)
 							{
-								var cd = new CallDispatchGroup {DepartmentGroupId = groupsToDispatch.DepartmentGroupId};
+								var cd = new CallDispatchGroup { DepartmentGroupId = groupsToDispatch.DepartmentGroupId };
 								call.GroupDispatches.Add(cd);
 
 								if (groupsToDispatch.Members != null && groupsToDispatch.Members.Any())
@@ -1022,6 +1090,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// Closes a Resgrid call
 		/// </summary>
 		/// <param name="closeCallInput">Data to close a call</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>OK status code if successful</returns>
 		[HttpPut("CloseCall")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -1056,6 +1125,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// Updates an existing Active Call in the Resgrid system
 		/// </summary>
 		/// <param name="editCallInput">Data to updated the call</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>OK status code if successful</returns>
 		[HttpPut("EditCall")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -1067,28 +1137,245 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		{
 			var call = await _callsService.GetCallByIdAsync(editCallInput.Cid);
 
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
 			if (call == null)
 				return NotFound();
 
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			if (call.State != (int) CallStates.Active)
+			if (call.State != (int)CallStates.Active)
 				return BadRequest();
 
-			if (!String.IsNullOrWhiteSpace(editCallInput.Nme) && editCallInput.Nme != call.Name)
-				call.Name = editCallInput.Nme;
+			call.Priority = (int)Enum.Parse(typeof(CallPriority), editCallInput.Pri);
+			call.Name = editCallInput.Nme;
+			call.NatureOfCall = editCallInput.Noc;
 
-			if (!String.IsNullOrWhiteSpace(editCallInput.Noc) && editCallInput.Noc != call.NatureOfCall)
-				call.NatureOfCall = editCallInput.Noc;
+			if (!string.IsNullOrWhiteSpace(editCallInput.CNme))
+				call.ContactName = editCallInput.CNme;
 
-			if (!String.IsNullOrWhiteSpace(editCallInput.Add) && editCallInput.Add != call.Address)
+			if (!string.IsNullOrWhiteSpace(editCallInput.CNum))
+				call.ContactName = editCallInput.CNum;
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.EId))
+				call.ExternalIdentifier = editCallInput.EId;
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.InI))
+				call.IncidentNumber = editCallInput.InI;
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.RId))
+				call.ReferenceNumber = editCallInput.RId;
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.Add))
 				call.Address = editCallInput.Add;
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.W3W))
+				call.W3W = editCallInput.W3W;
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.Cfd))
+				call.CallFormData = editCallInput.Cfd;
+
+			if (editCallInput.Don.HasValue)
+			{
+				call.DispatchOn = editCallInput.Don.Value;
+
+				call.DispatchOn = DateTimeHelpers.ConvertToUtc(editCallInput.Don.Value, department.TimeZone);
+				call.HasBeenDispatched = false;
+			}
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.Not))
+				call.Notes = editCallInput.Not;
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.Geo))
+				call.GeoLocationData = editCallInput.Geo;
+
+			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address) && call.GeoLocationData.Length > 1)
+				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
+
+			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
+			{
+				var coords = await _geoLocationProvider.GetCoordinatesFromW3WAsync(call.W3W);
+
+				if (coords != null)
+				{
+					call.GeoLocationData = $"{coords.Latitude},{coords.Longitude}";
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(editCallInput.Typ) && editCallInput.Typ != "No Type")
+			{
+				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+				var type = callTypes.FirstOrDefault(x => x.Type == editCallInput.Typ);
+
+				if (type != null)
+				{
+					call.Type = type.Type;
+				}
+			}
+
+			if (string.IsNullOrWhiteSpace(editCallInput.Dis) || editCallInput.Dis == "0")
+			{
+				if (call.Dispatches == null)
+					call.Dispatches = new List<CallDispatch>();
+
+				if (call.GroupDispatches == null)
+					call.GroupDispatches = new List<CallDispatchGroup>();
+
+				if (call.RoleDispatches == null)
+					call.RoleDispatches = new List<CallDispatchRole>();
+
+				if (call.UnitDispatches == null)
+					call.UnitDispatches = new List<CallDispatchUnit>();
+
+				var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+				// Use case, existing clients and non-ionic2 app this will be null dispatch all users. Or we've specified everyone (0).
+				foreach (var u in users)
+				{
+					var cd = new CallDispatch { UserId = u.UserId };
+
+					call.Dispatches.Add(cd);
+				}
+			}
+			else
+			{
+				var dispatch = editCallInput.Dis.Split(char.Parse("|"));
+				var usersToDispatch = dispatch.Where(x => x.StartsWith("P:")).Select(y => y.Replace("P:", ""));
+				var groupsToDispatch = dispatch.Where(x => x.StartsWith("G:")).Select(y => int.Parse(y.Replace("G:", "")));
+				var rolesToDispatch = dispatch.Where(x => x.StartsWith("R:")).Select(y => int.Parse(y.Replace("R:", "")));
+				var unitsToDispatch = dispatch.Where(x => x.StartsWith("U:")).Select(y => int.Parse(y.Replace("U:", "")));
+
+				try
+				{
+					if (call.Dispatches == null)
+						call.Dispatches = new List<CallDispatch>();
+
+					var dispatchesToRemove = call.Dispatches.Select(x => x.UserId).Where(y => !usersToDispatch.Contains(y)).ToList();
+
+					foreach (var userId in dispatchesToRemove)
+					{
+						var item = call.Dispatches.First(x => x.UserId == userId);
+						call.Dispatches.Remove(item);
+					}
+
+					foreach (var user in usersToDispatch)
+					{
+						if (!call.Dispatches.Any(x => x.UserId == user))
+						{
+							var cd = new CallDispatch { CallId = call.CallId, UserId = user };
+							call.Dispatches.Add(cd);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+
+				try
+				{
+					if (call.GroupDispatches == null)
+						call.GroupDispatches = new List<CallDispatchGroup>();
+
+					var dispatchesToRemove = call.GroupDispatches.Select(x => x.DepartmentGroupId).Where(y => !groupsToDispatch.Contains(y)).ToList();
+
+					foreach (var id in dispatchesToRemove)
+					{
+						call.GroupDispatches.Remove(call.GroupDispatches.First(x => x.DepartmentGroupId == id));
+					}
+
+					foreach (var group in groupsToDispatch)
+					{
+						if (!call.GroupDispatches.Any(x => x.DepartmentGroupId == group))
+						{
+							var cd = new CallDispatchGroup { CallId = call.CallId, DepartmentGroupId = group };
+							call.GroupDispatches.Add(cd);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+
+				try
+				{
+					if (call.RoleDispatches == null)
+						call.RoleDispatches = new List<CallDispatchRole>();
+
+					var dispatchesToRemove = call.RoleDispatches.Select(x => x.RoleId).Where(y => !rolesToDispatch.Contains(y)).ToList();
+
+					foreach (var id in dispatchesToRemove)
+					{
+						call.RoleDispatches.Remove(call.RoleDispatches.First(x => x.RoleId == id));
+					}
+
+					foreach (var role in rolesToDispatch)
+					{
+						if (!call.RoleDispatches.Any(x => x.RoleId == role))
+						{
+							var cd = new CallDispatchRole { CallId = call.CallId, RoleId = role };
+							call.RoleDispatches.Add(cd);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+
+				try
+				{
+					if (call.UnitDispatches == null)
+						call.UnitDispatches = new List<CallDispatchUnit>();
+
+					var dispatchesToRemove = call.UnitDispatches.Select(x => x.UnitId).Where(y => !unitsToDispatch.Contains(y)).ToList();
+
+					foreach (var id in dispatchesToRemove)
+					{
+						call.UnitDispatches.Remove(call.UnitDispatches.First(x => x.UnitId == id));
+					}
+
+					foreach (var unit in unitsToDispatch)
+					{
+						if (!call.UnitDispatches.Any(x => x.UnitId == unit))
+						{
+							var cdu = new CallDispatchUnit { CallId = call.CallId, UnitId = unit };
+							call.UnitDispatches.Add(cdu);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			// Call is in the past or is now, were dispatching now (at the end of this func)
+			if (call.DispatchOn.HasValue && call.DispatchOn.Value <= DateTime.UtcNow)
+				call.HasBeenDispatched = true;
 
 			await _callsService.SaveCallAsync(call, cancellationToken);
 
-			//OutboundEventProvider.CallAddedTopicHandler handler = new OutboundEventProvider.CallAddedTopicHandler();
-			//await handler.Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+			if (editCallInput.RebroadcastCall)
+			{
+				var cqi = new CallQueueItem();
+				cqi.Call = call;
+
+				// If we have any group, unit or role dispatches just bet the farm and all all profiles for now.
+				if (cqi.Call.GroupDispatches.Any() || cqi.Call.UnitDispatches.Any() || cqi.Call.RoleDispatches.Any())
+					cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value).ToList();
+				else if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
+					cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
+				else
+					cqi.Profiles = new List<UserProfile>();
+
+
+				if (cqi.Call.Dispatches.Any() || cqi.Call.GroupDispatches.Any() || cqi.Call.UnitDispatches.Any() || cqi.Call.RoleDispatches.Any())
+					await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+			}
+
 			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
 			return Ok();
@@ -1133,6 +1420,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				noteResult.Not = note.Note;
 				noteResult.Lat = note.Latitude;
 				noteResult.Lng = note.Longitude;
+				noteResult.Fnm = await UserHelper.GetFullNameForUser(note.UserId);
 
 				result.Add(noteResult);
 			}
@@ -1232,6 +1520,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		/// Attaches a file to a call
 		/// </summary>
 		/// <param name="input">ID of the user</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns></returns>
 		[HttpPost("UploadFile")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -1267,11 +1556,13 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			callAttachment.Timestamp = DateTime.UtcNow;
 			callAttachment.Data = Convert.FromBase64String(input.Data);
 
-			if (!String.IsNullOrWhiteSpace(input.Lat)) {
+			if (!String.IsNullOrWhiteSpace(input.Lat))
+			{
 				callAttachment.Latitude = decimal.Parse(input.Lat);
 			}
 
-			if (!String.IsNullOrWhiteSpace(input.Lon)) {
+			if (!String.IsNullOrWhiteSpace(input.Lon))
+			{
 				callAttachment.Longitude = decimal.Parse(input.Lon);
 			}
 
@@ -1370,7 +1661,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			if (callTypes != null && callTypes.Any())
 			{
-				foreach(var callType in callTypes)
+				foreach (var callType in callTypes)
 				{
 					var type = new CallTypeResult();
 					type.Id = callType.CallTypeId;
@@ -1381,6 +1672,152 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Returns all the non-dispatched (pending) scheduled calls for the department
+		/// </summary>
+		/// <returns>Array of CallResult objects for each active call in the department</returns>
+		[HttpGet("GetAllPendingScheduledCalls")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult<List<CallResult>>> GetAllPendingScheduledCalls()
+		{
+			var result = new List<CallResult>();
+
+			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)).OrderBy(x => x.DispatchOn);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			foreach (var c in calls)
+			{
+				var call = new CallResult();
+
+				call.Cid = c.CallId;
+				call.Pri = c.Priority;
+				call.Ctl = c.IsCritical;
+				call.Nme = StringHelpers.SanitizeHtmlInString(c.Name);
+
+				if (!String.IsNullOrWhiteSpace(c.NatureOfCall))
+					call.Noc = StringHelpers.SanitizeHtmlInString(c.NatureOfCall);
+
+				call.Map = c.MapPage;
+
+				if (!String.IsNullOrWhiteSpace(c.Notes))
+					call.Not = StringHelpers.SanitizeHtmlInString(c.Notes);
+
+				if (c.CallNotes != null)
+					call.Nts = c.CallNotes.Count();
+				else
+					call.Nts = 0;
+
+				if (c.Attachments != null)
+				{
+					call.Aud = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
+					call.Img = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.Image);
+					call.Fls = c.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.File);
+				}
+				else
+				{
+					call.Aud = 0;
+					call.Img = 0;
+					call.Fls = 0;
+				}
+
+				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
+				{
+					var geo = c.GeoLocationData.Split(char.Parse(","));
+
+					if (geo.Length == 2)
+						call.Add = await _geoLocationProvider.GetAddressFromLatLong(double.Parse(geo[0]), double.Parse(geo[1]));
+				}
+				else
+					call.Add = c.Address;
+
+				call.Geo = c.GeoLocationData;
+				call.Lon = c.LoggedOn.TimeConverter(department);
+				call.Utc = c.LoggedOn;
+				call.Ste = c.State;
+				call.Num = c.Number;
+
+				if (c.DispatchOn.HasValue)
+					call.Don = c.DispatchOn.Value.TimeConverter(department);
+
+				result.Add(call);
+			}
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Updates a call's scheduled dispatch time if it has not been dispatched
+		/// </summary>
+		/// <param name="callId">ID of the call</param>
+		/// <param name="date">UTC date to change the dispatch to</param>
+		/// <returns></returns>
+		[HttpGet("UpdateScheduledDispatchTime")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public async Task<ActionResult> UpdateScheduledDispatchTime(int callId, DateTime date)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var canDoOperation = await _authorizationService.CanUserCreateCallAsync(UserId, DepartmentId);
+
+			if (!canDoOperation)
+				return Unauthorized();
+
+			if (call == null)
+				return NotFound();
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (call.HasBeenDispatched.HasValue && call.HasBeenDispatched.Value)
+				return BadRequest();
+
+			call.DispatchOn = DateTimeHelpers.ConvertToUtc(date, department.TimeZone);
+			call.HasBeenDispatched = false;
+
+			var savedCall = await _callsService.SaveCallAsync(call);
+
+			return Ok();
+		}
+
+		/// <summary>
+		/// Deletes a call
+		/// </summary>
+		/// <param name="callId">ID of the call</param>
+		/// <returns></returns>
+		[HttpDelete("DeleteCall")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public async Task<ActionResult> DeleteCall(int callId)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+			var canDoOperation = await _authorizationService.CanUserCreateCallAsync(UserId, DepartmentId);
+
+			if (!canDoOperation)
+				return Unauthorized();
+
+			if (call == null)
+				return NotFound();
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (call.HasBeenDispatched.HasValue && call.HasBeenDispatched.Value)
+				return BadRequest();
+
+			call.IsDeleted = true;
+
+			var savedCall = await _callsService.SaveCallAsync(call);
+
+			return Ok();
 		}
 	}
 }

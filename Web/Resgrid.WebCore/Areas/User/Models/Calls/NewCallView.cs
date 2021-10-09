@@ -30,6 +30,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<CustomState> UnitStatuses { get; set; }
 		public SelectList CallTemplates { get; set; }
 		public int CallTemplateId { get; set; }
+		public string NewCallFormData { get; set; }
 
 		public NewCallView()
 		{

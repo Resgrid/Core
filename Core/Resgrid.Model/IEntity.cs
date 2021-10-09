@@ -10,6 +10,8 @@ namespace Resgrid.Model
 
 		string IdName { get; }
 
+		int IdType { get; }
+
 		IEnumerable<string> IgnoredProperties { get; }
 	}
 }

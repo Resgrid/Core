@@ -5,6 +5,7 @@ using Resgrid.Model.Identity;
 using ProtoBuf;
 using Resgrid.Framework;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -49,6 +50,7 @@ namespace Resgrid.Model
 		public decimal? Longitude { get; set; }
 		
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return CallNoteId; }
@@ -62,6 +64,9 @@ namespace Resgrid.Model
 		public string IdName => "CallNoteId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Call", "User" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Call", "User" };
 	}
 }

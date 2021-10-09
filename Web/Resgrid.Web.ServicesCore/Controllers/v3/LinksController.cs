@@ -22,6 +22,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class LinksController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IDepartmentsService _departmentsService;
@@ -142,7 +144,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Fls = 0;
 				}
 
-				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
 				{
 					var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -374,7 +376,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						call.Fls = 0;
 					}
 
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 

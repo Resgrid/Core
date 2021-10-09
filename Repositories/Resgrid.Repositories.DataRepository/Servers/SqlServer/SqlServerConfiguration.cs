@@ -895,7 +895,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT p.*, pt.*
 					FROM %SCHEMA%.%PROTOCOLSTABLE% p
 					LEFT OUTER JOIN %SCHEMA%.%PROTOCOLTRIGGERSSTABLE% pt ON pt.[DispatchProtocolId] = p.[DispatchProtocolId]
-					WHERE p.[DispatchProtocolId] = %PROTOCOLID%";
+					WHERE p.[DepartmentId] = %DID%";
 			SelectProtocolQuestionsByProIdQuery = @"
 					SELECT pq.*, pqa.*
 					FROM %SCHEMA%.%PROTOCOLQUESTIONSTABLE% pq
@@ -954,6 +954,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT * FROM %SCHEMA%.%TABLENAME%
 					WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0 AND year(LoggedOn) = %YEAR%
 					ORDER BY LoggedOn DESC";
+			SelectNonDispatchedScheduledCallsByDateQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE [HasBeenDispatched] = 0 AND [IsDeleted] = 0 AND [DispatchOn] IS NOT NULL AND [DispatchOn] >= %STARTDATE% AND [DispatchOn] <= %ENDDATE%";
+			SelectNonDispatchedScheduledCallsByDidQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE [HasBeenDispatched] = 0 AND [IsDeleted] = 0 AND [DepartmentId] = %DID%";
 			#endregion Calls
 
 			#region Department Groups
@@ -1066,6 +1074,61 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%DEPARTMENTSTABLE% d ON d.[DepartmentId] = n.[DepartmentId]
 					WHERE n.[DepartmentId] = %DID%";
 			#endregion Notes
+
+			#region Forms
+			FormsTable = "Forms";
+			FormAutomationsTable = "FormAutomations";
+			SelectFormByIdQuery = @"
+					SELECT f.*, fa.*
+					FROM %SCHEMA%.%FORMSTABLE% f
+					LEFT OUTER JOIN %SCHEMA%.%FORMAUTOMATIONSTABLE% fa ON fa.[FormId] = f.[FormId]
+					WHERE f.[FormId] = %FORMID%";
+			SelectFormsByDIdQuery = @"
+					SELECT f.*, fa.*
+					FROM %SCHEMA%.%FORMSTABLE% f
+					LEFT OUTER JOIN %SCHEMA%.%FORMAUTOMATIONSTABLE% fa ON fa.[FormId] = f.[FormId]
+					WHERE f.[DepartmentId] = %DID%";
+			SelectFormAutomationsByFormIdQuery = @"
+					SELECT fa.*
+					FROM %SCHEMA%.%FORMAUTOMATIONSTABLE% fa
+					WHERE fa.[FormId] = %FORMID%";
+			SelectNonDeletedFormsByDIdQuery = @"
+					SELECT f.*, fa.*
+					FROM %SCHEMA%.%FORMSTABLE% f
+					LEFT OUTER JOIN %SCHEMA%.%FORMAUTOMATIONSTABLE% fa ON fa.[FormId] = f.[FormId]
+					WHERE f.[IsDeleted] = 0 AND f.[DepartmentId] = %DID%";
+			UpdateFormsToEnableQuery = @"
+					UPDATE Forms
+					SET IsActive = 1
+					WHERE FormId = %FORMID%";
+			UpdateFormsToDisableQuery = @"
+					UPDATE Forms
+					SET IsActive = 0
+					WHERE FormId = %FORMID%";
+			#endregion Forms
+
+			#region Voice
+			DepartmentVoiceTableName = "DepartmentVoices";
+			DepartmentVoiceChannelsTableName = "DepartmentVoiceChannels";
+			DepartmentVoiceUsersTableName = "DepartmentVoiceUsers";
+			SelectVoiceByDIdQuery = @"
+					SELECT dv.*, dvc.*
+					FROM %SCHEMA%.%DEPARTMENTVOICETABLE% dv
+					LEFT OUTER JOIN %SCHEMA%.%DEPARTMENTVOICECHANNELSTABLE% dvc ON dv.DepartmentVoiceId = dvc.DepartmentVoiceId
+					WHERE dv.[DepartmentId] = %DID%";
+			SelectVoiceChannelsByVoiceIdQuery = @"
+					SELECT dvc.*
+					FROM %SCHEMA%.%DEPARTMENTVOICECHANNELSTABLE% dvc
+					WHERE dvc.[DepartmentVoiceId] = %VOICEID%";
+			SelectVoiceUserByUserIdQuery = @"
+					SELECT dvu.*
+					FROM %SCHEMA%.%DEPARTMENTVOICEUSERSSTABLE% dvu
+					WHERE dvu.[UserId] = %USERID%";
+			SelectVoiceChannelsByDIdQuery = @"
+					SELECT dvc.*
+					FROM %SCHEMA%.%DEPARTMENTVOICECHANNELSTABLE% dvc
+					WHERE dvc.[DepartmentId] = %DID%";
+			#endregion Voice
 		}
-	}
+}
 }

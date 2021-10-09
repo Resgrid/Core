@@ -138,6 +138,9 @@ namespace Resgrid.Model
 
 		[Description("Spark")]
 		Spark = 42, // SMS Direct Send
+
+		[Description("Mint")]
+		Mint = 43, // SMS Direct Send
 	}
 
 	public static class Carriers
@@ -185,7 +188,8 @@ namespace Resgrid.Model
 																																	{MobileCarriers.EE, "Direct"},
 																																	{MobileCarriers.MTSMobility, "{0}@text.mtsmobility.com"},
 																																	{MobileCarriers.Fido, "Direct"},
-																																	{MobileCarriers.Spark, "Direct"}
+																																	{MobileCarriers.Spark, "Direct"},
+																																	{MobileCarriers.Mint, "{0}@tmomail.net"},
 																																};
 
 		public static Dictionary<MobileCarriers, Tuple<int, string>> CarriersNumberLength = new Dictionary<MobileCarriers, Tuple<int, string>>()
@@ -242,7 +246,8 @@ namespace Resgrid.Model
 			MobileCarriers.BellMobility,
 			MobileCarriers.SaskTel,
 			MobileCarriers.Spark,
-			MobileCarriers.Koodo
+			MobileCarriers.Koodo,
+			MobileCarriers.Mint
 		};
 
 		public static HashSet<MobileCarriers> OnPremSmsGatewayCarriers = new HashSet<MobileCarriers>()

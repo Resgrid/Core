@@ -313,6 +313,8 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllCallRoleDispsByCallIdQuery { get; set; }
 		public string SelectCallYearsByDeptQuery { get; set; }
 		public string SelectAllClosedCallsByDidYearQuery { get; set; }
+		public string SelectNonDispatchedScheduledCallsByDateQuery { get; set; }
+		public string SelectNonDispatchedScheduledCallsByDidQuery { get; set; }
 		#endregion Calls
 
 		#region Dispatch Protocols
@@ -374,6 +376,27 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string NotesTableName { get; set; }
 		public string SelectNotesByDIdQuery { get; set; }
 		#endregion Notes
+
+		#region Forms
+		public string FormsTable { get; set; }
+		public string FormAutomationsTable { get; set; }
+		public string SelectFormByIdQuery { get; set; }
+		public string SelectFormsByDIdQuery { get; set; }
+		public string SelectFormAutomationsByFormIdQuery { get; set; }
+		public string SelectNonDeletedFormsByDIdQuery { get; set; }
+		public string UpdateFormsToEnableQuery { get; set; }
+		public string UpdateFormsToDisableQuery { get; set; }
+		#endregion Forms
+
+		#region Voice
+		public string DepartmentVoiceTableName { get; set; }
+		public string DepartmentVoiceChannelsTableName { get; set; }
+		public string DepartmentVoiceUsersTableName { get; set; }
+		public string SelectVoiceByDIdQuery { get; set; }
+		public string SelectVoiceChannelsByVoiceIdQuery { get; set; }
+		public string SelectVoiceUserByUserIdQuery { get; set; }
+		public string SelectVoiceChannelsByDIdQuery { get; set; }
+		#endregion Voice
 
 		// Identity
 

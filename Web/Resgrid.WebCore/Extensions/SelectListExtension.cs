@@ -27,6 +27,32 @@ namespace Resgrid.Model
 
 			return new SelectList(values, "Id", "Name", ((int)(dynamic)enumObj));
 		}
+
+		public static SelectList ToSelectListDescription<TEnum>(this TEnum obj)
+		where TEnum : struct, IComparable, IFormattable, IConvertible // correct one
+		{
+
+			return new SelectList(Enum.GetValues(typeof(TEnum)).OfType<Enum>()
+				.Select(x =>
+					new SelectListItem
+					{
+						Text = x.DisplayName(),
+						Value = (Convert.ToInt32(x)).ToString()
+					}), "Value", "Text");
+
+		}
+
+
+		public static string DisplayName(this Enum value)
+		{
+			FieldInfo field = value.GetType().GetField(value.ToString());
+
+			System.ComponentModel.DataAnnotations.DisplayAttribute attribute
+					= Attribute.GetCustomAttribute(field, typeof(System.ComponentModel.DataAnnotations.DisplayAttribute))
+						as System.ComponentModel.DataAnnotations.DisplayAttribute;
+
+			return attribute == null ? value.ToString() : attribute.Name;
+		}
 	}
 }
 

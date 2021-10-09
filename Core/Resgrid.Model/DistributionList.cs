@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -60,13 +61,14 @@ namespace Resgrid.Model
 		public string ErrorMessage { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DistributionListId; }
 			set { DistributionListId = (int)value; }
 		}
 
-		
+
 		[NotMapped]
 		public string TableName => "DistributionLists";
 
@@ -74,6 +76,9 @@ namespace Resgrid.Model
 		public string IdName => "DistributionListId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Members" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Members" };
 	}
 }

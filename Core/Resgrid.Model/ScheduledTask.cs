@@ -6,6 +6,7 @@ using Resgrid.Model.Identity;
 using System.Linq;
 using ProtoBuf;
 using Resgrid.Framework;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -84,6 +85,7 @@ namespace Resgrid.Model
 		public string DepartmentTimeZone { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return ScheduledTaskId; }
@@ -97,7 +99,10 @@ namespace Resgrid.Model
 		public string IdName => "ScheduledTaskId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "User", "DepartmentTimeZone" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "DepartmentTimeZone" };
 
 		public List<DayOfWeek> GetDaysOfWeek()
 		{
@@ -190,7 +195,7 @@ namespace Resgrid.Model
 
 					/* If the current time is at least 11:00 PM and the time we're evaluating is for 
 					 * midnight we have to add a day so that when we do the time math it will work out
-					 */ 
+					 */
 					if (currentLocalTime.Hour == 23 && am && hour == 12)
 						dayAdjust = 1;
 

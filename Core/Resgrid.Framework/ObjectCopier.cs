@@ -56,7 +56,26 @@ namespace Resgrid.Framework
 				return default(T);
 			}
 
-			return ObjectSerialization.Deserialize<T>(ObjectSerialization.Serialize(source));
+			//return ObjectSerialization.Deserialize<T>(ObjectSerialization.Serialize(source));
+			return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source));
+		}
+
+		/// <summary>
+		/// Perform a deep Copy of the object, using Json as a serialisation method returns a string
+		/// </summary>
+		/// <typeparam name="T">The type of object being copied.</typeparam>
+		/// <param name="source">The object instance to copy.</param>
+		/// <returns>The copied object as a json string</returns>
+		public static string CloneJsonToString<T>(this T source)
+		{
+			// Don't serialize a null object, simply return the default for that object
+			if (Object.ReferenceEquals(source, null))
+			{
+				return "";
+			}
+
+			//return ObjectSerialization.Deserialize<T>(ObjectSerialization.Serialize(source));
+			return JsonConvert.SerializeObject(source);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -49,6 +50,7 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return CustomStateId; }
@@ -62,6 +64,9 @@ namespace Resgrid.Model
 		public string IdName => "CustomStateId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Details" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Details" };
 	}
 }

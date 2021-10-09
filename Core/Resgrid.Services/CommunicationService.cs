@@ -127,7 +127,7 @@ namespace Resgrid.Services
 					{
 						subTitle = address;
 					}
-					else if (!string.IsNullOrEmpty(call.GeoLocationData))
+					else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 					{
 						try
 						{
@@ -229,7 +229,7 @@ namespace Resgrid.Services
 			{
 				subTitle = address;
 			}
-			else if (!string.IsNullOrEmpty(call.GeoLocationData))
+			else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 			{
 				try
 				{
@@ -427,7 +427,7 @@ namespace Resgrid.Services
 				{
 					try
 					{
-						_emailService.SendTroubleAlert(troubleAlertEvent, unit, call, callAddress, unitAddress, personnelNames, recipient);
+						await _emailService.SendTroubleAlert(troubleAlertEvent, unit, call, callAddress, unitAddress, personnelNames, recipient);
 					}
 					catch (Exception ex)
 					{

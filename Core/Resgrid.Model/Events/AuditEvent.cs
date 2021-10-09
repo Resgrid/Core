@@ -6,6 +6,9 @@ namespace Resgrid.Model.Events
 	[ProtoContract]
 	public class AuditEvent
 	{
+		[ProtoMember(7)]
+		public string EventId { get; set; }
+
 		[ProtoMember(1)]
 		public int DepartmentId { get; set; }
 
@@ -14,10 +17,19 @@ namespace Resgrid.Model.Events
 
 		[ProtoMember(3)]
 		public AuditLogTypes Type { get; set; }
-		public Object Before { get; set; }
-		public Object After { get; set; }
+
+		[ProtoMember(5)]
+		public string Before { get; set; }
+
+		[ProtoMember(6)]
+		public string After { get; set; }
 
 		[ProtoMember(4)]
 		public string Difference { get; set; }
+
+		public AuditEvent()
+		{
+			EventId = Guid.NewGuid().ToString();
+		}
 	}
 }

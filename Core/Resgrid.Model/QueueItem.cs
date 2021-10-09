@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Resgrid.Model
 {
 	[ProtoContract]
 	[Table("QueueItems")]
-	public class QueueItem: IEntity
+	public class QueueItem : IEntity
 	{
 		[Key]
 		[Required]
@@ -38,6 +39,7 @@ namespace Resgrid.Model
 		public int DequeueCount { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return QueueItemId; }
@@ -51,6 +53,9 @@ namespace Resgrid.Model
 		public string IdName => "QueueItemId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 }

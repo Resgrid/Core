@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Resgrid.Model
 {
 	[Table("Notes")]
-	public class Note: IEntity
+	public class Note : IEntity
 	{
 		[Key]
 		[Required]
@@ -41,6 +42,7 @@ namespace Resgrid.Model
 		public DateTime AddedOn { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return NoteId; }
@@ -54,6 +56,9 @@ namespace Resgrid.Model
 		public string IdName => "NoteId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department" };
 	}
 }

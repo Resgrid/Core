@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -35,6 +36,7 @@ namespace Resgrid.Model
 		public DateTime? LastDispatchedOn { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return CallDispatchRoleId; }
@@ -48,6 +50,9 @@ namespace Resgrid.Model
 		public string IdName => "CallDispatchRoleId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Role", "Call" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Role", "Call" };
 	}
 }

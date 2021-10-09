@@ -1,4 +1,5 @@
-﻿using Resgrid.Model.Queue;
+﻿using Resgrid.Model.Events;
+using Resgrid.Model.Queue;
 
 namespace Resgrid.Model.Providers
 {
@@ -10,6 +11,7 @@ namespace Resgrid.Model.Providers
 		bool EnqueueNotification(NotificationItem notificationQueue);
 		bool EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
 		bool EnqueueCqrsEvent(CqrsEvent cqrsEvent);
+		bool EnqueueAuditEvent(AuditEvent auditEvent);
 		bool VerifyAndCreateClients();
 	}
 }

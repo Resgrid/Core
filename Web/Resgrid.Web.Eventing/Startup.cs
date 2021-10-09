@@ -65,7 +65,7 @@ namespace Resgrid.Web.Eventing
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			Framework.Logging.Initialize(Configuration["AppOptions:SentryKey"]);
+			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrl);
 
 			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
 			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);

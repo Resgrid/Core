@@ -68,10 +68,15 @@ namespace Resgrid.Console
 			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
 
-			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
+			string configPath = Configuration["AppOptions:ConfigPath"];
+
+			if (string.IsNullOrWhiteSpace(configPath))
+				configPath = "C:\\Resgrid\\Config\\ResgridConfig.json";
+
+			bool configResult = ConfigProcessor.LoadAndProcessConfig(configPath);
 			if (configResult)
 			{
-				System.Console.WriteLine($"Loaded Config: {Configuration["AppOptions:ConfigPath"]}");
+				System.Console.WriteLine($"Loaded Config: {configPath}");
 			}
 
 			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
@@ -82,7 +87,12 @@ namespace Resgrid.Console
 			collection.SetValue(settings, false);
 
 			if (!configResult)
-				settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+			{
+				if (settings["ResgridContext"] == null)
+				{
+					settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+				}
+			}
 			else
 			{
 				if (settings["ResgridContext"] == null)

@@ -291,8 +291,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.PermissionsChanged;
-				auditEvent.Before = before.CloneJson();
-				auditEvent.After = result.CloneJson();
+				auditEvent.Before = before.CloneJsonToString();
+				auditEvent.After = result.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return new StatusCodeResult((int)HttpStatusCode.OK);
@@ -312,8 +312,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.PermissionsChanged;
-				auditEvent.Before = before.CloneJson();
-				auditEvent.After = result.CloneJson();
+				auditEvent.Before = before.CloneJsonToString();
+				auditEvent.After = result.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return new StatusCodeResult((int)HttpStatusCode.OK);

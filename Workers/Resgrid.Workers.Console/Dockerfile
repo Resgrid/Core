@@ -1,9 +1,12 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+ARG BUILD_VERSION=3.5.0
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/runtime:5.0.9-buster-slim-amd64 AS base
+ARG BUILD_VERSION
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0.400-buster-slim-amd64 AS build
+ARG BUILD_VERSION
 WORKDIR /src
 
 COPY ["Workers/Resgrid.Workers.Console/Resgrid.Workers.Console.csproj", "Workers/Resgrid.Workers.Console/"]
@@ -26,13 +29,14 @@ COPY ["Providers/Resgrid.Providers.Pdf/Resgrid.Providers.Pdf.csproj", "Providers
 COPY ["Providers/Resgrid.Providers.Claims/Resgrid.Providers.Claims.csproj", "Providers/Resgrid.Providers.Claims/"]
 COPY ["Workers/Resgrid.Workers.Framework/Resgrid.Workers.Framework.csproj", "Workers/Resgrid.Workers.Framework/"]
 COPY ["Providers/Resgrid.Providers.Migrations/Resgrid.Providers.Migrations.csproj", "Providers/Resgrid.Providers.Migrations/"]
+COPY ["Providers/Resgrid.Providers.Voip/Resgrid.Providers.Voip.csproj", "Providers/Resgrid.Providers.Voip/"]
 RUN dotnet restore "Workers/Resgrid.Workers.Console/Resgrid.Workers.Console.csproj"
 COPY . .
 WORKDIR "/src/Workers/Resgrid.Workers.Console"
-RUN dotnet build "Resgrid.Workers.Console.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Resgrid.Workers.Console.csproj" -c Release -o /app/publish
+ARG BUILD_VERSION
+RUN dotnet publish "Resgrid.Workers.Console.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 
 FROM base AS final
 WORKDIR /app

@@ -12,6 +12,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Produces("application/json")]
 	[Route("api/v{version:ApiVersion}/[controller]")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class CommandsController : V3AuthenticatedApiControllerbase
 	{
 		private readonly ICommandsService _commandsService;

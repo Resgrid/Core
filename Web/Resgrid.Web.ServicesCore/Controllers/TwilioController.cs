@@ -162,7 +162,7 @@ namespace Resgrid.Web.Services.Controllers
 							cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(users.Select(x => x.UserId).ToList());
 							cqi.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(cqi.Call.DepartmentId);
 
-							_queueService.EnqueueCallBroadcastAsync(cqi);
+							await _queueService.EnqueueCallBroadcastAsync(cqi);
 
 							messageEvent.Processed = true;
 						}
@@ -348,7 +348,7 @@ namespace Resgrid.Web.Services.Controllers
 
 										if (!String.IsNullOrWhiteSpace(call.Address))
 											callText.Append(call.Address + Environment.NewLine);
-										else if (!string.IsNullOrEmpty(call.GeoLocationData))
+										else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 										{
 											try
 											{
@@ -492,7 +492,7 @@ namespace Resgrid.Web.Services.Controllers
 			}
 
 			string address = call.Address;
-			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData))
+			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 			{
 				try
 				{

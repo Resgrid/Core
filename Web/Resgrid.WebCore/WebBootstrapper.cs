@@ -16,6 +16,7 @@ using Resgrid.Providers.GeoLocationProvider;
 using Resgrid.Providers.Marketing;
 using Resgrid.Providers.NumberProvider;
 using Resgrid.Providers.PdfProvider;
+using Resgrid.Providers.Voip;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Services;
 
@@ -45,6 +46,7 @@ namespace Resgrid.Web
 				builder.RegisterModule(new PdfProviderModule());
 				builder.RegisterModule(new AudioProviderModule());
 				builder.RegisterModule(new FirebaseProviderModule());
+				builder.RegisterModule(new VoipProviderModule());
 
 				if (services != null)
 					builder.Populate(services);

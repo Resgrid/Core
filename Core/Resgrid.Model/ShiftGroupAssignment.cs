@@ -37,7 +37,7 @@ namespace Resgrid.Model
 		public DateTime ShiftDay { get; set; }
 
 		[NotMapped]
-		public object IdValue
+		[JsonIgnore]public object IdValue
 		{
 			get { return ShiftGroupAssignmentId; }
 			set { ShiftGroupAssignmentId = (int) value; }
@@ -50,6 +50,9 @@ namespace Resgrid.Model
 		public string IdName => "ShiftGroupAssignmentId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ShiftGroup" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ShiftGroup" };
 	}
 }

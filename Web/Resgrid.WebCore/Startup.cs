@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
@@ -33,6 +34,7 @@ using Resgrid.Providers.GeoLocationProvider;
 using Resgrid.Providers.Marketing;
 using Resgrid.Providers.NumberProvider;
 using Resgrid.Providers.PdfProvider;
+using Resgrid.Providers.Voip;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Repositories.DataRepository.Stores;
 using Resgrid.Services;
@@ -61,9 +63,6 @@ namespace Resgrid.Web
 			{
 				// For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
 				//builder.AddUserSecrets();
-
-				// This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
-				builder.AddApplicationInsightsSettings(developerMode: true);
 			}
 
 			this.Configuration = builder.Build();
@@ -89,6 +88,8 @@ namespace Resgrid.Web
 
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
+
+			Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebsite);
 
 			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
 			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();
@@ -121,7 +122,7 @@ namespace Resgrid.Web
 					options.LoginPath = new PathString("/Account/LogOn/");
 					options.AccessDeniedPath = new PathString("/Public/Forbidden/");
 					options.Cookie.SecurePolicy = CookieSecurePolicy.None;//.SameAsRequest;
-					options.Cookie.SameSite = SameSiteMode.Strict;//.None;
+					options.Cookie.SameSite = SameSiteMode.Lax;//.None;
 					options.Cookie.Name = "RGSITEAUTHCOOKIE";
 					options.ExpireTimeSpan = new TimeSpan(48, 0, 0);
 				});
@@ -248,6 +249,16 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.Protocol_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Protocol_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Protocol_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Forms_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Forms_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Forms_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Forms_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Voice_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Voice_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Voice_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Voice_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 
@@ -258,7 +269,6 @@ namespace Resgrid.Web
 			var configOptions = Configuration.GetSection("AppOptions").Get<AppOptions>();
 			services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
 
-			services.AddApplicationInsightsTelemetry();
 			services.AddHttpContextAccessor();
 			services.AddRazorPages();
 
@@ -267,6 +277,13 @@ namespace Resgrid.Web
 				options.ForwardedHeaders =
 					ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
+			});
+
+			services.AddWebOptimizer(pipeline =>
+			{
+				pipeline.MinifyJsFiles("/js/**/*.js");
+				pipeline.MinifyCssFiles("/css/**/*.css");
+				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
 			});
 
 			services.AddMvc().AddMvcOptions(options =>
@@ -295,14 +312,6 @@ namespace Resgrid.Web
 			});
 #endif
 
-			//services.AddFluentMigratorCore()
-			//	.ConfigureRunner(
-			//		builder => builder
-			//			.AddSqlServer2014()
-			//			.WithGlobalConnectionString(DataConfig.ConnectionString)
-			//			.ScanIn(typeof(Providers.Migrations.Migrations.M0001_InitialMigration).Assembly).For
-			//			.Migrations());
-
 			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
 
 			this.Services = services;
@@ -325,6 +334,7 @@ namespace Resgrid.Web
 			builder.RegisterModule(new PdfProviderModule());
 			builder.RegisterModule(new AudioProviderModule());
 			builder.RegisterModule(new FirebaseProviderModule());
+			builder.RegisterModule(new VoipProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
@@ -384,8 +394,6 @@ namespace Resgrid.Web
 				//app.UseHttpsRedirection();
 			}
 
-
-
 			this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 			var eventAggregator = this.AutofacContainer.Resolve<IEventAggregator>();
 			var outbound = this.AutofacContainer.Resolve<IOutboundEventProvider>();
@@ -403,6 +411,7 @@ namespace Resgrid.Web
 
 			app.UseCookiePolicy(cookiePolicyOptions);
 
+			app.UseWebOptimizer();
 			app.UseStaticFiles();
 			app.UseRouting();
 

@@ -2,116 +2,17 @@
 using System.Linq;
 using Autofac;
 using Resgrid.Framework;
-using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using System.Web;
 using MimeKit;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.InteropExtensions;
-using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
 	public class DistributionListLogic
 	{
-		private IQueueService _queueService;
-		private QueueClient _client = null;
-
-		public DistributionListLogic()
-		{
-			while (_client == null)
-			{
-				try
-				{
-					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueEmailConnectionString, Config.ServiceBusConfig.EmailBroadcastQueueName);
-					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueEmailConnectionString, Config.ServiceBusConfig.EmailBroadcastQueueName);
-				}
-				catch (TimeoutException) { }
-			}
-		}
-
-		public async Task<bool> Process(DistributionListQueueItem item)
-		{
-			bool success = true;
-
-			if (Config.SystemBehaviorConfig.IsAzure)
-			{
-				//ProcessQueueMessage(_client.Receive());
-
-				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-				{
-					MaxConcurrentCalls = 1,
-					AutoComplete = false
-				};
-
-				// Register the function that will process messages
-				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
-			}
-			else
-			{
-				return await ProcessDistributionListQueueItem(item);
-			}
-
-			_queueService = null;
-			return false;
-		}
-
-		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
-		{
-			bool success = true;
-			string result = "";
-
-			if (message != null)
-			{
-				try
-				{
-					var body = message.GetBody<string>();
-
-					if (!String.IsNullOrWhiteSpace(body))
-					{
-						DistributionListQueueItem dlqi = null;
-						try
-						{
-							dlqi = ObjectSerialization.Deserialize<DistributionListQueueItem>(body);
-						}
-						catch (Exception ex)
-						{
-							success = false;
-							result = "Unable to parse message body Exception: " + ex.ToString();
-							//message.Complete();
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-						}
-
-						await ProcessDistributionListQueueItem(dlqi);
-					}
-
-					try
-					{
-						if (success)
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-							//message.Complete();
-					}
-					catch (MessageLockLostException)
-					{
-
-					}
-				}
-				catch (Exception ex)
-				{
-					result = ex.ToString();
-					Logging.LogException(ex);
-					//message.Abandon();
-					await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
-				}
-			}
-
-			return new Tuple<bool, string>(success, result);
-		}
-
 		public static async Task<bool> ProcessDistributionListQueueItem(DistributionListQueueItem dlqi)
 		{
 			var emailService = Bootstrapper.GetKernel().Resolve<IEmailService>();
@@ -163,7 +64,7 @@ namespace Resgrid.Workers.Framework.Logic
 							//mailMessage.Attachments.Add(file.Data, file.FileName, file.ContentId, file.FileType,
 							//	new HeaderCollection(),	NewAttachmentOptions.None, MailTransferEncoding.None);
 
-							fileService.DeleteFileAsync(file);
+							await fileService.DeleteFileAsync(file);
 						}
 					}
 				}
@@ -181,7 +82,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var user = dlqi.Users.FirstOrDefault(x => x.UserId == member.UserId);
 
 						if (user != null && !String.IsNullOrWhiteSpace(user.Email))
-							emailService.SendDistributionListEmail(mailMessage, user.Email, dlqi.List.Name, dlqi.List.Name, $"{dlqi.List.EmailAddress}@lists.resgrid.com");
+							await emailService.SendDistributionListEmail(mailMessage, user.Email, dlqi.List.Name, dlqi.List.Name, $"{dlqi.List.EmailAddress}@lists.resgrid.com");
 					}
 					catch (Exception ex)
 					{
@@ -195,17 +96,6 @@ namespace Resgrid.Workers.Framework.Logic
 			fileService = null;
 
 			return true;
-		}
-
-		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
-		{
-			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-			//Console.WriteLine("Exception context for troubleshooting:");
-			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
-			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
-			//Console.WriteLine($"- Executing Action: {context.Action}");
-			return Task.CompletedTask;
 		}
 	}
 }

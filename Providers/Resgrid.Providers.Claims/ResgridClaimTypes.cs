@@ -18,6 +18,14 @@
 			public const string Groups = "GroupMemberships";
 		}
 
+		public static class Data
+		{
+			// Memberships
+			public const string TimeZone = "TimeZone";
+			public const string DisplayName = "DisplayName";
+			public const string UserId = "UserId";
+		}
+
 		public static class Resources
 		{
 			// Resources
@@ -45,6 +53,8 @@
 			public const string Command = "Command";
 			public const string Connect = "Connect";
 			public const string Protocols = "Protocols";
+			public const string Forms = "Forms";
+			public const string Voice = "Voice";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

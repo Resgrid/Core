@@ -160,6 +160,16 @@ namespace Resgrid.Providers.Claims
 							ClaimsLogic.AddGroupClaim(id, group.DepartmentGroupId, isGroupAdmin);
 					}
 
+					string timeZone = "Pacific Standard Time";
+					if (!String.IsNullOrWhiteSpace(department.TimeZone))
+						timeZone = department.TimeZone;
+
+					Claim timeZoneClaim = new Claim(ResgridClaimTypes.Data.TimeZone, timeZone);
+					if (!id.HasClaim(timeZoneClaim.Type, timeZoneClaim.Value))
+					{
+						id.AddClaim(timeZoneClaim);
+					}
+
 					ClaimsLogic.AddCallClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 					ClaimsLogic.AddActionClaims(id);
 					ClaimsLogic.AddLogClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
@@ -182,6 +192,8 @@ namespace Resgrid.Providers.Claims
 					ClaimsLogic.AddConnectClaims(id, departmentAdmin);
 					ClaimsLogic.AddCommandClaims(id, departmentAdmin);
 					ClaimsLogic.AddProtocolClaims(id, departmentAdmin);
+					ClaimsLogic.AddFormsClaims(id, departmentAdmin);
+					ClaimsLogic.AddVoiceClaims(id, departmentAdmin);
 				}
 			}
 

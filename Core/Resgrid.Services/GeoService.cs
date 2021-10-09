@@ -53,7 +53,7 @@ namespace Resgrid.Services
 				{
 					var call = await _callsService.GetCallByIdAsync(log.DestinationId.Value, false);
 
-					if (!String.IsNullOrWhiteSpace(call.GeoLocationData))
+					if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, call.GeoLocationData);
 					else
 						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, call.GeoLocationData);

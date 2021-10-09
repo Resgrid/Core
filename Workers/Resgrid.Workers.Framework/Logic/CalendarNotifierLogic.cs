@@ -52,10 +52,13 @@ namespace Resgrid.Workers.Framework.Logic
 					else
 						message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {item.CalendarItem.Location}";
 
-					foreach (var person in item.CalendarItem.Attendees)
+					if (ConfigHelper.CanTransmit(department.DepartmentId))
 					{
-						var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
-						await _communicationService.SendNotificationAsync(person.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile);
+						foreach (var person in item.CalendarItem.Attendees)
+						{
+							var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
+							await _communicationService.SendNotificationAsync(person.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile);
+						}
 					}
 				}
 				catch (Exception ex)
@@ -86,32 +89,35 @@ namespace Resgrid.Workers.Framework.Logic
 				else
 					message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {item.CalendarItem.Location}";
 
-				if (items.Any(x => x.StartsWith("D:")))
+				if (ConfigHelper.CanTransmit(department.DepartmentId))
 				{
-					// Notify the entire department
-					foreach (var profile in profiles)
+					if (items.Any(x => x.StartsWith("D:")))
 					{
-						await _communicationService.SendNotificationAsync(profile.Key, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile.Value);
-					}
-				}
-				else
-				{
-					var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(item.CalendarItem.DepartmentId);
-					foreach (var val in items)
-					{
-						int groupId = 0;
-						if (int.TryParse(val.Replace("G:", ""), out groupId))
+						// Notify the entire department
+						foreach (var profile in profiles)
 						{
-							var group = groups.FirstOrDefault(x => x.DepartmentGroupId == groupId);
-
-							if (group != null)
+							await _communicationService.SendNotificationAsync(profile.Key, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile.Value);
+						}
+					}
+					else
+					{
+						var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(item.CalendarItem.DepartmentId);
+						foreach (var val in items)
+						{
+							int groupId = 0;
+							if (int.TryParse(val.Replace("G:", ""), out groupId))
 							{
-								foreach (var member in group.Members)
+								var group = groups.FirstOrDefault(x => x.DepartmentGroupId == groupId);
+
+								if (group != null)
 								{
-									if (profiles.ContainsKey(member.UserId))
-										await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId]);
-									else
-										await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, null);
+									foreach (var member in group.Members)
+									{
+										if (profiles.ContainsKey(member.UserId))
+											await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId]);
+										else
+											await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, null);
+									}
 								}
 							}
 						}

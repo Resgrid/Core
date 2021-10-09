@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -45,6 +46,7 @@ namespace Resgrid.Model
 		public bool Deleted { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DepartmentProfileArticleId; }
@@ -58,6 +60,9 @@ namespace Resgrid.Model
 		public string IdName => "DepartmentProfileArticleId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Profile", "CreatedByUser" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Profile", "CreatedByUser" };
 	}
 }

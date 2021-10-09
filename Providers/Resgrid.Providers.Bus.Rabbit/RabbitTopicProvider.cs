@@ -1,9 +1,11 @@
 ﻿using RabbitMQ.Client;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using System;
 using System.Text;
+using System.Threading;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
@@ -55,7 +57,31 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
+				Type = (int)EventingTypes.CallAdded,
+				TimeStamp = DateTime.UtcNow,
+				DepartmentId = message.DepartmentId,
+				ItemId = message.Call.CallId
+			}.SerializeJson());
+		}
+
+		public bool CallUpdated(CallUpdatedEvent message)
+		{
+			return SendMessage(Topics.EventingTopic, new EventingMessage
+			{
+				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.CallsUpdated,
+				TimeStamp = DateTime.UtcNow,
+				DepartmentId = message.DepartmentId,
+				ItemId = message.Call.CallId
+			}.SerializeJson());
+		}
+
+		public bool CallClosed(CallClosedEvent message)
+		{
+			return SendMessage(Topics.EventingTopic, new EventingMessage
+			{
+				Id = Guid.NewGuid(),
+				Type = (int)EventingTypes.CallClosed,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
 				ItemId = message.Call.CallId
@@ -90,8 +116,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 				{
-					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					using (var connection = factory.CreateConnection())
+					//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					using (var connection = CreateConnection())
 					{
 						using (var channel = connection.CreateModel())
 						{
@@ -111,6 +137,46 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
+		}
+
+		private IConnection CreateConnection()
+		{
+			ConnectionFactory factory;
+			IConnection connection;
+
+			// I know....I know.....
+			try
+			{
+				factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				connection = factory.CreateConnection();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				try
+				{
+					factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					connection = factory.CreateConnection();
+				}
+				catch (Exception ex2)
+				{
+					Logging.LogException(ex2);
+
+					try
+					{
+						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						connection = factory.CreateConnection();
+					}
+					catch (Exception ex3)
+					{
+						Logging.LogException(ex3);
+						throw;
+					}
+				}
+			}
+
+			return connection;
 		}
 
 		private static string SetQueueNameForEnv(string cacheKey)

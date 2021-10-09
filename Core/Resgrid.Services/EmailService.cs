@@ -195,7 +195,7 @@ namespace Resgrid.Services
 			}
 
 			string coordinates = "No Coordinates Supplied";
-			if (!string.IsNullOrEmpty(call.GeoLocationData))
+			if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 			{
 				coordinates = call.GeoLocationData;
 

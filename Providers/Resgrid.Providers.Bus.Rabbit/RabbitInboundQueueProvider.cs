@@ -3,6 +3,7 @@ using RabbitMQ.Client.Events;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<ShiftQueueItem, Task> ShiftNotificationQueueReceived;
 		public Func<CqrsEvent, Task> CqrsEventQueueReceived;
 		public Func<CqrsEvent, Task> PaymentEventQueueReceived;
+		public Func<AuditEvent, Task> AuditEventQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -38,8 +40,38 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private void VerifyAndCreateClients()
 		{
-			_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-			_connection = _factory.CreateConnection();
+			// I know....I know.....
+			try
+			{
+				_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				_connection = _factory.CreateConnection();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				try
+				{
+					_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					_connection = _factory.CreateConnection();
+				}
+				catch (Exception ex2)
+				{
+					Logging.LogException(ex2);
+
+					try
+					{
+						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						_connection = _factory.CreateConnection();
+					}
+					catch (Exception ex3)
+					{
+						Logging.LogException(ex3);
+						throw;
+					}
+				}
+			}
+
 			_channel = _connection.CreateModel();
 		}
 
@@ -328,6 +360,46 @@ namespace Resgrid.Providers.Bus.Rabbit
 					}
 				};
 
+				var auditEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				auditEventQueueReceivedConsumer.Received += async (model, ea) =>
+				{
+					if (ea != null && ea.Body.Length > 0)
+					{
+						AuditEvent audit = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							audit = ObjectSerialization.Deserialize<AuditEvent>(message);
+						}
+						catch (Exception ex)
+						{
+							_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
+
+						try
+						{
+							if (audit != null)
+							{
+								if (PaymentEventQueueReceived != null)
+								{
+									await AuditEventQueueReceived.Invoke(audit);
+									_channel.BasicAck(ea.DeliveryTag, false);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+							if (RetryQueueItem(ea, ex))
+								_channel.BasicAck(ea.DeliveryTag, false);
+							else
+								_channel.BasicNack(ea.DeliveryTag, false, true);
+						}
+					}
+				};
+
 
 				String callQueueReceivedConsumerTag = _channel.BasicConsume(
 					queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
@@ -363,6 +435,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 					queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
 					autoAck: false,
 					consumer: paymentEventQueueReceivedConsumer);
+
+				String auditEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
+					autoAck: false,
+					consumer: auditEventQueueReceivedConsumer);
 			}
 		}
 
@@ -387,8 +464,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 				if (currentDeliveryCount >= 3)
 					return true;
 
-				var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = factory.CreateConnection())
+				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				using (var connection = CreateConnection())
 				{
 					using (var channel = connection.CreateModel())
 					{
@@ -416,6 +493,46 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Logging.LogException(ex);
 				return false;
 			}
+		}
+
+		private IConnection CreateConnection()
+		{
+			ConnectionFactory factory;
+			IConnection connection;
+
+			// I know....I know.....
+			try
+			{
+				factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				connection = factory.CreateConnection();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				try
+				{
+					factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					connection = factory.CreateConnection();
+				}
+				catch (Exception ex2)
+				{
+					Logging.LogException(ex2);
+
+					try
+					{
+						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						connection = factory.CreateConnection();
+					}
+					catch (Exception ex3)
+					{
+						Logging.LogException(ex3);
+						throw;
+					}
+				}
+			}
+
+			return connection;
 		}
 
 		private static string SetQueueNameForEnv(string cacheKey)

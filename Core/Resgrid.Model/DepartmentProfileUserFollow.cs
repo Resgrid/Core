@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,6 +27,7 @@ namespace Resgrid.Model
 		public virtual DepartmentProfile DepartmentProfile { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DepartmentProfileUserFollowId; }
@@ -39,6 +41,9 @@ namespace Resgrid.Model
 		public string IdName => "DepartmentProfileUserFollowId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "DepartmentProfileUser", "DepartmentProfile" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "DepartmentProfileUser", "DepartmentProfile" };
 	}
 }

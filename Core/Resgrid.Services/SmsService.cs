@@ -65,7 +65,7 @@ namespace Resgrid.Services
 					}
 					email.IsBodyHtml = false;
 
-					_emailSender.SendEmail(email);
+					await _emailSender.SendEmail(email);
 				}
 			}
 
@@ -285,7 +285,7 @@ namespace Resgrid.Services
 					}
 					email.IsBodyHtml = false;
 
-					_emailSender.SendEmail(email);
+					await _emailSender.SendEmail(email);
 				}
 			}
 
@@ -321,7 +321,7 @@ namespace Resgrid.Services
 					email.Body = HtmlToTextHelper.ConvertHtml(message);
 					email.IsBodyHtml = false;
 
-					_emailSender.SendEmail(email);
+					await _emailSender.SendEmail(email);
 				}
 			}
 

@@ -82,7 +82,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.UnitId > 0)
 					model.Inventory.UnitId = model.UnitId;
 
-				_inventoryService.SaveInventoryAsync(model.Inventory);
+				await _inventoryService.SaveInventoryAsync(model.Inventory);
 
 				return RedirectToAction("Index");
 			}
@@ -131,7 +131,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (type.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			_inventoryService.DeleteTypeAsync(typeId);
+			await _inventoryService.DeleteTypeAsync(typeId);
 
 			return RedirectToAction("ManageTypes");
 		}
@@ -168,7 +168,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			type.ExpiresDays = model.Type.ExpiresDays;
 			type.UnitOfMesasure = model.Type.UnitOfMesasure;
 
-			_inventoryService.SaveTypeAsync(type);
+			await _inventoryService.SaveTypeAsync(type);
 
 			return RedirectToAction("ManageTypes");
 		}
@@ -180,7 +180,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				model.Type.DepartmentId = DepartmentId;
-				_inventoryService.SaveTypeAsync(model.Type);
+				await _inventoryService.SaveTypeAsync(model.Type);
 
 				return RedirectToAction("ManageTypes");
 			}

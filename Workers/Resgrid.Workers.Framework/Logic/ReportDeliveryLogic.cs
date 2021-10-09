@@ -34,37 +34,40 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);
-					var request = new RestRequest("User/Reports/InternalRunReport", Method.GET);
-					request.AddParameter("type", item.ScheduledTask.Data);
-					request.AddParameter("departmentId", item.Department.DepartmentId);
-
-					var response = client.Execute(request);
-
-					if (!string.IsNullOrWhiteSpace(response.Content))
+					if (ConfigHelper.CanTransmit(item.Department.DepartmentId))
 					{
-						//var content =
-						//	response.Content.Replace(
-						//		"<script type=\"text/javascript\">//<![CDATA[try { if (!window.CloudFlare) { var CloudFlare =[{ verbose: 0,p: 0,byc: 0,owlid: \"cf\",bag2: 1,mirage2: 0,oracle: 0,paths: { cloudflare: \"/cdn-cgi/nexp/dok3v=1613a3a185/\"},atok: \"ab24e007e451de77ff7ceb381c2348f0\",petok: \"80b990bdd3e004d336674babd22922ae48e99033-1471055012-1800\",zone: \"resgrid.com\",rocket: \"0\",apps: { \"ga_key\":{ \"ua\":\"UA-5288869-4\",\"ga_bs\":\"2\"},\"abetterbrowser\":{ \"config\":\"none\"} },sha2test: 0}]; !function(a, b){ a = document.createElement(\"script\"),b = document.getElementsByTagName(\"script\")[0],a.async = !0,a.src = \"//ajax.cloudflare.com/cdn-cgi/nexp/dok3v=0489c402f5/cloudflare.min.js\",b.parentNode.insertBefore(a, b)} ()} } catch (e) { };//]]></script>", "");
+						var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);
+						var request = new RestRequest("User/Reports/InternalRunReport", Method.GET);
+						request.AddParameter("type", item.ScheduledTask.Data);
+						request.AddParameter("departmentId", item.Department.DepartmentId);
 
-						Regex rRemScript = new Regex(@"<script[^>]*>[\s\S]*?</script>");
-						var content = rRemScript.Replace(response.Content, "");
+						var response = client.Execute(request);
 
-						var systemNotificaiton = new EmailNotification();
-						systemNotificaiton.Subject = string.Format("{0} Report for {1} ", ((ReportTypes)int.Parse(item.ScheduledTask.Data)), DateTime.UtcNow.TimeConverter(item.Department));
+						if (!string.IsNullOrWhiteSpace(response.Content))
+						{
+							//var content =
+							//	response.Content.Replace(
+							//		"<script type=\"text/javascript\">//<![CDATA[try { if (!window.CloudFlare) { var CloudFlare =[{ verbose: 0,p: 0,byc: 0,owlid: \"cf\",bag2: 1,mirage2: 0,oracle: 0,paths: { cloudflare: \"/cdn-cgi/nexp/dok3v=1613a3a185/\"},atok: \"ab24e007e451de77ff7ceb381c2348f0\",petok: \"80b990bdd3e004d336674babd22922ae48e99033-1471055012-1800\",zone: \"resgrid.com\",rocket: \"0\",apps: { \"ga_key\":{ \"ua\":\"UA-5288869-4\",\"ga_bs\":\"2\"},\"abetterbrowser\":{ \"config\":\"none\"} },sha2test: 0}]; !function(a, b){ a = document.createElement(\"script\"),b = document.getElementsByTagName(\"script\")[0],a.async = !0,a.src = \"//ajax.cloudflare.com/cdn-cgi/nexp/dok3v=0489c402f5/cloudflare.min.js\",b.parentNode.insertBefore(a, b)} ()} } catch (e) { };//]]></script>", "");
 
-						string fileName = string.Format("{0}Report_{1}.pdf", ((ReportTypes)int.Parse(item.ScheduledTask.Data)),
-							DateTime.UtcNow.TimeConverter(item.Department));
+							Regex rRemScript = new Regex(@"<script[^>]*>[\s\S]*?</script>");
+							var content = rRemScript.Replace(response.Content, "");
 
-						fileName = fileName.Replace(" ", "_");
-						fileName = fileName.Replace("/", "");
-						fileName = fileName.Replace(":", "");
-						
-						systemNotificaiton.To = item.Email;
-						systemNotificaiton.AttachmentName = fileName;
-						systemNotificaiton.AttachmentData = _pdfProvider.ConvertHtmlToPdf(content);
+							var systemNotificaiton = new EmailNotification();
+							systemNotificaiton.Subject = string.Format("{0} Report for {1} ", ((ReportTypes)int.Parse(item.ScheduledTask.Data)), DateTime.UtcNow.TimeConverter(item.Department));
 
-						_emailService.SendReportDeliveryEmail(systemNotificaiton);
+							string fileName = string.Format("{0}Report_{1}.pdf", ((ReportTypes)int.Parse(item.ScheduledTask.Data)),
+								DateTime.UtcNow.TimeConverter(item.Department));
+
+							fileName = fileName.Replace(" ", "_");
+							fileName = fileName.Replace("/", "");
+							fileName = fileName.Replace(":", "");
+
+							systemNotificaiton.To = item.Email;
+							systemNotificaiton.AttachmentName = fileName;
+							systemNotificaiton.AttachmentData = _pdfProvider.ConvertHtmlToPdf(content);
+
+							await _emailService.SendReportDeliveryEmail(systemNotificaiton);
+						}
 					}
 				}
 				catch (Exception ex)

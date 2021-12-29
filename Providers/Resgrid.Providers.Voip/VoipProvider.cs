@@ -125,5 +125,17 @@ namespace Resgrid.Providers.Voip
 
 			return null;
 		}
+
+		public async Task<string> CreateOpenViduSessionAndGetToken(string sessionId)
+		{
+			var openViduProvider = new OpenViduProvider();
+			var createSessionResult = await openViduProvider.CreateSession("test1");
+			var createTokenResult = await openViduProvider.CreateToken(createSessionResult);
+
+			if (createTokenResult != null)
+				return createTokenResult.Token;
+
+			return null;
+		}
 	}
 }

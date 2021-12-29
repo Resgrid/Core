@@ -176,6 +176,13 @@ namespace Resgrid.Services
 			return null;
 		}
 
+		public async Task<string> GetOpenViduSessionToken(string sessionId)
+		{
+			var result = await _voipProvider.CreateOpenViduSessionAndGetToken(sessionId);
+
+			return result;
+		}
+
 		private async Task<int> GetNextConferenceExtensionBaseNumber()
 		{
 			var voiceDepartments = await _departmentVoiceRepository.GetAllAsync();

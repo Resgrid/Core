@@ -57,7 +57,7 @@ BEGIN
         [DisplayName] nvarchar(max) NULL,
         [DisplayNames] nvarchar(max) NULL,
         [Permissions] nvarchar(max) NULL,
-        [PostLoutRedirectUris] nvarchar(max) NULL,
+        [PostLogoutRedirectUris] nvarchar(max) NULL,
         [Properties] nvarchar(max) NULL,
         [RedirectUris] nvarchar(max) NULL,
         [Requirements] nvarchar(max) NULL,

@@ -267,13 +267,18 @@ namespace Resgrid.Services
 
 			string subject = $"TROUBLE ALERT for {unit.Name} located at {unitAddress}";
 			string dispatchedOn = String.Empty;
+			Department d = await _departmentsService.GetDepartmentByIdAsync(unit.DepartmentId);
 
-			if (call.Department != null)
-				dispatchedOn = troubleAlertEvent.TimeStamp.Value.FormatForDepartment(call.Department);
+			if (d != null)
+				dispatchedOn = troubleAlertEvent.TimeStamp.Value.FormatForDepartment(d);
 			else
 				dispatchedOn = troubleAlertEvent.TimeStamp.Value.ToString("G") + " UTC";
 
 			string gpsLocation = "No Unit GPS Location";
+			string callName = "No Active Call";
+
+			if (call != null)
+				callName = call.Name;
 
 			if (!String.IsNullOrWhiteSpace(troubleAlertEvent.Latitude) && !String.IsNullOrWhiteSpace(troubleAlertEvent.Longitude))
 				gpsLocation = $"{troubleAlertEvent.Latitude},{troubleAlertEvent.Longitude}";
@@ -281,7 +286,7 @@ namespace Resgrid.Services
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
 			{
 				await _emailProvider.SendTroubleAlertMail(emailAddress, unit.Name, gpsLocation, "", callAddress,
-					unitAddress, "", call.Name);
+					unitAddress, "", callName);
 
 				return true;
 			}

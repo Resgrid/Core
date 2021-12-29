@@ -51,6 +51,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.VoiceEnabled = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
 			result.Data.Realm = Config.VoipConfig.VoipDomain;
 			result.Data.CallerIdName = await UserHelper.GetFullNameForUser(UserId);
+			result.Data.Type = (int)Config.SystemBehaviorConfig.VoipProviderType;
 
 			if (result.Data.VoiceEnabled)
 			{
@@ -65,6 +66,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						foreach (var chan in voice.Channels)
 						{
 							var channel = new DepartmentVoiceChannelResultData();
+							channel.Id = chan.DepartmentVoiceChannelId;
 							channel.Name = chan.Name;
 							channel.IsDefault = chan.IsDefault;
 							channel.ConferenceNumber = chan.ConferenceNumber;
@@ -87,6 +89,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		/// <summary>
+		/// Connects to an voip session, limited to only OpenVidu.
+		/// </summary>
+		/// <returns>Voice connection result containing the data needed to connect to a voip session</returns>
+		[HttpGet("ConnectToSession")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<VoiceSessionConnectionResult>> ConnectToSession(string sessionId)
+		{
+			var result = new VoiceSessionConnectionResult();
+			result.PageSize = 0;
+			result.Status = ResponseHelper.NotFound;
+
+			if (Config.SystemBehaviorConfig.VoipProviderType == Config.VoipProviderTypes.OpenVidu)
+			{
+				var token = await _voiceService.GetOpenViduSessionToken(sessionId);
+
+				if (token != null)
+				{
+					result.Data = new VoiceSessionConnectionResultData();
+					result.Data.Token = token;
+					result.PageSize = 1;
+					result.Status = ResponseHelper.Success;
+				}
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
 		}
 	}
 }

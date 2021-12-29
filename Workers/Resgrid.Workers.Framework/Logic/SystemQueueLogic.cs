@@ -84,28 +84,30 @@ namespace Resgrid.Workers.Framework.Logic
 						try
 						{
 							unitData = ObjectSerialization.Deserialize<PushRegisterionEvent>(qi.Data);
+
+							if (unitData != null)
+							{
+								PushUri pushUri = new PushUri();
+								pushUri.PushUriId = unitData.PushUriId;
+								pushUri.UserId = unitData.UserId;
+								pushUri.PlatformType = unitData.PlatformType;
+								pushUri.PushLocation = unitData.PushLocation;
+								pushUri.DepartmentId = unitData.DepartmentId;
+								pushUri.UnitId = unitData.UnitId;
+								pushUri.DeviceId = unitData.DeviceId;
+								pushUri.Uuid = unitData.Uuid;
+
+								var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
+
+								await pushService.UnRegisterUnit(pushUri);
+								var unitResult = await pushService.RegisterUnit(pushUri);
+
+								pushService = null;
+							}
 						}
 						catch (Exception ex)
 						{
 
-						}
-
-						if (unitData != null)
-						{
-							PushUri pushUri = new PushUri();
-							pushUri.PushUriId = unitData.PushUriId;
-							pushUri.UserId = unitData.UserId;
-							pushUri.PlatformType = unitData.PlatformType;
-							pushUri.PushLocation = unitData.PushLocation;
-							pushUri.DepartmentId = unitData.DepartmentId;
-							pushUri.UnitId = unitData.UnitId;
-							pushUri.DeviceId = unitData.DeviceId;
-							pushUri.Uuid = unitData.Uuid;
-
-							var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
-							var unitResult = await pushService.RegisterUnit(pushUri);
-
-							pushService = null;
 						}
 						break;
 					case CqrsEventTypes.StripeChargeSucceeded:

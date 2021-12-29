@@ -31,14 +31,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new VoiceIndexModel();
 			model.CanUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
+			model.Voice = await _voiceService.GetVoiceSettingsForDepartmentAsync(DepartmentId);
 
 			if (model.Voice == null)
 			{
 				model.Voice = new DepartmentVoice();
 				model.Voice.Channels = new List<DepartmentVoiceChannel>();
 			}
-
-			//var channels = await _voiceService.GetDepartmentVoiceChannels();
 
 			return View(model);
 		}
@@ -68,13 +67,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-
+				var voiceRecord = await _voiceService.GetOrCreateDepartmentVoiceRecordAsync(department);
 				var channel = await _voiceService.SaveChannelToVoipProviderAsync(department, model.ChannelName, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
 
 			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Voice_Create)]
+		public async Task<IActionResult> Resync()
+		{
+			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
+
+			if (!canUseVoice)
+				Unauthorized();
+
+			var result = await _voiceService.InitializeDepartmentUsersWithVoipProviderAsync(DepartmentId);
+
+			return RedirectToAction("Index");
 		}
 	}
 }

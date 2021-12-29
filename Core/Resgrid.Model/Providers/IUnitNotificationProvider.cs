@@ -10,7 +10,7 @@ namespace Resgrid.Model.Providers
 		Task UnRegisterPush(PushUri pushUri);
 		Task SendAllNotifications(string title, string subTitle, int unitId, string eventCode, string type, bool enableCustomSounds, int count, string color);
 		Task<List<PushRegistrationDescription>> GetRegistrationsByDeviceId(string deviceId);
-		Task<List<PushRegistrationDescription>> GetRegistrationsByUserId(string userId);
+		Task<List<PushRegistrationDescription>> GetRegistrationsByUnitId(int unitId);
 		Task<List<PushRegistrationDescription>> GetRegistrationsByUUID(string uuid);
 		Task UnRegisterPushByUserDeviceId(PushUri pushUri);
 		Task UnRegisterPushByUUID(string uuid);

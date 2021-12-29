@@ -27,5 +27,6 @@ namespace Resgrid.Web.Services.Helpers
 		public const string Created = "created";
 		public const string Updated = "updated";
 		public const string Deleted = "deleted";
+		public const string Queued = "queued";
 	}
 }

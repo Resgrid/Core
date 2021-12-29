@@ -115,6 +115,62 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Gets the unit status for a specific unit id
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("GetUnitStatus")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public async Task<ActionResult<UnitStatusResult>> GetUnitStatus(string unitId)
+		{
+			var result = new UnitStatusResult();
+
+			if (String.IsNullOrWhiteSpace(unitId))
+				return BadRequest();
+
+			var unit = await _unitsService.GetUnitByIdAsync(int.Parse(unitId));
+
+			if (unit == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (unit.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var status = await _unitsService.GetLastUnitStateByUnitIdAsync(int.Parse(unitId));
+
+			DepartmentGroup group = null;
+			if (unit.StationGroupId.HasValue)
+				group = await _departmentGroupsService.GetGroupByIdAsync(unit.StationGroupId.Value);
+
+			DateTime timestamp = DateTime.UtcNow;
+			if (status != null)
+			{
+				timestamp = status.Timestamp;
+				var customState = await CustomStatesHelper.GetCustomUnitState(status);
+				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(status.UnitId, timestamp);
+
+				result.Data = ConvertUnitStatusData(unit, status, latestUnitLocation, customState, group, TimeZone, activeCalls, groups);
+			}
+			else
+			{
+				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(status.UnitId, timestamp);
+				result.Data = ConvertUnitStatusData(unit, status, latestUnitLocation, null, group, TimeZone, activeCalls, groups);
+			}
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
+		/// <summary>
 		/// Sets the status/action for the current user.
 		/// </summary>
 		/// <param name="statusInput">StatusInput object with the Status/Action to set.</param>

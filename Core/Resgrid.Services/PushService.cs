@@ -88,7 +88,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> UnRegisterUnit(PushUri pushUri)
 		{
-			await _unitNotificationProvider.UnRegisterPushByUserDeviceId(pushUri);
+			await _unitNotificationProvider.UnRegisterPush(pushUri);
 
 			return true;
 		}

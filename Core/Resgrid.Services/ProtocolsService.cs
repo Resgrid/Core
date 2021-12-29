@@ -70,9 +70,27 @@ namespace Resgrid.Services
 		public async Task<DispatchProtocol> GetProtocolByIdAsync(int id)
 		{
 			var protocol = await _dispatchProtocolRepository.GetDispatchProtocolByIdAsync(id);
-			protocol.Attachments = (await _dispatchProtocolAttachmentRepository.GetDispatchProtocolAttachmentByProtocolIdAsync(id)).ToList();
-			protocol.Questions = (await _dispatchProtocolQuestionsRepository.GetDispatchProtocolQuestionsByProtocolIdAsync(id)).ToList();
-			protocol.Triggers = (await _dispatchProtocolTriggersRepository.GetDispatchProtocolTriggersByProtocolIdAsync(id)).ToList();
+
+			if (protocol != null)
+			{
+				var attachments = await _dispatchProtocolAttachmentRepository.GetDispatchProtocolAttachmentByProtocolIdAsync(id);
+				if (attachments != null && attachments.Any())
+					protocol.Attachments = attachments.ToList();
+				else
+					protocol.Attachments = new List<DispatchProtocolAttachment>();
+
+				var questions = await _dispatchProtocolQuestionsRepository.GetDispatchProtocolQuestionsByProtocolIdAsync(id);
+				if (questions != null && questions.Any())
+					protocol.Questions = questions.ToList();
+				else
+					protocol.Questions = new List<DispatchProtocolQuestion>();
+
+				var triggers = await _dispatchProtocolTriggersRepository.GetDispatchProtocolTriggersByProtocolIdAsync(id);
+				if (triggers != null && triggers.Any())
+					protocol.Triggers = triggers.ToList();
+				else
+					protocol.Triggers = new List<DispatchProtocolTrigger>();
+			}
 
 			return protocol;
 		}

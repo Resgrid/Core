@@ -71,7 +71,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Gets all deparment groups for a department
 		/// </summary>
 		/// <returns></returns>
-		[HttpGet("GetGroup")]
+		[HttpGet("GetAllGroups")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Group_View)]
 		public async Task<ActionResult<GroupResults>> GetAllGroups()

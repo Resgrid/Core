@@ -62,7 +62,7 @@ namespace Resgrid.Workers.Console.Tasks
 				}
 				else
 				{
-					progress.Report(6, "CalendarNotification::No Calendar Items to Notify");
+					//progress.Report(6, "CalendarNotification::No Calendar Items to Notify");
 				}
 				//}, cancellationToken);
 

@@ -36,9 +36,13 @@ namespace Resgrid.Framework
 
 			var multiplier = (point.Contains("S") || point.Contains("W")) ? -1 : 1; //handle south and west
 
-			point = Regex.Replace(point, "[^0-9. ]", ""); //remove the characters
+			var newPoint = point.Replace("°", " ");
+			newPoint = newPoint.Replace("'", " ");
+			newPoint = newPoint.Replace("  ", " ");
 
-			var pointArray = point.Trim().Split(' '); //split the string.
+			newPoint = Regex.Replace(newPoint, "[^0-9. ]", ""); //remove the characters
+
+			var pointArray = newPoint.Trim().Split(' '); //split the string.
 
 			//Decimal degrees = 
 			//   whole number of degrees, 

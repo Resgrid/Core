@@ -382,11 +382,6 @@
             <param name="input">Input to deregister the device for</param>
             <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
-            <summary>
-            Operations to support Dispatch operations
-            </summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
             <summary>
             Operations to support Dispatch operations
@@ -3269,6 +3264,25 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.DevicesController">
+            <summary>
+            Mobile or Tablet Device specific operations
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.RegisterUnitDevice(Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput)">
+            <summary>
+            Register a unit device to receive push notification from the Resgrid system
+            </summary>
+            <param name="registrationInput">Input to create the registration for</param>
+            <returns>Result for the registration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterUnitDevice(System.String)">
+            <summary>
+            Removed a Unit Push Notification support by PushUriId.
+            </summary>
+            <param name="deviceUuid">Input to deregister the device for</param>
+            <returns></returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DispatchController">
             <summary>
             API Calls that are used for the Dispatch App
@@ -3424,6 +3438,24 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
+            <summary>
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitLocationController.SetUnitLocation(Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput)">
+            <summary>
+            Sets the location of a unit
+            </summary>
+            <param name="locationInput">UnitLocationInput object with the gps information.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitLocationController.GetLatestUnitLocation(System.String)">
+            <summary>
+            Gets the latest location for a specified unit
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitRolesController">
             <summary>
             Unit roles
@@ -3463,6 +3495,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.GetUnitStatus(System.String)">
+            <summary>
+            Gets the unit status for a specific unit id
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStatus(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput)">
             <summary>
             Sets the status/action for the current user.
@@ -3480,6 +3518,12 @@
             Returns all the available responding options (Calls/Stations) for the department
             </summary>
             <returns>Array of RecipientResult objects for each responding option in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.ConnectToSession(System.String)">
+            <summary>
+            Connects to an voip session, limited to only OpenVidu.
+            </summary>
+            <returns>Voice connection result containing the data needed to connect to a voip session</returns>
         </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
@@ -4530,6 +4574,51 @@
             Is this custom status deleted (only should be used for display)
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput">
+            <summary>
+            Object that contains the device specific information needed to register the device for push notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput.Platform">
+            <summary>
+            The platform this device registration is going against
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput.Token">
+            <summary>
+            The push network resgistration token to register with Resgrid for Push Notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput.UnitId">
+            <summary>
+            The UnitId of the device being registered if it's from the Unit App
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput.DeviceUuid">
+            <summary>
+            Device UDID
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Device.PushRegistrationResult">
+            <summary>
+            Depicts a request to register for push notifications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.PushRegistrationResult.Id">
+            <summary>
+            Id of the device registration created
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Device.PushUnRegistrationInput">
+            <summary>
+            Unregister a device for push
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.PushUnRegistrationInput.DeviceUuid">
+            <summary>
+            Device UDID
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Dispatch.GetCallTemplatesResult">
             <summary>
             DCall Templates for Quick Dispatch
@@ -5290,6 +5379,116 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput">
+            <summary>
+            A GPS location for a point in time of a specificed unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.UnitId">
+            <summary>
+            UnitId of the apparatus that the location is for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.Timestamp">
+            <summary>
+            The timestamp of the location in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.Latitude">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.Longitude">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.Altitude">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.Speed">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput.Heading">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResult">
+            <summary>
+            A unit location in the Resgrid system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData">
+            <summary>
+            The information about a specific unit's location
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.UnitId">
+            <summary>
+            Id of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.Timestamp">
+            <summary>
+            The Timestamp for the location in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.Latitude">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.Longitude">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.Altitude">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.Speed">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationResultData.Heading">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitRoles.ActiveUnitRolesResult">
             <summary>
             Gets the users assigned to the accountability roles for a unit
@@ -5370,94 +5569,14 @@
             Default constructor
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult">
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult">
             <summary>
-            Depicts a unit status in the Resgrid system.
+            Depicts a result after saving a unit status
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult.Data">
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult.Id">
             <summary>
             Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData">
-            <summary>
-            Depicts a unit's status
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.UnitId">
-            <summary>
-            Unit Id
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Name">
-            <summary>
-            Units Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Type">
-            <summary>
-            The Type of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
-            <summary>
-            Units current Status (State)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateCss">
-            <summary>
-            CSS for status (for display)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateStyle">
-            <summary>
-            CSS Style for status (for display)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Timestamp">
-            <summary>
-            Timestamp of this Unit State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TimestampUtc">
-            <summary>
-            Timestamp in Utc of this Unit State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationId">
-            <summary>
-            Destination Id (Station or Call)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationName">
-            <summary>
-            Name of the Desination (Call or Station)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">
-            <summary>
-            Note for the State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Latitude">
-            <summary>
-            Latitude
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Longitude">
-            <summary>
-            Longitude
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupName">
-            <summary>
-            Name of the Group the Unit is in
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupId">
-            <summary>
-            Id of the Group the Unit is in
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput">
@@ -5571,14 +5690,94 @@
              The name of the Role
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult">
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult">
             <summary>
-            Depicts a result after saving a unit status
+            Depicts a unit status in the Resgrid system.
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult.Id">
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult.Data">
             <summary>
             Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData">
+            <summary>
+            Depicts a unit's status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.UnitId">
+            <summary>
+            Unit Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Name">
+            <summary>
+            Units Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Type">
+            <summary>
+            The Type of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
+            <summary>
+            Units current Status (State)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateCss">
+            <summary>
+            CSS for status (for display)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateStyle">
+            <summary>
+            CSS Style for status (for display)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Timestamp">
+            <summary>
+            Timestamp of this Unit State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TimestampUtc">
+            <summary>
+            Timestamp in Utc of this Unit State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationId">
+            <summary>
+            Destination Id (Station or Call)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationName">
+            <summary>
+            Name of the Desination (Call or Station)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">
+            <summary>
+            Note for the State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Latitude">
+            <summary>
+            Latitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Longitude">
+            <summary>
+            Longitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupName">
+            <summary>
+            Name of the Group the Unit is in
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupId">
+            <summary>
+            Id of the Group the Unit is in
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult">
@@ -5716,9 +5915,44 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Voice.ConnectToSessionInput">
+            <summary>
+            Connects to a voip session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.ConnectToSessionInput.SessionId">
+            <summary>
+            Session id to connect to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.ConnectToSessionInput.Name">
+            <summary>
+            Name of the person or unit connecting
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Voice.DepartmentVoiceResult.Data">
             <summary>
             Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Voice.VoiceSessionConnectionResult">
+            <summary>
+            Result of connecting to a voice session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.VoiceSessionConnectionResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Voice.VoiceSessionConnectionResultData">
+            <summary>
+            Data needed to connect to an active voice session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.VoiceSessionConnectionResultData.Token">
+            <summary>
+            Id used to connect to the session
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Properties.Resources">

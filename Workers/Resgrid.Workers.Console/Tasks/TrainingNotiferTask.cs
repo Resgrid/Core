@@ -47,7 +47,7 @@ namespace Resgrid.Workers.Console.Tasks
 						var qi = new TrainingNotifierQueueItem();
 						qi.Training = training;
 
-						progress.Report(3, "TrainingNotifer::Processing Training Notification: " + qi.Training.TrainingId);
+						//progress.Report(3, "TrainingNotifer::Processing Training Notification: " + qi.Training.TrainingId);
 						var result = await logic.Process(qi);
 
 						if (result.Item1)

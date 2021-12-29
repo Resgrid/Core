@@ -227,15 +227,15 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendSms)
 			{
-				string text = $"TROUBLE ALERT for {unit.Name} at {unitAddress}";
+				string text = $"for {unit.Name} at {unitAddress}";
 
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
+					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{

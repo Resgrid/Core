@@ -10,5 +10,7 @@ namespace Resgrid.Model.Providers
 		Task<string> CreateDeviceForUserIfNotExistsAsync(string voipSystemUserId, string voipSystemDeviceId, UserProfile profile, int departmentId);
 
 		Task<Tuple<string, string>> CreateConferenceIfNotExistsAsync(string voipSystemConferenceId, int departmentId, string name, string pin, int number);
+
+		Task<string> CreateOpenViduSessionAndGetToken(string sessionId);
 	}
 }

@@ -14,6 +14,8 @@ namespace Resgrid.Web.Services.Models.v4.Voice
 	{
 		public bool VoiceEnabled { get; set; }
 
+		public int Type { get; set; }
+
 		public string Realm { get; set; }
 
 		public string VoipServerWebsocketSslAddress { get; set; }
@@ -27,6 +29,8 @@ namespace Resgrid.Web.Services.Models.v4.Voice
 
 	public class DepartmentVoiceChannelResultData
 	{
+		public string Id { get; set; }
+
 		public string Name { get; set; }
 
 		public int ConferenceNumber { get; set; }

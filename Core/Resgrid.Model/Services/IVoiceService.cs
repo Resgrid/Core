@@ -18,5 +18,7 @@ namespace Resgrid.Model.Services
 		Task<DepartmentVoiceUser> SaveUserToVoipProviderAsync(DepartmentVoice voice, UserProfile profile, string emailAddress, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<DepartmentVoiceChannel> SaveChannelToVoipProviderAsync(Department department, string name, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<string> GetOpenViduSessionToken(string sessionId);
 	}
 }

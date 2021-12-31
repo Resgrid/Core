@@ -4,7 +4,7 @@
 	<Description>Cloud system for First Responders</Description>
 	<VersionPrefix>3.0.0</VersionPrefix>
 	<Authors>Resgrid, LLC.</Authors>
-	<TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
 	<AssemblyName>Resgrid.WebCore</AssemblyName>
 	<PackageId>Resgrid.WebCore</PackageId>
 	<UserSecretsId>aspnet-Resgrid.WebCore-6372c5f2-c359-4243-b5a9-1fc7a5aaeb3b</UserSecretsId>
@@ -130,7 +130,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	<Folder Include="Data\" />
 	<Folder Include="Service References\" />
 	<Folder Include="wwwroot\lib\jquery-ui.multidatespicker\" />
   </ItemGroup>

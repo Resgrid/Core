@@ -1,11 +1,11 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 ARG BUILD_VERSION=3.5.0
 
-FROM mcr.microsoft.com/dotnet/runtime:5.0.9-buster-slim-amd64 AS base
+FROM mcr.microsoft.com/dotnet/runtime:6.0.1-bullseye-slim-amd64 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0.400-buster-slim-amd64 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.101-bullseye-slim-amd64 AS build
 ARG BUILD_VERSION
 WORKDIR /src
 

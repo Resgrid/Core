@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <Configurations>Debug;Release;Docker</Configurations>
@@ -57,9 +57,6 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
-    <ProjectReference Include="..\..\Tools\Resgrid.Console\Resgrid.Console.csproj">
-      <Private>true</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
   </ItemGroup>
   <ItemGroup>

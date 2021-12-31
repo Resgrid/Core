@@ -74,7 +74,7 @@ namespace Resgrid.Web
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			var settings = ConfigurationManager.ConnectionStrings;
+			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
 			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
 			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
 

@@ -18,6 +18,9 @@
 		public static string KazzoAccount = "";
 		public static string KazooCrossbarApiUrl = @"";
 		public static string KazooCrossbarApiVersion = "";
+
+		public static string OpenViduUrl = "";
+		public static string OpenViduSecret = "";
 	}
 
 	/// <summary>
@@ -25,6 +28,7 @@
 	/// </summary>
 	public enum VoipProviderTypes
 	{
-		Kazoo = 0
+		Kazoo = 0,
+		OpenVidu = 1
 	}
 }

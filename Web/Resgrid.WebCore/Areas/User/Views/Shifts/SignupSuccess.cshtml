@@ -277,7 +277,7 @@
 							<div class="info">
 								<h2 class="title">@Model.Signup.Shift.Name</h2>
 
-								@if (Model.Signup.Shift.EndTime.HasValue())
+								@if (!String.IsNullOrWhiteSpace(Model.Signup.Shift.EndTime))
 								{
 									<p class="desc">Starts at @Model.Signup.Shift.StartTime and Ends at @Model.Signup.Shift.EndTime</p>
 								}

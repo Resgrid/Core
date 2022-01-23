@@ -1190,7 +1190,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
 				return RedirectToAction("Unauthorized", "Public", new { Area = "" });
 
-			var numbers = _numbersService.GetAvailableNumbers(country, areaCode);
+			var numbers = await _numbersService.GetAvailableNumbers(country, areaCode);
 
 			if (numbers.Count > 0)
 			{

@@ -41,14 +41,14 @@ namespace Resgrid.Services
 				{
 					string text = HtmlToTextHelper.ConvertHtml(message.Body);
 					text = StringHelpers.StripHtmlTagsCharArray(text);
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text),
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					string text = HtmlToTextHelper.ConvertHtml(message.Body);
 					text = StringHelpers.StripHtmlTagsCharArray(text);
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text),
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
@@ -138,7 +138,7 @@ namespace Resgrid.Services
 					//	text = text + " " + call.ShortenedCallUrl;
 					//}
 
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
 
 					if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
 						SendCallViaEmailSmsGateway(call, address, profile);
@@ -176,7 +176,7 @@ namespace Resgrid.Services
 					//	text = text + " " + call.ShortenedCallUrl;
 					//}
 
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
 
 					if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
 						SendCallViaEmailSmsGateway(call, address, profile);
@@ -267,7 +267,7 @@ namespace Resgrid.Services
 				if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					//string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(departmentId);
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(title, message), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(title, message), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
@@ -303,13 +303,13 @@ namespace Resgrid.Services
 			{
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), message,
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), message,
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					//string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(departmentId);
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), message,
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), message,
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else

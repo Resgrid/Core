@@ -64,7 +64,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> RegisterUnit(PushUri pushUri)
 		{
-			string deviceId = pushUri.DeviceId.GetHashCode().ToString();
+			//string deviceId = pushUri.DeviceId;
 			List<PushRegistrationDescription> usersDevices = null;
 
 			try
@@ -163,7 +163,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> PushCallUnit(StandardPushCall call, int unitId, DepartmentCallPriority priority = null)
 		{
-			if (Config.SystemBehaviorConfig.DoNotBroadcast && Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId.GetValueOrDefault()))
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId.GetValueOrDefault()))
 				return false;
 
 			if (call == null)

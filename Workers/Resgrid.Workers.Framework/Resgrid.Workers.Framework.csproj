@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.0" />
-    <PackageReference Include="CommonServiceLocator" Version="2.0.5" />
-    <PackageReference Include="CompareNETObjects" Version="4.66.0" />
+    <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.1" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
+    <PackageReference Include="CompareNETObjects" Version="4.74.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,7 +17,6 @@
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />

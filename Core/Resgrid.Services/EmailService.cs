@@ -315,7 +315,7 @@ namespace Resgrid.Services
 			message.From.Add(new MailboxAddress(Encoding.ASCII, $"({listUsername}) List", listEmail));
 
 			message.To.Clear();
-			message.To.Add(new MailboxAddress(emailAddress));
+			message.To.Add(new MailboxAddress(name, emailAddress));
 
 			message.Headers.Add(new MimeKit.Header(HeaderId.ReturnPath, $"{listUsername}+{emailAddress.Replace("@", "=")}@{Config.InboundEmailConfig.ListsDomain}"));
 			message.Headers.Add(new MimeKit.Header("Return-Path", $"{listUsername}+{emailAddress.Replace("@", "=")}@{Config.InboundEmailConfig.ListsDomain}"));

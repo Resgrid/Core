@@ -41,57 +41,59 @@
 	</None>
   </ItemGroup>
 
-  <ItemGroup>
-	<PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
-	<PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.313" />
-	<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.9" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.9" />
-	<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
-	<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-	<PackageReference Include="Autofac" Version="5.2.0" />
-	<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
-	<PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.0" />
-	<PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
-	<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="5.0.9" />
-	<PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="5.0.9" />
-	<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="5.0.9" />
-	<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="5.0.9" />
-	<PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="5.0.9" />
-	<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.9" />
-	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
-	<PackageReference Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
-	<PackageReference Include="PaulMiami.AspNetCore.Mvc.Recaptcha" Version="1.2.2" />
-	<PackageReference Include="protobuf-net" Version="3.0.29" />
-	<PackageReference Include="Remotion.Linq" Version="2.2.0" />
-	<PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
-	<PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
-	<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-	<PackageReference Include="System.Reflection.Metadata" Version="5.0.0" />
-	<PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.4.1" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
-	<PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
-	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2">
-	  <PrivateAssets>All</PrivateAssets>
-	</PackageReference>
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	<PackageReference Include="RestSharp" Version="106.12.0" />
-	<PackageReference Include="Stripe.net" Version="39.2.0" />
-	<PackageReference Include="Twilio" Version="5.46.2" />
-	<PackageReference Include="JWT" Version="7.2.1" />
-	<PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Net" />
-	<Reference Include="System" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AspNetCoreRateLimit" Version="4.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
+		<PackageReference Include="Autofac" Version="6.3.0" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
+		<PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.1" />
+		<PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+		<PackageReference Include="EntityFramework" Version="6.4.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.13" />
+		<PackageReference Include="protobuf-net" Version="3.0.101" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.2.3" />
+		<PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+		<PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
+		<PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.4.3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1">
+			<PrivateAssets>All</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="RestSharp" Version="107.1.1" />
+		<PackageReference Include="Stripe.net" Version="39.88.0" />
+		<PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
+		<PackageReference Include="Twilio" Version="5.70.0" />
+		<PackageReference Include="Twilio.AspNet.Common" Version="5.68.3" />
+		<PackageReference Include="JWT" Version="8.9.0" />
+		<PackageReference Include="Vereyon.Web.HtmlSanitizer" Version="1.6.0.1" />
+	</ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
 	<Exec Command="libman restore" />
@@ -140,7 +142,6 @@
 	<ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
 	<ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
 	<ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj" />
 	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
 	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
 	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />

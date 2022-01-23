@@ -6,20 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\Common\resgrid.com.crt" Link="resgrid.com.crt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
-    <PackageReference Include="Autofac" Version="5.2.0" />
-    <PackageReference Include="CommonServiceLocator" Version="2.0.5" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Stripe.net" Version="37.35.0" />
+    <PackageReference Include="Stripe.net" Version="39.88.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Audio\Resgrid.Providers.Audio.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />

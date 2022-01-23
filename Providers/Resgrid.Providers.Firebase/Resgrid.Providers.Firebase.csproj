@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="5.2.0" />
-    <PackageReference Include="FirebaseAdmin" Version="1.15.0" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="FirebaseAdmin" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>

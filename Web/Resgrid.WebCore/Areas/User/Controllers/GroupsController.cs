@@ -148,7 +148,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					var result = _geoLocationProvider.GetCoordinatesFromW3W(model.What3Word);
+					var result = await _geoLocationProvider.GetCoordinatesFromW3W(model.What3Word);
 
 					if (result == null)
 						ModelState.AddModelError("What3Word", string.Format("The What3Words address entered was incorrect."));
@@ -454,7 +454,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					var result = _geoLocationProvider.GetCoordinatesFromW3W(model.What3Word);
+					var result = await _geoLocationProvider.GetCoordinatesFromW3W(model.What3Word);
 
 					if (result == null)
 						ModelState.AddModelError("What3Word", string.Format("The What3Words address entered was incorrect."));

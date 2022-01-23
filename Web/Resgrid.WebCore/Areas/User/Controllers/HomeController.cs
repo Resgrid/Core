@@ -705,7 +705,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				if (!model.Profile.DoNotRecieveNewsletters)
-					Unsubscribe(model.Email);
+					await Unsubscribe(model.Email);
 
 				_usersService.UpdateEmail(model.User.Id, model.Email);
 
@@ -840,18 +840,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion User Actions
 
-		private void Unsubscribe(string emailAddress)
+		private async Task Unsubscribe(string emailAddress)
 		{
 			try
 			{
 				var client = new RestClient("https://app.mailerlite.com");
-				var request = new RestRequest("/api/v1/subscribers/unsubscribe/", Method.POST);
+				var request = new RestRequest("/api/v1/subscribers/unsubscribe/", Method.Post);
 				request.AddObject(new
 				{
 					apiKey = "QDrnoEf6hBONlGye26aZFh5Iv1KEgdJM",
 					email = emailAddress
 				});
-				var response = client.Execute(request);
+				var response = await client.ExecuteAsync(request);
 			}
 			catch { }
 		}

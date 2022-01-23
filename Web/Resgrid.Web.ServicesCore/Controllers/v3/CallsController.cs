@@ -25,6 +25,7 @@ using Resgrid.Web.Services.Controllers.Version3.Models.Protocols;
 using Resgrid.Web.ServicesCore.Options;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 using Resgrid.Web.Helpers;
+using System.Text;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -1609,7 +1610,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (String.IsNullOrWhiteSpace(query))
 				return NotFound();
 
-			string plainText = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase);
+			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query));
+
+			string plainText = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase);
 
 			if (String.IsNullOrWhiteSpace(plainText))
 				return NotFound();

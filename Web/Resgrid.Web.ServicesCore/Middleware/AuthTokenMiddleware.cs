@@ -176,16 +176,21 @@ namespace Resgrid.Web.ServicesCore.Middleware
 
 			string[] rows = null;
 
+			byte[] authBytes = null;
+			string cypherText = null;
+			string plainText = null;
+
 			try
 			{
-				var authBytes = Convert.FromBase64String(authHeader);
-				var cypherText = Encoding.ASCII.GetString(authBytes);
-				var plainText = SymmetricEncryption.Decrypt(cypherText, Config.SystemBehaviorConfig.ApiTokenEncryptionPassphrase);
+				authBytes = Convert.FromBase64String(authHeader);
+				cypherText = Encoding.ASCII.GetString(authBytes);
+				plainText = SymmetricEncryption.Decrypt(cypherText, Config.SystemBehaviorConfig.ApiTokenEncryptionPassphrase);
 
 				rows = plainText.Split('|');
 			}
 			catch (Exception ex)
 			{
+				Logging.LogException(ex, $"{cypherText} {plainText}");
 				//TODO: log exception here? with metada used in authHeader?
 				return null;
 			}

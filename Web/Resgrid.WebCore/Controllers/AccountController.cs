@@ -204,7 +204,7 @@ namespace Resgrid.Web.Controllers
 					_departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
 					_departmentsService.InvalidateDepartmentMembers();
 
-					_emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
+					await _emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
 					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, model.Password, department.DepartmentId);
 
 					var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
@@ -402,7 +402,7 @@ namespace Resgrid.Web.Controllers
 					_departmentsService.InvalidateDepartmentMembers();
 
 					await _invitesService.CompleteInviteAsync(model.Invite.Code, user.UserId, cancellationToken);
-					_emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
+					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
 					await _emailService.SendWelcomeEmail(model.Invite.Department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Password, model.Invite.DepartmentId);
 

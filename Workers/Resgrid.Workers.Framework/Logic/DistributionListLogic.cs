@@ -53,7 +53,7 @@ namespace Resgrid.Workers.Framework.Logic
 							// create an image attachment for the file located at path
 							var attachment = new MimePart(file.FileType)
 							{
-								ContentObject = new ContentObject(new MemoryStream(file.Data), ContentEncoding.Default),
+								Content = new MimeContent(new MemoryStream(file.Data), ContentEncoding.Default),
 								ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
 								ContentTransferEncoding = ContentEncoding.Base64,
 								FileName = file.FileName

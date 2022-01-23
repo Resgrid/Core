@@ -109,6 +109,7 @@ namespace Resgrid.Framework
 			// It is reasonable to set encryption mode to Cipher Block Chaining
 			// (CBC). Use default options for other symmetric key parameters.
 			symmetricKey.Mode = CipherMode.CBC;
+			symmetricKey.Padding = PaddingMode.PKCS7;
 
 			// Generate decryptor from the existing key bytes and initialization 
 			// vector. Key size will be defined based on the number of the key 
@@ -128,12 +129,25 @@ namespace Resgrid.Framework
 			// Since at this point we don't know what the size of decrypted data
 			// will be, allocate the buffer long enough to hold ciphertext;
 			// plaintext is never longer than ciphertext.
-			byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+			byte[] plainTextBytes = null;// = new byte[cipherTextBytes.Length];
 
 			// Start decrypting.
-			int decryptedByteCount = cryptoStream.Read(plainTextBytes,
-																								 0,
-																								 plainTextBytes.Length);
+			//int decryptedByteCount = cryptoStream.Read(plainTextBytes,
+			//																					 0,
+			//																					 plainTextBytes.Length);
+
+			string plainText = null;
+			//using (var plainTextReader = new StreamReader(cryptoStream))
+			//{
+			//	plainText = plainTextReader.ReadToEnd();
+			//}
+
+			using (var plainTextStream = new MemoryStream())
+			{
+				cryptoStream.CopyTo(plainTextStream);
+				plainTextBytes = plainTextStream.ToArray();
+				plainText = Encoding.UTF8.GetString(plainTextBytes, 0, plainTextBytes.Length);
+			}
 
 			// Close both streams.
 			memoryStream.Close();
@@ -141,9 +155,9 @@ namespace Resgrid.Framework
 
 			// Convert decrypted data into a string. 
 			// Let us assume that the original plaintext string was UTF8-encoded.
-			string plainText = Encoding.UTF8.GetString(plainTextBytes,
-																								 0,
-																								 decryptedByteCount);
+			//string plainText = Encoding.UTF8.GetString(plainTextBytes,
+			//																					 0,
+			//																					 totalRead);
 
 			// Return decrypted string.   
 			return plainText;

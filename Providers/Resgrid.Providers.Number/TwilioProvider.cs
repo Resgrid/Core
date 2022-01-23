@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Twilio;
@@ -13,13 +14,13 @@ namespace Resgrid.Providers.NumberProvider
 {
 	public class TwilioProvider : INumberProvider
 	{
-		public bool ProvisionNumber(string country, string number)
+		public async Task<bool> ProvisionNumber(string country, string number)
 		{
 			TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
 
 			try
 			{
-				var incomingPhoneNumber = IncomingPhoneNumberResource.Create(phoneNumber: new PhoneNumber(number),
+				var incomingPhoneNumber = await IncomingPhoneNumberResource.CreateAsync(phoneNumber: new PhoneNumber(number),
 																		     smsUrl: new Uri(Config.NumberProviderConfig.TwilioApiUrl),
 																			 smsMethod: "GET",
 																			 voiceUrl: new Uri(Config.NumberProviderConfig.TwilioVoiceApiUrl),
@@ -33,7 +34,7 @@ namespace Resgrid.Providers.NumberProvider
 			return true;
 		}
 
-		public List<TextNumber> GetAvailableNumbers(string country, string areaCode)
+		public async Task<List<TextNumber>> GetAvailableNumbers(string country, string areaCode)
 		{
 			var availableNumbers = new List<TextNumber>();
 			TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
@@ -42,9 +43,9 @@ namespace Resgrid.Providers.NumberProvider
 			if (country == "US" || country == "CA" || country == "GB")
 			{
 				if (!string.IsNullOrWhiteSpace(areaCode))
-					numbers = LocalResource.Read(country, areaCode: int.Parse(areaCode), smsEnabled: true);
+					numbers = await LocalResource.ReadAsync(country, areaCode: int.Parse(areaCode), smsEnabled: true);
 				else
-					numbers = LocalResource.Read(country, smsEnabled: true);
+					numbers = await LocalResource.ReadAsync(country, smsEnabled: true);
 
 				if (numbers != null)
 				{
@@ -64,9 +65,9 @@ namespace Resgrid.Providers.NumberProvider
 				ResourceSet<MobileResource> mobileNumbers;
 
 				if (!string.IsNullOrWhiteSpace(areaCode))
-					mobileNumbers = MobileResource.Read(country, areaCode: int.Parse(areaCode), smsEnabled: true);
+					mobileNumbers = await MobileResource.ReadAsync(country, areaCode: int.Parse(areaCode), smsEnabled: true);
 				else
-					mobileNumbers = MobileResource.Read(country, smsEnabled: true);
+					mobileNumbers = await MobileResource.ReadAsync(country, smsEnabled: true);
 
 				if (mobileNumbers != null)
 				{

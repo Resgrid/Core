@@ -16,6 +16,7 @@ using System.IO;
 using System.Net.Mime;
 using System.Threading;
 using System.Web;
+using System.Text;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -103,7 +104,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (String.IsNullOrWhiteSpace(query))
 				return NotFound();
 
-			var decryptedQuery = SymmetricEncryption.Decrypt(HttpUtility.UrlDecode(query), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query));
+
+			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 			var items = decryptedQuery.Split(char.Parse("|"));
 
@@ -203,7 +206,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var query = SymmetricEncryption.Encrypt($"{department.DepartmentId}|{attachment.CallAttachmentId}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
-			file.Url = Config.SystemBehaviorConfig.ResgridApiBaseUrl + "/api/v4/CallFiles/GetFile?query=" + HttpUtility.UrlEncode(query);
+			file.Url = Config.SystemBehaviorConfig.ResgridApiBaseUrl + "/api/v4/CallFiles/GetFile?query=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(query));
 			file.Name = attachment.Name;
 			file.Size = attachment.Size.GetValueOrDefault();
 			file.Mime = FileHelper.GetContentTypeByExtension(Path.GetExtension(attachment.FileName));

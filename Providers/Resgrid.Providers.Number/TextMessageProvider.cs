@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using CsvHelper;
 using Resgrid.Framework;
@@ -25,45 +26,57 @@ namespace Resgrid.Providers.NumberProvider
 		private static int _maxZone = 4;
 		private static IEnumerable<AreaCodeCity> _areaCodes;
 
-		public void SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false)
+		public async Task<bool> SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false)
 		{
 			if (carrier == MobileCarriers.Telstra)
-				SendTextMessageViaNexmo(number, message, departmentNumber);
+			{
+				return await SendTextMessageViaNexmo(number, message, departmentNumber);
+			}
 			else if (Carriers.OnPremSmsGatewayCarriers.Contains(carrier) || forceGateway)
 			{
 				if (!Config.SystemBehaviorConfig.DepartmentsToForceBackupSmsProvider.Contains(departmentId))
 				{
-					if (!SendTextMessageViaDiafaan(number, message))
+					if (!await SendTextMessageViaDiafaan(number, message))
 					{
-						SendTextMessageViaSignalWire(number, message, departmentNumber);
+						return await SendTextMessageViaSignalWire(number, message, departmentNumber);
+					}
+					else
+					{
+						return true;
 					}
 				}
 				else
 				{
-					SendTextMessageViaSignalWire(number, message, departmentNumber);
+					return await SendTextMessageViaSignalWire(number, message, departmentNumber);
 				}
 			}
 			else if (Config.SystemBehaviorConfig.SmsProviderType == Config.SmsProviderTypes.SignalWire)
 			{
 				if (!Config.SystemBehaviorConfig.DepartmentsToForceBackupSmsProvider.Contains(departmentId))
 				{
-					if (!SendTextMessageViaSignalWire(number, message, departmentNumber))
+					if (!await SendTextMessageViaSignalWire(number, message, departmentNumber))
 					{
-						SendTextMessageViaTwillio(number, message, departmentNumber);
+						return await SendTextMessageViaTwillio(number, message, departmentNumber);
+					}
+					else
+					{
+						return true;
 					}
 				}
 				else
 				{
 					if (isCall)
 					{
-						SendTextMessageViaTwillio(number, message, departmentNumber);
+						await SendTextMessageViaTwillio(number, message, departmentNumber);
 
 						if (Config.SystemBehaviorConfig.AlsoSendToPrimarySmsProvider)
-							SendTextMessageViaSignalWire(number, message, departmentNumber);
+							return await SendTextMessageViaSignalWire(number, message, departmentNumber);
+						else
+							return true;
 					}
 					else
 					{
-						SendTextMessageViaSignalWire(number, message, departmentNumber);
+						return await SendTextMessageViaSignalWire(number, message, departmentNumber);
 						//SendTextMessageViaTwillio(number, message, departmentNumber);
 					}
 				}
@@ -72,35 +85,42 @@ namespace Resgrid.Providers.NumberProvider
 			{
 				if (!Config.SystemBehaviorConfig.DepartmentsToForceBackupSmsProvider.Contains(departmentId))
 				{
-					if (!SendTextMessageViaTwillio(number, message, departmentNumber))
+					if (!await SendTextMessageViaTwillio(number, message, departmentNumber))
 					{
-						SendTextMessageViaSignalWire(number, message, departmentNumber);
+						return await SendTextMessageViaSignalWire(number, message, departmentNumber);
+					}
+					else
+					{
+						return true;
 					}
 				}
 				else
 				{
-					SendTextMessageViaSignalWire(number, message, departmentNumber);
+					return await SendTextMessageViaSignalWire(number, message, departmentNumber);
 				}
 			}
 		}
 
-		private void SendTextMessageViaNexmo(string number, string message, string departmentNumber)
+		private async Task<bool> SendTextMessageViaNexmo(string number, string message, string departmentNumber)
 		{
 			var client = new RestClient(Config.NumberProviderConfig.BaseNexmoUrl);
-			var request = new RestRequest(GenerateSendTextMessageUrl(number, message, departmentNumber), Method.GET);
+			var request = new RestRequest(GenerateSendTextMessageUrl(number, message, departmentNumber), Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (response.ResponseStatus == ResponseStatus.Completed)
 			{
 				if (response.Content.Contains("rejected"))
 				{
 					// Error
+					return false;
 				}
 			}
+
+			return true;
 		}
 
-		public bool SendTextMessageViaTwillio(string number, string message, string departmentNumber)
+		public async Task<bool> SendTextMessageViaTwillio(string number, string message, string departmentNumber)
 		{
 			TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
 			MessageResource messageResource;
@@ -110,7 +130,7 @@ namespace Resgrid.Providers.NumberProvider
 				{
 					//textMessage = twilio.SendMessage(Settings.Default.TwilioResgridNumber, number, message);
 
-					messageResource = MessageResource.Create(
+					messageResource = await MessageResource.CreateAsync(
 						from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
 						to: new PhoneNumber(number),
 						body: message);
@@ -128,7 +148,7 @@ namespace Resgrid.Providers.NumberProvider
 					//	from: new PhoneNumber(departmentNumber),
 					//	to: new PhoneNumber(number),
 					//	body: message);
-					messageResource = MessageResource.Create(
+					messageResource = await MessageResource.CreateAsync(
 						from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
 						to: new PhoneNumber(number),
 						body: message);
@@ -146,13 +166,13 @@ namespace Resgrid.Providers.NumberProvider
 
 		}
 
-		public bool SendTextMessageViaSignalWire(string number, string message, string departmentNumber)
+		public async Task<bool> SendTextMessageViaSignalWire(string number, string message, string departmentNumber)
 		{
 			try
 			{
 				var client = new RestClient(Config.NumberProviderConfig.SignalWireApiUrl);
 				client.Authenticator = new HttpBasicAuthenticator(Config.NumberProviderConfig.SignalWireAccountSid, Config.NumberProviderConfig.SignalWireApiKey);
-				var request = new RestRequest(GenerateSendTextMessageUrlForSignalWire(), Method.POST);
+				var request = new RestRequest(GenerateSendTextMessageUrlForSignalWire(), Method.Post);
 
 				if (!number.StartsWith("+"))
 				{
@@ -177,7 +197,7 @@ namespace Resgrid.Providers.NumberProvider
 					Body = message
 				});
 
-				var response = client.Execute<SignalWireMessageResponse>(request);
+				var response = await client.ExecuteAsync<SignalWireMessageResponse>(request);
 
 				if (response.ResponseStatus == ResponseStatus.Completed)
 				{
@@ -197,12 +217,12 @@ namespace Resgrid.Providers.NumberProvider
 			}
 		}
 
-		public bool SendTextMessageViaDiafaan(string number, string message)
+		public async Task<bool> SendTextMessageViaDiafaan(string number, string message)
 		{
 			var client = new RestClient(Config.NumberProviderConfig.DiafaanSmsGatewayUrl);
-			var request = new RestRequest(GenerateSendTextMessageUrlForDiafaan(number, message), Method.GET);
+			var request = new RestRequest(GenerateSendTextMessageUrlForDiafaan(number, message), Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (response.ResponseStatus == ResponseStatus.Completed)
 			{
@@ -400,7 +420,7 @@ namespace Resgrid.Providers.NumberProvider
 						var config = new CsvHelper.Configuration.CsvConfiguration(new CultureInfo("en-US"));
 						config.HasHeaderRecord = false;
 
-						var csvReader = new CsvReader(reader, config, false);
+						var csvReader = new CsvReader(reader, config);
 						_areaCodes = csvReader.GetRecords<AreaCodeCity>().ToList();
 					}
 				}

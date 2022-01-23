@@ -1,7 +1,6 @@
 ﻿using Resgrid.Framework;
 using Resgrid.Providers.Voip.Kazoo.Model;
 using RestSharp;
-using RestSharp.Serializers.Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = Hashing.ComputeMD5Hash($"{Config.VoipConfig.KazooUsername}:{Config.VoipConfig.KazooPassword}");
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/user_auth", Method.PUT);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/user_auth", Method.Put);
 
 			var body = new
 			{
@@ -51,7 +50,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooAccountUsersResult>(request);
@@ -73,8 +72,8 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users", Method.PUT);
-			request.JsonSerializer = new NewtonsoftJsonSerializer();
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users", Method.Put);
+			//request.JsonSerializer = new NewtonsoftJsonSerializer();
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var body = new
@@ -102,7 +101,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users/{userId}", Method.DELETE);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users/{userId}", Method.Delete);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooCreateUserResult>(request);
@@ -124,7 +123,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users/{userId}", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/users/{userId}", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooCreateUserResult>(request);
@@ -146,7 +145,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooDevicesResult>(request);
@@ -168,8 +167,8 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices", Method.PUT);
-			request.JsonSerializer = new NewtonsoftJsonSerializer();
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices", Method.Put);
+			//request.JsonSerializer = new NewtonsoftJsonSerializer();
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var body = new
@@ -197,7 +196,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices/{deviceId}", Method.DELETE);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices/{deviceId}", Method.Delete);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooCreateDeviceResult>(request);
@@ -219,7 +218,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices/{deviceId}", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/devices/{deviceId}", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooCreateDeviceResult>(request);
@@ -241,7 +240,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooConferencesResult>(request);
@@ -263,7 +262,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences/{conferenceId}", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences/{conferenceId}", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooGetConferenceResult>(request);
@@ -285,8 +284,8 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences", Method.PUT);
-			request.JsonSerializer = new NewtonsoftJsonSerializer();
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences", Method.Put);
+			//request.JsonSerializer = new NewtonsoftJsonSerializer();
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var body = new
@@ -314,7 +313,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences/{conferenceId}", Method.DELETE);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/conferences/{conferenceId}", Method.Delete);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooGetConferenceResult>(request);
@@ -336,7 +335,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooCallflowsResult>(request);
@@ -358,7 +357,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows/{callFlowId}", Method.GET);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows/{callFlowId}", Method.Get);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooCallflowDetailsResult>(request);
@@ -380,7 +379,7 @@ namespace Resgrid.Providers.Voip
 			var credentials = await GetAccountApiToken();
 
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows/{callFlowId}", Method.DELETE);
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows/{callFlowId}", Method.Delete);
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var response = await client.ExecuteAsync<KazooCallflowDetailsResult>(request);
@@ -401,9 +400,14 @@ namespace Resgrid.Providers.Voip
 		{
 			var credentials = await GetAccountApiToken();
 
+			//var options = new RestClientOptions();
+			//var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings();
+			//jsonSettings.
+			//options.SerializeJson(new Newtonsoft.Json.JsonSerializerSettings();
+
 			var client = new RestClient(Config.VoipConfig.KazooCrossbarApiUrl);
-			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows", Method.PUT);
-			request.JsonSerializer = new NewtonsoftJsonSerializer();
+			var request = new RestRequest($"{Config.VoipConfig.KazooCrossbarApiVersion}/accounts/{credentials.AccountId}/callflows", Method.Put);
+			//request.JsonSerializer = new NewtonsoftJsonSerializer();
 			request.AddHeader("X-Auth-Token", credentials.AuthToken);
 
 			var body = new

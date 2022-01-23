@@ -67,7 +67,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				try
 				{
-					var coords = _geoLocationProvider.GetLatLonFromAddressLocationIQ(plainTextAddress);
+					var coords = await _geoLocationProvider.GetLatLonFromAddressLocationIQ(plainTextAddress);
 
 					if (coords != null && coords.Longitude.HasValue && coords.Latitude.HasValue)
 					{

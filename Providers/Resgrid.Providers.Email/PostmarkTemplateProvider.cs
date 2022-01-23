@@ -6,6 +6,7 @@ using Resgrid.Model.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -55,7 +56,7 @@ namespace Resgrid.Providers.EmailProvider
 
 			try
 			{
-				callQuery = HttpUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+				callQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 			}
 			catch { }
 

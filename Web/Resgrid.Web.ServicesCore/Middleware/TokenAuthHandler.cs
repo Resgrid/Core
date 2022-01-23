@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Resgrid.Framework;
 using Resgrid.Model.Custom;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -29,6 +30,7 @@ namespace Resgrid.Web.Services.Middleware
 		private readonly IDepartmentsRepository _departmentRepository;
 		private readonly IUserClaimsPrincipalFactory<IdentityUser> _claimsPrincipalFactory;
 		private readonly IUsersService _usersService;
+		private readonly ILoggerFactory _logger;
 
 		public ResgridTokenAuthHandler(IOptionsMonitor<ResgridAuthenticationOptions> options, ILoggerFactory logger,
 			UrlEncoder encoder, ISystemClock clock, ICacheProvider cacheProvider, IDepartmentsRepository departmentRepository,
@@ -39,6 +41,7 @@ namespace Resgrid.Web.Services.Middleware
 			_departmentRepository = departmentRepository;
 			_claimsPrincipalFactory = claimsPrincipalFactory;
 			_usersService = usersService;
+			_logger = logger;
 		}
 
 		protected new ResgridAuthenticationEvents Events
@@ -60,13 +63,27 @@ namespace Resgrid.Web.Services.Middleware
 
 			try
 			{
-				var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-				var result = await AuthAndSetPrinciple(_cacheProvider, _departmentRepository, authHeader.Parameter);
+				//var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+				var authHeaderValue = Request.Headers["Authorization"].ToString();
+
+				if (string.IsNullOrWhiteSpace(authHeaderValue))
+					return AuthenticateResult.Fail("Missing Authorization Header value, blank");
+
+				authHeaderValue = authHeaderValue.Replace("Basic", "", StringComparison.InvariantCultureIgnoreCase).Trim();
+
+				if (string.IsNullOrWhiteSpace(authHeaderValue))
+					return AuthenticateResult.Fail("Missing Authorization Header value, no data with auth type");
+
+				var result = await AuthAndSetPrinciple(_cacheProvider, _departmentRepository, authHeaderValue);
 
 				if (!result)
-					return AuthenticateResult.Fail("Invalid Authorization Header");
+					return AuthenticateResult.Fail($"Invalid Authorization Header: {authHeaderValue}");
 
-				var authToken = V3AuthToken.Decode(authHeader.Parameter);
+				var authToken = V3AuthToken.Decode(authHeaderValue);
+
+				if (authToken == null)
+					return AuthenticateResult.Fail($"Invalid Authorization Header, null auth token: {authHeaderValue}");
+
 				var user = await _usersService.GetUserByNameAsync(authToken.UserName);
 				var principal = await _claimsPrincipalFactory.CreateAsync(user);
 
@@ -76,9 +93,10 @@ namespace Resgrid.Web.Services.Middleware
 				var ticket = new AuthenticationTicket(principal, Scheme.Name);
 				return AuthenticateResult.Success(ticket);
 			}
-			catch
+			catch (Exception ex)
 			{
-				return AuthenticateResult.Fail("Invalid Authorization Header");
+				Logging.LogException(ex);
+				return AuthenticateResult.Fail($"Invalid Authorization Header: {ex}");
 			}
 		}
 

@@ -5,19 +5,20 @@ using RestSharp;
 using RestSharp.Authenticators;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Resgrid.Providers.PdfProvider
 {
 	public class PrintNodeProvider: IPrinterProvider
 	{
-		public Whoami Whoami(string apiKey)
+		public async Task<Whoami> Whoami(string apiKey)
 		{
 			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
 			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
 
-			var request = new RestRequest("/whoami", Method.GET);
+			var request = new RestRequest("/whoami", Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 				return JsonConvert.DeserializeObject<Whoami>(response.Content);
@@ -25,14 +26,14 @@ namespace Resgrid.Providers.PdfProvider
 			return null;
 		}
 
-		public List<Computer> GetComputers(string apiKey)
+		public async Task<List<Computer>> GetComputers(string apiKey)
 		{
 			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
 			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
 
-			var request = new RestRequest("/computers", Method.GET);
+			var request = new RestRequest("/computers", Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 				return JsonConvert.DeserializeObject<List<Computer>>(response.Content);
@@ -40,14 +41,14 @@ namespace Resgrid.Providers.PdfProvider
 			return null;
 		}
 
-		public List<Printer> GetPrinters(string apiKey)
+		public async Task<List<Printer>> GetPrinters(string apiKey)
 		{
 			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
 			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
 
-			var request = new RestRequest("/printers", Method.GET);
+			var request = new RestRequest("/printers", Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 				return JsonConvert.DeserializeObject<List<Printer>>(response.Content);
@@ -55,14 +56,14 @@ namespace Resgrid.Providers.PdfProvider
 			return null;
 		}
 
-		public List<PrintJob> GetPrintJobs(string apiKey)
+		public async Task<List<PrintJob>> GetPrintJobs(string apiKey)
 		{
 			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
 			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
 
-			var request = new RestRequest("/printjobs", Method.GET);
+			var request = new RestRequest("/printjobs", Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 				return JsonConvert.DeserializeObject<List<PrintJob>>(response.Content);
@@ -72,12 +73,12 @@ namespace Resgrid.Providers.PdfProvider
 			//return "";//Get("PrintJobs");
 		}
 
-		public bool SubmitPrintJob(string apiKey, int printerId, string title, string url)
+		public async Task<bool> SubmitPrintJob(string apiKey, int printerId, string title, string url)
 		{
 			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
 			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
 
-			var request = new RestRequest("/printjobs", Method.POST);
+			var request = new RestRequest("/printjobs", Method.Post);
 			//request.AddHeader("Accept", "application/json");
 			//request.AddHeader("Content-Type", "application/json; charset=utf-8");
 			request.AddHeader("Content-type", "application/json");
@@ -91,7 +92,8 @@ namespace Resgrid.Providers.PdfProvider
 				source = "Resgrid Print Job"
 			});
 
-			request.AddParameter("application/json", body, "application/json; charset=utf-8", ParameterType.RequestBody);
+			var param = new BodyParameter("application/json", body, "application/json; charset=utf-8");
+			request.AddParameter(param);
 
 			//request.AddJsonBody(new
 			//{
@@ -102,7 +104,7 @@ namespace Resgrid.Providers.PdfProvider
 			//	source = "Resgrid Print Job"
 			//});
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 
 			if (response.StatusCode == HttpStatusCode.Created)

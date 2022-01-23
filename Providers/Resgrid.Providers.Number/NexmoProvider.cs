@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using RestSharp;
@@ -9,11 +10,11 @@ namespace Resgrid.Providers.NumberProvider
 {
     public class NexmoProvider : INumberProvider
     {
-        public bool ProvisionNumber(string country, string number)
+        public async Task<bool> ProvisionNumber(string country, string number)
         {
 			var client = new RestClient(Config.NumberProviderConfig.BaseNexmoUrl);
-			var request = new RestRequest(GenerateBuyNumberUrl(country, number), Method.POST);
-			var response = client.Execute(request);
+			var request = new RestRequest(GenerateBuyNumberUrl(country, number), Method.Post);
+			var response = await client.ExecuteAsync(request);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 				return true;
@@ -21,11 +22,11 @@ namespace Resgrid.Providers.NumberProvider
             return false;
         }
 
-		public List<TextNumber> GetAvailableNumbers(string country, string areaCode)
+		public async Task<List<TextNumber>> GetAvailableNumbers(string country, string areaCode)
         {
 			var client = new RestClient(Config.NumberProviderConfig.BaseNexmoUrl);
-			var request = new RestRequest(GenerateGetAvailableNumbersUrl(country), Method.GET);
-			var response = client.Execute<FindNumberResulsts>(request);
+			var request = new RestRequest(GenerateGetAvailableNumbersUrl(country), Method.Get);
+			var response = await client.ExecuteAsync<FindNumberResulsts>(request);
 
 			if (response.Data != null && response.Data.Numbers != null)
 				return response.Data.Numbers;

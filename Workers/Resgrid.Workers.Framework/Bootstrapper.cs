@@ -4,7 +4,6 @@ using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Providers.AddressVerification;
-using Resgrid.Providers.Audio;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
@@ -45,7 +44,6 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new CacheProviderModule());
 				builder.RegisterModule(new MarketingModule());
 				builder.RegisterModule(new PdfProviderModule());
-				builder.RegisterModule(new AudioProviderModule());
 				builder.RegisterModule(new FirebaseProviderModule());
 				builder.RegisterModule(new VoipProviderModule());
 

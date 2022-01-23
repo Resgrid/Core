@@ -32,6 +32,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Resgrid.WebCore.Areas.User.Models.Dispatch;
+using System.Text;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -983,13 +984,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(query))
 				Unauthorized();
 
+			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query)).Trim();
 
-			var decryptedQuery = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 			if (!decryptedQuery.Contains("|"))
 			{
 				// Legacy query, just the call id
-				var callId = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+				var callId = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 				if (String.IsNullOrWhiteSpace(callId))
 					Unauthorized();
@@ -1000,14 +1002,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = call;
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-				model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true);
 
 				return View(model);
 			}
@@ -1024,14 +1025,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = call;
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(model.Call.DepartmentId);
-				model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true);
 
 				if (!String.IsNullOrWhiteSpace(items[2]) && items[2] != "0")
 				{
@@ -1085,9 +1085,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			//var decryptedQuery = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 			var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);
-			var request = new RestRequest($"User/Dispatch/CallExportEx?query={HttpUtility.UrlEncode(query)}", Method.GET);
+			var request = new RestRequest($"User/Dispatch/CallExportEx?query={HttpUtility.UrlEncode(query)}", Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (!string.IsNullOrWhiteSpace(response.Content))
 			{
@@ -1564,7 +1564,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetCoordinatesFromW3W(string words)
 		{
-			var result = _geoLocationProvider.GetCoordinatesFromW3W(words) ?? new Coordinates();
+			var result = await _geoLocationProvider.GetCoordinatesFromW3W(words) ?? new Coordinates();
 
 			return Json(result);
 		}

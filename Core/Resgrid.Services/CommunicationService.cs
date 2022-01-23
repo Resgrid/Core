@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dasync.Collections;
 using System.Text.RegularExpressions;
 
 namespace Resgrid.Services
@@ -340,7 +339,8 @@ namespace Resgrid.Services
 				else
 				{
 					spm.Id = $"G{chatId}";
-					await recipients.ParallelForEachAsync(async person =>
+					//await recipients.ParallelForEachAsync(async person =>
+					foreach (var person in recipients)
 						{
 							try
 							{
@@ -350,7 +350,7 @@ namespace Resgrid.Services
 							{
 								Logging.LogException(ex);
 							}
-						});
+						}
 				}
 			}
 			catch (Exception ex)

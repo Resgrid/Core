@@ -23,7 +23,6 @@ using Newtonsoft.Json.Serialization;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
-using Resgrid.Providers.Audio;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
@@ -115,7 +114,6 @@ namespace Resgrid.Web.Eventing
 			builder.RegisterModule(new CacheProviderModule());
 			builder.RegisterModule(new MarketingModule());
 			builder.RegisterModule(new PdfProviderModule());
-			builder.RegisterModule(new AudioProviderModule());
 			builder.RegisterModule(new FirebaseProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();

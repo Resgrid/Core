@@ -37,11 +37,11 @@ namespace Resgrid.Workers.Framework.Logic
 					if (ConfigHelper.CanTransmit(item.Department.DepartmentId))
 					{
 						var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);
-						var request = new RestRequest("User/Reports/InternalRunReport", Method.GET);
+						var request = new RestRequest("User/Reports/InternalRunReport", Method.Get);
 						request.AddParameter("type", item.ScheduledTask.Data);
 						request.AddParameter("departmentId", item.Department.DepartmentId);
 
-						var response = client.Execute(request);
+						var response = await client.ExecuteAsync(request);
 
 						if (!string.IsNullOrWhiteSpace(response.Content))
 						{

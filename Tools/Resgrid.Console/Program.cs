@@ -65,7 +65,7 @@ namespace Resgrid.Console
 
 		private static void SetConnectionString()
 		{
-			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+			var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
 
 			string configPath = Configuration["AppOptions:ConfigPath"];
@@ -107,7 +107,7 @@ namespace Resgrid.Console
 				connectionStringsSection.ConnectionStrings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
 
 			config.Save();
-			ConfigurationManager.RefreshSection("connectionStrings");
+			System.Configuration.ConfigurationManager.RefreshSection("connectionStrings");
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
 		}

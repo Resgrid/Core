@@ -24,11 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="5.2.0" />
-    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.5.0.2" />
-    <PackageReference Include="MimeKit" Version="2.9.1" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.0.117" />
+    <PackageReference Include="MimeKit" Version="3.1.0" />
     <PackageReference Include="Mustachio" Version="2.1.0" />
-    <PackageReference Include="Postmark" Version="4.5.0" />
+    <PackageReference Include="Postmark" Version="4.5.2" />
   </ItemGroup>
 
   <ItemGroup>

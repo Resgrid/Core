@@ -27,7 +27,6 @@ using Newtonsoft.Json.Serialization;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
-using Resgrid.Providers.Audio;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
@@ -206,11 +205,8 @@ namespace Resgrid.Web.ServicesCore
  
 				var filePath = Path.Combine(AppContext.BaseDirectory, "Resgrid.Web.Services.xml");
 				options.IncludeXmlComments(filePath);
-				options.DescribeAllEnumsAsStrings();
+				//options.DescribeAllEnumsAsStrings();
 			});
-
-			services.AddAuthentication("BasicAuthentication")
-				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);
 
 			services.AddSignalR(hubOptions =>
 			{
@@ -508,6 +504,9 @@ namespace Resgrid.Web.ServicesCore
 					break;
 			}
 
+			services.AddAuthentication("BasicAuthentication")
+				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);
+
 			//// TODO: Add IServiceCollection.AddOpenTelemetryMetrics extension method
 			//var providerBuilder = Sdk.CreateMeterProviderBuilder()
 			//	.AddAspNetCoreInstrumentation();
@@ -536,7 +535,6 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new CacheProviderModule());
 			builder.RegisterModule(new MarketingModule());
 			builder.RegisterModule(new PdfProviderModule());
-			builder.RegisterModule(new AudioProviderModule());
 			builder.RegisterModule(new FirebaseProviderModule());
 			builder.RegisterModule(new VoipProviderModule());
 

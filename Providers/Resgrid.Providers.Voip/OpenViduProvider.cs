@@ -11,7 +11,7 @@ namespace Resgrid.Providers.Voip
 		{
 			var client = new RestClient(Config.VoipConfig.OpenViduUrl);
 
-			var request = new RestRequest($"/openvidu/api/sessions", Method.POST);
+			var request = new RestRequest($"/openvidu/api/sessions", Method.Post);
 			request.AddHeader("Authorization", "Basic " + Encode("OPENVIDUAPP:" + Config.VoipConfig.OpenViduSecret));
 			request.AddHeader("Content-Type", "application/json");
 
@@ -42,7 +42,7 @@ namespace Resgrid.Providers.Voip
 		{
 			var client = new RestClient(Config.VoipConfig.OpenViduUrl);
 
-			var request = new RestRequest($"/openvidu/api/sessions/" + session.Id + "/connection", Method.POST);
+			var request = new RestRequest($"/openvidu/api/sessions/" + session.Id + "/connection", Method.Post);
 			request.AddHeader("Authorization", "Basic " + Encode("OPENVIDUAPP:" + Config.VoipConfig.OpenViduSecret));
 			request.AddHeader("Content-Type", "application/json");
 

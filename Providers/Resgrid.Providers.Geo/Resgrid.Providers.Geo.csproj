@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Geocoding.Core" Version="4.0.1" />
     <PackageReference Include="Geocoding.Google" Version="4.0.1" />
     <PackageReference Include="Geocoding.Microsoft" Version="4.0.1" />
-    <PackageReference Include="RestSharp" Version="106.12.0" />
-    <PackageReference Include="SharpKml.Core" Version="5.1.3" />
+    <PackageReference Include="RestSharp" Version="107.1.1" />
+    <PackageReference Include="SharpKml.Core" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>

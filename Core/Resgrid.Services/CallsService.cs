@@ -558,7 +558,7 @@ namespace Resgrid.Services
 				if (callAttachmentId > 0)
 				{
 					var encryptedQuery =
-						WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
+						Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase)));
 					string shortenedUrl =
 						await _shortenUrlProvider.Shorten(
 							$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
@@ -577,7 +577,7 @@ namespace Resgrid.Services
 						return String.Empty;
 
 					var encryptedQuery =
-						WebUtility.UrlEncode(SymmetricEncryption.Encrypt(attachment.CallAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
+						Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(attachment.CallAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase)));
 					string shortenedUrl =
 						await _shortenUrlProvider.Shorten(
 							$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
@@ -603,14 +603,14 @@ namespace Resgrid.Services
 
 				if (!stationId.HasValue && !pdf)
 				{
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 				else
 				{
 					string type = pdf ? "pdf" : "web";
 					string station = stationId.HasValue ? stationId.Value.ToString() : "0";
 
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt($"{callId.ToString()}|${type}|${station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt($"{callId.ToString()}|${type}|${station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 
 
@@ -657,14 +657,14 @@ namespace Resgrid.Services
 
 				if (!stationId.HasValue && !pdf)
 				{
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 				else
 				{
 					string type = pdf ? "pdf" : "web";
 					string station = stationId.HasValue ? stationId.Value.ToString() : "0";
 
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt($"{callId.ToString()}|{type}|{station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt($"{callId.ToString()}|{type}|{station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 
 

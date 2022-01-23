@@ -23,7 +23,6 @@ using Resgrid.Framework;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
-using Resgrid.Providers.Audio;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
@@ -279,12 +278,12 @@ namespace Resgrid.Web
 				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
 			});
 
-			services.AddWebOptimizer(pipeline =>
-			{
-				pipeline.MinifyJsFiles("/js/**/*.js");
-				pipeline.MinifyCssFiles("/css/**/*.css");
-				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
-			});
+			//services.AddWebOptimizer(pipeline =>
+			//{
+			//	pipeline.MinifyJsFiles("/js/**/*.js");
+			//	pipeline.MinifyCssFiles("/css/**/*.css");
+			//	pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
+			//});
 
 			services.AddMvc().AddMvcOptions(options =>
 			{
@@ -292,7 +291,7 @@ namespace Resgrid.Web
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
-			}).AddRazorRuntimeCompilation();
+			});//.AddRazorRuntimeCompilation();
 
 #if (!DEBUG)
 			var redis = ConnectionMultiplexer.Connect(CacheConfig.RedisConnectionString);
@@ -332,7 +331,6 @@ namespace Resgrid.Web
 			builder.RegisterModule(new CacheProviderModule());
 			builder.RegisterModule(new MarketingModule());
 			builder.RegisterModule(new PdfProviderModule());
-			builder.RegisterModule(new AudioProviderModule());
 			builder.RegisterModule(new FirebaseProviderModule());
 			builder.RegisterModule(new VoipProviderModule());
 
@@ -411,7 +409,7 @@ namespace Resgrid.Web
 
 			app.UseCookiePolicy(cookiePolicyOptions);
 
-			app.UseWebOptimizer();
+			//app.UseWebOptimizer();
 			app.UseStaticFiles();
 			app.UseRouting();
 

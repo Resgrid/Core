@@ -338,7 +338,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (model.SendAccountCreationNotification)
 						await _emailService.SendWelcomeEmail(model.Department.Name, model.FirstName + " " + model.LastName, user.Email, user.UserName, model.ConfirmPassword, DepartmentId);
 
-					_emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
+					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
 					return RedirectToAction("Index", "Personnel", new { area = "User" });
 				}

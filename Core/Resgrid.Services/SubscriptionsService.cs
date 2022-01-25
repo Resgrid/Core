@@ -383,5 +383,28 @@ namespace Resgrid.Services
 
 			return addons;
 		}
+
+		public async Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentAsync(int departmentId)
+		{
+			List<PlanAddon> addons = new List<PlanAddon>();
+
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			addons.Add(addon);
+
+			return addons;
+		}
+
+
+		public async Task<PlanAddon> GetPTTAddonPlanForDepartmentAsync(int departmentId)
+		{
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			return addon;
+		}
 	}
 }

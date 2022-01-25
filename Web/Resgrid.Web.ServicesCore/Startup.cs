@@ -148,8 +148,9 @@ namespace Resgrid.Web.ServicesCore
 			services.AddMemoryCache();
 			services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
 			services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
-			services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+			services.AddInMemoryRateLimiting();
 			services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+			//services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
 			services.AddSwaggerGen();
 			services.AddSwaggerGenNewtonsoftSupport();

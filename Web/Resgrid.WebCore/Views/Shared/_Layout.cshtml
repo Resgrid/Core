@@ -15,7 +15,7 @@
   <link rel="apple-touch-icon" sizes="144x144" href="~/images/apple-touch-icon-ipad3.png" />
   <meta http-equiv="Access-Control-Allow-Origin" content="*" />
   <title>@ViewData["Title"]</title>
-  @Html.Partial("_StylePartial")
+  @await Html.PartialAsync("_StylePartial")
 
   <!-- Add local styles, mostly for plugins css file -->
   @if (IsSectionDefined("Styles"))
@@ -109,7 +109,11 @@
 		</div>
 	</section>
 
-	@Html.Partial("_ScriptsPartial")
-	@RenderSection("Scripts", required: false)
+	@await Html.PartialAsync("_ScriptsPartial")
+
+	@if (IsSectionDefined("Scripts"))
+	{
+		@RenderSection("Scripts", required: false)
+	}
 </body>
 </html>

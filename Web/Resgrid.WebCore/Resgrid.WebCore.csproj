@@ -43,6 +43,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AspNetCoreRateLimit" Version="4.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
@@ -63,6 +64,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.13" />
+		<PackageReference Include="NUglify" Version="1.17.10" />
 		<PackageReference Include="protobuf-net" Version="3.0.101" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
@@ -155,6 +157,12 @@
 	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
 	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
 	<ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WebOptimizer.Core">
+      <HintPath>..\..\References\WebOptimizer\WebOptimizer.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <!-- Used to support React apps on pages. Disabling for now

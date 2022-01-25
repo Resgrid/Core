@@ -278,12 +278,12 @@ namespace Resgrid.Web
 				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
 			});
 
-			//services.AddWebOptimizer(pipeline =>
-			//{
-			//	pipeline.MinifyJsFiles("/js/**/*.js");
-			//	pipeline.MinifyCssFiles("/css/**/*.css");
-			//	pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
-			//});
+			services.AddWebOptimizer(pipeline =>
+			{
+				pipeline.MinifyJsFiles("/js/**/*.js");
+				pipeline.MinifyCssFiles("/css/**/*.css");
+				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
+			});
 
 			services.AddMvc().AddMvcOptions(options =>
 			{
@@ -409,7 +409,7 @@ namespace Resgrid.Web
 
 			app.UseCookiePolicy(cookiePolicyOptions);
 
-			//app.UseWebOptimizer();
+			app.UseWebOptimizer();
 			app.UseStaticFiles();
 			app.UseRouting();
 

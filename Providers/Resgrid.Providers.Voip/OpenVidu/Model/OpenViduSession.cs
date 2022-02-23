@@ -14,7 +14,7 @@ namespace Resgrid.Providers.Voip.OpenVidu.Model
 		public string SessionId { get; set; }
 
 		[JsonProperty("createdAt")]
-		public string CreatedAt { get; set; }
+		public double CreatedAt { get; set; }
 
 		[JsonProperty("mediaMode")]
 		public string MediaMode { get; set; }

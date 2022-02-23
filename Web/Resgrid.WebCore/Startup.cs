@@ -285,13 +285,18 @@ namespace Resgrid.Web
 				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
 			});
 
-			services.AddMvc().AddMvcOptions(options =>
+
+			var builder = services.AddMvc().AddMvcOptions(options =>
 			{
 				options.EnableEndpointRouting = false;
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
-			});//.AddRazorRuntimeCompilation();
+			});
+
+#if (DEBUG)
+			builder.AddRazorRuntimeCompilation();
+#endif
 
 #if (!DEBUG)
 			var redis = ConnectionMultiplexer.Connect(CacheConfig.RedisConnectionString);

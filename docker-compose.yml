@@ -1,20 +1,100 @@
-version: '3.4'
+version: '3.9'
 
 services:
-  resgrid.webcore:
-    image: ${DOCKER_REGISTRY-}resgridwebcore
+  resgrid-web:
+    image: "resgridllc/resgridwebcore"
     build:
       context: .
       dockerfile: Web/Resgrid.WebCore/Dockerfile
+    ports:
+      - "5151:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - RESGRID__CacheConfig__RedisConnectionString=redis:5158
+      - RESGRID__DataConfig__ConnectionString=Server=x.x.x.x;Database=Resgrid;User Id=resgrid_app;Password=;MultipleActiveResultSets=True; 
+      - RESGRID__ServiceBusConfig__RabbbitPassword=**** 
+      - RESGRID__ServiceBusConfig__RabbitHostname=x.x.x.x 
+      - RESGRID__ServiceBusConfig__RabbitUsername=resgrid 
+      - RESGRID__SystemBehaviorConfig__ResgridApiBaseUrl=http://domain.example:81 
+      - RESGRID__SystemBehaviorConfig__ResgridBaseUrl=http://domain.example:80
 
-  resgrid.web.servicescore:
-    image: ${DOCKER_REGISTRY-}resgridwebservices
+
+
+
+      - PurchaseUrl=http://webshoppingapigw
+      - IdentityUrl=http://10.0.75.1:5105
+      - MarketingUrl=http://webmarketingapigw
+      - CatalogUrlHC=http://catalog-api/hc
+      - OrderingUrlHC=http://ordering-api/hc
+      - IdentityUrlHC=http://identity-api/hc
+      - BasketUrlHC=http://basket-api/hc
+      - MarketingUrlHC=http://marketing-api/hc
+      - PaymentUrlHC=http://payment-api/hc
+      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+    depends_on:
+      - resgrid-api
+      - resgrid-events
+      - db
+      - redis
+      - rabbitmq
+
+  resgrid-api:
+    image: "resgridllc/resgridwebservices"
     build:
       context: .
       dockerfile: Web/Resgrid.Web.ServicesCore/Dockerfile
+    ports:
+      - "5152:80"
+    depends_on:
+      - resgrid-events
+      - db
+      - redis
+      - rabbitmq
 
-  resgrid.workers.console:
-    image: ${DOCKER_REGISTRY-}resgridworkersconsole
+  resgrid-events:
+    image: "resgridllc/resgridwebevents"
+    build:
+      context: .
+      dockerfile: Web/Resgrid.Web.Eventing/Dockerfile
+    ports:
+      - "5153:80"
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+
+  resgrid-console:
+    image: "resgridllc/resgridworkersconsole"
+    container_name: worker
     build:
       context: .
       dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    ports:
+      - "5157:1433"
+    build:
+      context: .
+      dockerfile: Repositories/Resgrid.Repositories.DataRepository/Dockerfile
+
+  redis:
+    image: "redis:alpine"
+    command: redis-server --save 60 1 --loglevel warning
+    ports:
+     - "5158:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5160:15672"
+      - "5159:5672"

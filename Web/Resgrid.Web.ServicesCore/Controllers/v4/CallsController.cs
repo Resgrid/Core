@@ -46,6 +46,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IProtocolsService _protocolsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ICustomStateService _customStateService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -60,7 +61,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
 			IProtocolsService protocolsService,
-			IEventAggregator eventAggregator
+			IEventAggregator eventAggregator,
+			ICustomStateService customStateService
 			)
 		{
 			_callsService = callsService;
@@ -76,6 +78,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_personnelRolesService = personnelRolesService;
 			_protocolsService = protocolsService;
 			_eventAggregator = eventAggregator;
+			_customStateService = customStateService;
 		}
 		#endregion Members and Constructors
 
@@ -215,6 +218,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var priority = await _callsService.GetCallPrioritiesByIdAsync(call.DepartmentId, call.Priority, false);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(call.DepartmentId);
 
+			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(call.DepartmentId);
+			var defaultUnitStatuses = _customStateService.GetDefaultUnitStatuses();
+			var defaultUserStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(call.DepartmentId);
+
 			if (priority != null)
 			{
 				result.Data.Priority = CallPrioritiesController.ConvertPriorityData(priority);
@@ -247,6 +254,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.Location = actionLog.GeoLocationData;
 				eventResult.Note = actionLog.Note;
 
+				if (actionLog.ActionTypeId <= 25)
+				{
+					var state = defaultUserStatuses.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId);
+
+					if (state != null)
+					{
+						eventResult.StatusText = state.ButtonText;
+						eventResult.StatusColor = state.ButtonColor;
+					}
+				}
+				else
+				{
+					if (customStates != null && customStates.Count > 0)
+					{
+						var state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId)).FirstOrDefault(detail => detail != null);
+
+						if (state != null)
+						{
+							eventResult.StatusText = state.ButtonText;
+							eventResult.StatusColor = state.ButtonColor;
+						}
+					}
+				}
+
+				if (String.IsNullOrWhiteSpace(eventResult.StatusText))
+					eventResult.StatusText = "Unknown";
+
+				if (String.IsNullOrWhiteSpace(eventResult.StatusColor))
+					eventResult.StatusColor = "#ffa500";
+
 				result.Data.Activity.Add(eventResult);
 			}
 
@@ -265,9 +302,39 @@ namespace Resgrid.Web.Services.Controllers.v4
 					eventResult.Group = group.Name;
 				}
 
-				eventResult.StatusId = eventResult.StatusId;
-				eventResult.Location = eventResult.Location;
-				eventResult.Note = eventResult.Note;
+				eventResult.StatusId = unitLog.State;
+				eventResult.Location = unitLog.GeoLocationData;
+				eventResult.Note = unitLog.Note;
+
+				if (unitLog.UnitStateId <= 12)
+				{
+					var state = defaultUnitStatuses.FirstOrDefault(x => x.CustomStateDetailId == unitLog.UnitStateId);
+
+					if (state != null)
+					{
+						eventResult.StatusText = state.ButtonText;
+						eventResult.StatusColor = state.ButtonColor;
+					}
+				}
+				else
+				{
+					if (customStates != null && customStates.Count > 0)
+					{
+						var state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == unitLog.State)).FirstOrDefault(detail => detail != null);
+
+						if (state != null)
+						{
+							eventResult.StatusText = state.ButtonText;
+							eventResult.StatusColor = state.ButtonColor;
+						}
+					}
+				}
+
+				if (String.IsNullOrWhiteSpace(eventResult.StatusText))
+					eventResult.StatusText = "Unknown";
+
+				if (String.IsNullOrWhiteSpace(eventResult.StatusColor))
+					eventResult.StatusColor = "#ffa500";
 
 				result.Data.Activity.Add(eventResult);
 			}

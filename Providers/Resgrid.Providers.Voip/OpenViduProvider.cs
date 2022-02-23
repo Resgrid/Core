@@ -34,6 +34,14 @@ namespace Resgrid.Providers.Voip
 
 				return session;
 			}
+			else if (response.StatusCode == HttpStatusCode.NotAcceptable) // Already a session but no one in it?
+			{
+				var session = new OpenViduSession();
+				session.Id = sessionId;
+				session.CustomSessionId = sessionId;
+
+				return session;
+			}
 
 			return response.Data;
 		}
@@ -48,7 +56,7 @@ namespace Resgrid.Providers.Voip
 
 			var body = new
 			{
-				
+
 			};
 			request.AddJsonBody(body);
 

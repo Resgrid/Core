@@ -71,5 +71,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string Note { get; set; }
 		public int StatusId { get; set; }
 		public string Location { get; set; }
+		public string StatusText { get; set; }
+		public string StatusColor { get; set; }
 	}
 }

@@ -196,13 +196,13 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		/// <param name="departmentId">The department id to get info for.</param>
 		/// <returns>Task&lt;List&lt;PlanAddon&gt;&gt;.</returns>
-		Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentAsync(int departmentId);
+		Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentFromStripeAsync(int departmentId);
 
 		/// <summary>
 		/// Gets the current PTT plan addon active for a subscription asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department id to get info for.</param>
 		/// <returns>Task&lt;PlanAddon&gt;.</returns>
-		Task<PlanAddon> GetPTTAddonPlanForDepartmentAsync(int departmentId);
+		Task<PlanAddon> GetPTTAddonPlanForDepartmentFromStripeAsync(int departmentId);
 	}
 }

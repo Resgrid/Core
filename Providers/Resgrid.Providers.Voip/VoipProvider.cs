@@ -129,7 +129,7 @@ namespace Resgrid.Providers.Voip
 		public async Task<string> CreateOpenViduSessionAndGetToken(string sessionId)
 		{
 			var openViduProvider = new OpenViduProvider();
-			var createSessionResult = await openViduProvider.CreateSession("test1");
+			var createSessionResult = await openViduProvider.CreateSession(sessionId);
 			var createTokenResult = await openViduProvider.CreateToken(createSessionResult);
 
 			if (createTokenResult != null)

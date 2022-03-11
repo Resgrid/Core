@@ -460,10 +460,14 @@ namespace Resgrid.Providers.Bus
 			if (count == 0)
 				count = 1;
 
+			string soundFilename = FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type, true));
+
 			dynamic pushNotification = new JObject();
 			pushNotification.notification = new JObject();
 			pushNotification.notification.title = title;
 			pushNotification.notification.body = subTitle;
+			pushNotification.notification.android_channel_id = type;
+			//pushNotification.notification.sound = soundFilename + ".wav";
 			pushNotification.data = new JObject();
 			pushNotification.data["content-available"] = 1;
 			pushNotification.data["force-start"] = 1;
@@ -473,10 +477,7 @@ namespace Resgrid.Providers.Bus
 			if (channel != null && channel == "calls")
 				pushNotification.data.priority = "high";
 
-			string soundFilename = FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type, true));
-
 			pushNotification.data.sound = soundFilename;
-			pushNotification.data.soundname = soundFilename;
 			pushNotification.data.color = color;
 			pushNotification.data.count = count;
 			//pushNotification.data.ledColor = new JArray(0, int.Parse(color.Substring(1, 2), System.Globalization.NumberStyles.HexNumber),

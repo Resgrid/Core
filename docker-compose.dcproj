@@ -23,9 +23,10 @@
     <DockerServiceName>resgrid.webcore</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="docker-compose.override.yml">
-      <DependentUpon>docker-compose.yml</DependentUpon>
-    </None>
+    <None Include="Data\Dockerfile" />
+    <None Include="Data\create-database.sql" />
+    <None Include="Data\run-initialization.sh" />
+    <None Include="Data\entrypoint.sh" />
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
     <None Include="docker-resgrid.env" />

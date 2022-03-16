@@ -106,15 +106,19 @@ namespace Resgrid.Providers.EmailProvider
 			}
 			else
 			{
-				var template = Mustachio.Parser.Parse(GetTempate("Call.html"));
-				var content = template(templateModel);
+				try
+				{
+					var template = Mustachio.Parser.Parse(GetTempate("Call.html"));
+					var content = template(templateModel);
 
-				Email newEmail = new Email();
-				newEmail.HtmlBody = content;
-				newEmail.Sender = FROM_EMAIL;
-				newEmail.To.Add(email);
+					Email newEmail = new Email();
+					newEmail.HtmlBody = content;
+					newEmail.Sender = FROM_EMAIL;
+					newEmail.To.Add(email);
 
-				return await _emailSender.Send(newEmail);
+					return await _emailSender.Send(newEmail);
+				}
+				catch (Exception) { }
 			}
 
 			return false;
@@ -317,19 +321,23 @@ namespace Resgrid.Providers.EmailProvider
 
 					return true;
 				}
-				catch (Exception) {	}
+				catch (Exception) { }
 			}
 			else
 			{
-				var template = Mustachio.Parser.Parse(GetTempate("Message.html"));
-				var content = template(templateModel);
+				try
+				{
+					var template = Mustachio.Parser.Parse(GetTempate("Message.html"));
+					var content = template(templateModel);
 
-				Email newEmail = new Email();
-				newEmail.HtmlBody = content;
-				newEmail.Sender = FROM_EMAIL;
-				newEmail.To.Add(email);
+					Email newEmail = new Email();
+					newEmail.HtmlBody = content;
+					newEmail.Sender = FROM_EMAIL;
+					newEmail.To.Add(email);
 
-				return await _emailSender.Send(newEmail);
+					return await _emailSender.Send(newEmail);
+				}
+				catch (Exception) { }
 			}
 
 			return false;
@@ -375,15 +383,19 @@ namespace Resgrid.Providers.EmailProvider
 			}
 			else
 			{
-				var template = Mustachio.Parser.Parse(GetTempate("PasswordReset.html"));
-				var content = template(templateModel);
+				try
+				{
+					var template = Mustachio.Parser.Parse(GetTempate("PasswordReset.html"));
+					var content = template(templateModel);
 
-				Email newEmail = new Email();
-				newEmail.HtmlBody = content;
-				newEmail.Sender = FROM_EMAIL;
-				newEmail.To.Add(email);
+					Email newEmail = new Email();
+					newEmail.HtmlBody = content;
+					newEmail.Sender = FROM_EMAIL;
+					newEmail.To.Add(email);
 
-				return await _emailSender.Send(newEmail);
+					return await _emailSender.Send(newEmail);
+				}
+				catch (Exception) { }
 			}
 
 			return false;
@@ -493,15 +505,19 @@ namespace Resgrid.Providers.EmailProvider
 			}
 			else
 			{
-				var template = Mustachio.Parser.Parse(GetTempate("Welcome.html"));
-				var content = template(templateModel);
+				try
+				{
+					var template = Mustachio.Parser.Parse(GetTempate("Welcome.html"));
+					var content = template(templateModel);
 
-				Email newEmail = new Email();
-				newEmail.HtmlBody = content;
-				newEmail.Sender = FROM_EMAIL;
-				newEmail.To.Add(email);
+					Email newEmail = new Email();
+					newEmail.HtmlBody = content;
+					newEmail.Sender = FROM_EMAIL;
+					newEmail.To.Add(email);
 
-				return await _emailSender.Send(newEmail);
+					return await _emailSender.Send(newEmail);
+				}
+				catch (Exception) { }
 			}
 
 			return false;

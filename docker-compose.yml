@@ -11,37 +11,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - RESGRID__CacheConfig__RedisConnectionString=redis:5158
-      - RESGRID__DataConfig__ConnectionString=Server=x.x.x.x;Database=Resgrid;User Id=resgrid_app;Password=;MultipleActiveResultSets=True; 
-      - RESGRID__ServiceBusConfig__RabbbitPassword=**** 
-      - RESGRID__ServiceBusConfig__RabbitHostname=x.x.x.x 
-      - RESGRID__ServiceBusConfig__RabbitUsername=resgrid 
-      - RESGRID__SystemBehaviorConfig__ResgridApiBaseUrl=http://domain.example:81 
-      - RESGRID__SystemBehaviorConfig__ResgridBaseUrl=http://domain.example:80
-
-
-
-
-      - PurchaseUrl=http://webshoppingapigw
-      - IdentityUrl=http://10.0.75.1:5105
-      - MarketingUrl=http://webmarketingapigw
-      - CatalogUrlHC=http://catalog-api/hc
-      - OrderingUrlHC=http://ordering-api/hc
-      - IdentityUrlHC=http://identity-api/hc
-      - BasketUrlHC=http://basket-api/hc
-      - MarketingUrlHC=http://marketing-api/hc
-      - PaymentUrlHC=http://payment-api/hc
-      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - UseCustomizationData=True
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - UseLoadTest=${USE_LOADTEST:-False}
     depends_on:
       - resgrid-api
       - resgrid-events
-      - db
-      - redis
-      - rabbitmq
+      - resgrid-db
+      - resgrid-redis
+      - resgrid-rabbitmq
 
   resgrid-api:
     image: "resgridllc/resgridwebservices"
@@ -52,9 +27,9 @@ services:
       - "5152:80"
     depends_on:
       - resgrid-events
-      - db
-      - redis
-      - rabbitmq
+      - resgrid-db
+      - resgrid-redis
+      - resgrid-rabbitmq
 
   resgrid-events:
     image: "resgridllc/resgridwebevents"
@@ -64,9 +39,9 @@ services:
     ports:
       - "5153:80"
     depends_on:
-      - db
-      - redis
-      - rabbitmq
+      - resgrid-db
+      - resgrid-redis
+      - resgrid-rabbitmq
 
   resgrid-console:
     image: "resgridllc/resgridworkersconsole"
@@ -75,26 +50,29 @@ services:
       context: .
       dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
     depends_on:
-      - db
-      - redis
-      - rabbitmq
+      - resgrid-db
+      - resgrid-redis
+      - resgrid-rabbitmq
 
-  db:
+  resgrid-db:
     image: "mcr.microsoft.com/mssql/server"
     ports:
       - "5157:1433"
     build:
       context: .
-      dockerfile: Repositories/Resgrid.Repositories.DataRepository/Dockerfile
+      dockerfile: Data/Dockerfile
 
-  redis:
+  resgrid-redis:
     image: "redis:alpine"
     command: redis-server --save 60 1 --loglevel warning
     ports:
      - "5158:6379"
 
-  rabbitmq:
+  resgrid-rabbitmq:
     image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=resgrid
+      - RABBITMQ_DEFAULT_PASS=Resgrid321!
     ports:
       - "5160:15672"
       - "5159:5672"

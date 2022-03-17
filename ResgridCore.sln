@@ -81,8 +81,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Config", "Core\Resg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Voip", "Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj", "{FA1E3331-62D2-478C-BF1E-412FF9E83562}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Resgrid\Docker\docker-compose.dcproj", "{5F012A17-ECC0-42FE-B270-5AC1886610E8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -479,22 +477,6 @@ Global
 		{FA1E3331-62D2-478C-BF1E-412FF9E83562}.Staging|Any CPU.Build.0 = Debug|Any CPU
 		{FA1E3331-62D2-478C-BF1E-412FF9E83562}.Staging|x86.ActiveCfg = Debug|Any CPU
 		{FA1E3331-62D2-478C-BF1E-412FF9E83562}.Staging|x86.Build.0 = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Debug|x86.Build.0 = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Docker|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Docker|Any CPU.Build.0 = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Docker|x86.ActiveCfg = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Docker|x86.Build.0 = Debug|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Release|x86.ActiveCfg = Release|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Release|x86.Build.0 = Release|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Staging|Any CPU.Build.0 = Release|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Staging|x86.ActiveCfg = Release|Any CPU
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8}.Staging|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -526,7 +508,6 @@ Global
 		{B09CFEB5-E24D-4199-BB00-92C73D42762D} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{59E794E0-A247-4A7F-BCA1-DB928D59D876} = {D43D1D6B-66A9-4A57-9EA3-8DECC92FA583}
 		{FA1E3331-62D2-478C-BF1E-412FF9E83562} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
-		{5F012A17-ECC0-42FE-B270-5AC1886610E8} = {8853D22A-65B7-4AC8-9953-BB0A245A82CF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {156116FF-243E-45E8-8717-DB72E95F56AF}

@@ -61,7 +61,7 @@ namespace Resgrid.Workers.Console
 
 					var upgradeDatabase = Environment.GetEnvironmentVariable("RESGRID__DODBUPGRADE");
 
-					if (String.IsNullOrWhiteSpace(upgradeDatabase) || upgradeDatabase.ToLower() == "true")
+					if (!String.IsNullOrWhiteSpace(upgradeDatabase) && upgradeDatabase.ToLower() == "true")
 					{
 						services.AddSingleton<IHostedService, DatabaseUpgradeService>();
 					}

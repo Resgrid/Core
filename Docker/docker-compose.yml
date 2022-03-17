@@ -1,60 +1,48 @@
 version: '3.9'
 
 services:
-  resgrid-web:
+  web:
     image: "resgridllc/resgridwebcore"
-    build:
-      context: .
-      dockerfile: Web/Resgrid.WebCore/Dockerfile
     ports:
       - "5151:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
     depends_on:
-      - resgrid-api
-      - resgrid-events
-      - resgrid-db
-      - resgrid-redis
-      - resgrid-rabbitmq
+      - api
+      - events
+      - db
+      - redis
+      - rabbitmq
 
-  resgrid-api:
+  api:
     image: "resgridllc/resgridwebservices"
-    build:
-      context: .
-      dockerfile: Web/Resgrid.Web.ServicesCore/Dockerfile
     ports:
       - "5152:80"
     depends_on:
-      - resgrid-events
-      - resgrid-db
-      - resgrid-redis
-      - resgrid-rabbitmq
+      - events
+      - db
+      - redis
+      - rabbitmq
 
-  resgrid-events:
+  events:
     image: "resgridllc/resgridwebevents"
-    build:
-      context: .
-      dockerfile: Web/Resgrid.Web.Eventing/Dockerfile
     ports:
       - "5153:80"
     depends_on:
-      - resgrid-db
-      - resgrid-redis
-      - resgrid-rabbitmq
+      - db
+      - redis
+      - rabbitmq
 
-  resgrid-console:
+  console:
     image: "resgridllc/resgridworkersconsole"
     container_name: worker
-    build:
-      context: .
-      dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
     depends_on:
-      - resgrid-db
-      - resgrid-redis
-      - resgrid-rabbitmq
+      - db
+      - redis
+      - rabbitmq
 
-  resgrid-db:
+  db:
     image: "mcr.microsoft.com/mssql/server"
     ports:
       - "5157:1433"

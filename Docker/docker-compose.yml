@@ -2,45 +2,62 @@ version: '3.9'
 
 services:
   web:
-    image: "resgridllc/resgridwebcore"
+    image: "resgridllc/resgridwebcore:0.5.13"
     ports:
       - "5151:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
+    env_file:
+      - .env
     depends_on:
       - api
       - events
       - db
       - redis
       - rabbitmq
+      - worker
+    environment:
+      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672,api:80
+      WAIT_BEFORE: 90
 
   api:
-    image: "resgridllc/resgridwebservices"
+    image: "resgridllc/resgridwebservices:0.5.13"
     ports:
       - "5152:80"
+    env_file:
+      - .env
     depends_on:
       - events
       - db
       - redis
       - rabbitmq
+      - worker
+    environment:
+      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672,events:80
+      WAIT_BEFORE: 90
 
   events:
-    image: "resgridllc/resgridwebevents"
+    image: "resgridllc/resgridwebevents:0.5.13"
     ports:
       - "5153:80"
+    env_file:
+      - .env
     depends_on:
       - db
       - redis
       - rabbitmq
+    environment:
+      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672
+      WAIT_BEFORE: 90
 
-  console:
-    image: "resgridllc/resgridworkersconsole"
-    container_name: worker
+  worker:
+    image: "resgridllc/resgridworkersconsole:0.5.13"
+    env_file:
+      - .env
     depends_on:
       - db
       - redis
       - rabbitmq
+    environment:
+      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672
 
   db:
     image: "mcr.microsoft.com/mssql/server"
@@ -48,15 +65,19 @@ services:
       - "5157:1433"
     build:
       context: .
-      dockerfile: Data/Dockerfile
+      dockerfile: ./data/Dockerfile
+    volumes: 
+        - ./data:/var/opt/sqlserver/data
+        - ./data:/var/opt/sqlserver/log
+        - ./data:/var/opt/sqlserver/backup
 
-  resgrid-redis:
+  redis:
     image: "redis:alpine"
     command: redis-server --save 60 1 --loglevel warning
     ports:
      - "5158:6379"
 
-  resgrid-rabbitmq:
+  rabbitmq:
     image: rabbitmq:3-management
     environment:
       - RABBITMQ_DEFAULT_USER=resgrid

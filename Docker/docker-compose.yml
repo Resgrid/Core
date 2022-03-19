@@ -6,7 +6,7 @@ services:
     ports:
       - "5151:80"
     env_file:
-      - .env
+      - resgrid.env
     depends_on:
       - api
       - events
@@ -23,7 +23,7 @@ services:
     ports:
       - "5152:80"
     env_file:
-      - .env
+      - resgrid.env
     depends_on:
       - events
       - db
@@ -39,7 +39,7 @@ services:
     ports:
       - "5153:80"
     env_file:
-      - .env
+      - resgrid.env
     depends_on:
       - db
       - redis
@@ -51,7 +51,7 @@ services:
   worker:
     image: "resgridllc/resgridworkersconsole:0.5.13"
     env_file:
-      - .env
+      - resgrid.env
     depends_on:
       - db
       - redis
@@ -67,9 +67,9 @@ services:
       context: .
       dockerfile: ./data/Dockerfile
     volumes: 
-        - ./data:/var/opt/sqlserver/data
-        - ./data:/var/opt/sqlserver/log
-        - ./data:/var/opt/sqlserver/backup
+        - ./docker-data/sql/data:/var/opt/sqlserver/data
+        - ./docker-data/sql/log:/var/opt/sqlserver/log
+        - ./docker-data/sql/backup:/var/opt/sqlserver/backup
 
   redis:
     image: "redis:alpine"
@@ -85,3 +85,39 @@ services:
     ports:
       - "5160:15672"
       - "5159:5672"
+
+  elk:
+    image: sebp/elk
+    ports:
+      - "5163:5601"
+      - "5164:9200"
+      - "5165:5044"
+
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    container_name: mailserver
+    # If the FQDN for your mail-server is only two labels (eg: example.com),
+    # you can assign this entirely to `hostname` and remove `domainname`.
+    hostname: mail
+    domainname: example.com
+    env_file: mailserver.env
+    # More information about the mail-server ports:
+    # https://docker-mailserver.github.io/docker-mailserver/edge/config/security/understanding-the-ports/
+    # To avoid conflicts with yaml base-60 float, DO NOT remove the quotation marks.
+    ports:
+      - "25:25"    # SMTP  (explicit TLS => STARTTLS)
+      - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
+      - "465:465"  # ESMTP (implicit TLS)
+      - "587:587"  # ESMTP (explicit TLS => STARTTLS)
+      - "993:993"  # IMAP4 (implicit TLS)
+    volumes:
+      - ./docker-data/dms/mail-data/:/var/mail/
+      - ./docker-data/dms/mail-state/:/var/mail-state/
+      - ./docker-data/dms/mail-logs/:/var/log/mail/
+      - ./docker-data/dms/config/:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    stop_grace_period: 1m
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE

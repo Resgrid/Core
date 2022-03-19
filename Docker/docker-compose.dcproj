@@ -25,7 +25,7 @@
   <ItemGroup>
     <None Include="mailserver.env" />
     <None Include="data\Dockerfile" />
-    <None Include="data\create-database.sql" />
+    <None Include="data\create-databases.sql" />
     <None Include="data\run-initialization.sh" />
     <None Include="data\entrypoint.sh" />
     <None Include="docker-compose.yml" />

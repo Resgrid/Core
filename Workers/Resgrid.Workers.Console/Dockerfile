@@ -64,4 +64,4 @@ RUN set -xe \
 
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["sh", "-c", "wait && dotnet Resgrid.Workers.Console.dll"]
+ENTRYPOINT ["sh", "-c", "./wait && dotnet Resgrid.Workers.Console.dll"]

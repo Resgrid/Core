@@ -1,6 +1,17 @@
-﻿CREATE DATABASE Resgrid;
+﻿IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'Resgrid')
+    BEGIN
+        CREATE DATABASE Resgrid;
+    END
 GO
-CREATE DATABASE ResgridWorkers;
+
+IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'ResgridWorkers')
+    BEGIN
+        CREATE DATABASE ResgridWorkers;
+    END
 GO
-CREATE DATABASE ResgridOIDC;
+
+IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'ResgridOIDC')
+    BEGIN
+        CREATE DATABASE ResgridOIDC;
+    END
 GO

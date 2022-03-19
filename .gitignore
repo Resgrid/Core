@@ -194,3 +194,11 @@ Common/resgrid.local.pfx
 Web/Resgrid.Web.ServicesCore/Properties/serviceDependencies.json
 Web/Resgrid.Web.ServicesCore/Properties/serviceDependencies.local.json
 Web/Resgrid.Web.ServicesCore/Properties/ServiceDependencies/local/appInsights1.arm.json
+
+Docker/docker-data/dms/mail-state/lib-clamav/bytecode.cvd
+
+Docker/docker-data/dms/mail-state/lib-clamav/daily.cvd
+
+Docker/docker-data/dms/mail-state/lib-clamav/freshclam.dat
+
+Docker/docker-data/dms/mail-state/lib-clamav/main.cvd

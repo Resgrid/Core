@@ -40,8 +40,8 @@ RUN dotnet publish "Resgrid.WebCore.csproj" -c Release -o /app/publish -p:Versio
 
 FROM base AS final
 ## Add the wait script to the image
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
-RUN chmod +x /app/publish/wait
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait wait
+RUN chmod +x wait
 
 WORKDIR /app
 COPY --from=publish /app/publish .

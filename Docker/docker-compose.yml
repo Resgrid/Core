@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   web:
-    image: "resgridllc/resgridwebcore:0.5.13"
+    image: "resgridllc/resgridwebcore:0.5.19"
     ports:
       - "5151:80"
     env_file:
@@ -15,11 +15,11 @@ services:
       - rabbitmq
       - worker
     environment:
-      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672,api:80
-      WAIT_BEFORE: 90
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,api:80
+      - WAIT_AFTER=90
 
   api:
-    image: "resgridllc/resgridwebservices:0.5.13"
+    image: "resgridllc/resgridwebservices:0.5.19"
     ports:
       - "5152:80"
     env_file:
@@ -31,11 +31,11 @@ services:
       - rabbitmq
       - worker
     environment:
-      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672,events:80
-      WAIT_BEFORE: 90
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,events:80
+      - WAIT_AFTER=90
 
   events:
-    image: "resgridllc/resgridwebevents:0.5.13"
+    image: "resgridllc/resgridwebevents:0.5.19"
     ports:
       - "5153:80"
     env_file:
@@ -45,11 +45,11 @@ services:
       - redis
       - rabbitmq
     environment:
-      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672
-      WAIT_BEFORE: 90
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
+      - WAIT_AFTER=90
 
   worker:
-    image: "resgridllc/resgridworkersconsole:0.5.13"
+    image: "resgridllc/resgridworkersconsole:0.5.19"
     env_file:
       - resgrid.env
     depends_on:
@@ -57,19 +57,23 @@ services:
       - redis
       - rabbitmq
     environment:
-      WAIT_HOSTS: db:1433,redis:6379,rabbitmq:15672
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
 
   db:
-    image: "mcr.microsoft.com/mssql/server"
+    image: "mcr.microsoft.com/mssql/server:2019-CU13-ubuntu-20.04"
     ports:
       - "5157:1433"
     build:
       context: .
-      dockerfile: db/Dockerfile
+      dockerfile: ./db/Dockerfile
+    environment:
+      - SA_PASSWORD=Resgrid123!
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
     volumes: 
-        - ./docker-data/sql/data:/var/opt/sqlserver/data
-        - ./docker-data/sql/log:/var/opt/sqlserver/log
-        - ./docker-data/sql/backup:/var/opt/sqlserver/backup
+      - ./docker-data/sql/data/:/var/opt/sqlserver/data
+      - ./docker-data/sql/log/:/var/opt/sqlserver/log
+      - ./docker-data/sql/backup/:/var/opt/sqlserver/backup
 
   redis:
     image: "redis:alpine"

@@ -67,13 +67,13 @@ services:
       context: .
       dockerfile: ./db/Dockerfile
     environment:
-      - SA_PASSWORD=Resgrid123!
+      - SA_PASSWORD=Resgrid123!!
       - ACCEPT_EULA=Y
       - MSSQL_PID=Express
     volumes: 
-      - ./docker-data/sql/data/:/var/opt/sqlserver/data
-      - ./docker-data/sql/log/:/var/opt/sqlserver/log
-      - ./docker-data/sql/backup/:/var/opt/sqlserver/backup
+      - ./docker-data/sql/data/:/var/opt/mssql/data
+      - ./docker-data/sql/log/:/var/opt/mssql/log
+      - ./docker-data/sql/backup/:/var/opt/mssql/backup
 
   redis:
     image: "redis:alpine"

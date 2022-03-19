@@ -38,6 +38,10 @@ ARG BUILD_VERSION
 RUN dotnet publish "Resgrid.Workers.Console.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 
 FROM base AS final
+## Add the wait script to the image
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
+RUN chmod +x /app/publish/wait
+
 WORKDIR /app
 
 ## START - INSTALL WKHTMLTOPDF
@@ -60,4 +64,4 @@ RUN set -xe \
 
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "Resgrid.Workers.Console.dll"]
+ENTRYPOINT ["sh", "-c", "wait && dotnet Resgrid.Workers.Console.dll"]

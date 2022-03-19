@@ -39,6 +39,10 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 RUN dotnet publish "Resgrid.WebCore.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 
 FROM base AS final
+## Add the wait script to the image
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
+RUN chmod +x /app/publish/wait
+
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Resgrid.WebCore.dll"]
+ENTRYPOINT ["sh", "-c", "wait && dotnet Resgrid.WebCore.dll"]

@@ -65,7 +65,7 @@ services:
       - "5157:1433"
     build:
       context: .
-      dockerfile: ./data/Dockerfile
+      dockerfile: db/Dockerfile
     volumes: 
         - ./docker-data/sql/data:/var/opt/sqlserver/data
         - ./docker-data/sql/log:/var/opt/sqlserver/log
@@ -98,8 +98,8 @@ services:
     container_name: mailserver
     # If the FQDN for your mail-server is only two labels (eg: example.com),
     # you can assign this entirely to `hostname` and remove `domainname`.
-    hostname: mail
-    domainname: example.com
+    hostname: rgmail
+    domainname: yourcompany.com
     env_file: mailserver.env
     # More information about the mail-server ports:
     # https://docker-mailserver.github.io/docker-mailserver/edge/config/security/understanding-the-ports/

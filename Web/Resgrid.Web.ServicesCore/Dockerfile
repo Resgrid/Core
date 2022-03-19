@@ -44,4 +44,4 @@ RUN chmod +x wait
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["sh", "-c", "wait && dotnet Resgrid.Web.Services.dll"]
+ENTRYPOINT ["sh", "-c", "./wait && dotnet Resgrid.Web.Services.dll"]

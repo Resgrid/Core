@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   web:
-    image: "resgridllc/resgridwebcore:0.5.19"
+    image: "resgridllc/resgridwebcore:0.5.23"
     ports:
       - "5151:80"
     env_file:
@@ -16,10 +16,10 @@ services:
       - worker
     environment:
       - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,api:80
-      - WAIT_AFTER=90
+      - WAIT_TIMEOUT=300
 
   api:
-    image: "resgridllc/resgridwebservices:0.5.19"
+    image: "resgridllc/resgridwebservices:0.5.23"
     ports:
       - "5152:80"
     env_file:
@@ -32,10 +32,10 @@ services:
       - worker
     environment:
       - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,events:80
-      - WAIT_AFTER=90
+      - WAIT_TIMEOUT=300
 
   events:
-    image: "resgridllc/resgridwebevents:0.5.19"
+    image: "resgridllc/resgridwebevents:0.5.23"
     ports:
       - "5153:80"
     env_file:
@@ -46,10 +46,11 @@ services:
       - rabbitmq
     environment:
       - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
-      - WAIT_AFTER=90
+      - WAIT_AFTER=120
+      - WAIT_TIMEOUT=300
 
   worker:
-    image: "resgridllc/resgridworkersconsole:0.5.19"
+    image: "resgridllc/resgridworkersconsole:0.5.23"
     env_file:
       - resgrid.env
     depends_on:
@@ -58,22 +59,27 @@ services:
       - rabbitmq
     environment:
       - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
+      - WAIT_AFTER=90
+      - WAIT_TIMEOUT=180
 
   db:
-    image: "mcr.microsoft.com/mssql/server:2019-CU13-ubuntu-20.04"
     ports:
       - "5157:1433"
-    build:
-      context: .
-      dockerfile: ./db/Dockerfile
+    build: ./db
     environment:
       - SA_PASSWORD=Resgrid123!!
       - ACCEPT_EULA=Y
       - MSSQL_PID=Express
     volumes: 
-      - ./docker-data/sql/data/:/var/opt/mssql/data
-      - ./docker-data/sql/log/:/var/opt/mssql/log
-      - ./docker-data/sql/backup/:/var/opt/mssql/backup
+      - type: bind
+        source: ./docker-data/sql/data
+        target: /var/opt/mssql/data
+      - type: bind
+        source: ./docker-data/sql/log
+        target: /var/opt/mssql/log
+      - type: bind
+        source: ./docker-data/sql/backup
+        target: /var/opt/mssql/backup
 
   redis:
     image: "redis:alpine"
@@ -96,32 +102,3 @@ services:
       - "5163:5601"
       - "5164:9200"
       - "5165:5044"
-
-  mailserver:
-    image: docker.io/mailserver/docker-mailserver:latest
-    container_name: mailserver
-    # If the FQDN for your mail-server is only two labels (eg: example.com),
-    # you can assign this entirely to `hostname` and remove `domainname`.
-    hostname: rgmail
-    domainname: yourcompany.com
-    env_file: mailserver.env
-    # More information about the mail-server ports:
-    # https://docker-mailserver.github.io/docker-mailserver/edge/config/security/understanding-the-ports/
-    # To avoid conflicts with yaml base-60 float, DO NOT remove the quotation marks.
-    ports:
-      - "25:25"    # SMTP  (explicit TLS => STARTTLS)
-      - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
-      - "465:465"  # ESMTP (implicit TLS)
-      - "587:587"  # ESMTP (explicit TLS => STARTTLS)
-      - "993:993"  # IMAP4 (implicit TLS)
-    volumes:
-      - ./docker-data/dms/mail-data/:/var/mail/
-      - ./docker-data/dms/mail-state/:/var/mail-state/
-      - ./docker-data/dms/mail-logs/:/var/log/mail/
-      - ./docker-data/dms/config/:/tmp/docker-mailserver/
-      - /etc/localtime:/etc/localtime:ro
-    restart: always
-    stop_grace_period: 1m
-    cap_add:
-      - NET_ADMIN
-      - SYS_PTRACE

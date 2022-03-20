@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Resgrid.Model
 {
 	[Table("Permissions")]
 	[ProtoContract]
-	public class Permission: IEntity
+	public class Permission : IEntity
 	{
 		[Key]
 		[Required]
@@ -41,6 +42,7 @@ namespace Resgrid.Model
 		public bool LockToGroup { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return PermissionId; }
@@ -54,6 +56,9 @@ namespace Resgrid.Model
 		public string IdName => "PermissionId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department" };
 	}
 }

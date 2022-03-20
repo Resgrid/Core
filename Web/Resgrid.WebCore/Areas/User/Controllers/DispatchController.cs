@@ -31,6 +31,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Resgrid.WebCore.Areas.User.Models.Dispatch;
+using System.Text;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -57,13 +59,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ITemplatesService _templatesService;
 		private readonly IPdfProvider _pdfProvider;
 		private readonly IProtocolsService _protocolsService;
+		private readonly IFormsService _formsService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IGeoLocationProvider geoLocationProvider,
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService)
+						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -84,6 +87,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_templatesService = templatesService;
 			_pdfProvider = pdfProvider;
 			_protocolsService = protocolsService;
+			_formsService = formsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -358,7 +362,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.Call.CallSource = (int)CallSources.User;
 
-				if (!string.IsNullOrWhiteSpace(model.Call.GeoLocationData) && string.IsNullOrWhiteSpace(model.Call.Address))
+				if (!string.IsNullOrWhiteSpace(model.Call.GeoLocationData) && model.Call.GeoLocationData.Length > 1 && string.IsNullOrWhiteSpace(model.Call.Address))
 				{
 					try
 					{
@@ -796,7 +800,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.Call.CallSource = (int)CallSources.User;
 
-				if (!string.IsNullOrWhiteSpace(model.Call.GeoLocationData) && string.IsNullOrWhiteSpace(model.Call.Address))
+				if (!string.IsNullOrWhiteSpace(model.Call.GeoLocationData) && model.Call.GeoLocationData.Length > 1 && string.IsNullOrWhiteSpace(model.Call.Address))
 				{
 					try
 					{
@@ -980,13 +984,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(query))
 				Unauthorized();
 
+			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query)).Trim();
 
-			var decryptedQuery = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 			if (!decryptedQuery.Contains("|"))
 			{
 				// Legacy query, just the call id
-				var callId = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+				var callId = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 				if (String.IsNullOrWhiteSpace(callId))
 					Unauthorized();
@@ -997,14 +1002,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = call;
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-				model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true);
 
 				return View(model);
 			}
@@ -1021,14 +1025,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = call;
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(model.Call.DepartmentId);
-				model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true);
 
 				if (!String.IsNullOrWhiteSpace(items[2]) && items[2] != "0")
 				{
@@ -1082,9 +1085,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			//var decryptedQuery = SymmetricEncryption.Decrypt(query, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 			var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);
-			var request = new RestRequest($"User/Dispatch/CallExportEx?query={HttpUtility.UrlEncode(query)}", Method.GET);
+			var request = new RestRequest($"User/Dispatch/CallExportEx?query={HttpUtility.UrlEncode(query)}", Method.Get);
 
-			var response = client.Execute(request);
+			var response = await client.ExecuteAsync(request);
 
 			if (!string.IsNullOrWhiteSpace(response.Content))
 			{
@@ -1558,9 +1561,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetCoordinatesFromW3W(string words)
 		{
-			var result = _geoLocationProvider.GetCoordinatesFromW3W(words) ?? new Coordinates();
+			var result = await _geoLocationProvider.GetCoordinatesFromW3W(words) ?? new Coordinates();
 
 			return Json(result);
 		}
@@ -1583,6 +1587,52 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return null;
 
 			return File(callAttachment.Data, "image/jpeg");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCallTypes()
+		{
+			List<CallTypeJson> callTypesJson = new List<CallTypeJson>();
+
+			var types = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+
+			if (types != null && types.Any())
+			{
+				foreach (var type in types)
+				{
+					CallTypeJson json = new CallTypeJson();
+					json.Id = type.CallTypeId;
+					json.Name = type.Type;
+
+					callTypesJson.Add(json);
+				}
+			}
+
+			return Json(callTypesJson);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCallPriorities()
+		{
+			List<CallPriorityJson> callPrioritiesJson = new List<CallPriorityJson>();
+
+			var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
+
+			if (priorities != null && priorities.Any())
+			{
+				foreach (var priority in priorities)
+				{
+					CallPriorityJson json = new CallPriorityJson();
+					json.Id = priority.DepartmentCallPriorityId;
+					json.Name = priority.Name;
+
+					callPrioritiesJson.Add(json);
+				}
+			}
+
+			return Json(callPrioritiesJson);
 		}
 
 		#region Private Helpers
@@ -1632,6 +1682,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.Call.ReportingUserId = UserId;
+
+			var form = await _formsService.GetNewCallFormByDepartmentIdAsync(DepartmentId);
+
+			if (form != null)
+				model.NewCallFormData = form.Data;
 
 			return model;
 		}

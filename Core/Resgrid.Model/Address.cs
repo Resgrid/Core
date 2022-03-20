@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -46,12 +47,16 @@ namespace Resgrid.Model
 		[NotMapped]
 		public string IdName => "AddressId";
 
+		[NotMapped]
+		public int IdType => 0;
+
 		public string FormatAddress()
 		{
 			return string.Format("{0} {1} {2} {3} {4}", Address1, City, State, PostalCode, Country);
 		}
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return AddressId; }
@@ -59,6 +64,6 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 }

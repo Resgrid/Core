@@ -10,6 +10,7 @@ using Resgrid.Model.Providers;
 using RestSharp;
 using System.Net;
 using System.Threading.Tasks;
+using Resgrid.Providers.Geo.Models.LocationIQ;
 
 namespace Resgrid.Providers.GeoLocationProvider
 {
@@ -58,7 +59,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					try
 					{
-						var addressGeo = GetAddressFromLatLonLocationIQ(lat.ToString(), lon.ToString());
+						var addressGeo = await GetAddressFromLatLonLocationIQ(lat.ToString(), lon.ToString());
 
 						if (!String.IsNullOrWhiteSpace(addressGeo))
 							address = addressGeo;
@@ -111,7 +112,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					try
 					{
-						var coords = GetLatLonFromAddressLocationIQ(address);
+						var coords = await GetLatLonFromAddressLocationIQ(address);
 
 						if (coords != null)
 							coordinates = string.Format("{0},{1}", coords.Latitude, coords.Longitude);
@@ -215,38 +216,14 @@ namespace Resgrid.Providers.GeoLocationProvider
 			return await _cacheProvider.RetrieveAsync<RouteInformation>(string.Format(RouteCacheKey, start.GetHashCode(), end.GetHashCode()), getRoute, CacheLength);
 		}
 
-		public Coordinates GetCoordinatesFromW3W(string words)
-		{
-			Func<Coordinates> getLocationFromW3W = delegate ()
-			{
-				var client = new RestClient("https://api.what3words.com");
-				var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.GET);
-
-				var response = client.Execute<W3WResponse>(request);
-
-				if (response.Data != null && response.Data.geometry != null)
-				{
-					var coords = new Coordinates();
-					coords.Latitude = response.Data.geometry.lat;
-					coords.Longitude = response.Data.geometry.lng;
-
-					return coords;
-				}
-
-				return null;
-			};
-
-			return _cacheProvider.Retrieve<Coordinates>(string.Format(W3WCacheKey, words), getLocationFromW3W, CacheLength);
-		}
-
-		public async Task<Coordinates> GetCoordinatesFromW3WAsync(string words)
+		public async Task<Coordinates> GetCoordinatesFromW3W(string words)
 		{
 			Func<Task<Coordinates>> getLocationFromW3W = async () =>
 			{
 				var client = new RestClient("https://api.what3words.com");
-				var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.GET);
+				var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.Get);
 
-				var response = await client.ExecuteTaskAsync<W3WResponse>(request);
+				var response = await client.ExecuteAsync<W3WResponse>(request);
 
 				if (response.Data != null && response.Data.geometry != null)
 				{
@@ -263,14 +240,38 @@ namespace Resgrid.Providers.GeoLocationProvider
 			return await _cacheProvider.RetrieveAsync<Coordinates>(string.Format(W3WCacheKey, words), getLocationFromW3W, CacheLength);
 		}
 
-		public string GetW3WFromCoordinates(Coordinates coordinates)
+		public async Task<Coordinates> GetCoordinatesFromW3WAsync(string words)
 		{
-			Func<string> getLocationFromW3W = delegate ()
+			Func<Task<Coordinates>> getLocationFromW3W = async () =>
 			{
 				var client = new RestClient("https://api.what3words.com");
-				var request = new RestRequest($"/v2/reverse?key={Config.MappingConfig.What3WordsApiKey}&coords={$"{coordinates.Latitude},{coordinates.Longitude}"}", Method.GET);
+				var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.Get);
 
-				var response = client.Execute<ReverseW3WResponse>(request);
+				var response = await client.ExecuteAsync<W3WResponse>(request);
+
+				if (response.Data != null && response.Data.geometry != null)
+				{
+					var coords = new Coordinates();
+					coords.Latitude = response.Data.geometry.lat;
+					coords.Longitude = response.Data.geometry.lng;
+
+					return coords;
+				}
+
+				return null;
+			};
+
+			return await _cacheProvider.RetrieveAsync<Coordinates>(string.Format(W3WCacheKey, words), getLocationFromW3W, CacheLength);
+		}
+
+		public async Task<string> GetW3WFromCoordinates(Coordinates coordinates)
+		{
+			Func<Task<string>> getLocationFromW3W = async () =>
+			{
+				var client = new RestClient("https://api.what3words.com");
+				var request = new RestRequest($"/v2/reverse?key={Config.MappingConfig.What3WordsApiKey}&coords={$"{coordinates.Latitude},{coordinates.Longitude}"}", Method.Get);
+
+				var response = await client.ExecuteAsync<ReverseW3WResponse>(request);
 
 				if (response.Data != null && !String.IsNullOrWhiteSpace(response.Data.words))
 				{
@@ -280,19 +281,19 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			};
 
-			return _cacheProvider.Retrieve<string>(string.Format(ReverseW3WCacheKey, $"{coordinates.Latitude},{coordinates.Longitude}"), getLocationFromW3W, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(string.Format(ReverseW3WCacheKey, $"{coordinates.Latitude},{coordinates.Longitude}"), getLocationFromW3W, CacheLength);
 		}
 
-		public Coordinates GetLatLonFromAddressLocationIQ(string address)
+		public async Task<Coordinates> GetLatLonFromAddressLocationIQ(string address)
 		{
 			Coordinates coordinates = new Coordinates();
 
 			try
 			{
 				var client = new RestClient("http://locationiq.org");
-				var request = new RestRequest($"/v1/search.php?key={Config.MappingConfig.LocationIQApiKey}&format=json&q={WebUtility.UrlEncode(address)}", Method.GET);
+				var request = new RestRequest($"/v1/search.php?key={Config.MappingConfig.LocationIQApiKey}&format=json&q={WebUtility.UrlEncode(address)}", Method.Get);
 
-				var response = client.Execute<dynamic>(request);
+				var response = await client.ExecuteAsync<dynamic>(request);
 
 				if (response.IsSuccessful && response.Data != null)
 				{
@@ -316,20 +317,21 @@ namespace Resgrid.Providers.GeoLocationProvider
 			return null;
 		}
 
-		public string GetAddressFromLatLonLocationIQ(string lat, string lon)
+		public async Task<string> GetAddressFromLatLonLocationIQ(string lat, string lon)
 		{
 			try
 			{
 				var client = new RestClient("http://locationiq.org");
-				var request = new RestRequest($"/v1/reverse.php?key={Config.MappingConfig.LocationIQApiKey}&format=json&lat={WebUtility.UrlEncode(lat)}&lon={WebUtility.UrlEncode(lon)}&zoom=18", Method.GET);
+				var request = new RestRequest($"/v1/reverse.php?key={Config.MappingConfig.LocationIQApiKey}&format=json&lat={WebUtility.UrlEncode(lat)}&lon={WebUtility.UrlEncode(lon)}&zoom=18", Method.Get);
 
-				var response = client.Execute<dynamic>(request);
+				var response = await client.ExecuteAsync<LocationIQReverseResult>(request);
 
 				if (response.Data != null)
 				{
-					var geocode = response.Data[0];
+					//var geocode = response.Data[0];
 
-					return geocode["display_name"];
+					//return geocode["display_name"];
+					return response.Data.display_name;
 				}
 			}
 			catch { }

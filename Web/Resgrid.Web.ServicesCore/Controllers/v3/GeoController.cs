@@ -12,6 +12,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class GeoController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IGeoLocationProvider _geoLocationProvider;
@@ -65,7 +67,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				try
 				{
-					var coords = _geoLocationProvider.GetLatLonFromAddressLocationIQ(plainTextAddress);
+					var coords = await _geoLocationProvider.GetLatLonFromAddressLocationIQ(plainTextAddress);
 
 					if (coords != null && coords.Longitude.HasValue && coords.Latitude.HasValue)
 					{

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 
 namespace Resgrid.Model
@@ -66,6 +67,7 @@ namespace Resgrid.Model
 		public virtual ICollection<UnitStateRole> Roles { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return UnitStateId; }
@@ -79,7 +81,10 @@ namespace Resgrid.Model
 		public string IdName => "UnitStateId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Roles", "Unit" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Roles", "Unit" };
 
 		public string GetStatusText()
 		{

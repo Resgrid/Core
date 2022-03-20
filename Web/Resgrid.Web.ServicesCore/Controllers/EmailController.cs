@@ -364,7 +364,7 @@ namespace Resgrid.Web.Services.Controllers
 									// New Call Dispatch as normal
 									call.DepartmentId = departmentId.Value;
 
-									if (!String.IsNullOrWhiteSpace(call.Address) && String.IsNullOrWhiteSpace(call.GeoLocationData))
+									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
 									{
 										call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 									}
@@ -383,7 +383,7 @@ namespace Resgrid.Web.Services.Controllers
 								else if (call != null && call.CallId > 0)
 								{
 									// Existing Call, just update
-									if (!String.IsNullOrWhiteSpace(call.Address) && String.IsNullOrWhiteSpace(call.GeoLocationData))
+									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
 									{
 										call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 									}

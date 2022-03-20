@@ -17,5 +17,6 @@ namespace Resgrid.Web.Services.Models.v3.Dispatch
 		public List<string> Roles { get; set; }
 		public string Eta { get; set; }
 		public int Weight { get; set; }
+		public string Location { get; set; }
 	}
 }

@@ -175,5 +175,34 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Payment&gt;.</returns>
 		Task<Payment> CreateFreePlanPaymentAsync(int departmentId, string userId,
 			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Gets a current addon payment by department identifier asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="planAddonIds">The addon plan identifiers.</param>
+		/// <returns>Task&lt;List&lt;PaymentAddon&gt;&gt;.</returns>
+		Task<List<PaymentAddon>> GetCurrentPaymentAddonsForDepartmentAsync(int departmentId, List<string> planAddonIds);
+
+		/// <summary>
+		/// Gets all plan addons by plan addon type asynchronous.
+		/// </summary>
+		/// <param name="planAddonType">The type of plan addon.</param>
+		/// <returns>Task&lt;List&lt;PlanAddon&gt;&gt;.</returns>
+		Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType);
+
+		/// <summary>
+		/// Gets all plan addons active for a subscription asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department id to get info for.</param>
+		/// <returns>Task&lt;List&lt;PlanAddon&gt;&gt;.</returns>
+		Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentFromStripeAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the current PTT plan addon active for a subscription asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department id to get info for.</param>
+		/// <returns>Task&lt;PlanAddon&gt;.</returns>
+		Task<PlanAddon> GetPTTAddonPlanForDepartmentFromStripeAsync(int departmentId);
 	}
 }

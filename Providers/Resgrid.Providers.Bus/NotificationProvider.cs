@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Microsoft.Azure.NotificationHubs;
-using MoreLinq;
 using Newtonsoft.Json.Linq;
 using Resgrid.Providers.Bus.Models;
 using Newtonsoft.Json;

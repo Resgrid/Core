@@ -35,6 +35,10 @@
     <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
       <div class="buttons-actions">
         <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">Template</a>
+        @if (!String.IsNullOrWhiteSpace(Model.NewCallFormData))
+		{
+          <a title="Call Form" class="btn btn-info" data-target="#newCallFormWindow" data-toggle="modal">Call Form</a>
+		}
       </div>
     </div>
   </div>
@@ -53,6 +57,7 @@
                 @Html.HiddenFor(m => m.Latitude)
                 @Html.HiddenFor(m => m.Longitude)
                 @Html.HiddenFor(m => m.Call.ReportingUserId)
+                @Html.HiddenFor(m => m.Call.CallFormData)
                 <div asp-validation-summary="All" class="text-danger"></div>
 
                 @if (!String.IsNullOrEmpty(Model.Message))
@@ -357,14 +362,36 @@
   </div>
 </div>
 
+<div class="modal xl fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="newCallFormWindow">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">New Call Form</h4>
+      </div>
+      <div class="modal-body">
+        <div id="fb-template"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button id="saveNewCallFrom" type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 @section Scripts
 {
+  <script src="@Url.Content("~/lib/formBuilder/dist/form-render.min.js")" type="text/javascript"></script>
+
   @if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
   {
-    <script type="text/javascript">
-			var centerLat = @(Model.CenterCoordinates.Latitude.Value);
-			var centerLng = @(Model.CenterCoordinates.Longitude.Value);
-    </script>
+<script type="text/javascript">
+	  var centerLat = @(Model.CenterCoordinates.Latitude.Value);
+      var centerLng = @(Model.CenterCoordinates.Longitude.Value);
+      var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
+</script>
   }
 
   <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>

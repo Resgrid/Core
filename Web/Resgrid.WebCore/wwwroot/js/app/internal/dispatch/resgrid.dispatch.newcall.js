@@ -34,7 +34,17 @@ var resgrid;
 
 				$("#Call_Type").change(function () {
 					checkForProtocols();
-				});
+                });
+
+                var newCallForm = $('#fb-template').formRender({
+                    dataType: 'json',
+                    formData: newCallFormData
+                });
+
+                $("#saveNewCallFrom").click(function (evt) {
+                    var data = JSON.stringify(newCallForm.userData);
+                    $("#Call_CallFormData").val(data);
+                });
 
                 //$('#UnitCustomStatesId').select2();
                 //$('#CallTemplateId').select2();

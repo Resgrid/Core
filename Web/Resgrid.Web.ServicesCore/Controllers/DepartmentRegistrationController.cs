@@ -115,9 +115,9 @@ namespace Resgrid.Web.Services.Controllers
 
 				//TODO: No more CoreBridge, so fix yo.
 				var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);
-				var request = new RestRequest($"/CoreBridge/RegisterDepartment", Method.POST);
+				var request = new RestRequest($"/CoreBridge/RegisterDepartment", Method.Post);
 				request.AddJsonBody(model);
-				var response = client.Execute<DepartmentCreationResult>(request);
+				var response = await client.ExecuteAsync<DepartmentCreationResult>(request);
 
 				if (response.Data != null && !response.Data.Successful)
 					return BadRequest();

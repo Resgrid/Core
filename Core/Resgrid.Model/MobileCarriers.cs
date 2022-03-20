@@ -138,6 +138,21 @@ namespace Resgrid.Model
 
 		[Description("Spark")]
 		Spark = 42, // SMS Direct Send
+
+		[Description("Mint")]
+		Mint = 43, // SMS Direct Send
+
+		[Description("Chatr")]
+		Chatr = 44, // SMS Direct Send
+
+		[Description("Eastlink")]
+		Eastlink = 45, // SMS Direct Send
+
+		[Description("Freedom Mobile")]
+		FreedomMobile = 46, // SMS Direct Send
+
+		[Description("FSM Telecom")]
+		FSMTC = 47, // SMS Direct Send
 	}
 
 	public static class Carriers
@@ -185,7 +200,12 @@ namespace Resgrid.Model
 																																	{MobileCarriers.EE, "Direct"},
 																																	{MobileCarriers.MTSMobility, "{0}@text.mtsmobility.com"},
 																																	{MobileCarriers.Fido, "Direct"},
-																																	{MobileCarriers.Spark, "Direct"}
+																																	{MobileCarriers.Spark, "Direct"},
+																																	{MobileCarriers.Mint, "{0}@tmomail.net"},
+																																	{MobileCarriers.Chatr, "Direct"},
+																																	{MobileCarriers.Eastlink, "Direct"},
+																																	{MobileCarriers.FreedomMobile, "Direct"},
+																																	{MobileCarriers.FSMTC, "Direct"},
 																																};
 
 		public static Dictionary<MobileCarriers, Tuple<int, string>> CarriersNumberLength = new Dictionary<MobileCarriers, Tuple<int, string>>()
@@ -242,7 +262,12 @@ namespace Resgrid.Model
 			MobileCarriers.BellMobility,
 			MobileCarriers.SaskTel,
 			MobileCarriers.Spark,
-			MobileCarriers.Koodo
+			MobileCarriers.Koodo,
+			MobileCarriers.Mint,
+			MobileCarriers.Chatr,
+			MobileCarriers.Eastlink,
+			MobileCarriers.FreedomMobile,
+			MobileCarriers.FSMTC
 		};
 
 		public static HashSet<MobileCarriers> OnPremSmsGatewayCarriers = new HashSet<MobileCarriers>()

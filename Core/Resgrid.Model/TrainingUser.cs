@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -37,6 +38,7 @@ namespace Resgrid.Model
 		public double Score { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return TrainingUserId; }
@@ -50,6 +52,9 @@ namespace Resgrid.Model
 		public string IdName => "TrainingUserId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Training", "User" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Training", "User" };
 	}
 }

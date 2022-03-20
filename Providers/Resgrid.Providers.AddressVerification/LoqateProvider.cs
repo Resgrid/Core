@@ -19,7 +19,7 @@ namespace Resgrid.Providers.AddressVerification
 				string addressString = string.Format("{0} {1} {2} {3} {4}", address.Address1, address.City, address.State, address.PostalCode, address.Country);
 
 				var client = new RestClient(Config.MappingConfig.LoqateApiUrl);
-				var request = new RestRequest(String.Format("rest/?lqtkey={0}&p=v&addr={1}", Config.MappingConfig.LoqateApiKey, HttpUtility.UrlEncode(addressString)), Method.GET);
+				var request = new RestRequest(String.Format("rest/?lqtkey={0}&p=v&addr={1}", Config.MappingConfig.LoqateApiKey, HttpUtility.UrlEncode(addressString)), Method.Get);
 
 				var response = await client.ExecuteAsync<LoqateAddressVerificationResult>(request);
 

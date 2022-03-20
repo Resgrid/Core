@@ -9,7 +9,6 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Model.Providers;
-using MoreLinq;
 
 namespace Resgrid.Services
 {

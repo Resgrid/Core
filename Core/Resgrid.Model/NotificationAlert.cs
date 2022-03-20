@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Resgrid.Model
 {
 	[Table("NotificationAlerts")]
-	public class NotificationAlert: IEntity
+	public class NotificationAlert : IEntity
 	{
 		[Key]
 		[Required]
@@ -37,13 +38,14 @@ namespace Resgrid.Model
 		public string ManualNote { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return NotificationAlertId; }
 			set { NotificationAlertId = (int)value; }
 		}
 
-		
+
 		[NotMapped]
 		public string TableName => "NotificationAlerts";
 
@@ -51,6 +53,9 @@ namespace Resgrid.Model
 		public string IdName => "NotificationAlertId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Group" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Group" };
 	}
 }

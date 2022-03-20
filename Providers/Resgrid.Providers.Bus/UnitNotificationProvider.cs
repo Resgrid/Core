@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Microsoft.Azure.NotificationHubs;
+using Newtonsoft.Json.Linq;
 
 namespace Resgrid.Providers.Bus
 {
@@ -19,14 +20,18 @@ namespace Resgrid.Providers.Bus
 			if (pushUri.UnitId.HasValue)
 			{
 				var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
-				var unitTags = new string[]
+
+				var tagsWithHashedDeviceId = new List<string>(new string[] {
+														string.Format("unitId:{0}", pushUri.UnitId),
+														string.Format("platform:{0}", pushUri.PlatformType),
+														string.Format("uuid:{0}", pushUri.PushLocation),
+														string.Format("deviceId:{0}", pushUri.DeviceId.GetHashCode())
+				});
+
+				if (pushUri.DepartmentId > 0)
 				{
-					string.Format("pushUriId:{0}", pushUri.PushUriId),
-					string.Format("deviceId:{0}", pushUri.DeviceId.GetHashCode()), // Device Id is the registration token
-					string.Format("unitId:{0}", pushUri.UnitId),
-					string.Format("uuid:{0}", pushUri.PushLocation),
-					string.Format("did:{0}", pushUri.DepartmentId)
-				};
+					tagsWithHashedDeviceId.Add(string.Format("departmentId:{0}", pushUri.DepartmentId));
+				}
 
 				CollectionQueryResult<RegistrationDescription> registrations = null;
 				try
@@ -62,30 +67,39 @@ namespace Resgrid.Providers.Bus
 				{
 					try
 					{
-						var result = await hubClient.CreateMpnsNativeRegistrationAsync(pushUri.PushLocation, unitTags);
+						var result = await hubClient.CreateMpnsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
 					}
 					catch (ArgumentException ex)
 					{
+						Framework.Logging.LogException(ex,
+						string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+							tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
 					}
 				}
 				else if (pushUri.PlatformType == (int)Platforms.UnitAndroid)
 				{
 					try
 					{
-						var result = await hubClient.CreateFcmNativeRegistrationAsync(pushUri.DeviceId, unitTags);
+						var result = await hubClient.CreateFcmNativeRegistrationAsync(pushUri.DeviceId, tagsWithHashedDeviceId.ToArray());
 					}
 					catch (ArgumentException ex)
 					{
+						Framework.Logging.LogException(ex,
+						string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+							tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
 					}
 				}
 				else if (pushUri.PlatformType == (int)Platforms.UnitIOS)
 				{
 					try
 					{
-						var result = await hubClient.CreateAppleNativeRegistrationAsync(pushUri.DeviceId, unitTags);
+						var result = await hubClient.CreateAppleNativeRegistrationAsync(pushUri.DeviceId, tagsWithHashedDeviceId.ToArray());
 					}
 					catch (ArgumentException ex)
 					{
+						Framework.Logging.LogException(ex,
+						string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+							tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
 					}
 				}
 			}
@@ -95,19 +109,11 @@ namespace Resgrid.Providers.Bus
 		{
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 
-			var registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("userId:{0}", pushUri.UserId), 50);
+			var registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("deviceId:{0}", pushUri.DeviceId), 50);
 
 			foreach (var registration in registrations)
 			{
-				if (pushUri.PlatformType == (int)Platforms.Windows8 ||
-					pushUri.PlatformType == (int)Platforms.WindowsPhone7 ||
-					pushUri.PlatformType == (int)Platforms.WindowsPhone8)
-				{
-					var winReg = registration as WindowsRegistrationDescription;
-					if (winReg != null && winReg.ChannelUri == pushUri.ChannelUri)
-						await hubClient.DeleteRegistrationAsync(registration);
-				}
-				else if (pushUri.PlatformType == (int)Platforms.Android)
+				if (pushUri.PlatformType == (int)Platforms.Android)
 				{
 					var androidReg = registration as GcmRegistrationDescription;
 					if (androidReg != null && androidReg.GcmRegistrationId == pushUri.DeviceId)
@@ -219,7 +225,7 @@ namespace Resgrid.Providers.Bus
 			return registrations;
 		}
 
-		public async Task<List<PushRegistrationDescription>> GetRegistrationsByUserId(string userId)
+		public async Task<List<PushRegistrationDescription>> GetRegistrationsByUnitId(int unitId)
 		{
 			var registrations = new List<PushRegistrationDescription>();
 
@@ -227,7 +233,7 @@ namespace Resgrid.Providers.Bus
 			{
 				var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 
-				var registraions = await hubClient.GetRegistrationsByTagAsync(string.Format("userId:{0}", userId), 50);
+				var registraions = await hubClient.GetRegistrationsByTagAsync(string.Format("unitId:{0}", unitId), 50);
 
 				if (registraions != null && registraions.Any())
 					foreach (var registraion in registraions)
@@ -298,29 +304,7 @@ namespace Resgrid.Providers.Bus
 			try
 			{
 				var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
-				string androidNotification = null;
-
-				if (type == ((int)PushSoundTypes.CallEmergency).ToString() ||
-				    type == ((int)PushSoundTypes.CallHigh).ToString() ||
-				    type == ((int)PushSoundTypes.CallMedium).ToString() ||
-					type == ((int)PushSoundTypes.CallLow).ToString())
-				{
-					androidNotification = "{ \"data\" : {\"title\":\"" + title + "\", \"message\":\"" + subTitle + "\", \"content-available\": \"1\", \"eventCode\":\"" + eventCode + "\", \"sound\":\"" +
-																			 FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type, enableCustomSounds)) + "\", \"soundname\":\"" +
-																			 FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type, enableCustomSounds)) + "\"," +
-																				 //"\"actions\": [{ title: \"RESPONDING\", callback: \"window.pushActionResponding\"},{ title: \"NOT RESPONDING\", callback: \"window.pushActionNotResponding\"},]" +
-																				 "\"actions\": [{ icon: \"emailGuests\", title: \"RESPONDING\", callback: \"pushActionResponding\"},{ icon: \"emailGuests\", title: \"NOT RESPONDING\", callback: \"pushActionNotResponding\"}]" +
-																				 "}}";
-				}
-				else
-				{
-					androidNotification = "{ \"data\" : {\"title\":\"" + title + "\", \"message\":\"" + subTitle +
-																			 "\", \"eventCode\":\"" + eventCode + "\", \"sound\":\"" +
-																			 FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type,
-																				 enableCustomSounds)) + "\", \"soundname\":\"" +
-																			 FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type,
-																				 enableCustomSounds)) + "\"}}";
-				}
+				string androidNotification = CreateAndroidNotification(subTitle, title, eventCode, type, count, color, "calls");
 
 				var androidOutcome = await hubClient.SendFcmNativeNotificationAsync(androidNotification, string.Format("unitId:{0}", unitId));
 
@@ -466,6 +450,42 @@ namespace Resgrid.Providers.Bus
 				return string.Empty;
 
 			return Path.GetFileNameWithoutExtension(fileName).Replace("_", "").ToLower();
+		}
+
+		private string CreateAndroidNotification(string title, string subTitle, string eventCode, string type, int count, string color, string channel)
+		{
+			if (color == null)
+				color = "#ff0000";
+
+			if (count == 0)
+				count = 1;
+
+			string soundFilename = FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type, true));
+
+			dynamic pushNotification = new JObject();
+			pushNotification.notification = new JObject();
+			pushNotification.notification.title = title;
+			pushNotification.notification.body = subTitle;
+			pushNotification.notification.android_channel_id = type;
+			//pushNotification.notification.sound = soundFilename + ".wav";
+			pushNotification.data = new JObject();
+			pushNotification.data["content-available"] = 1;
+			pushNotification.data["force-start"] = 1;
+			pushNotification.data.notId = eventCode;
+			pushNotification.data.eventCode = eventCode;
+
+			if (channel != null && channel == "calls")
+				pushNotification.data.priority = "high";
+
+			pushNotification.data.sound = soundFilename;
+			pushNotification.data.color = color;
+			pushNotification.data.count = count;
+			//pushNotification.data.ledColor = new JArray(0, int.Parse(color.Substring(1, 2), System.Globalization.NumberStyles.HexNumber),
+			//	int.Parse(color.Substring(3, 2), System.Globalization.NumberStyles.HexNumber), int.Parse(color.Substring(5, 2), System.Globalization.NumberStyles.HexNumber));
+			pushNotification.data.vibrationPattern = new JArray(500, 1000, 500);
+			pushNotification.data.android_channel_id = type;
+
+			return pushNotification.ToString();
 		}
 	}
 }

@@ -1,15 +1,9 @@
-﻿using Microsoft.Azure.NotificationHubs.Messaging;
-using Microsoft.Azure.ServiceBus;
-using Resgrid.Config;
-using Resgrid.Framework;
-using Resgrid.Model;
+﻿using Resgrid.Config;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Providers.Bus.Rabbit;
 using System;
-using System.Text;
-using System.Threading;
 
 namespace Resgrid.Providers.Bus
 {
@@ -59,20 +53,9 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(personnelStaffingChangedTopicHandler);
 			_eventAggregator.AddListener(unitStatusTopicHandler);
 			_eventAggregator.AddListener(callAddedTopicHandler);
+			_eventAggregator.AddListener(callUpdatedTopicHandler);
+			_eventAggregator.AddListener(callClosedTopicHandler);
 		}
-
-		#region Private Helpers
-		private static Microsoft.Azure.ServiceBus.Message CreateMessage(Guid messageId, string messageBody)
-		{
-			return new Microsoft.Azure.ServiceBus.Message(Encoding.UTF8.GetBytes(messageBody)) { MessageId = messageId.ToString() };
-		}
-
-		private static void HandleTransientErrors(MessagingException e)
-		{
-			//If transient error/exception, let's back-off for 2 seconds and retry
-			Thread.Sleep(2000);
-		}
-		#endregion Private Helpers
 
 		public Action<UnitStatusEvent> unitStatusHandler = async delegate(UnitStatusEvent message)
 		{
@@ -433,174 +416,24 @@ namespace Resgrid.Providers.Bus
 		#region Topic Based Events
 		public Action<DepartmentSettingsChangedEvent> departmentSettingsChangedHandler = async delegate(DepartmentSettingsChangedEvent message)
 		{
-			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusConnectionString, Topics.GenericTopic);
+			var nqi = new NotificationItem();
 
-			var messageBus = CreateMessage(Guid.NewGuid(), new { DepartmentId = message.DepartmentId }.SerializeJson());
-			messageBus.CorrelationId = message.DepartmentId.ToString();
-			messageBus.UserProperties.Add("Type", (int)EventTypes.DepartmentSettingsChanged);
-			messageBus.UserProperties.Add("Value", message.DepartmentId);
-			messageBus.UserProperties.Add("DepartmentId", message.DepartmentId);
+			nqi.Type = (int)EventTypes.DepartmentSettingsChanged;
+			nqi.DepartmentId = message.DepartmentId;
+			nqi.ItemId = message.DepartmentId;
+			nqi.Value = message.DepartmentId.ToString();
 
-			while (true)
-			{
-				try
-				{
-					await topicClient.SendAsync(messageBus);
-					break;
-				}
-				catch (MessagingCommunicationException e)
-				{
-					if (!e.IsTransient)
-						throw;
-					else
-						HandleTransientErrors(e);
-				}
-			}
+			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
-
-		//public class DepartmentSettingsChangedHandler : IListener<DepartmentSettingsChangedEvent>
-		//{
-		//	public async Task<bool> Handle(DepartmentSettingsChangedEvent message)
-		//	{
-		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusConnectionString, Topics.GenericTopic);
-
-		//		var messageBus = CreateMessage(Guid.NewGuid(), new { DepartmentId = message.DepartmentId }.SerializeJson());
-		//		messageBus.CorrelationId = message.DepartmentId.ToString();
-		//		messageBus.UserProperties.Add("Type", (int)EventTypes.DepartmentSettingsChanged);
-		//		messageBus.UserProperties.Add("Value", message.DepartmentId);
-		//		messageBus.UserProperties.Add("DepartmentId", message.DepartmentId);
-
-		//		while (true)
-		//		{
-		//			try
-		//			{
-		//				await topicClient.SendAsync(messageBus);
-		//				break;
-		//			}
-		//			catch (MessagingCommunicationException e)
-		//			{
-		//				if (!e.IsTransient)
-		//					throw;
-		//				else
-		//					HandleTransientErrors(e);
-		//			}
-		//		}
-
-		//		return true;
-		//	}
-		//}
 
 		public Action<WorkerHeartbeatEvent> workerHeartbeatHandler = async delegate(WorkerHeartbeatEvent message)
 		{
-			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
-
-			var messageBus = CreateMessage(Guid.NewGuid(), new { WorkerType = message.WorkerType, TimeStamp = message.Timestamp }.SerializeJson());
-			messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.Worker);
-
-			while (true)
-			{
-				int retryCount = 0;
-
-				try
-				{
-					await topicClient.SendAsync(messageBus);
-					break;
-				}
-				catch (MessagingException e)
-				{
-					if (!e.IsTransient)
-						throw;
-					else
-						HandleTransientErrors(e);
-				}
-				catch (TimeoutException)
-				{
-					if (retryCount < 3)
-					{
-						retryCount++;
-						Thread.Sleep(2000);
-					}
-					else
-						throw;
-				}
-			}
+			
 		};
-
-		//public class WorkerHeartbeatHandler : IListener<WorkerHeartbeatEvent>
-		//{
-		//	public async Task<bool> Handle(WorkerHeartbeatEvent message)
-		//	{
-		//		var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
-
-		//		var messageBus = CreateMessage(Guid.NewGuid(), new { WorkerType = message.WorkerType, TimeStamp = message.Timestamp }.SerializeJson());
-		//		messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.Worker);
-
-		//		while (true)
-		//		{
-		//			int retryCount = 0;
-
-		//			try
-		//			{
-		//				await topicClient.SendAsync(messageBus);
-		//				break;
-		//			}
-		//			catch (MessagingException e)
-		//			{
-		//				if (!e.IsTransient)
-		//					throw;
-		//				else
-		//					HandleTransientErrors(e);
-		//			}
-		//			catch (TimeoutException)
-		//			{
-		//				if (retryCount < 3)
-		//				{
-		//					retryCount++;
-		//					Thread.Sleep(2000);
-		//				}
-		//				else
-		//					throw;
-		//			}
-		//		}
-
-		//		return true;
-		//	}
-		//}
 
 		public Action<DistributionListCheckEvent> dListCheckHandler = async delegate(DistributionListCheckEvent message)
 		{
-			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureServiceBusWorkerConnectionString, Topics.WorkerHeartbeatTopic);
-
-			var messageBus = CreateMessage(Guid.NewGuid(), new { ListId = message.DistributionListId, TimeStamp = message.Timestamp, IsFailure = message.IsFailure, ErrorMessage = message.ErrorMessage }.SerializeJson());
-			messageBus.UserProperties.Add("Type", (int)HeartbeatTypes.DListCheck);
-
-			while (true)
-			{
-				int retryCount = 0;
-
-				try
-				{
-					await topicClient.SendAsync(messageBus);
-					break;
-				}
-				catch (MessagingException e)
-				{
-					if (!e.IsTransient)
-						throw;
-					else
-						HandleTransientErrors(e);
-				}
-				catch (TimeoutException)
-				{
-					if (retryCount < 3)
-					{
-						retryCount++;
-						Thread.Sleep(2000);
-					}
-					else
-						throw;
-				}
-			}
+			
 		};
 
 		public Action<UserStatusEvent> personnelStatusChangedTopicHandler = async delegate (UserStatusEvent message)
@@ -612,41 +445,7 @@ namespace Resgrid.Providers.Bus
 			else
 			{
 
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-				var topicMessage = CreateMessage(Guid.NewGuid(),
-					new
-					{
-						Type = EventingTypes.PersonnelStatusUpdated,
-						TimeStamp = DateTime.UtcNow,
-						DepartmentId = message.Status.DepartmentId,
-						ItemId = message.Status.ActionLogId
-					}.SerializeJson());
-				topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStatusUpdated);
-				topicMessage.UserProperties.Add("DepartmentId", message.Status.DepartmentId);
-				topicMessage.UserProperties.Add("ItemId", message.Status.ActionLogId);
-
-
-				int retry = 0;
-				bool sent = false;
-
-				while (!sent)
-				{
-					try
-					{
-						await topicClient.SendAsync(topicMessage);
-						sent = true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
-
-						if (retry >= 5)
-							break;
-
-						Thread.Sleep(1000);
-						retry++;
-					}
-				}
+				
 			}
 		};
 
@@ -655,42 +454,6 @@ namespace Resgrid.Providers.Bus
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 				_rabbitTopicProvider.PersonnelStaffingChanged(message);
-
-			var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-			var topicMessage = CreateMessage(Guid.NewGuid(),
-				new
-				{
-					Type = EventingTypes.PersonnelStaffingUpdated,
-					TimeStamp = DateTime.UtcNow,
-					DepartmentId = message.DepartmentId,
-					ItemId = message.Staffing.UserStateId
-				}.SerializeJson());
-			topicMessage.UserProperties.Add("Type", (int)EventingTypes.PersonnelStaffingUpdated);
-			topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
-			topicMessage.UserProperties.Add("ItemId", message.Staffing.UserStateId);
-
-
-			int retry = 0;
-			bool sent = false;
-
-			while (!sent)
-			{
-				try
-				{
-					await topicClient.SendAsync(topicMessage);
-					sent = true;
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, message.ToString());
-
-					if (retry >= 5)
-						break;
-
-					Thread.Sleep(1000);
-					retry++;
-				}
-			}
 		};
 
 		public Action<UnitStatusEvent> unitStatusTopicHandler = async delegate(UnitStatusEvent message)
@@ -701,41 +464,6 @@ namespace Resgrid.Providers.Bus
 			}
 			else
 			{
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-				var topicMessage = CreateMessage(Guid.NewGuid(),
-					new
-					{
-						Type = EventingTypes.UnitStatusUpdated,
-						TimeStamp = DateTime.UtcNow,
-						DepartmentId = message.DepartmentId,
-						ItemId = message.Status.UnitStateId
-					}.SerializeJson());
-				topicMessage.UserProperties.Add("Type", (int)EventingTypes.UnitStatusUpdated);
-				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
-				topicMessage.UserProperties.Add("ItemId", message.Status.UnitStateId);
-
-
-				int retry = 0;
-				bool sent = false;
-
-				while (!sent)
-				{
-					try
-					{
-						await topicClient.SendAsync(topicMessage);
-						sent = true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
-
-						if (retry >= 5)
-							break;
-
-						Thread.Sleep(1000);
-						retry++;
-					}
-				}
 			}
 		};
 
@@ -747,40 +475,31 @@ namespace Resgrid.Providers.Bus
 			}
 			else
 			{
-				var topicClient = new TopicClient(Config.ServiceBusConfig.AzureEventingTopicConnectionString, Topics.EventingTopic);
-				var topicMessage = CreateMessage(Guid.NewGuid(),
-					new
-					{
-						Type = EventingTypes.CallsUpdated,
-						TimeStamp = DateTime.UtcNow,
-						DepartmentId = message.DepartmentId,
-						ItemId = message.Call.CallId
-					}.SerializeJson());
-				topicMessage.UserProperties.Add("Type", (int)EventingTypes.CallsUpdated);
-				topicMessage.UserProperties.Add("DepartmentId", message.DepartmentId);
-				topicMessage.UserProperties.Add("ItemId", message.Call.CallId);
+				
+			}
+		};
 
-				int retry = 0;
-				bool sent = false;
+		public Action<CallUpdatedEvent> callUpdatedTopicHandler = async delegate (CallUpdatedEvent message)
+		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			{
+				_rabbitTopicProvider.CallUpdated(message);
+			}
+			else
+			{
 
-				while (!sent)
-				{
-					try
-					{
-						await topicClient.SendAsync(topicMessage);
-						sent = true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex, message.ToString());
+			}
+		};
 
-						if (retry >= 5)
-							break;
+		public Action<CallClosedEvent> callClosedTopicHandler = async delegate (CallClosedEvent message)
+		{
+			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			{
+				_rabbitTopicProvider.CallClosed(message);
+			}
+			else
+			{
 
-						Thread.Sleep(1000);
-						retry++;
-					}
-				}
 			}
 		};
 		#endregion Topic Based Events

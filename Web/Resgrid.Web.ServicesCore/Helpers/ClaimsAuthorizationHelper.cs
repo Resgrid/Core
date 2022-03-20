@@ -102,6 +102,16 @@ namespace Resgrid.Web.ServicesCore.Helpers
 			return String.Empty;
 		}
 
+		public static string GetTimeZone()
+		{
+			var claim = GetClaimsPrincipal().FindFirst(ResgridClaimTypes.Data.TimeZone);
+
+			if (claim != null)
+				return claim.Value;
+
+			return String.Empty;
+		}
+
 		public static bool IsUserResgridAdmin()
 		{
 			//ClaimsAuthorizationManager authorizationManager = FederatedAuthentication.FederationConfiguration.IdentityConfiguration.ClaimsAuthorizationManager;

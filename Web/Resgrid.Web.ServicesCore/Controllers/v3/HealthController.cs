@@ -14,6 +14,7 @@ namespace Resgrid.Web.Services.Controllers.v3
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
 	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	[ApiController]
 	[AllowAnonymous]
 	public class HealthController: Controller

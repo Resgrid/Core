@@ -53,7 +53,7 @@ namespace Resgrid.Services
 
 				var payment = (from p in await _paymentsRepository.GetAllAsync()
 							   where p.DepartmentId == departmentId && p.EffectiveOn <= dateTime && p.EndingOn >= dateTime
-							   orderby p.PaymentId descending 
+							   orderby p.PaymentId descending
 							   select p).FirstOrDefault();
 
 				// Sometimes were not getting the plan back, need to get it from the db.
@@ -75,9 +75,9 @@ namespace Resgrid.Services
 		{
 			// I went with amount here as there could be preview payments, demo payments, etc in the system, no just Plans.FreePaymentId. 
 			var payment = (from p in await _paymentsRepository.GetAllAsync()
-										 where p.DepartmentId == departmentId && p.PaymentId < paymentId && p.Amount != 0
-										 orderby p.PaymentId descending
-										 select p).FirstOrDefault();
+						   where p.DepartmentId == departmentId && p.PaymentId < paymentId && p.Amount != 0
+						   orderby p.PaymentId descending
+						   select p).FirstOrDefault();
 
 			return payment;
 		}
@@ -117,8 +117,8 @@ namespace Resgrid.Services
 			async Task<Plan> getPlan()
 			{
 				return (from p in await _plansRepository.GetAllAsync()
-					where p.ExternalId == externalId
-					select p).FirstOrDefault();
+						where p.ExternalId == externalId
+						select p).FirstOrDefault();
 			}
 
 			if (!byPassCache && Config.SystemBehaviorConfig.CacheEnabled)
@@ -143,7 +143,7 @@ namespace Resgrid.Services
 			 * plans can be selected by a user to buy now, this will prevent them from changing
 			 * the query to a free plan, like Beta 2yr, Unlimited Free or Open preview.
 			 */
-			if (planId == 20 || planId == 21 || planId == 22 || planId == 23 || planId == 24 || planId == 25 || planId == 26 || 
+			if (planId == 20 || planId == 21 || planId == 22 || planId == 23 || planId == 24 || planId == 25 || planId == 26 ||
 				planId == 27 || planId == 28 || planId == 29 || planId == 30 || planId == 31 || planId == 32 || planId == 33)
 				return true;
 
@@ -210,7 +210,7 @@ namespace Resgrid.Services
 		public List<int> GetPossibleDowngradesForPlan(int planId)
 		{
 			List<int> plans = new List<int>();
-			
+
 			return plans;
 		}
 
@@ -247,15 +247,15 @@ namespace Resgrid.Services
 				if (days < 0)
 					return 0;
 				else if (days > 365)
-					days = 0; 
+					days = 0;
 
-				double dayCost = adjustedPrice/365;
+				double dayCost = adjustedPrice / 365;
 
-				return adjustedPrice - (days*dayCost);
+				return adjustedPrice - (days * dayCost);
 			}
 			else
 			{
-				if (plan.Frequency == (int) PlanFrequency.Monthly && payment.Plan.Frequency == (int) PlanFrequency.Yearly)
+				if (plan.Frequency == (int)PlanFrequency.Monthly && payment.Plan.Frequency == (int)PlanFrequency.Yearly)
 				{
 					var days = DateTime.UtcNow.Subtract(payment.EffectiveOn).TotalDays;
 					days = Math.Round(days, MidpointRounding.ToEven);
@@ -284,7 +284,7 @@ namespace Resgrid.Services
 			return 0;
 		}
 
-		public Tuple<int,double> CalculateCyclesTillFirstBill(double balance, double cost)
+		public Tuple<int, double> CalculateCyclesTillFirstBill(double balance, double cost)
 		{
 			int cycles = 0;
 			double remainder = -balance;
@@ -295,7 +295,7 @@ namespace Resgrid.Services
 				remainder += cost;
 			}
 
-			return new Tuple<int, double>(cycles,remainder);
+			return new Tuple<int, double>(cycles, remainder);
 		}
 
 		public async Task<Payment> CreateOpenPreviewPaymentAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
@@ -304,7 +304,7 @@ namespace Resgrid.Services
 			payment.DepartmentId = departmentId;
 			payment.PurchasingUserId = userId;
 			payment.PlanId = 7;
-			payment.Method = (int) PaymentMethods.System;
+			payment.Method = (int)PaymentMethods.System;
 			payment.IsTrial = false;
 			payment.IsUpgrade = false;
 			payment.PurchaseOn = DateTime.UtcNow;
@@ -344,6 +344,89 @@ namespace Resgrid.Services
 			ClearCacheForCurrentPayment(departmentId);
 
 			return saved;
+		}
+
+		public async Task<List<PaymentAddon>> GetCurrentPaymentAddonsForDepartmentAsync(int departmentId, List<string> planAddonIds)
+		{
+			List<PaymentAddon> paymentAddons = new List<PaymentAddon>();
+
+			if (planAddonIds != null && planAddonIds.Any())
+			{
+				foreach (var planAddonId in planAddonIds)
+				{
+					PaymentAddon addon = new PaymentAddon();
+					addon.DepartmentId = departmentId;
+					addon.PlanAddonId = planAddonId;
+					addon.TransactionId = "SYSTEM";
+					addon.Description = "Addon Forever";
+					addon.Amount = 0.00;
+					addon.Cancelled = false;
+					addon.EffectiveOn = DateTime.UtcNow.AddDays(-1);
+					addon.EndingOn = DateTime.MaxValue;
+
+					paymentAddons.Add(addon);
+				}
+			}
+
+			return paymentAddons;
+		}
+
+		public async Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType)
+		{
+			List<PlanAddon> addons = new List<PlanAddon>();
+
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			addons.Add(addon);
+
+			return addons;
+		}
+
+		public async Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentAsync(int departmentId)
+		{
+			List<PlanAddon> addons = new List<PlanAddon>();
+
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			addons.Add(addon);
+
+			return addons;
+		}
+
+
+		public async Task<PlanAddon> GetPTTAddonPlanForDepartmentAsync(int departmentId)
+		{
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			return addon;
+		}
+
+		public async Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentFromStripeAsync(int departmentId)
+		{
+			List<PlanAddon> addons = new List<PlanAddon>();
+
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			addons.Add(addon);
+
+			return addons;
+		}
+
+		public async Task<PlanAddon> GetPTTAddonPlanForDepartmentFromStripeAsync(int departmentId)
+		{
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			return addon;
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,12 +28,12 @@ namespace Resgrid.Model
 		public string Code { get; set; }
 
 		public bool IsDisabled { get; set; }
-		
+
 		[MaxLength(500)]
 		public string Description { get; set; }
 
 		public string ProtocolText { get; set; }
-		
+
 		[Required]
 		public DateTime CreatedOn { get; set; }
 
@@ -56,6 +57,7 @@ namespace Resgrid.Model
 		public ProtocolStates State { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DispatchProtocolId; }
@@ -69,6 +71,9 @@ namespace Resgrid.Model
 		public string IdName => "DispatchProtocolId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Triggers", "Attachments", "Questions", "State" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Triggers", "Attachments", "Questions", "State" };
 	}
 }

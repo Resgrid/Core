@@ -36,9 +36,11 @@ namespace Resgrid.Framework
 											{
 												o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
 												o.MinimumEventLevel = LogEventLevel.Error;
-												o.Dsn = new Dsn(dsn);
+												o.Dsn = dsn;
 												o.AttachStacktrace = true;
 												o.SendDefaultPii = true;
+												o.Environment = ExternalErrorConfig.Environment;
+												o.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
 											}).CreateLogger();
 				}
 				else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)
@@ -64,12 +66,12 @@ namespace Resgrid.Framework
 			}
 		}
 
-		public static void LogException(Exception exception, string extraMessage = "",
+		public static void LogException(Exception exception, string extraMessage = "", string correlationId = "", 
 			[CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerMemberName = "", [CallerLineNumber] int callerLineNumber = 0)
 		{
 			Initialize(null);
-			string msgToLog = string.Format("{0}\r\n{4}\r\n\r\nAssemblyName:{5}\r\nCallerFilePath:{1}\r\nCallerMemberName:{2}\r\nCallerLineNumber:{3}", extraMessage,
-				callerFilePath, callerMemberName, callerLineNumber, exception.ToString(), Assembly.GetExecutingAssembly().FullName);
+			string msgToLog = string.Format("{0}\r\n{4}\r\n\r\nAssemblyName:{5}\r\nCallerFilePath:{1}\r\nCallerMemberName:{2}\r\nCallerLineNumber:{3}r\nCorrelationId:{6}", extraMessage,
+				callerFilePath, callerMemberName, callerLineNumber, exception.ToString(), Assembly.GetExecutingAssembly().FullName, correlationId);
 
 
 			if (_logger != null)

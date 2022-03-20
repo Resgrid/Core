@@ -41,7 +41,7 @@ namespace Resgrid.Model
 		public virtual ICollection<ShiftSignup> Signups { get; set; }
 
 		[NotMapped]
-		public object IdValue
+		[JsonIgnore]public object IdValue
 		{
 			get { return ShiftId; }
 			set { ShiftId = (int)value; }
@@ -54,7 +54,10 @@ namespace Resgrid.Model
 		public string IdName => "ShiftId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Groups", "Days", "Personnel", "PersoAdminsnnel", "Signups", "Admins" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Groups", "Days", "Personnel", "PersoAdminsnnel", "Signups", "Admins" };
 
 		public ShiftDay GetShiftDayforDateTime(DateTime timestamp)
 		{

@@ -26,6 +26,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 {
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class UnitAppController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;
@@ -319,7 +321,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Map = c.MapPage;
 					call.Not = c.Notes;
 
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -443,7 +445,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Map = c.MapPage;
 					call.Not = c.Notes;
 
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 

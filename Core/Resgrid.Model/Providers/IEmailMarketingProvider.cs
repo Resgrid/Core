@@ -1,10 +1,12 @@
-﻿namespace Resgrid.Model.Providers
+﻿using System.Threading.Tasks;
+
+namespace Resgrid.Model.Providers
 {
 	public interface IEmailMarketingProvider
 	{
-		void Unsubscribe(string emailAddress);
-		void SubscribeUserToAdminList(string firstName, string lastName, string emailAddress);
-		void SubscribeUserToUsersList(string firstName, string lastName, string emailAddress);
-		void IncreaseStatusPageMetric(string metric);
+		Task<bool> Unsubscribe(string emailAddress);
+		Task<bool> SubscribeUserToAdminList(string firstName, string lastName, string emailAddress);
+		Task<bool> SubscribeUserToUsersList(string firstName, string lastName, string emailAddress);
+		Task<bool> IncreaseStatusPageMetric(string metric);
 	}
 }

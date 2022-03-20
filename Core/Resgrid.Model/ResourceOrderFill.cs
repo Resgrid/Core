@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Resgrid.Model.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -34,7 +35,7 @@ namespace Resgrid.Model
 		public string Note { get; set; }
 
 		public string ContactName { get; set; }
-		
+
 		public string ContactNumber { get; set; }
 
 		public DateTime FilledOn { get; set; }
@@ -56,13 +57,14 @@ namespace Resgrid.Model
 		public virtual ICollection<ResourceOrderFillUnit> Units { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return ResourceOrderFillId; }
 			set { ResourceOrderFillId = (int)value; }
 		}
 
-		
+
 		[NotMapped]
 		public string TableName => "ResourceOrderFills";
 
@@ -70,6 +72,9 @@ namespace Resgrid.Model
 		public string IdName => "ResourceOrderFillId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "OrderItem", "FillingUser", "LeadUser", "AcceptedUser", "Units" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "OrderItem", "FillingUser", "LeadUser", "AcceptedUser", "Units" };
 	}
 }

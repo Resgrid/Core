@@ -65,11 +65,10 @@ namespace Resgrid.Workers.Console
 					{
 						services.AddSingleton<IHostedService, DatabaseUpgradeService>();
 					}
-					else
-					{
-						services.AddSingleton<IHostedService, QueuesProcessingService>();
-						services.AddSingleton<IHostedService, ScheduledJobsService>();
-					}
+
+					services.AddSingleton<IHostedService, QueuesProcessingService>();
+					services.AddSingleton<IHostedService, ScheduledJobsService>();
+					
 				})
 				.ConfigureLogging((hostingContext, logging) => {
 					logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
@@ -84,11 +83,13 @@ namespace Resgrid.Workers.Console
 			System.Console.WriteLine("Initializing Dependencies...");
 
 			if (!String.IsNullOrWhiteSpace(Configuration["DOTNET_RUNNING_IN_CONTAINER"]))
-				ConfigProcessor.LoadAndProcessConfig(ConfigurationManager.AppSettings["ConfigPath"]);
+				ConfigProcessor.LoadAndProcessConfig(System.Configuration.ConfigurationManager.AppSettings["ConfigPath"]);
 
 			SetConnectionString();
 
 			Bootstrapper.Initialize();
+
+			Resgrid.Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs);
 
 			var eventAggragator = Bootstrapper.GetKernel().Resolve<IEventAggregator>();
 			var outbound = Bootstrapper.GetKernel().Resolve<IOutboundEventProvider>();
@@ -97,9 +98,9 @@ namespace Resgrid.Workers.Console
 			SerializerHelper.WarmUpProtobufSerializer();
 
 			if (Resgrid.Config.PaymentProviderConfig.IsTestMode)
-				StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.TestApiKey);
+				StripeConfiguration.ApiKey = Resgrid.Config.PaymentProviderConfig.TestApiKey;
 			else
-				StripeConfiguration.SetApiKey(Resgrid.Config.PaymentProviderConfig.ProductionApiKey);
+				StripeConfiguration.ApiKey = Resgrid.Config.PaymentProviderConfig.ProductionApiKey;
 
 			System.Console.WriteLine("Finished Initializing Dependencies.");
 		}
@@ -119,7 +120,7 @@ namespace Resgrid.Workers.Console
 
 		private static void SetConnectionString()
 		{
-			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+			var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
 
 			//var test = Configuration["ConnectionStrings:ResgridContext"];
@@ -132,7 +133,7 @@ namespace Resgrid.Workers.Console
 				connectionStringsSection.ConnectionStrings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
 
 			config.Save();
-			ConfigurationManager.RefreshSection("connectionStrings");
+			System.Configuration.ConfigurationManager.RefreshSection("connectionStrings");
 		}
 	}
 
@@ -303,6 +304,12 @@ namespace Resgrid.Workers.Console
 					new Commands.StatusScheduleCommand(11),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Dispatch Scheduled Calls");
+				await client.ScheduleAsync("Scheduled Calls",
+					new Commands.StatusScheduleCommand(12),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
 			}
 			else
 			{
@@ -383,7 +390,7 @@ namespace Resgrid.Workers.Console
 					// Add SQL Server support to FluentMigrator
 					.AddSqlServer()
 					// Set the connection string
-					.WithGlobalConnectionString(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
+					.WithGlobalConnectionString(System.Configuration.ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
 					// Define the assembly containing the migrations
 					.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
 				// Enable logging to console in the FluentMigrator way

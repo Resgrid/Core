@@ -2,26 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
-using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
 	public class BroadcastCallLogic
 	{
-		private IQueueService _queueService;
-		private QueueClient _client = null;
-
 		private static ICommunicationService _communicationService;
 		private static ICallsService _callsService;
 		private static IUserProfileService _userProfilesService;
@@ -29,120 +22,6 @@ namespace Resgrid.Workers.Framework.Logic
 		private static IUnitsService _unitsService;
 		private static IPersonnelRolesService _rolesService;
 		private static IPrinterProvider _printerProvider;
-
-		public BroadcastCallLogic()
-		{
-			while (_client == null)
-			{
-				try
-				{
-					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueConnectionString, Config.ServiceBusConfig.CallBroadcastQueueName);
-
-					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueConnectionString, Config.ServiceBusConfig.CallBroadcastQueueName);
-				}
-				catch (TimeoutException) { }
-			}
-		}
-
-		public async Task<bool> Process(CallQueueItem item)
-		{
-			bool success = true;
-
-			if (Config.SystemBehaviorConfig.IsAzure)
-			{
-				//ProcessQueueMessage(_client.Receive());
-
-				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-				{
-					MaxConcurrentCalls = 1,
-					AutoComplete = false
-				};
-
-				// Register the function that will process messages
-				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
-			}
-			else
-			{
-				return await ProcessCallQueueItem(item);
-			}
-
-			_queueService = null;
-
-			return false;
-		}
-
-		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
-		{
-			bool success = true;
-			string result = "";
-
-			if (message != null)
-			{
-				try
-				{
-					var body = message.GetBody<string>();
-
-					if (!String.IsNullOrWhiteSpace(body))
-					{
-						CallQueueItem cqi = null;
-						try
-						{
-							cqi = ObjectSerialization.Deserialize<CallQueueItem>(body);
-						}
-						catch (Exception ex)
-						{
-							success = false;
-							result = "Unable to parse message body Exception: " + ex.ToString();
-							//message.DeadLetter();
-							await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
-						}
-
-						if (cqi != null && cqi.Call != null && cqi.Call.HasAnyDispatches())
-						{
-							try
-							{
-								await ProcessCallQueueItem(cqi);
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex);
-								//message.Abandon();
-								await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
-
-								success = false;
-								result = ex.ToString();
-							}
-						}
-					}
-					else
-					{
-						success = false;
-						result = "Message body is null or empty";
-					}
-
-					try
-					{
-						//message.Complete();
-						await _client.CompleteAsync(message.SystemProperties.LockToken);
-					}
-					catch (MessageLockLostException)
-					{
-
-					}
-				}
-				catch (Exception ex)
-				{
-					success = false;
-					result = ex.ToString();
-
-					Logging.LogException(ex);
-					//message.Abandon();
-					await _client.DeadLetterAsync(message.SystemProperties.LockToken); 
-				}
-			}
-
-			return new Tuple<bool, string>(success, result);
-		}
 
 		public static async Task<bool> ProcessCallQueueItem(CallQueueItem cqi)
 		{
@@ -404,17 +283,6 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return true;
-		}
-
-		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
-		{
-			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-			//Console.WriteLine("Exception context for troubleshooting:");
-			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
-			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
-			//Console.WriteLine($"- Executing Action: {context.Action}");
-			return Task.CompletedTask;
 		}
 	}
 }

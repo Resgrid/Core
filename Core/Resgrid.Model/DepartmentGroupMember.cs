@@ -32,7 +32,7 @@ namespace Resgrid.Model
 		public bool? IsAdmin { get; set; }
 
 		[NotMapped]
-		public object IdValue
+		[JsonIgnore]public object IdValue
 		{
 			get { return DepartmentGroupMemberId; }
 			set { DepartmentGroupMemberId = (int)value; }
@@ -45,6 +45,9 @@ namespace Resgrid.Model
 		public string IdName => "DepartmentGroupMemberId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "DepartmentGroup", "User" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "DepartmentGroup", "User" };
 	}
 }

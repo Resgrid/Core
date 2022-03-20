@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Resgrid.Framework;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -34,29 +35,32 @@ namespace Resgrid.Workers.Framework.Logic
 				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(item.Training.Users.Select(x => x.UserId).ToList());
 				var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
 
-				if (!item.Training.Notified.HasValue)
+				if (ConfigHelper.CanTransmit(item.Training.DepartmentId))
 				{
-					if (item.Training.ToBeCompletedBy.HasValue)
-						message = string.Format("New Training ({0}) due on {1}", item.Training.Name,
-							item.Training.ToBeCompletedBy.Value.ToShortDateString());
+					if (!item.Training.Notified.HasValue)
+					{
+						if (item.Training.ToBeCompletedBy.HasValue)
+							message = string.Format("New Training ({0}) due on {1}", item.Training.Name,
+								item.Training.ToBeCompletedBy.Value.ToShortDateString());
+						else
+							message = string.Format("New Training ({0}) assigned to you", item.Training.Name);
+
+						title = "New Training Notice";
+					}
 					else
-						message = string.Format("New Training ({0}) assigned to you", item.Training.Name);
+					{
+						message = string.Format("Training ({0}) is due tomorrow", item.Training.Name);
+					}
 
-					title = "New Training Notice";
-				}
-				else
-				{
-					message = string.Format("Training ({0}) is due tomorrow", item.Training.Name);
-				}
+					foreach (var person in item.Training.Users)
+					{
+						var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
 
-				foreach (var person in item.Training.Users)
-				{
-					var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
+						if (!item.Training.Notified.HasValue || !person.Complete)
+							await _communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, title, profile);
 
-					if (!item.Training.Notified.HasValue || !person.Complete)
-						await _communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, title, profile);
-
-					title = "Training Due Notice";
+						title = "Training Due Notice";
+					}
 				}
 
 				await _trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);

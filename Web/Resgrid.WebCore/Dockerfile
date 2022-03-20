@@ -1,10 +1,13 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+ARG BUILD_VERSION=3.5.0
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.1-bullseye-slim-amd64 AS base
+ARG BUILD_VERSION
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.101-bullseye-slim-amd64 AS build
+ARG BUILD_VERSION
 WORKDIR /src
 COPY ["Web/Resgrid.WebCore/Resgrid.WebCore.csproj", "Web/Resgrid.WebCore/"]
 COPY ["Providers/Resgrid.Providers.Bus.Rabbit/Resgrid.Providers.Bus.Rabbit.csproj", "Providers/Resgrid.Providers.Bus.Rabbit/"]
@@ -20,23 +23,26 @@ COPY ["Repositories/Resgrid.Repositories.DataRepository/Resgrid.Repositories.Dat
 COPY ["Providers/Resgrid.Providers.Number/Resgrid.Providers.Number.csproj", "Providers/Resgrid.Providers.Number/"]
 COPY ["Providers/Resgrid.Providers.Firebase/Resgrid.Providers.Firebase.csproj", "Providers/Resgrid.Providers.Firebase/"]
 COPY ["Providers/Resgrid.Providers.Email/Resgrid.Providers.Email.csproj", "Providers/Resgrid.Providers.Email/"]
-COPY ["Providers/Resgrid.Providers.Audio/Resgrid.Providers.Audio.csproj", "Providers/Resgrid.Providers.Audio/"]
 COPY ["Providers/Resgrid.Providers.Marketing/Resgrid.Providers.Marketing.csproj", "Providers/Resgrid.Providers.Marketing/"]
 COPY ["Providers/Resgrid.Providers.Pdf/Resgrid.Providers.Pdf.csproj", "Providers/Resgrid.Providers.Pdf/"]
 COPY ["Providers/Resgrid.Providers.Claims/Resgrid.Providers.Claims.csproj", "Providers/Resgrid.Providers.Claims/"]
 COPY ["Providers/Resgrid.Providers.Migrations/Resgrid.Providers.Migrations.csproj", "Providers/Resgrid.Providers.Migrations/"]
+COPY ["Providers/Resgrid.Providers.Voip/Resgrid.Providers.Voip.csproj", "Providers/Resgrid.Providers.Voip/"]
 RUN dotnet restore "Web/Resgrid.WebCore/Resgrid.WebCore.csproj"
 COPY . .
 WORKDIR "/src/Web/Resgrid.WebCore"
 
-RUN dotnet build "Resgrid.WebCore.csproj" -c Release -o /app/build
-
 FROM build AS publish
+ARG BUILD_VERSION
 RUN dotnet tool install -g Microsoft.Web.LibraryManager.Cli
 ENV PATH="${PATH}:/root/.dotnet/tools"
-RUN dotnet publish "Resgrid.WebCore.csproj" -c Release -o /app/publish
+RUN dotnet publish "Resgrid.WebCore.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 
 FROM base AS final
+## Add the wait script to the image
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait wait
+RUN chmod +x wait
+
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Resgrid.WebCore.dll"]
+ENTRYPOINT ["sh", "-c", "./wait && dotnet Resgrid.WebCore.dll"]

@@ -1,7 +1,7 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Notes.ViewNoteView
 @{
-		ViewBag.Title = "Resgrid | View Note";
+  ViewBag.Title = "Resgrid | View Note";
 }
 
 @section Styles
@@ -10,77 +10,77 @@
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>View Note</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Notes" asp-action="Index" asp-route-area="User">Notes</a>
-			</li>
-			<li class="active">
-				<strong>View Note</strong>
-			</li>
-		</ol>
-	</div>
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-	{
-		<div class="col-sm-8">
-			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Edit Note" class="btn btn-primary" asp-controller="Notes" asp-action="Edit" asp-route-area="User" asp-route-noteId="@Model.Note.NoteId">Edit Note</a>
-				<a title="Delete note" class="btn btn-danger" asp-controller="Notes" asp-action="Delete" asp-route-area="User" asp-route-noteId="@Model.Note.NoteId" data-confirm="WARNING: This will permanently delete this note. Are you sure you want to delete the note?" rel="nofollow">Delete Note</a>
-			</div>
-		</div>
-	}
+  <div class="col-sm-4">
+    <h2>View Note</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li>
+        <a asp-controller="Notes" asp-action="Index" asp-route-area="User">Notes</a>
+      </li>
+      <li class="active">
+        <strong>View Note</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a title="Edit Note" class="btn btn-primary" asp-controller="Notes" asp-action="Edit" asp-route-area="User" asp-route-noteId="@Model.Note.NoteId">Edit Note</a>
+        <a title="Delete note" class="btn btn-danger" asp-controller="Notes" asp-action="Delete" asp-route-area="User" asp-route-noteId="@Model.Note.NoteId" data-confirm="WARNING: This will permanently delete this note. Are you sure you want to delete the note?" rel="nofollow">Delete Note</a>
+      </div>
+    </div>
+  }
 </div>
 
 <div class="wrapper wrapper-content  animated fadeInRight article">
-	<div class="row">
-		<div class="col-lg-10 col-lg-offset-1">
-			<div class="ibox">
+  <div class="row">
+    <div class="col-lg-10 col-lg-offset-1">
+      <div class="ibox">
 
-				<div class="ibox-content">
-					<div class="pull-right">
-						<button class="btn btn-white btn-xs" type="button">@Model.Note.Category</button>
-					</div>
-					<div class="text-center article-title">
-						<span class="text-muted"><i class="fa fa-clock-o"></i> @Model.Note.AddedOn.TimeConverter(Model.Department).ToShortDateString()</span>
-						<h1>
-							@Model.Note.Title
-						</h1>
-					</div>
-					<p>
-						@Html.Raw(Model.Note.Body)
-					</p>
-					<hr>
-					<div class="row">
-						<div class="col-md-6">
-							<h5>Category:</h5>
-							@Model.Note.Category
-						</div>
-						<div class="col-md-6">
-							<div class="small text-right">
-								<h5></h5>
-								@if (Model.Note.IsAdminOnly)
-								{
-									<i class="fa fa-eye"> </i><span>Viewable by Admins Only</span>
-								}
-								else
-								{
-									<i class="fa fa-eye"> </i><span>Viewable by Everyone </span>
-								}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="ibox-content">
+          <div class="pull-right">
+            <button class="btn btn-white btn-xs" type="button">@Model.Note.Category</button>
+          </div>
+          <div class="text-center article-title">
+            <span class="text-muted"><i class="fa fa-clock-o"></i> @Model.Note.AddedOn.TimeConverter(Model.Department).ToShortDateString()</span>
+            <h1>
+              @Model.Note.Title
+            </h1>
+          </div>
+          <p>
+            @Html.Raw(Model.Note.Body)
+          </p>
+          <hr>
+          <div class="row">
+            <div class="col-md-6">
+              <h5>Category:</h5>
+              @Model.Note.Category
+            </div>
+            <div class="col-md-6">
+              <div class="small text-right">
+                <h5></h5>
+                @if (Model.Note.IsAdminOnly)
+				{
+                  <i class="fa fa-eye"> </i><span>Viewable by Admins Only</span>
+				}
+				else
+				{
+                  <i class="fa fa-eye"> </i><span>Viewable by Everyone </span>
+				}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 
 @section Scripts
 {
-		<script src="~/js/app/internal/notes/resgrid.notes.newnote.js" type="text/javascript"></script>
+  <script src="~/js/app/internal/notes/resgrid.notes.newnote.js" type="text/javascript"></script>
 }

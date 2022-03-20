@@ -1,131 +1,15 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.InteropExtensions;
-using Resgrid.Framework;
-using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
-using Newtonsoft.Json;
-using Message = Microsoft.Azure.ServiceBus.Message;
 using System.Collections.Generic;
 
 namespace Resgrid.Workers.Framework.Logic
 {
 	public class BroadcastMessageLogic
 	{
-		private IQueueService _queueService;
-		private QueueClient _client = null;
-
-		public BroadcastMessageLogic()
-		{
-			while (_client == null)
-			{
-				try
-				{
-					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueMessageConnectionString, Config.ServiceBusConfig.MessageBroadcastQueueName);
-				}
-				catch (TimeoutException) { }
-			}
-		}
-
-		public async Task<bool> Process(MessageQueueItem item)
-		{
-			bool success = true;
-
-			if (Config.SystemBehaviorConfig.IsAzure)
-			{
-				var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-				{
-					MaxConcurrentCalls = 1,
-					AutoComplete = false
-				};
-
-				// Register the function that will process messages
-				_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
-
-				//await ProcessQueueMessage(_client.ReceiveAsync());
-			}
-			else
-			{
-				return await ProcessMessageQueueItem(item);
-			}
-
-			_queueService = null;
-			return false;
-		}
-
-		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
-		{
-			bool success = true;
-			string result = "";
-
-			if (message != null)
-			{
-				MessageQueueItem mqi = null;
-
-				try
-				{
-					var body = message.GetBody<string>();
-
-					if (!String.IsNullOrWhiteSpace(body))
-					{
-						try
-						{
-							mqi = ObjectSerialization.Deserialize<MessageQueueItem>(body);
-						}
-						catch (Exception ex)
-						{
-							success = false;
-							result = "Unable to parse message body Exception: " + ex.ToString();
-							//message.Complete();
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-						}
-
-						await ProcessMessageQueueItem(mqi);
-					}
-
-					try
-					{
-						if (success)
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-							//message.Complete();
-					}
-					catch (MessageLockLostException)
-					{
-
-					}
-				}
-				catch (Exception ex)
-				{
-					result = ex.ToString();
-
-					if (mqi != null)
-					{
-						ex.Data.Add("DepartmentId", mqi.DepartmentId);
-
-						if (mqi.Message != null)
-						{
-							ex.Data.Add("MessageId", mqi.Message.MessageId);
-							ex.Data.Add("SendingUserId", mqi.Message.SendingUserId);
-							ex.Data.Add("RecievingUserId", mqi.Message.ReceivingUserId);
-						}
-					}
-
-					ex.Data.Add("MQI", JsonConvert.SerializeObject(mqi));
-
-					Logging.LogException(ex);
-					await _client.AbandonAsync(message.SystemProperties.LockToken); 
-					//message.Abandon();
-				}
-			}
-
-			return new Tuple<bool, string>(success, result);
-		}
-
 		public static async Task<bool> ProcessMessageQueueItem(MessageQueueItem mqi)
 		{
 			var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
@@ -208,17 +92,6 @@ namespace Resgrid.Workers.Framework.Logic
 
 			_communicationService = null;
 			return true;
-		}
-
-		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
-		{
-			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-			//Console.WriteLine("Exception context for troubleshooting:");
-			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
-			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
-			//Console.WriteLine($"- Executing Action: {context.Action}");
-			return Task.CompletedTask;
 		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿@using Microsoft.ApplicationInsights.Extensibility
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -16,15 +15,13 @@
   <link rel="apple-touch-icon" sizes="144x144" href="~/images/apple-touch-icon-ipad3.png" />
   <meta http-equiv="Access-Control-Allow-Origin" content="*" />
   <title>@ViewData["Title"]</title>
-  @Html.Partial("_StylePartial")
+  @await Html.PartialAsync("_StylePartial")
 
   <!-- Add local styles, mostly for plugins css file -->
   @if (IsSectionDefined("Styles"))
   {
     @RenderSection("Styles", required: false)
   }
-
-  @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body id="page-top" class="landing-page">
 
@@ -52,7 +49,7 @@
 							<li><a asp-controller="Home" asp-action="OpenSource" asp-area="">Open Source</a></li>
 							<li><a asp-controller="Home" asp-action="Apps" asp-area="">Mobile Apps</a></li>
 							<li><a href="https://status.resgrid.com">System Status</a></li>
-							<li><a href="https://api.resgrid.com/help" target="_blank">Api</a></li>
+							<li><a href="https://api.resgrid.com" target="_blank">Api</a></li>
 						</ul>
 					</p>
 				</div>
@@ -83,7 +80,7 @@
 			<div class="row">
 				<div class="col-lg-12 text-center">
 					<p class="m-t-sm">
-						Or follow us on social platform
+						Follow us on social platforms
 					</p>
 					<ul class="list-inline social-icon">
 						<li>
@@ -112,7 +109,11 @@
 		</div>
 	</section>
 
-	@Html.Partial("_ScriptsPartial")
-	@RenderSection("Scripts", required: false)
+	@await Html.PartialAsync("_ScriptsPartial")
+
+	@if (IsSectionDefined("Scripts"))
+	{
+		@RenderSection("Scripts", required: false)
+	}
 </body>
 </html>

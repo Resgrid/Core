@@ -51,7 +51,7 @@ namespace Resgrid.Workers.Framework.Logic
 										membership = _usersService.GetMembershipByUserId(member.UserId);
 
 									if (membership != null && !String.IsNullOrWhiteSpace(membership.Email))
-										_emailService.SendDistributionListEmail(email, membership.Email, item.List.Name, $"Resgrid ({item.List.Name}) List", $"{item.List.EmailAddress}@{Config.InboundEmailConfig.ListsDomain}");
+										await _emailService.SendDistributionListEmail(email, membership.Email, item.List.Name, $"Resgrid ({item.List.Name}) List", $"{item.List.EmailAddress}@{Config.InboundEmailConfig.ListsDomain}");
 								}
 							}
 						}

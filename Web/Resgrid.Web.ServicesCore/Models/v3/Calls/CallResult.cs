@@ -128,5 +128,20 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.Calls
 		/// When was the call Logged On in UTC time
 		/// </summary>
 		public DateTime Utc { get; set; }
+
+		/// <summary>
+		/// Dispatch On
+		/// </summary>
+		public DateTime? Don { get; set; }
+
+		/// <summary>
+		/// Geolocation (Latitude)
+		/// </summary>
+		public string Gla { get; set; }
+
+		/// <summary>
+		/// Geolocation (Longitude)
+		/// </summary>
+		public string Glo { get; set; }
 	}
 }

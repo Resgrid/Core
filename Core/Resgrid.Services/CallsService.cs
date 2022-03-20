@@ -69,6 +69,10 @@ namespace Resgrid.Services
 			if (String.IsNullOrWhiteSpace(call.Name))
 				call.Name = "New Call " + DateTime.UtcNow.ToShortDateString();
 
+			// Got some bad data where geolocation is "," which passes some checks.
+			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length == 1)
+				call.GeoLocationData = "";
+
 			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 		}
 
@@ -554,7 +558,7 @@ namespace Resgrid.Services
 				if (callAttachmentId > 0)
 				{
 					var encryptedQuery =
-						WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
+						Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase)));
 					string shortenedUrl =
 						await _shortenUrlProvider.Shorten(
 							$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
@@ -573,7 +577,7 @@ namespace Resgrid.Services
 						return String.Empty;
 
 					var encryptedQuery =
-						WebUtility.UrlEncode(SymmetricEncryption.Encrypt(attachment.CallAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase));
+						Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(attachment.CallAttachmentId.ToString(), Config.SystemBehaviorConfig.ExternalAudioUrlParamPasshprase)));
 					string shortenedUrl =
 						await _shortenUrlProvider.Shorten(
 							$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/calls/getcallaudio?query={encryptedQuery}");
@@ -599,14 +603,14 @@ namespace Resgrid.Services
 
 				if (!stationId.HasValue && !pdf)
 				{
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 				else
 				{
 					string type = pdf ? "pdf" : "web";
 					string station = stationId.HasValue ? stationId.Value.ToString() : "0";
 
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt($"{callId.ToString()}|${type}|${station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt($"{callId.ToString()}|${type}|${station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 
 
@@ -653,14 +657,14 @@ namespace Resgrid.Services
 
 				if (!stationId.HasValue && !pdf)
 				{
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 				else
 				{
 					string type = pdf ? "pdf" : "web";
 					string station = stationId.HasValue ? stationId.Value.ToString() : "0";
 
-					encryptedQuery = WebUtility.UrlEncode(SymmetricEncryption.Encrypt($"{callId.ToString()}|{type}|{station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase));
+					encryptedQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt($"{callId.ToString()}|{type}|{station}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 				}
 
 
@@ -685,6 +689,26 @@ namespace Resgrid.Services
 			}
 
 			return true;
+		}
+
+		public async Task<List<Call>> GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime startDate, DateTime endDate)
+		{
+			var calls = await _callsRepository.GetAllNonDispatchedScheduledCallsWithinDateRange(startDate, endDate);
+
+			if (calls != null && calls.Any())
+				return calls.ToList();
+
+			return new List<Call>();
+		}
+
+		public async Task<List<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId)
+		{
+			var calls = await _callsRepository.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(departmentId);
+
+			if (calls != null && calls.Any())
+				return calls.ToList();
+
+			return new List<Call>();
 		}
 
 		public string CallStateToString(CallStates state)

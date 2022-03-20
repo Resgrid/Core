@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model.Identity
 {
-	public class IdentityUserLoginInfo: IEntity
+	public class IdentityUserLoginInfo : IEntity
 	{
 		public string UserId { get; set; }
 
@@ -37,6 +38,7 @@ namespace Resgrid.Model.Identity
 		public string ProviderDisplayName { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return UserId; }
@@ -50,6 +52,9 @@ namespace Resgrid.Model.Identity
 		public string IdName => "UserId";
 
 		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
+		public int IdType => 0;
+
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 }

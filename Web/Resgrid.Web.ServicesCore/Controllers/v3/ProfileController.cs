@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Web.Services.Controllers.Version3.Models.Profile;
-
+using Resgrid.Model.Events;
+using Resgrid.Framework;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -19,6 +21,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class ProfileController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;
@@ -27,9 +31,11 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IUserProfileService _userProfileService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IAddressService _addressService;
+		private readonly IEventAggregator _eventAggregator;
 
 		public ProfileController(IUsersService usersService, IDepartmentsService departmentsService, ILimitsService limitsService,
-			IUserProfileService userProfileService, IAuthorizationService authorizationService, IAddressService addressService)
+			IUserProfileService userProfileService, IAuthorizationService authorizationService, IAddressService addressService,
+			IEventAggregator eventAggregator)
 		{
 			_usersService = usersService;
 			_departmentsService = departmentsService;
@@ -37,6 +43,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_userProfileService = userProfileService;
 			_authorizationService = authorizationService;
 			_addressService = addressService;
+			_eventAggregator = eventAggregator;
 		}
 
 		/// <summary>
@@ -199,6 +206,12 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (profile == null)
 				return NotFound();
 
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.ProfileUpdated;
+			auditEvent.Before = profile.CloneJsonToString();
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var dm = await _departmentsService.GetDepartmentMemberAsync(UserId.ToUpper(), DepartmentId);
 			var membership = _usersService.GetMembershipByUserId(UserId.ToUpper());
@@ -242,6 +255,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			await _userProfileService.SaveProfileAsync(DepartmentId, profile, cancellationToken);
 			_departmentsService.InvalidateDepartmentUsersInCache(department.DepartmentId);
+
+			auditEvent.After = profile.CloneJsonToString();
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			return Ok(result);
 		}

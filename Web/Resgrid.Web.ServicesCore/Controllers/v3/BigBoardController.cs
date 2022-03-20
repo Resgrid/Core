@@ -20,6 +20,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class BigBoardController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;
@@ -99,24 +101,24 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 			var personnelViewModels = new List<PersonnelViewModel>();
 
-			
+
 
 			var sortedUngroupedUsers = from u in allUsers
-				// let mu = Membership.GetUser(u.UserId)
-				let userGroup = departmentGroups.FirstOrDefault(x => x.Members.Any(y => y.UserId == u.UserId))
-				let groupName = userGroup == null ? "" : userGroup.Name
-				//let roles = _personnelRolesService.GetRolesForUserAsync(u.UserId, DepartmentId).Result
-				//let name = (ProfileBase.Create(mu.UserName, true)).GetPropertyValue("Name").ToString()
-				let name = names.ContainsKey(u.UserId) ? names[u.UserId] : "Unknown User"
-				let weight = lastUserActionlogs.Where(x => x.UserId == u.UserId).FirstOrDefault().GetWeightForAction()
-				orderby groupName, weight, name ascending
-				select new
-				{
-					Name = name,
-					User = u,
-					Group = userGroup,
-					Roles = new List<PersonnelRole>()
-				};
+										   // let mu = Membership.GetUser(u.UserId)
+									   let userGroup = departmentGroups.FirstOrDefault(x => x.Members.Any(y => y.UserId == u.UserId))
+									   let groupName = userGroup == null ? "" : userGroup.Name
+									   //let roles = _personnelRolesService.GetRolesForUserAsync(u.UserId, DepartmentId).Result
+									   //let name = (ProfileBase.Create(mu.UserName, true)).GetPropertyValue("Name").ToString()
+									   let name = names.ContainsKey(u.UserId) ? names[u.UserId] : "Unknown User"
+									   let weight = lastUserActionlogs.Where(x => x.UserId == u.UserId).FirstOrDefault().GetWeightForAction()
+									   orderby groupName, weight, name ascending
+									   select new
+									   {
+										   Name = name,
+										   User = u,
+										   Group = userGroup,
+										   Roles = new List<PersonnelRole>()
+									   };
 
 			foreach (var u in sortedUngroupedUsers)
 			{
@@ -125,13 +127,13 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				var us = userStates.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
 
 				// if setting is such, ignore unavailable users.
-				if (hideUnavailable.HasValue && hideUnavailable.Value && us.State != (int) UserStateTypes.Unavailable)
+				if (hideUnavailable.HasValue && hideUnavailable.Value && us.State != (int)UserStateTypes.Unavailable)
 					continue;
 
-				u.Roles.AddRange( await _personnelRolesService.GetRolesForUserAsync(u.User.UserId, DepartmentId));
+				u.Roles.AddRange(await _personnelRolesService.GetRolesForUserAsync(u.User.UserId, DepartmentId));
 
 				string callNumber = "";
-				if (al != null && al.ActionTypeId == (int) ActionTypes.RespondingToScene ||
+				if (al != null && al.ActionTypeId == (int)ActionTypes.RespondingToScene ||
 						(al != null && al.DestinationType.HasValue && al.DestinationType.Value == 2))
 				{
 					if (al.DestinationId.HasValue)
@@ -159,12 +161,12 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var usersNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			
+
 			var callViewModels = new List<CallViewModel>();
 
 			foreach (var call in calls)
 			{
-				
+
 				string name = "";
 				var personName = usersNames.FirstOrDefault(x => x.UserId == call.ReportingUserId);
 
@@ -202,18 +204,21 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		{
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
+			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+
 			var unitViewModels = new List<UnitViewModel>();
 
 			var sortedUnits = from u in units
-												let station = u.StationGroup
-												let stationName = station == null ? "" : station.Name
-												orderby stationName, u.Name ascending
-												select new
-												{
-													Unit = u,
-													Station = station,
-													StationName = stationName
-												};
+							  let station = u.StationGroup
+							  let stationName = station == null ? "" : station.Name
+							  orderby stationName, u.Name ascending
+							  select new
+							  {
+								  Unit = u,
+								  Station = station,
+								  StationName = stationName
+							  };
 
 			foreach (var unit in sortedUnits)
 			{
@@ -224,7 +229,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				int? destinationId = 0;
 				decimal? latitude = 0;
 				decimal? longitude = 0;
-
+				var destinationName = "";
 				DateTime? timestamp = null;
 
 				if (stateFound != null)
@@ -235,6 +240,40 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						state = customState.ButtonText;
 						stateCss = customState.ButtonColor;
 						stateStyle = customState.ButtonColor;
+
+						if (customState.DetailType == (int)CustomStateDetailTypes.Calls)
+						{
+							var call = activeCalls.FirstOrDefault(x => x.CallId == stateFound.DestinationId);
+							if (call != null)
+							{
+								destinationName = call.Number;
+							}
+						}
+						else if (customState.DetailType == (int)CustomStateDetailTypes.Stations)
+						{
+							var station = groups.FirstOrDefault(x => x.DepartmentGroupId == stateFound.DestinationId);
+							if (station != null)
+							{
+								destinationName = station.Name;
+							}
+						}
+						else if (customState.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
+						{
+							// First try and get the station, as a station can get a call (based on Id) but the inverse is hard
+							var station = groups.FirstOrDefault(x => x.DepartmentGroupId == stateFound.DestinationId);
+							if (station != null)
+							{
+								destinationName = station.Name;
+							}
+							else
+							{
+								var call = activeCalls.FirstOrDefault(x => x.CallId == stateFound.DestinationId);
+								if (call != null)
+								{
+									destinationName = call.Number;
+								}
+							}
+						}
 					}
 					else
 					{
@@ -252,6 +291,13 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				if (unit.Station != null)
 					groupId = unit.Station.DepartmentGroupId;
 
+				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.Unit.UnitId, timestamp);
+				if (latestUnitLocation != null)
+				{
+					latitude = latestUnitLocation.Latitude;
+					longitude = latestUnitLocation.Longitude;
+				}
+
 				var unitViewModel = new UnitViewModel
 				{
 					UnitId = unit.Unit.UnitId,
@@ -265,7 +311,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					Latitude = latitude,
 					Longitude = longitude,
 					GroupId = groupId,
-					GroupName = unit.StationName
+					GroupName = unit.StationName,
+					DestinationName = destinationName
 				};
 
 				unitViewModels.Add(unitViewModel);
@@ -424,7 +471,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				info.Title = call.Name;
 				info.InfoWindowContent = call.NatureOfCall;
 
-				if (!String.IsNullOrEmpty(call.GeoLocationData))
+				if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 				{
 					try
 					{
@@ -612,7 +659,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				WeatherUnit = weatherUnits,
 			};
 
-			
+
 
 			return Ok(mapModel);
 		}

@@ -2,6 +2,7 @@
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Workers.Console.Commands;
@@ -39,6 +40,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.ShiftNotificationQueueReceived += OnShiftNotificationQueueReceived;
 			queue.CqrsEventQueueReceived += OnCqrsEventQueueReceived;
 			queue.PaymentEventQueueReceived += OnPaymentEventQueueReceived;
+			queue.AuditEventQueueReceived += OnAuditEventQueueReceived;
 
 			await queue.Start();
 
@@ -46,15 +48,6 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				Thread.Sleep(500);
 			}
-
-			//await Task.Factory.StartNew(() =>
-			//{
-			//	// Keep alive
-			//	while (_running)
-			//	{
-			//		Thread.Sleep(1000);
-			//	}
-			//}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
 			if (progress != null)
 				progress.Report(100, $"Finishing the {Name} Task");
@@ -107,6 +100,13 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger.LogInformation($"{Name}: Payment Queue Received with a type of {cqrs.Type}, starting processing...");
 			await PaymentQueueLogic.ProcessPaymentQueueItem(cqrs);
 			_logger.LogInformation($"{Name}: Finished processing of Payment queue item with type of {cqrs.Type}.");
+		}
+
+		private async Task OnAuditEventQueueReceived(AuditEvent auditEvent)
+		{
+			_logger.LogInformation($"{Name}: Audit Queue Received with an id of {auditEvent.EventId}, starting processing...");
+			await AuditQueueLogic.ProcessAuditQueueItem(auditEvent);
+			_logger.LogInformation($"{Name}: Finished processing of Audit queue item with an id of {auditEvent.EventId}.");
 		}
 	}
 }

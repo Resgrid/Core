@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -13,6 +11,8 @@ using Resgrid.Model.Services;
 
 using Resgrid.Web.Services.Models;
 using Resgrid.Web.ServicesCore.Helpers;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -21,6 +21,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	//[EnableCors("_resgridWebsiteAllowSpecificOrigins")]
 	public class AvatarsController : ControllerBase
 	{
@@ -95,11 +96,30 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				return BadRequest();
 
 			// load the image from the upload and generate a new filename
-			var image = Image.FromStream(img.OpenReadStream());
+			//var image = Image.FromStream(img.OpenReadStream());
 			var extension = Path.GetExtension(img.FileName);
+			byte[] imgArray;
+			int width = 0;
+			int height = 0;
 
-			ImageConverter converter = new ImageConverter();
-			byte[] imgArray = (byte[])converter.ConvertTo(image, typeof(byte[]));
+			using (Image image = Image.Load(img.OpenReadStream()))
+			{
+				//image.Mutate(x => x
+				//	 .Resize(image.Width / 2, image.Height / 2)
+				//	 .Grayscale());
+
+				width = image.Width;
+				height = image.Height;
+
+				MemoryStream ms = new MemoryStream();
+				await image.SaveAsPngAsync(ms);
+				imgArray = ms.ToArray();
+
+				//image.Save()"output/fb.png"); // Automatic encoder selected based on extension.
+			}
+
+			//ImageConverter converter = new ImageConverter();
+			//byte[] imgArray = (byte[])converter.ConvertTo(image, typeof(byte[]));
 
 			if (type == null)
 				await _imageService.SaveImageAsync(ImageTypes.Avatar, id, imgArray);
@@ -119,8 +139,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				status = CroppicStatuses.Success,
 				url = url,
-				width = image.Width,
-				height = image.Height
+				width = width,
+				height = height
 			};
 
 			return CreatedAtAction(nameof(Upload), new { id = obj.url }, obj);
@@ -141,15 +161,23 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			try
 			{
 				var ms = new MemoryStream(await _imageService.GetImageAsync(ImageTypes.Avatar, originalId));
-				var img = Image.FromStream(ms);
+				//var img = Image.FromStream(ms);
+
+				byte[] imgArray;
+
+				Image image = Image.Load(ms);
 
 				// load the original picture and resample it to the scaled values
-				var bitmap = ImageUtils.Resize(img, (int)model.imgW, (int)model.imgH);
+				var bitmap = ImageUtils.Resize(image, (int)model.imgW, (int)model.imgH);
 
 				var croppedBitmap = ImageUtils.Crop(bitmap, model.imgX1, model.imgY1, model.cropW, model.cropH);
 
-				ImageConverter converter = new ImageConverter();
-				byte[] imgArray = (byte[])converter.ConvertTo(croppedBitmap, typeof(byte[]));
+				MemoryStream ms2 = new MemoryStream();
+				await croppedBitmap.SaveAsPngAsync(ms2);
+				imgArray = ms.ToArray();
+
+				//ImageConverter converter = new ImageConverter();
+				//byte[] imgArray = (byte[])converter.ConvertTo(croppedBitmap, typeof(byte[]));
 
 				await _imageService.SaveImageAsync(ImageTypes.Avatar, originalId, imgArray);
 			}

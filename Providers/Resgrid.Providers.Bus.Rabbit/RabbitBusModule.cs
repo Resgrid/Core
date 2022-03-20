@@ -7,7 +7,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterType<RabbitOutboundQueueProvider>().As<IRabbitOutboundQueueProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<RabbitOutboundQueueProvider>().As<IRabbitOutboundQueueProvider>().SingleInstance();
 			builder.RegisterType<RabbitInboundEventProvider>().As<IRabbitInboundEventProvider>().InstancePerLifetimeScope();
 
 			//builder.RegisterType<UnitNotificationProvider>().As<IUnitNotificationProvider>().InstancePerLifetimeScope();

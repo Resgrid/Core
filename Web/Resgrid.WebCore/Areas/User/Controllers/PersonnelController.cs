@@ -315,7 +315,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					auditEvent.DepartmentId = DepartmentId;
 					auditEvent.UserId = UserId;
 					auditEvent.Type = AuditLogTypes.UserAdded;
-					auditEvent.After = userObject;
+					auditEvent.After = userObject.CloneJsonToString();
 					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					if (model.UserGroup != 0)
@@ -336,9 +336,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					_usersService.ClearCacheForDepartment(DepartmentId);
 
 					if (model.SendAccountCreationNotification)
-						_emailService.SendWelcomeEmail(model.Department.Name, model.FirstName + " " + model.LastName, user.Email, user.UserName, model.ConfirmPassword, DepartmentId);
+						await _emailService.SendWelcomeEmail(model.Department.Name, model.FirstName + " " + model.LastName, user.Email, user.UserName, model.ConfirmPassword, DepartmentId);
 
-					_emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
+					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
 					return RedirectToAction("Index", "Personnel", new { area = "User" });
 				}

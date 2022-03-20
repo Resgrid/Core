@@ -371,7 +371,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					info.Title = call.Name;
 					info.InfoWindowContent = call.NatureOfCall;
 
-					if (!String.IsNullOrEmpty(call.GeoLocationData))
+					if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 					{
 						try
 						{

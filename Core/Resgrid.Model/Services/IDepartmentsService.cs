@@ -131,6 +131,8 @@ namespace Resgrid.Model.Services
 
 		Task<DepartmentReport> GetDepartmentSetupReportAsync(int departmentId);
 
+		string ConvertDepartmentCodeToDigitPin(string departmentCode);
+
 		decimal GenerateSetupScore(DepartmentReport report);
 
 		/// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -28,13 +29,14 @@ namespace Resgrid.Model
 		public IdentityUser User { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return PersonnelRoleUserId; }
 			set { PersonnelRoleUserId = (int)value; }
 		}
 
-		
+
 		[NotMapped]
 		public string TableName => "PersonnelRoleUsers";
 
@@ -42,6 +44,9 @@ namespace Resgrid.Model
 		public string IdName => "PersonnelRoleUserId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Role", "User" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Role", "User" };
 	}
 }

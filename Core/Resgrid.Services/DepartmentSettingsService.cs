@@ -121,7 +121,7 @@ namespace Resgrid.Services
 					{
 						if (Framework.LocationHelpers.IsDMSLocation(points[1]))
 						{
-							newLocation = Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[1]).ToString();
+							newLocation = newLocation + Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[1]).ToString();
 						}
 						else
 						{

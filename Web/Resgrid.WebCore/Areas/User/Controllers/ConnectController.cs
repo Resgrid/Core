@@ -155,7 +155,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!String.IsNullOrWhiteSpace(profile.What3Words) &&
 						(String.IsNullOrWhiteSpace(profile.Latitude) && String.IsNullOrWhiteSpace(profile.Longitude)))
 				{
-					var result = _geoLocationProvider.GetCoordinatesFromW3W(profile.What3Words);
+					var result = await _geoLocationProvider.GetCoordinatesFromW3W(profile.What3Words);
 					if (result != null)
 					{
 						profile.Latitude = result.Latitude.ToString();

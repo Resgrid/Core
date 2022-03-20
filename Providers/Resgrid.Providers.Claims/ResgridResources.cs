@@ -112,5 +112,15 @@
 		public const string Protocol_Update = "Protocol_Update";
 		public const string Protocol_Create = "Protocol_Create";
 		public const string Protocol_Delete = "Protocol_Delete";
+
+		public const string Forms_View = "Forms_View";
+		public const string Forms_Update = "Forms_Update";
+		public const string Forms_Create = "Forms_Create";
+		public const string Forms_Delete = "Forms_Delete";
+
+		public const string Voice_View = "Voice_View";
+		public const string Voice_Update = "Voice_Update";
+		public const string Voice_Create = "Voice_Create";
+		public const string Voice_Delete = "Voice_Delete";
 	}
 }

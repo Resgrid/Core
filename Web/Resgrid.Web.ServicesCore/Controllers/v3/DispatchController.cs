@@ -27,6 +27,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	/// </summary>
 	[Route("api/v{version:ApiVersion}/[controller]")]
 	[Produces("application/json")]
+	[ApiVersion("3.0")]
+	[ApiExplorerSettings(GroupName = "v3")]
 	public class DispatchController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUsersService _usersService;
@@ -43,6 +45,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly ICqrsProvider _cqrsProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ITemplatesService _templatesService;
+		private readonly IFormsService _formsService;
 
 		public DispatchController(
 			IUsersService usersService,
@@ -58,7 +61,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			IGeoLocationProvider geoLocationProvider,
 			ICqrsProvider cqrsProvider,
 			IDepartmentSettingsService departmentSettingsService,
-			ITemplatesService templatesService
+			ITemplatesService templatesService,
+			IFormsService formsService
 			)
 		{
 			_usersService = usersService;
@@ -75,6 +79,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			_cqrsProvider = cqrsProvider;
 			_departmentSettingsService = departmentSettingsService;
 			_templatesService = templatesService;
+			_formsService = formsService;
 		}
 
 		[HttpGet("GetNewCallData")]
@@ -375,7 +380,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						call.Fls = 0;
 					}
 
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData))
+					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -580,6 +585,8 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						person.Status = status.ButtonText;
 						person.StatusColor = status.ButtonClassToColor();
 					}
+
+					person.Location = currentStatus.GeoLocationData;
 				}
 				else
 				{
@@ -724,6 +731,48 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			}
 
 			return Ok(templatesJson);
+		}
+
+		/// <summary>
+		/// Returns the custom new call form if any exists and is active
+		/// </summary>
+		/// <returns>FormDataResult object with the new call form data</returns>
+		[HttpGet("GetNewCallForm")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult<FormDataResult>> GetNewCallForm()
+		{
+			var formResult = new FormDataResult();
+			var form = await _formsService.GetNewCallFormByDepartmentIdAsync(DepartmentId);
+
+			if (form != null)
+			{
+				formResult.Id = form.FormId;
+				formResult.Name = form.Name;
+				formResult.Type = form.Type;
+				formResult.Data = form.Data;
+
+				if (form.Automations != null && form.Automations.Any())
+				{
+					formResult.Automations = new List<FormDataAutomationResult>();
+
+					foreach (var automation in form.Automations)
+					{
+						var automationResult = new FormDataAutomationResult();
+						automationResult.Id = automation.FormAutomationId;
+						automationResult.FormId = automation.FormId;
+						automationResult.TriggerField = automation.TriggerField;
+						automationResult.TriggerValue = automation.TriggerValue;
+						automationResult.OperationType = automation.OperationType;
+						automationResult.OperationValue = automation.OperationValue;
+
+						formResult.Automations.Add(automationResult);
+					}
+				}
+			}
+
+			return Ok(formResult);
 		}
 	}
 }

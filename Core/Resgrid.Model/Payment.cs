@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using ProtoBuf;
 using Resgrid.Framework;
 using Resgrid.Model.Identity;
@@ -95,13 +96,14 @@ namespace Resgrid.Model
 		public string SubscriptionId { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return PaymentId; }
 			set { PaymentId = (int)value; }
 		}
 
-				
+
 		[NotMapped]
 		public string TableName => "Payments";
 
@@ -109,13 +111,16 @@ namespace Resgrid.Model
 		public string IdName => "PaymentId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Plan", "UpgradedPayment" , "PurchasingUser"  };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Plan", "UpgradedPayment", "PurchasingUser" };
 
 		public DateTime GetEndDate()
 		{
 			if (Plan != null)
 			{
-				switch ((PlanFrequency) Plan.Frequency)
+				switch ((PlanFrequency)Plan.Frequency)
 				{
 					case PlanFrequency.Never:
 						return DateTime.MaxValue;

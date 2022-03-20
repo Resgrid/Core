@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -42,13 +43,14 @@ namespace Resgrid.Model
 		public virtual ICollection<IncidentLog> Logs { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return IncidentId; }
 			set { IncidentId = (int)value; }
 		}
 
-		
+
 		[NotMapped]
 		public string TableName => "Incidents";
 
@@ -56,6 +58,9 @@ namespace Resgrid.Model
 		public string IdName => "IncidentId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Call", "Definition", "Logs" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Call", "Definition", "Logs" };
 	}
 }

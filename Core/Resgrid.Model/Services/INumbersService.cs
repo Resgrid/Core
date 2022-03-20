@@ -12,7 +12,7 @@ namespace Resgrid.Model.Services
 		/// <param name="country">The country.</param>
 		/// <param name="areaCode">The area code.</param>
 		/// <returns>List&lt;TextNumber&gt;.</returns>
-		List<TextNumber> GetAvailableNumbers(string country, string areaCode);
+		Task<List<TextNumber>> GetAvailableNumbers(string country, string areaCode);
 
 		/// <summary>
 		/// Provisions the number asynchronous.

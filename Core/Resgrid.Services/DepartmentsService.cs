@@ -13,6 +13,7 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
 using Resgrid.Repositories.DataRepository.Queries.ActionLogs;
+using System.Text;
 
 namespace Resgrid.Services
 {
@@ -275,7 +276,7 @@ namespace Resgrid.Services
 		{
 			var member = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userIdToDelete);
 			var auditEvent = new AuditEvent();
-			auditEvent.Before = member.CloneJson();
+			auditEvent.Before = member.CloneJsonToString();
 
 			if (member != null)
 			{
@@ -289,7 +290,7 @@ namespace Resgrid.Services
 					auditEvent.DepartmentId = departmentId;
 					auditEvent.UserId = deletingUserId;
 					auditEvent.Type = AuditLogTypes.UserRemoved;
-					auditEvent.After = member2.CloneJson();
+					auditEvent.After = member2.CloneJsonToString();
 					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					InvalidateAllDepartmentsCache(departmentId);
@@ -511,7 +512,7 @@ namespace Resgrid.Services
 			async Task<List<PersonName>> getDepartmentPersonnelNames()
 			{
 				return (from i in await _userProfileRepository.GetAllProfilesForDepartmentAsync(departmentId)
-				select new PersonName{ UserId = i.Value.UserId, FirstName = i.Value.FirstName, LastName = i.Value.LastName}).ToList();
+						select new PersonName { UserId = i.Value.UserId, FirstName = i.Value.FirstName, LastName = i.Value.LastName }).ToList();
 			}
 
 			if (Config.SystemBehaviorConfig.CacheEnabled)
@@ -746,6 +747,107 @@ namespace Resgrid.Services
 			return await _departmentRepository.GetDepartmentStatsByDepartmentUserIdAsync(departmentId, userId);
 		}
 
+		public string ConvertDepartmentCodeToDigitPin(string departmentCode)
+		{
+			if (String.IsNullOrWhiteSpace(departmentCode))
+				return null;
+
+			char[] characters = departmentCode.ToCharArray();
+			StringBuilder result = new StringBuilder();
+
+			foreach (var c in characters)
+			{
+				if (char.IsNumber(c))
+					result.Append(c);
+
+				switch (char.ToLower(c))
+				{
+					case 'a':
+						result.Append(0);
+						break;
+					case 'b':
+						result.Append(1);
+						break;
+					case 'c':
+						result.Append(2);
+						break;
+					case 'd':
+						result.Append(3);
+						break;
+					case 'e':
+						result.Append(4);
+						break;
+					case 'f':
+						result.Append(5);
+						break;
+					case 'g':
+						result.Append(6);
+						break;
+					case 'h':
+						result.Append(7);
+						break;
+					case 'i':
+						result.Append(8);
+						break;
+					case 'j':
+						result.Append(9);
+						break;
+					case 'k':
+						result.Append(0);
+						break;
+					case 'l':
+						result.Append(1);
+						break;
+					case 'm':
+						result.Append(2);
+						break;
+					case 'n':
+						result.Append(3);
+						break;
+					case 'o':
+						result.Append(4);
+						break;
+					case 'p':
+						result.Append(5);
+						break;
+					case 'q':
+						result.Append(6);
+						break;
+					case 'r':
+						result.Append(7);
+						break;
+					case 's':
+						result.Append(8);
+						break;
+					case 't':
+						result.Append(9);
+						break;
+					case 'u':
+						result.Append(0);
+						break;
+					case 'v':
+						result.Append(1);
+						break;
+					case 'w':
+						result.Append(2);
+						break;
+					case 'x':
+						result.Append(3);
+						break;
+					case 'y':
+						result.Append(4);
+						break;
+					case 'z':
+						result.Append(5);
+						break;
+					default:
+						break;
+				}
+			}
+
+			return result.ToString();
+		}
+
 		#region Private Methods
 		private static string CreateCode(int passwordLength)
 		{
@@ -772,8 +874,8 @@ namespace Resgrid.Services
 				if (department.AdminUsers.Count <= 0)
 				{
 					department.AdminUsers.AddRange((from dm in await _departmentMembersRepository.GetAllByDepartmentIdAsync(department.DepartmentId)
-											where dm.IsAdmin.GetValueOrDefault()
-											select dm.UserId));
+													where dm.IsAdmin.GetValueOrDefault()
+													select dm.UserId));
 				}
 			}
 

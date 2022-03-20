@@ -131,6 +131,14 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DispatchProtocolTriggersRepository>().As<IDispatchProtocolTriggersRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitActiveRolesRepository>().As<IUnitActiveRolesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchProtocolQuestionAnswersRepository>().As<IDispatchProtocolQuestionAnswersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FormsRepository>().As<IFormsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FormAutomationsRepository>().As<IFormAutomationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PlanAddonsRepository>().As<IPlanAddonsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PaymentAddonsRepository>().As<IPaymentAddonsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentVoiceRepository>().As<IDepartmentVoiceRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentVoiceChannelRepository>().As<IDepartmentVoiceChannelRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentVoiceUserRepository>().As<IDepartmentVoiceUserRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<OidcRepository>().As<IOidcRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

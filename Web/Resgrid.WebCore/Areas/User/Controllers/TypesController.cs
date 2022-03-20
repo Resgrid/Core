@@ -10,7 +10,6 @@ using System.IO;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Remotion.Linq.Parsing.ExpressionVisitors.Transformation.PredefinedTransformations;
 using Resgrid.WebCore.Areas.User.Models.Types;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -21,16 +20,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly ICustomStateService _customStateService;
 		private readonly ICallsService _callsService;
-		private readonly IAudioValidatorProvider _audioValidatorProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 
-		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IAudioValidatorProvider audioValidatorProvider,
-			IDepartmentSettingsService departmentSettingsService)
+		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService)
 		{
 			_unitsService = unitsService;
 			_customStateService = customStateService;
 			_callsService = callsService;
-			_audioValidatorProvider = audioValidatorProvider;
 			_departmentSettingsService = departmentSettingsService;
 		}
 
@@ -127,12 +123,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (pushfileToUpload.Length > 1000000)
 					ModelState.AddModelError("pushfileToUpload", "Android Push Audio file is too large, must be smaller then 1MB.");
-
-				var fileAudioLength = _audioValidatorProvider.GetMp3FileDuration(pushfileToUpload.OpenReadStream());
-				if (fileAudioLength == null)
-					ModelState.AddModelError("pushfileToUpload", string.Format("Audio file type ({0}) is not supported for Android Push Notifications. MP3 Files are required.", extenion));
-				else if (fileAudioLength != null && fileAudioLength.Value > new TimeSpan(0, 0, 25))
-					ModelState.AddModelError("pushfileToUpload", string.Format("Android Push audio file length is longer then 25 seconds. Android Push notification sounds must be 25 seconds or shorter.", extenion));
 			}
 
 			if (iOSPushfileToUpload != null && iOSPushfileToUpload.Length > 0)
@@ -167,12 +157,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (alertfileToUpload.Length > 1000000)
 					ModelState.AddModelError("alertfileToUpload", "Push Audio file is too large, must be smaller then 1MB.");
-
-				var fileAudioLength = _audioValidatorProvider.GetWavFileDuration(alertfileToUpload.OpenReadStream());
-				if (fileAudioLength == null)
-					ModelState.AddModelError("alertfileToUpload", string.Format("Audio file type ({0}) is not supported for Browser Alert Notifications. WAV Files are required.", extenion));
-				else if (fileAudioLength != null && fileAudioLength.Value > new TimeSpan(0, 0, 5))
-					ModelState.AddModelError("alertfileToUpload", string.Format("Browser alert audio file length is longer then 5 seconds. Push notification sounds must be 5 seconds or shorter.", extenion));
 			}
 
 			if (String.IsNullOrWhiteSpace(model.CallPriority.Name))
@@ -267,12 +251,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (pushfileToUpload.Length > 1000000)
 					ModelState.AddModelError("pushfileToUpload", "Push Audio file is too large, must be smaller then 1MB.");
-
-				var fileAudioLength = _audioValidatorProvider.GetWavFileDuration(pushfileToUpload.OpenReadStream());
-				if (fileAudioLength == null)
-					ModelState.AddModelError("pushfileToUpload", string.Format("Audio file type ({0}) is not supported for Push Notifications. WAV Files are required.", extenion));
-				else if (fileAudioLength != null && fileAudioLength.Value > new TimeSpan(0, 0, 25))
-					ModelState.AddModelError("pushfileToUpload", string.Format("Push audio file length is longer then 25 seconds. Push notification sounds must be 25 seconds or shorter.", extenion));
 			}
 
 			if (iOSPushfileToUpload != null && iOSPushfileToUpload.Length > 0)
@@ -307,12 +285,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (alertfileToUpload.Length > 1000000)
 					ModelState.AddModelError("alertfileToUpload", "Push Audio file is too large, must be smaller then 1MB.");
-
-				var fileAudioLength =  _audioValidatorProvider.GetWavFileDuration(alertfileToUpload.OpenReadStream());
-				if (fileAudioLength == null)
-					ModelState.AddModelError("alertfileToUpload", string.Format("Audio file type ({0}) is not supported for Browser Alert Notifications. WAV Files are required.", extenion));
-				else if (fileAudioLength != null && fileAudioLength.Value > new TimeSpan(0, 0, 5))
-					ModelState.AddModelError("alertfileToUpload", string.Format("Browser alert audio file length is longer then 5 seconds. Push notification sounds must be 5 seconds or shorter.", extenion));
 			}
 
 			if (ModelState.IsValid)

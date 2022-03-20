@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 
 namespace Resgrid.Model
@@ -96,6 +97,7 @@ namespace Resgrid.Model
 		public virtual ICollection<CalendarItemAttendee> Attendees { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return CalendarItemId; }
@@ -110,7 +112,10 @@ namespace Resgrid.Model
 		public string IdName => "CalendarItemId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Attendees", "Department" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Attendees", "Department" };
 
 		public bool IsUserAttending(string userId)
 		{

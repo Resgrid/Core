@@ -10,29 +10,23 @@ using Microsoft.Extensions.Logging;
 using Resgrid.Config;
 using Resgrid.Providers.Claims;
 using Resgrid.Repositories.DataRepository.Stores;
-using Resgrid.Web.ServicesCore.Middleware;
 using Resgrid.Web.ServicesCore.Options;
 using Stripe;
 using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Security.Claims;
 using AspNetCoreRateLimit;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
-using Elastic.Apm.NetCoreAll;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
-using Resgrid.Providers.Audio;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
@@ -46,6 +40,21 @@ using Resgrid.Repositories.DataRepository;
 using Resgrid.Services;
 using Resgrid.Web.Services.Hubs;
 using Resgrid.Web.Services.Middleware;
+using Resgrid.Providers.Voip;
+using Resgrid.Web.Services.Models;
+using Microsoft.EntityFrameworkCore;
+using static OpenIddict.Abstractions.OpenIddictConstants;
+using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Instrumentation.AspNetCore;
+//using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenIddict.Abstractions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -55,6 +64,7 @@ namespace Resgrid.Web.ServicesCore
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
+		//private MeterProvider meterProvider;
 
 		public Startup(IHostingEnvironment env)
 		{
@@ -68,9 +78,6 @@ namespace Resgrid.Web.ServicesCore
 			{
 				// For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
 				//builder.AddUserSecrets();
-
-				// This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
-				builder.AddApplicationInsightsSettings(developerMode: true);
 			}
 
 			this.Configuration = builder.Build();
@@ -83,14 +90,12 @@ namespace Resgrid.Web.ServicesCore
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			Framework.Logging.Initialize(Configuration["AppOptions:SentryKey"]);
+			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrl);
 
 			//var manager = new ApplicationPartManager();
 			//manager.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
 
 			// Add framework services.
-			services.AddApplicationInsightsTelemetry(Configuration);
-
 			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
 			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
 			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -126,7 +131,6 @@ namespace Resgrid.Web.ServicesCore
 				config.Password.RequiredLength = 6;
 			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
-			services.AddApplicationInsightsTelemetry();
 			services.AddCors();
 
 			services.AddControllers().AddNewtonsoftJson(options =>
@@ -136,39 +140,74 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddApiVersioning(x =>  
 			{  
-				x.DefaultApiVersion = new ApiVersion(3, 0);  
-				x.AssumeDefaultVersionWhenUnspecified = true;  
+				x.DefaultApiVersion = new ApiVersion(3, 0);
+				x.AssumeDefaultVersionWhenUnspecified = true;
 				x.ReportApiVersions = true;  
 			});
 
 			services.AddMemoryCache();
 			services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
 			services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
-			services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+			services.AddInMemoryRateLimiting();
 			services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+			//services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
 			services.AddSwaggerGen();
 			services.AddSwaggerGenNewtonsoftSupport();
 			services.ConfigureSwaggerGen(options =>
 			{
+				options.CustomSchemaIds(type => type.ToString());
+
+				// add JWT Authentication
+				var securityScheme = new OpenApiSecurityScheme
+				{
+					Name = "JWT Authentication",
+					Description = "Enter JWT Bearer token **_only_**",
+					In = ParameterLocation.Header,
+					Type = SecuritySchemeType.Http,
+					Scheme = "bearer", // must be lower case
+					BearerFormat = "JWT",
+					Reference = new OpenApiReference
+					{
+						Id = JwtBearerDefaults.AuthenticationScheme,
+						Type = ReferenceType.SecurityScheme
+					}
+				};
+
+				options.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+				options.AddSecurityRequirement(new OpenApiSecurityRequirement
+				{
+					{securityScheme, new string[] { }}
+				});
+
 				options.SwaggerDoc("v3",
+
 					new OpenApiInfo
 					{
 						Title = "Resgrid API",
 						Version = "v3",
-						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference",
+						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
+						Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
+						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
+					}
+				);
+
+				options.SwaggerDoc("v4",
+
+					new OpenApiInfo
+					{
+						Title = "Resgrid API",
+						Version = "v4",
+						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
 						Contact = new OpenApiContact() {Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com")},
-						TermsOfService = new Uri("https://resgrid.com/Public/Terms") 
+						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
 					}
 				);
  
-				var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "Resgrid.Web.Services.xml");
+				var filePath = Path.Combine(AppContext.BaseDirectory, "Resgrid.Web.Services.xml");
 				options.IncludeXmlComments(filePath);
-				options.DescribeAllEnumsAsStrings();
+				//options.DescribeAllEnumsAsStrings();
 			});
-
-			services.AddAuthentication("BasicAuthentication")
-				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);
 
 			services.AddSignalR(hubOptions =>
 			{
@@ -296,6 +335,16 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Protocol_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Protocol_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Protocol_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Forms_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Forms_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Forms_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Forms_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Voice_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Voice_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Voice_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Voice_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 
@@ -303,6 +352,171 @@ namespace Resgrid.Web.ServicesCore
 			services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
 
 			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
+
+			services.AddDbContext<AuthorizationDbContext>(options =>
+			{
+				// Configure the context to use Microsoft SQL Server.
+				options.UseSqlServer(OidcConfig.ConnectionString);
+
+				// Register the entity sets needed by OpenIddict.
+				// Note: use the generic overload if you need
+				// to replace the default OpenIddict entities.
+				options.UseOpenIddict<Guid>();
+			});
+
+			// Register the Identity services.
+			//services.AddIdentity<ApplicationUser, IdentityRole>()
+			//	.AddEntityFrameworkStores<ApplicationDbContext>()
+			//	.AddDefaultTokenProviders();
+
+			// Configure Identity to use the same JWT claims as OpenIddict instead
+			// of the legacy WS-Federation claims it uses by default (ClaimTypes),
+			// which saves you from doing the mapping in your authorization controller.
+			services.Configure<IdentityOptions>(options =>
+			{
+				options.ClaimsIdentity.UserNameClaimType = Claims.Name;
+				options.ClaimsIdentity.UserIdClaimType = Claims.Subject;
+				options.ClaimsIdentity.RoleClaimType = Claims.Role;
+			});
+
+			//// OpenIddict offers native integration with Quartz.NET to perform scheduled tasks
+			//// (like pruning orphaned authorizations/tokens from the database) at regular intervals.
+			//services.AddQuartz(options =>
+			//{
+			//	options.UseMicrosoftDependencyInjectionJobFactory();
+			//	options.UseSimpleTypeLoader();
+			//	options.UseInMemoryStore();
+			//});
+
+			//// Register the Quartz.NET service and configure it to block shutdown until jobs are complete.
+			//services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+			services.AddOpenIddict()
+				// Register the OpenIddict core components.
+				.AddCore(options =>
+				{
+					// Configure OpenIddict to use the Entity Framework Core stores and models.
+					// Note: call ReplaceDefaultEntities() to replace the default OpenIddict entities.
+					options.UseEntityFrameworkCore()
+					   .UseDbContext<AuthorizationDbContext>()
+					   .ReplaceDefaultEntities<Guid>();
+
+					// Enable Quartz.NET integration.
+					//options.UseQuartz();
+				})
+				// Register the OpenIddict server components.
+				.AddServer(options =>
+				{
+					options.RegisterScopes(
+						Scopes.Profile,
+						Scopes.Email,
+						Scopes.OfflineAccess);
+
+					// Enable the token endpoint.
+					options.SetTokenEndpointUris("/api/v4/connect/token");
+
+					options.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+					options.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
+
+					// Enable the password and the refresh token flows.
+					options.AllowPasswordFlow()
+						   .AllowRefreshTokenFlow();
+
+					// Accept anonymous clients (i.e clients that don't send a client_id).
+					options.AcceptAnonymousClients();
+
+					options.AddEncryptionCertificate(new X509Certificate2(Convert.FromBase64String(OidcConfig.EncryptionCert)));
+					options.AddSigningCertificate(new X509Certificate2(Convert.FromBase64String(OidcConfig.SigningCert)));
+
+					//options.AddEncryptionKey(new SymmetricSecurityKey(
+					//	Convert.FromBase64String(OidcConfig.Key)));
+
+					// Register the signing and encryption credentials.
+					//options.AddDevelopmentEncryptionCertificate()
+					//	   .AddDevelopmentSigningCertificate();
+
+					// Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
+					options.UseAspNetCore()
+						   .EnableTokenEndpointPassthrough();
+				})
+				// Register the OpenIddict validation components.
+				.AddValidation(options =>
+				{
+					// Import the configuration from the local OpenIddict server instance.
+					options.UseLocalServer();
+
+					// Register the ASP.NET Core host.
+					options.UseAspNetCore();
+				});
+
+			switch (TelemetryConfig.Exporter)
+			{
+				case "jaeger":
+					services.AddOpenTelemetryTracing((builder) => builder
+						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Jaeger:ServiceName")))
+						.AddAspNetCoreInstrumentation()
+						.AddHttpClientInstrumentation()
+						.AddJaegerExporter());
+
+					services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
+					break;
+				case "zipkin":
+					services.AddOpenTelemetryTracing((builder) => builder
+						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Zipkin:ServiceName")))
+						.AddAspNetCoreInstrumentation()
+						.AddHttpClientInstrumentation()
+						.AddZipkinExporter());
+
+					services.Configure<ZipkinExporterOptions>(this.Configuration.GetSection("Zipkin"));
+					break;
+				case "otlp":
+					// Adding the OtlpExporter creates a GrpcChannel.
+					// This switch must be set before creating a GrpcChannel/HttpClient when calling an insecure gRPC service.
+					// See: https://docs.microsoft.com/aspnet/core/grpc/troubleshoot#call-insecure-grpc-services-with-net-core-client
+					AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
+					services.AddOpenTelemetryTracing((builder) => builder
+						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Otlp:ServiceName")))
+						.AddAspNetCoreInstrumentation()
+						.AddHttpClientInstrumentation()
+						.AddOtlpExporter(otlpOptions =>
+						{
+							otlpOptions.Endpoint = new Uri(this.Configuration.GetValue<string>("Otlp:Endpoint"));
+						}));
+					break;
+				default:
+					services.AddOpenTelemetryTracing((builder) => builder
+						.AddAspNetCoreInstrumentation()
+						.AddHttpClientInstrumentation()
+						.AddConsoleExporter());
+
+					// For options which can be bound from IConfiguration.
+					services.Configure<AspNetCoreInstrumentationOptions>(this.Configuration.GetSection("AspNetCoreInstrumentation"));
+
+					// For options which can be configured from code only.
+					services.Configure<AspNetCoreInstrumentationOptions>(options =>
+					{
+						options.Filter = (req) =>
+						{
+							return req.Request.Host != null;
+						};
+					});
+
+					break;
+			}
+
+			services.AddAuthentication("BasicAuthentication")
+				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);
+
+			//// TODO: Add IServiceCollection.AddOpenTelemetryMetrics extension method
+			//var providerBuilder = Sdk.CreateMeterProviderBuilder()
+			//	.AddAspNetCoreInstrumentation();
+
+			//// TODO: Add configuration switch for Prometheus and OTLP export
+			//providerBuilder
+			//	.AddConsoleExporter();
+
+			//this.meterProvider = providerBuilder.Build();
 
 			this.Services = services;
 		}
@@ -322,8 +536,8 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new CacheProviderModule());
 			builder.RegisterModule(new MarketingModule());
 			builder.RegisterModule(new PdfProviderModule());
-			builder.RegisterModule(new AudioProviderModule());
 			builder.RegisterModule(new FirebaseProviderModule());
+			builder.RegisterModule(new VoipProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
@@ -382,7 +596,9 @@ namespace Resgrid.Web.ServicesCore
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
 			{
-				c.SwaggerEndpoint("/swagger/v3/swagger.json", "Resgrid API V3");
+				c.SwaggerEndpoint($"/swagger/v3/swagger.json", "Resgrid API V3");
+				c.SwaggerEndpoint($"/swagger/v4/swagger.json", "Resgrid API V4");
+
 				c.RoutePrefix = string.Empty;
 			});
 

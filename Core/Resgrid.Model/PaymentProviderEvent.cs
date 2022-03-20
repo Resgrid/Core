@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Resgrid.Model
 {
 	[Table("PaymentProviderEvents")]
-	public class PaymentProviderEvent: IEntity
+	public class PaymentProviderEvent : IEntity
 	{
 		[Key]
 		[Required]
@@ -30,6 +31,7 @@ namespace Resgrid.Model
 		public bool? Processed { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return PaymentProviderEventId; }
@@ -43,6 +45,9 @@ namespace Resgrid.Model
 		public string IdName => "PaymentProviderEventId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 }

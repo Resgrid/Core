@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -60,7 +61,8 @@ namespace Resgrid.Model
 		public DateTime? RejectedOn { get; set; }
 
         [NotMapped]
-        public object IdValue
+        [JsonIgnore]
+		public object IdValue
         {
             get { return AffiliateId; }
             set { AffiliateId = (int)value; }
@@ -73,6 +75,9 @@ namespace Resgrid.Model
         public string IdName => "AffiliateId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
     }
 }

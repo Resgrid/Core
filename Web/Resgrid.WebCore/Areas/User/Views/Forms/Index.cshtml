@@ -1,0 +1,122 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.WebCore.Areas.User.Models.Forms.FormIndexModel
+@{
+  ViewBag.Title = "Resgrid | Forms";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-4">
+    <h2>Forms</h2>
+    <ol class="breadcrumb">
+      <li>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+      </li>
+      <li class="active">
+        <strong>Forms</strong>
+      </li>
+    </ol>
+  </div>
+  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+  {
+    <div class="col-sm-8">
+      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+        <a title="Create Form" class="btn btn-success" asp-controller="Forms" asp-action="New" asp-route-area="User">New Form</a>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Type
+                  </th>
+                  <th>
+                    Active
+                  </th>
+                  <th>
+                    Created On
+                  </th>
+                  <th>
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var t in Model.Forms)
+				{
+                  <tr>
+                    <td>
+                      @t.Name
+                    </td>
+                    <td>
+                      @if (t.Type == 0)
+					  {
+                        <span>New Call Form</span>
+					  }
+                    </td>
+                    <td>
+                      @if (t.IsActive)
+					  {
+                        <span>Yes</span>
+					  }
+					  else
+					  {
+                        <span>No</span>
+					  }
+                    </td>
+                    <td>
+                      @Html.Raw(t.CreatedOn.ToShortDateString())
+                    </td>
+                    <td>
+                      <a href="@Url.Action("View", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-info'>
+                        <i class="icon-eye-open">
+                        </i> View
+                      </a>
+                      @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+					  {
+						if (t.IsActive)
+						{
+                          <a href="@Url.Action("Disable", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-warning' rel="nofollow">Disable</a>
+						}
+						else
+						{
+                          <a href="@Url.Action("Enable", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-success' rel="nofollow">Enable</a>
+						}
+                        <a href="@Url.Action("Delete", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this form. Are you sure you want to delete the form @t.Name ?" rel="nofollow">Delete</a>
+					  }
+                    </td>
+                  </tr>
+				}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="alert alert-warning">
+      You can only have 1 New Call Form type active at a time.
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+
+}

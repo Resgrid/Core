@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -33,7 +34,7 @@ namespace Resgrid.Model
 
 		public string GetLimitForType(PlanLimitTypes limitType)
 		{
-			var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int) limitType);
+			var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
 
 			if (limt != null)
 				return limt.LimitValue.ToString();
@@ -46,15 +47,21 @@ namespace Resgrid.Model
 			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
 				return int.MaxValue;
 
-			var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
+			if (PlanLimits != null && PlanLimits.Any())
+			{
+				var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
 
-			if (limt != null)
-				return limt.LimitValue;
-			else
-				return int.MaxValue;
+				if (limt != null)
+					return limt.LimitValue;
+				else
+					return int.MaxValue;
+			}
+
+			return int.MaxValue;
 		}
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return PlanId; }
@@ -68,6 +75,9 @@ namespace Resgrid.Model
 		public string IdName => "PlanId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Role", "User" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Role", "User" };
 	}
 }

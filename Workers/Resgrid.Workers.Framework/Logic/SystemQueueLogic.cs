@@ -2,7 +2,6 @@
 using Autofac;
 using Resgrid.Framework;
 using Resgrid.Model;
-using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Stripe;
 using Resgrid.Model.Repositories;
@@ -13,98 +12,14 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Model.Providers;
 using Newtonsoft.Json;
 using Stripe.Checkout;
-using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
 	public class SystemQueueLogic
 	{
-		private QueueClient _client = null;
-
-		public SystemQueueLogic()
-		{
-			while (_client == null)
-			{
-				try
-				{
-					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.SystemQueueName);
-					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.SystemQueueName);
-				}
-				catch (TimeoutException) { }
-			}
-		}
-
-		public void Process(SystemQueueItem item)
-		{
-			//ProcessQueueMessage(_client.Receive());
-
-			var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-			{
-				MaxConcurrentCalls = 1,
-				AutoComplete = false
-			};
-
-			// Register the function that will process messages
-			_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
-		}
-
-		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
-		{
-			bool success = true;
-			string result = "";
-
-			if (message != null)
-			{
-				try
-				{
-					var body = message.GetBody<string>();
-
-					if (!String.IsNullOrWhiteSpace(body))
-					{
-						CqrsEvent qi = null;
-						try
-						{
-							qi = ObjectSerialization.Deserialize<CqrsEvent>(body);
-						}
-						catch (Exception ex)
-						{
-							success = false;
-							result = "Unable to parse message body Exception: " + ex.ToString();
-							//message.Complete();
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-						}
-
-						success = await ProcessSystemQueueItem(qi);
-					}
-
-					try
-					{
-						if (success)
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-							//message.Complete();
-					}
-					catch (MessageLockLostException)
-					{
-					}
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-					await _client.AbandonAsync(message.SystemProperties.LockToken); 
-					//message.Abandon();
-					success = false;
-					result = ex.ToString();
-				}
-			}
-
-			return new Tuple<bool, string>(success, result);
-		}
-
 		public static async Task<bool> ProcessSystemQueueItem(CqrsEvent qi, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			bool success = true;
@@ -169,28 +84,30 @@ namespace Resgrid.Workers.Framework.Logic
 						try
 						{
 							unitData = ObjectSerialization.Deserialize<PushRegisterionEvent>(qi.Data);
+
+							if (unitData != null)
+							{
+								PushUri pushUri = new PushUri();
+								pushUri.PushUriId = unitData.PushUriId;
+								pushUri.UserId = unitData.UserId;
+								pushUri.PlatformType = unitData.PlatformType;
+								pushUri.PushLocation = unitData.PushLocation;
+								pushUri.DepartmentId = unitData.DepartmentId;
+								pushUri.UnitId = unitData.UnitId;
+								pushUri.DeviceId = unitData.DeviceId;
+								pushUri.Uuid = unitData.Uuid;
+
+								var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
+
+								await pushService.UnRegisterUnit(pushUri);
+								var unitResult = await pushService.RegisterUnit(pushUri);
+
+								pushService = null;
+							}
 						}
 						catch (Exception ex)
 						{
 
-						}
-
-						if (unitData != null)
-						{
-							PushUri pushUri = new PushUri();
-							pushUri.PushUriId = unitData.PushUriId;
-							pushUri.UserId = unitData.UserId;
-							pushUri.PlatformType = unitData.PlatformType;
-							pushUri.PushLocation = unitData.PushLocation;
-							pushUri.DepartmentId = unitData.DepartmentId;
-							pushUri.UnitId = unitData.UnitId;
-							pushUri.DeviceId = unitData.DeviceId;
-							pushUri.Uuid = unitData.Uuid;
-
-							var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
-							var unitResult = await pushService.RegisterUnit(pushUri);
-
-							pushService = null;
 						}
 						break;
 					case CqrsEventTypes.StripeChargeSucceeded:
@@ -376,7 +293,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 									if (!String.IsNullOrEmpty(call.Address))
 										callAddress = call.Address;
-									else if (!String.IsNullOrEmpty(call.GeoLocationData))
+									else if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 									{
 										string[] points = call.GeoLocationData.Split(char.Parse(","));
 
@@ -425,13 +342,16 @@ namespace Resgrid.Workers.Framework.Logic
 								case AuditLogTypes.DepartmentSettingsChanged:
 									auditLog.Message = string.Format("{0} updated the department settings", profile.FullName.AsFirstNameLastName);
 									var compareLogic = new CompareLogic();
-									ComparisonResult auditCompareResult = compareLogic.Compare(auditEvent.Before, auditEvent.After);
+									var departmentSettingsChangedBefore = JsonConvert.DeserializeObject<Department>(auditEvent.Before);
+									var departmentSettingsChangedAfter = JsonConvert.DeserializeObject<Department>(auditEvent.After);
+									ComparisonResult auditCompareResult = compareLogic.Compare(departmentSettingsChangedBefore, departmentSettingsChangedAfter);
 									auditLog.Data = auditCompareResult.DifferencesString;
 									break;
 								case AuditLogTypes.UserAdded:
-									if (auditEvent.After != null && auditEvent.After.GetType().BaseType == typeof(IdentityUser))
+									if (!String.IsNullOrWhiteSpace(auditEvent.After))
 									{
-										var newProfile = await userProfileService.GetProfileByUserIdAsync(((IdentityUser)auditEvent.After).UserId);
+										var userAddedIdentityUser = JsonConvert.DeserializeObject<IdentityUser>(auditEvent.After);
+										var newProfile = await userProfileService.GetProfileByUserIdAsync(userAddedIdentityUser.UserId);
 										auditLog.Message = string.Format("{0} added new user {1}", profile.FullName.AsFirstNameLastName, newProfile.FullName.AsFirstNameLastName);
 
 										auditLog.Data = $"New UserId: {newProfile.UserId}";
@@ -439,83 +359,99 @@ namespace Resgrid.Workers.Framework.Logic
 									break;
 								case AuditLogTypes.UserRemoved:
 
-									if (auditEvent.Before != null && auditEvent.Before.GetType() == typeof(UserProfile))
+									if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 									{
-										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed user {(((UserProfile)auditEvent.Before).FullName.AsFirstNameLastName)}";
+										var userRemovedIdentityUser = JsonConvert.DeserializeObject<UserProfile>(auditEvent.Before);
+										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed user {userRemovedIdentityUser.FullName.AsFirstNameLastName}";
 										auditLog.Data = "No Data";
 									}
 
 									break;
 								case AuditLogTypes.GroupAdded:
-									if (auditEvent.After != null && auditEvent.After.GetType() == typeof(DepartmentGroup))
+									if (!String.IsNullOrWhiteSpace(auditEvent.After))
 									{
-										if (((DepartmentGroup)auditEvent.After).Type.HasValue && ((DepartmentGroup)auditEvent.After).Type.Value == (int)DepartmentGroupTypes.Station)
-											auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added station group {((DepartmentGroup)auditEvent.After).Name}";
+										var groupAddedGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.After);
+										if (groupAddedGroup.Type.HasValue && groupAddedGroup.Type.Value == (int)DepartmentGroupTypes.Station)
+											auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added station group {groupAddedGroup.Name}";
 										else
-											auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added organizational group {((DepartmentGroup)auditEvent.After).Name}";
+											auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added organizational group {groupAddedGroup.Name}";
 
-										auditLog.Data = $"GroupId: {((DepartmentGroup)auditEvent.After).DepartmentGroupId}";
+										auditLog.Data = $"GroupId: {groupAddedGroup.DepartmentGroupId}";
 									}
 									break;
 								case AuditLogTypes.GroupRemoved:
-									if (auditEvent.Before != null && auditEvent.Before.GetType() == typeof(DepartmentGroup))
+									if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 									{
-										auditLog.Message = string.Format("{0} removed group {1}", profile.FullName.AsFirstNameLastName, ((DepartmentGroup)auditEvent.Before).Name);
+										var groupRemovedGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.Before);
+										auditLog.Message = string.Format("{0} removed group {1}", profile.FullName.AsFirstNameLastName, groupRemovedGroup.Name);
 										auditLog.Data = "No Data";
 									}
 									break;
 								case AuditLogTypes.GroupChanged:
-									if (auditEvent.Before != null && auditEvent.Before.GetType() == typeof(DepartmentGroup) && auditEvent.After != null &&
-										auditEvent.After.GetType() == typeof(DepartmentGroup))
+									if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
 									{
-										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated group {((DepartmentGroup)auditEvent.After).Name}";
+										var groupUpdatedBeforeGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.Before);
+										var groupUpdatedAfterGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.After);
+
+										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated group {groupUpdatedAfterGroup.Name}";
 										var compareLogicGroup = new CompareLogic();
 
-										ComparisonResult resultGroup = compareLogicGroup.Compare(auditEvent.Before, auditEvent.After);
+										ComparisonResult resultGroup = compareLogicGroup.Compare(groupUpdatedBeforeGroup, groupUpdatedAfterGroup);
 										auditLog.Data = resultGroup.DifferencesString;
 									}
 									break;
 								case AuditLogTypes.UnitAdded:
-									if (auditEvent.After != null && auditEvent.After.GetType() == typeof(Unit))
+									if (!String.IsNullOrWhiteSpace(auditEvent.After))
 									{
-										auditLog.Message = string.Format("{0} added unit {1}", profile.FullName.AsFirstNameLastName, ((Unit)auditEvent.After).Name);
-										auditLog.Data = $"UnitId: {((Unit)auditEvent.After).UnitId}";
+										var unitedAddedUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.After);
+										auditLog.Message = string.Format("{0} added unit {1}", profile.FullName.AsFirstNameLastName, unitedAddedUnit.Name);
+										auditLog.Data = $"UnitId: {unitedAddedUnit.UnitId}";
 									}
 									break;
 								case AuditLogTypes.UnitRemoved:
-									if (auditEvent.Before != null && auditEvent.Before.GetType() == typeof(Unit))
+									if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 									{
-										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed unit {((Unit)auditEvent.Before).Name}";
+										var unitedRemovedUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.Before);
+										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed unit {unitedRemovedUnit.Name}";
 										auditLog.Data = "No Data";
 									}
 									break;
 								case AuditLogTypes.UnitChanged:
-									if (auditEvent.Before != null && auditEvent.Before.GetType() == typeof(Unit) && auditEvent.After != null && auditEvent.After.GetType() == typeof(Unit))
+									if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
 									{
-										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated unit {((Unit)auditEvent.After).Name}";
+										var unitUpdatedBeforeUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.Before);
+										var unitUpdatedAfterUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.After);
+
+										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated unit {unitUpdatedAfterUnit.Name}";
 
 										var compareLogicUnit = new CompareLogic();
-										ComparisonResult resultUnit = compareLogicUnit.Compare(auditEvent.Before, auditEvent.After);
+										ComparisonResult resultUnit = compareLogicUnit.Compare(unitUpdatedBeforeUnit, unitUpdatedAfterUnit);
 										auditLog.Data = resultUnit.DifferencesString;
 									}
 									break;
 								case AuditLogTypes.ProfileUpdated:
-									if (auditEvent.Before != null && auditEvent.Before.GetType() == typeof(UserProfile) && auditEvent.After != null && auditEvent.After.GetType() == typeof(UserProfile))
+									if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
 									{
-										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the profile for {((UserProfile)auditEvent.After).FullName.AsFirstNameLastName}";
+										var profileUpdatedBeforeProfile = JsonConvert.DeserializeObject<UserProfile>(auditEvent.Before);
+										var profileUpdatedAfterProfile = JsonConvert.DeserializeObject<UserProfile>(auditEvent.After);
+
+										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the profile for {profileUpdatedBeforeProfile.FullName.AsFirstNameLastName}";
 
 										var compareLogicProfile = new CompareLogic();
-										ComparisonResult resultProfile = compareLogicProfile.Compare(auditEvent.Before, auditEvent.After);
+										ComparisonResult resultProfile = compareLogicProfile.Compare(profileUpdatedBeforeProfile, profileUpdatedAfterProfile);
 										auditLog.Data = resultProfile.DifferencesString;
 									}
 									break;
 								case AuditLogTypes.PermissionsChanged:
-									if (auditEvent.Before != null && auditEvent.Before.GetType() == typeof(Permission) && auditEvent.After != null && auditEvent.After.GetType() == typeof(Permission))
+									if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
 									{
+										var updatePermissionBefore = JsonConvert.DeserializeObject<Permission>(auditEvent.Before);
+										var updatePermissionAfter = JsonConvert.DeserializeObject<Permission>(auditEvent.After);
+
 										auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the department permissions";
 
 										var compareLogicProfile = new CompareLogic();
-										ComparisonResult resultProfile = compareLogicProfile.Compare(auditEvent.Before, auditEvent.After);
+										ComparisonResult resultProfile = compareLogicProfile.Compare(updatePermissionBefore, updatePermissionAfter);
 										auditLog.Data = resultProfile.DifferencesString;
 									}
 									break;
@@ -573,17 +509,6 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return success;
-		}
-
-		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
-		{
-			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-			//Console.WriteLine("Exception context for troubleshooting:");
-			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
-			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
-			//Console.WriteLine($"- Executing Action: {context.Action}");
-			return Task.CompletedTask;
 		}
 	}
 }

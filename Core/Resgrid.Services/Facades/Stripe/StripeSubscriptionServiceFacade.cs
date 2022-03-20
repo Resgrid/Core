@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Resgrid.Model.Facades.Stripe;
 using Stripe;
 
@@ -13,12 +15,12 @@ namespace Resgrid.Services.Facades.Stripe
 			_stripeSubscriptionService = new SubscriptionService();
 		}
 
-		public Subscription Get(string customerId, string subscriptionId)
+		public async Task<Subscription> Get(string customerId, string subscriptionId)
 		{
-			return _stripeSubscriptionService.Get(subscriptionId);
+			return await _stripeSubscriptionService.GetAsync(subscriptionId);
 		}
 
-		public Subscription Create(string customerId, string planId, SubscriptionCreateOptions createOptions = null)
+		public async Task<Subscription> Create(string customerId, string planId, SubscriptionCreateOptions createOptions = null)
 		{
 			if (createOptions == null)
 				createOptions = new SubscriptionCreateOptions();
@@ -27,26 +29,58 @@ namespace Resgrid.Services.Facades.Stripe
 			createOptions.Items = new List<SubscriptionItemOptions>();
 			createOptions.Items.Add(new SubscriptionItemOptions { Plan = planId, Quantity = 1 });
 
-			return _stripeSubscriptionService.Create(createOptions);
+			return await _stripeSubscriptionService.CreateAsync(createOptions);
 		}
 
-		public Subscription Update(string customerId, string subscriptionId, SubscriptionUpdateOptions updateOptions)
+		public async Task<Subscription> Update(string customerId, string subscriptionId, SubscriptionUpdateOptions updateOptions)
 		{
 			if (updateOptions == null)
 				updateOptions = new SubscriptionUpdateOptions();
 
-			return _stripeSubscriptionService.Update(subscriptionId, updateOptions);
+			return await _stripeSubscriptionService.UpdateAsync(subscriptionId, updateOptions);
 		}
 
 		public Subscription Cancel(string customerId, string subscriptionId, bool cancelAtPeriodEnd = false)
 		{
-
-			return _stripeSubscriptionService.Cancel(subscriptionId, new SubscriptionCancelOptions { });
+			return  _stripeSubscriptionService.Cancel(subscriptionId, new SubscriptionCancelOptions { });
 		}
 
-		public IEnumerable<Subscription> List(string customerId, ListOptions listOptions = null)
+		public async Task<IEnumerable<Subscription>> List(string customerId, ListOptions listOptions = null)
 		{
-			return _stripeSubscriptionService.List(new SubscriptionListOptions { Customer = customerId });
+			return await _stripeSubscriptionService.ListAsync(new SubscriptionListOptions { Customer = customerId });
+		}
+
+		public async Task<Subscription> GetCurrentActiveSub(string customerId)
+		{
+			var subs = await _stripeSubscriptionService.ListAsync(new SubscriptionListOptions { Customer = customerId, Status = "active" });
+
+			if (subs == null || subs.Data == null || subs.Data.Count <= 0)
+				return null;
+
+			return subs.Data[0];
+		}
+
+		public async Task<bool> AddAddonToSubscription(string customerId, string addonId)
+		{
+			var sub = await GetCurrentActiveSub(customerId);
+
+			var options = new SubscriptionUpdateOptions();
+			var addonItem = new SubscriptionItemOptions();
+			addonItem.Price = addonId;
+			options.Items.Add(addonItem);
+			options.ProrationBehavior = "always_invoice";
+
+			var newSub = await _stripeSubscriptionService.UpdateAsync(sub.Id, options);
+
+			if (newSub != null && newSub.Items != null && newSub.Items.Data.Count > 0)
+			{
+				var newAddonItem = newSub.Items.Data.FirstOrDefault(x => x.Price != null && x.Price.Id == addonId);
+
+				if (addonItem != null)
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

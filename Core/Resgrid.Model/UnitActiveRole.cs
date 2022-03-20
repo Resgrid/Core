@@ -1,4 +1,5 @@
-﻿using Resgrid.Model.Identity;
+﻿using Newtonsoft.Json;
+using Resgrid.Model.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -45,6 +46,7 @@ namespace Resgrid.Model
 		public virtual IdentityUser UpdatedByUser { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return UnitActiveRoleId; }
@@ -57,8 +59,11 @@ namespace Resgrid.Model
 		[NotMapped]
 		public string IdName => "UnitActiveRoleId";
 
+		[NotMapped]
+		public int IdType => 0;
+
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Unit", "UnitRole", "User", "UpdatedByUser" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Unit", "UnitRole", "User", "UpdatedByUser" };
 	}
 }

@@ -161,9 +161,15 @@ namespace Resgrid.Repositories.DataRepository
 
 					var query = _queryFactory.GetInsertQuery<InsertQuery, T>(entity);
 
-					var result = await x.QuerySingleAsync<int>(query, dynamicParameters, _unitOfWork.Transaction);
-
-					((IEntity)entity).IdValue = result;
+					if (((IEntity)entity).IdType == 0)
+					{
+						var result = await x.QuerySingleAsync<int>(query, dynamicParameters, _unitOfWork.Transaction);
+						((IEntity)entity).IdValue = result;
+					}
+					else
+					{
+						var result = await x.QueryAsync(query, dynamicParameters, _unitOfWork.Transaction);
+					}
 
 					if (!firstLevelOnly)
 						await HandleChildObjects(entity, cancellationToken);
@@ -294,7 +300,12 @@ namespace Resgrid.Repositories.DataRepository
 				didParse = int.TryParse(entity.IdValue.ToString(), out idValue);
 
 			if (((IEntity)entity).IdValue == null || (didParse && idValue == 0))
+			{
+				if (((IEntity)entity).IdType == 1)
+					((IEntity)entity).IdValue = Guid.NewGuid().ToString();
+
 				return await InsertAsync(entity, cancellationToken, firstLevelOnly);
+			}
 
 			return await UpdateAsync(entity, cancellationToken, firstLevelOnly);
 		}

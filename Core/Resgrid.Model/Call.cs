@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using System.Linq;
 using ProtoBuf;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -154,7 +155,14 @@ namespace Resgrid.Model
 		[NotMapped]
 		public int PreviousDispatchCount { get; set; }
 
+		public string CallFormData { get; set; }
+
+		public DateTime? DispatchOn { get; set; }
+
+		public bool? HasBeenDispatched { get; set; }
+
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return CallId; }
@@ -168,7 +176,10 @@ namespace Resgrid.Model
 		public string IdName => "CallId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount" };
 
 		public string GetIdentifier()
 		{

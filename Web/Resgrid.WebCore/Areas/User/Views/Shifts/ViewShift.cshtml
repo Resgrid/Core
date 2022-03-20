@@ -82,7 +82,7 @@
                   <dt>Start:</dt>
                   <dd>@Model.Day.Shift.StartTime</dd>
                   <dt>End:</dt>
-                  @if (Model.Day.Shift.EndTime.HasValue())
+                  @if (!String.IsNullOrWhiteSpace(Model.Day.Shift.EndTime))
 				  {
                     <dd>@Model.Day.Shift.EndTime</dd>
 				  }

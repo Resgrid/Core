@@ -1,105 +1,17 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.InteropExtensions;
 using Resgrid.Framework;
 using Resgrid.Model;
-using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Stripe;
 using Newtonsoft.Json;
 using Stripe.Checkout;
-using Message = Microsoft.Azure.ServiceBus.Message;
 
 namespace Resgrid.Workers.Framework.Logic
 {
 	public class PaymentQueueLogic
 	{
-		private QueueClient _client = null;
-
-		public PaymentQueueLogic()
-		{
-			while (_client == null)
-			{
-				try
-				{
-					//_client = QueueClient.CreateFromConnectionString(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.PaymentQueueName);
-					_client = new QueueClient(Config.ServiceBusConfig.AzureQueueSystemConnectionString, Config.ServiceBusConfig.PaymentQueueName);
-				}
-				catch (TimeoutException) { }
-			}
-		}
-
-		public void Process(SystemQueueItem item)
-		{
-			var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-			{
-				MaxConcurrentCalls = 1,
-				AutoComplete = false
-			};
-
-			// Register the function that will process messages
-			_client.RegisterMessageHandler(ProcessQueueMessage, messageHandlerOptions);
-
-			//ProcessQueueMessage(_client.Receive());
-		}
-
-		public async Task<Tuple<bool, string>> ProcessQueueMessage(Message message, CancellationToken token)
-		{
-			bool success = true;
-			string result = "";
-
-			if (message != null)
-			{
-				try
-				{
-					var body = message.GetBody<string>();
-
-					if (!String.IsNullOrWhiteSpace(body))
-					{
-						CqrsEvent qi = null;
-						try
-						{
-							qi = ObjectSerialization.Deserialize<CqrsEvent>(body);
-						}
-						catch (Exception ex)
-						{
-							success = false;
-							result = "Unable to parse message body Exception: " + ex.ToString();
-							//message.Complete();
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-						}
-
-						success = await ProcessPaymentQueueItem(qi);
-					}
-
-					try
-					{
-						if (success)
-							await _client.CompleteAsync(message.SystemProperties.LockToken);
-							//message.Complete();
-					}
-					catch (MessageLockLostException)
-					{
-					}
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-					Logging.SendExceptionEmail(ex, "PaymentQueueLogic");
-
-					await _client.AbandonAsync(message.SystemProperties.LockToken); 
-					//message.Abandon();
-					success = false;
-					result = ex.ToString();
-				}
-			}
-
-			return new Tuple<bool, string>(success, result);
-		}
-
 		public static async Task<bool> ProcessPaymentQueueItem(CqrsEvent qi)
 		{
 			bool success = true;
@@ -194,17 +106,6 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return success;
-		}
-
-		static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
-		{
-			//Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-			//var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-			//Console.WriteLine("Exception context for troubleshooting:");
-			//Console.WriteLine($"- Endpoint: {context.Endpoint}");
-			//Console.WriteLine($"- Entity Path: {context.EntityPath}");
-			//Console.WriteLine($"- Executing Action: {context.Action}");
-			return Task.CompletedTask;
 		}
 	}
 }

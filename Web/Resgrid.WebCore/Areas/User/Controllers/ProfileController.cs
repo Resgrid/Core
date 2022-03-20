@@ -960,7 +960,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (result.Succeeded)
 			{
 				if (model.EmailUser)
-					_emailService.SendPasswordResetEmail(model.Email, model.Name, user.UserName, model.Password, userDepartment.Name);
+					await _emailService.SendPasswordResetEmail(model.Email, model.Name, user.UserName, model.Password, userDepartment.Name);
 
 				return RedirectToAction("Index", "Personnel", new { Area = "User" });
 			}

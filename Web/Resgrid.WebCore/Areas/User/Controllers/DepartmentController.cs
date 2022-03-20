@@ -331,7 +331,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Settings(DepartmentSettingsModel model, CancellationToken cancellationToken)
 		{
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.DepartmentSettingsChanged;
+
 			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			auditEvent.Before = d.CloneJsonToString();
+
 			d.TimeZone = model.Department.TimeZone;
 			d.Name = model.Department.Name;
 			d.ManagingUserId = model.Department.ManagingUserId;
@@ -433,14 +440,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				departmentAddress = await _addressService.SaveAddressAsync(departmentAddress, cancellationToken);
 				d.AddressId = departmentAddress.AddressId;
 
-				var auditEvent = new AuditEvent();
-				auditEvent.DepartmentId = DepartmentId;
-				auditEvent.UserId = UserId;
-				auditEvent.Type = AuditLogTypes.DepartmentSettingsChanged;
-				auditEvent.Before = d.CloneJson();
-
 				await _departmentsService.UpdateDepartmentAsync(d, cancellationToken);
-				auditEvent.After = d;
+				auditEvent.After = d.CloneJsonToString();
 
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 				model.Message = "Department settings save successful, you may have to log out and log back in for everything to take effect.";
@@ -1189,7 +1190,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
 				return RedirectToAction("Unauthorized", "Public", new { Area = "" });
 
-			var numbers = _numbersService.GetAvailableNumbers(country, areaCode);
+			var numbers = await _numbersService.GetAvailableNumbers(country, areaCode);
 
 			if (numbers.Count > 0)
 			{

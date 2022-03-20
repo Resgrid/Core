@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Docker|AnyCPU">
+      <Configuration>Docker</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectVersion>2.1</ProjectVersion>
+    <DockerTargetOS>Linux</DockerTargetOS>
+    <ProjectGuid>5f012a17-ecc0-42fe-b270-5ac1886610e8</ProjectGuid>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/</DockerServiceUrl>
+    <DockerServiceName>resgrid.webcore</DockerServiceName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="mailserver.env" />
+    <None Include="data\Dockerfile" />
+    <None Include="data\create-databases.sql" />
+    <None Include="data\run-initialization.sh" />
+    <None Include="data\entrypoint.sh" />
+    <None Include="docker-compose.yml" />
+    <None Include=".dockerignore" />
+    <None Include="resgrid.env" />
+  </ItemGroup>
+</Project>

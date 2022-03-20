@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
@@ -18,7 +19,7 @@ namespace Resgrid.Model
 		public int LogId { get; set; }
 
 		public virtual Log Log { get; set; }
-		
+
 		[ForeignKey("Unit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int? UnitId { get; set; }
 
@@ -30,6 +31,7 @@ namespace Resgrid.Model
 
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return LogUserId; }
@@ -43,6 +45,9 @@ namespace Resgrid.Model
 		public string IdName => "LogUserId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Log", "Unit", "User" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Log", "Unit", "User" };
 	}
 }

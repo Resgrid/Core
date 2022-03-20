@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model.Events;
 
@@ -39,6 +40,7 @@ namespace Resgrid.Model
 		public string Data { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DepartmentNotificationId; }
@@ -52,7 +54,10 @@ namespace Resgrid.Model
 		public string IdName => "DepartmentNotificationId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department" };
 
 		public void AddUserToNotify(string userId)
 		{

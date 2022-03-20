@@ -56,5 +56,20 @@ namespace Resgrid.Model.Repositories
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;string&gt;&gt;.</returns>
 		Task<IEnumerable<string>> SelectCallYearsByDeptAsync(int departmentId);
+
+		/// <summary>
+		/// Gets all calls by date range that are to be dispatched asynchronous.
+		/// </summary>
+		/// <param name="startDate">The start date.</param>
+		/// <param name="endDate">The end date.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Call&gt;&gt;.</returns>
+		Task<IEnumerable<Call>> GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime startDate, DateTime endDate);
+
+		/// <summary>
+		/// Gets all non-dispatched scheduled calls by department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Call&gt;&gt;.</returns>
+		Task<IEnumerable<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId);
 	}
 }

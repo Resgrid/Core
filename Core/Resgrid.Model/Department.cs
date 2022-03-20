@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using System.Linq;
 using ProtoBuf;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -86,6 +87,7 @@ namespace Resgrid.Model
 		public string LinkCode { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return DepartmentId; }
@@ -99,7 +101,10 @@ namespace Resgrid.Model
 		public string IdName => "DepartmentId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "ManagingUser", "Address", "Members", "AdminUsers" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ManagingUser", "Address", "Members", "AdminUsers" };
 
 		[ProtoMember(18)]
 		[NotMapped]
@@ -123,6 +128,17 @@ namespace Resgrid.Model
 
 			if (user.Any())
 				return true;
+
+			return false;
+		}
+
+		public bool IsUserInDepartment(string userId)
+		{
+			if (userId == ManagingUserId)
+				return true;
+
+			if (Members != null && Members.Any())
+				return Members.Any(x => x.UserId == userId);
 
 			return false;
 		}

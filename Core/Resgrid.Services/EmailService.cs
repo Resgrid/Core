@@ -195,7 +195,7 @@ namespace Resgrid.Services
 			}
 
 			string coordinates = "No Coordinates Supplied";
-			if (!string.IsNullOrEmpty(call.GeoLocationData))
+			if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 			{
 				coordinates = call.GeoLocationData;
 
@@ -267,13 +267,18 @@ namespace Resgrid.Services
 
 			string subject = $"TROUBLE ALERT for {unit.Name} located at {unitAddress}";
 			string dispatchedOn = String.Empty;
+			Department d = await _departmentsService.GetDepartmentByIdAsync(unit.DepartmentId);
 
-			if (call.Department != null)
-				dispatchedOn = troubleAlertEvent.TimeStamp.Value.FormatForDepartment(call.Department);
+			if (d != null)
+				dispatchedOn = troubleAlertEvent.TimeStamp.Value.FormatForDepartment(d);
 			else
 				dispatchedOn = troubleAlertEvent.TimeStamp.Value.ToString("G") + " UTC";
 
 			string gpsLocation = "No Unit GPS Location";
+			string callName = "No Active Call";
+
+			if (call != null)
+				callName = call.Name;
 
 			if (!String.IsNullOrWhiteSpace(troubleAlertEvent.Latitude) && !String.IsNullOrWhiteSpace(troubleAlertEvent.Longitude))
 				gpsLocation = $"{troubleAlertEvent.Latitude},{troubleAlertEvent.Longitude}";
@@ -281,7 +286,7 @@ namespace Resgrid.Services
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
 			{
 				await _emailProvider.SendTroubleAlertMail(emailAddress, unit.Name, gpsLocation, "", callAddress,
-					unitAddress, "", call.Name);
+					unitAddress, "", callName);
 
 				return true;
 			}
@@ -310,7 +315,7 @@ namespace Resgrid.Services
 			message.From.Add(new MailboxAddress(Encoding.ASCII, $"({listUsername}) List", listEmail));
 
 			message.To.Clear();
-			message.To.Add(new MailboxAddress(emailAddress));
+			message.To.Add(new MailboxAddress(name, emailAddress));
 
 			message.Headers.Add(new MimeKit.Header(HeaderId.ReturnPath, $"{listUsername}+{emailAddress.Replace("@", "=")}@{Config.InboundEmailConfig.ListsDomain}"));
 			message.Headers.Add(new MimeKit.Header("Return-Path", $"{listUsername}+{emailAddress.Replace("@", "=")}@{Config.InboundEmailConfig.ListsDomain}"));

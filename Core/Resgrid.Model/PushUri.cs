@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using ProtoBuf;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
@@ -69,6 +70,7 @@ namespace Resgrid.Model
 		public DateTime CreatedOn { get; set; }
 
 		[NotMapped]
+		[JsonIgnore]
 		public object IdValue
 		{
 			get { return PushUriId; }
@@ -82,6 +84,9 @@ namespace Resgrid.Model
 		public string IdName => "PushUriId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "User", "ChannelUri", "Uuid", "DepartmentId" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "ChannelUri", "Uuid", "DepartmentId" };
 	}
 }

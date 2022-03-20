@@ -789,7 +789,10 @@ namespace Resgrid.Services
 							var userProfile = await _userProfileService.GetProfileByUserIdAsync(userStaffing.UserId);
 							var userStaffingText = await _customStateService.GetCustomPersonnelStaffingAsync(data.DepartmentId, userStaffing);
 
-							return String.Format("{0} staffing is now {1}", userProfile.FullName.AsFirstNameLastName, userStaffingText.ButtonText);
+							if (userProfile != null && userStaffingText != null)
+								return String.Format("{0} staffing is now {1}", userProfile.FullName.AsFirstNameLastName, userStaffingText.ButtonText);
+							else
+								return String.Empty;
 						}
 						else
 							return String.Empty;
@@ -878,8 +881,11 @@ namespace Resgrid.Services
 						var userStateChanged = await _userStateService.GetUserStateByIdAsync(int.Parse(notification.Value));
 						var roleForGroup = await _personnelRolesService.GetRoleByIdAsync(notification.PersonnelRoleTargeted);
 						var groupForRole = await _departmentGroupsService.GetGroupForUserAsync(userStateChanged.UserId, notification.DepartmentId);
+						// TODO: Check this
+						if (roleForGroup != null && groupForRole != null)
+							return String.Format("Availability for role {0} in group {1} is at or below the lower limit", roleForGroup.Name, groupForRole.Name);
 
-						return String.Format("Availability for role {0} in group {1} is at or below the lower limit", roleForGroup.Name, groupForRole.Name);
+						return "Availability for a role is at or below the lower limit";
 					case EventTypes.RolesInDepartmentAvailabilityAlert:
 						if (notification != null)
 						{

@@ -2,7 +2,6 @@
 using CommonServiceLocator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Eventing.Hubs
@@ -30,6 +29,10 @@ namespace Resgrid.Web.Eventing.Hubs
 		Task UnsubscribeToCall(int callId);
 
 		Task CallDataUpdated(int callId);
+
+		Task CallAdded(int departmentId, int id);
+
+		Task CallClosed(int departmentId, int id);
 	}
 
 	[AllowAnonymous]
@@ -121,6 +124,22 @@ namespace Resgrid.Web.Eventing.Hubs
 
 			if (group != null)
 				await group.SendAsync("callDataUpdated", callId);
+		}
+
+		public async Task CallAdded(int departmentId, int id)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("callAdded", id);
+		}
+
+		public async Task CallClosed(int departmentId, int id)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("callClosed", id);
 		}
 	}
 }

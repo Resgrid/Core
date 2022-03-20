@@ -79,7 +79,7 @@ namespace Resgrid.Model
 		public string FaxNumber { get; set; }
 
 		[NotMapped]
-		public object IdValue
+		[JsonIgnore]public object IdValue
 		{
 			get { return DepartmentGroupId; }
 			set { DepartmentGroupId = (int)value; }
@@ -92,7 +92,10 @@ namespace Resgrid.Model
 		public string IdName => "DepartmentGroupId";
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Parent", "Members", "Children", "Address" };
+		public int IdType => 0;
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "Parent", "Members", "Children", "Address" };
 
 		public bool IsUserGroupAdmin(string userId)
 		{

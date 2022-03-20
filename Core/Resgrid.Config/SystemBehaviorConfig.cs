@@ -108,6 +108,11 @@ namespace Resgrid.Config
 		public static LinksProviderTypes LinkProviderType = LinksProviderTypes.Polr;
 
 		/// <summary>
+		/// Sets the type of voip provider to use
+		/// </summary>
+		public static VoipProviderTypes VoipProviderType = VoipProviderTypes.Kazoo;
+
+		/// <summary>
 		/// Sets the type of sms provider to use
 		/// </summary>
 		public static SmsProviderTypes SmsProviderType = SmsProviderTypes.Twilio;
@@ -149,6 +154,11 @@ namespace Resgrid.Config
 		/// an annual payment, please contact team@resgrid.com. 
 		/// </summary>
 		public static string SiteKey = "";
+
+		/// <summary>
+		/// A notice to display on the login page
+		/// </summary>
+		public static string LoginPageNotice = "";
 
 		public static string GetEnvPrefix()
 		{

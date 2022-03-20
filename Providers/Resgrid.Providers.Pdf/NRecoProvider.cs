@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using NReco.PdfGenerator;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model.Providers;
 
 namespace Resgrid.Providers.PdfProvider
@@ -11,6 +11,14 @@ namespace Resgrid.Providers.PdfProvider
 		public byte[] ConvertHtmlToPdf(string html)
 		{
 			var converter = new HtmlToPdfConverter();
+
+			if (OS.IsLinux() || OS.IsMacOS())
+			{
+				converter.WkHtmlToPdfExeName = "wkhtmltopdf";
+				converter.PdfToolPath = "/usr/local/bin/";
+			}
+			else
+				converter.WkHtmlToPdfExeName = "wkhtmltopdf.exe";
 
 			if (!String.IsNullOrWhiteSpace(PrintConfig.NRecoPdfOwner) && !String.IsNullOrWhiteSpace(PrintConfig.NRecoPdfKey))
 				converter.License.SetLicenseKey(PrintConfig.NRecoPdfOwner, PrintConfig.NRecoPdfKey);

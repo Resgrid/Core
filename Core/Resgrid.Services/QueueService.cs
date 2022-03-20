@@ -116,7 +116,7 @@ namespace Resgrid.Services
 			//if (Config.SystemBehaviorConfig.IsAzure)
 			//{
 			// If we have geolocation data, lets get the approx address now.
-			if (!string.IsNullOrEmpty(cqi.Call.GeoLocationData) && String.IsNullOrWhiteSpace(cqi.Call.Address))
+			if (!string.IsNullOrEmpty(cqi.Call.GeoLocationData) && cqi.Call.GeoLocationData.Length > 1 && String.IsNullOrWhiteSpace(cqi.Call.Address))
 			{
 				try
 				{

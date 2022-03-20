@@ -119,5 +119,18 @@ namespace Resgrid.Model.Services
 		/// <param name="state">The state.</param>
 		/// <returns>Task&lt;CustomStateDetail&gt;.</returns>
 		Task<CustomStateDetail> GetCustomPersonnelStaffingAsync(int departmentId, UserState state);
+
+		/// <summary>
+		/// Gets the custom personnel staffing or defaults asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;CustomStateDetail&gt;&gt;.</returns>
+		Task<List<CustomStateDetail>> GetCustomPersonnelStaffingsOrDefaultsAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the default (system) unit statuses
+		/// </summary>
+		/// <returns></returns>
+		List<CustomStateDetail> GetDefaultUnitStatuses();
 	}
 }

@@ -23,14 +23,14 @@ namespace Resgrid.Services
 			_inboundMessageEventRepository = inboundMessageEventRepository;
 		}
 
-		public List<TextNumber> GetAvailableNumbers(string country, string areaCode)
+		public async Task<List<TextNumber>> GetAvailableNumbers(string country, string areaCode)
 		{
-			return _numberProvider.GetAvailableNumbers(country, areaCode);
+			return await _numberProvider.GetAvailableNumbers(country, areaCode);
 		}
 
 		public async Task<bool> ProvisionNumberAsync(int departmentId, string number, string country)
 		{
-			var numberProvisioned = _numberProvider.ProvisionNumber(country, number);
+			var numberProvisioned = await _numberProvider.ProvisionNumber(country, number);
 
 			if (numberProvisioned)
 			{

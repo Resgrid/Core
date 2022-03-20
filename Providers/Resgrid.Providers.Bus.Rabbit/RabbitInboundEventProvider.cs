@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
-	public class RabbitInboundEventProvider: IRabbitInboundEventProvider
+	public class RabbitInboundEventProvider : IRabbitInboundEventProvider
 	{
 		private ConnectionFactory _factory;
 		private IConnection _connection;
@@ -19,6 +21,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, int, Task> ProcessPersonnelStatusChanged;
 		public Func<int, int, Task> ProcessUnitStatusChanged;
 		public Func<int, int, Task> ProcessCallStatusChanged;
+		public Func<int, int, Task> ProcessCallAdded;
+		public Func<int, int, Task> ProcessCallClosed;
 		public Func<int, int, Task> ProcessPersonnelStaffingChanged;
 
 		public async Task Start()
@@ -29,8 +33,38 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private void VerifyAndCreateClients()
 		{
-			_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-			_connection = _factory.CreateConnection();
+			// I know....I know.....
+			try
+			{
+				_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				_connection = _factory.CreateConnection();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				try
+				{
+					_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					_connection = _factory.CreateConnection();
+				}
+				catch (Exception ex2)
+				{
+					Logging.LogException(ex2);
+
+					try
+					{
+						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						_connection = _factory.CreateConnection();
+					}
+					catch (Exception ex3)
+					{
+						Logging.LogException(ex3);
+						throw;
+					}
+				}
+			}
+
 			_channel = _connection.CreateModel();
 		}
 
@@ -68,6 +102,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 								if (ProcessCallStatusChanged != null)
 									await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
 								break;
+							case EventingTypes.CallAdded:
+								if (ProcessCallStatusChanged != null)
+									await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							case EventingTypes.CallClosed:
+								if (ProcessCallStatusChanged != null)
+									await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
 							case EventingTypes.PersonnelStaffingUpdated:
 								if (ProcessPersonnelStaffingChanged != null)
 									await ProcessPersonnelStaffingChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
@@ -91,12 +133,19 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return _channel.IsOpen;
 		}
 
-		public void RegisterForEvents(Func<int, int, Task> personnelStatusChanged, Func<int, int, Task> unitStatusChanged, Func<int, int, Task> callStatusChanged, Func<int, int, Task> personnelStaffingChanged)
+		public void RegisterForEvents(Func<int, int, Task> personnelStatusChanged,
+									  Func<int, int, Task> unitStatusChanged,
+									  Func<int, int, Task> callStatusChanged,
+									  Func<int, int, Task> personnelStaffingChanged,
+									  Func<int, int, Task> callAdded,
+									  Func<int, int, Task> callClosed)
 		{
 			ProcessPersonnelStatusChanged = personnelStatusChanged;
 			ProcessUnitStatusChanged = unitStatusChanged;
 			ProcessCallStatusChanged = callStatusChanged;
 			ProcessPersonnelStaffingChanged = personnelStaffingChanged;
+			ProcessCallAdded = callAdded;
+			ProcessCallClosed = callClosed;
 		}
 
 		private static string SetQueueNameForEnv(string cacheKey)

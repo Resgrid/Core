@@ -125,7 +125,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != departmentId)
 				return Unauthorized();
 
-			var contentType = FileHelper.GetContentTypeByExtension(Path.GetExtension(attachment.FileName).ToLowerInvariant());
+			var extension = Path.GetExtension(attachment.FileName).ToLowerInvariant();
+			var contentType = FileHelper.GetContentTypeByExtension(extension);
 			return File(attachment.Data, contentType);
 		}
 

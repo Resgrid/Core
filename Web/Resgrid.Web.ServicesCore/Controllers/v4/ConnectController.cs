@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
+using Resgrid.Config;
 using Resgrid.Model.Services;
 using System;
 using System.Collections.Generic;
@@ -110,6 +111,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var claim in principal.Claims)
 				{
 					claim.SetDestinations(GetDestinations(claim, principal));
+				}
+
+				if (request.GetScopes() != null && request.GetScopes().Contains("mobile"))
+				{
+					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+					//principal.SetAuthorizationCodeLifetime(TimeSpan.FromMinutes(1));
+					//principal.SetIdentityTokenLifetime(TimeSpan.FromMinutes(30));
+					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
+				} else
+				{
+					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+					//principal.SetAuthorizationCodeLifetime(TimeSpan.FromMinutes(1));
+					//principal.SetIdentityTokenLifetime(TimeSpan.FromMinutes(30));
+					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.NonMobileRefreshTokenExpiryDays));
 				}
 
 				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);

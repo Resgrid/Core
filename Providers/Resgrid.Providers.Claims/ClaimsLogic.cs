@@ -1067,5 +1067,17 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Delete));
 			}
 		}
+
+		public static void AddCustomStateClaims(ClaimsIdentity identity, bool isAdmin)
+		{
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.View));
+
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Delete));
+			}
+		}
 	}
 }

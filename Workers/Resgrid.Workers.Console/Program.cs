@@ -160,52 +160,6 @@ namespace Resgrid.Workers.Console
 		}
 	}
 
-	//public class SystemProcessingService : BackgroundService
-	//{
-	//	private ILogger _logger;
-
-	//	public SystemProcessingService(ILogger<SystemProcessingService> logger)
-	//	{
-	//		_logger = logger;
-	//	}
-
-	//	protected override Task ExecuteAsync(CancellationToken stoppingToken)
-	//	{
-	//		_logger.Log(LogLevel.Information, "Starting Queues Event Watcher");
-
-	//		Task.Run(async () =>
-	//		{
-	//			var queuesTask = new QueuesProcessorTask(_logger);
-	//			await queuesTask.ProcessAsync(new SystemQueueProcessorCommand(8), null, stoppingToken);
-	//		}, stoppingToken);
-
-	//		return Task.CompletedTask;
-	//	}
-	//}
-
-	//public class PaymentProcessingService : BackgroundService
-	//{
-	//	private ILogger _logger;
-
-	//	public PaymentProcessingService(ILogger<PaymentProcessingService> logger)
-	//	{
-	//		_logger = logger;
-	//	}
-
-	//	protected override Task ExecuteAsync(CancellationToken stoppingToken)
-	//	{
-	//		_logger.Log(LogLevel.Information, "Starting Payment Event Watcher");
-
-	//		Task.Run(async () =>
-	//		{
-	//			var queuesTask = new PaymentQueueProcessorTask(_logger);
-	//			await queuesTask.ProcessAsync(new PaymentQueueProcessorCommand(10), null, stoppingToken);
-	//		}, stoppingToken);
-
-	//		return Task.CompletedTask;
-	//	}
-	//}
-
 	public class ScheduledJobsService : BackgroundService
 	{
 		private ILogger _logger;
@@ -310,6 +264,12 @@ namespace Resgrid.Workers.Console
 					new Commands.StatusScheduleCommand(12),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling OIDC Token Cleaning");
+				await client.ScheduleAsync("Clean OIDC Tokens",
+					new Commands.CleanOIDCCommand(13),
+					Cron.MinuteIntervals(30),
+					stoppingToken);
 			}
 			else
 			{
@@ -325,6 +285,7 @@ namespace Resgrid.Workers.Console
 				stoppingToken.WaitHandle.WaitOne();
 			}
 
+			//var test = "a";
 			//while (!cancellationToken.IsCancellationRequested)
 			//{
 			//	await Task.Delay(TimeSpan.FromSeconds(1));

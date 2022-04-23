@@ -441,12 +441,14 @@ namespace Resgrid.Services
 			if (userId == editingProfileId)
 				return true;
 
-			var usersDepartment = await _departmentsService.GetDepartmentByUserIdAsync(editingProfileId);
+			var usersDepartments = await _departmentsService.GetAllDepartmentsForUserAsync(editingProfileId);
 
-			if (usersDepartment == null)
+			if (usersDepartments == null || !usersDepartments.Any())
 				return false;
 
-			if (usersDepartment.DepartmentId != departmentId)
+			var hasDepartmentIdMatch = usersDepartments.Any(x => x.DepartmentId == departmentId);
+
+			if (!hasDepartmentIdMatch)
 				return false;
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);

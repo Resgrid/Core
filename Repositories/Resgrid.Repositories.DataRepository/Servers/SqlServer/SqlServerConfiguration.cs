@@ -878,6 +878,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				FROM [dbo].[Shifts] sh
 				WHERE sh.DepartmentId = %DID%
 				FOR JSON PATH) AS 'JsonResult'";
+			SelectShiftSignupsByGroupIdAndDateQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID% AND CAST([ShiftDay] AS DATE) = CAST(%SHIFTDAYDATE% AS DATE)";
 			#endregion Shifts
 
 			#region Dispatch Protocols

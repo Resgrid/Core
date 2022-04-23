@@ -566,7 +566,7 @@ namespace Resgrid.Services
 			return signup;
 		}
 
-		public async Task<bool> IsUserSignedUpForShiftDayAsync(ShiftDay shiftDay, string userId)
+		public async Task<bool> IsUserSignedUpForShiftDayAsync(ShiftDay shiftDay, string userId, int? departmentId)
 		{
 			var signups = await GetShiftSignpsForShiftDayAsync(shiftDay.ShiftDayId);
 
@@ -581,8 +581,16 @@ namespace Resgrid.Services
 
 			foreach (var shiftSignup in signups)
 			{
-				if (shiftSignup.UserId == userId)
-					return true;
+				if (departmentId.HasValue)
+				{
+					if (shiftSignup.UserId == userId && shiftSignup.DepartmentGroupId == departmentId.Value)
+						return true;
+				}
+				else
+				{
+					if (shiftSignup.UserId == userId)
+						return true;
+				}
 
 				if (shiftSignup.Trade != null && shiftSignup.Trade.TargetShiftSignup != null &&
 					shiftSignup.Trade.TargetShiftSignup.UserId == userId)
@@ -734,6 +742,13 @@ namespace Resgrid.Services
 				return items.ToList();
 
 			return new List<ShiftGroup>();
+		}
+
+
+		public async Task<List<ShiftSignup>> GetShiftSignupsByDepartmentGroupIdAndDayAsync(int departmentGroupId, DateTime shiftDayDate)
+		{
+			var signups = await _shiftSignupRepository.GetAllShiftSignupsByGroupIdAndDateAsync(departmentGroupId, shiftDayDate);
+			return signups.ToList();
 		}
 	}
 }

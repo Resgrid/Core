@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Resgrid.Framework
@@ -27,7 +28,13 @@ namespace Resgrid.Framework
 
 		public static bool IsDMSLocation(string point)
 		{
-			return (point.Contains("S") || point.Contains("W") || point.Contains("'") || point.Contains("\""));
+			//return (point.Contains("S") || point.Contains("W") || point.Contains("'") || point.Contains("\""));
+			return (point.Contains("°") || point.Contains("'") || point.Contains("\""));
+		}
+
+		public static string StripNonDecimalCharacters(string point)
+		{
+			return string.Concat(point?.Where(c => char.IsNumber(c) || c == '.' || c == '-') ?? "");
 		}
 
 		public static double ConvertDegreeAngleToDouble(string point)

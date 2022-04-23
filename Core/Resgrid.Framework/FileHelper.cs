@@ -114,6 +114,8 @@ namespace Resgrid.Framework
 					return "image/gif";
 				case ".jpg":
 					return "image/jpeg";
+				case ".jpeg":
+					return "image/jpeg";
 				case ".png":
 					return "image/png";
 				case ".tiff":

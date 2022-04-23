@@ -10,6 +10,7 @@ using Dapper.Contrib.Extensions;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories;
 using Resgrid.Model;
+using Resgrid.Config;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -255,6 +256,18 @@ namespace Resgrid.Repositories.DataRepository
 
 				return query.ToList();
 			}
+		}
+
+		public async Task<bool> CleanUpOIDCTokensAsync(DateTime timestamp)
+		{
+			using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+			{
+				var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+													 WHERE ExpirationDate < @timestamp",
+								new { timestamp = timestamp });
+			}
+
+			return false;
 		}
 	}
 }

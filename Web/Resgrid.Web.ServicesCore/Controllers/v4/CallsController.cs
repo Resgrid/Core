@@ -47,6 +47,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtocolsService _protocolsService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICustomStateService _customStateService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IShiftsService _shiftsService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -62,7 +64,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IPersonnelRolesService personnelRolesService,
 			IProtocolsService protocolsService,
 			IEventAggregator eventAggregator,
-			ICustomStateService customStateService
+			ICustomStateService customStateService,
+			IDepartmentSettingsService departmentSettingsService,
+			IShiftsService shiftsService
 			)
 		{
 			_callsService = callsService;
@@ -79,6 +83,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_protocolsService = protocolsService;
 			_eventAggregator = eventAggregator;
 			_customStateService = customStateService;
+			_departmentSettingsService = departmentSettingsService;
+			_shiftsService = shiftsService;
 		}
 		#endregion Members and Constructors
 
@@ -667,6 +673,59 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			if (call.UnitDispatches != null && call.UnitDispatches.Any())
+			{
+				foreach (var unitDispatch in call.UnitDispatches)
+				{
+					var unitRoleAssignments = await _unitsService.GetActiveRolesForUnitAsync(unitDispatch.UnitId);
+
+					if (unitRoleAssignments != null && unitRoleAssignments.Any())
+					{
+						foreach (var unitRoleAssignment in unitRoleAssignments)
+						{
+							if (!call.Dispatches.Any(x => x.UserId == unitRoleAssignment.UserId))
+							{
+								CallDispatch cd = new CallDispatch();
+								cd.UserId = unitRoleAssignment.UserId;
+
+								call.Dispatches.Add(cd);
+							}
+						}
+					}
+				}
+			}
+
+			var dispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(DepartmentId);
+			var autoSetStatusForShiftPersonnel = await _departmentSettingsService.GetAutoSetStatusForShiftDispatchPersonnelAsync(DepartmentId);
+			var shiftDispatchStatus = await _departmentSettingsService.GetShiftCallDispatchPersonnelStatusToSetAsync(DepartmentId);
+			//var shiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
+
+			List<string> shiftUserIds = new List<string>();
+			if (dispatchShiftInsteadOfGroup)
+			{
+				if (call.GroupDispatches != null && call.GroupDispatches.Any())
+				{
+					var localizedDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
+					var shiftDate = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day);
+					foreach (var group in call.GroupDispatches)
+					{
+						var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(group.DepartmentGroupId, shiftDate);
+
+						if (signups != null && signups.Any())
+						{
+							foreach (var signup in signups)
+							{
+								CallDispatch cd = new CallDispatch();
+								cd.UserId = signup.UserId;
+
+								call.Dispatches.Add(cd);
+								shiftUserIds.Add(signup.UserId);
+							}
+						}
+					}
+				}
+			}
+
 			// Call is in the past or is now, were dispatching now (at the end of this func)
 			if (call.DispatchOn.HasValue && call.DispatchOn.Value <= DateTime.UtcNow)
 				call.HasBeenDispatched = true;
@@ -676,6 +735,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
 			//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+
+			if (autoSetStatusForShiftPersonnel && shiftUserIds.Any() && call.HasBeenDispatched.GetValueOrDefault())
+			{
+				if (shiftDispatchStatus < 0)
+					shiftDispatchStatus = (int)ActionTypes.RespondingToScene;
+
+				foreach (var user in shiftUserIds)
+				{
+					await _actionLogsService.SetUserActionAsync(user, DepartmentId, shiftDispatchStatus, null, call.CallId, cancellationToken);
+				}
+			}
 
 			var profiles = new List<string>();
 

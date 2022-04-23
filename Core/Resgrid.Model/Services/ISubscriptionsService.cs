@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stripe;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="byPassCache">if set to <c>true</c> [by pass cache].</param>
 		/// <returns>Task&lt;Plan&gt;.</returns>
-		Task<Plan> GetCurrentPlanForDepartmentAsync(int departmentId, bool byPassCache = true);
+		Task<Model.Plan> GetCurrentPlanForDepartmentAsync(int departmentId, bool byPassCache = true);
 
 		/// <summary>
 		/// Gets the plan counts for department asynchronous.
@@ -204,5 +205,24 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department id to get info for.</param>
 		/// <returns>Task&lt;PlanAddon&gt;.</returns>
 		Task<PlanAddon> GetPTTAddonPlanForDepartmentFromStripeAsync(int departmentId);
+
+		Task<PlanAddon> GetPlanAddonByExternalIdAsync(string externalId);
+
+		Task<PaymentAddon> InsertPaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<bool> HasActiveSubForDepartmentFromStripeAsync(int departmentId);
+
+		Task<PlanAddon> GetPTTAddonForCurrentSubAsync(int departmentId);
+
+		Task<PlanAddon> GetPlanAddonByIdAsync(string planAddonId);
+
+		Task<PlanAddon> AddAddonAddedToExistingSub(int departmentId, Plan plan, PlanAddon addon);
+		Task<bool> CancelPlanAddonByTypeFromStripeAsync(int departmentId, int addonType);
+
+		Task<Subscription> GetCanceledPlanFromStripeAsync(int departmentId);
+
+		Task<List<PlanAddon>> GetAllAddonPlansAsync();
+
+		Task<PaymentAddon> SavePaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

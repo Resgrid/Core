@@ -194,6 +194,7 @@ namespace Resgrid.Providers.Claims
 					ClaimsLogic.AddProtocolClaims(id, departmentAdmin);
 					ClaimsLogic.AddFormsClaims(id, departmentAdmin);
 					ClaimsLogic.AddVoiceClaims(id, departmentAdmin);
+					ClaimsLogic.AddCustomStateClaims(id, departmentAdmin);
 				}
 			}
 

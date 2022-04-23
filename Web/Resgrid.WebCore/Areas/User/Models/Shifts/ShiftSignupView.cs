@@ -14,5 +14,11 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public List<ShiftSignup> Signups { get; set; }
 		public Dictionary<string, List<PersonnelRole>> PersonnelRoles { get; set; }
 		public Dictionary<string, UserProfile> UserProfiles { get; set; }
+		public Dictionary<int, bool> ShiftGroupSignups { get; set; }
+
+		public ShiftSignupView()
+		{
+			ShiftGroupSignups = new Dictionary<int, bool>();
+		}
 	}
 }

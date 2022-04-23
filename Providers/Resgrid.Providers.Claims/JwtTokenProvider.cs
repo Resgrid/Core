@@ -119,6 +119,7 @@ namespace Resgrid.Providers.Claims
 			ClaimsLogic.AddProtocolClaims(id, departmentAdmin);
 			ClaimsLogic.AddFormsClaims(id, departmentAdmin);
 			ClaimsLogic.AddVoiceClaims(id, departmentAdmin);
+			ClaimsLogic.AddCustomStateClaims(id, departmentAdmin);
 
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConfig.Key));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);

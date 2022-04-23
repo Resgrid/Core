@@ -132,5 +132,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="retrieveHidden">if set to <c>true</c> [retrieve hidden].</param>
 		/// <returns>Task&lt;List&lt;IdentityUser&gt;&gt;.</returns>
 		Task<List<IdentityUser>> GetAllUsersForDepartmentWithinLimitsAsync(int departmentId, bool retrieveHidden);
+
+		Task<bool> CleanUpOIDCTokensAsync(DateTime timestamp);
 	}
 }

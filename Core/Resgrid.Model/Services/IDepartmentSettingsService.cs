@@ -245,5 +245,15 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;DepartmentSetting&gt;.</returns>
 		Task<DepartmentSetting> SetDepartmentPersonnelListStatusSortOrderAsync(int departmentId, List<PersonnelListStatusOrder> orders, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<bool> GetDispatchShiftInsteadOfGroupAsync(int departmentId);
+
+		Task<bool> GetAutoSetStatusForShiftDispatchPersonnelAsync(int departmentId);
+
+		Task<int> GetShiftCallDispatchPersonnelStatusToSetAsync(int departmentId);
+
+		Task<int> GetShiftCallReleasePersonnelStatusToSetAsync(int departmentId);
+
+		Task<bool> GetAllowSignupsForMultipleShiftGroupsAsync(int departmentId);
 	}
 }

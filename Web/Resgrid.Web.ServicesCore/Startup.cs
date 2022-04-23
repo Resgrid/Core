@@ -345,6 +345,11 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Voice_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Voice_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Voice_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.CustomStates_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.CustomStates_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.CustomStates_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.CustomStates_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 
@@ -410,7 +415,8 @@ namespace Resgrid.Web.ServicesCore
 					options.RegisterScopes(
 						Scopes.Profile,
 						Scopes.Email,
-						Scopes.OfflineAccess);
+						Scopes.OfflineAccess,
+						"mobile");
 
 					// Enable the token endpoint.
 					options.SetTokenEndpointUris("/api/v4/connect/token");

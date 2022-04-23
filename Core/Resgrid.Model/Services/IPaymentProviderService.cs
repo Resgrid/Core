@@ -111,5 +111,7 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Customer&gt;.</returns>
 		Task<Customer> ProcessStripeCheckoutUpdateAsync(Session session,
 			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<Payment> ProcessStripeInvoicePaidAsync(Invoice invoice);
 	}
 }

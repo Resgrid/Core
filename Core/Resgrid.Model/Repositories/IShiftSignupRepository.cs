@@ -32,5 +32,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="shiftDayDate">The shift day date.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ShiftSignup&gt;&gt;.</returns>
 		Task<IEnumerable<ShiftSignup>> GetAllShiftSignupsByShiftIdAndDateAsync(int shiftId, DateTime shiftDayDate);
+
+		Task<IEnumerable<ShiftSignup>> GetAllShiftSignupsByGroupIdAndDateAsync(int departmentGroupId, DateTime shiftDayDate);
 	}
 }

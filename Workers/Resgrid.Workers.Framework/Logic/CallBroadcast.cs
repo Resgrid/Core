@@ -7,6 +7,7 @@ using Autofac;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
@@ -22,6 +23,9 @@ namespace Resgrid.Workers.Framework.Logic
 		private static IUnitsService _unitsService;
 		private static IPersonnelRolesService _rolesService;
 		private static IPrinterProvider _printerProvider;
+		private static IDepartmentSettingsService _departmentSettingsService;
+		private static IShiftsService _shiftsService;
+		private static IDepartmentsService _departmentsService;
 
 		public static async Task<bool> ProcessCallQueueItem(CallQueueItem cqi)
 		{
@@ -93,10 +97,29 @@ namespace Resgrid.Workers.Framework.Logic
 					// Dispatch Groups
 					if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())
 					{
+						if (_departmentSettingsService == null)
+							_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+
+						if (_shiftsService == null)
+							_shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
+
+						if (_departmentsService == null)
+							_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+
+						var dispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(cqi.Call.DepartmentId);
+						var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
+						var localizedDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
+						var shiftDate = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day);
+
 						foreach (var d in cqi.Call.GroupDispatches)
 						{
 							if (!groupIds.Contains(d.DepartmentGroupId))
 								groupIds.Add(d.DepartmentGroupId);
+
+							var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(d.DepartmentGroupId, shiftDate);
+
+							if (dispatchShiftInsteadOfGroup && (signups != null && signups.Any()))
+								continue;
 
 							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(d.DepartmentGroupId);
 

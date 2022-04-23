@@ -3,7 +3,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.UserStatusTableModel
 
-<div class="table-responsive">
+<div class="table-responsive" style="overflow: visible;">
 	<table class='table table-striped'>
 		<tbody>
 			@foreach (var g in Model.UserStatusGroups.Where(x => x.Group != null && x.Group.ParentDepartmentGroupId == null))

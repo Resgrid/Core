@@ -153,6 +153,9 @@ namespace Resgrid.Model
 
 		[Description("FSM Telecom")]
 		FSMTC = 47, // SMS Direct Send
+
+		[Description("MTC Namibia")]
+		MTCNamibia = 48, // SMS Direct Send
 	}
 
 	public static class Carriers
@@ -206,6 +209,7 @@ namespace Resgrid.Model
 																																	{MobileCarriers.Eastlink, "Direct"},
 																																	{MobileCarriers.FreedomMobile, "Direct"},
 																																	{MobileCarriers.FSMTC, "Direct"},
+																																	{MobileCarriers.MTCNamibia, "Direct"},
 																																};
 
 		public static Dictionary<MobileCarriers, Tuple<int, string>> CarriersNumberLength = new Dictionary<MobileCarriers, Tuple<int, string>>()
@@ -267,7 +271,8 @@ namespace Resgrid.Model
 			MobileCarriers.Chatr,
 			MobileCarriers.Eastlink,
 			MobileCarriers.FreedomMobile,
-			MobileCarriers.FSMTC
+			MobileCarriers.FSMTC,
+			MobileCarriers.MTCNamibia
 		};
 
 		public static HashSet<MobileCarriers> OnPremSmsGatewayCarriers = new HashSet<MobileCarriers>()

@@ -382,11 +382,6 @@
             <param name="input">Input to deregister the device for</param>
             <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
-            <summary>
-            Operations to support Dispatch operations
-            </summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
             <summary>
             Operations to support Dispatch operations
@@ -3269,6 +3264,24 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActivePersonnelStatuses">
+            <summary>
+            Gets the active statuses that personnel can currently set for the department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActivePersonnelStaffingLevels">
+            <summary>
+            Gets the active staffing levels that personnel can currently set for the department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActiveUnitStatesLevels">
+            <summary>
+            Gets the active states that units can currently set for the department
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DevicesController">
             <summary>
             Mobile or Tablet Device specific operations
@@ -3391,6 +3404,48 @@
             </summary>
             <param name="userId">UserId of the person to get info for</param>
             <returns>PersonnelInfoResult with information pertaining to that user</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController">
+            <summary>
+            Operations to perform against personnel staffing, i.e. Available, Delayed, in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.SavePersonStaffing(Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a staffing for a person
+            </summary>
+            <param name="input">Staffing and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.SavePersonsStaffings(Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a staffing for multiple personnel
+            </summary>
+            <param name="input">Staffing and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController">
+            <summary>
+            Operations to perform against personnel in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.SavePersonStatus(Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a status for a person
+            </summary>
+            <param name="input">Status and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.SavePersonsStatuses(Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a status for multiple personnel
+            </summary>
+            <param name="input">Status and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RolesController">
             <summary>
@@ -5012,6 +5067,266 @@
         <member name="M:Resgrid.Web.Services.Models.v4.Mapping.GetMapDataResult.#ctor">
             <summary>
             Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput">
+            <summary>
+            Saves (sets) and Personnel Staffing in the system, for a single user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput.UserId">
+            <summary>
+            UnitId of the apparatus that the state is being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput.Type">
+            <summary>
+            The UnitStateType of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput.TimestampUtc">
+            <summary>
+            The timestamp of the status event in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput.Timestamp">
+            <summary>
+            The timestamp of the status event in the local time of the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput.Note">
+            <summary>
+            User provided note for this event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput.EventId">
+            <summary>
+            The event id used for queuing on mobile applications
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingResult">
+            <summary>
+            Depicts a result after saving a person status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingResult.Id">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput">
+            <summary>
+            Saves (sets) and Personnel Status in the system, for a single user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput.UserIds">
+            <summary>
+            UnitId of the apparatus that the state is being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput.Type">
+            <summary>
+            The UnitStateType of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput.TimestampUtc">
+            <summary>
+            The timestamp of the status event in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput.Timestamp">
+            <summary>
+            The timestamp of the status event in the local time of the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput.Note">
+            <summary>
+            User provided note for this event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput.EventId">
+            <summary>
+            The event id used for queuing on mobile applications
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsResult">
+            <summary>
+            Depicts a result after saving a person staffing
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsResult.Ids">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput">
+            <summary>
+            Saves (sets) and Personnel Status in the system, for a single user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.UserIds">
+            <summary>
+            UnitId of the apparatus that the state is being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Type">
+            <summary>
+            The UnitStateType of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.RespondingTo">
+            <summary>
+            The Call/Station the unit is responding to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.TimestampUtc">
+            <summary>
+            The timestamp of the status event in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Timestamp">
+            <summary>
+            The timestamp of the status event in the local time of the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Note">
+            <summary>
+            User provided note for this event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Latitude">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Longitude">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Altitude">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Speed">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.Heading">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.EventId">
+            <summary>
+            The event id used for queuing on mobile applications
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesResult">
+            <summary>
+            Depicts a result after saving a person status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesResult.Ids">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput">
+            <summary>
+            Saves (sets) and Personnel Status in the system, for a single user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.UserId">
+            <summary>
+            UnitId of the apparatus that the state is being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Type">
+            <summary>
+            The UnitStateType of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.RespondingTo">
+            <summary>
+            The Call/Station the unit is responding to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.TimestampUtc">
+            <summary>
+            The timestamp of the status event in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Timestamp">
+            <summary>
+            The timestamp of the status event in the local time of the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Note">
+            <summary>
+            User provided note for this event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Latitude">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Longitude">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Altitude">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Speed">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.Heading">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.EventId">
+            <summary>
+            The event id used for queuing on mobile applications
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusResult">
+            <summary>
+            Depicts a result after saving a person status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusResult.Id">
+            <summary>
+            Response Data
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult">

@@ -130,7 +130,19 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Gets the default (system) unit statuses
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>List of CustomStateDetail</returns>
 		List<CustomStateDetail> GetDefaultUnitStatuses();
+
+		/// <summary>
+		/// Gets the default (system) personnel statuses
+		/// </summary>
+		/// <returns>List of CustomStateDetail</returns>
+		List<CustomStateDetail> GetDefaultPersonStatuses();
+
+		/// <summary>
+		/// Gets the default (system) personnel staffing levels
+		/// </summary>
+		/// <returns>List of CustomStateDetail</returns>
+		List<CustomStateDetail> GetDefaultPersonStaffings();
 	}
 }

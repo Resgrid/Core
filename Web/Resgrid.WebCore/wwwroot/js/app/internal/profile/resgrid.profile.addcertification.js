@@ -15,17 +15,6 @@ var resgrid;
                         select: "Select File"
                     }
                 });
-                $("#Type").kendoComboBox({
-                    minLength: 3,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Profile/GetDepartmentCertificationTypes'
-                        }
-                    },
-                    filter: "contains",
-                    suggest: true
-                });
             });
         })(addcertification = profile.addcertification || (profile.addcertification = {}));
     })(profile = resgrid.profile || (resgrid.profile = {}));

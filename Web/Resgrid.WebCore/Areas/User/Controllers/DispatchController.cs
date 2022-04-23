@@ -60,13 +60,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPdfProvider _pdfProvider;
 		private readonly IProtocolsService _protocolsService;
 		private readonly IFormsService _formsService;
+		private readonly IShiftsService _shiftsService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IGeoLocationProvider geoLocationProvider,
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService)
+						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
+						IShiftsService shiftsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -88,6 +90,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_pdfProvider = pdfProvider;
 			_protocolsService = protocolsService;
 			_formsService = formsService;
+			_shiftsService = shiftsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -346,7 +349,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						if (unitRoleAssignments != null && unitRoleAssignments.Any())
 						{
-							foreach(var unitRoleAssignment in unitRoleAssignments)
+							foreach (var unitRoleAssignment in unitRoleAssignments)
 							{
 								if (!model.Call.Dispatches.Any(x => x.UserId == unitRoleAssignment.UserId))
 								{
@@ -356,7 +359,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 									model.Call.Dispatches.Add(cd);
 								}
 							}
-						}	
+						}
+					}
+				}
+
+				var dispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(DepartmentId);
+				var autoSetStatusForShiftPersonnel = await _departmentSettingsService.GetAutoSetStatusForShiftDispatchPersonnelAsync(DepartmentId);
+				var shiftDispatchStatus = await _departmentSettingsService.GetShiftCallDispatchPersonnelStatusToSetAsync(DepartmentId);
+				//var shiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
+
+				List<string> shiftUserIds = new List<string>();
+				if (dispatchShiftInsteadOfGroup)
+				{
+					if (model.Call.GroupDispatches != null && model.Call.GroupDispatches.Any())
+					{
+						var localizedDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, model.Department);
+						var shiftDate = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day);
+						foreach (var group in model.Call.GroupDispatches)
+						{
+							var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(group.DepartmentGroupId, shiftDate);
+
+							if (signups != null && signups.Any())
+							{
+								foreach (var signup in signups)
+								{
+									CallDispatch cd = new CallDispatch();
+									cd.UserId = signup.UserId;
+
+									model.Call.Dispatches.Add(cd);
+									shiftUserIds.Add(signup.UserId);
+								}
+							}	
+						}
 					}
 				}
 
@@ -371,6 +405,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					catch { /* If no addy, no addy */ }
 				}
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
+
+				if (autoSetStatusForShiftPersonnel && shiftUserIds.Any())
+				{
+					if (shiftDispatchStatus < 0)
+						shiftDispatchStatus = (int)ActionTypes.RespondingToScene;
+
+					foreach (var user in shiftUserIds)
+					{
+						await _actionLogsService.SetUserActionAsync(user, DepartmentId, shiftDispatchStatus, null, call.CallId, cancellationToken);
+					}
+				}
 
 				var cqi = new CallQueueItem();
 				cqi.Call = call;
@@ -894,7 +939,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Call_Update)]
-		public async Task<IActionResult> AddCallNote([FromBody]AddCallNoteInput model, CancellationToken cancellationToken)
+		public async Task<IActionResult> AddCallNote([FromBody] AddCallNoteInput model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
 				Unauthorized();

@@ -544,7 +544,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
 			model.Needs = await _shiftsService.GetShiftDayNeedsAsync(shiftDayId);
 			model.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDayId);
-			model.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(model.Day, UserId);
+
+			var allowMulitpleSignups = await _departmentSettingsService.GetAllowSignupsForMultipleShiftGroupsAsync(DepartmentId);
+			model.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(model.Day, UserId, null);
+
+			if (model.UserSignedUp)
+			{
+				if (allowMulitpleSignups)
+					model.UserSignedUp = false;
+			}
+
+			foreach (var shiftGroup in model.Day.Shift.Groups)
+			{
+				model.ShiftGroupSignups.Add(shiftGroup.DepartmentGroupId, await _shiftsService.IsUserSignedUpForShiftDayAsync(model.Day, UserId, shiftGroup.DepartmentGroupId));
+			}
+
 			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
 			model.UserProfiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
 
@@ -566,7 +580,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
 			model.Needs = await _shiftsService.GetShiftDayNeedsAsync(shiftDayId);
 			model.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDayId);
-			model.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(model.Day, UserId);
+			model.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(model.Day, UserId, null);
 			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
 			model.UserProfiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
 
@@ -593,6 +607,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new ShiftSignupView();
 			model.Signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignupId);
+			model.Signup.Shift = await _shiftsService.GetShiftByIdAsync(model.Signup.ShiftId);
 
 			return View(model);
 		}
@@ -928,7 +943,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						item.SignupType = shift.AssignmentType;
 						item.ShiftId = day.ShiftId;
 						item.Filled = await _shiftsService.IsShiftDayFilledWithObjAsync(shift, day);
-						item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId);
+						item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId, null);
 
 						var shiftGroups = await _shiftsService.GetShiftDayNeedsObjAsync(shift, day);
 
@@ -1041,7 +1056,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				item.SignupType = shift.AssignmentType;
 				item.ShiftId = day.ShiftId;
 				item.Filled = await _shiftsService.IsShiftDayFilledAsync(day.ShiftDayId);
-				item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId);
+				item.UserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(day, UserId, null);
 
 				var shiftGroups = await _shiftsService.GetShiftDayNeedsAsync(day.ShiftDayId);
 

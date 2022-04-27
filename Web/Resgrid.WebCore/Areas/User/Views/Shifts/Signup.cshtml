@@ -182,6 +182,12 @@
                                                         <td>
                                                             @string.Join(", ", roles.Select(x => x.Name))
                                                         </td>
+                                                        <td>
+                                                            @if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(group.DepartmentGroupId) || ClaimsAuthorizationHelper.GetUserId() == signup.UserId)
+                                                            {
+                                                                <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteShiftDaySignup", "Shifts", new {Area = "User", shiftSignupId = signup.ShiftSignupId, shiftDayId = Model.Day.ShiftDayId})">Delete Shift Signup</a>
+                                                            }
+                                                        </td>
                                                     </tr>
                                                 }
                                             </tbody>

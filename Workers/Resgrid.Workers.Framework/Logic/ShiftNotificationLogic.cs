@@ -99,12 +99,15 @@ namespace Resgrid.Workers.Framework.Logic
 
 					var text = $"Shift {shift.Name} has been updated";
 
-					foreach (var profile in shift.Personnel)
+					if (shift.Personnel != null && shift.Personnel.Any())
 					{
-						if (profiles.ContainsKey(profile.UserId))
-							await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
-						else
-							await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
+						foreach (var profile in shift.Personnel)
+						{
+							if (profiles.ContainsKey(profile.UserId))
+								await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
+							else
+								await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
+						}
 					}
 				}
 

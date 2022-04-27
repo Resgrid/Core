@@ -21,13 +21,15 @@ namespace Resgrid.Services
 		private readonly IPermissionsService _permissionsService;
 		private readonly ICalendarService _calendarService;
 		private readonly IProtocolsService _protocolsService;
+		private readonly IShiftsService _shiftsService;
 
 		public AuthorizationService(IDepartmentsService departmentsService, IInvitesService invitesService,
 			ICallsService callsService, IMessageService messageService, IWorkLogsService workLogsService, ISubscriptionsService subscriptionsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
-			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService)
+			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
+			IShiftsService shiftsService)
 		{
-			_departmentsService = departmentsService;
+			_departmentsService = departmentsService;		
 			_invitesService = invitesService;
 			_callsService = callsService;
 			_messageService = messageService;
@@ -39,6 +41,7 @@ namespace Resgrid.Services
 			_permissionsService = permissionsService;
 			_calendarService = calendarService;
 			_protocolsService = protocolsService;
+			_shiftsService = shiftsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -508,6 +511,42 @@ namespace Resgrid.Services
 				return false;
 
 			return true;
+		}
+
+		public async Task<bool> CanUserDeleteShiftSignupAsync(string userId, int departmentId, int shiftSignupId)
+		{
+			var signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignupId);
+			var usersDepartments = await _departmentsService.GetAllDepartmentsForUserAsync(userId);
+
+			if (usersDepartments == null || !usersDepartments.Any())
+				return false;
+
+			var hasDepartmentIdMatch = usersDepartments.Any(x => x.DepartmentId == departmentId);
+
+			if (!hasDepartmentIdMatch)
+				return false;
+
+			if (signup == null)
+				return false;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			if (signup.DepartmentGroupId.HasValue)
+			{
+				var group = await _departmentGroupsService.GetGroupByIdAsync(signup.DepartmentGroupId.Value);
+				if (group != null)
+				{
+					if (group.IsUserGroupAdmin(userId))
+						return true;
+				}
+			}
+
+			if (signup.UserId == userId)
+				return true;
+
+			return false;
 		}
 	}
 }

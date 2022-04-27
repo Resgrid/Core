@@ -66,7 +66,7 @@ namespace Resgrid.Services
 		public async Task<Shift> GetShiftByIdAsync(int shiftId)
 		{
 			var shift = await _shiftsRepository.GetShiftAndDaysByShiftIdAsync(shiftId);
-			//shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shiftId)).ToList();
+			shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shiftId)).ToList();
 			//shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
 			shift.Groups = await GetShiftGroupsForShift(shiftId);
 			//shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shiftId)).ToList();
@@ -167,7 +167,8 @@ namespace Resgrid.Services
 
 		public async Task<bool> UpdateShiftGroupsAsync(Shift shift, List<ShiftGroup> groups, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			foreach (var shiftGroup in groups)
+			var shiftGroups = await GetShiftGroupsForShift(shift.ShiftId);
+			foreach (var shiftGroup in shiftGroups)
 			{
 				await _shiftGroupsRepository.DeleteAsync(shiftGroup, cancellationToken);
 			}
@@ -176,7 +177,7 @@ namespace Resgrid.Services
 			foreach (var group in groups)
 			{
 				group.ShiftId = shift.ShiftId;
-				await _shiftGroupsRepository.DeleteAsync(group, cancellationToken);
+				await _shiftGroupsRepository.InsertAsync(group, cancellationToken);
 			}
 
 			return true;

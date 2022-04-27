@@ -72,7 +72,7 @@ namespace Resgrid.Workers.Framework.Logic
 					// Dispatch Personnel
 					if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
 					{
-						Parallel.ForEach(cqi.Call.Dispatches, d =>
+						foreach (var d in cqi.Call.Dispatches)
 						{
 							dispatchedUsers.Add(d.UserId);
 
@@ -82,13 +82,13 @@ namespace Resgrid.Workers.Framework.Logic
 
 								if (profile != null)
 								{
-									_communicationService.SendCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+									await _communicationService.SendCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 								}
 							}
 							catch (SocketException sex)
 							{
 							}
-						});
+						}
 					}
 
 					if (_departmentGroupsService == null)

@@ -39,6 +39,10 @@
 		{
           <button class="btn btn-danger" onclick="resgrid.dispatch.viewcall.reOpenCall();">Re-Open Call</button>
 		}
+		@if (ClaimsAuthorizationHelper.CanCreateCall())
+		{
+			<a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">Edit Call</a>
+		}
       </div>
     </div>
   </div>
@@ -104,6 +108,10 @@
               <dl class="dl-horizontal">
                 <dt>Incident Id:</dt>
                 <dd>@Model.Call.IncidentNumber</dd>
+				<dt>Call Id:</dt>
+                <dd>@Model.Call.ExternalIdentifier</dd>
+				<dt>Reference Id:</dt>
+                <dd>@Model.Call.ReferenceNumber</dd>
                 <dt>Logged By:</dt>
                 <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</dd>
                 <dt>Logged On:</dt>

@@ -230,5 +230,7 @@ namespace Resgrid.Model.Services
 		/// <param name="logId">The log identifier.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> CanUserDeleteWorkLogAsync(string userId, int logId);
+
+		Task<bool> CanUserDeleteShiftSignupAsync(string userId, int departmentId, int shiftSignupId);
 	}
 }

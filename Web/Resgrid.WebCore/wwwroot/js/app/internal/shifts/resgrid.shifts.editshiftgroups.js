@@ -80,14 +80,15 @@ var resgrid;
             editshiftgroups.generateGroupDropdown = generateGroupDropdown;
             function generateExistingGroupDropdown(groupId, count) {
                 var groupSelect = '<select id="groupSelection_' + count + '" name="groupSelection_' + count + '" class="sl2">';
-                for (var i = 0; i < editshiftgroups.groupData.length; i++) {
-                    if (editshiftgroups.groupData[i].GroupId == groupId) {
+                for (var i = 0; i < resgrid.shifts.editshiftgroups.groupData.length; i++) {
+                    if (resgrid.shifts.editshiftgroups.groupData[i].GroupId == groupId) {
                         groupSelect += '<option value="' + editshiftgroups.groupData[i].GroupId + '" selected>' + editshiftgroups.groupData[i].Name + '</option>';
                     }
                     else {
                         groupSelect += '<option value="' + editshiftgroups.groupData[i].GroupId + '">' + editshiftgroups.groupData[i].Name + '</option>';
                     }
                 }
+                groupSelect += '</select>'
                 return groupSelect;
             }
             editshiftgroups.generateExistingGroupDropdown = generateExistingGroupDropdown;

@@ -35,10 +35,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUnitsService _unitsService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
 		public ShiftsController(IShiftsService shiftsService, IDepartmentGroupsService departmentGroupsService, IDepartmentsService departmentService,
 			IPersonnelRolesService personnelRolesService, IUserProfileService userProfileService, IEventAggregator eventAggregator,
-			IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService)
+			IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService)
 		{
 			_shiftsService = shiftsService;
 			_departmentGroupsService = departmentGroupsService;
@@ -48,6 +49,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 			_departmentSettingsService = departmentSettingsService;
 			_unitsService = unitsService;
+			_authorizationService = authorizationService;
 		}
 
 		[HttpGet]
@@ -459,7 +461,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (shift.DepartmentId != DepartmentId)
 				Unauthorized();
+
 			model.Shift = shift;
+			var shiftGroups = await _shiftsService.GetShiftGroupsByGroupIdAsync(model.Shift.ShiftId);
 
 			if (ModelState.IsValid)
 			{
@@ -474,6 +478,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var group = new ShiftGroup();
 
 						group.DepartmentGroupId = int.Parse(groupId);
+
+						if (shiftGroups != null && shiftGroups.Any())
+						{
+							var shiftGroup = shiftGroups.FirstOrDefault(x => x.DepartmentGroupId == group.DepartmentGroupId);
+
+							if (shiftGroup != null)
+								group.ShiftGroupId = shiftGroup.ShiftGroupId;
+						}
 
 						var values = new Dictionary<int, int>();
 						List<int> roleSelections = (from object key in form.Keys where key.ToString().StartsWith("roleSelection_" + i + "_") select int.Parse(key.ToString().Replace("roleSelection_" + i + "_", ""))).ToList();
@@ -599,6 +611,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var signup = await _shiftsService.SignupForShiftDayAsync(day.ShiftId, day.Day, groupId, UserId, cancellationToken);
 
 			return RedirectToAction("SignupSuccess", new { shiftSignupId = signup.ShiftSignupId });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> DeleteShiftDaySignup(int shiftSignupId, int shiftDayId, CancellationToken cancellationToken)
+		{
+			var signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignupId);
+
+			if (signup == null)
+				return RedirectToAction("Signup", new { shiftDayId = shiftDayId });
+
+			var shift = await _shiftsService.GetShiftByIdAsync(signup.ShiftId);
+
+			if (shift == null)
+				return RedirectToAction("Signup", new { shiftDayId = shiftDayId });
+
+			if (shift.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			if (!(await _authorizationService.CanUserDeleteShiftSignupAsync(UserId, DepartmentId, shiftSignupId)))
+				Unauthorized();
+
+			await _shiftsService.DeleteShiftSignupAsync(signup, cancellationToken);
+
+			return RedirectToAction("Signup", new { shiftDayId = shiftDayId });
 		}
 
 		[HttpGet]

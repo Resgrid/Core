@@ -26,6 +26,8 @@ namespace Resgrid.Model
 
 		public int? CustomStatesId { get; set; }
 
+		public int? MapIconType { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

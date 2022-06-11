@@ -28,6 +28,7 @@ using Serilog.Formatting.Json;
 using Stripe;
 using FluentMigrator.Runner;
 using Resgrid.Providers.Migrations.Migrations;
+using Resgrid.Model.Repositories;
 
 namespace Resgrid.Workers.Console
 {
@@ -318,6 +319,7 @@ namespace Resgrid.Workers.Console
 				using (var scope = serviceProvider.CreateScope())
 				{
 					UpdateDatabase(scope.ServiceProvider);
+					UpdateOidcDatabase(scope.ServiceProvider);
 				}
 
 				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
@@ -340,6 +342,15 @@ namespace Resgrid.Workers.Console
 
 			// Execute the migrations
 			runner.MigrateUp();
+		}
+
+		/// <summary>
+		/// Update the database
+		/// </summary>
+		private static void UpdateOidcDatabase(IServiceProvider serviceProvider)
+		{
+			var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
+			bool result = oidcRepository.UpdateOidcDatabase();
 		}
 
 		private static IServiceProvider CreateServices()

@@ -305,6 +305,32 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
+                <strong><small>Notes</small></strong>
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Name</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var note in Model.Call.CallNotes)
+                        {
+                            var name = Model.Names.FirstOrDefault(x => x.UserId == note.UserId);
+                            <tr>
+                                <td>@note.Timestamp.TimeConverterToString(Model.Department)</td>
+                                <td>@name.FirstName @name.LastName</td>
+                                <td>@note.Note</td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
                 <strong><small>Unit Events</small></strong>
                 <table class="table table-condensed table-bordered">
                     <thead>
@@ -329,7 +355,7 @@
                                 {
                                     <td><span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span></td>
                                 }
-                                <td>@us.Timestamp.FormatForDepartment(Model.Department)</td>
+                                <td>@us.Timestamp.TimeConverterToString(Model.Department)</td>
                             </tr>
                         }
                     </tbody>
@@ -362,7 +388,7 @@
                                 {
                                     <td><span class='label label-default' style="color:@customState.TextColor;background-color:@customState.ButtonColor;">@customState.ButtonText</span></td>
                                 }
-                                <td>@al.Timestamp.FormatForDepartment(Model.Department)</td>
+                                <td>@al.Timestamp.TimeConverterToString(Model.Department)</td>
                             </tr>
                         }
                     </tbody>
@@ -371,7 +397,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12" style="text-align: right;">
-                @DateTime.UtcNow.FormatForDepartment(Model.Department)
+                @DateTime.UtcNow.TimeConverterToString(Model.Department)
             </div>
         </div>
     </div>

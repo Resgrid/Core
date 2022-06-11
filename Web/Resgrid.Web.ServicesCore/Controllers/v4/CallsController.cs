@@ -108,7 +108,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true);
 
 					string address = "";
-					if (String.IsNullOrWhiteSpace(c.Address) && (!String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1))
+					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -161,7 +161,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true);
 
 			string address = "";
-			if (String.IsNullOrWhiteSpace(c.Address) && (!String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1))
+			if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 			{
 				var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -1254,7 +1254,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var c in calls)
 				{
 					string address = "";
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
+					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 

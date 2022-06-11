@@ -12,6 +12,7 @@ using System.Threading;
 using Resgrid.Framework;
 using System.Collections.Generic;
 using Resgrid.Web.Services.Models.v4.PersonnelStaffing;
+using Resgrid.Model.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -57,6 +58,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
+
+		/// <summary>
+		/// Gets the current staffing for a user
+		/// </summary>
+		/// <param name="userId">UserId to get the status for</param>
+		/// <returns></returns>
+		[HttpGet("GetCurrentStatffing")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		public async Task<ActionResult<GetCurrentStaffingResult>> GetCurrentStatffing(string userId)
+		{
+			var result = new GetCurrentStaffingResult();
+
+			if (string.IsNullOrEmpty(userId))
+				userId = UserId;
+
+			var userState = await _userStateService.GetLastUserStateByUserIdAsync(UserId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			if (userState != null && userState.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			result.Data = ConvertPersonStaffing(userState, department, userId);
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
 
 		/// <summary>
 		/// Saves a staffing for a person
@@ -160,6 +192,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStaffingsForPersonnel", result);
+		}
+
+		public static GetCurrentStaffingResultData ConvertPersonStaffing(UserState userState, Department department, string userId)
+		{
+			var staffingResult = new GetCurrentStaffingResultData
+			{
+				StaffingType = (int)UserStateTypes.Available,
+				UserId = userId,
+				DepartmentId = department.DepartmentId.ToString()
+			};
+
+			if (userState == null)
+			{
+				staffingResult.TimestampUtc = DateTime.UtcNow;
+				staffingResult.Timestamp = DateTime.UtcNow.TimeConverter(department);
+			}
+			else
+			{
+				staffingResult.StaffingType = userState.State;
+				staffingResult.TimestampUtc = userState.Timestamp;
+				staffingResult.Timestamp = userState.Timestamp.TimeConverter(department);
+				staffingResult.Note = userState.Note;
+			}
+
+			return staffingResult;
 		}
 	}
 }

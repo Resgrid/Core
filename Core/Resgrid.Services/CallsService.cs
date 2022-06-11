@@ -272,11 +272,14 @@ namespace Resgrid.Services
 			return await _callTypesRepository.GetByIdAsync(callTypeId);
 		}
 
-		public async Task<CallType> SaveNewCallTypeAsync(string callType, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<CallType> SaveNewCallTypeAsync(string callType, int departmentId, int? mapIconType, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CallType newCallType = new CallType();
 			newCallType.DepartmentId = departmentId;
 			newCallType.Type = callType;
+
+			if (mapIconType.HasValue && mapIconType.Value >= 0)
+				newCallType.MapIconType = mapIconType;
 
 			return await _callTypesRepository.SaveOrUpdateAsync(newCallType, cancellationToken);
 		}

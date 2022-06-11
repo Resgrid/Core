@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\Common\resgrid.com.crt" Link="resgrid.com.crt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
 

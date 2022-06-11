@@ -90,12 +90,7 @@
                                         <td>
                                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                             {
-                                                if (!c.IsDefault)
-                                                {
-                                                    <a href="@Url.Action("EnableDefault", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-info' rel="nofollow">Make Default</a>
-                                                }
-
-                                                if (!c.IsDefault || Model.Voice.Channels.Count <= 1)
+                                                if (Model.Voice.Channels.Count <= 1)
                                                 {
                                                     <a href="@Url.Action("Delete", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this channel. Are you sure you want to delete the channel @c.Name ?" rel="nofollow">Delete</a>
                                                 }

@@ -101,11 +101,14 @@ namespace Resgrid.Web
 				config.SignIn.RequireConfirmedPhoneNumber = false;
 				config.User.RequireUniqueEmail = true;
 				config.User.AllowedUserNameCharacters = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@";
-				config.Password.RequireDigit = false;
-				config.Password.RequireLowercase = false;
-				config.Password.RequireUppercase = false;
+				config.Password.RequireDigit = true;
+				config.Password.RequireLowercase = true;
+				config.Password.RequireUppercase = true;
 				config.Password.RequireNonAlphanumeric = false;
-				config.Password.RequiredLength = 6;
+				config.Password.RequiredLength = 8;
+				config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+				config.Lockout.MaxFailedAccessAttempts = 5;
+				config.Lockout.AllowedForNewUsers = true;
 			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
 			services.AddAuthentication(sharedOptions =>
@@ -116,8 +119,7 @@ namespace Resgrid.Web
 				})
 				.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 				{
-					options.LoginPath = "/Account/LogIn";
-					options.LogoutPath = "/Account/LogOff";
+					options.LogoutPath = new PathString("/Account/LogOff");
 					options.LoginPath = new PathString("/Account/LogOn/");
 					options.AccessDeniedPath = new PathString("/Public/Forbidden/");
 					options.Cookie.SecurePolicy = CookieSecurePolicy.None;//.SameAsRequest;
@@ -382,14 +384,16 @@ namespace Resgrid.Web
 				app.Use(async (context, next) => {
 					context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
 					context.Request.Scheme = "https";
+					context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self';");
+
 					await next.Invoke();
 				});
-
-				//app.Use((context, next) =>
-				//{
-				//	context.Request.Scheme = "https";
-				//	return next();
-				//});
+#else
+				app.Use(async (context, next) =>
+				{
+					context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self';");
+					await next.Invoke();
+				});
 #endif
 
 				/* I'm disabling this for now. Ideally it would be configured, but HSTS won't validate

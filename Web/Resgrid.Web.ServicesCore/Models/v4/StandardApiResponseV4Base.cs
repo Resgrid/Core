@@ -8,9 +8,14 @@ namespace Resgrid.Web.Services.Models.v4
 	public class StandardApiResponseV4Base
 	{
 		/// <summary>
-		/// Number of recrods returned
+		/// Number of records returned
 		/// </summary>
 		public int PageSize { get; set; }
+
+		/// <summary>
+		/// The requested page size
+		/// </summary>
+		public int Page { get; set; }
 
 		/// <summary>
 		/// Timestamp in UTC of the operation
@@ -41,5 +46,15 @@ namespace Resgrid.Web.Services.Models.v4
 		/// Status of the Response
 		/// </summary>
 		public string Status { get; set; }
+
+		/// <summary>
+		/// If pagination values were supplied what is the previous page url (if empty this is the first page)
+		/// </summary>
+		public string PreviousPageUrl { get; set; }
+
+		/// <summary>
+		/// If pagination values were supplied what is the next page url (if empty there is no more records)
+		/// </summary>
+		public string NextPageUrl { get; set; }
 	}
 }

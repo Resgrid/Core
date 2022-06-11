@@ -1018,6 +1018,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true);
+			model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -1054,6 +1055,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 				return View(model);
 			}

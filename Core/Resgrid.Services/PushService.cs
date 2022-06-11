@@ -41,16 +41,20 @@ namespace Resgrid.Services
 			try
 			{
 				usersDevices = await _notificationProvider.GetRegistrationsByUserId(pushUri.UserId);
+
+				if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(deviceId)))
+					await _notificationProvider.RegisterPush(pushUri);
 			}
 			catch (TimeoutException)
 			{ }
-			
+			catch (TaskCanceledException)
+			{ }
 
 			//if (existingPushUri == null)
 			//	pushUri = _pushUriService.SavePushUri(pushUri);
 
-			if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(deviceId)))
-				await _notificationProvider.RegisterPush(pushUri);
+			//if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(deviceId)))
+			//	await _notificationProvider.RegisterPush(pushUri);
 
 			return true;
 		}

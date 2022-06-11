@@ -183,6 +183,20 @@ namespace Resgrid.Services
 			return result;
 		}
 
+		public async Task<DepartmentVoiceChannel> GetDepartmentVoiceChannelByIdAsync(string departmentVoiceChannelId)
+		{
+			var result = await _departmentVoiceChannelRepository.GetByIdAsync(departmentVoiceChannelId);
+
+			return result;
+		}
+
+		public async Task<bool> DeleteDepartmentVoiceChannelAsync(DepartmentVoiceChannel channel, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var result = await _departmentVoiceChannelRepository.DeleteAsync(channel, cancellationToken);
+
+			return result;
+		}
+
 		private async Task<int> GetNextConferenceExtensionBaseNumber()
 		{
 			var voiceDepartments = await _departmentVoiceRepository.GetAllAsync();

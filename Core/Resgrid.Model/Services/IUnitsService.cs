@@ -127,7 +127,7 @@ namespace Resgrid.Model.Services
 		/// <param name="name">The name.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;UnitType&gt;.</returns>
-		Task<UnitType> AddUnitTypeAsync(int departmentId, string name,
+		Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int? mapIconType,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
@@ -146,7 +146,7 @@ namespace Resgrid.Model.Services
 		/// <param name="customStatesId">The custom states identifier.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;UnitType&gt;.</returns>
-		Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int customStatesId,
+		Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int customStatesId, int? mapIconType,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

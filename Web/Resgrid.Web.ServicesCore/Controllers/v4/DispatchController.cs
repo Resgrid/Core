@@ -49,6 +49,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ITemplatesService _templatesService;
 		private readonly IFormsService _formsService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
 		public DispatchController(
 			IUsersService usersService,
@@ -65,7 +66,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICqrsProvider cqrsProvider,
 			IDepartmentSettingsService departmentSettingsService,
 			ITemplatesService templatesService,
-			IFormsService formsService
+			IFormsService formsService,
+			Model.Services.IAuthorizationService authorizationService
 			)
 		{
 			_usersService = usersService;
@@ -83,6 +85,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_templatesService = templatesService;
 			_formsService = formsService;
+			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
 
@@ -119,6 +122,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var callPriorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
 
 			foreach (var user in users)
 			{
@@ -137,7 +141,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var action = await _actionLogsService.GetLastActionLogForUserAsync(user.UserId, DepartmentId);
 				var userState = await _userStateService.GetLastUserStateByUserIdAsync(user.UserId);
 
-				result.Personnel.Add(PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState));
+				result.Personnel.Add(await PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII));
 			}
 
 			foreach (var group in allGroups)

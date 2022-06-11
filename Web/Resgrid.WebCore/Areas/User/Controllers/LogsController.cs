@@ -237,6 +237,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						model.Log.OtherPersonnel = coronerOthers;
 				}
 
+				if (model.LogType == LogTypes.Callback)
+				{
+					model.Log.CallId = model.CallId;
+				}
+
 				foreach (var i in unitsInReport)
 				{
 					var unit = new LogUnit();

@@ -56,6 +56,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%ACTIONLOGSTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%ACTIONLOGSTABLE%.UserId
 					WHERE [UserId] = %USERID% AND [Timestamp] >= %STARTDATE% AND [Timestamp] <= %ENDDATE%";
+			SelectALogsByDateRangeQuery = @"
+					SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
+					FROM %SCHEMA%.%ACTIONLOGSTABLE%
+					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%ACTIONLOGSTABLE%.UserId
+					WHERE [DepartmentId] = %DID% AND [Timestamp] >= %STARTDATE% AND [Timestamp] <= %ENDDATE%";
 			SelectALogsByDidQuery = @"
 					SELECT al.*, u.*
 					FROM %SCHEMA%.%ACTIONLOGSTABLE% al
@@ -71,7 +76,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							SELECT al.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% al
 							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = al.UserId
-							WHERE al.[DestinationId] = %CALLID% AND al.[ActionTypeId] IN (%TYPES%)";
+							WHERE al.[DestinationId] = %CALLID%  AND (al.[ActionTypeId] IS NULL OR al.[ActionTypeId] IN (%TYPES%))";
 			SelectPreviousActionLogsByUserQuery = @"
 							SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% a1

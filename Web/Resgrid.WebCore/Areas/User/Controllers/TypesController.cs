@@ -46,6 +46,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.States = states;
 			model.UnitCustomStatesId = model.UnitType.CustomStatesId.GetValueOrDefault();
 
+			if (model.UnitType.MapIconType.HasValue)
+				model.UnitTypeIcon = model.UnitType.MapIconType.Value;
+
 			return View(model);
 		}
 
@@ -73,6 +76,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					unitType.CustomStatesId = model.UnitCustomStatesId;
 				else
 					unitType.CustomStatesId = null;
+
+				if (model.UnitTypeIcon >= 0)
+					unitType.MapIconType = model.UnitTypeIcon;
+				else
+					unitType.MapIconType = null;
 
 				await _unitsService.SaveUnitTypeAsync(unitType, cancellationToken);
 

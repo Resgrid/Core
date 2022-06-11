@@ -75,6 +75,16 @@ namespace Resgrid.Web.Services.Models.v4.Personnel
 		public string StatusId { get; set; }
 
 		/// <summary>
+		/// The current action/status string for the user
+		/// </summary>
+		public string Status { get; set; }
+
+		/// <summary>
+		/// The current action/status color hex string for the user
+		/// </summary>
+		public string StatusColor { get; set; }
+
+		/// <summary>
 		/// The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
 		/// </summary>
 		public DateTime StatusTimestamp { get; set; }
@@ -95,8 +105,28 @@ namespace Resgrid.Web.Services.Models.v4.Personnel
 		public string StaffingId { get; set; }
 
 		/// <summary>
+		/// The current staffing level (state) string for the user
+		/// </summary>
+		public string Staffing { get; set; }
+
+		/// <summary>
+		/// The current staffing level (state) color hex string for the user
+		/// </summary>
+		public string StaffingColor { get; set; }
+
+		/// <summary>
 		/// The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
 		/// </summary>
 		public DateTime StaffingTimestamp { get; set; }
+
+		/// <summary>
+		/// Users last known location
+		/// </summary>
+		public string Location { get; set; }
+
+		/// <summary>
+		/// Sorting weight for the user
+		/// </summary>
+		public int Weight { get; set; }
 	}
 }

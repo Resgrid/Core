@@ -1,162 +1,177 @@
 ﻿@model Resgrid.Web.Models.AccountViewModels.RegisterViewModel
 @{
-  ViewData["Title"] = "Resgrid | Register";
-  Layout = null;
+    ViewData["Title"] = "Resgrid | Register";
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@ViewData["Title"]</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  @Html.Partial("_StylePartial")
+    @Html.Partial("_StylePartial")
 
-  <style>
-    .dropcap {
-      color: #1F8AC4;
-      float: left;
-      font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-size: 75px;
-      line-height: 60px;
-      padding-top: 4px;
-      padding-right: 8px;
-      padding-left: 3px;
-    }
-  </style>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        .dropcap {
+            color: #1F8AC4;
+            float: left;
+            font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 75px;
+            line-height: 60px;
+            padding-top: 4px;
+            padding-right: 8px;
+            padding-left: 3px;
+        }
+    </style>
+    <link rel="stylesheet" href="~/clib/validate-password-requirements/jquery.passwordRequirements.css" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="gray-bg">
 
-  <div class="loginColumns animated fadeInDown">
-    <div class="row">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
 
-      <div class="col-md-6">
-        <div style="text-align: center;">
-          <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+            <div class="col-md-6">
+                <div style="text-align: center;">
+                    <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+                </div>
+                <div style="font-size: 16px !important; padding-top:4px;padding-bottom: 18px;">
+                    <p>
+                        Registering for Resgrid is as easy as 1,2,3!
+                    </p>
+                    <div class="row" style="padding-bottom:12px;">
+                        <div class="col-sm-12">
+                            <span class="dropcap">1</span>Have <b>one</b> person from your org fill out this form, we <a href="https://youtu.be/J0ry0Ki1dx0">have a video to watch</a>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:12px;">
+                        <div class="col-sm-12">
+                            <span class="dropcap">2</span>Once Signed up, you can invite or add people from the Personnel page inside the app
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:12px;">
+                        <div class="col-sm-12">
+                            <span class="dropcap">3</span>Thats it! Only a single person needs to Register the organization
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="font-size: 14px !important;">
+                            If someone in your organization <b>already has an account with Resgrid</b> have them invite you to their department instead of creating a new one, if you want to use Resgrid with them.
+                        </div>
+                    </div>
+                </div>
+
+                <div class='alert alert-info'>
+                    By signing up, you accept Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">
+                        terms of use
+                    </a> and <a asp-controller="Public" asp-action="Privacy" target="_blank">
+                        privacy
+                        policy
+                    </a>
+                </div>
+
+                <p>
+                    <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox-content">
+                    <form id="registrationForm" class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="First Name" asp-for="FirstName" required="">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Last Name" asp-for="LastName" required="">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Email Address" asp-for="Email" required="">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Department Name" asp-for="DepartmentName" required="">
+                        </div>
+                        <div class="form-group" style="vertical-align: central;">
+                            <label asp-for="DepartmentType" class="col-md-6 control-label" style="padding-top: 10px; padding-left: 2px;"></label>
+                            <div class="col-md-6" style="padding-left: 0px; padding-right: 0px; padding-top: 10px; padding-bottom: 20px; float: right; text-align: right;">
+                                <select asp-for="DepartmentType" asp-items="ViewBag.DepartmentTypes" style="padding-left: 0; width: 100%;"></select>
+                                <span asp-validation-for="DepartmentType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
+                        </div>
+                        <div class="form-group">
+                            <span>Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</span>
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="Password" class="pr-password form-control" placeholder="Password" required="" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="Confirm Password" required="" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="g-recaptcha" data-sitekey="@Model.SiteKey"></div>
+                            <input asp-for="GoogleReCaptchaResponse" type="hidden" required="" />
+                        </div>
+
+
+                        <button id="registerButton" type="submit" class="btn btn-primary block full-width m-b">Register</button>
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                    </form>
+                    <p class="m-t">
+
+                    </p>
+                </div>
+            </div>
         </div>
-        <div style="font-size: 16px !important; padding-top:4px;padding-bottom: 18px;">
-          <p>
-            Registering for Resgrid is as easy as 1,2,3!
-          </p>
-          <div class="row" style="padding-bottom:12px;">
-            <div class="col-sm-12">
-              <span class="dropcap">1</span>Have <b>one</b> person from your org fill out this form, we <a href="https://youtu.be/J0ry0Ki1dx0">have a video to watch</a>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                Resgrid, LLC.
             </div>
-          </div>
-          <div class="row" style="padding-bottom:12px;">
-            <div class="col-sm-12">
-              <span class="dropcap">2</span>Once Signed up, you can invite or add people from the Personnel page inside the app
+            <div class="col-md-6 text-right">
+                <small>© @DateTime.Now.Year</small>
             </div>
-          </div>
-          <div class="row" style="padding-bottom:12px;">
-            <div class="col-sm-12">
-              <span class="dropcap">3</span>Thats it! Only a single person needs to Register the organization
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-12" style="font-size: 14px !important;">
-              If someone in your organization <b>already has an account with Resgrid</b> have them invite you to their department instead of creating a new one, if you want to use Resgrid with them.
-            </div>
-          </div>
         </div>
-
-        <div class='alert alert-info'>
-          By signing up, you accept Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">
-            terms of use
-          </a> and <a asp-controller="Public" asp-action="Privacy" target="_blank">
-            privacy
-            policy
-          </a>
-        </div>
-
-        <p>
-          <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
-        </p>
-      </div>
-      <div class="col-md-6">
-        <div class="ibox-content">
-          <form id="registrationForm" class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="First Name" asp-for="FirstName" required="">
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Last Name" asp-for="LastName" required="">
-            </div>
-            <div class="form-group">
-              <input type="email" class="form-control" placeholder="Email Address" asp-for="Email" required="">
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Department Name" asp-for="DepartmentName" required="">
-            </div>
-            <div class="form-group" style="vertical-align: central;">
-              <label asp-for="DepartmentType" class="col-md-6 control-label" style="padding-top: 10px; padding-left: 2px;"></label>
-              <div class="col-md-6" style="padding-left: 0px; padding-right: 0px; padding-top: 10px; padding-bottom: 20px; float: right; text-align: right;">
-                <select asp-for="DepartmentType" asp-items="ViewBag.DepartmentTypes" style="padding-left: 0; width: 100%;"></select>
-                <span asp-validation-for="DepartmentType" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
-            </div>
-            <div class="form-group">
-              <input asp-for="Password" class="form-control" placeholder="Password" required="" />
-            </div>
-            <div class="form-group">
-              <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required="" />
-              <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-              <div class="g-recaptcha" data-sitekey="@Model.SiteKey"></div>
-              <input asp-for="GoogleReCaptchaResponse" type="hidden" required="" />
-            </div>
-
-
-            <button id="registerButton" type="submit" class="btn btn-primary block full-width m-b">Register</button>
-
-            <div asp-validation-summary="All" class="text-danger"></div>
-          </form>
-          <p class="m-t">
-
-          </p>
-        </div>
-      </div>
     </div>
-    <hr />
-    <div class="row">
-      <div class="col-md-6">
-        Resgrid, LLC.
-      </div>
-      <div class="col-md-6 text-right">
-        <small>© @DateTime.Now.Year</small>
-      </div>
-    </div>
-  </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="~/lib/jquery/jquery.min.js"><\/script>')</script>
-  <script src="~/clib/ujs/jquery-ujs.js"></script>
-  <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-  <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="~/lib/jquery/jquery.min.js"><\/script>')</script>
+    <script src="~/clib/ujs/jquery-ujs.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
+    <script src="~/clib/validate-password-requirements/jquery.passwordRequirements.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-  <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
-  @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+            $(document).ready(function () {
+                $(".pr-password").passwordRequirements({
+                  numCharacters: 8,
+                  useLowercase: true,
+                  useUppercase: true,
+                  useNumbers: true,
+                  useSpecial: false
+                });
 
-  <script>
-	$(document).ready(function () {
-	  $(document).on('submit', '#registrationForm', function () {
-		var crep = $('#g-recaptcha-response').val();
-		$('#GoogleReCaptchaResponse').val(crep);
+              $(document).on('submit', '#registrationForm', function () {
+                var crep = $('#g-recaptcha-response').val();
+                $('#GoogleReCaptchaResponse').val(crep);
 
-		if ($(this).valid()) {
-		  // On submit disable form submit button
-		  $('#registerButton').prop('disabled', true);
-		}
+                if ($(this).valid()) {
+                  // On submit disable form submit button
+                  $('#registerButton').prop('disabled', true);
+                }
 
-		return true;
-	  });
-	});
-  </script>
+                return true;
+              });
+            });
+    </script>
 </body>
 </html>

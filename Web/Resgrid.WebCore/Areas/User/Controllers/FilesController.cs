@@ -89,6 +89,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 						await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
 
 						return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = callAttachment.CallId });
+					case FileUploadTypes.CallImage:
+						CallAttachment callAttachment2 = new CallAttachment();
+						callAttachment2.CallId = int.Parse(model.ResourceId);
+						callAttachment2.CallAttachmentType = (int)CallAttachmentTypes.Image;
+						callAttachment2.Name = model.Name;
+						callAttachment2.FileName = FileName;
+						//callAttachment2. = FileType;
+						callAttachment2.Size = Data.Length;
+						callAttachment2.Data = Data;
+						callAttachment2.Timestamp = DateTime.UtcNow;
+
+						if (!await _authorizationService.CanUserEditCallAsync(UserId, callAttachment2.CallId))
+							Unauthorized();
+
+						await _callsService.SaveCallAttachmentAsync(callAttachment2, cancellationToken);
+
+						return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = callAttachment2.CallId });
 
 				}
 			}

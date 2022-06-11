@@ -135,6 +135,12 @@ namespace Resgrid.Services
 			return logs.ToList();
 		}
 
+		public async Task<List<ActionLog>> GetAllActionLogsInDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
+		{
+			var logs = await _actionLogsRepository.GetAllActionLogsInDateRangeAsync(departmentId, startDate, endDate);
+			return logs.ToList();
+		}
+
 		public async Task<ActionLog> GetLastActionLogForUserAsync(string userId, int? departmentId = null)
 		{
 			var time = DateTime.UtcNow.AddHours(-1);
@@ -393,7 +399,7 @@ namespace Resgrid.Services
 								where state.Details != null
 								select state;
 
-			callEnabledStates.AddRange(from state in nonNullStates from detail in state.Details where detail.DetailType == (int)CustomStateDetailTypes.Calls || detail.DetailType == (int)CustomStateDetailTypes.CallsAndStations select detail.DetailType);
+			callEnabledStates.AddRange(from state in nonNullStates from detail in state.Details where detail.DetailType == (int)CustomStateDetailTypes.Calls || detail.DetailType == (int)CustomStateDetailTypes.CallsAndStations select detail.CustomStateDetailId);
 
 			var items = await _actionLogsRepository.GetActionLogsForCallAndTypesAsync(callId, callEnabledStates);
 			return items.ToList();

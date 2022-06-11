@@ -180,7 +180,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					detail.DetailType = (int)model.DetailType;
 				//}
 
-				await _customStateService.SaveDetailAsync(detail, cancellationToken);
+				await _customStateService.SaveDetailAsync(detail, DepartmentId, cancellationToken);
 
 				return RedirectToAction("Edit", new { id = detail.CustomStateId });
 			}

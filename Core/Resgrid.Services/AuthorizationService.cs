@@ -29,7 +29,7 @@ namespace Resgrid.Services
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
 			IShiftsService shiftsService)
 		{
-			_departmentsService = departmentsService;		
+			_departmentsService = departmentsService;
 			_invitesService = invitesService;
 			_callsService = callsService;
 			_messageService = messageService;
@@ -545,6 +545,213 @@ namespace Resgrid.Services
 
 			if (signup.UserId == userId)
 				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewUnitLocationAsync(string userId, int unitId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CanSeeUnitLocations);
+
+			if (permission == null)
+				return true;
+
+			bool isGroupAdmin = false;
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
+			{ // Department Admins only
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (not locked to group)
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (locked to group)
+				if (department.IsUserAnAdmin(userId))
+					return true; // Department Admins have access.
+
+				if (unit.StationGroupId.HasValue && group != null &&
+				    unit.StationGroupId.Value == group.DepartmentGroupId)
+					return true; // Group admin in the same group have access to locked to group
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
+			{
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !department.IsUserAnAdmin(userId))
+			{
+				if (permission.LockToGroup && unit.StationGroupId.HasValue && group != null &&
+				    unit.StationGroupId.Value != group.DepartmentGroupId)
+					return false;
+
+				if (!String.IsNullOrWhiteSpace(permission.Data))
+				{
+					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+					var role = from r in roles
+						where roleIds.Contains(r.PersonnelRoleId)
+						select r;
+
+					if (role.Any())
+					{
+						return true;
+					}
+				}
+
+			}
+			else if (permission.Action == (int)PermissionActions.Everyone && permission.LockToGroup)
+			{
+				if (unit.StationGroupId.HasValue && group != null &&
+				    unit.StationGroupId.Value == group.DepartmentGroupId)
+					return true; // Everyone in the same group have access to locked to group
+			}
+			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewPersonLocationAsync(string userId, string targetUserId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CanSeePersonnelLocations);
+
+			if (permission == null)
+				return true;
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var targetUserGroup = await _departmentGroupsService.GetGroupForUserAsync(targetUserId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
+			{ // Department Admins only
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (not locked to group)
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (locked to group)
+				if (department.IsUserAnAdmin(userId))
+					return true; // Department Admins have access.
+
+				if (group != null && targetUserGroup != null && group.DepartmentGroupId == targetUserGroup.DepartmentGroupId)
+					return true; // Group admin in the same group have access to locked to group
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
+			{
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !department.IsUserAnAdmin(userId))
+			{
+				if (permission.LockToGroup && group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
+					return false;
+
+				if (!String.IsNullOrWhiteSpace(permission.Data))
+				{
+					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+					var role = from r in roles
+						where roleIds.Contains(r.PersonnelRoleId)
+						select r;
+
+					if (role.Any())
+					{
+						return true;
+					}
+				}
+
+			}
+			else if (permission.Action == (int)PermissionActions.Everyone && permission.LockToGroup)
+			{
+				if (group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
+					return true; // Everyone in the same group have access to locked to group
+			}
+			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewPersonAsync(string userId, string targetUserId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewGroupUsers);
+
+			if (permission == null)
+				return true;
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var targetUserGroup = await _departmentGroupsService.GetGroupForUserAsync(targetUserId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
+			{ // Department Admins only
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (not locked to group)
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (locked to group)
+				if (department.IsUserAnAdmin(userId))
+					return true; // Department Admins have access.
+
+				if (group != null && targetUserGroup != null && group.DepartmentGroupId == targetUserGroup.DepartmentGroupId)
+					return true; // Group admin in the same group have access to locked to group
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
+			{
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !department.IsUserAnAdmin(userId))
+			{
+				if (permission.LockToGroup && group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
+					return false;
+
+				if (!String.IsNullOrWhiteSpace(permission.Data))
+				{
+					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+					var role = from r in roles
+						where roleIds.Contains(r.PersonnelRoleId)
+						select r;
+
+					if (role.Any())
+					{
+						return true;
+					}
+				}
+
+			}
+			else if (permission.Action == (int)PermissionActions.Everyone && permission.LockToGroup)
+			{
+				if (group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
+					return true; // Everyone in the same group have access to locked to group
+			}
+			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
+			{
+				return true;
+			}
 
 			return false;
 		}

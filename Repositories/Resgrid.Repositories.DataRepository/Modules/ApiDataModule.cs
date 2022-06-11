@@ -139,6 +139,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentVoiceChannelRepository>().As<IDepartmentVoiceChannelRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentVoiceUserRepository>().As<IDepartmentVoiceUserRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<OidcRepository>().As<IOidcRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<SystemAuditsRepository>().As<ISystemAuditsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AutofillsRepository>().As<IAutofillsRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

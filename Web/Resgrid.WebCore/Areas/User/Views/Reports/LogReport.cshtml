@@ -4,1127 +4,1346 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Reports.Logs.LogReportView
 @{
-	Layout = null;
+    Layout = null;
 }
 
 <!DOCTYPE html>
 
 <html lang="en">
 <head>
-	<title>Resgrid Log Report</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Resgrid Log Report">
-	<meta name="author" content="Resgrid">
+    <title>Resgrid Log Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Resgrid Log Report">
+    <meta name="author" content="Resgrid">
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-				crossorigin="anonymous"
-				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-				asp-fallback-test-class="hidden"
-				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          crossorigin="anonymous"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="hidden"
+          asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
 
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
 
-	<style>
-		.table th, .table td {
-			padding: 1px !important;
-			line-height: 20px !important;
-			text-align: left !important;
-			vertical-align: top !important;
-			border-top: 0 !important;
-		}
-	</style>
+    <style>
+        .table th, .table td {
+            padding: 1px !important;
+            line-height: 20px !important;
+            text-align: left !important;
+            vertical-align: top !important;
+            border-top: 0 !important;
+        }
+    </style>
 
-	<!--[if lt IE 9]>
-		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
+    <!--[if lt IE 9]>
+        <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
-	<link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
-	<link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
-	<link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
-	<link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+    <link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+    <link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+    <link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+    <link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+    <link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
 </head>
 <body>
 
-	<!-- BEGIN WORK LOG -->
-	<div id="workLog" class="container" style="display: none;">
-		<div class="row">
-			<div class="col-xs-5 col-xs-offset-1">
-				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
-			</div>
-			<div class="col-xs-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Resgrid Log</h3>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<table class="table table-condensed">
-					<tbody>
-						<tr>
-							<td>
-								<strong><small></small></strong>
-								<span style="display: block;"></span>
-							</td>
-							@if (Model.Log.StationGroup != null)
-							{
-								<td>
-									<strong><small>District</small></strong>
-									<span style="display: block;">@Model.Log.StationGroup.Name</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Department</small></strong>
-									<span style="display: block;">@Model.Log.Department.Name</span>
-								</td>
-							}
-							@if (Model.Log.LogType != null)
-							{
-								<td>
-									<strong><small>Type</small></strong>
-									<span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Type</small></strong>
-									<span style="display: block;">Work</span>
-								</td>
-							}
-						</tr>
-						<tr>
-							<td>
-								<strong><small>Logged On</small></strong>
-								<span style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
-							</td>
+    <!-- BEGIN WORK LOG -->
+    <div id="workLog" class="container" style="display: none;">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-1">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+            <div class="col-xs-5" style="text-align: right;">
+                <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong><small></small></strong>
+                                <span style="display: block;"></span>
+                            </td>
+                            @if (Model.Log.StationGroup != null)
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.StationGroup.Name</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Department</small></strong>
+                                    <span style="display: block;">@Model.Log.Department.Name</span>
+                                </td>
+                            }
+                            @if (Model.Log.LogType != null)
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">Work</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Logged On</small></strong>
+                                <span style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
+                            </td>
 
-							<td>
-								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
-							</td>
-						</tr>
-						<tr>
-							@if (Model.Log.StartedOn.HasValue)
-							{
-								<td>
-									<strong><small>Started On</small></strong>
-									<span style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Started On</small></strong>
-									<span style="display: block;">Not Supplied</span>
-								</td>
-							}
-							@if (Model.Log.EndedOn.HasValue)
-							{
-								<td>
-									<strong><small>Ended On</small></strong>
-									<span style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Ended On</small></strong>
-									<span style="display: block;">Not Supplied</span>
-								</td>
-							}
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Personnel</small></strong>
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Station</th>
-							<th>Name</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var user in Model.Log.Users)
-						{
+                            <td>
+                                <strong><small>Logged By</small></strong>
+                                <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            @if (Model.Log.StartedOn.HasValue)
+                            {
+                                <td>
+                                    <strong><small>Started On</small></strong>
+                                    <span style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Started On</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+                            @if (Model.Log.EndedOn.HasValue)
+                            {
+                                <td>
+                                    <strong><small>Ended On</small></strong>
+                                    <span style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Ended On</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Personnel</small></strong>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Station</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Log.Users)
+                        {
 
-							<tr>
-								@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-								{
-									<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-								}
-								else
-								{
-									<td></td>
-								}
-								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Narrative</small></strong>
-				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
-				@Model.RunOn.FormatForDepartment(Model.Log.Department, true)
-			</div>
-		</div>
-	</div>
-	<!-- END WORK LOG -->
-	<!-- BEGIN RUN LOG -->
-	<div id="runLog" class="container" style="display: none;">
-		<div class="row">
-			<div class="col-xs-5 col-xs-offset-2">
-				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
-			</div>
-			<div class="col-xs-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Resgrid Log</h3>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<table class="table table-condensed">
-					<tbody>
-						<tr>
-							<td>
-								<strong><small>Id</small></strong>
-								<span style="display: block;">@Model.Log.ExternalId</span>
-							</td>
-							@if (Model.Log.StationGroup != null)
-							{
-								<td>
-									<strong><small>District</small></strong>
-									<span style="display: block;">@Model.Log.StationGroup.Name</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>District</small></strong>
-									<span style="display: block;">@Model.Log.Department.Name</span>
-								</td>
-							}
-							@if (Model.Log.LogType != null)
-							{
-								<td>
-									<strong><small>Type</small></strong>
-									<span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Type</small></strong>
-									<span style="display: block;">Work</span>
-								</td>
-							}
-						</tr>
-						<tr>
-							<td>
-								<strong><small>Logged On</small></strong>
-								<span style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
-							</td>
+                            <tr>
+                                @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                {
+                                    <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@Model.UserData[user.UserId].Item1</td>
+                                <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Narrative</small></strong>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Log.Department, true)
+            </div>
+        </div>
+    </div>
+    <!-- END WORK LOG -->
+    <!-- BEGIN RUN LOG -->
+    <div id="runLog" class="container" style="display: none;">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-2">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+            <div class="col-xs-5" style="text-align: right;">
+                <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong><small>Id</small></strong>
+                                <span style="display: block;">@Model.Log.ExternalId</span>
+                            </td>
+                            @if (Model.Log.StationGroup != null)
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.StationGroup.Name</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.Department.Name</span>
+                                </td>
+                            }
+                            @if (Model.Log.LogType != null)
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">Work</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Logged On</small></strong>
+                                <span style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
+                            </td>
 
-							<td>
-								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
-							</td>
-						</tr>
-						<tr>
-							@if (Model.Log.Call != null)
-							{
-								<td>
-									<strong><small>Call Name</small></strong>
-									<span style="display: block;">@Model.Log.Call.Name</span>
-								</td>
-								<td>
-									<strong><small>Call Type</small></strong>
-									@if (!String.IsNullOrWhiteSpace(Model.Log.Call.Type))
-									{
-										<span style="display: block;">@Model.Log.Call.Type</span>
-									}
-									else
-									{
-										<span style="display: block;">No Type</span>
-									}
-								</td>
-								<td>
-									<strong><small>Priority</small></strong>
-									<span style="display: block;">@(await CallPriorityHelper.CallPriorityToString(Model.Log.DepartmentId, Model.Log.Call.Priority))</span>
-								</td>
-							}
-							else
-							{
-								<td colspan="2">
-									<strong><small>Call Name</small></strong>
-									<span style="display: block;">Not Supplied</span>
-								</td>
-							}
-						</tr>
-						<tr>
-							@if (Model.Log.Call != null)
-							{
-								<td colspan="3">
-									<strong><small>Call Address</small></strong>
-									<span style="display: block;">@Model.Log.Call.Address</span>
-								</td>
-							}
-							else
-							{
-								<td colspan="3">
-									<strong><small>Call Address</small></strong>
-									<span style="display: block;">Not Supplied</span>
-								</td>
-							}
+                            <td>
+                                <strong><small>Logged By</small></strong>
+                                <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            @if (Model.Log.Call != null)
+                            {
+                                <td>
+                                    <strong><small>Call Name</small></strong>
+                                    <span style="display: block;">@Model.Log.Call.Name</span>
+                                </td>
+                                <td>
+                                    <strong><small>Call Type</small></strong>
+                                    @if (!String.IsNullOrWhiteSpace(Model.Log.Call.Type))
+                                    {
+                                        <span style="display: block;">@Model.Log.Call.Type</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">No Type</span>
+                                    }
+                                </td>
+                                <td>
+                                    <strong><small>Priority</small></strong>
+                                    <span style="display: block;">@(await CallPriorityHelper.CallPriorityToString(Model.Log.DepartmentId, Model.Log.Call.Priority))</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td colspan="2">
+                                    <strong><small>Call Name</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            @if (Model.Log.Call != null)
+                            {
+                                <td colspan="3">
+                                    <strong><small>Call Address</small></strong>
+                                    <span style="display: block;">@Model.Log.Call.Address</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td colspan="3">
+                                    <strong><small>Call Address</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
 
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Units</small></strong>
-				<div>
-					@foreach (var unit in Model.Log.Units)
-					{
-						<div style="border: 1px solid #ddd; padding: 10px;">
-							<div class="row">
-								<div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
-								<div class="col-xs-2">
-									<strong><small>Dispatched</small></strong>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Units</small></strong>
+                <div>
+                    @foreach (var unit in Model.Log.Units)
+                    {
+                        <div style="border: 1px solid #ddd; padding: 10px;">
+                            <div class="row">
+                                <div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
+                                <div class="col-xs-2">
+                                    <strong><small>Dispatched</small></strong>
 
-									@if (unit.Dispatched.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.Dispatched.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>Enroute</small></strong>
+                                    @if (unit.Dispatched.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.Dispatched.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>Enroute</small></strong>
 
-									@if (unit.Enroute.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.Enroute.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>On Scene</small></strong>
+                                    @if (unit.Enroute.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.Enroute.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>On Scene</small></strong>
 
-									@if (unit.OnScene.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.OnScene.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>Released</small></strong>
+                                    @if (unit.OnScene.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.OnScene.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>Released</small></strong>
 
-									@if (unit.Released.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.Released.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>In Quarters</small></strong>
+                                    @if (unit.Released.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.Released.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>In Quarters</small></strong>
 
-									@if (unit.InQuarters.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.InQuarters.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-							</div>
-							<table class="table table-condensed table-bordered">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Station</th>
-										<th>Name</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var user in Model.Log.Users.Where(x => x.UnitId == unit.UnitId))
-									{
+                                    @if (unit.InQuarters.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.InQuarters.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                            </div>
+                            <table class="table table-condensed table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Station</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Log.Users.Where(x => x.UnitId == unit.UnitId))
+                                    {
 
-										<tr>
-											@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-											{
-												<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-											}
-											else
-											{
-												<td></td>
-											}
-											<td>@Model.UserData[user.UserId].Item1</td>
-											<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Personnel</small></strong>
-				<table class="table table-condensed table-bordered">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Station</th>
-							<th>Name</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var user in Model.Log.Users.Where(x => x.UnitId == null))
-						{
+                                        <tr>
+                                            @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                            {
+                                                <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                            <td>@Model.UserData[user.UserId].Item1</td>
+                                            <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Personnel</small></strong>
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Station</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Log.Users.Where(x => x.UnitId == null))
+                        {
 
-							<tr>
-								@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-								{
-									<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-								}
-								else
-								{
-									<td></td>
-								}
-								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Condition</small></strong>
-				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.InitialReport)</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Narrative</small></strong>
-				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
-				@Model.RunOn.FormatForDepartment(Model.Log.Department)
-			</div>
-		</div>
-	</div>
-	<!-- END RUN LOG -->
-	<!-- BEGIN TRAINING LOG -->
-	<div id="trainingLog" class="container" style="display: none;">
-		<div class="row">
-			<div class="col-xs-5 col-xs-offset-2">
-				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
-			</div>
-			<div class="col-xs-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Resgrid Log</h3>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<table class="table table-condensed">
-					<tbody>
-						<tr>
-							@if (Model.Log.StationGroup != null)
-							{
-								<td>
-									<strong><small>District</small></strong>
-									<span style="display: block;">@Model.Log.StationGroup.Name</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>District</small></strong>
-									<span style="display: block;">@Model.Log.Department.Name</span>
-								</td>
-							}
-							<td>
-								<strong></strong>
-								<span style="display: block;"></span>
-							</td>
-							@if (Model.Log.LogType != null)
-							{
-								<td>
-									<strong><small>Type</small></strong>
-									<span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Type</small></strong>
-									<span style="display: block;">Work</span>
-								</td>
-							}
-						</tr>
-						<tr>
-							<td>
-								<strong><small>Logged On</small></strong>
-								<span style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
-							</td>
+                            <tr>
+                                @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                {
+                                    <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@Model.UserData[user.UserId].Item1</td>
+                                <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Condition</small></strong>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.InitialReport)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Narrative</small></strong>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Log.Department)
+            </div>
+        </div>
+    </div>
+    <!-- END RUN LOG -->
+    <!-- BEGIN TRAINING LOG -->
+    <div id="trainingLog" class="container" style="display: none;">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-2">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+            <div class="col-xs-5" style="text-align: right;">
+                <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            @if (Model.Log.StationGroup != null)
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.StationGroup.Name</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.Department.Name</span>
+                                </td>
+                            }
+                            <td>
+                                <strong></strong>
+                                <span style="display: block;"></span>
+                            </td>
+                            @if (Model.Log.LogType != null)
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">Work</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Logged On</small></strong>
+                                <span style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
+                            </td>
 
-							<td>
-								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
-							</td>
+                            <td>
+                                <strong><small>Logged By</small></strong>
+                                <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
+                            </td>
 
-							<td>
-								<strong><small>Attendance</small></strong>
-								<span style="display: block;">@Html.Raw(string.Format("{0}%", Model.Attendance.ToString("F")))</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<strong><small>Training\Course</small></strong>
-								<span style="display: block;">@Model.Log.Course</span>
-							</td>
-							<td>
-								<strong><small>Code</small></strong>
-								<span style="display: block;">@Model.Log.CourseCode</span>
-							</td>
-							<td>
-								<strong><small>Instructors</small></strong>
-								<span style="display: block;">@Model.Log.Instructors</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<strong><small>Start</small></strong>
-								@if (Model.Log.StartedOn.HasValue)
-								{
-									<span style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
-								}
-								else
-								{
-									<span style="display: block;"></span>
-								}
-							</td>
-							<td>
-								<strong><small>End</small></strong>
-								@if (Model.Log.EndedOn.HasValue)
-								{
-									<span style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
-								}
-								else
-								{
-									<span style="display: block;"></span>
-								}
-							</td>
-							<td>
-								@{
-									TimeSpan timeDiff = new TimeSpan();
-									if (Model.Log.EndedOn.HasValue && Model.Log.StartedOn.HasValue)
-									{
-										timeDiff = Model.Log.EndedOn.Value.Subtract(Model.Log.StartedOn.Value);
-									}
-								}
-								<strong><small>Total Time</small></strong>
-								<span style="display: block;">@timeDiff.ToString("g")</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Personnel</small></strong>
-				<table class="table table-condensed table-bordered">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Station</th>
-							<th>Audit</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var user in Model.Log.Users.Where(x => x.UnitId == null))
-						{
+                            <td>
+                                <strong><small>Attendance</small></strong>
+                                <span style="display: block;">@Html.Raw(string.Format("{0}%", Model.Attendance.ToString("F")))</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Training\Course</small></strong>
+                                <span style="display: block;">@Model.Log.Course</span>
+                            </td>
+                            <td>
+                                <strong><small>Code</small></strong>
+                                <span style="display: block;">@Model.Log.CourseCode</span>
+                            </td>
+                            <td>
+                                <strong><small>Instructors</small></strong>
+                                <span style="display: block;">@Model.Log.Instructors</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Start</small></strong>
+                                @if (Model.Log.StartedOn.HasValue)
+                                {
+                                    <span style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                }
+                                else
+                                {
+                                    <span style="display: block;"></span>
+                                }
+                            </td>
+                            <td>
+                                <strong><small>End</small></strong>
+                                @if (Model.Log.EndedOn.HasValue)
+                                {
+                                    <span style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                }
+                                else
+                                {
+                                    <span style="display: block;"></span>
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    TimeSpan timeDiff = new TimeSpan();
+                                    if (Model.Log.EndedOn.HasValue && Model.Log.StartedOn.HasValue)
+                                    {
+                                        timeDiff = Model.Log.EndedOn.Value.Subtract(Model.Log.StartedOn.Value);
+                                    }
+                                }
+                                <strong><small>Total Time</small></strong>
+                                <span style="display: block;">@timeDiff.ToString("g")</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Personnel</small></strong>
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Station</th>
+                            <th>Audit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Log.Users.Where(x => x.UnitId == null))
+                        {
 
-							<tr>
-								@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-								{
-									<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-								}
-								else
-								{
-									<td></td>
-								}
-								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-								<td>@Model.UserData[user.UserId].Item1</td>
-								<td style="width: 250px;"></td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Units</small></strong>
-				<div>
-					@foreach (var unit in Model.Log.Units)
-					{
-						<div>
-							<div class="row">
-								<div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
-							</div>
-							<table class="table table-condensed table-bordered">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Name</th>
-										<th>Station</th>
-										<th>Audit</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var user in Model.Log.Users.Where(x => x.UnitId == unit.UnitId))
-									{
+                            <tr>
+                                @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                {
+                                    <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                                <td>@Model.UserData[user.UserId].Item1</td>
+                                <td style="width: 250px;"></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Units</small></strong>
+                <div>
+                    @foreach (var unit in Model.Log.Units)
+                    {
+                        <div>
+                            <div class="row">
+                                <div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
+                            </div>
+                            <table class="table table-condensed table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Station</th>
+                                        <th>Audit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Log.Users.Where(x => x.UnitId == unit.UnitId))
+                                    {
 
-										<tr>
-											@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-											{
-												<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-											}
-											else
-											{
-												<td></td>
-											}
-											<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-											<td>@Model.UserData[user.UserId].Item1</td>
-											<td style="width: 250px;"></td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Narrative</small></strong>
-				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
-				@Model.RunOn.FormatForDepartment(Model.Log.Department)
-			</div>
-		</div>
-	</div>
-	<!-- END TRAINING LOG -->
-	<!-- BEGIN MEETING LOG -->
-	<div id="meetingLog" class="container" style="display: none;">
-		<div class="row">
-			<div class="col-xs-5 col-xs-offset-1">
-				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
-			</div>
-			<div class="col-xs-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Resgrid Log</h3>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<table class="table table-condensed">
-					<tbody>
-						<tr>
-							<td>
-								<strong><small>Meeting Type</small></strong>
-								<span style="display: block;">@Model.Log.Type</span>
-							</td>
-							@if (Model.Log.StationGroup != null)
-							{
-								<td>
-									<strong><small>District</small></strong>
-									<span style="display: block;">@Model.Log.StationGroup.Name</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Department</small></strong>
-									<span style="display: block;">@Model.Log.Department.Name</span>
-								</td>
-							}
-							@if (Model.Log.LogType != null)
-							{
-								<td>
-									<strong><small>Log Type</small></strong>
-									<span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Type</small></strong>
-									<span style="display: block;">Meeting</span>
-								</td>
-							}
-						</tr>
-						<tr>
-							<td>
-								<strong><small>Logged On</small></strong>
-								<span style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
-							</td>
+                                        <tr>
+                                            @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                            {
+                                                <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                            <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                                            <td>@Model.UserData[user.UserId].Item1</td>
+                                            <td style="width: 250px;"></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Narrative</small></strong>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Log.Department)
+            </div>
+        </div>
+    </div>
+    <!-- END TRAINING LOG -->
+    <!-- BEGIN MEETING LOG -->
+    <div id="meetingLog" class="container" style="display: none;">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-1">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+            <div class="col-xs-5" style="text-align: right;">
+                <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong><small>Meeting Type</small></strong>
+                                <span style="display: block;">@Model.Log.Type</span>
+                            </td>
+                            @if (Model.Log.StationGroup != null)
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.StationGroup.Name</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Department</small></strong>
+                                    <span style="display: block;">@Model.Log.Department.Name</span>
+                                </td>
+                            }
+                            @if (Model.Log.LogType != null)
+                            {
+                                <td>
+                                    <strong><small>Log Type</small></strong>
+                                    <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">Meeting</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Logged On</small></strong>
+                                <span style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
+                            </td>
 
-							<td>
-								<strong><small>Logged By</small></strong>
-								<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
-							</td>
-						</tr>
-						<tr>
-							@if (Model.Log.StartedOn.HasValue)
-							{
-								<td>
-									<strong><small>Started On</small></strong>
-									<span style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Started On</small></strong>
-									<span style="display: block;">Not Supplied</span>
-								</td>
-							}
-							@if (Model.Log.EndedOn.HasValue)
-							{
-								<td>
-									<strong><small>Ended On</small></strong>
-									<span style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
-								</td>
-							}
-							else
-							{
-								<td>
-									<strong><small>Ended On</small></strong>
-									<span style="display: block;">Not Supplied</span>
-								</td>
-							}
-							<td>
-								<strong><small>Location</small></strong>
-								<span style="display: block;">@Model.Log.Location</span>
-							</td>
-						</tr>
-					<tr>
-							<td>
-								<strong><small>Presiding</small></strong>
-								<span style="display: block;">@Model.Log.Instructors</span>
-							</td>
-							<td colspan="2">
-								<strong><small>Other Attendees</small></strong>
-								<span style="display: block;">@Model.Log.OtherPersonnel</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Personnel</small></strong>
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Station</th>
-							<th>Name</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var user in Model.Log.Users)
-						{
+                            <td>
+                                <strong><small>Logged By</small></strong>
+                                <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            @if (Model.Log.StartedOn.HasValue)
+                            {
+                                <td>
+                                    <strong><small>Started On</small></strong>
+                                    <span style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Started On</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+                            @if (Model.Log.EndedOn.HasValue)
+                            {
+                                <td>
+                                    <strong><small>Ended On</small></strong>
+                                    <span style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Ended On</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+                            <td>
+                                <strong><small>Location</small></strong>
+                                <span style="display: block;">@Model.Log.Location</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Presiding</small></strong>
+                                <span style="display: block;">@Model.Log.Instructors</span>
+                            </td>
+                            <td colspan="2">
+                                <strong><small>Other Attendees</small></strong>
+                                <span style="display: block;">@Model.Log.OtherPersonnel</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Personnel</small></strong>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Station</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Log.Users)
+                        {
 
-							<tr>
-								@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-								{
-									<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-								}
-								else
-								{
-									<td></td>
-								}
-								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Meeting Minutes</small></strong>
-				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
-				@Model.RunOn.FormatForDepartment(Model.Log.Department, true)
-			</div>
-		</div>
-	</div>
-	<!-- END MEETING LOG -->
-	<!-- BEGIN CORONER LOG -->
-	<div id="coronerLog" class="container" style="display: none;">
-		<div class="row">
-			<div class="col-xs-5 col-xs-offset-1">
-				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
-			</div>
-			<div class="col-xs-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Resgrid Log</h3>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<table class="table table-condensed">
-					<tbody>
-					<tr>
-						<td>
-							<strong><small>Case #</small></strong>
-							<span style="display: block;">@Model.Log.ExternalId</span>
-						</td>
-						@if (Model.Log.StationGroup != null)
-						{
-							<td>
-								<strong><small>District</small></strong>
-								<span style="display: block;">@Model.Log.StationGroup.Name</span>
-							</td>
-						}
-						else
-						{
-							<td>
-								<strong><small>Department</small></strong>
-								<span style="display: block;">@Model.Log.Department.Name</span>
-							</td>
-						}
-						@if (Model.Log.LogType != null)
-						{
-							<td>
-								<strong><small>Log Type</small></strong>
-								<span style="display: block;">@(((LogTypes) Model.Log.LogType.Value).ToString())</span>
-							</td>
-						}
-						else
-						{
-							<td>
-								<strong><small>Type</small></strong>
-								<span style="display: block;">Meeting</span>
-							</td>
-						}
-					</tr>
-					<tr>
-						<td>
-							<strong><small>Logged On</small></strong>
-							<span style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
-						</td>
-						<td>
-							<strong><small>Logged By</small></strong>
-							<span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
-						</td>
-						<td>
-							<strong><small>OIC</small></strong>
-							<span style="display: block;">@Model.Log.Instructors</span>
-						</td>
-					</tr>
-					<tr>
-						@if (Model.Log.StartedOn.HasValue)
-						{
-							<td>
-								<strong><small>Date</small></strong>
-								<span style="display: block;">@Model.Log.StartedOn.Value.ToShortDateString()</span>
-							</td>
-						}
-						else
-						{
-							<td>
-								<strong><small>Date</small></strong>
-								<span style="display: block;">Not Supplied</span>
-							</td>
-						}
-						<td colspan="2">
-							<strong><small>Destination</small></strong>
-							<span style="display: block;">@Model.Log.Location</span>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<strong><small>Pronounced By</small></strong>
-							<span style="display: block;">@Model.Log.PronouncedDeceasedBy</span>
-						</td>
-						<td colspan="2">
-							<strong><small>Body Location</small></strong>
-							<span style="display: block;">@Model.Log.BodyLocation</span>
-						</td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Units</small></strong>
-				<div>
-					@foreach (var unit in Model.Log.Units)
-					{
-						<div style="border: 1px solid #ddd; padding: 10px;">
-							<div class="row">
-								<div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
-								<div class="col-xs-2">
-									<strong><small>Dispatched</small></strong>
+                            <tr>
+                                @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                {
+                                    <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@Model.UserData[user.UserId].Item1</td>
+                                <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Meeting Minutes</small></strong>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Log.Department, true)
+            </div>
+        </div>
+    </div>
+    <!-- END MEETING LOG -->
+    <!-- BEGIN CORONER LOG -->
+    <div id="coronerLog" class="container" style="display: none;">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-1">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+            <div class="col-xs-5" style="text-align: right;">
+                <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong><small>Case #</small></strong>
+                                <span style="display: block;">@Model.Log.ExternalId</span>
+                            </td>
+                            @if (Model.Log.StationGroup != null)
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.StationGroup.Name</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Department</small></strong>
+                                    <span style="display: block;">@Model.Log.Department.Name</span>
+                                </td>
+                            }
+                            @if (Model.Log.LogType != null)
+                            {
+                                <td>
+                                    <strong><small>Log Type</small></strong>
+                                    <span style="display: block;">@(((LogTypes) Model.Log.LogType.Value).ToString())</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">Meeting</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Logged On</small></strong>
+                                <span style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
+                            </td>
+                            <td>
+                                <strong><small>Logged By</small></strong>
+                                <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
+                            </td>
+                            <td>
+                                <strong><small>OIC</small></strong>
+                                <span style="display: block;">@Model.Log.Instructors</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            @if (Model.Log.StartedOn.HasValue)
+                            {
+                                <td>
+                                    <strong><small>Date</small></strong>
+                                    <span style="display: block;">@Model.Log.StartedOn.Value.ToShortDateString()</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Date</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+                            <td colspan="2">
+                                <strong><small>Destination</small></strong>
+                                <span style="display: block;">@Model.Log.Location</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Pronounced By</small></strong>
+                                <span style="display: block;">@Model.Log.PronouncedDeceasedBy</span>
+                            </td>
+                            <td colspan="2">
+                                <strong><small>Body Location</small></strong>
+                                <span style="display: block;">@Model.Log.BodyLocation</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Units</small></strong>
+                <div>
+                    @foreach (var unit in Model.Log.Units)
+                    {
+                        <div style="border: 1px solid #ddd; padding: 10px;">
+                            <div class="row">
+                                <div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
+                                <div class="col-xs-2">
+                                    <strong><small>Dispatched</small></strong>
 
-									@if (unit.Dispatched.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.Dispatched.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>Enroute</small></strong>
+                                    @if (unit.Dispatched.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.Dispatched.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>Enroute</small></strong>
 
-									@if (unit.Enroute.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.Enroute.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>On Scene</small></strong>
+                                    @if (unit.Enroute.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.Enroute.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>On Scene</small></strong>
 
-									@if (unit.OnScene.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.OnScene.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>Released</small></strong>
+                                    @if (unit.OnScene.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.OnScene.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>Released</small></strong>
 
-									@if (unit.Released.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.Released.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-								<div class="col-xs-2">
-									<strong><small>In Quarters</small></strong>
+                                    @if (unit.Released.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.Released.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                                <div class="col-xs-2">
+                                    <strong><small>In Quarters</small></strong>
 
-									@if (unit.InQuarters.HasValue)
-									{
-										<span style="display: block; font-size: 12px;">@unit.InQuarters.Value.FormatForDepartment(Model.Log.Department, true)</span>
-									}
-									else
-									{
-										<span style="display: block;">Not Supplied</span>
-									}
-								</div>
-							</div>
-							<table class="table table-condensed table-bordered">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Station</th>
-										<th>Name</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var user in Model.Log.Users.Where(x => x.UnitId == unit.UnitId))
-									{
+                                    @if (unit.InQuarters.HasValue)
+                                    {
+                                        <span style="display: block; font-size: 12px;">@unit.InQuarters.Value.FormatForDepartment(Model.Log.Department, true)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">Not Supplied</span>
+                                    }
+                                </div>
+                            </div>
+                            <table class="table table-condensed table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Station</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Log.Users.Where(x => x.UnitId == unit.UnitId))
+                                    {
 
-										<tr>
-											@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-											{
-												<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-											}
-											else
-											{
-												<td></td>
-											}
-											<td>@Model.UserData[user.UserId].Item1</td>
-											<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Personnel</small></strong>
-				<table class="table table-condensed table-bordered">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Station</th>
-							<th>Name</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var user in Model.Log.Users.Where(x => x.UnitId == null))
-						{
+                                        <tr>
+                                            @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                            {
+                                                <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                            <td>@Model.UserData[user.UserId].Item1</td>
+                                            <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Personnel</small></strong>
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Station</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Log.Users.Where(x => x.UnitId == null))
+                        {
 
-							<tr>
-								@if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
-								{
-									<td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
-								}
-								else
-								{
-									<td></td>
-								}
-								<td>@Model.UserData[user.UserId].Item1</td>
-								<td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<strong><small>Meeting Minutes</small></strong>
-				<div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
-				@Model.RunOn.FormatForDepartment(Model.Log.Department, true)
-			</div>
-		</div>
-	</div>
-	<!-- END CORONER LOG -->
+                            <tr>
+                                @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                {
+                                    <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@Model.UserData[user.UserId].Item1</td>
+                                <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Meeting Minutes</small></strong>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Log.Department, true)
+            </div>
+        </div>
+    </div>
+    <!-- END CORONER LOG -->
+    <!-- BEGIN CALLBACK LOG -->
+    <div id="callbackLog" class="container" style="display: none;">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-1">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+            <div class="col-xs-5" style="text-align: right;">
+                <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong><small></small></strong>
+                                <span style="display: block;"></span>
+                            </td>
+                            @if (Model.Log.StationGroup != null)
+                            {
+                                <td>
+                                    <strong><small>District</small></strong>
+                                    <span style="display: block;">@Model.Log.StationGroup.Name</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Department</small></strong>
+                                    <span style="display: block;">@Model.Log.Department.Name</span>
+                                </td>
+                            }
+                            @if (Model.Log.LogType != null)
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">Callback</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong><small>Logged On</small></strong>
+                                <span style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
+                            </td>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+                            <td>
+                                <strong><small>Logged By</small></strong>
+                                <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
+                            </td>
+                        </tr>
+                        @if (Model.Log.Call != null)
+                        {
+                            <tr>
+                                <td>
+                                    <strong><small>Call Id</small></strong>
+                                    <span style="display: block;">@Model.Log.Call.CallId</span>
+                                </td>
+                                <td>
+                                    <strong><small>Call Number</small></strong>
+                                    <span style="display: block;">@Model.Log.Call.Number</span>
+                                </td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td style="width: 30%">
+                                                <strong><small>Incident Id</small></strong>
 
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+                                                @if (!String.IsNullOrWhiteSpace(Model.Log.Call.IncidentNumber))
+                                                {
+                                                    <span style="display: block;">@Model.Log.Call.IncidentNumber</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="display: block;">None</span>
+                                                }
+                                            </td>
+                                            <td style="width: 30%">
+                                                <strong><small>Call Id</small></strong>
+
+                                                @if (!String.IsNullOrWhiteSpace(Model.Log.Call.ExternalIdentifier))
+                                                {
+                                                    <span style="display: block;">@Model.Log.Call.ExternalIdentifier</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="display: block;">None</span>
+                                                }
+                                            </td>
+                                            <td style="width: 30%">
+                                                <strong><small>Reference Id</small></strong>
+
+                                                @if (!String.IsNullOrWhiteSpace(@Model.Log.Call.ReferenceNumber))
+                                                {
+                                                    <span style="display: block;">@Model.Log.Call.ReferenceNumber</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="display: block;">None</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            @if (Model.Log.Call != null)
+                            {
+                                <td>
+                                    <strong><small>Call Name</small></strong>
+                                    <span style="display: block;">@Model.Log.Call.Name</span>
+                                </td>
+                                <td>
+                                    <strong><small>Call Type</small></strong>
+                                    @if (!String.IsNullOrWhiteSpace(Model.Log.Call.Type))
+                                    {
+                                        <span style="display: block;">@Model.Log.Call.Type</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block;">No Type</span>
+                                    }
+                                </td>
+                                <td>
+                                    <strong><small>Priority</small></strong>
+                                    <span style="display: block;">@(await CallPriorityHelper.CallPriorityToString(Model.Log.DepartmentId, Model.Log.Call.Priority))</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td colspan="2">
+                                    <strong><small>Call Name</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            @if (Model.Log.Call != null)
+                            {
+                                <td colspan="3">
+                                    <strong><small>Call Address</small></strong>
+                                    <span style="display: block;">@Model.Log.Call.Address</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td colspan="3">
+                                    <strong><small>Call Address</small></strong>
+                                    <span style="display: block;">Not Supplied</span>
+                                </td>
+                            }
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Personnel</small></strong>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Station</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Log.Users)
+                        {
+
+                            <tr>
+                                @if (Model.UserData[user.UserId] != null && @Model.UserData[user.UserId].Item2 != null && @Model.UserData[user.UserId].Item2.IdentificationNumber != null)
+                                {
+                                    <td>@Model.UserData[user.UserId].Item2.IdentificationNumber</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@Model.UserData[user.UserId].Item1</td>
+                                <td>@(await UserHelper.GetFullNameForUser(user.UserId))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <strong><small>Narrative</small></strong>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Log.Department, true)
+            </div>
+        </div>
+    </div>
+    <!-- END CALLBACK LOG -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
 
-	<script src="~/clib/flot/jquery.flot.js"></script>
-	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
-	<script src="~/clib/flot/jquery.flot.resize.js"></script>
-	<script src="~/clib/flot/jquery.flot.pie.js"></script>
-	<script src="~/clib/flot/jquery.flot.time.js"></script>
-	<script src="~/clib/flot/jquery.flot.spline.js"></script>
+    <script src="~/clib/flot/jquery.flot.js"></script>
+    <script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="~/clib/flot/jquery.flot.resize.js"></script>
+    <script src="~/clib/flot/jquery.flot.pie.js"></script>
+    <script src="~/clib/flot/jquery.flot.time.js"></script>
+    <script src="~/clib/flot/jquery.flot.spline.js"></script>
 
-	<script src="~/clib/kendo/js/kendo.all.min.js"></script>
-	<script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+    <script src="~/clib/kendo/js/kendo.all.min.js"></script>
+    <script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
 
-	@if (Model.Log.LogType == null /* || Model.Log.LogType == (int)LogTypes.Work*/)
-	{
-		<script>
-			var type = 'work';
-		</script>
-	}
-	else if (Model.Log.LogType == (int)LogTypes.Run)
-	{
-		<script>
-			var type = 'run';
-		</script>
-	}
-	else if (Model.Log.LogType == (int)LogTypes.Training)
-	{
-		<script>
-			var type = 'training';
-		</script>
-	}
-	else if (Model.Log.LogType == (int)LogTypes.Work)
-	{
-		<script>
-			var type = 'work';
-		</script>
-	}
-	else if (Model.Log.LogType == (int)LogTypes.Meeting)
-	{
-		<script>
-			var type = 'meeting';
-		</script>
-	}
-	else if (Model.Log.LogType == (int)LogTypes.Coroner)
-	{
-		<script>
-			var type = 'coroner';
-		</script>
-	}
+    @if (Model.Log.LogType == null /* || Model.Log.LogType == (int)LogTypes.Work*/)
+    {
+        <script>
+            var type = 'work';
+        </script>
+    }
+    else if (Model.Log.LogType == (int)LogTypes.Run)
+    {
+        <script>
+            var type = 'run';
+        </script>
+    }
+    else if (Model.Log.LogType == (int)LogTypes.Training)
+    {
+        <script>
+            var type = 'training';
+        </script>
+    }
+    else if (Model.Log.LogType == (int)LogTypes.Work)
+    {
+        <script>
+            var type = 'work';
+        </script>
+    }
+    else if (Model.Log.LogType == (int)LogTypes.Meeting)
+    {
+        <script>
+            var type = 'meeting';
+        </script>
+    }
+    else if (Model.Log.LogType == (int)LogTypes.Coroner)
+    {
+        <script>
+            var type = 'coroner';
+        </script>
+    }
+    else if (Model.Log.LogType == (int)LogTypes.Callback)
+    {
+        <script>
+            var type = 'callback';
+        </script>
+    }
 
-	<script>
-		$(document).ready(function () {
-			if (type === 'run')
-				$('#runLog').show();
-			else if (type === 'work')
-				$('#workLog').show();
-			else if (type === 'training')
-				$('#trainingLog').show();
-			else if (type === 'work')
-				$('#workLog').show();
-			else if (type === 'meeting')
-				$('#meetingLog').show();
-			else if (type === 'coroner')
-				$('#coronerLog').show();
-		});
-	</script>
+    <script>
+        $(document).ready(function () {
+            if (type === 'run')
+                $('#runLog').show();
+            else if (type === 'work')
+                $('#workLog').show();
+            else if (type === 'training')
+                $('#trainingLog').show();
+            else if (type === 'work')
+                $('#workLog').show();
+            else if (type === 'meeting')
+                $('#meetingLog').show();
+            else if (type === 'coroner')
+                $('#coronerLog').show();
+            else if (type === 'callback')
+                $('#callbackLog').show();
+        });
+    </script>
 </body>
 
 

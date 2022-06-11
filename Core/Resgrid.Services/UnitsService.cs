@@ -218,9 +218,9 @@ namespace Resgrid.Services
 			return await _unitTypesRepository.GetByIdAsync(unitTypeId);
 		}
 
-		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int? mapIconType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await AddUnitTypeAsync(departmentId, name, 0, cancellationToken);
+			return await AddUnitTypeAsync(departmentId, name, 0, mapIconType, cancellationToken);
 		}
 
 		public async Task<UnitType> GetUnitTypeByNameAsync(int departmentId, string type)
@@ -228,7 +228,7 @@ namespace Resgrid.Services
 			return await _unitTypesRepository.GetUnitByNameDepartmentIdAsync(departmentId, type);
 		}
 
-		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int customStatesId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int customStatesId, int? mapIconType, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var type = new UnitType();
 			type.DepartmentId = departmentId;
@@ -236,6 +236,9 @@ namespace Resgrid.Services
 
 			if (customStatesId != 0)
 				type.CustomStatesId = customStatesId;
+
+			if (mapIconType.HasValue && mapIconType.Value >= 0)
+				type.MapIconType = mapIconType;
 
 			return await _unitTypesRepository.SaveOrUpdateAsync(type, cancellationToken);
 		}

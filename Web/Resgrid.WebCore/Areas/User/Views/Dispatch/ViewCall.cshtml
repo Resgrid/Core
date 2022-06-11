@@ -468,6 +468,7 @@
 				      </table>
 				    </div>
 				    <div class="tab-pane" id="tab-5">
+						<a style="text-decoration:none; float: right;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 2, resourceId = Model.Call.CallId})">Add Image</a>
 				      <div class="callImages">
 				        @foreach (var image in Model.Call.Attachments.Where(x => x.CallAttachmentType == 2))
 						{

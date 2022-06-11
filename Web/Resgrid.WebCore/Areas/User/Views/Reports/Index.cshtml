@@ -38,13 +38,13 @@
 							<tbody>
 								<tr>
 									<td>
-										<a href="@Url.Action("ActionLogs", "Reports", new { Area = "User" })">Department Action Logs</a>
+										<a href="@Url.Action("ActionLogsParams", "Reports", new { Area = "User" })">Personnel Status History Report</a>
 									</td>
 									<td>
-										View all the actions that have been performed in the department for every user. The department admin can also clear all the actions for the department.
+										This report will show all the personnel status (action logs) history supplied by the selected personnel
 									</td>
 									<td>
-										<a href="@Url.Action("ActionLogs", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+										<a href="@Url.Action("ActionLogsParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
 									</td>
 								</tr>
 								@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())

@@ -166,6 +166,50 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<ActionLog>> GetAllActionLogsInDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+
+					var query = _queryFactory.GetQuery<SelectALogsByDateRangeQuery>();
+
+					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; }/*,
+						splitOn: "Id"*/);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
 		public async Task<IEnumerable<ActionLog>> GetAllActionLogsForDepartmentAsync(int departmentId)
 		{
 			try

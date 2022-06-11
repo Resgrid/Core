@@ -84,16 +84,7 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				List<CustomStateDetail> details = new List<CustomStateDetail>();
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.StandingBy, ButtonText = "Available" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.NotResponding, ButtonText = "Not Responding" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.Responding, ButtonText = "Responding" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.OnScene, ButtonText = "On Scene" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.AvailableStation, ButtonText = "Available Station" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToStation, ButtonText = "Responding To Station" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToScene, ButtonText = "Responding To Scene" });
-
-				return details;
+				return GetDefaultPersonStatuses();
 			}
 		}
 
@@ -107,14 +98,7 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				List<CustomStateDetail> details = new List<CustomStateDetail>();
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Available, ButtonText = "Available" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Delayed, ButtonText = "Delayed" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Unavailable, ButtonText = "Unavailable" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Committed, ButtonText = "Committed" });
-				details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.OnShift, ButtonText = "On Shift" });
-
-				return details;
+				return GetDefaultPersonStaffings();
 			}
 		}
 
@@ -180,10 +164,10 @@ namespace Resgrid.Services
 			return await _customStateDetailRepository.GetByIdAsync(detailId);
 		}
 
-		public async Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _customStateDetailRepository.SaveOrUpdateAsync(customStateDetail, cancellationToken);
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customStateDetail.CustomState.DepartmentId });
+			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = departmentId });
 
 			return saved;
 		}
@@ -323,10 +307,10 @@ namespace Resgrid.Services
 		public List<CustomStateDetail> GetDefaultPersonStatuses()
 		{
 			List<CustomStateDetail> details = new List<CustomStateDetail>();
-			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.StandingBy, ButtonText = "Standing By", ButtonColor = "#d1dade", NoteType = (int)CustomStateNoteTypes.Optional });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.Responding, ButtonText = "Responding", ButtonColor = "#449d44", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.CallsAndStations });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.NotResponding, ButtonText = "Not Responding", ButtonColor = "#ed5565", NoteType = (int)CustomStateNoteTypes.Optional });
-			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.Responding, ButtonText = "Responding", ButtonColor = "#449d44", NoteType = (int)CustomStateNoteTypes.Optional });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.OnScene, ButtonText = "On Scene", ButtonColor = "#262626", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Calls });
+			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.StandingBy, ButtonText = "Standing By", ButtonColor = "#d1dade", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Stations });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.AvailableStation, ButtonText = "Available Station", ButtonColor = "#d1dade", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Stations });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToStation, ButtonText = "Responding to Station", ButtonColor = "#449d44", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Stations });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToScene, ButtonText = "Responding to Scene", ButtonColor = "#449d44", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Calls });

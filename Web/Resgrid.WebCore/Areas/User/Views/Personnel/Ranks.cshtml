@@ -27,14 +27,14 @@
 			<div class="ibox float-e-margins" id="personnelContainer">
 				<div class="ibox-title">
 					<h5>Personnel</h5>
-@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-{
-					<div class="ibox-tools">
-						<div class="buttons-actions">
-								<a title="Add a new rank" class="btn btn-success" asp-controller="Personnel" asp-action="AddRank" asp-route-area="User">Add Rank</a>
+					@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+					{
+						<div class="ibox-tools">
+							<div class="buttons-actions">
+									<a title="Add a new rank" class="btn btn-success" asp-controller="Personnel" asp-action="AddRank" asp-route-area="User">Add Rank</a>
+							</div>
 						</div>
-					</div>
-}
+					}
 				</div>
 				<div class="ibox-content">
 					<div class="table-responsive">

@@ -83,13 +83,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Action Logs
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
-		public async Task<IActionResult> ActionLogs()
+		public async Task<IActionResult> ActionLogs(bool groupSelect, int groupId, string userId, DateTime start, DateTime end)
 		{
-			var model = new ActionLogModel();
-			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
-			model.User = _usersService.GetUserById(UserId);
+			//var model = new PersonnelStatusHistoryView();
+			//model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			//model.User = _usersService.GetUserById(UserId);
 
-			return View(model);
+			return View(await PersonnelStatusHistoryReportModel(DepartmentId, groupSelect, groupId, userId, start, end));
 		}
 
 		[HttpGet]
@@ -179,25 +179,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(actionLogs);
-		}
-
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		//[AuthorizeUpdate(ResgridClaimTypes.Resources.Department)]
-		public async Task<IActionResult> ClearAllActionLogs(ActionLogModel model, CancellationToken cancellationToken)
-		{
-			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
-
-
-			if (ModelState.IsValid)
-			{
-				if (model.ConfirmClearAll && model.Department.IsUserAnAdmin(UserId))
-				{
-					await _actionLogsService.DeleteAllActionLogsForDepartmentAsync(model.Department.DepartmentId, cancellationToken);
-				}
-			}
-
-			return RedirectToAction("ActionLogs", "Reports", new { Area = "User" });
 		}
 		#endregion Action Logs
 
@@ -343,6 +324,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> PersonnelStaffingHistoryReportParams(PersonnelStaffingHistoryReportParams model)
 		{
 			return RedirectToAction("PersonnelStaffingHistoryReport", new { groupSelect = model.GroupSelect, groupId = model.GroupId, userId = model.UserId, start = model.Start, end = model.End });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+
+		public async Task<IActionResult> ActionLogsParams()
+		{
+			var model = new PersonnelStaffingHistoryReportParams();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			model.Start = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), department);
+			model.End = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59), department);
+
+			var profiles = new List<UserProfile>();
+			profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
+
+			profiles.AddRange((await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value));
+			model.Users = new SelectList(profiles, "UserId", "FullName.AsFirstNameLastName", Guid.Empty);
+
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name", 0);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> ActionLogsParams(PersonnelStaffingHistoryReportParams model)
+		{
+			return RedirectToAction("ActionLogs", new { groupSelect = model.GroupSelect, groupId = model.GroupId, userId = model.UserId, start = model.Start, end = model.End });
 		}
 
 		[HttpGet]
@@ -655,6 +666,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new LogReportView();
 			model.Log = await _logService.GetWorkLogByIdAsync(logId);
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(model.Log.DepartmentId);
 			model.RunOn = DateTime.UtcNow.TimeConverter(department);
 
@@ -1323,6 +1335,101 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				model.CallSummaries.Add(summary);
+			}
+
+			return model;
+		}
+
+		private async Task<PersonnelStatusHistoryView> PersonnelStatusHistoryReportModel(int departmentId, bool groupSelect, int groupId, string userId, DateTime? start, DateTime? end)
+		{
+			var model = new PersonnelStatusHistoryView();
+
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+
+			if (start.HasValue && end.HasValue)
+			{
+				model.Start = start.Value;
+				model.End = end.Value;
+			}
+			else
+			{
+				model.Start = new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1);
+				model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
+			}
+
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+			var groups = await _departmentGroupsService.GetAllDepartmentGroupsForDepartmentAsync(departmentId);
+
+			var statuses = new List<ActionLog>();
+
+			if (groupSelect && groupId > 0)
+			{
+				var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
+				var usersInGroup = group.Members.Select(x => x.UserId);
+
+				foreach (var user in usersInGroup)
+				{
+					statuses.AddRange(await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(user, model.Start, model.End));
+				}
+			}
+			else
+			{
+				if (!String.IsNullOrWhiteSpace(userId))
+				{
+					statuses.AddRange(await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(userId, model.Start, model.End));
+				}
+				else
+				{
+					statuses.AddRange(await _actionLogsService.GetAllActionLogsInDateRangeAsync(DepartmentId, model.Start, model.End));
+				}
+			}
+
+			var groupedStates = from s in statuses
+								group s by s.UserId
+													into g
+								select new { UserId = g.Key, States = g.ToList() };
+
+			foreach (var group in groupedStates)
+			{
+				if (profiles.ContainsKey(group.UserId))
+				{
+					var summary = new PersonnelStatusSummary();
+					var profile = profiles[group.UserId];
+
+					summary.ID = profile.IdentificationNumber;
+					summary.Name = profile.FullName.AsFirstNameLastName;
+					summary.TotalStaffingChanges = group.States.Count;
+
+					if (groups.ContainsKey(group.UserId))
+					{
+						var dg = groups[group.UserId];
+						summary.Group = dg.Name;
+					}
+
+					foreach (var state in group.States)
+					{
+						var detail = new PersonnelStatusDetail();
+						detail.Timestamp = state.Timestamp.TimeConverterToString(model.Department);
+						detail.Note = state.Note;
+
+						var customState = await CustomStatesHelper.GetCustomPersonnelStatus(departmentId, state);
+
+						if (customState != null)
+						{
+							detail.Status = customState.ButtonText;
+							detail.StatusColor = customState.ButtonColor;
+						}
+						else
+						{
+							detail.Status = "Unknown";
+							detail.StatusColor = "#FFF";
+						}
+						summary.Details.Add(detail);
+					}
+
+					model.Personnel.Add(summary);
+				}
 			}
 
 			return model;

@@ -40,7 +40,7 @@
 					<div>
 						<small>@note.AddedOn.TimeConverter(note.Department).ToShortDateString()</small>
 						<h4>@note.Title.Truncate(50)</h4>
-						<p>@Html.Raw(note.Body)</p>
+						<p>@StringHelpers.StripHtmlTagsCharArray(note.Body).Truncate(100)</p>
 
 						<a title="View" class="btn btn-info noteButton" asp-controller="Notes" asp-action="View" asp-route-area="User" asp-route-noteId="@note.NoteId">View</a>
 					</div>

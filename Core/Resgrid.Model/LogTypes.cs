@@ -7,6 +7,7 @@
 		//Event = 3,
 		Work = 4,
 		Meeting = 5,
-		Coroner = 6
+		Coroner = 6,
+		Callback = 7,
 	}
 }

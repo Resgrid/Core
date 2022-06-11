@@ -190,7 +190,7 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;CallType&gt;.</returns>
-		Task<CallType> SaveNewCallTypeAsync(string callType, int departmentId,
+		Task<CallType> SaveNewCallTypeAsync(string callType, int departmentId, int? mapIconType,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

@@ -58,6 +58,16 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentGroup> SaveAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// New or Updated Address for this group
+			if (departmentGroup.Address != null)
+			{
+				var address = await _addressService.SaveAddressAsync(departmentGroup.Address, cancellationToken);
+				if (address != null)
+				{
+					departmentGroup.AddressId = address.AddressId;
+				}
+			}
+
 			var saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken);
 			InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
 

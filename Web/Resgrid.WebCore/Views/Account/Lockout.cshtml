@@ -1,8 +1,72 @@
 ﻿@{
-    ViewData["Title"] = "Locked out";
+	Layout = null;
 }
 
-<header>
-    <h1 class="text-danger">Locked out.</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
-</header>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Resgrid - Locked out</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<environment names="Development">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+					crossorigin="anonymous"
+					asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css"
+					asp-fallback-test-class="hidden"
+					asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+		<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+		<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.css" />
+		<link rel="stylesheet" href="~/css/animate.css" />
+		<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+	</environment>
+	<environment names="Staging,Production">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+					crossorigin="anonymous"
+					asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+					asp-fallback-test-class="hidden"
+					asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+		<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
+		<link rel="stylesheet" href="~/css/animate.css" />
+		<link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true" />
+	</environment>
+</head>
+<body class="gray-bg">
+
+
+	<div class="middle-box text-center animated fadeInDown">
+		<h1></h1>
+		<h2>Locked out</h2>
+
+		<div class="error-desc">
+			This account has been locked out, please try again later. 
+			<ul class="list-inline">
+				<li>
+					<a class="btn btn-primary m-t" href="javascript:history.back();">Go Back</a>
+				</li>
+				<li>
+
+				</li>
+				<li>
+					<a class="btn btn-primary m-t" asp-controller="Account" asp-action="LogOn" asp-route-area="">Log in</a>
+				</li>
+				<li>
+
+				</li>
+				<li>
+					<a class="btn btn-primary m-t" href="https://resgrid.com">Home</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

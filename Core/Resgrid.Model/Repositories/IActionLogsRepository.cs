@@ -81,5 +81,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="types">The types.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ActionLog&gt;&gt;.</returns>
 		Task<IEnumerable<ActionLog>> GetActionLogsForCallAndTypesAsync(int destinationId, List<int> types);
+
+		Task<IEnumerable<ActionLog>> GetAllActionLogsInDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
 	}
 }

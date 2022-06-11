@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Web.ServicesCore.Middleware;
+using Resgrid.Web.Services.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.Version3
 {
@@ -32,18 +33,21 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		private readonly IUsersService _usersService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly ISystemAuditsService _systemAuditsService;
 
 		public AuthController(
 			IUsersService usersService,
 			IUserProfileService userProfileService,
 			IDepartmentsService departmentsService,
-			SignInManager<Model.Identity.IdentityUser> signInManager
+			SignInManager<Model.Identity.IdentityUser> signInManager,
+			ISystemAuditsService systemAuditsService
 			)
 		{
 			_usersService = usersService;
 			_userProfileService = userProfileService;
 			_departmentsService = departmentsService;
 			_signInManager = signInManager;
+			_systemAuditsService = systemAuditsService;
 		}
 
 		/// <summary>
@@ -64,7 +68,17 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				if (authInput == null)
 					return BadRequest();
 
-				var signInResult = await _signInManager.PasswordSignInAsync(authInput.Usr, authInput.Pass, true, lockoutOnFailure: false);
+				var signInResult = await _signInManager.PasswordSignInAsync(authInput.Usr, authInput.Pass, true, lockoutOnFailure: true);
+				SystemAudit audit = new SystemAudit();
+				audit.System = (int)SystemAuditSystems.Api;
+				audit.Type = (int)SystemAuditTypes.Login;
+				audit.Username = authInput.Usr;
+				audit.Successful = signInResult.Succeeded;
+				audit.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				audit.ServerName = Environment.MachineName;
+				audit.Data = $"V3 Validate, {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+
 				if (signInResult.Succeeded)
 				{
 					if (await _usersService.DoesUserHaveAnyActiveDepartments(authInput.Usr))
@@ -114,7 +128,17 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				if (authInput == null)
 					return BadRequest();
 
-				var signInResult = await _signInManager.PasswordSignInAsync(authInput.Usr, authInput.Pass, true, lockoutOnFailure: false);
+				var signInResult = await _signInManager.PasswordSignInAsync(authInput.Usr, authInput.Pass, true, lockoutOnFailure: true);
+				SystemAudit audit = new SystemAudit();
+				audit.System = (int)SystemAuditSystems.Api;
+				audit.Type = (int)SystemAuditTypes.Login;
+				audit.Username = authInput.Usr;
+				audit.Successful = signInResult.Succeeded;
+				audit.IpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+				audit.ServerName = Environment.MachineName;
+				audit.Data = $"V3 ValidateForDepartment, {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+
 				if (signInResult.Succeeded)
 				{
 					if (await _usersService.DoesUserHaveAnyActiveDepartments(authInput.Usr))

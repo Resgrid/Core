@@ -124,11 +124,14 @@ namespace Resgrid.Web.ServicesCore
 				config.SignIn.RequireConfirmedPhoneNumber = false;
 				config.User.RequireUniqueEmail = true;
 				config.User.AllowedUserNameCharacters = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@";
-				config.Password.RequireDigit = false;
-				config.Password.RequireLowercase = false;
-				config.Password.RequireUppercase = false;
+				config.Password.RequireDigit = true;
+				config.Password.RequireLowercase = true;
+				config.Password.RequireUppercase = true;
 				config.Password.RequireNonAlphanumeric = false;
-				config.Password.RequiredLength = 6;
+				config.Password.RequiredLength = 8;
+				config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+				config.Lockout.MaxFailedAccessAttempts = 5;
+				config.Lockout.AllowedForNewUsers = true;
 			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
 			services.AddCors();

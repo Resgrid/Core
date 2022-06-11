@@ -231,6 +231,40 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> CanUserDeleteWorkLogAsync(string userId, int logId);
 
+		/// <summary>
+		/// Determines whether this instance [can delete shift signup asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="shiftSignupId">The shift signup identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> CanUserDeleteShiftSignupAsync(string userId, int departmentId, int shiftSignupId);
+
+		/// <summary>
+		/// Determines whether this instance [can view unit location asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="unitId">The unit identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewUnitLocationAsync(string userId, int unitId, int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can view person location asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The current user identifier.</param>
+		/// <param name="targetUserId">The target user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewPersonLocationAsync(string userId, string targetUserId, int departmentId);
+
+		/// <summary>
+		/// Determines whether this instance [can view person asynchronous] the specified user identifier.
+		/// </summary>
+		/// <param name="userId">The current user identifier.</param>
+		/// <param name="targetUserId">The target user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> CanUserViewPersonAsync(string userId, string targetUserId, int departmentId);
 	}
 }

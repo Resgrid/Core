@@ -69,6 +69,8 @@ namespace Resgrid.Services
 			builder.RegisterType<ProtocolsService>().As<IProtocolsService>().InstancePerLifetimeScope();
 			builder.RegisterType<FormsService>().As<IFormsService>().InstancePerLifetimeScope();
 			builder.RegisterType<VoiceService>().As<IVoiceService>().InstancePerLifetimeScope();
+			builder.RegisterType<SystemAuditsService>().As<ISystemAuditsService>().InstancePerLifetimeScope();
+			builder.RegisterType<AutofillsService>().As<IAutofillsService>().InstancePerLifetimeScope();
 
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();

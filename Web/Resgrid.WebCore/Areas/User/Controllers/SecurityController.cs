@@ -211,8 +211,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			createMessagePermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
 			model.CreateMessagePermissions = new SelectList(createMessagePermissions, "Id", "Name");
 
+
+
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers))
+			{
 				model.ViewGroupsUsers = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers).Action;
+				model.LockViewGroupsUsersToGroup = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers).LockToGroup;
+			}
 			else
 				model.ViewGroupsUsers = 3;
 

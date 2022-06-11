@@ -12,6 +12,7 @@ using System.Threading;
 using Resgrid.Web.Services.Models.v4.PersonnelStatuses;
 using Resgrid.Framework;
 using System.Collections.Generic;
+using Resgrid.Model.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -57,6 +58,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
+
+		/// <summary>
+		/// Gets the current status for a user
+		/// </summary>
+		/// <param name="userId">UserId to get the status for</param>
+		/// <returns></returns>
+		[HttpGet("GetCurrentStatus")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		public async Task<ActionResult<GetCurrentStatusResult>> GetCurrentStatus(string userId)
+		{
+			var result = new GetCurrentStatusResult();
+
+			if (string.IsNullOrEmpty(userId))
+				userId = UserId;
+
+			var action = await _actionLogsService.GetLastActionLogForUserAsync(userId, DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			if (action != null && action.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			result.Data = ConvertPersonStatus(action, department, userId);
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
 
 		/// <summary>
 		/// Saves a status for a person
@@ -175,6 +207,42 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStatusesForPersonnel", result);
+		}
+
+		public static GetCurrentStatusResultData ConvertPersonStatus(ActionLog actionLog, Department department, string userId)
+		{
+			var statusResult = new GetCurrentStatusResultData
+			{
+				StatusType = (int)ActionTypes.StandingBy,
+				UserId = userId,
+				DepartmentId = department.DepartmentId.ToString()
+			};
+
+			if (actionLog == null)
+			{
+				statusResult.TimestampUtc = DateTime.UtcNow;
+				statusResult.Timestamp = DateTime.UtcNow.TimeConverter(department);
+			}
+			else
+			{
+				statusResult.StatusType = actionLog.ActionTypeId;
+				statusResult.TimestampUtc = actionLog.Timestamp;
+				statusResult.Timestamp = actionLog.Timestamp.TimeConverter(department);
+				statusResult.GeoLocationData = actionLog.GeoLocationData;
+				statusResult.Note = actionLog.Note;
+
+				if (actionLog.DestinationId.HasValue)
+				{
+					statusResult.DestinationId = actionLog.DestinationId.Value;
+
+					if (actionLog.DestinationType.HasValue)
+						statusResult.DestinationType = actionLog.DestinationType.Value;
+					else
+						statusResult.DestinationType = 2; // Call (1 = Group)
+				}
+			}
+
+			return statusResult;
 		}
 	}
 }

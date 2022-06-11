@@ -20,5 +20,6 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public string StartLon { get; set; }
 		public string EndLat { get; set; }
 		public string EndLon { get; set; }
+		public List<PersonName> Names { get; set; }
 	}
 }

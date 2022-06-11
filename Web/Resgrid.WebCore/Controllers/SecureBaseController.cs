@@ -19,7 +19,7 @@ namespace Resgrid.Web
 
 		public new void Unauthorized()
 		{
-			Response.Redirect("~/Public/Unauthorized");
+			Response.Redirect("/Public/Unauthorized");
 		}
 	}
 }

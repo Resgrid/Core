@@ -89,5 +89,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return RedirectToAction("Index");
 		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Voice_Delete)]
+		public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+		{
+			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
+
+			if (!canUseVoice)
+				Unauthorized();
+
+			var channel = await _voiceService.GetDepartmentVoiceChannelByIdAsync(id);
+			if (channel != null)
+			{
+				var result = await _voiceService.DeleteDepartmentVoiceChannelAsync(channel, cancellationToken);
+			}
+
+			return RedirectToAction("Index");
+		}
 	}
 }

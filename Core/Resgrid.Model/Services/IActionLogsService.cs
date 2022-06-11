@@ -223,5 +223,7 @@ namespace Resgrid.Model.Services
 		/// <param name="callId">The call identifier.</param>
 		/// <returns>Task&lt;List&lt;ActionLog&gt;&gt;.</returns>
 		Task<List<ActionLog>> GetActionLogsForCallAsync(int departmentId, int callId);
+
+		Task<List<ActionLog>> GetAllActionLogsInDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
 	}
 }

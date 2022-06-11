@@ -1098,14 +1098,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> NewCallType(CallSettingsView model, CancellationToken cancellationToken)
+		public async Task<IActionResult> NewCallType(DepartmentTypesView model, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrEmpty(model.NewCallType))
 				ModelState.AddModelError("NewCallType", "You Must specify the new call type.");
 
 			if (ModelState.IsValid)
 			{
-				await _callsService.SaveNewCallTypeAsync(model.NewCallType, DepartmentId, cancellationToken);
+				await _callsService.SaveNewCallTypeAsync(model.NewCallType, DepartmentId, model.CallTypeIcon, cancellationToken);
 			}
 
 			return RedirectToAction("Types");

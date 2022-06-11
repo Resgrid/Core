@@ -321,7 +321,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Map = c.MapPage;
 					call.Not = c.Notes;
 
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
+					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -445,7 +445,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Map = c.MapPage;
 					call.Not = c.Notes;
 
-					if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
+					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 					{
 						var geo = c.GeoLocationData.Split(char.Parse(","));
 

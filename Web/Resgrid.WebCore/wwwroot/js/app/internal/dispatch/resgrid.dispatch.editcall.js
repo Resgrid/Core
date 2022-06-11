@@ -152,7 +152,7 @@ var resgrid;
                                 }
                             }
                         },
-                        pageSize: 50,
+                        //pageSize: 50,
                         serverPaging: false,
                         serverFiltering: false,
                         serverSorting: false
@@ -224,7 +224,7 @@ var resgrid;
                                 }
                             }
                         },
-                        pageSize: 50,
+                        //pageSize: 50,
                         serverPaging: false,
                         serverFiltering: false,
                         serverSorting: false
@@ -276,7 +276,7 @@ var resgrid;
                                 }
                             }
                         },
-                        pageSize: 50,
+                        //pageSize: 50,
                         serverPaging: false,
                         serverFiltering: false,
                         serverSorting: false
@@ -328,7 +328,7 @@ var resgrid;
                                 }
                             }
                         },
-                        pageSize: 50,
+                        //pageSize: 50,
                         serverPaging: false,
                         serverFiltering: false,
                         serverSorting: false

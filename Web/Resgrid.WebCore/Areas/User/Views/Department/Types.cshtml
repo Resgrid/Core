@@ -1,440 +1,553 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentTypesView
 @{
-  ViewBag.Title = "Resgrid | Department Wide Types";
+    ViewBag.Title = "Resgrid | Department Wide Types";
 }
 @section Styles
   {
 
 }
 
-  <div class="row wrapper border-bottom white-bg page-heading">
+<div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-      <h2>Department Wide Types</h2>
-      <ol class="breadcrumb">
-        <li>
-          <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-        </li>
-        <li class="active">
-          <strong>Department Wide Types</strong>
-        </li>
-      </ol>
+        <h2>Department Wide Types</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li class="active">
+                <strong>Department Wide Types</strong>
+            </li>
+        </ol>
     </div>
     <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <a id="manageListOrderingButton" class="btn btn-info top-button" title="Manage List Ordering" asp-controller="Types" asp-action="ListOrdering" asp-route-area="User">Manage List Ordering</a>
-      </div>
-    </div>
-  </div>
-
-<div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Call Types</h5>
-          <div class="ibox-tools">
-            <div class="buttons-actions">
-              <a title="Add a new call type" class="btn btn-success" data-target="#newCallTypeModal" data-toggle="modal">New Call Type</a>
-            </div>
-          </div>
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <a id="manageListOrderingButton" class="btn btn-info top-button" title="Manage List Ordering" asp-controller="Types" asp-action="ListOrdering" asp-route-area="User">Manage List Ordering</a>
         </div>
-        <div class="ibox-content">
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Type Name</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var c in Model.CallTypes)
-				{
-                  <tr>
-                    <td>
-                      @c.Type
-                    </td>
-
-                    <td>
-                      <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallType", "Department", new { area = "User", callTypeId = c.CallTypeId })" data-confirm="WARNING: This will permanently delete this call type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
-                    </td>
-                  </tr>
-				}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Call Priorities</h5>
-          <div class="ibox-tools">
-            <div class="buttons-actions">
-              <a title="Add a new call priority" class="btn btn-success" asp-controller="Types" asp-action="NewCallPriority" asp-route-area="User">New Call Priority</a>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Call Types</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="Add a new call type" class="btn btn-success" data-target="#newCallTypeModal" data-toggle="modal">New Call Type</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Type Name</th>
+                                    <th>Map Icon</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CallTypes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Type
+                                        </td>
+                                        <td>
+                                            @if (c.MapIconType.HasValue)
+                                            {
+                                                <span>@(((MapIconTypes)c.MapIconType.Value).ToString())</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Default</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallType", "Department", new { area = "User", callTypeId = c.CallTypeId })" data-confirm="WARNING: This will permanently delete this call type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="ibox-content">
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Color</th>
-                  <th>Is Default</th>
-                  <th>Alert Sound</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var c in Model.CallPriorites)
-				{
-                  <tr>
-                    <td>
-                      @c.Name
-                    </td>
-                    <td>
-                      <span style="color: @c.Color;">@c.Color</span>
-                    </td>
-                    <td>
-                      @if (c.IsDefault)
-					  {
-                        <span style="color: green;">Yes</span>
-					  }
-					  else
-					  {
-                        <span style="color: gray;">No</span>
-					  }
-                    </td>
-                    <td>
-                      @if (c.Tone > 0)
-					  {
-						var name = ((CustomAudioTypes)c.Tone).ToString();
-                        <span>@name</span>
-					  }
-					  else
-					  {
-                        <span>Default</span>
-					  }
-                    </td>
-                    <td>
-                      @if (c.DepartmentId != 0 && c.IsSystemPriority == false)
-					  {
-                        <a class="btn btn-xs btn-primary" href="@Url.Action("EditCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })">Edit</a>
-
-						if (!c.IsDefault)
-						{
-                          <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })" data-confirm="WARNING: This will permanently delete this call priority. Are you sure you want to delete the priority @c.Name ?" rel="nofollow">Delete</a>
-						}
-					  }
-                    </td>
-                  </tr>
-				}
-              </tbody>
-            </table>
-            @if (Model.CallPriorites.First().DepartmentId == 0)
-			{
-              <div class="alert alert-warning">
-                You’re currently using the Default call priorities. If you add any custom call priorities you will no longer be able to utilize the default call priorities (including their sounds). If you don’t specify a custom sound for your new call priorities, they will default to the High call push sound and alert sound. Users on the v5 or lower version of the Responder app and v2 or lower of the Unit app don't support custom call priorities. If you have any users on those versions of the apps we recommend not creating custom call priories.
-              </div>
-			}
-			else
-			{
-              <div class="alert alert-warning">
-                You have custom Call Priorities enabled. To revert back to the default ones you will need to delete all the custom ones. Editing an existing call priority will update it for all calls that used that priority.
-              </div>
-			}
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Unit Types</h5>
-          <div class="ibox-tools">
-            <div class="buttons-actions">
-              <a title="Add a new unit type" class="btn btn-success" href="#newUnitTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Unit Type</a>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Call Priorities</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="Add a new call priority" class="btn btn-success" asp-controller="Types" asp-action="NewCallPriority" asp-route-area="User">New Call Priority</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Color</th>
+                                    <th>Is Default</th>
+                                    <th>Alert Sound</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CallPriorites)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Name
+                                        </td>
+                                        <td>
+                                            <span style="color: @c.Color;">@c.Color</span>
+                                        </td>
+                                        <td>
+                                            @if (c.IsDefault)
+                                            {
+                                                <span style="color: green;">Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color: gray;">No</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.Tone > 0)
+                                            {
+                                                var name = ((CustomAudioTypes)c.Tone).ToString();
+                                                <span>@name</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Default</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.DepartmentId != 0 && c.IsSystemPriority == false)
+                                            {
+                                                <a class="btn btn-xs btn-primary" href="@Url.Action("EditCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })">Edit</a>
+
+                                                if (!c.IsDefault)
+                                                {
+                                                    <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })" data-confirm="WARNING: This will permanently delete this call priority. Are you sure you want to delete the priority @c.Name ?" rel="nofollow">Delete</a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.CallPriorites.First().DepartmentId == 0)
+                        {
+                            <div class="alert alert-warning">
+                                You’re currently using the Default call priorities. If you add any custom call priorities you will no longer be able to utilize the default call priorities (including their sounds). If you don’t specify a custom sound for your new call priorities, they will default to the High call push sound and alert sound. Users on the v5 or lower version of the Responder app and v2 or lower of the Unit app don't support custom call priorities. If you have any users on those versions of the apps we recommend not creating custom call priories.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                You have custom Call Priorities enabled. To revert back to the default ones you will need to delete all the custom ones. Editing an existing call priority will update it for all calls that used that priority.
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="ibox-content">
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Actions Set</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var c in Model.UnitTypes)
-				{
-                  <tr>
-                    <td>
-                      @c.Type
-                    </td>
-                    <td>
-                      @if (c.CustomStatesId.GetValueOrDefault() > 0 && Model.States.Any(x => x.CustomStateId == c.CustomStatesId.Value))
-					  {
-                        <span>@Model.States.First(x => x.CustomStateId == c.CustomStatesId.Value).Name</span>
-					  }
-					  else
-					  {
-                        <span>Default Unit Actions</span>
-					  }
-                    </td>
-                    <td>
-                      <a class="btn btn-xs btn-primary" href="@Url.Action("EditUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })"><i class="icon-pencil"></i> Edit</a>
-                      <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteUnitType", "Department", new { area = "User", unitTypeId = c.UnitTypeId })" data-confirm="WARNING: This will permanently delete this unit type. Are you sure you want to delete the unit type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
-                    </td>
-                  </tr>
-				}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Certification Types</h5>
-          <div class="ibox-tools">
-            <div class="buttons-actions">
-              <a title="Add a new Certification type" class="btn btn-success" data-target="#newCertificationTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Certification Type</a>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Unit Types</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="Add a new unit type" class="btn btn-success" href="#newUnitTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Unit Type</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Actions Set</th>
+                                     <th>Map Icon</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.UnitTypes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Type
+                                        </td>
+                                        <td>
+                                            @if (c.CustomStatesId.GetValueOrDefault() > 0 && Model.States.Any(x => x.CustomStateId == c.CustomStatesId.Value))
+                                            {
+                                                <span>@Model.States.First(x => x.CustomStateId == c.CustomStatesId.Value).Name</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Default Unit Actions</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.MapIconType.HasValue)
+                                            {
+                                                <span>@(((MapIconTypes)c.MapIconType.Value).ToString())</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Default</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-primary" href="@Url.Action("EditUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })"><i class="icon-pencil"></i> Edit</a>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteUnitType", "Department", new { area = "User", unitTypeId = c.UnitTypeId })" data-confirm="WARNING: This will permanently delete this unit type. Are you sure you want to delete the unit type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="ibox-content">
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Type Name</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var c in Model.CertificationTypes)
-				{
-                  <tr>
-                    <td>
-                      @c.Type
-                    </td>
-
-                    <td>
-                      <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Department", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="WARNING: This will permanently delete this Certification Type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
-                    </td>
-                  </tr>
-				}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Certification Types</h5>
-          <div class="ibox-tools">
-            <div class="buttons-actions">
-              <a title="Add a new Certification type" class="btn btn-success" data-target="#newCertificationTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Certification Type</a>
-            </div>
-          </div>
-        </div>
-        <div class="ibox-content">
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Type Name</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var c in Model.CertificationTypes)
-                {
-                  <tr>
-                    <td>
-                      @c.Type
-                    </td>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Certification Types</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="Add a new Certification type" class="btn btn-success" data-target="#newCertificationTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Certification Type</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Type Name</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CertificationTypes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Type
+                                        </td>
 
-                    <td>
-                      <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Department", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="WARNING: This will permanently delete this Certification Type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+                                        <td>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Department", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="WARNING: This will permanently delete this Certification Type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Certification Types</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="Add a new Certification type" class="btn btn-success" data-target="#newCertificationTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Certification Type</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Type Name</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CertificationTypes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Type
+                                        </td>
+
+                                        <td>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Department", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="WARNING: This will permanently delete this Certification Type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 <div class="modal fade @ViewBag.NewCallTypeModalCss" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="newCertificationTypeModal" style="@ViewBag.NewCallTypeModalStyle">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Department Certification Type</h4>
-      </div>
-      @using (Html.BeginForm("NewCertificationType", "Department", FormMethod.Post, new { area = "User", id = "new_callType", @class = "form-horizontal" }))
-	  {
-        <div class="modal-body">
-          @if (!String.IsNullOrEmpty(Model.Message))
-		  {
-            <div class="alert alert-success">
-              @Model.Message
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Department Certification Type</h4>
             </div>
-		  }
-          <span class="alert alert-error">
-            @Html.ValidationSummary(false)
-            @Html.AntiForgeryToken()
-          </span>
-          <div class="form-group">
-            <label class=" control-label">
-              Certification Type Name
-            </label>
-            <div class="controls">
-              @Html.TextBoxFor(m => m.NewCertificationType, new { @class = "form-control" })
-            </div>
-          </div>
+            @using (Html.BeginForm("NewCertificationType", "Department", FormMethod.Post, new { area = "User", id = "new_callType", @class = "form-horizontal" }))
+            {
+                <div class="modal-body">
+                    @if (!String.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-success">
+                            @Model.Message
+                        </div>
+                    }
+                    <span class="alert alert-error">
+                        @Html.ValidationSummary(false)
+                        @Html.AntiForgeryToken()
+                    </span>
+                    <div class="form-group">
+                        <label class=" control-label">
+                            Certification Type Name
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.NewCertificationType, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("Types", "Department", new { area = "User" })" class="btn">Close</a>
+                    <input class="btn btn-primary" id="submit_action" name="commit" type="submit"
+                       value="Save Certification Type" />
+                </div>
+            }
         </div>
-        <div class="modal-footer">
-          <a href="@Url.Action("Types", "Department", new { area = "User" })" class="btn">Close</a>
-          <input class="btn btn-primary" id="submit_action" name="commit" type="submit"
-				 value="Save Certification Type" />
-        </div>
-	  }
     </div>
-  </div>
 </div>
 
 <div id="newUnitTypeModal" class="modal fade @ViewBag.NewCallTypeModalCss" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="@ViewBag.NewCallTypeModalStyle">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Resgrid Unit Type</h4>
-      </div>
-      @using (Html.BeginForm("NewUnitType", "Department", FormMethod.Post, new { area = "User", id = "new_unitType", @class = "form-horizontal" }))
-	  {
-        <div class="modal-body">
-          @if (!String.IsNullOrEmpty(Model.Message))
-		  {
-            <div class="alert alert-success">
-              @Model.Message
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Resgrid Unit Type</h4>
             </div>
-		  }
-          <span class="alert-error">
-            @Html.ValidationSummary(false)
-            @Html.AntiForgeryToken()
-          </span>
-          <div class="form-group">
-            <label class="control-label">
-              Unit Type Name
-            </label>
-            <div class="controls">
-              <div class="col-md-10">
-                @Html.TextBoxFor(m => m.NewUnitType, new { @class = "form-control" })
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">
-              Actions
-            </label>
-            <div class="controls">
-              <div class="col-md-10">
-                @Html.DropDownListFor(m => m.UnitCustomStatesId, new SelectList(Model.States, "CustomStateId", "Name"), new { @class = "input-large" })
-                <p class="help-block"></p>
-              </div>
-            </div>
-          </div>
+            @using (Html.BeginForm("NewUnitType", "Department", FormMethod.Post, new { area = "User", id = "new_unitType", @class = "form-horizontal" }))
+            {
+                <div class="modal-body">
+                    @if (!String.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-success">
+                            @Model.Message
+                        </div>
+                    }
+                    <span class="alert-error">
+                        @Html.ValidationSummary(false)
+                        @Html.AntiForgeryToken()
+                    </span>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Unit Type Name
+                        </label>
+                        <div class="controls">
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.NewUnitType, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Actions
+                        </label>
+                        <div class="controls">
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(m => m.UnitCustomStatesId, new SelectList(Model.States, "CustomStateId", "Name"), new { @class = "input-large" })
+                                <p class="help-block"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Map Icon
+                        </label>
+                        <div class="controls">
+                            <div class="col-md-4">
+                                <select name="UnitTypeIcon" id="UnitTypeIcon">
+                                    <option value="-1">Default</option>
+                                    <option value="20">Aircraft</option>
+                                    <option value="21">Ambulance</option>
+                                    <option value="22">Bulldozer</option>
+                                    <option value="23">Bus</option>
+                                    <option value="24">Car</option>
+                                    <option value="25">Car Two</option>
+                                    <option value="26">Check</option>
+                                    <option value="27">Flag</option>
+                                    <option value="28">FourByFour</option>
+                                    <option value="29">Group</option>
+                                    <option value="30">Helicopter</option>
+                                    <option value="31">Motorcycle</option>
+                                    <option value="32">Pickup</option>
+                                    <option value="33">Camper</option>
+                                    <option value="34">Plowtruck</option>
+                                    <option value="35">Tires</option>
+                                    <option value="36">Truck</option>
+                                    <option value="37">Van</option>
+                                    <option value="38">Velocimeter</option>
+                                    <option value="39">Watercraft</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <img id="newUnitTypePreview" style="height: 37px; width: 32px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("Types", "Department", new { area = "User" })" class="btn">Close</a>
+                    <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Save Unit Type" />
+                </div>
+            }
         </div>
-        <div class="modal-footer">
-          <a href="@Url.Action("Types", "Department", new { area = "User" })" class="btn">Close</a>
-          <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Save Unit Type" />
-        </div>
-	  }
     </div>
-  </div>
 </div>
 
 <div class="modal fade @ViewBag.NewCallTypeModalCss" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="newCallTypeModal" style="@ViewBag.NewCallTypeModalStyle">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Resgrid Email Type</h4>
-      </div>
-      @using (Html.BeginForm("NewCallType", "Department", FormMethod.Post, new { area = "User", id = "new_callType", @class = "form-horizontal" }))
-	  {
-        <div class="modal-body">
-          @if (!String.IsNullOrEmpty(Model.Message))
-		  {
-            <div class="alert alert-success">
-              @Model.Message
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">New Call Type</h4>
             </div>
-		  }
-          <span class="alert-error">
-            @Html.ValidationSummary(false)
-            @Html.AntiForgeryToken()
-          </span>
-          <div class="form-group">
-            <label class=" control-label">
-              Call Type Name
-            </label>
-            <div class="controls">
-              @Html.TextBoxFor(m => m.NewCallType, new { @class = "form-control" })
-            </div>
-          </div>
+            @using (Html.BeginForm("NewCallType", "Department", FormMethod.Post, new { area = "User", id = "new_callType", @class = "form-horizontal" }))
+            {
+                <div class="modal-body">
+                    @if (!String.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-success">
+                            @Model.Message
+                        </div>
+                    }
+                    <span class="alert-error">
+                        @Html.ValidationSummary(false)
+                        @Html.AntiForgeryToken()
+                    </span>
+                    <div class="form-group">
+                        <label class=" control-label">
+                            Call Type Name
+                        </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.NewCallType, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Map Icon
+                        </label>
+                        <div class="controls">
+                            <div class="col-md-4">
+                                <select name="CallTypeIcon" id="CallTypeIcon">
+                                    <option value="-1">Default</option>
+                                    <option value="0">Search</option>
+                                    <option value="1">Blast</option>
+                                    <option value="2">Car Accident</option>
+                                    <option value="3">Crime Scene</option>
+                                    <option value="4">Earthquake</option>
+                                    <option value="5">Emergency Phone</option>
+                                    <option value="6">Fire</option>
+                                    <option value="7">First Aid</option>
+                                    <option value="8">Flood</option>
+                                    <option value="9">Tools</option>
+                                    <option value="10">Line Down</option>
+                                    <option value="11">Industry</option>
+                                    <option value="12">Power Outage</option>
+                                    <option value="13">Radiation</option>
+                                    <option value="14">Shooting</option>
+                                    <option value="15">Poison</option>
+                                    <option value="16">Gathering</option>
+                                    <option value="17">Tree Down</option>
+                                    <option value="18">Worksite</option>
+                                    <option value="19">Workshop</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <img id="newCallTypePreview" style="height: 37px; width: 32px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("Types", "Department", new {area = "User"})" class="btn">Close</a>
+                    <input class="btn btn-primary" id="submit_action" name="commit" type="submit"
+                       value="Save Call Type" />
+                </div>
+            }
         </div>
-        <div class="modal-footer">
-          <a href="@Url.Action("Types", "Department", new {area = "User"})" class="btn">Close</a>
-          <input class="btn btn-primary" id="submit_action" name="commit" type="submit"
-				 value="Save Call Type" />
-        </div>
-	  }
     </div>
-  </div>
 </div>
 
 @section Scripts
   {
-  <script>
-	$(document).ready(function () {
-	  resgrid.common.analytics.track('Department - Types');
+<script>
+    $(document).ready(function () {
+      resgrid.common.analytics.track('Department - Types');
 
-	  $('#UnitCustomStatesId').select2();
-	});
-  </script>
+      $('#newCallTypePreview').hide();
+      $('#newUnitTypePreview').hide();
+      $('#UnitCustomStatesId').select2();
+
+      $('#CallTypeIcon').on('change', function() {
+          if (this.value >= 0) {
+            $('#newCallTypePreview').show();
+            let text = $( "#CallTypeIcon option:selected" ).text().replace(/\s/g, '').toLowerCase();
+            $("#newCallTypePreview").attr("src", "/images/Mapping/" + text + ".png");
+          } else {
+              $('#newCallTypePreview').hide();
+          }
+      });
+
+      $('#UnitTypeIcon').on('change', function() {
+          if (this.value >= 0) {
+            $('#newUnitTypePreview').show();
+            let text = $( "#UnitTypeIcon option:selected" ).text().replace(/\s/g, '').toLowerCase();
+            $("#newUnitTypePreview").attr("src", "/images/Mapping/" + text + ".png");
+          } else {
+              $('#newUnitTypePreview').hide();
+          }
+      });
+    });
+</script>
 }

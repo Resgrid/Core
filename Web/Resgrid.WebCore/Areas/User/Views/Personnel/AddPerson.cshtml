@@ -4,6 +4,11 @@
   ViewBag.Title = "Resgrid | Add Person";
 }
 
+@section Styles
+{
+    <link rel="stylesheet" href="~/clib/validate-password-requirements/jquery.passwordRequirements.css" />
+}
+
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
     <h2>Add Person</h2>
@@ -44,8 +49,8 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">New Password</label>
               <div class="col-sm-10">
-                <input type="password" class="form-control" asp-for="NewPassword" autocomplete="off">
-                <span class="help-block m-b-none">Passwords must be at least 6 characters long</span>
+                <input type="password" class="form-control pr-password" asp-for="NewPassword" autocomplete="off">
+                <span class="help-block m-b-none">Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</span>
               </div>
             </div>
             <div class="form-group">
@@ -198,4 +203,29 @@
 		var isUserGroupAdmin = '@Model.IsUserGroupAdmin';
   </script>
   <script src="~/js/app/internal/personnel/resgrid.personnel.addperson.js" type="text/javascript"></script>
+  <script src="~/clib/validate-password-requirements/jquery.passwordRequirements.min.js"></script>
+
+  <script>
+            $(document).ready(function () {
+                $(".pr-password").passwordRequirements({
+                  numCharacters: 8,
+                  useLowercase: true,
+                  useUppercase: true,
+                  useNumbers: true,
+                  useSpecial: false
+                });
+
+              $(document).on('submit', '#registrationForm', function () {
+                var crep = $('#g-recaptcha-response').val();
+                $('#GoogleReCaptchaResponse').val(crep);
+
+                if ($(this).valid()) {
+                  // On submit disable form submit button
+                  $('#registerButton').prop('disabled', true);
+                }
+
+                return true;
+              });
+            });
+    </script>
 }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Training;
 using Resgrid.WebCore.Areas.User.Models.Templates;
 
@@ -18,14 +20,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 	{
 		private readonly ITemplatesService _templatesService;
 		private readonly ICallsService _callsService;
+		private readonly IAutofillsService _autofillsService;
 
-		public TemplatesController(ITemplatesService templatesService, ICallsService callsService)
+		public TemplatesController(ITemplatesService templatesService, ICallsService callsService,
+			IAutofillsService autofillsService)
 		{
 			_templatesService = templatesService;
 			_callsService = callsService;
+			_autofillsService = autofillsService;
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> Index()
 		{
 			var model = new TemplateIndexModel();
@@ -35,7 +41,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> CallNotes()
+		{
+			var model = new CallNotesModel();
+			model.CallNotes = await _autofillsService.GetAllAutofillsForDepartmentByTypeAsync(DepartmentId, AutofillTypes.CallNote);
+			model.CallNotes = model.CallNotes.OrderBy(x => x.Sort).ToList();
 
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> New()
 		{
 			var model = new NewTemplateModel();
@@ -54,6 +71,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> New(NewTemplateModel model, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrWhiteSpace(model.Template.CallName) &&
@@ -77,6 +95,45 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> NewCallNote()
+		{
+			var model = new NewCallNoteModel();
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> NewCallNote(NewCallNoteModel model, CancellationToken cancellationToken)
+		{
+			if (String.IsNullOrWhiteSpace(model.Name) &&
+				String.IsNullOrWhiteSpace(model.Data))
+			{
+				model.Message = "You must specify a call name and/or call nature to set to save the template";
+				return View(model);
+			}
+
+			if (ModelState.IsValid)
+			{
+				var autofill = new Autofill();
+				autofill.Name = model.Name;
+				autofill.Data = model.Data;
+				autofill.Type = (int)AutofillTypes.CallNote;
+				autofill.Sort = model.Sort;
+				autofill.DepartmentId = DepartmentId;
+				autofill.AddedByUserId = UserId;
+				autofill.AddedOn = DateTime.UtcNow;
+
+				await _autofillsService.SaveAutofillAsync(autofill, cancellationToken);
+				return RedirectToAction("CallNotes");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
 		{
 			var template = await _templatesService.GetCallQuickTemplateByIdAsync(id);
@@ -87,6 +144,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _templatesService.DeleteCallQuickTemplateAsync(id, cancellationToken);
 
 			return RedirectToAction("Index");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DeleteCallNote(string id, CancellationToken cancellationToken)
+		{
+			var template = await _autofillsService.GetAutofillByIdAsync(id);
+
+			if (template == null || template.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			await _autofillsService.DeleteAutofillAsync(id, cancellationToken);
+
+			return RedirectToAction("CallNotes");
 		}
 
 		[HttpGet]

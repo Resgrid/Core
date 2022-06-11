@@ -186,6 +186,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (String.IsNullOrEmpty(model.Latitude) && String.IsNullOrEmpty(model.Longitude))
 					{
+						model.NewGroup.Address = new Address();
 						model.NewGroup.Address.Address1 = model.Address1;
 						model.NewGroup.Address.City = model.City;
 						model.NewGroup.Address.Country = model.Country;

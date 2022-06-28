@@ -4089,6 +4089,16 @@
             Are you attending
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.TypeColor">
+            <summary>
+            Color of the Type (if any)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.TypeName">
+            <summary>
+            Name of the type (if any)
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.Attendees">
             <summary>
             All attendees
@@ -4437,6 +4447,11 @@
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData">
             <summary>
             Depicts a call in the Resgrid system.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.CallFormData">
+            <summary>
+            Call form data that was filled out during call creation.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.Activity">

@@ -216,6 +216,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 
+			result.Data.CallFormData = call.CallFormData;
+
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
 			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
@@ -1336,6 +1338,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.ReferenceId = call.ReferenceNumber;
 			callResult.ExternalId = call.ExternalIdentifier;
 			callResult.IncidentId = call.IncidentNumber;
+			callResult.Type = call.Type;
 
 			callResult.Protocols = new List<CallProtocolResultData>();
 			if (protocol != null && protocol.Any())

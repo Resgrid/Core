@@ -10,9 +10,9 @@
 
 <html lang="en">
 <head>
-	<title>YTD Department Activity Report</title>
+	<title>Call Summary Report</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Department Activity Report">
+	<meta name="description" content="Call Summary Report">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -218,12 +218,15 @@
 	<script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
 
 	<script>
+		var startDateString = encodeURIComponent("@Model.Start.ToString()");
+		var endDateString = encodeURIComponent("@Model.End.ToString()");
+
 		$(document).ready(function () {
 			$("#calls-types").kendoChart({
 				dataSource: {
 					transport: {
 						read: {
-							url: "/User/Dispatch/CallsTypesInRange?startDate=@System.Net.WebUtility.UrlEncode(Model.Start.ToString())&endDate=@System.Net.WebUtility.UrlEncode(Model.End.ToString())",
+							url: `/User/Dispatch/CallsTypesInRange?startDate=${startDateString}&endDate=${endDateString}`,
 							dataType: "json"
 						}
 					},
@@ -284,7 +287,7 @@
 				dataSource: {
 					transport: {
 						read: {
-							url: "/User/Dispatch/CallsStatesInRange?startDate=@System.Net.WebUtility.UrlEncode(Model.Start.ToString())&endDate=@System.Net.WebUtility.UrlEncode(Model.End.ToString())",
+							url: `/User/Dispatch/CallsStatesInRange?startDate=${startDateString}&endDate=${endDateString}`,
 							dataType: "json"
 						}
 					},

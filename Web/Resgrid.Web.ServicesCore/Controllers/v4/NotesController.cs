@@ -55,6 +55,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					result.Data.Add(ConvertNoteData(n, department));
 				}
 
+				result.Data = result.Data.OrderBy(x => x.AddedOn).ToList();
+
 				result.PageSize = result.Data.Count;
 				result.Status = ResponseHelper.Success;
 			}

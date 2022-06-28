@@ -140,6 +140,16 @@ public class GetAllCalendarItemResultData
 	public bool Attending { get; set; }
 
 	/// <summary>
+	/// Color of the Type (if any)
+	/// </summary>
+	public string TypeColor { get; set; }
+
+	/// <summary>
+	/// Name of the type (if any)
+	/// </summary>
+	public string TypeName { get; set; }
+
+	/// <summary>
 	/// All attendees
 	/// </summary>
 	public List<CalendarItemResultAttendeeData> Attendees { get; set; }

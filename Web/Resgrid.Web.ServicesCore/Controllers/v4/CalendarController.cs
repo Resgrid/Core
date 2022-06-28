@@ -53,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data = new List<GetAllCalendarItemResultData>();
 
 			var items = await _calendarService.GetAllCalendarItemsForDepartmentAsync(DepartmentId);
+			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (items != null && items.Any())
@@ -60,7 +61,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var item in items)
 				{
-					result.Data.Add(ConvertCalendarItemData(item, department, UserId));
+					if (item.ItemType > 0)
+					{
+						var itemType = types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, itemType));
+					}
+					else
+					{
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, null));
+					}
 				}
 
 				result.PageSize = result.Data.Count;
@@ -93,6 +102,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data = new List<GetAllCalendarItemResultData>();
 
 			var items = await _calendarService.GetAllCalendarItemsForDepartmentInRangeAsync(DepartmentId, start.SetToMidnight(), end.SetToEndOfDay());
+			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (items != null && items.Any())
@@ -100,7 +110,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var item in items)
 				{
-					result.Data.Add(ConvertCalendarItemData(item, department, UserId));
+					if (item.ItemType > 0)
+					{
+						var itemType = types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, itemType));
+					}
+					else
+					{
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, null));
+					}
 				}
 
 				result.PageSize = result.Data.Count;
@@ -129,6 +147,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new GetCalendarItemResult();
 			var item = await _calendarService.GetCalendarItemByIdAsync(id);
+			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (item != null)
@@ -136,7 +155,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (item.DepartmentId != DepartmentId)
 					return Unauthorized();
 
-				result.Data = ConvertCalendarItemData(item, department, UserId);
+				if (item.ItemType > 0)
+				{
+					var itemType = types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
+					result.Data = ConvertCalendarItemData(item, department, UserId, itemType);
+				}
+				else
+				{
+					result.Data = ConvertCalendarItemData(item, department, UserId, null);
+				}
+
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Success;
 			}
@@ -223,7 +251,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
-		public static GetAllCalendarItemResultData ConvertCalendarItemData(CalendarItem item, Department department, string currentUserId)
+		public static GetAllCalendarItemResultData ConvertCalendarItemData(CalendarItem item, Department department, string currentUserId, CalendarItemType type)
 		{
 			var calendarItem = new GetAllCalendarItemResultData();
 			calendarItem.CalendarItemId = item.CalendarItemId.ToString();
@@ -247,6 +275,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			calendarItem.Entities = item.Entities;
 			calendarItem.RequiredAttendes = item.RequiredAttendes;
 			calendarItem.OptionalAttendes = item.OptionalAttendes;
+
+			if (type != null)
+			{
+				calendarItem.TypeName = type.Name;
+				calendarItem.TypeColor = type.Color;
+			}
+			else
+			{
+				calendarItem.TypeColor = "#1e90ff";
+			}
 
 			if (!String.IsNullOrWhiteSpace(item.CreatorUserId))
 				calendarItem.CreatorUserId = item.CreatorUserId.ToString();

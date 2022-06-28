@@ -30,6 +30,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 	public class CallExtraDataResultData
 	{
 		/// <summary>
+		/// Call form data that was filled out during call creation.
+		/// </summary>
+		public string CallFormData { get; set; }
+
+		/// <summary>
 		/// Unit and Personnel activities attached to this call
 		/// </summary>
 		public List<DispatchedEventResultData> Activity { get; set; }

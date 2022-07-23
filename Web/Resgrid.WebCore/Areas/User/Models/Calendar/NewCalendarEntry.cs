@@ -10,5 +10,7 @@ namespace Resgrid.WebCore.Areas.User.Models.Calendar
 		public RecurrenceTypes RecurrenceTypes { get; set; }
 		public List<CalendarItemType> Types { get; set; }
 		public string entities { get; set; }
+		public int WeekdayOccurrence { get; set; }
+		public int WeekdayDayOfWeek { get; set; }
 	}
 }

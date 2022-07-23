@@ -3221,7 +3221,7 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallsController">
             <summary>
-            Calls, also referred to as Dispatches. 
+            Calls, also referred to as Dispatches.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetActiveCalls">
@@ -3287,6 +3287,13 @@
             Returns all the non-dispatched (pending) scheduled calls for the department
             </summary>
             <returns>Array of CallResult objects for each active call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallHistory(System.Int32)">
+            <summary>
+            Gets all the meta-data around a call, dispatched personnel, units, groups and responses
+            </summary>
+            <param name="callId">CallId to get data for</param>
+            <returns></returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
             <summary>
@@ -4477,6 +4484,51 @@
         <member name="M:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.#ctor">
             <summary>
             Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResult">
+            <summary>
+            Gets the history of all actions taken during a call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData">
+            <summary>
+            Call history item
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData.Timestamp">
+            <summary>
+            Timestamp of the history event in local time
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData.TimestampUtc">
+            <summary>
+            Timestamp of the history event in UTC/GMT
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData.Type">
+            <summary>
+            Type of the event (0 = Call, 1 = Note, 2 = Personnel Status, 3 = Unit Status)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData.Id">
+            <summary>
+            Source Identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData.Info">
+            <summary>
+            Text describing the history event
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallResult">

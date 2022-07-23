@@ -117,6 +117,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Item.CreatorUserId = UserId;
 				model.Item.Entities = model.entities;
 
+				if (model.Item.RecurrenceType == 2)
+				{
+					model.Item.RepeatOnWeek = model.WeekdayOccurrence;
+					model.Item.RepeatOnDay = model.WeekdayDayOfWeek;
+				}
+
 				await _calendarService.AddNewCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
 
 				return RedirectToAction("Index");

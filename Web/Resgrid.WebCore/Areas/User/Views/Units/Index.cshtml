@@ -2,321 +2,333 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
 @{
-  ViewBag.Title = "Resgrid | Units";
+    ViewBag.Title = "Resgrid | Units";
 }
 
 <style>
-  .k-grid-content {
-  padding-bottom: 300px;
-  }
+    .k-grid-content {
+        padding-bottom: 300px;
+    }
 
-  .multi-level {
-  z-index: 9999999999 !important;
-  overflow: visible !important;
-  }
+    .multi-level {
+        z-index: 9999999999 !important;
+        overflow: visible !important;
+    }
 
-  .dropdown-submenu {
-  position: relative;
-  z-index: 9999999999 !important;
-  overflow: visible !important;
-  }
+    .dropdown-submenu {
+        position: relative;
+        z-index: 9999999999 !important;
+        overflow: visible !important;
+    }
 
-  .dropdown-submenu > .dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  -webkit-border-radius: 0 6px 6px 6px;
-  -moz-border-radius: 0 6px 6px;
-  border-radius: 0 6px 6px 6px;
-  z-index: 9999999999 !important;
-  overflow: visible !important;
-  }
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -6px;
+            margin-left: -1px;
+            -webkit-border-radius: 0 6px 6px 6px;
+            -moz-border-radius: 0 6px 6px;
+            border-radius: 0 6px 6px 6px;
+            z-index: 9999999999 !important;
+            overflow: visible !important;
+        }
 
-  .dropdown-submenu:hover > .dropdown-menu {
-  display: block;
-  }
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
 
-  .dropdown-submenu > a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #ccc;
-  margin-top: 5px;
-  margin-right: -10px;
-  position: relative;
-  z-index: 9999999999 !important;
-  overflow: visible !important;
-  }
+        .dropdown-submenu > a:after {
+            display: block;
+            content: " ";
+            float: right;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            border-width: 5px 0 5px 5px;
+            border-left-color: #ccc;
+            margin-top: 5px;
+            margin-right: -10px;
+            position: relative;
+            z-index: 9999999999 !important;
+            overflow: visible !important;
+        }
 
-  .dropdown-submenu:hover > a:after {
-  border-left-color: #fff;
-  }
+        .dropdown-submenu:hover > a:after {
+            border-left-color: #fff;
+        }
 
-  .dropdown-submenu.pull-left {
-  float: none;
-  }
+        .dropdown-submenu.pull-left {
+            float: none;
+        }
 
-  .dropdown-submenu.pull-left > .dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  -webkit-border-radius: 6px 0 6px 6px;
-  -moz-border-radius: 6px 0 6px 6px;
-  border-radius: 6px 0 6px 6px;
-  z-index: 9999999999 !important;
-  overflow: visible !important;
-  }
+            .dropdown-submenu.pull-left > .dropdown-menu {
+                left: -100%;
+                margin-left: 10px;
+                -webkit-border-radius: 6px 0 6px 6px;
+                -moz-border-radius: 6px 0 6px 6px;
+                border-radius: 6px 0 6px 6px;
+                z-index: 9999999999 !important;
+                overflow: visible !important;
+            }
 </style>
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>Units List</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li class="active">
-        <strong>Units</strong>
-      </li>
-    </ol>
-  </div>
-  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanUserAddUnit)
-  {
-    <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <a title="Add a new unit" class="btn btn-success" asp-controller="Units" asp-action="NewUnit" asp-route-area="User">New Unit</a>
-        <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
-      </div>
+    <div class="col-sm-4">
+        <h2>Units List</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li class="active">
+                <strong>Units</strong>
+            </li>
+        </ol>
     </div>
-  }
-  else if (Model.IsUserAdminOrGroupAdmin)
-  {
-    <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-		<a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
-      </div>
-    </div>
-  }
+    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanUserAddUnit)
+    {
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a title="Add a new unit" class="btn btn-success" asp-controller="Units" asp-action="NewUnit" asp-route-area="User">New Unit</a>
+                <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
+            </div>
+        </div>
+    }
+    else if (Model.IsUserAdminOrGroupAdmin)
+    {
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
+            </div>
+        </div>
+    }
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <div>
-            <ul class="nav nav-tabs" role="tablist">
-              @{
-				var count = 0;
-
-				var ungroupedUnits = Model.Units.Where(x => x.StationGroupId == null);
-
-				if (ungroupedUnits != null && ungroupedUnits.Any())
-				{
-                  @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab0' aria-controls='home' role='tab' data-toggle='tab'>Units</a></li>");
-				  count++;
-				}
-
-
-				for (var i = 0; i < Model.Groups.Count(); i++)
-				{
-				  var units = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
-
-				  if (units != null && units.Any())
-				  {
-					if (count == 0)
-					{
-                      @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
-					}
-					else
-					{
-                      @Html.Raw("<li role='presentation'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>");
-					}
-
-					count++;
-				  }
-				}
-              }
-            </ul>
-            <div class="tab-content">
-              @{
-				var count2 = 0;
-
-				var ungroupedUnits2 = Model.Units.Where(x => x.StationGroupId == null);
-
-				if (ungroupedUnits2 != null && ungroupedUnits2.Any())
-				{
-                  @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>");
-                  @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_0'>");
-
-				  if (ungroupedUnits2 != null && ungroupedUnits2.Any())
-				  {
-					foreach (var u in ungroupedUnits2)
-					{
-					  var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
-					  var stateText = "Unknown";
-					  var stateColor = "#000000";
-					  var stateTextColor = "#FFFFFF";
-
-					  if (unitStatus != null)
-					  {
-						var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
-
-						if (state != null)
-						{
-						  stateText = state.ButtonText;
-						  stateColor = state.ButtonColor;
-						  stateTextColor = state.TextColor;
-						}
-					  }
-
-
-					  var customState = 1;
-					  if (Model.UnitCustomStates.ContainsKey(u.UnitId))
-					  {
-						customState = Model.UnitCustomStates[u.UnitId].CustomStateId;
-					  }
-
-
-                      @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>");
-                      @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>");
-                      @Html.Raw("<td>");
-                      @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;");
-
-                      @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-					  {
-                        @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>");
-					  }
-
-                      @Html.Raw("</td>")
-                      @Html.Raw("</tr>");
-					}
-				  }
-                  @Html.Raw("</tbody></table></div></div>");
-				  count2++;
-				}
-
-				for (var i = 0; i < Model.Groups.Count(); i++)
-				{
-				  var groupUnits = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
-
-				  if (groupUnits != null && groupUnits.Any())
-				  {
-					if (count2 == 0)
-					{
-                      @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
-					}
-					else
-					{
-                      @Html.Raw("<div role='tabpanel' class='tab-pane' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>");
-					}
-
-                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>");
-
-					if (groupUnits != null && groupUnits.Any())
-					{
-					  foreach (var u in groupUnits)
-					  {
-						var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
-						var stateText = "Unknown";
-						var stateColor = "#000000";
-						var stateTextColor = "#FFFFFF";
-
-						if (unitStatus != null)
-						{
-						  var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
-
-						  if (state != null)
-						  {
-							stateText = state.ButtonText;
-							stateColor = state.ButtonColor;
-							stateTextColor = state.TextColor;
-						  }
-						}
-
-
-						var customState = 1;
-						if (Model.UnitCustomStates.ContainsKey(u.UnitId))
-						{
-						  customState = Model.UnitCustomStates[u.UnitId].CustomStateId;
-						}
-
-
-                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>");
-                        @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>");
-                        @Html.Raw("<td>");
-                        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;");
-
-                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-						{
-                          @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>");
-						}
-
-                        @Html.Raw("</td>");
-                        @Html.Raw("</tr>");
-					  }
-					}
-                    @Html.Raw("</tbody></table></div></div>");
-
-					count2++;
-				  }
-				}
-              }
-            </div>
-          </div>
-          <div id="multiSelectUnits" style="display: none;">
-
-            <div class="row">
-              <div class="col-xs-6">
-                <div class='btn-group' style='position: absolute;'><a class='btn btn-xs btn-primary dropdown-toggle multiStateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State for Selected Units&nbsp;<span class='caret'></span></a></div>
-              </div>
-              <div class="col-xs-6">
-                <div class="alert alert-warning">
-                  You have selected a unit, only other units with the same custom (or default) states can be selected.
+    <div class="col-lg-3">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content mailbox-content">
+                    <div>
+                        <div id="tree"></div>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+
+    <div class="col-lg-9">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @{
+                        var count2 = 0;
+
+                        var ungroupedUnits2 = Model.Units.Where(x => x.StationGroupId == null);
+                        if (ungroupedUnits2 != null && ungroupedUnits2.Any())
+                        {
+                            @Html.Raw("<div id='unitsTab0' class='unitTabPannel'>")
+                            ;
+                            @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_0'>")
+                            ;
+
+                            if (ungroupedUnits2 != null && ungroupedUnits2.Any())
+                            {
+                                foreach (var u in ungroupedUnits2)
+                                {
+                                    var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
+                                    var stateText = "Unknown";
+                                    var stateColor = "#000000";
+                                    var stateTextColor = "#FFFFFF";
+
+                                    if (unitStatus != null)
+                                    {
+                                        var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
+
+                                        if (state != null)
+                                        {
+                                            stateText = state.ButtonText;
+                                            stateColor = state.ButtonColor;
+                                            stateTextColor = state.TextColor;
+                                        }
+                                    }
+
+
+                                    var customState = 1;
+                                    if (Model.UnitCustomStates.ContainsKey(u.UnitId))
+                                    {
+                                        customState = Model.UnitCustomStates[u.UnitId].CustomStateId;
+                                    }
+
+
+                                    @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
+                                    ;
+                                    @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>")
+                                    ;
+                                    @Html.Raw("<td>")
+                                    ;
+                                    @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;")
+                                    ;
+
+                                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                    {
+                                        @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>")
+                                        ;
+                                    }
+
+                                    @Html.Raw("</td>")
+                                    @Html.Raw("</tr>")
+                                    ;
+                                }
+                            }
+                            @Html.Raw("</tbody></table></div></div>")
+                            ;
+                            count2++;
+                        }
+                        else
+                        {
+                            @Html.Raw("<div style='text-align:center;'><h3>No Un-Grouped Units</h3></div>")
+                        }
+                    }
+
+                    @{
+                        for (var i = 0; i < Model.Groups.Count(); i++)
+                        {
+                            var groupUnits = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId).ToList();
+
+                            if (Model.Groups[i].Children != null && Model.Groups[i].Children.Any())
+                            {
+                                foreach (var childGroup in Model.Groups[i].Children)
+                                {
+                                    groupUnits.AddRange(Model.Units.Where(x => x.StationGroupId == childGroup.DepartmentGroupId).ToList());
+                                }
+                            }
+
+                            if (groupUnits != null && groupUnits.Any())
+                            {
+                                @Html.Raw("<div id='unitsTab" + Model.Groups[i].DepartmentGroupId + "' class='unitTabPannel' style='display: none;'>")
+
+                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
+                                ;
+
+                                if (groupUnits != null && groupUnits.Any())
+                                {
+                                    foreach (var u in groupUnits)
+                                    {
+                                        var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
+                                        var stateText = "Unknown";
+                                        var stateColor = "#000000";
+                                        var stateTextColor = "#FFFFFF";
+
+                                        if (unitStatus != null)
+                                        {
+                                            var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
+
+                                            if (state != null)
+                                            {
+                                                stateText = state.ButtonText;
+                                                stateColor = state.ButtonColor;
+                                                stateTextColor = state.TextColor;
+                                            }
+                                        }
+
+
+                                        var customState = 1;
+                                        if (Model.UnitCustomStates.ContainsKey(u.UnitId))
+                                        {
+                                            customState = Model.UnitCustomStates[u.UnitId].CustomStateId;
+                                        }
+
+
+                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
+                                        ;
+                                        @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>")
+                                        ;
+                                        @Html.Raw("<td>")
+                                        ;
+                                        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;")
+                                        ;
+
+                                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                        {
+                                            @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>")
+                                            ;
+                                        }
+
+                                        @Html.Raw("</td>")
+                                        @Html.Raw("</tr>")
+                                    }
+                                }
+                                @Html.Raw("</tbody></table></div></div>")
+
+                                count2++;
+                            }
+                            else
+                            {
+                                @Html.Raw("<div id='unitsTab" + Model.Groups[i].DepartmentGroupId + "' class='unitTabPannel' style='display: none;'>")
+                                @Html.Raw("<div style='text-align:center;'><h3>No Units in this Group</h3></div>")
+                                @Html.Raw("</div>")
+                            }
+                        }
+                    }
+
+
+
+
+
+                    <div id="multiSelectUnits" style="display: none;">
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class='btn-group' style='position: absolute;'><a class='btn btn-xs btn-primary dropdown-toggle multiStateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State for Selected Units&nbsp;<span class='caret'></span></a></div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="alert alert-warning">
+                                    You have selected a unit, only other units with the same custom (or default) states can be selected.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 @section Scripts
-  {
-  <script id="state-template" type="text/x-kendo-template">
-	#if(StateId <= 25){#
-	<span class='label #=StateColor#'>#=State#</span>
-	#}else{#
-	<span class='label label-default' style="color:#=TextColor#;background-color:#=StateColor#;">#=State#</span>
-	#}#
-  </script>
+    {
+    <script id="state-template" type="text/x-kendo-template">
+        #if(StateId <= 25){#
+        <span class='label #=StateColor#'>#=State#</span>
+        #}else{#
+        <span class='label label-default' style="color:#=TextColor#;background-color:#=StateColor#;">#=State#</span>
+        #}#
+    </script>
 
-  <script id="unitstatus-template" type="text/x-kendo-template">
-	<div class="btn-group" style="position: absolute;" data-id="#=UnitId#">
-	  <a class="btn btn-xs btn-primary dropdown-toggle stateDropdown" data-toggle="dropdown" data-id="#=UnitId#" href="" style="top: -14px;">
-		Set State <span class="caret"></span>
-	  </a>
-	</div>
-  </script>
+    <script id="unitstatus-template" type="text/x-kendo-template">
+        <div class="btn-group" style="position: absolute;" data-id="#=UnitId#">
+          <a class="btn btn-xs btn-primary dropdown-toggle stateDropdown" data-toggle="dropdown" data-id="#=UnitId#" href="" style="top: -14px;">
+            Set State <span class="caret"></span>
+          </a>
+        </div>
+    </script>
 
-  <script id="unitcommand-template" type="text/x-kendo-template">
-    <a type="button" href="@Url.Action("ViewEvents", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-primary">View Events</a>
-    <a type="button" href="@Url.Action("ViewLogs", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-info">Logs</a>
+    <script id="unitcommand-template" type="text/x-kendo-template">
+        <a type="button" href="@Url.Action("ViewEvents", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-primary">View Events</a>
+        <a type="button" href="@Url.Action("ViewLogs", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-info">Logs</a>
 
-    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-	{
-      <a type="button" href="@Url.Action("EditUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-warning">Edit</a>
-      <a type="button" href="@Url.Action("DeleteUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this unit. Are you sure you want to delete the unit #=Name#?" rel="nofollow">Delete</a>
-	}
-  </script>
+        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+        {
+                          <a type="button" href="@Url.Action("EditUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-warning">Edit</a>
+                          <a type="button" href="@Url.Action("DeleteUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this unit. Are you sure you want to delete the unit #=Name#?" rel="nofollow">Delete</a>
+        }
+    </script>
 
-  <script src="~/js/app/internal/units/resgrid.units.index.js" type="text/javascript"></script>
+    <script>
+        var treeData = @Html.Raw(@Model.TreeData);
+    </script>
+
+    <script src="~/js/app/internal/units/resgrid.units.index.js" type="text/javascript"></script>
 }

@@ -25,7 +25,7 @@ using Resgrid.Web.Helpers;
 namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
-	/// Calls, also referred to as Dispatches. 
+	/// Calls, also referred to as Dispatches.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -816,7 +816,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new EditCallResult();
 
 			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, int.Parse(editCallInput.Id));
-			
+
 			if (!canDoOperation)
 				return Unauthorized();
 
@@ -1281,7 +1281,216 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		
+		/// <summary>
+		/// Gets all the meta-data around a call, dispatched personnel, units, groups and responses
+		/// </summary>
+		/// <param name="callId">CallId to get data for</param>
+		/// <returns></returns>
+		[HttpGet("GetCallHistory")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<CallHistoryResult>> GetCallHistory(int callId)
+		{
+			var result = new CallHistoryResult();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (call.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			result.Data.Add(new CallHistoryResultData()
+			{
+				Id = call.CallId.ToString(),
+				TimestampUtc = call.LoggedOn,
+				Timestamp = call.LoggedOn.TimeConverter(department),
+				Type = 0,
+				Info = $"Call created"
+			});
+
+			if (call.ClosedOn.HasValue)
+			{
+				result.Data.Add(new CallHistoryResultData()
+				{
+					Id = call.CallId.ToString(),
+					TimestampUtc = call.ClosedOn.Value,
+					Timestamp = call.ClosedOn.Value.TimeConverter(department),
+					Type = 0,
+					Info = $"Call closed"
+				});
+			}
+
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
+			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
+			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+			var names = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, true);
+			var priority = await _callsService.GetCallPrioritiesByIdAsync(call.DepartmentId, call.Priority, false);
+			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(call.DepartmentId);
+
+			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(call.DepartmentId);
+			var defaultUnitStatuses = _customStateService.GetDefaultUnitStatuses();
+			var defaultUserStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(call.DepartmentId);
+
+
+			foreach (var actionLog in actionLogs)
+			{
+				var nameInfo = names.FirstOrDefault(x => x.UserId == actionLog.UserId);
+				CustomStateDetail state = null;
+				if (actionLog.ActionTypeId <= 25)
+				{
+					state = defaultUserStatuses.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId);
+				}
+				else
+				{
+					if (customStates != null && customStates.Count > 0)
+					{
+						state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId)).FirstOrDefault(detail => detail != null);
+					}
+				}
+
+				if (nameInfo != null)
+				{
+					result.Data.Add(new CallHistoryResultData()
+					{
+						Id = actionLog.ActionLogId.ToString(),
+						TimestampUtc = actionLog.Timestamp,
+						Timestamp = actionLog.Timestamp.TimeConverter(department),
+						Type = 2,
+						Info = $"{nameInfo.LastName},{nameInfo.FirstName} set status to {state.ButtonText} at {actionLog.GeoLocationData}"
+					});
+				}
+			}
+
+			foreach (var unitLog in unitStates)
+			{
+				CustomStateDetail state = null;
+				if (unitLog.UnitStateId <= 12)
+				{
+					state = defaultUnitStatuses.FirstOrDefault(x => x.CustomStateDetailId == unitLog.UnitStateId);
+				}
+				else
+				{
+					if (customStates != null && customStates.Count > 0)
+					{
+						state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == unitLog.State)).FirstOrDefault(detail => detail != null);
+					}
+				}
+
+				result.Data.Add(new CallHistoryResultData()
+				{
+					Id = unitLog.UnitStateId.ToString(),
+					TimestampUtc = unitLog.Timestamp,
+					Timestamp = unitLog.Timestamp.TimeConverter(department),
+					Type = 3,
+					Info = $"{unitLog.Unit.Name} set status to {state.ButtonText} at {unitLog.GeoLocationData}"
+				});
+			}
+
+			foreach (var dispatch in call.Dispatches)
+			{
+				var nameInfo = names.FirstOrDefault(x => x.UserId == dispatch.UserId);
+
+				if (nameInfo != null)
+				{
+					result.Data.Add(new CallHistoryResultData()
+					{
+						TimestampUtc = call.LoggedOn.Add(TimeSpan.FromSeconds(30)),
+						Timestamp = call.LoggedOn.Add(TimeSpan.FromSeconds(30)).TimeConverter(department),
+						Type = 0,
+						Info = $"{nameInfo.LastName}, {nameInfo.FirstName} was dispatched to the call"
+					});
+				}
+			}
+
+			if (call.GroupDispatches != null && call.GroupDispatches.Any())
+			{
+				foreach (var groupDispatch in call.GroupDispatches)
+				{
+					var name = groups.FirstOrDefault(x => x.DepartmentGroupId == groupDispatch.DepartmentGroupId);
+					if (name != null)
+					{
+						result.Data.Add(new CallHistoryResultData()
+						{
+							TimestampUtc = call.LoggedOn.Add(TimeSpan.FromSeconds(30)),
+							Timestamp = call.LoggedOn.Add(TimeSpan.FromSeconds(30)).TimeConverter(department),
+							Type = 0,
+							Info = $"Group {name.Name} was dispatched to the call"
+						});
+
+					}
+				}
+			}
+
+			if (call.UnitDispatches != null && call.UnitDispatches.Any())
+			{
+				foreach (var unitDispatch in call.UnitDispatches)
+				{
+					var unit = units.FirstOrDefault(x => x.UnitId == unitDispatch.UnitId);
+					if (unit != null)
+					{
+						result.Data.Add(new CallHistoryResultData()
+						{
+							TimestampUtc = call.LoggedOn.Add(TimeSpan.FromSeconds(30)),
+							Timestamp = call.LoggedOn.Add(TimeSpan.FromSeconds(30)).TimeConverter(department),
+							Type = 0,
+							Info = $"Unit {unit.Name} was dispatched to the call"
+						});
+					}
+				}
+			}
+
+			if (call.RoleDispatches != null && call.RoleDispatches.Any())
+			{
+				foreach (var roleDispatch in call.RoleDispatches)
+				{
+					var role = roles.FirstOrDefault(x => x.PersonnelRoleId == roleDispatch.RoleId);
+					if (role != null)
+					{
+						result.Data.Add(new CallHistoryResultData()
+						{
+							TimestampUtc = call.LoggedOn.Add(TimeSpan.FromSeconds(30)),
+							Timestamp = call.LoggedOn.Add(TimeSpan.FromSeconds(30)).TimeConverter(department),
+							Type = 0,
+							Info = $"Role {role.Name} was dispatched to the call"
+						});
+					}
+				}
+			}
+
+			if (call.CallNotes != null && call.CallNotes.Any())
+			{
+				foreach (var note in call.CallNotes)
+				{
+					var nameInfo = names.FirstOrDefault(x => x.UserId == note.UserId);
+
+					if (nameInfo != null)
+					{
+						result.Data.Add(new CallHistoryResultData()
+						{
+							TimestampUtc = note.Timestamp,
+							Timestamp = note.Timestamp.TimeConverter(department),
+							Type = 1,
+							Info = $"{nameInfo.LastName}, {nameInfo.FirstName} added note '{note.Note}'"
+						});
+					}
+				}
+			}
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
 
 		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone)
 		{

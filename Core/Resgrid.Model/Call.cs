@@ -161,6 +161,8 @@ namespace Resgrid.Model
 
 		public bool? HasBeenDispatched { get; set; }
 
+		public int? LinkedCallId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

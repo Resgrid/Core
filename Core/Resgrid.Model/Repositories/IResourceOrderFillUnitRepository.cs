@@ -1,4 +1,7 @@
-﻿namespace Resgrid.Model.Repositories
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Resgrid.Model.Repositories
 {
 	/// <summary>
 	/// Interface IResourceOrderFillUnitRepository
@@ -7,5 +10,6 @@
 	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.ResourceOrderFillUnit}" />
 	public interface IResourceOrderFillUnitRepository: IRepository<ResourceOrderFillUnit>
 	{
+		Task<IEnumerable<ResourceOrderFillUnit>> GetAllResourceOrderFillUnitsByFillIdAsync(int resourceOrderFillId);
 	}
 }

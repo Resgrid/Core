@@ -23,20 +23,25 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SchemaName = "[dbo]";
 			TableColumnStartNotation = "[";
 			TableColumnEndNotation = "]";
-			InsertGetReturnIdCommand = "; SELECT CAST(SCOPE_IDENTITY() as int);"; // For Postgresql INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id; https://stackoverflow.com/questions/2944297/postgresql-function-for-last-inserted-id/2944481
+			InsertGetReturnIdCommand =
+				"; SELECT CAST(SCOPE_IDENTITY() as int);"; // For Postgresql INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id; https://stackoverflow.com/questions/2944297/postgresql-function-for-last-inserted-id/2944481
 
 			#region Common Queries
+
 			InsertQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)%RETURNID%";
 			DeleteQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [%IDCOLUMN%] = %ID%";
-			DeleteMultipleQuery = "DELETE FROM %SCHEMA%.%BASETABLENAME% WHERE [%PARENTKEYNAME%] = %PARENTID% AND [%IDCOLUMN%] NOT IN (%IDS%)";
+			DeleteMultipleQuery =
+				"DELETE FROM %SCHEMA%.%BASETABLENAME% WHERE [%PARENTKEYNAME%] = %PARENTID% AND [%IDCOLUMN%] NOT IN (%IDS%)";
 			UpdateQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE [%IDCOLUMN%] = %ID%";
 			SelectByIdQuery = "SELECT * FROM %SCHEMA%.%BASETABLENAME% WHERE [%IDCOLUMN%] = %ID%";
 			SelectAllQuery = "SELECT * FROM %SCHEMA%.%TABLENAME%";
 			SelectByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID%";
 			SelectByUserIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %ID%";
+
 			#endregion Common Queries
 
 			#region Action Logs
+
 			ActionLogsTable = "ActionLogs";
 			SelectLastActionLogsForDepartmentQuery = @"
 							SELECT al.*, u.*
@@ -93,6 +98,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%ACTIONLOGSTABLE% al
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = al.UserId
 					WHERE al.DestinationId = %DID%";
+
 			#endregion ActionLogs
 
 			#region Department Members
@@ -130,12 +136,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm
 					INNER JOIN %SCHEMA%.%DEPARTMENTSTABLE% d ON d.[DepartmentId] = dm.[DepartmentId]
 					WHERE dm.[UserId] = %USERID%";
+
 			#endregion Department Members
 
 			#region Department Settings
 
 			DepartmentSettingsTable = "DepartmentSettings";
-			SelectDepartmentSettingByDepartmentIdTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND SettingType = %SETTINGTYPE%";
+			SelectDepartmentSettingByDepartmentIdTypeQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND SettingType = %SETTINGTYPE%";
 			SelectDepartmentSettingByTypeUserIdQuery = @"SELECT ds.* FROM [DepartmentSettings] ds
 						INNER JOIN [DepartmentMembers] dm ON ds.DepartmentId = dm.DepartmentId
 						WHERE dm.UserId = %USERID% AND ds.SettingType = %SETTINGTYPE%";
@@ -145,44 +153,61 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 						FROM [Departments] d
 						INNER JOIN [AspNetUsers] u ON u.Id = d.ManagingUserId
 						LEFT OUTER JOIN [UserProfiles] up ON up.UserId = d.ManagingUserId";
-			SelectDepartmentManagerInfoByEmailQuery = @"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email
+			SelectDepartmentManagerInfoByEmailQuery =
+				@"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email
 						FROM [Departments] d
 						INNER JOIN [AspNetUsers] u ON u.Id = d.ManagingUserId
 						LEFT OUTER JOIN [UserProfiles] up ON up.UserId = d.ManagingUserId
 						WHERE u.Email = %EMAILADDRESS%";
+
 			#endregion Department Settings
 
 			#region Invites
+
 			InvitesTable = "Invites";
 			SelectInviteByCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [Code] = %CODE%";
 			SelectInviteByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [EmailAddress] = %EMAIL%";
+
 			#endregion Invites
 
 			#region Queues
+
 			QueueItemsTable = "QueueItems";
-			SelectQueueItemByTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [QueueType] = %TYPE% AND PickedUp IS NULL && CompletedOn IS NULL";
+			SelectQueueItemByTypeQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [QueueType] = %TYPE% AND PickedUp IS NULL && CompletedOn IS NULL";
+
 			#endregion Queues
 
 			#region Certifications
+
 			CertificationsTable = "PersonnelCertifications";
 
 			SelectCertsByUserQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID%";
+
 			#endregion Certifications
 
 			#region Permissions
+
 			PermissionsTable = "Permissions";
 
-			SelectPermissionByDepartmentTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [PermissionType] = %TYPE%";
+			SelectPermissionByDepartmentTypeQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [PermissionType] = %TYPE%";
+
 			#endregion Permissions
 
 			#region Department Links
+
 			DepartmentLinksTable = "DepartmentLinks";
 
-			SelectAllLinksForDepartmentQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% OR [LinkedDepartmentId] = %DID%";
-			SelectAllLinkForDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% OR [DepartmentLinkId] = %ID%";
+			SelectAllLinksForDepartmentQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% OR [LinkedDepartmentId] = %DID%";
+			SelectAllLinkForDepartmentIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% OR [DepartmentLinkId] = %ID%";
+
 			#endregion Department Links
 
 			#region Departments
+
 			DepartmentsTable = "Departments";
 			SelectDepartmentByLinkCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [LinkCode] = %CODE%";
 			SelectDepartmentByIdQuery = @"
@@ -228,7 +253,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							INNER JOIN Departments d ON d.DepartmentId = dm1.DepartmentId
 							INNER JOIN DepartmentMembers dm ON dm.DepartmentId = d.DepartmentId
 							WHERE u.Id = %USERID% AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = 0";
-			SelectValidDepartmentByUsernameQuery = @"SELECT dm.UserId as 'UserId', dm.IsDisabled as 'IsDisabled', dm.IsDeleted as 'IsDeleted', d.DepartmentId as 'DepartmentId', d.Code as 'Code'
+			SelectValidDepartmentByUsernameQuery =
+				@"SELECT dm.UserId as 'UserId', dm.IsDisabled as 'IsDisabled', dm.IsDeleted as 'IsDeleted', d.DepartmentId as 'DepartmentId', d.Code as 'Code'
 							FROM AspNetUsers u
 							INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
 							INNER JOIN Departments d ON dm.DepartmentId = d.DepartmentId
@@ -240,12 +266,15 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					WHERE mr.[UserId] = %USERID% AND mr.[IsDeleted] = 0 AND m.[IsDeleted] = 0) AS [UnreadMessageCount],
 
 					(SELECT COUNT(*) FROM %SCHEMA%.%CALLTABLENAME% c WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[State] = 0) AS [OpenCallsCount]";
+
 			#endregion Departments
 
 			#region Personnel Roles
+
 			PersonnelRolesTable = "PersonnelRoles";
 			PersonnelRoleUsersTable = "PersonnelRoleUsers";
-			SelectRoleByDidAndNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Name] = %NAME%";
+			SelectRoleByDidAndNameQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Name] = %NAME%";
 			SelectRolesByDidAndUserQuery = @"
 					SELECT * FROM [PersonnelRoles] pr
 					INNER JOIN [PersonnelRoleUsers] pru ON pr.[PersonnelRoleId] = pru.[PersonnelRoleId]
@@ -274,9 +303,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%ROLESTABLE% pr
 					LEFT JOIN %SCHEMA%.%ROLEUSERSTABLE% pru ON pr.[PersonnelRoleId] = pru.[PersonnelRoleId]
 					WHERE pr.[PersonnelRoleId] = %ROLEID%";
+
 			#endregion Personnel Roles
 
 			#region Inventory
+
 			InventoryTable = "Inventories";
 			InventoryTypesTable = "InventoryTypes";
 			SelectInventoryByTypeIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TypeId] = %TYPEID%";
@@ -290,9 +321,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%INVENTORYTABLE% i
 					INNER JOIN %SCHEMA%.%INVENTORYTYPESTABE% it ON it.[InventoryTypeId] = i.[TypeId]
 					WHERE i.[InventoryId] = %INVENTORYID%";
+
 			#endregion Inventory
 
 			#region Messages
+
 			MessagesTable = "Messages";
 			MessageRecipientsTable = "MessageRecipients";
 			SelectInboxMessagesByUserQuery = @"
@@ -304,7 +337,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT COUNT(*) FROM %SCHEMA%.%MESSAGESTABLE% m
 					LEFT OUTER JOIN %SCHEMA%.%MESSAGERECIPIENTSTABLE% mr ON m.MessageId = mr.MessageId
 					WHERE mr.[UserId] = %USERID% AND mr.[IsDeleted] = 0 AND m.[IsDeleted] = 0";
-			SelectMessageRecpByMessageUsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [MessageId] = %MESSAGEID% AND [UserId] = %USERID%";
+			SelectMessageRecpByMessageUsQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [MessageId] = %MESSAGEID% AND [UserId] = %USERID%";
 			SelectMessagesByUserQuery = @"
 					SELECT %SCHEMA%.%MESSAGESTABLE%.*, %SCHEMA%.%MESSAGERECIPIENTSTABLE%.*
 					FROM %SCHEMA%.%MESSAGESTABLE%
@@ -329,9 +363,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					UPDATE %SCHEMA%.%TABLENAME%
 					SET [ReadOn] = %READON%
 					WHERE [MessageId] IN (%MESSAGEIDS%) AND [UserId] = %USERID%";
+
 			#endregion Messages
 
 			#region Identity
+
 			InsertRoleQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
 			DeleteRoleQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [Id] = %ID%";
 			UpdateRoleQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE [Id] = %ID%";
@@ -340,32 +376,48 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% OUTPUT INSERTED.Id VALUES(%VALUES%)";
 			DeleteUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [Id] = %ID%";
 			UpdateUserQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE [Id] = %ID%";
-			SelectUserByUserNameQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] =  %SCHEMA%.%USERTABLE%.[Id] WHERE [UserName] = %USERNAME%";
-			SelectUserByEmailQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] =  %SCHEMA%.%USERTABLE%.[Id] WHERE [Email] = %EMAIL%";
-			SelectUserByIdQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] =  %SCHEMA%.%USERTABLE%.[Id] WHERE %SCHEMA%.%USERTABLE%.[Id] = %ID%";
+			SelectUserByUserNameQuery =
+				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] =  %SCHEMA%.%USERTABLE%.[Id] WHERE [UserName] = %USERNAME%";
+			SelectUserByEmailQuery =
+				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] =  %SCHEMA%.%USERTABLE%.[Id] WHERE [Email] = %EMAIL%";
+			SelectUserByIdQuery =
+				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] =  %SCHEMA%.%USERTABLE%.[Id] WHERE %SCHEMA%.%USERTABLE%.[Id] = %ID%";
 			InsertUserClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
 			InsertUserLoginQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
 			InsertUserRoleQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
-			GetUserLoginByLoginProviderAndProviderKeyQuery = "SELECT TOP 1 %USERFILTER%, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] = %SCHEMA%.%USERTABLE%.[Id] INNER JOIN %SCHEMA%.%USERLOGINTABLE% ON %SCHEMA%.%USERTABLE%.[Id] = %SCHEMA%.%USERLOGINTABLE%.[UserId] WHERE [LoginProvider] = @LoginProvider AND [ProviderKey] = @ProviderKey";
+			GetUserLoginByLoginProviderAndProviderKeyQuery =
+				"SELECT TOP 1 %USERFILTER%, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.[UserId] = %SCHEMA%.%USERTABLE%.[Id] INNER JOIN %SCHEMA%.%USERLOGINTABLE% ON %SCHEMA%.%USERTABLE%.[Id] = %SCHEMA%.%USERLOGINTABLE%.[UserId] WHERE [LoginProvider] = @LoginProvider AND [ProviderKey] = @ProviderKey";
 			GetClaimsByUserIdQuery = "SELECT [ClaimType], [ClaimValue] FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %ID%";
-			GetRolesByUserIdQuery = "SELECT [Name] FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%USERROLETABLE% WHERE [UserId] = %ID% AND %SCHEMA%.%ROLETABLE%.[Id] = %SCHEMA%.%USERROLETABLE%.[RoleId]";
-			GetUserLoginInfoByIdQuery = "SELECT [LoginProvider], [Name], [ProviderKey] FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %ID%";
-			GetUsersByClaimQuery = "SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERCLAIMTABLE% WHERE [ClaimValue] = %CLAIMVALUE% AND [ClaimType] = %CLAIMTYPE%";
-			GetUsersInRoleQuery = "SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.[Name] = %ROLENAME% AND %SCHEMA%.%USERROLETABLE%.[RoleId] = %SCHEMA%.%ROLETABLE%.[Id] AND %SCHEMA%.%USERROLETABLE%.[UserId] = %SCHEMA%.%USERTABLE%.[Id]";
-			IsInRoleQuery = "SELECT 1 FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.[Name] = %ROLENAME% AND %SCHEMA%.%USERTABLE%.[Id] = %USERID% AND %SCHEMA%.%USERROLETABLE%.[RoleId] = %SCHEMA%.%ROLETABLE%.[Id] AND %SCHEMA%.%USERROLETABLE%.[UserId] = %SCHEMA%.%USERTABLE%.[Id]";
-			RemoveClaimsQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %ID% AND [ClaimType] = %CLAIMTYPE% AND [ClaimValue] = %CLAIMVALUE%";
-			RemoveUserFromRoleQuery = "DELETE FROM %SCHEMA%.%USERROLETABLE% WHERE [UserId] = %USERID% AND [RoleId] = (SELECT [Id] FROM %SCHEMA%.%ROLETABLE% WHERE [Name] = %ROLENAME%)";
-			RemoveLoginForUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID% AND [LoginProvider] = %LOGINPROVIDER% AND [ProviderKey] = %PROVIDERKEY%";
-			UpdateClaimForUserQuery = "UPDATE %SCHEMA%.%TABLENAME% SET [ClaimType] = %NEWCLAIMTYPE%, [ClaimValue] = %NEWCLAIMVALUE% WHERE [UserId] = %USERID% AND [ClaimType] = %CLAIMTYPE% AND [ClaimValue] = %CLAIMVALUE%";
-			SelectClaimByRoleQuery = "SELECT %SCHEMA%.%ROLECLAIMTABLE%.* FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%ROLECLAIMTABLE% WHERE [RoleId] = %ROLEID% AND %SCHEMA%.%ROLECLAIMTABLE%.[RoleId] = %SCHEMA%.%ROLETABLE%.[Id]";
+			GetRolesByUserIdQuery =
+				"SELECT [Name] FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%USERROLETABLE% WHERE [UserId] = %ID% AND %SCHEMA%.%ROLETABLE%.[Id] = %SCHEMA%.%USERROLETABLE%.[RoleId]";
+			GetUserLoginInfoByIdQuery =
+				"SELECT [LoginProvider], [Name], [ProviderKey] FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %ID%";
+			GetUsersByClaimQuery =
+				"SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERCLAIMTABLE% WHERE [ClaimValue] = %CLAIMVALUE% AND [ClaimType] = %CLAIMTYPE%";
+			GetUsersInRoleQuery =
+				"SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.[Name] = %ROLENAME% AND %SCHEMA%.%USERROLETABLE%.[RoleId] = %SCHEMA%.%ROLETABLE%.[Id] AND %SCHEMA%.%USERROLETABLE%.[UserId] = %SCHEMA%.%USERTABLE%.[Id]";
+			IsInRoleQuery =
+				"SELECT 1 FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.[Name] = %ROLENAME% AND %SCHEMA%.%USERTABLE%.[Id] = %USERID% AND %SCHEMA%.%USERROLETABLE%.[RoleId] = %SCHEMA%.%ROLETABLE%.[Id] AND %SCHEMA%.%USERROLETABLE%.[UserId] = %SCHEMA%.%USERTABLE%.[Id]";
+			RemoveClaimsQuery =
+				"DELETE FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %ID% AND [ClaimType] = %CLAIMTYPE% AND [ClaimValue] = %CLAIMVALUE%";
+			RemoveUserFromRoleQuery =
+				"DELETE FROM %SCHEMA%.%USERROLETABLE% WHERE [UserId] = %USERID% AND [RoleId] = (SELECT [Id] FROM %SCHEMA%.%ROLETABLE% WHERE [Name] = %ROLENAME%)";
+			RemoveLoginForUserQuery =
+				"DELETE FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID% AND [LoginProvider] = %LOGINPROVIDER% AND [ProviderKey] = %PROVIDERKEY%";
+			UpdateClaimForUserQuery =
+				"UPDATE %SCHEMA%.%TABLENAME% SET [ClaimType] = %NEWCLAIMTYPE%, [ClaimValue] = %NEWCLAIMVALUE% WHERE [UserId] = %USERID% AND [ClaimType] = %CLAIMTYPE% AND [ClaimValue] = %CLAIMVALUE%";
+			SelectClaimByRoleQuery =
+				"SELECT %SCHEMA%.%ROLECLAIMTABLE%.* FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%ROLECLAIMTABLE% WHERE [RoleId] = %ROLEID% AND %SCHEMA%.%ROLECLAIMTABLE%.[RoleId] = %SCHEMA%.%ROLETABLE%.[Id]";
 			InsertRoleClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
-			DeleteRoleClaimQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [RoleId] = %ROLEID% AND [ClaimType] = %CLAIMTYPE% AND [ClaimValue] = %CLAIMVALUE%";
+			DeleteRoleClaimQuery =
+				"DELETE FROM %SCHEMA%.%TABLENAME% WHERE [RoleId] = %ROLEID% AND [ClaimType] = %CLAIMTYPE% AND [ClaimValue] = %CLAIMVALUE%";
 			RoleTable = "[AspNetRoles]";
 			UserTable = "[AspNetUsers]";
 			UserClaimTable = "[AspNetUserClaims]";
 			UserRoleTable = "[AspNetUserRoles]";
 			UserLoginTable = "[AspNetUserLogins]";
 			RoleClaimTable = "[AspNetRoleClaims]";
+
 			#endregion Identity
 
 			#region Resource Orders
@@ -374,19 +426,32 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			ResourceOrderFillsTable = "ResourceOrderFills";
 			ResourceOrderItemsTable = "ResourceOrderItems";
 			ResourceOrderSettingsTable = "ResourceOrderSettings";
+			ResourceOrderFillUnitsTable = "ResourceOrderFillUnits";
 			SelectAllOpenOrdersQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CloseDate] IS NULL";
 			UpdateOrderFillStatusQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE [ResourceOrderFillId] = %ID%";
 			SelectAllOpenNonDVisibleOrdersQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CloseDate] IS NULL AND [Visibility] = 0 AND [DepartmentId] != %DID% AND [NeededBy] > %DATE%";
 			SelectAllItemsByOrderIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [ResourceOrderId] = %ID%";
+			SelectItemsByResourceOrderIdQuery = @"
+					SELECT roi.*, rof.*
+					FROM %SCHEMA%.%RESOURCEORDERITEMSTABLE% roi
+					INNER JOIN %SCHEMA%.%RESOURCEORDERFILLSTABLE% rof ON roi.[ResourceOrderItemId] = rof.[ResourceOrderItemId]
+					WHERE roi.[ResourceOrderId] = %RESOURCEORDERID%";
+			SelectOrderFillUnitsByFillIdQuery = @"
+					SELECT rofu.*, u.*
+					FROM %SCHEMA%.%RESOURCEORDERFILLUNIT% rofu
+					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = rofu.[UnitId]
+					WHERE rofu.[ResourceOrderFillId] = %FILLID%";
 			#endregion Resource Orders
 
 			#region Distribution Lists
+
 			DistributionListsTable = "DistributionLists";
 			DistributionListMembersTable = "DistributionListMembers";
 			SelectDListByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [EmailAddress] = %EMAIL%";
 			SelectAllEnabledDListsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [IsDisabled] = 0";
-			SelectDListMembersByListIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DistributionListId] = %LISTID%";
+			SelectDListMembersByListIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DistributionListId] = %LISTID%";
 			SelectDListMembersByUserQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID%";
 			SelectDListByIdQuery = @"
 					SELECT dl.*, dlm.*
@@ -398,9 +463,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%DISTRIBUTIONLISTSTABLE% dl
 					LEFT JOIN %SCHEMA%.%DISTRIBUTIONLISTMEMBERSTABLE% dlm ON dlm.[DistributionListId] = dl.[DistributionListId]
 					WHERE dl.[DepartmentId] = %DID%";
+
 			#endregion Distribution Lists
 
 			#region Custom States
+
 			CustomStatesTable = "CustomStates";
 			CustomStateDetailsTable = "CustomStateDetails";
 			SelectStatesByDidUserQuery = @"
@@ -413,15 +480,18 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%CUSTOMSTATESTABLE% cs
 					LEFT JOIN %SCHEMA%.%MCUSTOMSTATEDETAILSTABLE% csd ON csd.[CustomStateId] = cs.[CustomStateId]
 					WHERE cs.[CustomStateId] = %CUSTOMSTATEID%";
+
 			#endregion Custom States
 
 			#region Training
+
 			TrainingsTable = "Trainings";
 			TrainingAttachmentsTable = "TrainingAttachments";
 			TrainingUsersTable = "TrainingUsers";
 			TrainingQuestionsTable = "TrainingQuestions";
 			TrainingQuestionAnswersTable = "TrainingQuestionAnswers";
-			SelectTrainingUserByTandUIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TrainingId] = %TRAININGID% AND [UserId] = %USERID%";
+			SelectTrainingUserByTandUIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TrainingId] = %TRAININGID% AND [UserId] = %USERID%";
 			SelectTrainingsByDIdQuery = @"
 					SELECT t.*, tu.*
 					FROM %SCHEMA%.%TRAININGSTABLE% t
@@ -437,10 +507,13 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%TRAININGSTABLE% t
 					LEFT OUTER JOIN %SCHEMA%.%TRAININGUSERSTABLE% tu ON tu.[TrainingId] = t.[TrainingId]
 					WHERE t.[TrainingId] = %TRAININGID%";
-			SelectTrainingAttachmentsBytIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TrainingId] = %TRAININGID%";
+			SelectTrainingAttachmentsBytIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TrainingId] = %TRAININGID%";
+
 			#endregion Training
 
 			#region User Profile
+
 			UserProfilesTable = "UserProfiles";
 			SelectProfileByUserIdQuery = @"
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
@@ -478,12 +551,15 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			#endregion User Profile
 
 			#region Calendar
+
 			CalendarItemsTable = "CalendarItems";
 			CalendarItemAttendeesTable = "CalendarItemAttendees";
 			CalendarItemTypesTable = "CalendarItemTypes";
 			SelectCalendarItemByRecurrenceIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [RecurrenceId] = %ID%";
-			DeleteCalendarItemQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [CalendarItemId] = %ID% OR [RecurrenceId] = %ID%";
-			SelectCalendarItemAttendeeByUserQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CalendarItemId] = %ID% AND [UserId] = %USERID%";
+			DeleteCalendarItemQuery =
+				"DELETE FROM %SCHEMA%.%TABLENAME% WHERE [CalendarItemId] = %ID% OR [RecurrenceId] = %ID%";
+			SelectCalendarItemAttendeeByUserQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CalendarItemId] = %ID% AND [UserId] = %USERID%";
 			SelectCalendarItemsByDateQuery = @"SELECT * FROM %SCHEMA%.%TABLENAME%
 					WHERE [IsV2Schedule] = 1 AND [ReminderSent] = 0 AND [Reminder] > 0
 					AND ([Start] >= @startDate OR ([RecurrenceType] > 0 AND ([RecurrenceEnd] IS NULL OR [RecurrenceEnd] > %STARTDATE%)))";
@@ -492,9 +568,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%CALENDARITEMSTABLE% ci
 					LEFT OUTER JOIN %SCHEMA%.%CALITEMATTENDEESTABLE% cia ON cia.[CalendarItemId] = ci.[CalendarItemId]
 					WHERE ci.[CalendarItemId] = %CALENDARITEMID%";
+
 			#endregion Calendar
 
 			#region Logs
+
 			LogsTable = "Logs";
 			LogUsersTable = "LogUsers";
 			LogUnitsTable = "LogUnits";
@@ -519,9 +597,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT * FROM %SCHEMA%.%TABLENAME%
 					WHERE [DepartmentId] = %DID% AND year(LoggedOn) = %YEAR%
 					ORDER BY LoggedOn DESC";
+
 			#endregion Logs
 
 			#region Units
+
 			UnitsTable = "Units";
 			UnitLogsTable = "UnitLogs";
 			UnitRolesTable = "UnitRoles";
@@ -550,8 +630,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectUnitByDIdNameQuery = @"
 					SELECT * FROM %SCHEMA%.%TABLENAME%
 					WHERE [DepartmentId] = %DID% AND [Name] = %UNITNAME%";
-			SelectUnitTypeByDIdNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPENAME%";
-			SelectUnitLogsByUnitIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% ORDER BY Timestamp DESC";
+			SelectUnitTypeByDIdNameQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPENAME%";
+			SelectUnitLogsByUnitIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% ORDER BY Timestamp DESC";
 			SelectUnitRolesByUnitIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID%";
 			SelectUnitsByGroupIdQuery = @"
 					SELECT u.*, dg.*
@@ -562,14 +644,17 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT * FROM %SCHEMA%.%UNITSTATESTABLE% us
 					INNER JOIN %SCHEMA%.%UNITSTATEROLESSTABLE% ON %SCHEMA%.%UNITSTATEROLESSTABLE%.[UnitStateId] = us.[UnitStateId]
 					WHERE us.[UnitId] = @unitId AND [Timestamp] >= DATEADD(day,-2,GETUTCDATE())";
-			SelectLatestUnitLocationByUnitId = "SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% ORDER BY UnitLocationId DESC";
-			SelectLatestUnitLocationByUnitIdTimeQuery = "SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% AND [Timestamp] > %TIMESTAMP% ORDER BY UnitLocationId DESC";
+			SelectLatestUnitLocationByUnitId =
+				"SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% ORDER BY UnitLocationId DESC";
+			SelectLatestUnitLocationByUnitIdTimeQuery =
+				"SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% AND [Timestamp] > %TIMESTAMP% ORDER BY UnitLocationId DESC";
 			SelectUnitStatesByCallIdQuery = @"
 					SELECT us.*, u.*
 					FROM %SCHEMA%.%UNITSTATESTABLE% us
 					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = us.[UnitId]
 					WHERE us.[DestinationId] = %CALLID%";
-			SelectUnitByDIdTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPE%";
+			SelectUnitByDIdTypeQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPE%";
 			SelectLastUnitStatesByDidQuery = @"
 					SELECT  q.*, u.*
 					FROM    (
@@ -591,9 +676,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM [dbo].[Units] u
 					LEFT JOIN [dbo].[DepartmentGroups] dg ON dg.[DepartmentGroupId] = u.[StationGroupId]
 					WHERE u.[DepartmentId] = %DID%";
+
 			#endregion Units
 
 			#region Shifts
+
 			ShiftsTable = "Shifts";
 			ShiftPersonsTable = "ShiftPersons";
 			ShiftDaysTable = "ShiftDays";
@@ -616,7 +703,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%SHIFTGROUPSTABLE%
 					LEFT JOIN %SCHEMA%.%SHIFTGROUPROLESTABLE% ON %SCHEMA%.%SHIFTGROUPROLESTABLE%.[ShiftGroupId] =  %SCHEMA%.%SHIFTGROUPSTABLE%.[ShiftGroupId]
 					WHERE [DepartmentGroupId] = %GROUPID%";
-			SelectShiftAssignmentByGroupQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [ShiftGroupId] = %SHIFTGROUPID%";
+			SelectShiftAssignmentByGroupQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [ShiftGroupId] = %SHIFTGROUPID%";
 			SelectShiftSignupTradeUsersByTradeIdQuery = @"
 					SELECT %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE%.*, %SCHEMA%.%SHIFTSIGNUPTRADEUSERSHIFTSTABLE%.*
 					FROM %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE%
@@ -646,24 +734,24 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectShiftAndDaysJSONQuery = @"
 					SELECT (SELECT *,
 				      JSON_QUERY((SELECT *
-				         FROM [dbo].[Departments] 
+				         FROM [dbo].[Departments]
 						 WHERE [dbo].[Departments].DepartmentId = sh.DepartmentId
 				       FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Department',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[DepartmentGroups] 
+								 FROM [dbo].[DepartmentGroups]
 								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = sg.DepartmentGroupId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'DepartmentGroup',
 							 (SELECT *
-								 FROM [dbo].[ShiftGroupRoles] 
+								 FROM [dbo].[ShiftGroupRoles]
 								 WHERE [dbo].[ShiftGroupRoles].ShiftGroupId = sg.ShiftGroupId
 							   FOR JSON PATH) AS 'Roles',
 							  (SELECT *
-								 FROM [dbo].[ShiftGroupAssignments] 
+								 FROM [dbo].[ShiftGroupAssignments]
 								 WHERE [dbo].[ShiftGroupAssignments].ShiftGroupId = sg.ShiftGroupId
 							   FOR JSON PATH) AS 'Assignments'
 				         FROM [dbo].[ShiftGroups] sg
@@ -671,7 +759,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Groups',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftDays] sd
@@ -679,7 +767,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Days',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftPersons] sp
@@ -687,7 +775,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Personnel',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftAdmins] sa
@@ -695,11 +783,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Admins',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
 							 JSON_QUERY((SELECT *
-								 FROM [dbo].[DepartmentGroups] 
+								 FROM [dbo].[DepartmentGroups]
 								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = ss.DepartmentGroupId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Group'
 				         FROM [dbo].[ShiftSignups] ss
@@ -740,7 +828,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%SHIFTDAYSTABLE% sd
 					INNER JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.[ShiftId] = sd.[ShiftId]
 					WHERE sd.[ShiftDayId] = %SHIFTDAYID%";
-			SelectShiftSignupByShiftIdDateQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [ShiftId] = %SHIFTID% AND CAST([ShiftDay] AS DATE) = CAST(%SHIFTDAYDATE% AS DATE)";
+			SelectShiftSignupByShiftIdDateQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [ShiftId] = %SHIFTID% AND CAST([ShiftDay] AS DATE) = CAST(%SHIFTDAYDATE% AS DATE)";
 			SelectShiftGroupRolesByGroupIdQuery = @"
 					SELECT sgr.*, pr.*
 					FROM %SCHEMA%.%SHIFTGROUPROLESTABLE% sgr
@@ -754,24 +843,24 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectShiftByShiftIdJSONQuery = @"
 					SELECT (SELECT *,
 				      JSON_QUERY((SELECT *
-				         FROM [dbo].[Departments] 
+				         FROM [dbo].[Departments]
 						 WHERE [dbo].[Departments].DepartmentId = sh.DepartmentId
 				       FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Department',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[DepartmentGroups] 
+								 FROM [dbo].[DepartmentGroups]
 								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = sg.DepartmentGroupId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'DepartmentGroup',
 							 (SELECT *
-								 FROM [dbo].[ShiftGroupRoles] 
+								 FROM [dbo].[ShiftGroupRoles]
 								 WHERE [dbo].[ShiftGroupRoles].ShiftGroupId = sg.ShiftGroupId
 							   FOR JSON PATH) AS 'Roles',
 							  (SELECT *
-								 FROM [dbo].[ShiftGroupAssignments] 
+								 FROM [dbo].[ShiftGroupAssignments]
 								 WHERE [dbo].[ShiftGroupAssignments].ShiftGroupId = sg.ShiftGroupId
 							   FOR JSON PATH) AS 'Assignments'
 				         FROM [dbo].[ShiftGroups] sg
@@ -779,7 +868,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Groups',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftDays] sd
@@ -787,7 +876,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Days',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftPersons] sp
@@ -795,7 +884,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Personnel',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftAdmins] sa
@@ -803,11 +892,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Admins',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
 							   JSON_QUERY((SELECT *
-								 FROM [dbo].[DepartmentGroups] 
+								 FROM [dbo].[DepartmentGroups]
 								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = ss.DepartmentGroupId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Group'
 				         FROM [dbo].[ShiftSignups] ss
@@ -820,24 +909,24 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectShiftsByDidJSONQuery = @"
 					SELECT (SELECT *,
 				      JSON_QUERY((SELECT *
-				         FROM [dbo].[Departments] 
+				         FROM [dbo].[Departments]
 						 WHERE [dbo].[Departments].DepartmentId = sh.DepartmentId
 				       FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Department',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[DepartmentGroups] 
+								 FROM [dbo].[DepartmentGroups]
 								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = sg.DepartmentGroupId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'DepartmentGroup',
 							 (SELECT *
-								 FROM [dbo].[ShiftGroupRoles] 
+								 FROM [dbo].[ShiftGroupRoles]
 								 WHERE [dbo].[ShiftGroupRoles].ShiftGroupId = sg.ShiftGroupId
 							   FOR JSON PATH) AS 'Roles',
 							  (SELECT *
-								 FROM [dbo].[ShiftGroupAssignments] 
+								 FROM [dbo].[ShiftGroupAssignments]
 								 WHERE [dbo].[ShiftGroupAssignments].ShiftGroupId = sg.ShiftGroupId
 							   FOR JSON PATH) AS 'Assignments'
 				         FROM [dbo].[ShiftGroups] sg
@@ -845,7 +934,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Groups',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftDays] sd
@@ -853,7 +942,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Days',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftPersons] sp
@@ -861,7 +950,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Personnel',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
 				         FROM [dbo].[ShiftAdmins] sa
@@ -869,11 +958,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Admins',
 					   (SELECT *,
 							JSON_QUERY((SELECT *
-								 FROM [dbo].[Shifts] 
+								 FROM [dbo].[Shifts]
 								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
 							 JSON_QUERY((SELECT *
-								 FROM [dbo].[DepartmentGroups] 
+								 FROM [dbo].[DepartmentGroups]
 								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = ss.DepartmentGroupId
 							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Group'
 				         FROM [dbo].[ShiftSignups] ss
@@ -883,10 +972,13 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				FROM [dbo].[Shifts] sh
 				WHERE sh.DepartmentId = %DID%
 				FOR JSON PATH) AS 'JsonResult'";
-			SelectShiftSignupsByGroupIdAndDateQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID% AND CAST([ShiftDay] AS DATE) = CAST(%SHIFTDAYDATE% AS DATE)";
+			SelectShiftSignupsByGroupIdAndDateQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID% AND CAST([ShiftDay] AS DATE) = CAST(%SHIFTDAYDATE% AS DATE)";
+
 			#endregion Shifts
 
 			#region Dispatch Protocols
+
 			DispatchProtocolsTable = "DispatchProtocols";
 			DispatchProtocolTriggersTable = "DispatchProtocolTriggers";
 			DispatchProtocolAttachmentsTable = "DispatchProtocolAttachments";
@@ -907,14 +999,17 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%PROTOCOLQUESTIONSTABLE% pq
 					LEFT OUTER JOIN %SCHEMA%.%PROTOCOLQUESTIONANSWERSTABLE% pqa ON pqa.[DispatchProtocolQuestionId] = pq.[DispatchProtocolQuestionId]
 					WHERE pq.[DispatchProtocolId] = %PROTOCOLID%";
-			SelectProtocolAttachmentsByProIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DispatchProtocolId] = %PROTOCOLID%";
+			SelectProtocolAttachmentsByProIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DispatchProtocolId] = %PROTOCOLID%";
 			SelectProtocolTriggersByProIdQuery = @"
 					SELECT *
 					FROM %SCHEMA%.%PROTOCOLTRIGGERSTABLE% pt
 					WHERE pt.[DispatchProtocolId] = %PROTOCOLID%";
+
 			#endregion Dispatch Protocols
 
 			#region Calls
+
 			CallsTable = "Calls";
 			CallDispatchesTable = "CallDispatches";
 			CallDispatchGroupsTable = "CallDispatchGroups";
@@ -925,12 +1020,18 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			CallAttachmentsTable = "CallAttachments";
 			DepartmentCallPrioritiesTable = "DepartmentCallPriorities";
 			CallProtocolsTable = "CallProtocols";
-			SelectAllCallsByDidDateQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE%";
-			SelectAllClosedCallsByDidDateQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0";
-			SelectAllCallDispatchesByGroupIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID%";
-			SelectCallAttachmentByCallIdTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID% AND [CallAttachmentType] = %TYPE%";
-			SelectAllOpenCallsByDidDateQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] = 0";
-			SelectAllCallsByDidLoggedOnQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND AND [LoggedOn] >= %DATE%";
+			SelectAllCallsByDidDateQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE%";
+			SelectAllClosedCallsByDidDateQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0";
+			SelectAllCallDispatchesByGroupIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID%";
+			SelectCallAttachmentByCallIdTypeQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID% AND [CallAttachmentType] = %TYPE%";
+			SelectAllOpenCallsByDidDateQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] = 0";
+			SelectAllCallsByDidLoggedOnQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND AND [LoggedOn] >= %DATE%";
 			UpdateUserDispatchesAsSentQuery = @"
 					UPDATE Calls
 					SET DispatchCount = (DispatchCount + 1),
@@ -968,6 +1069,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
 					WHERE [HasBeenDispatched] = 0 AND [IsDeleted] = 0 AND [DepartmentId] = %DID%";
+
 			#endregion Calls
 
 			#region Department Groups
@@ -1013,6 +1115,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%GROUPSTABLE% dg
 					LEFT JOIN %SCHEMA%.%GROUPMEMBERSSTABLE% dgm ON dgm.[DepartmentGroupId] = dg.[DepartmentGroupId]
 					WHERE dg.[DepartmentGroupId] = %GROUPID%";
+
 			#endregion Department Groups
 
 			#region Payments
@@ -1023,7 +1126,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					(SELECT COUNT(*) FROM DepartmentMembers dm WHERE dm.DepartmentId = %DID% AND IsDisabled = 1) AS 'UsersCount',
 					(SELECT COUNT(*) FROM DepartmentGroups dg WHERE dg.DepartmentId = %DID%) AS 'GroupsCount',
 					(SELECT COUNT(*) FROM Units u WHERE u.DepartmentId = %DID%) AS 'UnitsCount'";
-			SelectPaymentByTransactionIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TransactionId] = %TRANSACTIONID%";
+			SelectPaymentByTransactionIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TransactionId] = %TRANSACTIONID%";
 			SelectPaymentsByDIdQuery = @"
 					SELECT pa.*, pl.*
 					FROM %SCHEMA%.%PAYMENTSTSTABLE% pa
@@ -1034,15 +1138,21 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%PAYMENTSTSTABLE% pa
 					LEFT JOIN %SCHEMA%.%PLANSTABLE% pl ON pl.[PlanId] = pa.[PlanId]
 					WHERE pa.[PaymentId] = %PAYMENTID%";
+
 			#endregion Payments
 
 			#region User States
+
 			UserStatesTable = "UserStates";
-			SelectLatestUserStatesByDidQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Timestamp] >= %TIMESTAMP%";
+			SelectLatestUserStatesByDidQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Timestamp] >= %TIMESTAMP%";
 			SelectUserStatesByUserIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID%";
-			SelectLastUserStatesByUserIdQuery = "SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID% ORDER BY UserStateId DESC";
-			SelectPreviousUserStatesByUserIdQuery = "SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID% AND [UserStateId] < %USERSTATEID% ORDER BY UserStateId DESC";
-			SelectUserStatesByDIdDateRangeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Timestamp] >= %STARTDATE% AND [Timestamp] <= %ENDDATE%";
+			SelectLastUserStatesByUserIdQuery =
+				"SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID% ORDER BY UserStateId DESC";
+			SelectPreviousUserStatesByUserIdQuery =
+				"SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID% AND [UserStateId] < %USERSTATEID% ORDER BY UserStateId DESC";
+			SelectUserStatesByDIdDateRangeQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Timestamp] >= %STARTDATE% AND [Timestamp] <= %ENDDATE%";
 
 			#endregion User States
 
@@ -1055,9 +1165,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%PLANSTABLE% p
 					INNER JOIN %SCHEMA%.%PLANLIMITS% pl ON pl.[PlanId] = p.[PlanId]
 					WHERE p.[PlanId] = %PLANID%";
+
 			#endregion Plans
 
 			#region Mapping
+
 			PoisTableName = "Pois";
 			POITypesTableName = "POITypes";
 			SelectPoiTypesByDIdQuery = @"
@@ -1070,18 +1182,22 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%POITYPESTABLE% pt
 					LEFT JOIN %SCHEMA%.%POISTABLE% p ON pt.[PoiTypeId] = p.[PoiTypeId]
 					WHERE pt.[PoiTypeId] = %POITYPEID%";
+
 			#endregion Mapping
 
 			#region Notes
+
 			NotesTableName = "Notes";
 			SelectNotesByDIdQuery = @"
 					SELECT n.*, d.*
 					FROM %SCHEMA%.%NOTESTABLE% n
 					INNER JOIN %SCHEMA%.%DEPARTMENTSTABLE% d ON d.[DepartmentId] = n.[DepartmentId]
 					WHERE n.[DepartmentId] = %DID%";
+
 			#endregion Notes
 
 			#region Forms
+
 			FormsTable = "Forms";
 			FormAutomationsTable = "FormAutomations";
 			SelectFormByIdQuery = @"
@@ -1111,9 +1227,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					UPDATE Forms
 					SET IsActive = 0
 					WHERE FormId = %FORMID%";
+
 			#endregion Forms
 
 			#region Voice
+
 			DepartmentVoiceTableName = "DepartmentVoices";
 			DepartmentVoiceChannelsTableName = "DepartmentVoiceChannels";
 			DepartmentVoiceUsersTableName = "DepartmentVoiceUsers";
@@ -1134,7 +1252,16 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT dvc.*
 					FROM %SCHEMA%.%DEPARTMENTVOICECHANNELSTABLE% dvc
 					WHERE dvc.[DepartmentId] = %DID%";
+
 			#endregion Voice
+
+			#region Unit States
+			SelectUnitStatesByUnitInDateRangeQuery = @"
+					SELECT us.*, u.*
+					FROM %SCHEMA%.%UNITSTATESTABLE% us
+					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = us.[UnitId]
+					WHERE us.[UnitId] = %UNITID% AND us.[Timestamp] >= %STARTDATE% AND us.[Timestamp] <= %ENDDATE%";
+			#endregion Unit States
 		}
-}
+	}
 }

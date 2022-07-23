@@ -37,7 +37,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectLastActionLogByUserIdQuery { get; set; }
 		public string SelectActionLogsByCallIdQuery {get;set;}
 		#endregion Action Logs
-		
+
 		#region Department Members
 		public string DepartmentMembersTable { get; set; }
 
@@ -141,10 +141,13 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string ResourceOrderFillsTable { get;set; }
 		public string ResourceOrderItemsTable {get;set;}
 		public string ResourceOrderSettingsTable {get;set;}
+		public string ResourceOrderFillUnitsTable { get; set; }
 		public string SelectAllOpenOrdersQuery { get; set; }
 		public string UpdateOrderFillStatusQuery {get;set;}
 		public string SelectAllOpenNonDVisibleOrdersQuery { get; set; }
 		public string SelectAllItemsByOrderIdQuery { get; set; }
+		public string SelectItemsByResourceOrderIdQuery { get; set; }
+		public string SelectOrderFillUnitsByFillIdQuery { get; set; }
 		#endregion Resource Orders
 
 		#region Distribution Lists
@@ -188,7 +191,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCalendarItemsByDateQuery { get; set; }
 		public string SelectCalendarItemByIdQuery { get; set; }
 		#endregion Calendar
-		
+
 		#region User Profile
 		public string UserProfilesTable { get; set; }
 		public string SelectProfileByUserIdQuery { get; set; }
@@ -399,6 +402,10 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectVoiceUserByUserIdQuery { get; set; }
 		public string SelectVoiceChannelsByDIdQuery { get; set; }
 		#endregion Voice
+
+		#region Unit States
+		public string SelectUnitStatesByUnitInDateRangeQuery { get; set; }
+		#endregion Unit States
 
 		// Identity
 

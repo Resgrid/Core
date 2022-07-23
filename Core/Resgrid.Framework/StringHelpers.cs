@@ -50,6 +50,9 @@ namespace Resgrid.Framework
 
 		public static string SanitizeHtmlInString(string source)
 		{
+			if (string.IsNullOrWhiteSpace(source))
+				return source;
+
 			StringCollection sc = new StringCollection();
 			string temp = source;
 

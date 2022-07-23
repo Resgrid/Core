@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.Units;
+using Resgrid.Repositories.DataRepository.Queries.UnitStates;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -70,6 +72,50 @@ namespace Resgrid.Repositories.DataRepository
 				Logging.LogException(ex);
 
 				throw;
+			}
+		}
+
+		public async Task<IEnumerable<UnitState>> GetAllUnitStatesForUnitInDateRangeAsync(int unitId, DateTime startDate, DateTime endDate)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UnitState>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("UnitId", unitId);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+
+					var query = _queryFactory.GetQuery<SelectUnitStatesByUnitInDateRangeQuery>();
+
+					return await x.QueryAsync<UnitState, Unit, UnitState>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (us, u) => { us.Unit = u; return us; },
+						splitOn: "UnitId");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
 			}
 		}
 

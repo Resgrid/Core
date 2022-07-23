@@ -19,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model.Providers;
 using Resgrid.WebCore.Areas.User.Models.Units;
+using Resgrid.WebCore.Areas.User.Models;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -99,6 +100,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 			}
+
+			List<BSTreeModel> trees = new List<BSTreeModel>();
+			var tree1 = new BSTreeModel();
+			tree1.id = "TreeGroup_0";
+			tree1.text = "Units";
+			tree1.icon = "";
+			trees.Add(tree1);
+			
+			if (model.Groups != null && model.Groups.Any())
+			{
+				foreach (var topLevelGroup in model.Groups.Where(x => !x.ParentDepartmentGroupId.HasValue).ToList())
+				{
+					var group = new BSTreeModel();
+					group.id = $"TreeGroup_{topLevelGroup.DepartmentGroupId.ToString()}";
+					group.text = topLevelGroup.Name;
+					group.icon = "";
+
+					if (topLevelGroup.Children != null && topLevelGroup.Children.Any())
+					{
+						foreach (var secondLevelGroup in topLevelGroup.Children)
+						{
+							var secondLevelGroupTree = new BSTreeModel();
+							secondLevelGroupTree.id = $"TreeGroup_{secondLevelGroup.DepartmentGroupId.ToString()}";
+							secondLevelGroupTree.text = secondLevelGroup.Name;
+							secondLevelGroupTree.icon = "";
+
+							group.nodes.Add(secondLevelGroupTree);
+						}
+					}
+
+					trees.Add(group);
+				}
+			}
+			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees);
 
 			return View(model);
 		}

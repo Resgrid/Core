@@ -22,10 +22,12 @@ namespace Resgrid.Services
 		private readonly IResourceOrderItemRepository _resourceOrderItemRepository;
 		private readonly IResourceOrderFillRepository _resourceOrderFillRepository;
 		private readonly IResourceOrderSettingsRepository _resourceOrderSettingsRepository;
+		private readonly IResourceOrderFillUnitRepository _resourceOrderFillUnitRepository;
 
 		public ResourceOrdersService(IResourceOrdersRepository resourceOrdersRepository, IDepartmentsService departmentsService,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, IResourceOrderItemRepository resourceOrderItemRepository,
-			IResourceOrderFillRepository resourceOrderFillRepository, IResourceOrderSettingsRepository resourceOrderSettingsRepository)
+			IResourceOrderFillRepository resourceOrderFillRepository, IResourceOrderSettingsRepository resourceOrderSettingsRepository,
+			IResourceOrderFillUnitRepository resourceOrderFillUnitRepository)
 		{
 			_resourceOrdersRepository = resourceOrdersRepository;
 			_departmentsService = departmentsService;
@@ -34,6 +36,7 @@ namespace Resgrid.Services
 			_resourceOrderItemRepository = resourceOrderItemRepository;
 			_resourceOrderFillRepository = resourceOrderFillRepository;
 			_resourceOrderSettingsRepository = resourceOrderSettingsRepository;
+			_resourceOrderFillUnitRepository = resourceOrderFillUnitRepository;
 		}
 
 		public async Task<List<ResourceOrder>> GetAllAsync()
@@ -73,7 +76,30 @@ namespace Resgrid.Services
 				for (int i = 0; i < orders.Count; i++)
 				{
 					orders[i].Department = await _departmentsService.GetDepartmentByIdAsync(orders[i].DepartmentId);
+
+					var resourceItems = await _resourceOrdersRepository.GetAllItemsByResourceOrderIdAsync(orders[i].ResourceOrderId);
+
+					if (resourceItems != null && resourceItems.Any())
+					{
+						orders[i].Items = resourceItems?.ToList();
+
+						foreach (var item in orders[i].Items)
+						{
+							if (item.Fills != null && item.Fills.Any())
+							{
+								foreach (var fill in item.Fills)
+								{
+									fill.Department = await _departmentsService.GetDepartmentByIdAsync(fill.DepartmentId);
+								}
+							}
+
+						}
+					}
+					else
+						orders[i].Items = new List<ResourceOrderItem>();
 				}
+
+				return orders;
 			}
 
 			return new List<ResourceOrder>();
@@ -117,10 +143,34 @@ namespace Resgrid.Services
 			{
 				order.Department = await _departmentsService.GetDepartmentByIdAsync(order.DepartmentId);
 
-				var items = await _resourceOrderItemRepository.GetAllItemsByResourceItemIdAsync(orderId);
+				var items = await _resourceOrdersRepository.GetAllItemsByResourceOrderIdAsync(orderId);
 
 				if (items != null && items.Any())
+				{
 					order.Items = items.ToList();
+
+					foreach (var item in order.Items)
+					{
+						if (item.Fills != null && item.Fills.Any())
+						{
+							foreach (var fill in item.Fills)
+							{
+								fill.Department = await _departmentsService.GetDepartmentByIdAsync(fill.DepartmentId);
+								var fillUnits = await _resourceOrderFillUnitRepository.GetAllResourceOrderFillUnitsByFillIdAsync(fill.ResourceOrderFillId);
+
+								if (fillUnits != null && fillUnits.Any())
+								{
+									fill.Units = fillUnits?.ToList();
+								}
+								else
+								{
+									fill.Units = new List<ResourceOrderFillUnit>();
+								}
+							}
+						}
+
+					}
+				}
 				else
 					order.Items = new List<ResourceOrderItem>();
 			}
@@ -169,6 +219,26 @@ namespace Resgrid.Services
 				for (int i = 0; i < allOrders.Count; i++)
 				{
 					allOrders[i].Department = await _departmentsService.GetDepartmentByIdAsync(allOrders[i].DepartmentId);
+					var resourceItems = await _resourceOrdersRepository.GetAllItemsByResourceOrderIdAsync(allOrders[i].ResourceOrderId);
+
+					if (resourceItems != null && resourceItems.Any())
+					{
+						allOrders[i].Items = resourceItems?.ToList();
+
+						foreach (var item in allOrders[i].Items)
+						{
+							if (item.Fills != null && item.Fills.Any())
+							{
+								foreach (var fill in item.Fills)
+								{
+									fill.Department = await _departmentsService.GetDepartmentByIdAsync(fill.DepartmentId);
+								}
+							}
+							
+						}
+					}
+					else
+						allOrders[i].Items = new List<ResourceOrderItem>();
 				}
 			}
 

@@ -227,14 +227,14 @@ namespace Resgrid.Services
 			if (!item.RecurrenceEnd.HasValue || item.RecurrenceEnd > DateTime.UtcNow && item.Start >= start)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId, false);
-				var currentTime = item.Start.TimeConverter(department);
+				//var currentTime = item.Start.TimeConverter(department);
 				DateTime startTimeConverted = item.Start.TimeConverter(department);
 
 				var length = item.GetDifferenceBetweenStartAndEnd();
 
 				if (item.RecurrenceType == (int)RecurrenceTypes.Weekly)
-				{
-					DateTime weekWorkingDate = currentTime;
+				{ // Day of week (i.e. every tuesday and thursday)
+					DateTime weekWorkingDate = startTimeConverted;
 					int weekProcssed = 1;
 
 					var nextWeek = GetNextWeekValues(item, weekWorkingDate);
@@ -251,7 +251,8 @@ namespace Resgrid.Services
 
 									var endDate = startDate.Add(length);
 
-									calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
+									if (!item.RecurrenceEnd.HasValue || DateTimeHelpers.ConvertToUtc(startDate, department.TimeZone) < item.RecurrenceEnd)
+										calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
 								}
 							}
 						}
@@ -261,28 +262,29 @@ namespace Resgrid.Services
 						weekProcssed++;
 					}
 				}
-				else if (item.RecurrenceType == (int)RecurrenceTypes.Monthly && item.RepeatOnDay == 0)
+				else if (item.RecurrenceType == (int)RecurrenceTypes.Monthly && item.RepeatOnWeek == 0)
 				{ // This is a repeat on every 15th of the month
-					DateTime monthWorkingDate = currentTime;
+					DateTime monthWorkingDate = startTimeConverted;
 					int monthProcessed = 1;
 
 					while (monthProcessed <= 12)
 					{
 						var monthDate = monthWorkingDate.AddMonths(monthProcessed);
 
-						var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(monthDate.Year, monthDate.Month, item.RepeatOnMonth,
+						var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(monthDate.Year, monthDate.Month, item.RepeatOnDay,
 								startTimeConverted.Hour, startTimeConverted.Minute, startTimeConverted.Second), department.TimeZone);
 
 						var endDate = startDate.Add(length);
 
-						calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
+						if (!item.RecurrenceEnd.HasValue || DateTimeHelpers.ConvertToUtc(startDate, department.TimeZone) < item.RecurrenceEnd)
+							calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
 
 						monthProcessed++;
 					}
 				}
-				else if (item.RecurrenceType == (int)RecurrenceTypes.Monthly && item.RepeatOnDay > 0)
-				{ // This is a repeat on every nth day of the month
-					DateTime monthWorkingDate = currentTime;
+				else if (item.RecurrenceType == (int)RecurrenceTypes.Monthly && item.RepeatOnWeek > 0)
+				{ // This is a repeat on every nth friday of the month
+					DateTime monthWorkingDate = startTimeConverted;
 					int monthProcessed = 1;
 
 					while (monthProcessed <= 12)
@@ -290,21 +292,22 @@ namespace Resgrid.Services
 						var monthDate = monthWorkingDate.AddMonths(monthProcessed);
 
 						var startDateDay = DateTimeHelpers.FindDay(monthDate.Year, monthDate.Month, (DayOfWeek)item.RepeatOnDay,
-							item.RepeatOnMonth);
+							item.RepeatOnWeek);
 
 						var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(monthDate.Year, monthDate.Month, startDateDay,
 							startTimeConverted.Hour, startTimeConverted.Minute, startTimeConverted.Second), department.TimeZone);
 
 						var endDate = startDate.Add(length);
 
-						calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
+						if (!item.RecurrenceEnd.HasValue || DateTimeHelpers.ConvertToUtc(startDate, department.TimeZone) < item.RecurrenceEnd)
+							calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
 
 						monthProcessed++;
 					}
 				}
 				else if (item.RecurrenceType == (int)RecurrenceTypes.Yearly)
 				{
-					DateTime yearlyWorkingDate = currentTime;
+					DateTime yearlyWorkingDate = startTimeConverted;
 					yearlyWorkingDate = yearlyWorkingDate.AddYears(1);
 
 					var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(yearlyWorkingDate.Year, startTimeConverted.Month, startTimeConverted.Day,
@@ -312,7 +315,8 @@ namespace Resgrid.Services
 
 					var endDate = startDate.Add(length);
 
-					calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
+					if (!item.RecurrenceEnd.HasValue || DateTimeHelpers.ConvertToUtc(startDate, department.TimeZone) < item.RecurrenceEnd)
+						calendarItems.Add(item.CreateRecurranceItem(startDate, endDate, department.TimeZone));
 				}
 			}
 

@@ -331,7 +331,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			groups.Add(defaultGroup);
 			groups.AddRange(await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId));
 
-			ViewBag.Carriers = model.Carrier.ToSelectList();
+			ViewBag.Carriers = model.Carrier.ToSelectList().OrderBy(x => x.Text);
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 

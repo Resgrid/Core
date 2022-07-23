@@ -80,7 +80,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			List<DepartmentGroup> groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup { DepartmentGroupId = -1, Name = "None" });
-			groups.AddRange(model.Groups.Where(x => x.Type.HasValue && x.Type.Value == (int)DepartmentGroupTypes.Station));
+			//groups.AddRange(model.Groups.Where(x => x.Type.HasValue && x.Type.Value == (int)DepartmentGroupTypes.Station));
+			groups.AddRange(model.Groups.Where(x => x.ParentDepartmentGroupId.HasValue == false));
 
 			model.StationGroups = new SelectList(groups, "DepartmentGroupId", "Name");
 
@@ -363,7 +364,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			List<DepartmentGroup> groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup { DepartmentGroupId = -1, Name = "None" });
-			groups.AddRange(model.Groups.Where(x => x.Type.HasValue && x.Type.Value == (int)DepartmentGroupTypes.Station));
+			groups.AddRange(model.Groups.Where(x => x.ParentDepartmentGroupId.HasValue == false && x.DepartmentGroupId != departmentGroupId));
 			model.StationGroups = new SelectList(groups, "DepartmentGroupId", "Name");
 
 			if (model.EditGroup.Address != null && model.EditGroup.Type.HasValue && model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
@@ -526,6 +527,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.EditGroup.ParentDepartmentGroupId <= 0)
 					group.ParentDepartmentGroupId = null;
+				else
+					group.ParentDepartmentGroupId = model.EditGroup.ParentDepartmentGroupId;
 
 				if (!String.IsNullOrWhiteSpace(model.PrinterApiKey) && !String.IsNullOrWhiteSpace(model.PrinterId))
 				{

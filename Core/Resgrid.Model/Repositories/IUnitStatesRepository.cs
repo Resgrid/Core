@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -52,5 +53,15 @@ namespace Resgrid.Model.Repositories
 		/// <param name="unitStateId">The unit state identifier.</param>
 		/// <returns>Task&lt;UnitState&gt;.</returns>
 		Task<UnitState> GetUnitStateByUnitStateIdAsync(int unitStateId);
+
+		/// <summary>
+		/// Gets the unit states by unit identifier and start and end dates asynchronous.
+		/// </summary>
+		/// <param name="unitId">The unit identifier</param>
+		/// <param name="startDate">Start date for the timestamp</param>
+		/// <param name="endDate">End date for the timestamp</param>
+		/// <returns></returns>
+		Task<IEnumerable<UnitState>> GetAllUnitStatesForUnitInDateRangeAsync(int unitId, DateTime startDate,
+			DateTime endDate);
 	}
 }

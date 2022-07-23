@@ -94,6 +94,21 @@ namespace Resgrid.Services
 				departmentGroups.Add(groups[i]);
 			}
 
+			foreach (var group in departmentGroups)
+			{
+				if (group.ParentDepartmentGroupId.HasValue)
+				{
+					group.Parent = await GetGroupByIdAsync(group.ParentDepartmentGroupId.Value);
+				}
+
+				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(group.DepartmentGroupId);
+
+				if (childGroups != null && childGroups.Any())
+					group.Children = childGroups.ToList();
+				else
+					group.Children = new List<DepartmentGroup>();
+			}
+
 			return departmentGroups;
 		}
 
@@ -110,6 +125,18 @@ namespace Resgrid.Services
 			{
 				if (g.AddressId.HasValue && g.Address == null)
 					g.Address = await _addressService.GetAddressByIdAsync(g.AddressId.Value);
+
+				if (g.ParentDepartmentGroupId.HasValue)
+				{
+					g.Parent = await GetGroupByIdAsync(g.ParentDepartmentGroupId.Value);
+				}
+
+				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(g.DepartmentGroupId);
+
+				if (childGroups != null && childGroups.Any())
+					g.Children = childGroups.ToList();
+				else
+					g.Children = new List<DepartmentGroup>();
 			}
 
 			return groups.ToList();
@@ -123,6 +150,18 @@ namespace Resgrid.Services
 
 				if (group1 != null && group1.AddressId.HasValue && group1.Address == null)
 					group1.Address = await _addressService.GetAddressByIdAsync(group1.AddressId.Value);
+
+				if (group1.ParentDepartmentGroupId.HasValue)
+				{
+					group1.Parent = await GetGroupByIdAsync(group1.ParentDepartmentGroupId.Value);
+				}
+
+				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(group1.DepartmentGroupId);
+
+				if (childGroups != null && childGroups.Any())
+					group1.Children = childGroups.ToList();
+				else
+					group1.Children = new List<DepartmentGroup>();
 
 				return group1;
 			}

@@ -63,22 +63,22 @@ var resgrid;
             function switchInputs(v) {
                 var value = $('#Item_RecurrenceType').val();
                 if (value) {
-                    if (value == "0") {
+                    if (value == "0") { // None
                         $('#recurrenceEndBlock').hide();
                         $('#daysOfTheWeekBlock').hide();
                         $('#monthlyBlock').hide();
                     }
-                    else if (value == "1") {
+                    else if (value == "1") { // Weekly
                         $('#recurrenceEndBlock').show();
                         $('#daysOfTheWeekBlock').show();
                         $('#monthlyBlock').hide();
                     }
-                    else if (value == "2") {
+                    else if (value == "2") { // Monthly
                         $('#recurrenceEndBlock').show();
                         $('#daysOfTheWeekBlock').hide();
                         $('#monthlyBlock').show();
                     }
-                    else if (value == "3") {
+                    else if (value == "3") { // Yearly
                         $('#recurrenceEndBlock').show();
                         $('#daysOfTheWeekBlock').hide();
                         $('#monthlyBlock').hide();

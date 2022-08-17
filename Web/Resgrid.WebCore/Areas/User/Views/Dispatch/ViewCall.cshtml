@@ -11,7 +11,7 @@
 {
   <link rel="stylesheet" href="~/lib/jplayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" />
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css" />
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.3.22/plyr.css">
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.3.22/plyr.css" />
 }
 
 @Html.HiddenFor(m => m.Latitude)
@@ -38,6 +38,11 @@
         @if (ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State != 0)
 		{
           <button class="btn btn-danger" onclick="resgrid.dispatch.viewcall.reOpenCall();">Re-Open Call</button>
+		}
+		@if (ClaimsAuthorizationHelper.CanCreateCall())
+		{
+			<a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">Edit Call</a>
+			<a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">Close Call</a>
 		}
       </div>
     </div>
@@ -104,6 +109,10 @@
               <dl class="dl-horizontal">
                 <dt>Incident Id:</dt>
                 <dd>@Model.Call.IncidentNumber</dd>
+				<dt>Call Id:</dt>
+                <dd>@Model.Call.ExternalIdentifier</dd>
+				<dt>Reference Id:</dt>
+                <dd>@Model.Call.ReferenceNumber</dd>
                 <dt>Logged By:</dt>
                 <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</dd>
                 <dt>Logged On:</dt>
@@ -460,7 +469,8 @@
 				      </table>
 				    </div>
 				    <div class="tab-pane" id="tab-5">
-				      <div class="callImages">
+						<a style="text-decoration:none; float: right;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 2, resourceId = Model.Call.CallId})">Add Image</a>
+				      <div>
 				        @foreach (var image in Model.Call.Attachments.Where(x => x.CallAttachmentType == 2))
 						{
 				          <div>
@@ -484,7 +494,7 @@
 
 				              </div>
 				              <div>
-				                <img src="@Url.Action("GetCallImage", "Dispatch", new {Area = "User", callId = image.CallId, attachmentId = image.CallAttachmentId})" />
+				                <img style="max-width:300px;" src="@Url.Action("GetCallImage", "Dispatch", new {Area = "User", callId = image.CallId, attachmentId = image.CallAttachmentId})" />
 				              </div>
 				            </div>
 				          </div>

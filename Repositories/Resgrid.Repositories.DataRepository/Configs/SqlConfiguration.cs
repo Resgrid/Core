@@ -29,6 +29,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectLastActionLogsForDepartmentQuery { get; set; }
 		public string SelectActionLogsByUserIdQuery { get; set; }
 		public string SelectALogsByUserInDateRangQuery { get; set; }
+		public string SelectALogsByDateRangeQuery { get; set; }
 		public string SelectALogsByDidQuery { get; set; }
 		public string SelectLastActionLogForUserQuery { get; set; }
 		public string SelectActionLogsByCallIdTypeQuery { get; set; }
@@ -36,7 +37,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectLastActionLogByUserIdQuery { get; set; }
 		public string SelectActionLogsByCallIdQuery {get;set;}
 		#endregion Action Logs
-		
+
 		#region Department Members
 		public string DepartmentMembersTable { get; set; }
 
@@ -44,6 +45,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectMembersWithinLimitsQuery { get; set; }
 		public string SelectMembersByDidUserIdQuery { get; set; }
 		public string SelectMembersByUserIdQuery { get; set; }
+		public string SelectMembersUnlimitedInclDelQuery { get; set; }
 
 		#endregion Department Members
 
@@ -69,6 +71,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectInventoryByTypeIdQuery { get; set; }
 		public string SelectInventoryByDIdQuery { get; set; }
 		public string SelectInventoryByInventoryIdQuery { get; set; }
+		public string DeleteInventoryByGroupIdQuery { get; set; }
 		#endregion Inventory
 
 		#region Queues
@@ -140,10 +143,13 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string ResourceOrderFillsTable { get;set; }
 		public string ResourceOrderItemsTable {get;set;}
 		public string ResourceOrderSettingsTable {get;set;}
+		public string ResourceOrderFillUnitsTable { get; set; }
 		public string SelectAllOpenOrdersQuery { get; set; }
 		public string UpdateOrderFillStatusQuery {get;set;}
 		public string SelectAllOpenNonDVisibleOrdersQuery { get; set; }
 		public string SelectAllItemsByOrderIdQuery { get; set; }
+		public string SelectItemsByResourceOrderIdQuery { get; set; }
+		public string SelectOrderFillUnitsByFillIdQuery { get; set; }
 		#endregion Resource Orders
 
 		#region Distribution Lists
@@ -186,8 +192,9 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCalendarItemAttendeeByUserQuery { get; set; }
 		public string SelectCalendarItemsByDateQuery { get; set; }
 		public string SelectCalendarItemByIdQuery { get; set; }
+		public string SelectCalendarItemByDIdQuery { get; set; }
 		#endregion Calendar
-		
+
 		#region User Profile
 		public string UserProfilesTable { get; set; }
 		public string SelectProfileByUserIdQuery { get; set; }
@@ -284,6 +291,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectShiftTradeAndSourceByUserIdQuery { get; set; }
 		public string SelectShiftByShiftIdJSONQuery { get; set; }
 		public string SelectShiftsByDidJSONQuery { get; set; }
+		public string SelectShiftSignupsByGroupIdAndDateQuery { get; set; }
 		#endregion Shifts
 
 		#region Calls
@@ -340,6 +348,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectGroupByDispatchCodeQuery { get; set; }
 		public string SelectGroupByMessageCodeQuery { get; set; }
 		public string SelectGroupByGroupIdQuery { get; set; }
+		public string DeleteGroupMembersByGroupIdDidQuery { get; set; }
 		#endregion Department Groups
 
 		#region Payments
@@ -398,6 +407,10 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectVoiceChannelsByDIdQuery { get; set; }
 		#endregion Voice
 
+		#region Unit States
+		public string SelectUnitStatesByUnitInDateRangeQuery { get; set; }
+		#endregion Unit States
+
 		// Identity
 
 		#region Table Names
@@ -442,5 +455,16 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string RemoveLoginForUserQuery { get; set; }
 		public string UpdateClaimForUserQuery { get; set; }
 		#endregion
+
+		#region Workshifts
+		public string WorkshiftsTable { get; set; }
+		public string WorkshiftDaysTable { get; set; }
+		public string WorkshiftEntitiesTable { get; set; }
+		public string WorkshiftFillsTable { get; set; }
+		public string SelectAllWorkshiftsAndDaysByDidQuery { get; set; }
+		public string SelectWorkshiftByIdQuery { get; set; }
+		public string SelectWorkshiftEntitiesByWorkshiftIdQuery { get; set; }
+		public string SelectWorkshiftFillsByWorkshiftIdQuery { get; set; }
+		#endregion Workshifts
 	}
 }

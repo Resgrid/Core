@@ -184,7 +184,7 @@ namespace Resgrid.Model.Services
 		/// <param name="shiftDay">The shift day.</param>
 		/// <param name="userId">The user identifier.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> IsUserSignedUpForShiftDayAsync(ShiftDay shiftDay, string userId);
+		Task<bool> IsUserSignedUpForShiftDayAsync(ShiftDay shiftDay, string userId, int? departmentGroupId);
 
 
 		/// <summary>Gets the shift signps for shift day asynchronous.</summary>
@@ -293,5 +293,8 @@ namespace Resgrid.Model.Services
 		/// <param name="shiftDay"></param>
 		/// <returns></returns>
 		Task<Dictionary<int, Dictionary<int, int>>> GetShiftDayNeedsObjAsync(Shift shift, ShiftDay shiftDay);
+
+
+		Task<List<ShiftSignup>> GetShiftSignupsByDepartmentGroupIdAndDayAsync(int departmentGroupId, DateTime shiftDayDate);
 	}
 }

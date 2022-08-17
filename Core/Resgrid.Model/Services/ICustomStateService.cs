@@ -65,9 +65,10 @@ namespace Resgrid.Model.Services
 		/// Saves the detail asynchronous.
 		/// </summary>
 		/// <param name="customStateDetail">The custom state detail.</param>
+		/// <param name="departmentId">DepartmentId of the update</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;CustomStateDetail&gt;.</returns>
-		Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, CancellationToken cancellationToken = default(CancellationToken));
+		Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 		/// <summary>
 		/// Deletes the asynchronous.
 		/// </summary>
@@ -130,7 +131,19 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Gets the default (system) unit statuses
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>List of CustomStateDetail</returns>
 		List<CustomStateDetail> GetDefaultUnitStatuses();
+
+		/// <summary>
+		/// Gets the default (system) personnel statuses
+		/// </summary>
+		/// <returns>List of CustomStateDetail</returns>
+		List<CustomStateDetail> GetDefaultPersonStatuses();
+
+		/// <summary>
+		/// Gets the default (system) personnel staffing levels
+		/// </summary>
+		/// <returns>List of CustomStateDetail</returns>
+		List<CustomStateDetail> GetDefaultPersonStaffings();
 	}
 }

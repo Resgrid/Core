@@ -109,7 +109,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="retrieveDisabled">if set to <c>true</c> [retrieve disabled].</param>
 		/// <param name="retrieveDeleted">if set to <c>true</c> [retrieve deleted].</param>
 		/// <returns>List&lt;UserGroupRole&gt;.</returns>
-		List<UserGroupRole> GetAllUsersGroupsAndRoles(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
+		Task<List<UserGroupRole>> GetAllUsersGroupsAndRolesAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
 
 		/// <summary>
 		/// Updates the email.
@@ -132,5 +132,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="retrieveHidden">if set to <c>true</c> [retrieve hidden].</param>
 		/// <returns>Task&lt;List&lt;IdentityUser&gt;&gt;.</returns>
 		Task<List<IdentityUser>> GetAllUsersForDepartmentWithinLimitsAsync(int departmentId, bool retrieveHidden);
+
+		Task<bool> CleanUpOIDCTokensAsync(DateTime timestamp);
 	}
 }

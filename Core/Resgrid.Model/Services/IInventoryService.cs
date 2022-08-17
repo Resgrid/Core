@@ -64,5 +64,7 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;List&lt;Inventory&gt;&gt;.</returns>
 		Task<List<Inventory>> GetConsolidatedInventoryForDepartment(int departmentId);
+
+		Task<bool> DeleteInventoriesByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

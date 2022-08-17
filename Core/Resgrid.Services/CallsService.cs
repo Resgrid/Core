@@ -73,6 +73,42 @@ namespace Resgrid.Services
 			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length == 1)
 				call.GeoLocationData = "";
 
+				if (call.Dispatches != null && call.Dispatches.Any())
+				{
+					foreach (var dispatch in call.Dispatches)
+					{
+						if (dispatch.CallDispatchId == 0)
+							dispatch.DispatchedOn = DateTime.UtcNow;
+					}
+				}
+
+				if (call.GroupDispatches != null && call.GroupDispatches.Any())
+				{
+					foreach (var dispatch in call.GroupDispatches)
+					{
+						if (dispatch.CallDispatchGroupId == 0)
+							dispatch.DispatchedOn = DateTime.UtcNow;
+					}
+				}
+
+				if (call.RoleDispatches != null && call.RoleDispatches.Any())
+				{
+					foreach (var dispatch in call.RoleDispatches)
+					{
+						if (dispatch.CallDispatchRoleId == 0)
+							dispatch.DispatchedOn = DateTime.UtcNow;
+					}
+				}
+
+				if (call.UnitDispatches != null && call.UnitDispatches.Any())
+				{
+					foreach (var dispatch in call.UnitDispatches)
+					{
+						if (dispatch.CallDispatchUnitId == 0)
+							dispatch.DispatchedOn = DateTime.UtcNow;
+					}
+				}
+			
 			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 		}
 
@@ -114,8 +150,8 @@ namespace Resgrid.Services
 		public async Task<List<Call>> GetAllCallsByDepartmentDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
 			var calls = (from c in (await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, startDate, endDate))
-											orderby c.State
-											select c).ToList();
+						 orderby c.State
+						 select c).ToList();
 
 			foreach (var call in calls)
 			{
@@ -141,8 +177,8 @@ namespace Resgrid.Services
 		public async Task<List<Call>> GetLatest10ActiveCallsByDepartmentAsync(int departmentId)
 		{
 			var calls = (from c in await _callsRepository.GetAllOpenCallsByDepartmentAsync(departmentId)
-										orderby c.LoggedOn descending
-										select c).Take(10);
+						 orderby c.LoggedOn descending
+						 select c).Take(10);
 
 			return calls.ToList();
 		}
@@ -272,13 +308,9 @@ namespace Resgrid.Services
 			return await _callTypesRepository.GetByIdAsync(callTypeId);
 		}
 
-		public async Task<CallType> SaveNewCallTypeAsync(string callType, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<CallType> SaveCallTypeAsync(CallType callType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			CallType newCallType = new CallType();
-			newCallType.DepartmentId = departmentId;
-			newCallType.Type = callType;
-
-			return await _callTypesRepository.SaveOrUpdateAsync(newCallType, cancellationToken);
+			return await _callTypesRepository.SaveOrUpdateAsync(callType, cancellationToken);
 		}
 
 		public Call GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
@@ -570,7 +602,7 @@ namespace Resgrid.Services
 				}
 				else
 				{
-					var attachment = await 
+					var attachment = await
 						_callAttachmentRepository.GetCallAttachmentByCallIdAndTypeAsync(callId, CallAttachmentTypes.DispatchAudio);
 
 					if (attachment == null)

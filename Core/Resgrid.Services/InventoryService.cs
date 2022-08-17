@@ -98,5 +98,10 @@ namespace Resgrid.Services
 
 			return consolidated;
 		}
+
+		public async Task<bool> DeleteInventoriesByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _inventoryRepository.DeleteInventoriesByGroupIdAsync(groupId, departmentId, cancellationToken);
+		}
 	}
 }

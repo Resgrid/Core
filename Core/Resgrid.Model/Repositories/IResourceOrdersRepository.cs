@@ -39,5 +39,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ResourceOrder&gt;&gt;.</returns>
 		Task<IEnumerable<ResourceOrder>> GetAllNonDepartmentOpenVisibleOrdersAsync(int departmentId);
+
+		Task<IEnumerable<ResourceOrderItem>> GetAllItemsByResourceOrderIdAsync(int resourceOrderId);
 	}
 }

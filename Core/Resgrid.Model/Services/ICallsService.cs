@@ -187,11 +187,9 @@ namespace Resgrid.Model.Services
 		/// Saves the new call type asynchronous.
 		/// </summary>
 		/// <param name="callType">Type of the call.</param>
-		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;CallType&gt;.</returns>
-		Task<CallType> SaveNewCallTypeAsync(string callType, int departmentId,
-			CancellationToken cancellationToken = default(CancellationToken));
+		Task<CallType> SaveCallTypeAsync(CallType callType, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Generates the call from email.

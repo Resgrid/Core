@@ -27,11 +27,13 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentGroups
 																			  },
 																 new string[] {
 																				"%GROUPSTABLE%",
-																				"%GROUPMEMBERSSTABLE%"
+																				"%GROUPMEMBERSSTABLE%",
+																				"%DEPARTMENTMEMBERSSTABLE%"
 																 },
 																 new string[] {
 																				_sqlConfiguration.DepartmentGroupsTable,
-																				_sqlConfiguration.DepartmentGroupMembersTable
+																				_sqlConfiguration.DepartmentGroupMembersTable,
+																				_sqlConfiguration.DepartmentMembersTable
 																 }
 																 );
 

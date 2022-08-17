@@ -734,6 +734,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 			var model = new AddCertificationView();
 			model.UserId = userToGet;
+			var types = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			model.CertificationTypes = new SelectList(types, "Type", "Type");
 
 			return View(model);
 		}
@@ -758,6 +760,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (fileToUpload.Length > 10000000)
 					ModelState.AddModelError("fileToUpload", "Document is too large, must be smaller then 10MB.");
 			}
+
+			var types = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			model.CertificationTypes = new SelectList(types, "Type", "Type");
 
 			if (ModelState.IsValid)
 			{
@@ -890,6 +895,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ExpiresOn = cert.ExpiresOn;
 			model.RecievedOn = cert.RecievedOn;
 			model.Type = cert.Type;
+
+			var types = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			model.CertificationTypes = new SelectList(types, "Type", "Type");
 
 			return View(model);
 		}

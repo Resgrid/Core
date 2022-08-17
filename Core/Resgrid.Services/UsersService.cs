@@ -33,12 +33,15 @@ namespace Resgrid.Services
 		private readonly IDepartmentMembersRepository _departmentMembersRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IIdentityRepository _identityRepository;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
-		public UsersService(IDepartmentMembersRepository departmentMembersRepository, ICacheProvider cacheProvider, IIdentityRepository identityRepository)
+		public UsersService(IDepartmentMembersRepository departmentMembersRepository, ICacheProvider cacheProvider,
+			IIdentityRepository identityRepository, IDepartmentSettingsService departmentSettingsService)
 		{
 			_departmentMembersRepository = departmentMembersRepository;
 			_cacheProvider = cacheProvider;
 			_identityRepository = identityRepository;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
 		public List<IdentityUser> GetAll()
@@ -100,17 +103,38 @@ namespace Resgrid.Services
 			return _identityRepository.GetUserById(userId.ToString());
 		}
 
-		public List<UserGroupRole> GetUserGroupAndRolesByDepartmentId(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
+		public async Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
 		{
-			Func<List<UserGroupRole>> getUserGroupRole = delegate ()
-			{
-				return _identityRepository.GetAllUsersGroupsAndRoles(deparmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
-			};
+			////Func<List<UserGroupRole>> getUserGroupRole = delegate ()
+			//{
+			//	return _identityRepository.GetAllUsersGroupsAndRolesAsync(deparmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+			//};
 
 			//if (Config.SystemBehaviorConfig.CacheEnabled)
 			//	return _cacheProvider.Retrieve(string.Format(UserGroupRolesCacheKey, deparmentId), getUserGroupRole, UGRCacheLength);
 			//else
-				return getUserGroupRole();
+			//	return getUserGroupRole();
+
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(deparmentId);
+			var users = await _identityRepository.GetAllUsersGroupsAndRolesAsync(deparmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+
+			if (users != null && users.Any())
+			{
+				switch (personnelSortOrder)
+				{
+					case PersonnelSortOrders.FirstName:
+						users = users.OrderBy(x => x.FirstName).ToList();
+						break;
+					case PersonnelSortOrders.LastName:
+						users = users.OrderBy(x => x.LastName).ToList();
+						break;
+					case PersonnelSortOrders.Group:
+						users = users.OrderBy(x => x.DepartmentGroupId).ToList();
+						break;
+				}
+			}
+
+			return users;
 		}
 
 		public void ClearCacheForDepartment(int departmentId)

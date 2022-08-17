@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
@@ -147,6 +148,57 @@ namespace Resgrid.Repositories.DataRepository
 					conn = _unitOfWork.CreateOrGetConnection();
 
 					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<bool> DeleteInventoriesByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			try
+			{
+				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					try
+					{
+						var dynamicParameters = new DynamicParameters();
+						dynamicParameters.Add("GroupId", groupId);
+						dynamicParameters.Add("DepartmentId", departmentId);
+
+						var query = _queryFactory.GetDeleteQuery<DeleteInventoryByGroupIdQuery>();
+
+						var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+						return result > 0;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+
+						throw;
+					}
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						return await removeFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await removeFunction(conn);
 				}
 			}
 			catch (Exception ex)

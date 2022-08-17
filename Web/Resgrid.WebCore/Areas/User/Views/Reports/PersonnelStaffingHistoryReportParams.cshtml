@@ -102,8 +102,8 @@
 			$('#usersSelect').show();
 			$('#groupSelect').hide();
 
-			$('#GroupSelect').change(function () {
-				var val = $("input[name='GroupSelect']:checked").val();
+			$("input:radio[name='GroupSelect']").change(function () {
+				var val = $("input:radio[name='GroupSelect']:checked").val();
 
 				if (val === 'True') {
 					$('#usersSelect').hide();

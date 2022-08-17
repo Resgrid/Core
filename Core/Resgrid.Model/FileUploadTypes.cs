@@ -2,6 +2,7 @@
 {
 	public enum FileUploadTypes
 	{
-		CallFile = 1
+		CallFile = 1,
+		CallImage = 2
 	}
 }

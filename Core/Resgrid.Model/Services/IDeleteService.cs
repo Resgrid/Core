@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Services
 {
@@ -22,6 +23,6 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentGroupId">The department group identifier.</param>
 		/// <param name="currentUserId">The current user identifier.</param>
 		/// <returns>Task&lt;DeleteGroupResults&gt;.</returns>
-		Task<DeleteGroupResults> DeleteGroupAsync(int departmentGroupId, string currentUserId);
+		Task<DeleteGroupResults> DeleteGroupAsync(int departmentGroupId, int departmentId, string currentUserId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

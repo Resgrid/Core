@@ -304,3 +304,7 @@ Docker/docker-data/dms/config/mailconfig
 Docker/docker-data/dms/mail-data/maildata
 Docker/docker-data/dms/mail-logs/maillogs
 Docker/docker-data/dms/mail-state/mailstate
+Web/Resgrid.WebCore/wwwroot/js/ng/main.js
+Web/Resgrid.WebCore/wwwroot/js/ng/polyfills.js
+Web/Resgrid.WebCore/wwwroot/js/ng/runtime.js
+Web/Resgrid.WebCore/wwwroot/js/ng/styles.css

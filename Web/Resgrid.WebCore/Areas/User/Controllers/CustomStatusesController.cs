@@ -4,10 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.CustomStatuses;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -26,6 +28,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Private Members and Constructors
 
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
 		public async Task<IActionResult> Index()
 		{
 			var model = new CustomStatusesIndexView();
@@ -43,6 +46,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[Authorize(Policy = ResgridResources.CustomStates_Create)]
 		public async Task<IActionResult> New(int type)
 		{
 			var model = new NewCustomStateView();
@@ -54,6 +58,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.CustomStates_Create)]
 		public async Task<IActionResult> New(NewCustomStateView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			List<int> options = (from object key in form.Keys
@@ -111,6 +116,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_Delete)]
 		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
 		{
 			var state = await _customStateService.GetCustomSateByIdAsync(id);
@@ -124,6 +130,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> Edit(int id)
 		{
 			var model = new EditStatusView();
@@ -133,6 +140,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> EditDetail(int stateDetailId)
 		{
 			var model = new EditDetailView();
@@ -151,6 +159,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> EditDetail(EditDetailView model, CancellationToken cancellationToken)
 		{
 			model.DetailTypes = model.DetailType.ToSelectList();
@@ -171,7 +180,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					detail.DetailType = (int)model.DetailType;
 				//}
 
-				await _customStateService.SaveDetailAsync(detail, cancellationToken);
+				await _customStateService.SaveDetailAsync(detail, DepartmentId, cancellationToken);
 
 				return RedirectToAction("Edit", new { id = detail.CustomStateId });
 			}
@@ -182,6 +191,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> Edit(EditStatusView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
@@ -237,6 +247,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region Async Methods
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
 		public async Task<IActionResult> GetPersonnelStatusesForDepartment(bool includeAny)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
@@ -271,6 +282,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
 		public async Task<IActionResult> GetPersonnelStaffingLevelsForDepartment(bool includeAny)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
@@ -303,6 +315,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
 		public async Task<IActionResult> GetUnitStatusesLevelsForDepartment(bool includeAny, int unitTypeId)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
@@ -348,6 +361,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
 		public async Task<IActionResult> GetUnitStatusesLevelsForDepartmentCombined(bool includeAny)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();

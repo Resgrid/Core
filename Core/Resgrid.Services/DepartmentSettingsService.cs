@@ -113,7 +113,7 @@ namespace Resgrid.Services
 						}
 						else
 						{
-							newLocation = points[0] + ",";
+							newLocation = LocationHelpers.StripNonDecimalCharacters(points[0]) + ",";
 						}
 					}
 
@@ -125,7 +125,7 @@ namespace Resgrid.Services
 						}
 						else
 						{
-							newLocation = newLocation + points[1];
+							newLocation = newLocation + LocationHelpers.StripNonDecimalCharacters(points[1]);
 						}
 					}
 
@@ -491,6 +491,58 @@ namespace Resgrid.Services
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(setting),
 				DepartmentSettingTypes.PersonnelListStatusSortOrder, cancellationToken);
 		}
+
+		#region Shift Group Dispatch Settings
+		public async Task<bool> GetDispatchShiftInsteadOfGroupAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DispatchShiftInsteadOfGroup);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+
+		public async Task<bool> GetAutoSetStatusForShiftDispatchPersonnelAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.AutoSetStatusForShiftDispatchPersonnel);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+
+		public async Task<int> GetShiftCallDispatchPersonnelStatusToSetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.ShiftCallDispatchPersonnelStatusToSet);
+
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
+
+			return -1;
+		}
+
+		public async Task<int> GetShiftCallReleasePersonnelStatusToSetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.ShiftCallReleasePersonnelStatusToSet);
+
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
+
+			return -1;
+		}
+
+		public async Task<bool> GetAllowSignupsForMultipleShiftGroupsAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+		#endregion Shift Group Dispatch Settings
 
 		private async Task<DepartmentSetting> GetSettingByDepartmentIdType(int departmentId, DepartmentSettingTypes settingType)
 		{

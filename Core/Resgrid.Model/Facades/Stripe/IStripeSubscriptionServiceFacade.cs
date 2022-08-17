@@ -11,7 +11,11 @@ namespace Resgrid.Model.Facades.Stripe
 		Task<Subscription> Update(string customerId, string subscriptionId, SubscriptionUpdateOptions updateOptions);
 		Subscription Cancel(string customerId, string subscriptionId, bool cancelAtPeriodEnd = false);
 		Task<IEnumerable<Subscription>> List(string customerId, ListOptions listOptions = null);
-		Task<Subscription> GetCurrentActiveSub(string customerId);
-		Task<bool> AddAddonToSubscription(string customerId, string addonId);
+		Task<Subscription> GetCurrentActiveSubAsync(string customerId);
+		Task<bool> AddAddonToSubscription(string customerId, Model.Plan plan, PlanAddon addon);
+		Task<bool> CancelSubscriptionItem(string subscriptionId, string subscriptionItemId);
+		Task<Subscription> GetCurrentActiveOrCanceledSubAsync(string customerId);
+		Task<Subscription> GetCurrentCanceledSubAsync(string customerId);
+		Task<Subscription> GetCurrentCanceledSubWithAddonAsync(string customerId, PlanAddon addon);
 	}
 }

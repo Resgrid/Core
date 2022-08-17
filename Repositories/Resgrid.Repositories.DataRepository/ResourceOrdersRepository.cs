@@ -207,6 +207,54 @@ namespace Resgrid.Repositories.DataRepository
 			return null;
 		}
 
+		public async Task<IEnumerable<ResourceOrderItem>> GetAllItemsByResourceOrderIdAsync(int resourceOrderId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrderItem>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("ResourceOrderId", resourceOrderId);
+
+					var query = _queryFactory.GetQuery<SelectItemsByResourceOrderIdQuery>();
+
+					var messageDictionary = new Dictionary<int, ResourceOrderItem>();
+					var result = await x.QueryAsync<ResourceOrderItem, ResourceOrderFill, ResourceOrderItem>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: ResourceOrderItemMapping(messageDictionary),
+						splitOn: "ResourceOrderFillId");
+
+					if (messageDictionary.Count > 0)
+						return messageDictionary.Select(y => y.Value);
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
 
 		public async Task<List<ResourceOrder>> GetAllOpenOrdersByRange(int departmentId)
 		{
@@ -305,6 +353,41 @@ namespace Resgrid.Repositories.DataRepository
 
 
 			return fill;
+		}
+
+		private static Func<ResourceOrderItem, ResourceOrderFill, ResourceOrderItem> ResourceOrderItemMapping(Dictionary<int, ResourceOrderItem> dictionary)
+		{
+			return new Func<ResourceOrderItem, ResourceOrderFill, ResourceOrderItem>((resourceOrderItem, resourceOrderFill) =>
+			{
+				var dictionaryResourceOrderItem = default(ResourceOrderItem);
+
+				if (resourceOrderFill != null)
+				{
+					if (dictionary.TryGetValue(resourceOrderItem.ResourceOrderItemId, out dictionaryResourceOrderItem))
+					{
+						if (dictionaryResourceOrderItem.Fills.All(x => x.ResourceOrderFillId != resourceOrderFill.ResourceOrderFillId))
+							dictionaryResourceOrderItem.Fills.Add(resourceOrderFill);
+					}
+					else
+					{
+						if (resourceOrderItem.Fills == null)
+							resourceOrderItem.Fills = new List<ResourceOrderFill>();
+
+						resourceOrderItem.Fills.Add(resourceOrderFill);
+						dictionary.Add(resourceOrderItem.ResourceOrderItemId, resourceOrderItem);
+
+						dictionaryResourceOrderItem = resourceOrderItem;
+					}
+				}
+				else
+				{
+					resourceOrderItem.Fills = new List<ResourceOrderFill>();
+					dictionaryResourceOrderItem = resourceOrderItem;
+					dictionary.Add(resourceOrderItem.ResourceOrderItemId, resourceOrderItem);
+				}
+
+				return dictionaryResourceOrderItem;
+			});
 		}
 
 		//private static Func<Message, MessageRecipient, Message> ResourceOrderMapping(Dictionary<int, Message> dictionary)

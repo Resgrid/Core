@@ -337,6 +337,14 @@ namespace Resgrid.Framework
 
 			return new DateTime(int.Parse(dateParts[2]), int.Parse(dateParts[0]), int.Parse(dateParts[1]), 0, 0, 0, DateTimeKind.Local);
 		}
+
+		public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+		{
+			// Unix timestamp is seconds past epoch
+			DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+			return dateTime;
+		}
 	}
 
 	//http://stackoverflow.com/questions/381401/how-do-you-compare-datetime-objects-using-a-specified-tolerance-in-c

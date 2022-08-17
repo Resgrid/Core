@@ -1,257 +1,599 @@
 {
   "version": "1.0",
-  "defaultProvider": "cdnjs",
+  "defaultProvider": "unpkg",
   "libraries": [
-	{
-	  "library": "twitter-bootstrap@3.4.0",
-	  "destination": "wwwroot/lib/bootstrap/"
-	},
-	{
-	  "library": "jquery@2.2.4",
-	  "destination": "wwwroot/lib/jquery/"
-	},
-	{
-	  "library": "jquery-validation-unobtrusive@3.2.11",
-	  "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
-	},
-	{
-	  "library": "jquery-validate@1.19.0",
-	  "destination": "wwwroot/lib/jquery-validate/"
-	},
-	{
-	  "library": "font-awesome@4.7.0",
-	  "destination": "wwwroot/lib/font-awesome/"
-	},
-	{
-	  "library": "quill@1.3.6",
-	  "destination": "wwwroot/lib/quill/"
-	},
-	{
-	  "library": "fullcalendar@3.10.0",
-	  "destination": "wwwroot/lib/fullcalendar/"
-	},
-	{
-	  "library": "metisMenu@3.0.3",
-	  "destination": "wwwroot/lib/metisMenu/"
-	},
-	{
-	  "library": "pace@1.0.2",
-	  "destination": "wwwroot/lib/pace/"
-	},
-	{
-	  "library": "jQuery-slimScroll@1.3.8",
-	  "destination": "wwwroot/lib/slimScroll/"
-	},
-	{
-	  "library": "peity@2.0.3",
-	  "destination": "wwwroot/lib/peity/"
-	},
-	{
-	  "library": "morris.js@0.5.1",
-	  "destination": "wwwroot/lib/morrisjs/"
-	},
-	{
-	  "library": "rickshaw@1.6.6",
-	  "destination": "wwwroot/lib/rickshaw/"
-	},
-	{
-	  "library": "d3@3.5.6",
-	  "destination": "wwwroot/lib/d3/"
-	},
-	{
-	  "library": "chartist@0.11.0",
-	  "destination": "wwwroot/lib/chartist/"
-	},
-	{
-	  "library": "c3@0.6.12",
-	  "destination": "wwwroot/lib/c3/"
-	},
-	{
-	  "library": "awesome-bootstrap-checkbox@1.0.1",
-	  "destination": "wwwroot/lib/awesome-bootstrap-checkbox/"
-	},
-	{
-	  "library": "jasny-bootstrap@3.1.3",
-	  "destination": "wwwroot/lib/jasny-bootstrap/"
-	},
-	{
-	  "library": "bootstrap-datepicker@1.8.0",
-	  "destination": "wwwroot/lib/bootstrap-datepicker/"
-	},
-	{
-	  "library": "cropper@4.0.0",
-	  "destination": "wwwroot/lib/cropper/"
-	},
-	{
-	  "library": "select2@4.0.13",
-	  "destination": "wwwroot/lib/select2/"
-	},
-	{
-	  "library": "bootstrap-touchspin@3.0.3",
-	  "destination": "wwwroot/lib/bootstrap-touchspin/"
-	},
-	{
-	  "library": "moment.js@2.24.0",
-	  "destination": "wwwroot/lib/moment/"
-	},
-	{
-	  "library": "bootstrap-markdown@2.10.0",
-	  "destination": "wwwroot/lib/bootstrap-markdown/"
-	},
-	{
-	  "library": "markdown.js@0.5.0",
-	  "destination": "wwwroot/lib/markdown/"
-	},
-	{
-	  "library": "jqueryui@1.12.1",
-	  "destination": "wwwroot/lib/jqueryui/"
-	},
-	{
-	  "library": "toastr.js@2.1.4",
-	  "destination": "wwwroot/lib/toastr/"
-	},
-	{
-	  "library": "sweetalert@2.1.2",
-	  "destination": "wwwroot/lib/sweetalert/"
-	},
-	{
-	  "library": "jquery-idletimer@1.0.0",
-	  "destination": "wwwroot/lib/jquery-idletimer/"
-	},
-	{
-	  "library": "jQuery.dotdotdot@4.0.2",
-	  "destination": "wwwroot/lib/jQuery.dotdotdot/"
-	},
-	{
-	  "library": "codemirror@5.43.0",
-	  "destination": "wwwroot/lib/codemirror/"
-	},
-	{
-	  "library": "jstree@3.3.7",
-	  "destination": "wwwroot/lib/jstree/"
-	},
-	{
-	  "library": "Ladda@1.0.6",
-	  "destination": "wwwroot/lib/Ladda/"
-	},
-	{
-	  "library": "masonry@4.2.2",
-	  "destination": "wwwroot/lib/masonry/"
-	},
-	{
-	  "library": "jquery-footable@3.1.6",
-	  "destination": "wwwroot/lib/footable/"
-	},
-	{
-	  "library": "slick-carousel@1.9.0",
-	  "destination": "wwwroot/lib/slick-carousel/"
-	},
-	{
-	  "library": "blueimp-gallery@2.33.0",
-	  "destination": "wwwroot/lib/blueimp-gallery/"
-	},
-	{
-	  "library": "jquery.gridster@0.5.6",
-	  "destination": "wwwroot/lib/gridster/"
-	},
-	{
-	  "library": "vide@0.5.1",
-	  "destination": "wwwroot/lib/vide/"
-	},
-	{
-	  "library": "angular.js@1.7.7",
-	  "destination": "wwwroot/lib/angular/"
-	},
-	{
-	  "library": "jquery.bootstrapvalidator@0.5.3",
-	  "destination": "wwwroot/lib/bootstrapvalidator/"
-	},
-	{
-	  "library": "twitter-bootstrap-wizard@1.2",
-	  "destination": "wwwroot/lib/twitter-bootstrap-wizard/"
-	},
-	{
-	  "library": "retina.js@1.3.0",
-	  "destination": "wwwroot/lib/retina.js/"
-	},
-	{
-	  "library": "jplayer@2.9.2",
-	  "destination": "wwwroot/lib/jplayer/"
-	},
-	{
-	  "library": "plyr@3.4.8",
-	  "destination": "wwwroot/lib/plyr/"
-	},
-	{
-	  "library": "bootstrap-tour@0.11.0",
-	  "destination": "wwwroot/lib/bootstrap-tour/"
-	},
-	{
-	  "library": "leaflet@1.7.1",
-	  "destination": "wwwroot/lib/leaflet/"
-	},
-	{
-	  "provider": "unpkg",
-	  "library": "@microsoft/signalr@latest",
-	  "destination": "wwwroot/lib/signalr/",
-	  "files": [
-		"dist/browser/signalr.js",
-		"dist/browser/signalr.js.map",
-		"dist/browser/signalr.min.js",
-		"dist/browser/signalr.min.js.map"
-	  ]
-	},
-	{
-	  "library": "survey-jquery@1.8.57",
-	  "destination": "wwwroot/lib/survey-jquery/"
-	},
-	{
-	  "library": "survey-angular@1.8.57",
-	  "destination": "wwwroot/lib/survey-angular/"
-	},
-	{
-	  "provider": "unpkg",
-	  "library": "survey-creator@1.8.57",
-	  "destination": "wwwroot/lib/survey-creator/"
-	},
-	{
-	  "provider": "unpkg",
-	  "library": "surveyjs-widgets@1.8.57",
-	  "destination": "wwwroot/lib/surveyjs-widgets/"
-	},
-	{
-	  "provider": "unpkg",
-	  "library": "survey-react@1.8.58",
-	  "destination": "wwwroot/lib/survey-react/"
-	},
-	{
-	  "provider": "unpkg",
-	  "library": "react@16.4.1",
-	  "destination": "wwwroot/lib/react/"
-	},
-	{
-	  "provider": "unpkg",
-	  "library": "react-dom@16.4.1",
-	  "destination": "wwwroot/lib/react-dom/"
-	},
-	{
-	  "provider": "unpkg",
-	  "library": "formBuilder@3.7.3",
-	  "destination": "wwwroot/lib/formBuilder/",
-	  "files": [
-		"dist/form-builder.min.js",
-		"dist/form-builder.min.js.gz",
-		"dist/form-render.min.js",
-		"dist/form-render.min.js.gz",
-		"README.md",
-		"package.json",
-		"LICENSE",
-		"CHANGELOG.md"
-	  ]
-	},
-	{
-	  "library": "typed.js@2.0.12",
-	  "destination": "wwwroot/lib/typed.js/"
-	}
+    {
+      "library": "jquery-validation-unobtrusive@3.2.11",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
+    },
+    {
+      "library": "jquery-validation@1.19.0",
+      "destination": "wwwroot/lib/jquery-validate/"
+    },
+    {
+      "library": "font-awesome@4.7.0",
+      "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "fullcalendar@3.10.0",
+      "destination": "wwwroot/lib/fullcalendar/"
+    },
+    {
+      "library": "metismenu@3.0.7",
+      "destination": "wwwroot/lib/metisMenu/"
+    },
+    {
+      "library": "pace-js@1.0.2",
+      "destination": "wwwroot/lib/pace/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jQuery-slimScroll@1.3.8",
+      "destination": "wwwroot/lib/slimScroll/"
+    },
+    {
+      "library": "peity@3.1.1",
+      "destination": "wwwroot/lib/peity/"
+    },
+    {
+      "library": "morris.js@0.5.0",
+      "destination": "wwwroot/lib/morrisjs/"
+    },
+    {
+      "library": "rickshaw@1.6.6",
+      "destination": "wwwroot/lib/rickshaw/"
+    },
+    {
+      "library": "d3@3.5.6",
+      "destination": "wwwroot/lib/d3/"
+    },
+    {
+      "library": "chartist@0.11.0",
+      "destination": "wwwroot/lib/chartist/"
+    },
+    {
+      "library": "c3@0.6.12",
+      "destination": "wwwroot/lib/c3/"
+    },
+    {
+      "library": "awesome-bootstrap-checkbox@1.0.1",
+      "destination": "wwwroot/lib/awesome-bootstrap-checkbox/"
+    },
+    {
+      "library": "jasny-bootstrap@3.1.3",
+      "destination": "wwwroot/lib/jasny-bootstrap/"
+    },
+    {
+      "library": "bootstrap-datepicker@1.8.0",
+      "destination": "wwwroot/lib/bootstrap-datepicker/"
+    },
+    {
+      "library": "cropper@4.0.0",
+      "destination": "wwwroot/lib/cropper/"
+    },
+    {
+      "library": "bootstrap-touchspin@3.1.1",
+      "destination": "wwwroot/lib/bootstrap-touchspin/"
+    },
+    {
+      "library": "bootstrap-markdown@2.10.0",
+      "destination": "wwwroot/lib/bootstrap-markdown/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "markdown.js@0.5.0",
+      "destination": "wwwroot/lib/markdown/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jqueryui@1.12.1",
+      "destination": "wwwroot/lib/jqueryui/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr/"
+    },
+    {
+      "library": "sweetalert@2.1.2",
+      "destination": "wwwroot/lib/sweetalert/"
+    },
+    {
+      "library": "jquery-idletimer@1.0.0",
+      "destination": "wwwroot/lib/jquery-idletimer/"
+    },
+    {
+      "library": "dotdotdot-js@4.0.2",
+      "destination": "wwwroot/lib/jQuery.dotdotdot/"
+    },
+    {
+      "library": "codemirror@5.43.0",
+      "destination": "wwwroot/lib/codemirror/"
+    },
+    {
+      "library": "jstree@3.3.7",
+      "destination": "wwwroot/lib/jstree/"
+    },
+    {
+      "library": "ladda@1.0.6",
+      "destination": "wwwroot/lib/Ladda/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "masonry@4.2.2",
+      "destination": "wwwroot/lib/masonry/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery-footable@3.1.6",
+      "destination": "wwwroot/lib/footable/"
+    },
+    {
+      "library": "slick-carousel@1.8.1",
+      "destination": "wwwroot/lib/slick-carousel/"
+    },
+    {
+      "library": "blueimp-gallery@2.33.0",
+      "destination": "wwwroot/lib/blueimp-gallery/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery.gridster@0.5.6",
+      "destination": "wwwroot/lib/gridster/"
+    },
+    {
+      "library": "vide@0.5.1",
+      "destination": "wwwroot/lib/vide/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery.bootstrapvalidator@0.5.3",
+      "destination": "wwwroot/lib/bootstrapvalidator/"
+    },
+    {
+      "library": "twitter-bootstrap-wizard@1.2",
+      "destination": "wwwroot/lib/twitter-bootstrap-wizard/"
+    },
+    {
+      "library": "jplayer@2.9.2",
+      "destination": "wwwroot/lib/jplayer/"
+    },
+    {
+      "library": "plyr@3.4.8",
+      "destination": "wwwroot/lib/plyr/"
+    },
+    {
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/lib/signalr/",
+      "files": [
+        "dist/browser/signalr.js",
+        "dist/browser/signalr.js.map",
+        "dist/browser/signalr.min.js",
+        "dist/browser/signalr.min.js.map"
+      ]
+    },
+    {
+      "library": "survey-jquery@1.8.57",
+      "destination": "wwwroot/lib/survey-jquery/"
+    },
+    {
+      "library": "survey-angular@1.8.57",
+      "destination": "wwwroot/lib/survey-angular/"
+    },
+    {
+      "library": "survey-creator@1.8.57",
+      "destination": "wwwroot/lib/survey-creator/"
+    },
+    {
+      "library": "surveyjs-widgets@1.8.57",
+      "destination": "wwwroot/lib/surveyjs-widgets/"
+    },
+    {
+      "library": "formBuilder@3.7.3",
+      "destination": "wwwroot/lib/formBuilder/",
+      "files": [
+        "dist/form-builder.min.js",
+        "dist/form-builder.min.js.gz",
+        "dist/form-render.min.js",
+        "dist/form-render.min.js.gz",
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "CHANGELOG.md"
+      ]
+    },
+    {
+      "library": "bstreeview@1.2.0",
+      "destination": "wwwroot/lib/bstreeview/",
+      "files": [
+        "dist/css/bstreeview.min.css",
+        "dist/js/bstreeview.min.js"
+      ]
+    },
+    {
+      "library": "retina.js@1.1.0",
+      "destination": "wwwroot/lib/retina.js/"
+    },
+    {
+      "library": "quill@1.3.6",
+      "destination": "wwwroot/lib/quill/",
+      "files": [
+        "dist/quill.bubble.css",
+        "dist/quill.core.css",
+        "dist/quill.core.js",
+        "dist/quill.js",
+        "dist/quill.min.js",
+        "dist/quill.min.js.map",
+        "dist/quill.snow.css"
+      ]
+    },
+    {
+      "library": "bootstrap@3.4.0",
+      "destination": "wwwroot/lib/bootstrap/",
+      "files": [
+        "dist/css/bootstrap-theme.css",
+        "dist/css/bootstrap-theme.css.map",
+        "dist/css/bootstrap-theme.min.css",
+        "dist/css/bootstrap-theme.min.css.map",
+        "dist/css/bootstrap.css",
+        "dist/css/bootstrap.css.map",
+        "dist/css/bootstrap.min.css",
+        "dist/css/bootstrap.min.css.map",
+        "dist/fonts/glyphicons-halflings-regular.eot",
+        "dist/fonts/glyphicons-halflings-regular.svg",
+        "dist/fonts/glyphicons-halflings-regular.ttf",
+        "dist/fonts/glyphicons-halflings-regular.woff",
+        "dist/fonts/glyphicons-halflings-regular.woff2",
+        "dist/js/bootstrap.js",
+        "dist/js/bootstrap.min.js",
+        "dist/js/npm.js"
+      ]
+    },
+    {
+      "library": "jquery@2.2.4",
+      "destination": "wwwroot/lib/jquery/",
+      "files": [
+        "dist/jquery.js",
+        "dist/jquery.min.js",
+        "dist/jquery.min.map"
+      ]
+    },
+    {
+      "library": "bootstrap-tour@0.11.0",
+      "destination": "wwwroot/lib/bootstrap-tour/",
+      "files": [
+        "build/css/bootstrap-tour-standalone.css",
+        "build/css/bootstrap-tour-standalone.min.css",
+        "build/css/bootstrap-tour.css",
+        "build/css/bootstrap-tour.min.css",
+        "build/js/bootstrap-tour-standalone.js",
+        "build/js/bootstrap-tour-standalone.min.js",
+        "build/js/bootstrap-tour.js",
+        "build/js/bootstrap-tour.min.js"
+      ]
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "wwwroot/lib/select2/",
+      "files": [
+        "dist/css/select2.css",
+        "dist/css/select2.min.css",
+        "dist/js/select2.full.js",
+        "dist/js/select2.full.min.js",
+        "dist/js/select2.js",
+        "dist/js/select2.min.js",
+        "dist/js/i18n/af.js",
+        "dist/js/i18n/ar.js",
+        "dist/js/i18n/az.js",
+        "dist/js/i18n/bg.js",
+        "dist/js/i18n/bn.js",
+        "dist/js/i18n/bs.js",
+        "dist/js/i18n/build.txt",
+        "dist/js/i18n/ca.js",
+        "dist/js/i18n/cs.js",
+        "dist/js/i18n/da.js",
+        "dist/js/i18n/de.js",
+        "dist/js/i18n/dsb.js",
+        "dist/js/i18n/el.js",
+        "dist/js/i18n/en.js",
+        "dist/js/i18n/es.js",
+        "dist/js/i18n/et.js",
+        "dist/js/i18n/eu.js",
+        "dist/js/i18n/fa.js",
+        "dist/js/i18n/fi.js",
+        "dist/js/i18n/fr.js",
+        "dist/js/i18n/gl.js",
+        "dist/js/i18n/he.js",
+        "dist/js/i18n/hi.js",
+        "dist/js/i18n/hr.js",
+        "dist/js/i18n/hsb.js",
+        "dist/js/i18n/hu.js",
+        "dist/js/i18n/hy.js",
+        "dist/js/i18n/id.js",
+        "dist/js/i18n/is.js",
+        "dist/js/i18n/it.js",
+        "dist/js/i18n/ja.js",
+        "dist/js/i18n/ka.js",
+        "dist/js/i18n/km.js",
+        "dist/js/i18n/ko.js",
+        "dist/js/i18n/lt.js",
+        "dist/js/i18n/lv.js",
+        "dist/js/i18n/mk.js",
+        "dist/js/i18n/ms.js",
+        "dist/js/i18n/nb.js",
+        "dist/js/i18n/ne.js",
+        "dist/js/i18n/nl.js",
+        "dist/js/i18n/pl.js",
+        "dist/js/i18n/ps.js",
+        "dist/js/i18n/pt-BR.js",
+        "dist/js/i18n/pt.js",
+        "dist/js/i18n/ro.js",
+        "dist/js/i18n/ru.js",
+        "dist/js/i18n/sk.js",
+        "dist/js/i18n/sl.js",
+        "dist/js/i18n/sq.js",
+        "dist/js/i18n/sr-Cyrl.js",
+        "dist/js/i18n/sr.js",
+        "dist/js/i18n/sv.js",
+        "dist/js/i18n/th.js",
+        "dist/js/i18n/tk.js",
+        "dist/js/i18n/tr.js",
+        "dist/js/i18n/uk.js",
+        "dist/js/i18n/vi.js",
+        "dist/js/i18n/zh-CN.js",
+        "dist/js/i18n/zh-TW.js"
+      ]
+    },
+    {
+      "library": "leaflet@1.7.1",
+      "destination": "wwwroot/lib/leaflet/",
+      "files": [
+        "dist/images/layers-2x.png",
+        "dist/images/layers.png",
+        "dist/images/marker-icon-2x.png",
+        "dist/images/marker-icon.png",
+        "dist/images/marker-shadow.png",
+        "dist/leaflet-src.esm.js",
+        "dist/leaflet-src.esm.js.map",
+        "dist/leaflet-src.js",
+        "dist/leaflet-src.js.map",
+        "dist/leaflet.css",
+        "dist/leaflet.js",
+        "dist/leaflet.js.map",
+        "dist/reference-1.6.0-newleafdoc.html",
+        "dist/reference-1.6.0-oldleafdoc.html",
+        "dist/reference-1.6.0.html"
+      ]
+    },
+    {
+      "library": "moment@2.24.0",
+      "destination": "wwwroot/lib/moment/",
+      "files": [
+        "min/locales.js",
+        "min/locales.min.js",
+        "min/moment-with-locales.js",
+        "min/moment-with-locales.min.js",
+        "min/moment.min.js"
+      ]
+    },
+    {
+      "library": "typed.js@2.0.12",
+      "destination": "wwwroot/lib/typed.js/",
+      "files": [
+        "lib/typed.min.js",
+        "lib/typed.min.js.map",
+        "lib/typed.js"
+      ]
+    },
+    {
+      "library": "@selectize/selectize@0.13.5",
+      "destination": "wwwroot/lib/selectize/selectize/",
+      "files": [
+        "dist/css/selectize.bootstrap2.css",
+        "dist/css/selectize.bootstrap3.css",
+        "dist/css/selectize.bootstrap4.css",
+        "dist/css/selectize.bootstrap5.css",
+        "dist/css/selectize.css",
+        "dist/css/selectize.default.css",
+        "dist/css/selectize.legacy.css",
+        "dist/js/selectize.js",
+        "dist/js/selectize.min.js",
+        "dist/js/standalone/selectize.js",
+        "dist/js/standalone/selectize.min.js",
+        "dist/less/selectize.bootstrap2.less",
+        "dist/less/selectize.bootstrap3.less",
+        "dist/less/selectize.default.less",
+        "dist/less/selectize.legacy.less",
+        "dist/less/selectize.less",
+        "dist/less/plugins/drag_drop.less",
+        "dist/less/plugins/dropdown_header.less",
+        "dist/less/plugins/optgroup_columns.less",
+        "dist/less/plugins/remove_button.less",
+        "dist/scss/selectize.bootstrap3.scss",
+        "dist/scss/selectize.bootstrap4.scss",
+        "dist/scss/selectize.bootstrap5.scss",
+        "dist/scss/selectize.default.scss",
+        "dist/scss/selectize.scss",
+        "dist/scss/plugins/drag_drop.scss",
+        "dist/scss/plugins/dropdown_header.scss",
+        "dist/scss/plugins/optgroup_columns.scss",
+        "dist/scss/plugins/remove_button.scss",
+        "dist/vendor/bootstrap4/bootstrap-grid.scss",
+        "dist/vendor/bootstrap4/bootstrap-reboot.scss",
+        "dist/vendor/bootstrap4/bootstrap.scss",
+        "dist/vendor/bootstrap4/_alert.scss",
+        "dist/vendor/bootstrap4/_badge.scss",
+        "dist/vendor/bootstrap4/_breadcrumb.scss",
+        "dist/vendor/bootstrap4/_button-group.scss",
+        "dist/vendor/bootstrap4/_buttons.scss",
+        "dist/vendor/bootstrap4/_card.scss",
+        "dist/vendor/bootstrap4/_carousel.scss",
+        "dist/vendor/bootstrap4/_close.scss",
+        "dist/vendor/bootstrap4/_code.scss",
+        "dist/vendor/bootstrap4/_custom-forms.scss",
+        "dist/vendor/bootstrap4/_dropdown.scss",
+        "dist/vendor/bootstrap4/_forms.scss",
+        "dist/vendor/bootstrap4/_functions.scss",
+        "dist/vendor/bootstrap4/_grid.scss",
+        "dist/vendor/bootstrap4/_images.scss",
+        "dist/vendor/bootstrap4/_input-group.scss",
+        "dist/vendor/bootstrap4/_jumbotron.scss",
+        "dist/vendor/bootstrap4/_list-group.scss",
+        "dist/vendor/bootstrap4/_media.scss",
+        "dist/vendor/bootstrap4/_mixins.scss",
+        "dist/vendor/bootstrap4/_modal.scss",
+        "dist/vendor/bootstrap4/_nav.scss",
+        "dist/vendor/bootstrap4/_navbar.scss",
+        "dist/vendor/bootstrap4/_pagination.scss",
+        "dist/vendor/bootstrap4/_popover.scss",
+        "dist/vendor/bootstrap4/_print.scss",
+        "dist/vendor/bootstrap4/_progress.scss",
+        "dist/vendor/bootstrap4/_reboot.scss",
+        "dist/vendor/bootstrap4/_root.scss",
+        "dist/vendor/bootstrap4/_spinners.scss",
+        "dist/vendor/bootstrap4/_tables.scss",
+        "dist/vendor/bootstrap4/_toasts.scss",
+        "dist/vendor/bootstrap4/_tooltip.scss",
+        "dist/vendor/bootstrap4/_transitions.scss",
+        "dist/vendor/bootstrap4/_type.scss",
+        "dist/vendor/bootstrap4/_utilities.scss",
+        "dist/vendor/bootstrap4/_variables.scss",
+        "dist/vendor/bootstrap4/mixins/_alert.scss",
+        "dist/vendor/bootstrap4/mixins/_background-variant.scss",
+        "dist/vendor/bootstrap4/mixins/_badge.scss",
+        "dist/vendor/bootstrap4/mixins/_border-radius.scss",
+        "dist/vendor/bootstrap4/mixins/_box-shadow.scss",
+        "dist/vendor/bootstrap4/mixins/_breakpoints.scss",
+        "dist/vendor/bootstrap4/mixins/_buttons.scss",
+        "dist/vendor/bootstrap4/mixins/_caret.scss",
+        "dist/vendor/bootstrap4/mixins/_clearfix.scss",
+        "dist/vendor/bootstrap4/mixins/_deprecate.scss",
+        "dist/vendor/bootstrap4/mixins/_float.scss",
+        "dist/vendor/bootstrap4/mixins/_forms.scss",
+        "dist/vendor/bootstrap4/mixins/_gradients.scss",
+        "dist/vendor/bootstrap4/mixins/_grid-framework.scss",
+        "dist/vendor/bootstrap4/mixins/_grid.scss",
+        "dist/vendor/bootstrap4/mixins/_hover.scss",
+        "dist/vendor/bootstrap4/mixins/_image.scss",
+        "dist/vendor/bootstrap4/mixins/_list-group.scss",
+        "dist/vendor/bootstrap4/mixins/_lists.scss",
+        "dist/vendor/bootstrap4/mixins/_nav-divider.scss",
+        "dist/vendor/bootstrap4/mixins/_pagination.scss",
+        "dist/vendor/bootstrap4/mixins/_reset-text.scss",
+        "dist/vendor/bootstrap4/mixins/_resize.scss",
+        "dist/vendor/bootstrap4/mixins/_screen-reader.scss",
+        "dist/vendor/bootstrap4/mixins/_size.scss",
+        "dist/vendor/bootstrap4/mixins/_table-row.scss",
+        "dist/vendor/bootstrap4/mixins/_text-emphasis.scss",
+        "dist/vendor/bootstrap4/mixins/_text-hide.scss",
+        "dist/vendor/bootstrap4/mixins/_text-truncate.scss",
+        "dist/vendor/bootstrap4/mixins/_transition.scss",
+        "dist/vendor/bootstrap4/mixins/_visibility.scss",
+        "dist/vendor/bootstrap4/utilities/_align.scss",
+        "dist/vendor/bootstrap4/utilities/_background.scss",
+        "dist/vendor/bootstrap4/utilities/_borders.scss",
+        "dist/vendor/bootstrap4/utilities/_clearfix.scss",
+        "dist/vendor/bootstrap4/utilities/_display.scss",
+        "dist/vendor/bootstrap4/utilities/_embed.scss",
+        "dist/vendor/bootstrap4/utilities/_flex.scss",
+        "dist/vendor/bootstrap4/utilities/_float.scss",
+        "dist/vendor/bootstrap4/utilities/_interactions.scss",
+        "dist/vendor/bootstrap4/utilities/_overflow.scss",
+        "dist/vendor/bootstrap4/utilities/_position.scss",
+        "dist/vendor/bootstrap4/utilities/_screenreaders.scss",
+        "dist/vendor/bootstrap4/utilities/_shadows.scss",
+        "dist/vendor/bootstrap4/utilities/_sizing.scss",
+        "dist/vendor/bootstrap4/utilities/_spacing.scss",
+        "dist/vendor/bootstrap4/utilities/_stretched-link.scss",
+        "dist/vendor/bootstrap4/utilities/_text.scss",
+        "dist/vendor/bootstrap4/utilities/_visibility.scss",
+        "dist/vendor/bootstrap4/vendor/_rfs.scss",
+        "dist/vendor/bootstrap5/bootstrap-grid.scss",
+        "dist/vendor/bootstrap5/bootstrap-reboot.scss",
+        "dist/vendor/bootstrap5/bootstrap-utilities.scss",
+        "dist/vendor/bootstrap5/bootstrap.scss",
+        "dist/vendor/bootstrap5/_accordion.scss",
+        "dist/vendor/bootstrap5/_alert.scss",
+        "dist/vendor/bootstrap5/_badge.scss",
+        "dist/vendor/bootstrap5/_breadcrumb.scss",
+        "dist/vendor/bootstrap5/_button-group.scss",
+        "dist/vendor/bootstrap5/_buttons.scss",
+        "dist/vendor/bootstrap5/_card.scss",
+        "dist/vendor/bootstrap5/_carousel.scss",
+        "dist/vendor/bootstrap5/_close.scss",
+        "dist/vendor/bootstrap5/_containers.scss",
+        "dist/vendor/bootstrap5/_dropdown.scss",
+        "dist/vendor/bootstrap5/_forms.scss",
+        "dist/vendor/bootstrap5/_functions.scss",
+        "dist/vendor/bootstrap5/_grid.scss",
+        "dist/vendor/bootstrap5/_helpers.scss",
+        "dist/vendor/bootstrap5/_images.scss",
+        "dist/vendor/bootstrap5/_list-group.scss",
+        "dist/vendor/bootstrap5/_mixins.scss",
+        "dist/vendor/bootstrap5/_modal.scss",
+        "dist/vendor/bootstrap5/_nav.scss",
+        "dist/vendor/bootstrap5/_navbar.scss",
+        "dist/vendor/bootstrap5/_offcanvas.scss",
+        "dist/vendor/bootstrap5/_pagination.scss",
+        "dist/vendor/bootstrap5/_placeholders.scss",
+        "dist/vendor/bootstrap5/_popover.scss",
+        "dist/vendor/bootstrap5/_progress.scss",
+        "dist/vendor/bootstrap5/_reboot.scss",
+        "dist/vendor/bootstrap5/_root.scss",
+        "dist/vendor/bootstrap5/_spinners.scss",
+        "dist/vendor/bootstrap5/_tables.scss",
+        "dist/vendor/bootstrap5/_toasts.scss",
+        "dist/vendor/bootstrap5/_tooltip.scss",
+        "dist/vendor/bootstrap5/_transitions.scss",
+        "dist/vendor/bootstrap5/_type.scss",
+        "dist/vendor/bootstrap5/_utilities.scss",
+        "dist/vendor/bootstrap5/_variables.scss",
+        "dist/vendor/bootstrap5/forms/_floating-labels.scss",
+        "dist/vendor/bootstrap5/forms/_form-check.scss",
+        "dist/vendor/bootstrap5/forms/_form-control.scss",
+        "dist/vendor/bootstrap5/forms/_form-range.scss",
+        "dist/vendor/bootstrap5/forms/_form-select.scss",
+        "dist/vendor/bootstrap5/forms/_form-text.scss",
+        "dist/vendor/bootstrap5/forms/_input-group.scss",
+        "dist/vendor/bootstrap5/forms/_labels.scss",
+        "dist/vendor/bootstrap5/forms/_validation.scss",
+        "dist/vendor/bootstrap5/helpers/_clearfix.scss",
+        "dist/vendor/bootstrap5/helpers/_colored-links.scss",
+        "dist/vendor/bootstrap5/helpers/_position.scss",
+        "dist/vendor/bootstrap5/helpers/_ratio.scss",
+        "dist/vendor/bootstrap5/helpers/_stacks.scss",
+        "dist/vendor/bootstrap5/helpers/_stretched-link.scss",
+        "dist/vendor/bootstrap5/helpers/_text-truncation.scss",
+        "dist/vendor/bootstrap5/helpers/_visually-hidden.scss",
+        "dist/vendor/bootstrap5/helpers/_vr.scss",
+        "dist/vendor/bootstrap5/mixins/_alert.scss",
+        "dist/vendor/bootstrap5/mixins/_backdrop.scss",
+        "dist/vendor/bootstrap5/mixins/_border-radius.scss",
+        "dist/vendor/bootstrap5/mixins/_box-shadow.scss",
+        "dist/vendor/bootstrap5/mixins/_breakpoints.scss",
+        "dist/vendor/bootstrap5/mixins/_buttons.scss",
+        "dist/vendor/bootstrap5/mixins/_caret.scss",
+        "dist/vendor/bootstrap5/mixins/_clearfix.scss",
+        "dist/vendor/bootstrap5/mixins/_color-scheme.scss",
+        "dist/vendor/bootstrap5/mixins/_container.scss",
+        "dist/vendor/bootstrap5/mixins/_deprecate.scss",
+        "dist/vendor/bootstrap5/mixins/_forms.scss",
+        "dist/vendor/bootstrap5/mixins/_gradients.scss",
+        "dist/vendor/bootstrap5/mixins/_grid.scss",
+        "dist/vendor/bootstrap5/mixins/_image.scss",
+        "dist/vendor/bootstrap5/mixins/_list-group.scss",
+        "dist/vendor/bootstrap5/mixins/_lists.scss",
+        "dist/vendor/bootstrap5/mixins/_pagination.scss",
+        "dist/vendor/bootstrap5/mixins/_reset-text.scss",
+        "dist/vendor/bootstrap5/mixins/_resize.scss",
+        "dist/vendor/bootstrap5/mixins/_table-variants.scss",
+        "dist/vendor/bootstrap5/mixins/_text-truncate.scss",
+        "dist/vendor/bootstrap5/mixins/_transition.scss",
+        "dist/vendor/bootstrap5/mixins/_utilities.scss",
+        "dist/vendor/bootstrap5/mixins/_visually-hidden.scss",
+        "dist/vendor/bootstrap5/utilities/_api.scss",
+        "dist/vendor/bootstrap5/vendor/_rfs.scss"
+      ]
+    }
   ]
 }

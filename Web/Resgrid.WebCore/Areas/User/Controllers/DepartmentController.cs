@@ -24,6 +24,8 @@ using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Web.Models.AccountViewModels;
 using Resgrid.Model.Providers;
+using Resgrid.WebCore.Areas.User.Models.Dispatch;
+using Resgrid.Web.Areas.User.Models.Dispatch;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -140,7 +142,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var user = _usersService.GetUserByEmail(email);
 				if (user != null)
 				{
-					ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department or another. Email address can only be used once per account in the system.", email));
+					ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department or another. Email address can only be used once per account in the system. If the user previously has a Resgrid account they need to be added via the Add a Person page.", email));
 				}
 			}
 
@@ -217,13 +219,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
 
 			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
-			model.PersonnelSort = (int) personnelSortOrder;
+			model.PersonnelSort = (int)personnelSortOrder;
 
 			var callSortOrder = await _departmentSettingsService.GetDepartmentCallSortOrderAsync(DepartmentId);
-			model.CallsSort = (int) callSortOrder;
+			model.CallsSort = (int)callSortOrder;
 
 			var unitsSortOrder = await _departmentSettingsService.GetDepartmentUnitsSortOrderAsync(DepartmentId);
-			model.UnitsSort = (int) unitsSortOrder;
+			model.UnitsSort = (int)unitsSortOrder;
 
 			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
@@ -548,7 +550,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId, cancellationToken);
 				}
 
-				_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent(){DepartmentId = DepartmentId});
+				_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
 
 				_departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
 
@@ -1035,7 +1037,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CertificationTypes = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
 			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
-			
+
 			var states = new List<CustomState>();
 			states.Add(new CustomState
 			{
@@ -1051,7 +1053,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CallPriorites = _callsService.GetDefaultCallPriorities();
 
 				//Sounds don't need to come back to the UI
-				foreach(var priority in model.CallPriorites)
+				foreach (var priority in model.CallPriorites)
 				{
 					priority.PushNotificationSound = null;
 					priority.ShortNotificationSound = null;
@@ -1096,14 +1098,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> NewCallType(CallSettingsView model, CancellationToken cancellationToken)
+		public async Task<IActionResult> NewCallType(DepartmentTypesView model, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrEmpty(model.NewCallType))
 				ModelState.AddModelError("NewCallType", "You Must specify the new call type.");
 
 			if (ModelState.IsValid)
 			{
-				await _callsService.SaveNewCallTypeAsync(model.NewCallType, DepartmentId, cancellationToken);
+				CallType newCallType = new CallType();
+				newCallType.DepartmentId = DepartmentId;
+				newCallType.Type = model.NewCallType;
+
+				if (model.CallTypeIcon >= 0)
+					newCallType.MapIconType = model.CallTypeIcon;
+				
+				await _callsService.SaveCallTypeAsync(newCallType, cancellationToken);
 			}
 
 			return RedirectToAction("Types");
@@ -1164,7 +1173,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetAvailableNumbers(string country, string areaCode)
 		{
-			return Json(_numbersService.GetAvailableNumbers(country, areaCode));
+			return Json(await _numbersService.GetAvailableNumbers(country, areaCode));
 		}
 
 		[HttpGet]
@@ -1352,12 +1361,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> GetSubscriptionLimitWarning()
 		{
 			if (!String.IsNullOrWhiteSpace(Config.NoticeConfig.DashboardToastNotice))
-				return Json(new {title = "System Notice", message = Config.NoticeConfig.DashboardToastNotice});
+				return Json(new { title = "System Notice", message = Config.NoticeConfig.DashboardToastNotice });
 
 			if (!await _limitsService.ValidateDepartmentIsWithinLimitsAsync(DepartmentId))
-				return Json(new {title = "Department Limits", message = "The department is at or has exceeded some limits for the current subscription plan. Some functionality may be impacted."});
+				return Json(new { title = "Department Limits", message = "The department is at or has exceeded some limits for the current subscription plan. Some functionality may be impacted." });
 
-			return Json(new {title = "", message = ""});
+			return Json(new { title = "", message = "" });
 		}
 
 		[HttpGet]
@@ -1448,7 +1457,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> SubmitSetupWizard([FromBody]SetupWizardFormPayload payload, CancellationToken cancellationToken)
+		public async Task<IActionResult> SubmitSetupWizard([FromBody] SetupWizardFormPayload payload, CancellationToken cancellationToken)
 		{
 			var formCollection = JsonConvert.DeserializeObject<Dictionary<string, string>>(payload.setupWizardForm);
 
@@ -1528,6 +1537,103 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new JsonResult("{}");
 		}
 		#endregion Setup Wizard
+
+		#region Dispatch Settings
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ShiftSettings()
+		{
+			var model = new ShiftSettingsView();
+			model.AllowSignupsForMultipleShiftGroups = await _departmentSettingsService.GetAllowSignupsForMultipleShiftGroupsAsync(DepartmentId);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ShiftSettings(ShiftSettingsView model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AllowSignupsForMultipleShiftGroups.ToString(), DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups, cancellationToken);
+
+				model.SaveSuccess = true;
+				return View(model);
+			}
+
+			model.SaveSuccess = false;
+			return View(model);
+		}
+		#endregion Dispatch Settings
+
+		#region Dispatch Settings
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DispatchSettings()
+		{
+			var model = new DispatchSettingsView();
+
+			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
+			if (actionLogs == null)
+			{
+				var statuses = model.UserStatusTypes.ToSelectListInt().ToList();
+				statuses.Insert(0, new SelectListItem() { Value = "-1", Text = "Default" });
+				model.StatusLevels = new SelectList(statuses, "Value", "Text");
+			}
+			else
+			{
+				List<CustomStateDetail> statuses = new List<CustomStateDetail>();
+				statuses.Add(new CustomStateDetail() { CustomStateDetailId = -1, ButtonText = "Default" });
+				statuses.AddRange(actionLogs.GetActiveDetails());
+
+				model.StatusLevels = new SelectList(statuses, "CustomStateDetailId", "ButtonText");
+			}
+
+			model.DispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(DepartmentId);
+			model.AutoSetStatusForShiftPersonnel = await _departmentSettingsService.GetAutoSetStatusForShiftDispatchPersonnelAsync(DepartmentId);
+			model.ShiftDispatchStatus = await _departmentSettingsService.GetShiftCallDispatchPersonnelStatusToSetAsync(DepartmentId);
+			model.ShiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DispatchSettings(DispatchSettingsView model, CancellationToken cancellationToken)
+		{
+			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
+			if (actionLogs == null)
+			{
+				var statuses = model.UserStatusTypes.ToSelectListInt().ToList();
+				statuses.Insert(0, new SelectListItem() { Value = "-1", Text = "Default" });
+				model.StatusLevels = new SelectList(statuses, "Value", "Text");
+			}
+			else
+			{
+				List<CustomStateDetail> statuses = new List<CustomStateDetail>();
+				statuses.Add(new CustomStateDetail() { CustomStateDetailId = -1, ButtonText = "Default" });
+				statuses.AddRange(actionLogs.GetActiveDetails());
+
+				model.StatusLevels = new SelectList(statuses, "CustomStateDetailId", "ButtonText");
+			}
+
+			if (ModelState.IsValid)
+			{
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DispatchShiftInsteadOfGroup.ToString(), DepartmentSettingTypes.DispatchShiftInsteadOfGroup, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoSetStatusForShiftPersonnel.ToString(), DepartmentSettingTypes.AutoSetStatusForShiftDispatchPersonnel, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.ShiftDispatchStatus.ToString(), DepartmentSettingTypes.ShiftCallDispatchPersonnelStatusToSet, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.ShiftClearStatus.ToString(), DepartmentSettingTypes.ShiftCallReleasePersonnelStatusToSet, cancellationToken);
+
+				model.SaveSuccess = true;
+				return View(model);
+			}
+
+			model.SaveSuccess = false;
+			return View(model);
+		}
+		#endregion Dispatch Settings
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]

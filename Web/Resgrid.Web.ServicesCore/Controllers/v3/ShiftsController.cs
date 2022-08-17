@@ -138,7 +138,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				var personnelRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
 				var signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDay.ShiftDayId);
 
-				dayResult.SignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(shiftDay, UserId);
+				dayResult.SignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(shiftDay, UserId, null);
 
 				dayResult.Signups = new List<ShiftDaySignupResult>();
 				foreach (var signup in signups)
@@ -206,7 +206,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var personnelRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
 			var signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(id);
 
-			result.SignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(shiftDay, UserId);
+			result.SignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(shiftDay, UserId, null);
 
 			result.Signups = new List<ShiftDaySignupResult>();
 			foreach (var signup in signups)

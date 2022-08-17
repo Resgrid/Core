@@ -36,6 +36,17 @@ var resgrid;
 					checkForProtocols();
                 });
 
+                var noteQuillDescription = new Quill('#note-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                $(document).on('submit', '#newCallForm', function () {
+                    $('#Call_Notes').val(noteQuillDescription.root.innerHTML);
+
+                    return true;
+                });
+
                 var newCallForm = $('#fb-template').formRender({
                     dataType: 'json',
                     formData: newCallFormData

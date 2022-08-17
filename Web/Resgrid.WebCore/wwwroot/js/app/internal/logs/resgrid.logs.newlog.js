@@ -6,7 +6,7 @@ var resgrid;
         var newlog;
         (function (newlog) {
             $(document).ready(function () {
-                newlog.validationFilter = ".training-validation, .work-validation, .meeting-validation, .coroner-validation";
+                newlog.validationFilter = ".training-validation, .work-validation, .meeting-validation, .coroner-validation, .callback-validation";
                 supressValidation();
                 $('#Call_LoggedOn').kendoDateTimePicker({
                     interval: 1
@@ -101,6 +101,7 @@ var resgrid;
                         }).done(function (data) {
                             if (data) {
                                 $("#Call_Name").val(data.Name);
+                                $("#CallbackCallName").val(data.Name);
                                 var editor = $("#NatureOfCall").data("kendoEditor");
                                 editor.value(data.Nature);
                                 $("#Call_Address").val(data.Address);
@@ -216,7 +217,9 @@ var resgrid;
                         $('#unitsList').show();
                         $('#meetingInformation').hide();
                         $('.coroner-related').hide();
-                        newlog.validationFilter = ".training-validation, .work-validation, .meeting-validation, .coroner-validation";
+                        $('#coronerInformation').hide();
+                        $('#callbackInformation').hide();
+                        newlog.validationFilter = ".training-validation, .work-validation, .meeting-validation, .coroner-validation, .callback-validation";
                     }
                     else if (value === "Training") {
                         $('#callLogInformation').hide();
@@ -226,7 +229,9 @@ var resgrid;
                         $('#unitsList').show();
                         $('#meetingInformation').hide();
                         $('.coroner-related').hide();
-                        newlog.validationFilter = ".call-validation, .work-validation, .meeting-validation, .coroner-validation";
+                        $('#coronerInformation').hide();
+                        $('#callbackInformation').hide();
+                        newlog.validationFilter = ".call-validation, .work-validation, .meeting-validation, .coroner-validation, .callback-validation";
                     }
                     else if (value === "Work") {
                         $('#callLogInformation').hide();
@@ -236,7 +241,9 @@ var resgrid;
                         $('.call-related').hide();
                         $('#meetingInformation').hide();
                         $('.coroner-related').hide();
-                        newlog.validationFilter = ".call-validation, .training-validation, .meeting-validation, .coroner-validation";
+                        $('#coronerInformation').hide();
+                        $('#callbackInformation').hide();
+                        newlog.validationFilter = ".call-validation, .training-validation, .meeting-validation, .coroner-validation, .callback-validation";
                     }
                     else if (value === "Meeting") {
                         $('#callLogInformation').hide();
@@ -246,7 +253,9 @@ var resgrid;
                         $('.call-related').hide();
                         $('#meetingInformation').show();
                         $('.coroner-related').hide();
-                        newlog.validationFilter = ".call-validation, .training-validation, .work-validation, .coroner-validation";
+                        $('#coronerInformation').hide();
+                        $('#callbackInformation').hide();
+                        newlog.validationFilter = ".call-validation, .training-validation, .work-validation, .coroner-validation, .callback-validation";
                     }
                     else if (value === "Coroner") {
                         $('#callLogInformation').hide();
@@ -257,7 +266,20 @@ var resgrid;
                         $('.coroner-related').show();
                         $('#meetingInformation').hide();
                         $('#coronerInformation').show();
-                        newlog.validationFilter = ".call-validation, .training-validation, .work-validation, .meeting-validation";
+                        newlog.validationFilter = ".call-validation, .training-validation, .work-validation, .meeting-validation, .callback-validation";
+                    }
+                    else if (value === "Callback") {
+                        $('#callLogInformation').hide();
+                        $('#trainingInformation').hide();
+                        $('#unitsList').hide();
+                        $('#workInformation').hide();
+                        $('.call-related').hide();
+                        $('.coroner-related').hide();
+                        $('#meetingInformation').hide();
+                        $('#coronerInformation').hide();
+                        $('#coronerInformation').hide();
+                        $('#callbackInformation').show();
+                        newlog.validationFilter = ".call-validation, .training-validation, .work-validation, .meeting-validation, .coroner-validation";
                     }
                 }
                 supressValidation();

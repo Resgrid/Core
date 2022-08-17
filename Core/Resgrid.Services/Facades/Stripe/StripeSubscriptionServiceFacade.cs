@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Resgrid.Model;
 using Resgrid.Model.Facades.Stripe;
 using Stripe;
 
@@ -81,6 +82,36 @@ namespace Resgrid.Services.Facades.Stripe
 			}
 
 			return false;
+		}
+
+		public async Task<Subscription> GetCurrentActiveSubAsync(string customerId)
+		{
+			return null;
+		}
+		
+		public async Task<bool> AddAddonToSubscription(string customerId, Model.Plan plan, PlanAddon addon)
+		{
+			return true;
+		}
+
+		public async Task<bool> CancelSubscriptionItem(string subscriptionId, string subscriptionItemId)
+		{
+			return true;
+		}
+
+		public async Task<Subscription> GetCurrentActiveOrCanceledSubAsync(string customerId)
+		{
+			return null;
+		}
+
+		public async Task<Subscription> GetCurrentCanceledSubAsync(string customerId)
+		{
+			return null;
+		}
+
+		public async Task<Subscription> GetCurrentCanceledSubWithAddonAsync(string customerId, PlanAddon addon)
+		{
+			return null;
 		}
 	}
 }

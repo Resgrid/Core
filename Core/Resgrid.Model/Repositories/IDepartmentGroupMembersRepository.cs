@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -25,5 +26,7 @@ namespace Resgrid.Model.Repositories
 		/// <returns>Task&lt;IEnumerable&lt;DepartmentGroupMember&gt;&gt;.</returns>
 		Task<IEnumerable<DepartmentGroupMember>> GetAllGroupMembersByUserAndDepartmentAsync(string userId,
 			int departmentId);
+
+		Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

@@ -22,7 +22,6 @@
 		    <li class="@Html.IsSelected(controller: "Department", action: "CallSettings")"><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">Call Import Settings</a></li>
 		    <li class="@Html.IsSelected(controller: "CustomStatuses", action: "Index")"><a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">Custom Statuses</a></li>
 		    <li class="@Html.IsSelected(controller: "Department", action: "TextSettings")"><a asp-controller="Department" asp-action="TextSettings" asp-route-area="User">Text Messaging</a></li>
-		    <li class="@Html.IsSelected(controller: "Department", action: "Api")"><a asp-controller="Department" asp-action="Api" asp-route-area="User">Api & Rss Settings</a></li>
 		    <li class="@Html.IsSelected(controller: "Templates", action: "Index")"><a asp-controller="Templates" asp-action="Index" asp-route-area="User">Templates</a></li>
 		    <li class="@Html.IsSelected(controller: "Protocols", action: "Index")"><a asp-controller="Protocols" asp-action="Index" asp-route-area="User">Protocols</a></li>
 		    <li class="@Html.IsSelected(controller: "Forms", action: "Index")"><a asp-controller="Forms" asp-action="Index" asp-route-area="User">Forms</a></li>
@@ -37,7 +36,7 @@
 		  <li class="@Html.IsSelected(controller: "Orders", action: "Index")"><a asp-controller="Orders" asp-action="Index" asp-route-area="User">Orders</a></li>
 		  <li class="@Html.IsSelected(controller: "Links", action: "Index")"><a asp-controller="Links" asp-action="Index" asp-route-area="User">Links</a></li>
 		  <li class="@Html.IsSelected(controller: "Notifications", action: "Index")"><a asp-controller="Notifications" asp-action="Index" asp-route-area="User">Notifications</a></li>
-		  <li class="@Html.IsSelected(controller: "Command", action: "Index")"><a asp-controller="Command" asp-action="Index" asp-route-area="User">Commands</a></li>
+		  @*<li class="@Html.IsSelected(controller: "Command", action: "Index")"><a asp-controller="Command" asp-action="Index" asp-route-area="User">Commands</a></li>*@
 		  <li><a href="https://bigboard.resgrid.com" target="_blank">Big Board</a></li>
 		</ul>
       </li>

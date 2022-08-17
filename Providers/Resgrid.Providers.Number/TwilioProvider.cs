@@ -40,28 +40,28 @@ namespace Resgrid.Providers.NumberProvider
 			TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
 			ResourceSet<LocalResource> numbers;
 
-			if (country == "US" || country == "CA" || country == "GB")
-			{
-				if (!string.IsNullOrWhiteSpace(areaCode))
-					numbers = await LocalResource.ReadAsync(country, areaCode: int.Parse(areaCode), smsEnabled: true);
-				else
-					numbers = await LocalResource.ReadAsync(country, smsEnabled: true);
+			//if (country == "US" || country == "CA" || country == "GB")
+			//{
+			//	if (!string.IsNullOrWhiteSpace(areaCode))
+			//		numbers = await LocalResource.ReadAsync(country, areaCode: int.Parse(areaCode), smsEnabled: true);
+			//	else
+			//		numbers = await LocalResource.ReadAsync(country, smsEnabled: true);
 
-				if (numbers != null)
-				{
-					foreach (var number in numbers)
-					{
-						var textNumber = new TextNumber();
-						textNumber.msisdn = number.PhoneNumber.ToString();
-						textNumber.country = number.IsoCountry;
-						textNumber.Number = number.FriendlyName.ToString();
+			//	if (numbers != null)
+			//	{
+			//		foreach (var number in numbers)
+			//		{
+			//			var textNumber = new TextNumber();
+			//			textNumber.msisdn = number.PhoneNumber.ToString();
+			//			textNumber.country = number.IsoCountry;
+			//			textNumber.Number = number.FriendlyName.ToString();
 
-						availableNumbers.Add(textNumber);
-					}
-				}
-			}
-			else
-			{
+			//			availableNumbers.Add(textNumber);
+			//		}
+			//	}
+			//}
+			//else
+			//{
 				ResourceSet<MobileResource> mobileNumbers;
 
 				if (!string.IsNullOrWhiteSpace(areaCode))
@@ -81,7 +81,7 @@ namespace Resgrid.Providers.NumberProvider
 						availableNumbers.Add(textNumber);
 					}
 				}
-			}
+			//}
 
 			if (availableNumbers.Count > 10)
 				return availableNumbers.Take(10).ToList();

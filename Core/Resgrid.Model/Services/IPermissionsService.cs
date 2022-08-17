@@ -55,6 +55,6 @@ namespace Resgrid.Model.Services
 		/// <param name="isUserGroupAdmin">if set to <c>true</c> [is user group admin].</param>
 		/// <param name="roles">The roles.</param>
 		/// <returns>List&lt;System.String&gt;.</returns>
-		List<string> GetAllowedUsers(Permission permission, int departmentId, int? sourceGroupId, bool isUserDepartmentAdmin, bool isUserGroupAdmin, List<PersonnelRole> roles);
+		Task<List<string>> GetAllowedUsersAsync(Permission permission, int departmentId, int? sourceGroupId, bool isUserDepartmentAdmin, bool isUserGroupAdmin, List<PersonnelRole> roles);
 	}
 }

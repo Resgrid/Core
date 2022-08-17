@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Resgrid.Web.Areas.User.Models.Profile
@@ -7,6 +9,7 @@ namespace Resgrid.Web.Areas.User.Models.Profile
 	{
 		public string UserId { get; set; }
 		public string Message { get; set; }
+		public SelectList CertificationTypes { get; set; }
 
 		[Required]
 		public string Name { get; set; }

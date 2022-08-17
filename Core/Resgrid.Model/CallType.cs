@@ -24,6 +24,8 @@ namespace Resgrid.Model
 		[MaxLength(100)]
 		public string Type { get; set; }
 
+		public int? MapIconType { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

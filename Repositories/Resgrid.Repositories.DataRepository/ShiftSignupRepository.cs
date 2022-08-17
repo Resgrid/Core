@@ -112,6 +112,48 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<ShiftSignup>> GetAllShiftSignupsByGroupIdAndDateAsync(int departmentGroupId, DateTime shiftDayDate)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftSignup>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("GroupId", departmentGroupId);
+					dynamicParameters.Add("ShiftDayDate", shiftDayDate);
+
+					var query = _queryFactory.GetQuery<SelectShiftSignupsByGroupIdAndDateQuery>();
+
+					return await x.QueryAsync<ShiftSignup>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
 		public async Task<IEnumerable<ShiftSignup>> GetAllShiftSignupsByUserIdAsync(string userId)
 		{
 			try

@@ -1,0 +1,127 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Workshifts.NewWorkshiftView
+@{
+    ViewBag.Title = "Resgrid | New Static Shift";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>New Static Shift</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li>
+                <a asp-controller="Workshifts" asp-action="Index" asp-route-area="User">Static Shifts</a>
+            </li>
+            <li class="active">
+                <strong>New Static Shift</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Workshifts" asp-action="New" asp-route-area="User" method="post" id="newWorkshiftForm">
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                @Html.AntiForgeryToken()
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                Name
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" placeholder="Title of the shift (person name, work name, etc)" asp-for="Shift.Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">Color</label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" asp-for="Shift.Color">
+                                    <span class="help-block m-b-none">Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+							<label class="col-sm-2 control-label">
+								Description
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-6">
+									<input type="hidden" asp-for="Shift.Description">
+			
+									<div id="editor-container" style="width:100%; height: 300px;">
+										@Html.Raw(Model.Shift.Description)
+									</div>
+								</div>
+							</div>
+						</div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                Start Date/Time
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" asp-for="Shift.Start">
+                                    <span class="help-block m-b-none">The date and time that the shift starts (i.e. start of travel) where entities under it are considered committed.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                End Date/Time
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" asp-for="Shift.End">
+                                    <span class="help-block m-b-none">The date and time that the shift ends (i.e. back in quarters) where entities under it are considered available.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="unitSelection" class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Units
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <select asp-for="UnitsAssigned"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Create Static Shift</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script src="~/js/app/internal/workshifts/resgrid.workshifts.new.js"></script>
+}

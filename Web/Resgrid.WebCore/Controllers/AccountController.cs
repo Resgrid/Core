@@ -18,6 +18,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Config;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
+using Resgrid.Web.Helpers;
+using Resgrid.WebCore.Helpers;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Resgrid.Web.Controllers
 {
@@ -38,11 +42,14 @@ namespace Resgrid.Web.Controllers
 		private readonly IAffiliateService _affiliateService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IEmailMarketingProvider _emailMarketingProvider;
-
+		private readonly ISystemAuditsService _systemAuditsService;
+		private readonly ICacheProvider _cacheProvider;
+		
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
-						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider)
+						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider,
+						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -55,6 +62,8 @@ namespace Resgrid.Web.Controllers
 			_affiliateService = affiliateService;
 			_eventAggregator = eventAggregator;
 			_emailMarketingProvider = emailMarketingProvider;
+			_systemAuditsService = systemAuditsService;
+			_cacheProvider = cacheProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -76,7 +85,7 @@ namespace Resgrid.Web.Controllers
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> LogOn(LoginViewModel model, string returnUrl = null)
+		public async Task<IActionResult> LogOn(LoginViewModel model, CancellationToken cancellationToken, string returnUrl = null)
 		{
 			await _signInManager.SignOutAsync();
 			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -84,12 +93,20 @@ namespace Resgrid.Web.Controllers
 			ViewData["ReturnUrl"] = returnUrl;
 			if (ModelState.IsValid)
 			{
-				// This doesn't count login failures towards account lockout
-				// To enable password failures to trigger account lockout, set lockoutOnFailure: true
-
 				try
 				{
-					var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
+					var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: true);
+
+					SystemAudit audit = new SystemAudit();
+					audit.System = (int)SystemAuditSystems.Website;
+					audit.Type = (int)SystemAuditTypes.Login;
+					audit.Username = model.Username;
+					audit.Successful = result.Succeeded;
+					audit.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+					audit.ServerName = Environment.MachineName;
+					audit.Data = $"Web LogOn {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+					await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
+
 					if (result != null && result.Succeeded)
 					{
 						if (await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
@@ -102,9 +119,26 @@ namespace Resgrid.Web.Controllers
 									AllowRefresh = false
 								});
 
+							try
+							{
+								var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimarySid)?.Value;
+
+								if (!string.IsNullOrWhiteSpace(userId))
+								{
+									var token = await ApiAuthHelper.GetBearerApiTokenAsync(model.Username, model.Password);
+									await _cacheProvider.SetStringAsync(CacheConfig.ApiBearerTokenKeyName + $"_${userId}", token, new TimeSpan(48, 0, 0));
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+							}
+
 							Response.Cookies.Delete(".AspNetCore.Identity.Application");
 							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC1");
 							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC2");
+							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC3");
+							
 							if (!String.IsNullOrWhiteSpace(returnUrl))
 								return RedirectToLocal(returnUrl);
 							else
@@ -278,7 +312,7 @@ namespace Resgrid.Web.Controllers
 				var department = await _departmentsService.GetDepartmentForUserAsync(user.UserName);
 
 				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-				var newPassword = RandomGenerator.GenerateRandomString(6, 8, false, false, true, true, false, true, null);
+				var newPassword = RandomGenerator.GenerateRandomString(8, 10, false, false, false, true, false, true, null);
 				var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
 
 				if (result.Succeeded)

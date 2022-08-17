@@ -1,0 +1,118 @@
+﻿@using Resgrid.Framework
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Reports.Params.UnitStateHistoryReportParams
+@{
+	ViewBag.Title = "Resgrid | Unit State History Report Params";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>Unit State History Report</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Reports" asp-action="Index" asp-route-area="User">Reports</a>
+			</li>
+			<li class="active">
+				<strong>Unit State History Report</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Reports" asp-action="UnitStateHistoryReportParams" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Type
+							</label>
+							<div class="col-sm-10">
+								Group @Html.RadioButtonFor(m => m.GroupSelect, true) or Units(s) @Html.RadioButtonFor(m => m.GroupSelect, false)
+							</div>
+						</div>
+						<div class="form-group" id="usersSelect">
+							<label class="col-sm-2 control-label required">
+								Units(s)
+							</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.UnitId, Model.Units, new { @style = "width: 450px;" })
+							</div>
+						</div>
+						<div class="form-group" style="display: none;" id="groupSelect">
+							<label class="col-sm-2 control-label required">
+								Group
+							</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.GroupId, Model.Groups, new { @style = "width: 450px;" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Report Start Time
+							</label>
+							<div class="col-sm-10">
+								@Html.TextBoxFor(m => m.Start, new { style = "width:250px;", onkeydown = "javascript:return false;" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Report End Time
+							</label>
+							<div class="col-sm-10">
+								@Html.TextBoxFor(m => m.End, new { style = "width:250px;", onkeydown = "javascript:return false;" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Reports" asp-action="Index" asp-route-area="User">Cancel</a>
+								<button class="btn btn-primary" type="submit">Run Report</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		$(document).ready(function () {
+			$("#Start").kendoDateTimePicker();
+			$("#End").kendoDateTimePicker();
+
+			$('#usersSelect').show();
+			$('#groupSelect').hide();
+
+			$("input:radio[name='GroupSelect']").change(function () {
+				var val = $("input:radio[name='GroupSelect']:checked").val();
+
+				if (val === 'True') {
+					$('#usersSelect').hide();
+					$('#groupSelect').show();
+				} else {
+					$('#usersSelect').show();
+					$('#groupSelect').hide();
+				}
+			});
+		});
+	</script>
+}

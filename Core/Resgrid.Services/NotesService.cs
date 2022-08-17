@@ -38,6 +38,7 @@ namespace Resgrid.Services
 
 		public async Task<Note> SaveAsync(Note note, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			note.Body = StringHelpers.SanitizeHtmlInString(note.Body);
 			var saved = await _notesRepository.SaveOrUpdateAsync(note, cancellationToken);
 			_eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent() { DepartmentId = note.DepartmentId, Note = note });
 

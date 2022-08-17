@@ -34,7 +34,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <returns></returns>
 		[HttpGet("GetAllCustomStatuses")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Call_View)]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
 		public async Task<ActionResult<CustomStatusesResult>> GetAllCustomStatuses()
 		{
 			var result = new CustomStatusesResult();
@@ -64,7 +64,161 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				result.PageSize = 0;
 				result.Status = ResponseHelper.NotFound;
-			}	
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the active statuses that personnel can currently set for the department
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("GetActivePersonnelStatuses")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
+		public async Task<ActionResult<CustomStatusesResult>> GetActivePersonnelStatuses()
+		{
+			var result = new CustomStatusesResult();
+			var customState = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
+
+			if (customState != null)
+			{
+				foreach (var stateDetail in customState.GetActiveDetails())
+				{
+					if (stateDetail.IsDeleted)
+						continue;
+
+					result.Data.Add(ConvertCustomStatusData(customState, stateDetail));
+				}
+			}
+
+			if (!result.Data.Any())
+			{
+				var defaultStatuses = _customStateService.GetDefaultPersonStatuses();
+				var state = new CustomState();
+				state.Type = (int)CustomStateTypes.Personnel;
+
+				foreach (var defaultStatus in defaultStatuses)
+				{
+					result.Data.Add(ConvertCustomStatusData(state, defaultStatus));
+				}
+			}
+
+			if (result.Data.Any())
+			{
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the active staffing levels that personnel can currently set for the department
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("GetActivePersonnelStaffingLevels")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
+		public async Task<ActionResult<CustomStatusesResult>> GetActivePersonnelStaffingLevels()
+		{
+			var result = new CustomStatusesResult();
+			var customState = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
+
+			if (customState != null)
+			{
+				foreach (var stateDetail in customState.GetActiveDetails())
+				{
+					if (stateDetail.IsDeleted)
+						continue;
+
+					result.Data.Add(ConvertCustomStatusData(customState, stateDetail));
+				}
+			}
+
+			if (!result.Data.Any())
+			{
+				var defaultStatuses = _customStateService.GetDefaultPersonStaffings();
+				var state = new CustomState();
+				state.Type = (int)CustomStateTypes.Staffing;
+
+				foreach (var defaultStatus in defaultStatuses)
+				{
+					result.Data.Add(ConvertCustomStatusData(state, defaultStatus));
+				}
+			}
+
+			if (result.Data.Any())
+			{
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the active states that units can currently set for the department
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("GetActiveUnitStatesLevels")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.CustomStates_View)]
+		public async Task<ActionResult<CustomStatusesResult>> GetActiveUnitStatesLevels()
+		{
+			var result = new CustomStatusesResult();
+			var customStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
+
+			if (customStates != null && customStates.Any())
+			{
+				foreach (var customState in customStates)
+				{
+					if (customState.IsDeleted)
+						continue;
+
+					foreach (var stateDetail in customState.GetActiveDetails())
+					{
+						if (stateDetail.IsDeleted)
+							continue;
+
+						result.Data.Add(ConvertCustomStatusData(customState, stateDetail));
+					}
+				}
+
+				var defaultStatuses = _customStateService.GetDefaultUnitStatuses();
+				var state = new CustomState();
+				state.Type = (int)CustomStateTypes.Staffing;
+
+				foreach (var defaultStatus in defaultStatuses)
+				{
+					result.Data.Add(ConvertCustomStatusData(state, defaultStatus));
+				}
+
+
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
 
 			ResponseHelper.PopulateV4ResponseData(result);
 

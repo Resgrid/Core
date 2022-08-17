@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -38,6 +39,7 @@ using Resgrid.Repositories.DataRepository;
 using Resgrid.Repositories.DataRepository.Stores;
 using Resgrid.Services;
 using Resgrid.Web.Options;
+using Resgrid.WebCore.Middleware;
 using StackExchange.Redis;
 using Stripe;
 
@@ -101,11 +103,14 @@ namespace Resgrid.Web
 				config.SignIn.RequireConfirmedPhoneNumber = false;
 				config.User.RequireUniqueEmail = true;
 				config.User.AllowedUserNameCharacters = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@";
-				config.Password.RequireDigit = false;
-				config.Password.RequireLowercase = false;
-				config.Password.RequireUppercase = false;
+				config.Password.RequireDigit = true;
+				config.Password.RequireLowercase = true;
+				config.Password.RequireUppercase = true;
 				config.Password.RequireNonAlphanumeric = false;
-				config.Password.RequiredLength = 6;
+				config.Password.RequiredLength = 8;
+				config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+				config.Lockout.MaxFailedAccessAttempts = 5;
+				config.Lockout.AllowedForNewUsers = true;
 			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
 			services.AddAuthentication(sharedOptions =>
@@ -116,8 +121,12 @@ namespace Resgrid.Web
 				})
 				.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 				{
-					options.LoginPath = "/Account/LogIn";
-					options.LogoutPath = "/Account/LogOff";
+					options.SessionStore = new RedisCacheTicketStore(new RedisCacheOptions()
+					{
+						Configuration = CacheConfig.RedisConnectionString
+					});
+
+					options.LogoutPath = new PathString("/Account/LogOff");
 					options.LoginPath = new PathString("/Account/LogOn/");
 					options.AccessDeniedPath = new PathString("/Public/Forbidden/");
 					options.Cookie.SecurePolicy = CookieSecurePolicy.None;//.SameAsRequest;
@@ -128,6 +137,11 @@ namespace Resgrid.Web
 
 			services.ConfigureApplicationCookie(options =>
 			{
+				//options.SessionStore = new RedisCacheTicketStore(new RedisCacheOptions()
+				//{
+				//	Configuration = CacheConfig.RedisConnectionString
+				//});
+				
 				options.Events.OnSignedIn = (context) =>
 				{
 					context.HttpContext.User = context.Principal;
@@ -258,6 +272,11 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.Voice_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Voice_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Voice_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Voice, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.CustomStates_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.CustomStates_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.CustomStates_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.CustomStates_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 
@@ -280,9 +299,30 @@ namespace Resgrid.Web
 
 			services.AddWebOptimizer(pipeline =>
 			{
+				// jquery/js app files and css
 				pipeline.MinifyJsFiles("/js/**/*.js");
 				pipeline.MinifyCssFiles("/css/**/*.css");
+
+				// Public (external website) public style bundles
 				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
+
+				// Angular App code
+				pipeline.AddJavaScriptBundle("/js/ng/app.js", "js/ng/runtime.js", "js/ng/runtime.js", "js/ng/polyfills.js", "js/ng/main.js");
+
+				// Internal app style bundle
+				pipeline.AddCssBundle("/css/int-bundle.css", "lib/font-awesome/css/font-awesome.min.css", "lib/metisMenu/dist/metisMenu.min.css", "lib/bootstrap-tour/build/css/bootstrap-tour.min.css",
+					"css/animate.css", "lib/select2/dist/css/select2.min.css", "clib/kendo/styles/kendo.common.min.css", "clib/kendo/styles/kendo.material.min.css",
+					"lib/toastr/toastr.min.css", "lib/jqueryui/themes/cupertino/jquery-ui.css", "lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
+					"clib/picEdit/css/picedit.min.css", "clib/bootstrap-wizard/bootstrap-wizard.css", "lib/quill/dist/quill.snow.css", "lib/leaflet/dist/leaflet.css",
+					"lib/fullcalendar/dist/fullcalendar.min.css", "lib/bstreeview/dist/css/bstreeview.min.css", "lib/selectize/selectize/dist/css/selectize.default.css", "css/style.css");
+
+				// Internal app js bundle
+				pipeline.AddJavaScriptBundle("/js/int-bundle.js", "lib/metisMenu/dist/metisMenu.min.js", "lib/slimScroll/jquery.slimscroll.js", "lib/pace/pace.js",
+					"lib/select2/dist/js/select2.full.js", "clib/kendo/js/kendo.web.min.js", "lib/bootstrap-tour/build/js/bootstrap-tour.min.js", "lib/toastr/toastr.min.js",
+					"clib/markerwithlabel/markerwithlabel.js", "clib/ujs/jquery-ujs.js", "lib/jquery-validate/dist/jquery.validate.min.js", "lib/jqueryui/jquery-ui.min.js",
+					"lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js", "lib/signalr/dist/browser/signalr.js", "clib/picEdit/js/picedit.min.js",
+					"lib/sweetalert/dist/sweetalert.min.js", "clib/bootstrap-wizard/bootstrap-wizard.min.js", "lib/quill/dist/quill.min.js", "lib/moment/min/moment.min.js",
+					"lib/fullcalendar/dist/fullcalendar.min.js", "lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js", "lib/selectize/selectize/dist/js/standalone/selectize.min.js", "js/site.min.js");
 			});
 
 
@@ -298,7 +338,7 @@ namespace Resgrid.Web
 			builder.AddRazorRuntimeCompilation();
 #endif
 
-#if (!DEBUG)
+//#if (!DEBUG)
 			var redis = ConnectionMultiplexer.Connect(CacheConfig.RedisConnectionString);
 			services.AddDataProtection().SetApplicationName($"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-web").PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
@@ -311,10 +351,10 @@ namespace Resgrid.Web
 
 			services.AddSession(options =>
 			{
-				options.IdleTimeout = TimeSpan.FromMinutes(30);
+				options.IdleTimeout = TimeSpan.FromMinutes(240);
 				options.Cookie.Name = "ResgridSessionCookie";
 			});
-#endif
+//#endif
 
 			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
 
@@ -377,14 +417,16 @@ namespace Resgrid.Web
 				app.Use(async (context, next) => {
 					context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
 					context.Request.Scheme = "https";
+					context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self';");
+
 					await next.Invoke();
 				});
-
-				//app.Use((context, next) =>
-				//{
-				//	context.Request.Scheme = "https";
-				//	return next();
-				//});
+#else
+				app.Use(async (context, next) =>
+				{
+					context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self';");
+					await next.Invoke();
+				});
 #endif
 
 				/* I'm disabling this for now. Ideally it would be configured, but HSTS won't validate
@@ -420,6 +462,8 @@ namespace Resgrid.Web
 
 			app.UseAuthentication();
 			app.UseAuthorization();
+
+			app.UseSession();
 
 			app.UseMvc(routes =>
 			{

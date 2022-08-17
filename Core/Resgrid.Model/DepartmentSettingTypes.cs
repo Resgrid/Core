@@ -22,6 +22,11 @@
 		PersonnelSortOrder = 18,
 		UnitsSortOrder = 19,
 		CallsSortOrder = 20,
-		PersonnelListStatusSortOrder = 21
+		PersonnelListStatusSortOrder = 21,
+		DispatchShiftInsteadOfGroup = 22,
+		AutoSetStatusForShiftDispatchPersonnel = 23,
+		ShiftCallDispatchPersonnelStatusToSet = 24,
+		ShiftCallReleasePersonnelStatusToSet = 25,
+		AllowSignupsForMultipleShiftGroups = 26
 	}
 }

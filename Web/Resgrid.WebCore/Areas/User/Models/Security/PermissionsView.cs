@@ -47,6 +47,7 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public SelectList CreateMessagePermissions { get; set; }
 
 		public int ViewGroupsUsers { get; set; }
+		public bool LockViewGroupsUsersToGroup { get; set; }
 		public SelectList ViewGroupUsersPermissions { get; set; }
 	}
 }

@@ -41,5 +41,6 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public string ImagePath { get; set; }
 		public string InfoWindowContent { get; set; }
 		public string Color { get; set; }
+		public int Type { get; set; }
 	}
 }

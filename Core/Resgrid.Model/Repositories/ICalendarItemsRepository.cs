@@ -40,5 +40,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="calendarItemId">The calendar item identifier.</param>
 		/// <returns>Task&lt;CalendarItem&gt;.</returns>
 		Task<CalendarItem> GetCalendarItemByIdAsync(int calendarItemId);
+
+		Task<IEnumerable<CalendarItem>> GetAllCalendarItemsByDepartmentIdAsync(int departmentId);
 	}
 }

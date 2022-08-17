@@ -1,0 +1,104 @@
+﻿@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Dispatch.FlagCallNoteView
+@{
+    ViewBag.Title = "Resgrid | Flag Call Note";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Flag Call Note</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li>
+                <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+            </li>
+            <li class="active">
+                <strong>Flag Call Note</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="FlagCallNote" asp-route-area="User" method="post">
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.CallId)
+                                @Html.HiddenFor(m => m.CallNoteId)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Call Note Text</label>
+                            <div class="col-sm-10">@Html.Raw(Model.CallNote)</div>
+                        </div>
+
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">Call Note Added On</label>
+                            <div class="col-sm-10">@Html.Raw(Model.AddedOn)</div>
+                        </div>
+
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">Call Note Added By</label>
+                            <div class="col-sm-10">@Html.Raw(Model.AddedBy)</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Is Flagged</label>
+                            <div class="col-sm-10"><input type="checkbox" asp-for="IsFlagged"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Flagged Reason</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="Reason for flagging" asp-for="FlagNote"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.CallId">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Save Flag</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+<script>
+    $(document).ready(function () {
+        resgrid.common.analytics.track('Department - Edit Unit Types');
+
+         $('#newUnitTypePreview').hide();
+        $('#UnitCustomStatesId').select2();
+
+        $('#UnitTypeIcon').on('change', function() {
+          if (this.value >= 0) {
+            $('#newUnitTypePreview').show();
+            let text = $( "#UnitTypeIcon option:selected" ).text().replace(/\s/g, '').toLowerCase();
+            $("#newUnitTypePreview").attr("src", "/images/Mapping/" + text + ".png");
+          } else {
+              $('#newUnitTypePreview').hide();
+          }
+      });
+    });
+</script>
+}

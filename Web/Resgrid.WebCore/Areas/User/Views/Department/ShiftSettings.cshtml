@@ -1,0 +1,65 @@
+﻿@model Resgrid.Web.Areas.User.Models.Departments.ShiftSettingsView
+@{
+    ViewBag.Title = "Resgrid | Shift Settings";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Shift Settings</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li class="active">
+                <strong>Shift Settings</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form role="form" class="form-horizontal" asp-controller="Department" asp-action="ShiftSettings" asp-route-area="User" method="post">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-horizontal">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="All" class="text-danger"></div>
+
+                            @if (Model.SaveSuccess.GetValueOrDefault())
+				            {
+                              <div class="alert alert-success">
+                                Successfully saved Shift Settings.
+                              </div>
+				            }
+
+                            <h3>Shift Signup Settings</h3>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Allow Signups For Multiple Groups</label>
+                                <div class="col-sm-9">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <input type="checkbox" asp-for="AllowSignupsForMultipleShiftGroups">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Cancel</a>
+                                    <button class="btn btn-primary" type="submit">Save Settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts
+{
+
+}

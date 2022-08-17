@@ -136,7 +136,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
 
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
-			var allUsers = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+			var allUsers = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 			model.ExcludedUsers = await _departmentsService.GetAllDisabledOrHiddenUsersAsync(DepartmentId);
 
 			List<string> groupedUserIds = new List<string>();
@@ -331,7 +331,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			groups.Add(defaultGroup);
 			groups.AddRange(await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId));
 
-			ViewBag.Carriers = model.Carrier.ToSelectList();
+			ViewBag.Carriers = model.Carrier.ToSelectList().OrderBy(x => x.Text);
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 

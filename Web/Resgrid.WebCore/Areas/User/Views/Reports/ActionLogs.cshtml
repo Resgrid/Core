@@ -1,129 +1,138 @@
-﻿@using Resgrid.Web.Helpers
-@model Resgrid.Web.Areas.User.Models.ActionLogModel
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.PersonnelStatusHistoryView
 @{
-	ViewBag.Title = "Resgrid | Action Log";
-}
-@section Styles
-{
-
+	Layout = null;
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Action Logs</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Reports" asp-action="Index" asp-route-area="User">Reports</a>
-			</li>
-			<li class="active">
-				<strong>Action Logs</strong>
-			</li>
-		</ol>
-	</div>
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-	{
-		<div class="col-sm-8">
-			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<span><a data-toggle="modal" data-target="#confirmClearAllActionLogsModal" class="btn btn-danger">Clear out all Action Logs</a> </span>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>Personnel Status History Report</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Personnel Status History Report">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+				crossorigin="anonymous"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
+	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
+
+	<style>
+		.table th, .table td {
+			padding: 8px !important;
+			line-height: 20px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+	</style>
+
+	<!--[if lt IE 9]>
+		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+	<link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+	<link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+	<link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+	<link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-1">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-md-6" style="text-align: right;">
+				<h3 style="margin-top: 10px;">Personnel Status History Report</h3>
+				<span>@Model.Start.FormatForDepartment(Model.Department)</span><span>-</span><span>@Model.End.FormatForDepartment(Model.Department)</span>
 			</div>
 		</div>
-	}
-</div>
-
-<div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div id="grid"></div>
-				</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>Status Changes</h4>
 			</div>
 		</div>
-	</div>
-</div>
-
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="confirmClearAllActionLogsModal">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Delete All Action Logs</h4>
-			</div>
-			@using (Html.BeginForm("ClearAllActionLogs", "Reports", FormMethod.Post, new { area = "User", id = "clear_all" }))
-			{
-				<div class="modal-body">
-					<span class="alert alert-error">
-						@Html.ValidationSummary(false)
-						@Html.AntiForgeryToken()
-					</span>
-					<div class="form-group">
-						<label class=" control-label">
-							Are you sure you want to permanently delete all action logs?
-						</label>
-						<div class="controls">
-							@Html.CheckBoxFor(m => m.ConfirmClearAll) Yes I'm sure
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<a href="#" class="btn" data-dismiss="modal">Close</a>
-					<input class="btn btn-primary" id="group_submit_action" name="commit" type="submit"
-								 value="Delete All" />
-				</div>
-			}
-		</div>
-	</div>
-</div>
-
-@section Scripts
-{
-	<script>
-		$(document).ready(function () {
-			$("#grid").kendoGrid({
-				dataSource: {
-					transport: {
-						read: '@Url.Action("GetActionLogs", "Reports", new {Area="User"})'
-					},
-					schema: {
-						model: {
-							fields: {
-								Name: { type: "string" },
-								Action: { type: "string" },
-								Timestamp: { type: "string" }
-							}
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Group</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var response in Model.Personnel)
+						{
+							<tr>
+								<td style="padding-left: 10px;">@response.ID</td>
+								<td>@response.Name</td>
+								<td>@response.Group</td>
+								<td>@response.TotalStaffingChanges</td>
+							</tr>
+							<tr>
+								<td colspan="5">
+									<table class="table table-condensed">
+										<thead>
+											<tr>
+												<th>Timestamp</th>
+												<th>Status</th>
+												<th>Note</th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach (var detail in response.Details)
+											{
+												<tr>
+													<td>@detail.Timestamp</td>
+													<td><span style="color:@detail.StatusColor;">@detail.Status</span></td>
+													<td>@detail.Note</td>
+												</tr>
+											}
+										</tbody>
+									</table>
+								</td>
+							</tr>
 						}
-					},
-					pageSize: 50,
-					serverPaging: false,
-					serverFiltering: true,
-					serverSorting: true
-				},
-				height: 650,
-				filterable: true,
-				sortable: true,
-				pageable: true,
-				columns: [
-						{
-							field: "Name",
-							title: "Name",
-							width: 100
-						},
-						{
-							field: "Action",
-							title: "Action",
-							width: 100
-						},
-						{
-							field: "Timestamp",
-							title: "Timestamp",
-							width: 100,
-							format: "{0:MM/dd/yyyy HH:mm:ss}"
-						}
-				]
-			});
-		});
-	</script>
-}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1" style="text-align: right;">
+				@Model.RunOn.FormatForDepartment(Model.Department)
+			</div>
+		</div>
+	</div>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+	<script src="~/clib/flot/jquery.flot.js"></script>
+	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
+	<script src="~/clib/flot/jquery.flot.resize.js"></script>
+	<script src="~/clib/flot/jquery.flot.pie.js"></script>
+	<script src="~/clib/flot/jquery.flot.time.js"></script>
+	<script src="~/clib/flot/jquery.flot.spline.js"></script>
+
+	<script src="~/clib/kendo/js/kendo.all.min.js"></script>
+	<script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+
+</body>
+</html>

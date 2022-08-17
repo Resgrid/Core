@@ -12,6 +12,7 @@ namespace Resgrid.Web.Areas.User.Models.Units
 		public List<CustomState> UnitStatuses { get; set; }
 		public bool CanUserAddUnit { get; set; }
 		public bool IsUserAdminOrGroupAdmin { get; set; }
+		public string TreeData { get; set; }
 
 		public Dictionary<int, CustomState> UnitCustomStates { get; set; }
 	}

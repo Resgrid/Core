@@ -52,12 +52,12 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Name</label>
+							<label class="col-sm-2 control-label required">Name</label>
 							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Certification Name" asp-for="Name"></div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Type</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Certification Type" asp-for="Type"></div>
+							<div class="col-sm-10"><select asp-for="Type" asp-items="Model.CertificationTypes" style="padding-left: 0; width: 70%;"></select></div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">ID # \ Cert #</label>
@@ -69,7 +69,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Issued By</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Area certification in valid in" asp-for="IssuedBy"></div>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Issuing Authority name" asp-for="IssuedBy"></div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Issued On</label>
@@ -80,10 +80,9 @@
 							<div class="col-sm-10"><input type="text" asp-for="ExpiresOn"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Expires On</label>
+							<label class="col-sm-2 control-label">Attachment</label>
 							<div class="col-sm-10">
 								<input name="fileToUpload" id="fileToUpload" type="file" />
-								<span class="help-block m-b-none">Leave blank if you don't want to change your UserName (i.e. keep your current UserName that you log in with)</span>
 							</div>
 						</div>
 

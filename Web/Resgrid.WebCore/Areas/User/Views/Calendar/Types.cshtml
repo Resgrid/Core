@@ -60,7 +60,11 @@
 											<span style="color:@type.Color;">@type.Color</span>
 										</td>
 										<td>
-											<a href="@Url.Action("DeleteType", "Calendar", new { area = "User" })?typeId=@type.CalendarItemTypeId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this type. Are you sure you want to delete the type @type.Name?" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
+											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+											{
+												<a href="@Url.Action("EditType", "Calendar", new { area = "User" })?id=@type.CalendarItemTypeId" class="btn btn-xs btn-info">Edit</a>
+												<a href="@Url.Action("DeleteType", "Calendar", new { area = "User" })?typeId=@type.CalendarItemTypeId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this type. Are you sure you want to delete the type @type.Name?" rel="nofollow">Delete</a>
+											}
 										</td>
 									</tr>
 								}

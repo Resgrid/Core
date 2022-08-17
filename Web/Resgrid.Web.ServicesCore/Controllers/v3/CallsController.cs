@@ -138,7 +138,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Fls = 0;
 				}
 
-				if (String.IsNullOrWhiteSpace(c.Address) && (!String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1))
+				if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 				{
 					var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -211,7 +211,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Fls = 0;
 				}
 
-				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
+				if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 				{
 					var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -428,7 +428,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				call.Fls = 0;
 			}
 
-			if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
+			if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 			{
 				var geo = c.GeoLocationData.Split(char.Parse(","));
 
@@ -482,7 +482,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
 			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
-			var names = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, true);
+			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
 			var priority = await _callsService.GetCallPrioritiesByIdAsync(call.DepartmentId, call.Priority, false);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(call.DepartmentId);
 
@@ -1727,7 +1727,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					call.Fls = 0;
 				}
 
-				if (String.IsNullOrWhiteSpace(c.Address) && !String.IsNullOrWhiteSpace(c.GeoLocationData) && c.GeoLocationData.Length > 1)
+				if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
 				{
 					var geo = c.GeoLocationData.Split(char.Parse(","));
 

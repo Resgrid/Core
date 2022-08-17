@@ -46,6 +46,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.States = states;
 			model.UnitCustomStatesId = model.UnitType.CustomStatesId.GetValueOrDefault();
 
+			if (model.UnitType.MapIconType.HasValue)
+				model.UnitTypeIcon = model.UnitType.MapIconType.Value;
+
 			return View(model);
 		}
 
@@ -67,12 +70,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				var unitType = await _unitsService.GetUnitTypeByIdAsync(model.UnitType.UnitTypeId);
+
+				if (unitType == null || unitType.DepartmentId != DepartmentId)
+					Unauthorized();
+
 				unitType.Type = model.UnitType.Type;
 
 				if (model.UnitCustomStatesId != 0)
 					unitType.CustomStatesId = model.UnitCustomStatesId;
 				else
 					unitType.CustomStatesId = null;
+
+				if (model.UnitTypeIcon >= 0)
+					unitType.MapIconType = model.UnitTypeIcon;
+				else
+					unitType.MapIconType = null;
 
 				await _unitsService.SaveUnitTypeAsync(unitType, cancellationToken);
 
@@ -82,6 +94,47 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 		#endregion Edit Unit Type
+
+		#region Edit Call Type
+		[HttpGet]
+		public async Task<IActionResult> EditCallType(int callTypeId)
+		{
+			var model = new EditCallTypeView();
+			model.CallType = await _callsService.GetCallTypeByIdAsync(callTypeId);
+
+			if (model.CallType.MapIconType.HasValue)
+				model.CallTypeIcon = model.CallType.MapIconType.Value;
+			else
+				model.CallTypeIcon = -1;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> EditCallType(EditCallTypeView model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				var callType = await _callsService.GetCallTypeByIdAsync(model.CallType.CallTypeId);
+
+				if (callType == null || callType.DepartmentId != DepartmentId)
+					Unauthorized();
+				
+				callType.Type = model.CallType.Type;
+
+				if (model.CallTypeIcon >= 0)
+					callType.MapIconType = model.CallTypeIcon;
+				else
+					callType.MapIconType = null;
+
+				await _callsService.SaveCallTypeAsync(callType, cancellationToken);
+
+				return RedirectToAction("Types", "Department", new { Area = "User" });
+			}
+
+			return View(model);
+		}
+		#endregion Edit Call Type
 
 		#region Call Priority
 		[HttpGet]

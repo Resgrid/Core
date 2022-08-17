@@ -117,9 +117,17 @@ var resgrid;
 					if (result) {
 						notesHtml.empty();
 						notesHtml1.empty();
-						for (var i = 0; i < result.length; i++) {
+                        for (var i = 0; i < result.length; i++) {
+
+                            let flagHtml = '';
+                            if (result[i].IsFlagged) {
+                                flagHtml = "<a href='" + resgrid.absoluteBaseUrl + '/User/Dispatch/FlagCallNote?callId=' + callId + "&callNoteId=" + result[i].CallNoteId + "'> <i class='fa fa-flag' style='color: #ff0000;'></i> </a>";
+                            } else {
+                                flagHtml = "<a href='" + resgrid.absoluteBaseUrl + '/User/Dispatch/FlagCallNote?callId=' + callId + "&callNoteId=" + result[i].CallNoteId + "'> <i class='fa fa-flag'></i> </a>";
+                            }
+
 							notesHtml.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='" + resgrid.absoluteBaseUrl + "/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='https://resgrid.com/images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well'>" + result[i].Note + "</div></div></div>");
-							notesHtml1.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='" + resgrid.absoluteBaseUrl + "/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='https://resgrid.com/images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well'>" + result[i].Note + "</div></div></div>");
+                            notesHtml1.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='" + resgrid.absoluteBaseUrl + "/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='https://resgrid.com/images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well pull-left' style='width:95%'>" + result[i].Note + "</div><div class='pull-right' style='width=4%'>" + flagHtml + "</div></div></div>");
 						}
 
 						if (fromSubmitButton) {

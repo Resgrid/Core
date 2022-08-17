@@ -28,7 +28,25 @@ var resgrid;
                         //$("select").not(this).find("option[value=" + $(this).val() + "]").attr('disabled', true);
                     }
                 });
-                
+
+                $('.selectize').selectize({
+                    valueField: 'UserId',
+                    labelField: 'Name',
+                    searchField: 'Name',
+                    options: [],
+                    create: false,
+                    render: {
+                        option: function (item, escape) {
+                            return '<div>' +
+                                '<span class="title">' +
+                                '<span class="name">' + escape(item.Name) + '</span>' +
+                                '<span class="by">' + escape(item.GroupName) + '</span>' +
+                                '</span>' +
+                                '<span class="description">' + escape(item.Roles) + '</span>' +
+                                '</div>';
+                        }
+                    }
+                });
             });
         })(viewevents = units.setstaffing || (units.setstaffing = {}));
     })(units = resgrid.units || (resgrid.units = {}));

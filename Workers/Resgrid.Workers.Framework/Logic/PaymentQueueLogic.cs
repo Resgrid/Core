@@ -94,6 +94,16 @@ namespace Resgrid.Workers.Framework.Logic
 								await paymentProviderService.ProcessStripeCheckoutUpdateAsync(stripeCheckoutSessionUpdated);
 							}
 							break;
+						case CqrsEventTypes.StripeInvoicePaid:
+							var invoicePaid = JsonConvert.DeserializeObject<Invoice>(qi.Data);
+
+							if (invoicePaid != null)
+							{
+								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+
+								await paymentProviderService.ProcessStripeInvoicePaidAsync(invoicePaid);
+							}
+							break;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}

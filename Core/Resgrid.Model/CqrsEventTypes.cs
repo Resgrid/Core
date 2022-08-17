@@ -16,6 +16,8 @@
 		NewChatMessage = 11,
 		TroubleAlert = 12,
 		StripeCheckoutCompleted = 13,
-		StripeCheckoutUpdated = 14
+		StripeCheckoutUpdated = 14,
+		StripeInvoicePaid = 15,
+		StripeInvoiceItemDeleted = 16,
 	}
 }

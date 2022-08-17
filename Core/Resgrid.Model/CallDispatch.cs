@@ -40,6 +40,8 @@ namespace Resgrid.Model
 
 		public DateTime? LastDispatchedOn { get; set; }
 
+		public DateTime DispatchedOn { get; set; }
+
 		[ForeignKey("ActionLog"), DatabaseGenerated(DatabaseGeneratedOption.None)]
 		[ProtoMember(6)]
 		public int? ActionLogId { get; set; }

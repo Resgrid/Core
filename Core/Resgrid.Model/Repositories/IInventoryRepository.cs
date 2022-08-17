@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -30,5 +31,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="inventoryId">The inventory identifier.</param>
 		/// <returns>Task&lt;Inventory&gt;.</returns>
 		Task<Inventory> GetInventoryByIdAsync(int inventoryId);
+
+		Task<bool> DeleteInventoriesByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

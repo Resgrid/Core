@@ -117,6 +117,49 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<DepartmentMember>> GetAllDepartmentMembersUnlimitedIncDelAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentMember>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectMembersUnlimitedInclDelQuery>();
+
+					return await x.QueryAsync<DepartmentMember, IdentityUser, DepartmentMember>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (up, u) => { up.User = u; return up; }/*,
+						splitOn: "Id"*/);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
 		public async Task<DepartmentMember> GetDepartmentMemberByDepartmentIdAndUserIdAsync(int departmentId, string userId)
 		{
 			try

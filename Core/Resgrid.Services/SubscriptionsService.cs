@@ -360,7 +360,7 @@ namespace Resgrid.Services
 					addon.TransactionId = "SYSTEM";
 					addon.Description = "Addon Forever";
 					addon.Amount = 0.00;
-					addon.Cancelled = false;
+					addon.IsCancelled = false;
 					addon.EffectiveOn = DateTime.UtcNow.AddDays(-1);
 					addon.EndingOn = DateTime.MaxValue;
 
@@ -427,6 +427,80 @@ namespace Resgrid.Services
 			addon.Cost = 0;
 
 			return addon;
+		}
+
+		public async Task<PlanAddon> GetPlanAddonByExternalIdAsync(string externalId)
+		{
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			return addon;
+		}
+
+		public async Task<PaymentAddon> InsertPaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public async Task<bool> HasActiveSubForDepartmentFromStripeAsync(int departmentId)
+		{
+			return true;
+		}
+
+		public async Task<PlanAddon> GetPTTAddonForCurrentSubAsync(int departmentId)
+		{
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			return addon;
+		}
+
+		public async Task<PlanAddon> GetPlanAddonByIdAsync(string planAddonId)
+		{
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			return addon;
+		}
+
+		public async Task<PlanAddon> AddAddonAddedToExistingSub(int departmentId, Plan plan, PlanAddon addon)
+		{
+			PlanAddon addon1 = new PlanAddon();
+			addon1.AddonType = 1;
+			addon1.Cost = 0;
+
+			return addon1;
+		}
+
+		public async Task<bool> CancelPlanAddonByTypeFromStripeAsync(int departmentId, int addonType)
+		{
+			return true;
+		}
+
+		public async Task<Stripe.Subscription> GetCanceledPlanFromStripeAsync(int departmentId)
+		{
+			return null;
+		}
+
+		public async Task<List<PlanAddon>> GetAllAddonPlansAsync()
+		{
+			List<PlanAddon> addons = new List<PlanAddon>();
+
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			addons.Add(addon);
+
+			return addons;
+		}
+
+		public async Task<PaymentAddon> SavePaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default)
+		{
+			return null;
 		}
 	}
 }

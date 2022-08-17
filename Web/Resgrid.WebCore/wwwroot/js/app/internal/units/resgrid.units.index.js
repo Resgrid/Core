@@ -8,6 +8,8 @@ var resgrid;
 			$(document).ready(function () {
 				resgrid.common.analytics.track('Units List');
 
+                $('#tree').bstreeview({ data: treeData });
+
 				$('input[type="checkbox"]').click(evaluate);
 				$("#unitsIndexList").kendoGrid({
 					dataSource: {
@@ -170,7 +172,19 @@ var resgrid;
 					});
 
 					return unitsString;
-				}
+                }
+
+                $(document).on('click', '.list-group-item', function (e) {
+                    if (e) {
+                        $('.unitTabPannel').each(function (i, el) {
+                            $(el).hide();
+                        });
+
+                        if (e.target) {
+                            $("#unitsTab" + e.target.id.replace('TreeGroup_', '')).show();
+                        }
+                    }
+                });
 			});
 		})(index = units.index || (units.index = {}));
 	})(units = resgrid.units || (resgrid.units = {}));

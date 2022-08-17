@@ -1,0 +1,102 @@
+﻿@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Templates.NewCallNoteModel
+@{
+    ViewBag.Title = "Resgrid | New Call Note Template";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>New Call Note Template</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li>
+                <a asp-controller="Templates" asp-action="Index" asp-route-area="User">Templates</a>
+            </li>
+            <li>
+                <a asp-controller="Templates" asp-action="CallNotes" asp-route-area="User">Call Note Templates</a>
+            </li>
+            <li class="active">
+                <strong>New Call Note Template</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form id="newTemplateForm" class="form-horizontal" role="form" asp-controller="Templates" asp-action="NewCallNote" asp-route-area="User" method="post">
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                @Html.AntiForgeryToken()
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                Name
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", autofocus = "autofocus" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                Sort
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="number" asp-for="Sort">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                Note Text
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="col-md-8">
+                                    <textarea cols="15" rows="5" class="form-control" asp-for="Data"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Templates" asp-action="CallNotes" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Add Template</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+<script>
+    document.querySelector("input[name='Sort']").addEventListener("keypress", function (evt) {
+        if(evt.which == 8){return} // to allow BackSpace
+        if (evt.which < 48 || evt.which > 57)
+        {
+            evt.preventDefault();
+        }
+    });
+</script>
+}

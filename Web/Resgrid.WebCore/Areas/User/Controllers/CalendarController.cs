@@ -117,6 +117,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Item.CreatorUserId = UserId;
 				model.Item.Entities = model.entities;
 
+				if (model.Item.RecurrenceType == 2)
+				{
+					model.Item.RepeatOnWeek = model.WeekdayOccurrence;
+					model.Item.RepeatOnDay = model.WeekdayDayOfWeek;
+				}
+
 				await _calendarService.AddNewCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
 
 				return RedirectToAction("Index");
@@ -599,6 +605,46 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.Type.DepartmentId = DepartmentId;
 				await _calendarService.SaveCalendarItemTypeAsync(model.Type, cancellationToken);
+
+				return RedirectToAction("Types", "Calendar", new { Area = "User" });
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Schedule_Create)]
+		public async Task<IActionResult> EditType(string id)
+		{
+			if (String.IsNullOrWhiteSpace(id))
+				Unauthorized();
+			
+			NewTypeView model = new NewTypeView();
+			model.Type = await _calendarService.GetCalendarItemTypeByIdAsync(int.Parse(id));
+
+			if (model.Type.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_Create)]
+		public async Task<IActionResult> EditType(NewTypeView model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				var savedType = await _calendarService.GetCalendarItemTypeByIdAsync(model.Type.CalendarItemTypeId);
+
+				if (savedType == null)
+					Unauthorized();
+
+				if (savedType.DepartmentId != DepartmentId)
+					Unauthorized();
+
+				savedType.Name = model.Type.Name;
+				savedType.Color = model.Type.Color;
+				await _calendarService.SaveCalendarItemTypeAsync(savedType, cancellationToken);
 
 				return RedirectToAction("Types", "Calendar", new { Area = "User" });
 			}

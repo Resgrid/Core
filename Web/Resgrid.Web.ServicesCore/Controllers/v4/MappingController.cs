@@ -86,6 +86,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			//var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			//var personnelViewModels = (await GetPersonnelStatuses()).Value;
 
@@ -191,6 +193,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				info.ImagePath = "Station";
 				info.Title = station.Name;
 				info.InfoWindowContent = station.Name;
+				info.Type = 2;
 
 				if (station.Address != null)
 				{
@@ -223,6 +226,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				info.Id = $"c{call.CallId}";
 				info.Title = call.Name;
 				info.InfoWindowContent = call.NatureOfCall;
+				info.Type = 0;
+
+				if (callTypes != null && callTypes.Count > 0 && !String.IsNullOrWhiteSpace(call.Type))
+				{
+					var type = callTypes.FirstOrDefault(x => x.Type == call.Type);
+
+					if (type != null && type.MapIconType.HasValue)
+						info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
+				}
 
 				if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 				{
@@ -260,6 +272,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 					info.InfoWindowContent = "";
 					info.Latitude = double.Parse(unit.Latitude.Value.ToString());
 					info.Longitude = double.Parse(unit.Longitude.Value.ToString());
+					info.Type = 1;
+
+					if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Unit.Type))
+					{
+						var type = unitTypes.FirstOrDefault(x => x.Type == unit.Unit.Type);
+
+						if (type != null && type.MapIconType.HasValue)
+							info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
+					}
 
 					result.Data.MapMakerInfos.Add(info);
 				}
@@ -302,6 +323,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			//		info.InfoWindowContent = "";
 			//		info.Latitude = double.Parse(person.Latitude.Value.ToString());
 			//		info.Longitude = double.Parse(person.Longitude.Value.ToString());
+			//		info.Type = 3;
 
 			//		result.Data.MapMakerInfos.Add(info);
 			//	}

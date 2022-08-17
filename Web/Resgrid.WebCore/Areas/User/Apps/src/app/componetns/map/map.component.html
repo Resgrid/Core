@@ -1,0 +1,10 @@
+<div>
+  <div style="width: 100%; float: right; text-align: right;" *ngIf="showbuttons == true">
+    Show Calls: <input type="checkbox" [checked]="showCalls" (change)="changeShowCalls($event)"> &nbsp;&nbsp;&nbsp;
+    Show Stations: <input type="checkbox" [checked]="showStations" (change)="changeShowStations($event)"> &nbsp;&nbsp;&nbsp;
+    Show Units: <input type="checkbox" [checked]="showUnits" (change)="changeShowUnits($event)"> &nbsp;&nbsp;&nbsp;
+    Show Personnel: <input type="checkbox" [checked]="showPersonnel" (change)="changeShowPeople($event)">
+  </div>
+  <div #map id="map" name="map" style="width: 100%;" [style.height]="mapheight">
+  </div>
+</div>

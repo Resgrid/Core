@@ -143,22 +143,22 @@ namespace Resgrid.Providers.Claims
 					if (group != null)
 						isGroupAdmin = group.IsUserGroupAdmin(user.Id);
 
-					if (departmentAdmin)
-					{
-						var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(department.DepartmentId);
-						if (groups != null)
-						{
-							foreach (var departmentGroup in groups)
-							{
-								ClaimsLogic.AddGroupClaim(id, departmentGroup.DepartmentGroupId, true);
-							}
-						}
-					}
-					else
-					{
+					//if (departmentAdmin)
+					//{
+					//	var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(department.DepartmentId);
+					//	if (groups != null)
+					//	{
+					//		foreach (var departmentGroup in groups)
+					//		{
+					//			ClaimsLogic.AddGroupClaim(id, departmentGroup.DepartmentGroupId, true);
+					//		}
+					//	}
+					//}
+					//else
+					//{
 						if (group != null)
 							ClaimsLogic.AddGroupClaim(id, group.DepartmentGroupId, isGroupAdmin);
-					}
+					//}
 
 					string timeZone = "Pacific Standard Time";
 					if (!String.IsNullOrWhiteSpace(department.TimeZone))
@@ -194,6 +194,7 @@ namespace Resgrid.Providers.Claims
 					ClaimsLogic.AddProtocolClaims(id, departmentAdmin);
 					ClaimsLogic.AddFormsClaims(id, departmentAdmin);
 					ClaimsLogic.AddVoiceClaims(id, departmentAdmin);
+					ClaimsLogic.AddCustomStateClaims(id, departmentAdmin);
 				}
 			}
 

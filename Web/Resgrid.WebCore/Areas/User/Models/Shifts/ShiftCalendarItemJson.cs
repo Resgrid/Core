@@ -9,6 +9,7 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public string Title { get; set; }
 		public DateTime Start { get; set; }
 		public DateTime End { get; set; }
+		public string Color { get; set; }
 		public string StartTimezone { get; set; }
 		public string EndTimezone { get; set; }
 		public string Description { get; set; }
@@ -19,6 +20,8 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public int SignupType { get; set; }
 		public bool IsAllDay { get; set; }
 		public int ShiftId { get; set; }
+		public string WorkshiftId { get; set; }
+		public string WorkshiftDayId { get; set; }
 		public bool Filled { get; set; }
 		public bool UserSignedUp { get; set; }
 		public List<ShiftGroupNeeds> Groups { get; set; }

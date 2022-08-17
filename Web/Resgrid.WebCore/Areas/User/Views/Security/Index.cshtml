@@ -344,11 +344,11 @@
 								    @Html.DropDownListFor(m => m.ViewGroupsUsers, Model.ViewGroupUsersPermissions)
 								</td>
 								<td>
-								  N/A
+								  <input type="checkbox" asp-for="LockViewGroupsUsersToGroup" />
 								</td>
 								<td>
-								  <span id="createMessagesRolesSpan">No Roles</span>
-								  <div id="createMessagesRolesDiv" style="display: none;"><select id="createMessagesRoles" name="createMessagesRoles"></select></div>
+								  <span id="viewUsersRolesSpan">No Roles</span>
+								  <div id="viewUsersRolesDiv" style="display: none;"><select id="viewUsersRoles" name="viewUsersRoles"></select></div>
 								</td>
 								</tr>
 								</tbody>

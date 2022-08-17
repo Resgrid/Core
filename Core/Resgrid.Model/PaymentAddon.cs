@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using ProtoBuf;
-using Resgrid.Framework;
-using Resgrid.Model.Identity;
 
 namespace Resgrid.Model
 {
@@ -55,7 +53,7 @@ namespace Resgrid.Model
 		public string TransactionId { get; set; }
 
 		[ProtoMember(19)]
-		public bool Cancelled { get; set; }
+		public bool IsCancelled { get; set; }
 
 		[ProtoMember(20)]
 		public DateTime? CancelledOn { get; set; }

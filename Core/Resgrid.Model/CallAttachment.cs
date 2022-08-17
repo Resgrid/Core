@@ -55,6 +55,19 @@ namespace Resgrid.Model
 		//[ProtoMember(10)]
 		//public string Note { get; set; }
 
+		public bool IsDeleted { get; set; }
+
+		public bool IsFlagged { get; set; }
+
+		public string FlaggedReason { get; set; }
+
+		public string FlaggedByUserId { get; set; }
+
+		public string DeletedByUserId { get; set; }
+
+		public DateTime? FlaggedOn { get; set; }
+
+		public DateTime? DeletedOn { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]

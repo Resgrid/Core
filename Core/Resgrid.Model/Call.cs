@@ -161,6 +161,8 @@ namespace Resgrid.Model
 
 		public bool? HasBeenDispatched { get; set; }
 
+		public int? LinkedCallId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -194,8 +196,8 @@ namespace Resgrid.Model
 			if (Dispatches != null && Dispatches.Any())
 			{
 				var dispatch = from d in Dispatches
-											 where d.UserId == userId
-											 select d;
+							   where d.UserId == userId
+							   select d;
 
 				if (dispatch != null && dispatch.Any())
 					return true;
@@ -227,7 +229,7 @@ namespace Resgrid.Model
 			{
 				if (Priority <= 3)
 				{
-					switch (((Resgrid.Model.CallPriority) Priority))
+					switch (((Resgrid.Model.CallPriority)Priority))
 					{
 						case Resgrid.Model.CallPriority.Low:
 							return "Low";
@@ -275,6 +277,24 @@ namespace Resgrid.Model
 				return false;
 
 			return PreviousDispatchCount == DispatchCount;
+		}
+
+		public bool HasValidGeolocationData()
+		{
+			if (!String.IsNullOrWhiteSpace(GeoLocationData) && GeoLocationData.Length > 3)
+			{
+				var geo = GeoLocationData.Split(char.Parse(","));
+				if (geo.Length == 2)
+				{
+					double r1 = 0;
+					double r2 = 0;
+
+					if (double.TryParse(geo[0], out r1) && double.TryParse(geo[1], out r2))
+						return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

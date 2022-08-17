@@ -1,0 +1,195 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Reports.Calls.OpenCallResourceView
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Active Calls and Resources Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Active Calls and Resources Report">
+    <meta name="author" content="Resgrid">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          crossorigin="anonymous"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="hidden"
+          asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
+    <link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
+
+    <style>
+        .table th, .table td {
+            padding: 8px !important;
+            line-height: 20px !important;
+            text-align: left !important;
+            vertical-align: top !important;
+        }
+    </style>
+
+    <!--[if lt IE 9]>
+        <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+    <link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+    <link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+    <link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+    <link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+            </div>
+            <div class="col-md-6" style="text-align: right;">
+                <h3 style="margin-top: 10px;">Active Calls and Resources Report</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h4>Calls</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <table class="table table-condensed">
+                    <tbody>
+                        @foreach (var callState in Model.Calls)
+                        {
+                            <tr style="background-color: #e0e0e0;">
+                                <td style="padding-left: 10px;">
+                                     <strong><small>Number</small></strong>
+                                    <span style="display: block;">@callState.Number</span>
+                                </td>
+                                <td>
+                                    <strong><small>Call Name</small></strong>
+                                    <span style="display: block;">@callState.Name</span>
+                                </td>
+                                <td>
+                                    <strong><small>Type</small></strong>
+                                    <span style="display: block;">@callState.Type</span>
+                                </td>
+                                <td>
+                                    <strong><small>Logged On</small></strong>
+                                    <span style="display: block;">@callState.LoggedOn.FormatForDepartment(Model.Department)</span>
+                                </td>
+                                <td>
+                                    <strong><small>Units</small></strong>
+                                    <span style="display: block;">@callState.Units.Count()</span>
+                                </td>
+                                <td>
+                                    <strong><small>Personnel</small></strong>
+                                    <span style="display: block;">@callState.Personnel.Count()</span>
+                                </td>
+                            </tr>
+
+                            @if (callState.Units.Count() > 0)
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <h4>Units on Call</h4>
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var unit in callState.Units)
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <table class="table table-condensed table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Unit Name</th>
+                                                    <th>Dispatched On</th>
+                                                    <th>14 Day Mark</th>
+                                                    <th>21 Day Mark</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>@unit.UnitName</td>
+                                                    <td>@unit.DispatchedOn.FormatForDepartment(Model.Department)</td>
+                                                    <td>@unit.DispatchedOn.AddDays(14).FormatForDepartment(Model.Department)</td>
+                                                    <td>@unit.DispatchedOn.AddDays(21).FormatForDepartment(Model.Department)</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+
+                            @if (callState.Personnel.Count() > 0)
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <h4>Personnel on Call</h4>
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var person in callState.Personnel)
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <table class="table table-condensed table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Person Name</th>
+                                                    <th>Group Name</th>
+                                                    <th>Dispatched On</th>
+                                                    <th>14 Day Mark</th>
+                                                    <th>21 Day Mark</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>@person.Name</td>
+                                                    <td>@person.GroupName</td>
+                                                    <td>@person.DispatchedOn.FormatForDepartment(Model.Department)</td>
+                                                    <td>@person.DispatchedOn.AddDays(14).FormatForDepartment(Model.Department)</td>
+                                                    <td>@person.DispatchedOn.AddDays(21).FormatForDepartment(Model.Department)</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1" style="text-align: right;">
+                @Model.RunOn.FormatForDepartment(Model.Department)
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+    <script src="~/clib/flot/jquery.flot.js"></script>
+    <script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="~/clib/flot/jquery.flot.resize.js"></script>
+    <script src="~/clib/flot/jquery.flot.pie.js"></script>
+    <script src="~/clib/flot/jquery.flot.time.js"></script>
+    <script src="~/clib/flot/jquery.flot.spline.js"></script>
+
+    <script src="~/clib/kendo/js/kendo.all.min.js"></script>
+    <script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+
+</body>
+</html>

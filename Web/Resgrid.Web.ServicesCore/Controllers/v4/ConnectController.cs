@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
+using Resgrid.Config;
+using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Web.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,13 +36,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUsersService _usersService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly ISystemAuditsService _systemAuditsService;
 
 		public ConnectController(
 			IUsersService usersService,
 			IUserProfileService userProfileService,
 			IDepartmentsService departmentsService,
 			SignInManager<Model.Identity.IdentityUser> signInManager,
-			UserManager<Model.Identity.IdentityUser> userManager
+			UserManager<Model.Identity.IdentityUser> userManager,
+			ISystemAuditsService systemAuditsService
 			)
 		{
 			_usersService = usersService;
@@ -47,6 +52,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentsService = departmentsService;
 			_signInManager = signInManager;
 			_userManager = userManager;
+			_systemAuditsService = systemAuditsService;
 		}
 
 		/// <summary>
@@ -64,9 +70,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var request = HttpContext.GetOpenIddictServerRequest();
 			if (request != null && request.IsPasswordGrantType())
 			{
+				SystemAudit audit = new SystemAudit();
+				audit.System = (int)SystemAuditSystems.Api;
+				audit.Type = (int)SystemAuditTypes.Login;
+				audit.Username = request.Username;
+				audit.Successful = false;
+				audit.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				audit.ServerName = Environment.MachineName;
+				audit.Data = $"V4 Token, {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+
 				var user = await _userManager.FindByNameAsync(request.Username);
 				if (user == null)
 				{
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+
 					var properties = new AuthenticationProperties(new Dictionary<string, string>
 					{
 						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
@@ -78,7 +95,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 
 				// Validate the username/password parameters and ensure the account is not locked out.
-				var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
+				var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
+
+				audit.UserId = user.Id;
+				audit.Successful = result.Succeeded;
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+
 				if (!result.Succeeded)
 				{
 					var properties = new AuthenticationProperties(new Dictionary<string, string>
@@ -110,6 +132,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var claim in principal.Claims)
 				{
 					claim.SetDestinations(GetDestinations(claim, principal));
+				}
+
+				if (request.GetScopes() != null && request.GetScopes().Contains("mobile"))
+				{
+					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
+				}
+				else
+				{
+					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.NonMobileRefreshTokenExpiryDays));
 				}
 
 				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);

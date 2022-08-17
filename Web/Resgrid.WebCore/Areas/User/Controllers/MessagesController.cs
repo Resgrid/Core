@@ -242,7 +242,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Message = await _messageService.GetMessageByIdAsync(messageId);
 			model.UnreadMessages = await _messageService.GetUnreadMessagesCountByUserIdAsync(UserId);
-			model.UserGroupsAndRoles = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, true, true, true);
+			model.UserGroupsAndRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
 			await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
 
 			return View(model);

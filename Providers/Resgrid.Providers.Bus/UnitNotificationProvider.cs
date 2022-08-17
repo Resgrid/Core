@@ -7,6 +7,8 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Microsoft.Azure.NotificationHubs;
 using Newtonsoft.Json.Linq;
+using Resgrid.Providers.Bus.Models;
+using Newtonsoft.Json;
 
 namespace Resgrid.Providers.Bus
 {
@@ -325,18 +327,44 @@ namespace Resgrid.Providers.Bus
 			{
 				var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 				string appleNotification = null;
+				string category = null;
 
 				if (type == ((int)PushSoundTypes.CallEmergency).ToString() ||
-				    type == ((int)PushSoundTypes.CallHigh).ToString() ||
-				    type == ((int)PushSoundTypes.CallMedium).ToString() ||
-				    type == ((int)PushSoundTypes.CallLow).ToString())
+					type == ((int)PushSoundTypes.CallHigh).ToString() ||
+					type == ((int)PushSoundTypes.CallMedium).ToString() ||
+					type == ((int)PushSoundTypes.CallLow).ToString())
 				{
-					appleNotification = "{\"aps\" : { \"alert\" : \"" + subTitle + "\", \"content-available\": 1, \"category\" : \"CALLS\", \"badge\" : " + count + ", \"sound\" : \"" + GetSoundFileNameFromType(Platforms.iPhone, type, enableCustomSounds) + "\" }, \"eventCode\": \"" + eventCode + "\" }";
+					category = "calls";
 				}
-				else
+				else if (type == ((int)PushSoundTypes.Message).ToString())
 				{
-					appleNotification = "{\"aps\" : { \"alert\" : \"" + subTitle + "\", \"badge\" : " + count + ", \"sound\" : \"" + GetSoundFileNameFromType(Platforms.iPhone, type, enableCustomSounds) + "\" }, \"eventCode\": \"" + eventCode + "\" }";
+					category = "message";
 				}
+				else if (type == ((int)PushSoundTypes.Notifiation).ToString())
+				{
+					category = "notif";
+				}
+
+
+				var apnsPayload = new ApnsPayload
+				{
+					aps = new ApnsHeader
+					{
+						alert = new ApnsAlert
+						{
+							title = title,
+							body = subTitle
+						},
+						badge = count,
+						category = category,
+						sound = GetSoundFileNameFromType(Platforms.iPhone, type, enableCustomSounds)
+					},
+					eventCode = eventCode
+
+				};
+
+				appleNotification = JsonConvert.SerializeObject(apnsPayload);
+
 
 
 				var appleOutcome = await hubClient.SendAppleNativeNotificationAsync(appleNotification, string.Format("unitId:{0}", unitId));

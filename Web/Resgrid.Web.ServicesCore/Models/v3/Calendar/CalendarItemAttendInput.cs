@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Resgrid.Web.Services.Controllers.Version3.Models.Calendar
+﻿namespace Resgrid.Web.Services.Controllers.Version3.Models.Calendar
 {
+	/// <summary>
+	/// Input object to set the attendace to a calendar event
+	/// </summary>
 	public class CalendarItemAttendInput
 	{
 		/// <summary>
-		/// 
+		/// The identifier of the calendar event
 		/// </summary>
-		public int CalId { get; set; }
+		public string CalendarEventId { get; set; }
 
 		/// <summary>
-		/// 
+		/// An optional note for the status
 		/// </summary>
 		public string Note { get; set; }
 

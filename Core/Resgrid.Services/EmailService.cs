@@ -335,7 +335,7 @@ namespace Resgrid.Services
 
 			var userProfile = await _userProfileService.GetProfileByUserIdAsync(department.ManagingUserId);
 
-			await _emailProvider.SendPaymentReciept(department.Name, userProfile.FullName.AsFirstNameLastName, payment.PurchaseOn.ToShortDateString() + " (UTC)", payment.Amount.ToString("C"), user.Email,
+			await _emailProvider.SendPaymentReciept(department.Name, userProfile.FullName.AsFirstNameLastName, payment.PurchaseOn.ToShortDateString() + " (UTC)", payment.Amount.ToString("C", Cultures.UnitedStates), user.Email,
 					((PaymentMethods)payment.Method).ToString(), payment.TransactionId, payment.Plan.Name, string.Format("{0} to {1}", payment.EffectiveOn.ToShortDateString(),
 					payment.EndingOn.ToShortDateString()), payment.EndingOn.ToShortDateString() + " " + payment.EndingOn.ToShortTimeString() + " (UTC)", payment.PaymentId);
 
@@ -390,7 +390,7 @@ namespace Resgrid.Services
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
-			await _emailProvider.SendRefundReciept(profile.FirstName + " " + profile.LastName, user.Email, department.Name, DateTime.UtcNow.ToShortDateString(), (float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C"),
+			await _emailProvider.SendRefundReciept(profile.FirstName + " " + profile.LastName, user.Email, department.Name, DateTime.UtcNow.ToShortDateString(), (float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C", Cultures.UnitedStates),
 					((PaymentMethods)payment.Method).ToString(), charge.Id, payment.PaymentId.ToString());
 
 			return true;
@@ -416,7 +416,7 @@ namespace Resgrid.Services
 		public async Task<bool> SendRefundIssuedNotificationToTeam(Payment payment, Charge charge, Department department)
 		{
 			await _emailProvider.TEAM_SendNotifyRefundIssued(department.DepartmentId.ToString(), department.Name, DateTime.UtcNow.ToShortDateString() + " " + DateTime.UtcNow.ToShortTimeString(),
-													(float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C"), ((PaymentMethods)payment.Method).ToString(), charge.Id, payment.PaymentId.ToString());
+													(float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C", Cultures.UnitedStates), ((PaymentMethods)payment.Method).ToString(), charge.Id, payment.PaymentId.ToString());
 
 			return true;
 		}
@@ -425,7 +425,7 @@ namespace Resgrid.Services
 		{
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
 
-			await  _emailProvider.SendUpgradePaymentReciept(department.Name, newPayment.PurchaseOn.ToShortDateString() + " (UTC)", newPayment.Amount.ToString("C"), user.Email,
+			await  _emailProvider.SendUpgradePaymentReciept(department.Name, newPayment.PurchaseOn.ToShortDateString() + " (UTC)", newPayment.Amount.ToString("C", Cultures.UnitedStates), user.Email,
 					((PaymentMethods)newPayment.Method).ToString(), newPayment.TransactionId, oldPayment.Plan.Name, newPayment.Plan.Name, string.Format("{0} to {1}", newPayment.EffectiveOn.ToShortDateString(),
 					newPayment.EndingOn.ToShortDateString()), newPayment.EndingOn.ToShortDateString() + " " + newPayment.EndingOn.ToShortTimeString() + " (UTC)");
 

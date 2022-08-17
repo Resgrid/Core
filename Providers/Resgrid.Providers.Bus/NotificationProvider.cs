@@ -63,12 +63,16 @@ namespace Resgrid.Providers.Bus
 					{
 						var result = await hubClient.CreateMpnsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
 					}
-					catch (ArgumentException ex)
+					catch (Exception ex)
 					{
-						Framework.Logging.LogException(ex,
-							string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-								tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+						//Framework.Logging.LogException(ex);
 					}
+					//catch (ArgumentException ex)
+					//{
+					//	Framework.Logging.LogException(ex,
+					//		string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+					//			tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					//}
 				}
 			}
 			else if (pushUri.PlatformType == (int)Platforms.Windows8)
@@ -79,12 +83,16 @@ namespace Resgrid.Providers.Bus
 					{
 						var result = await hubClient.CreateWindowsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
 					}
-					catch (ArgumentException ex)
+					catch (Exception ex)
 					{
-						Framework.Logging.LogException(ex,
-							string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-								tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+						//Framework.Logging.LogException(ex);
 					}
+					//catch (ArgumentException ex)
+					//{
+					//	Framework.Logging.LogException(ex,
+					//		string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+					//			tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					//}
 				}
 			}
 			else if (pushUri.PlatformType == (int)Platforms.Android)
@@ -93,12 +101,16 @@ namespace Resgrid.Providers.Bus
 				{
 					var result = await hubClient.CreateFcmNativeRegistrationAsync(pushUri.DeviceId, tagsWithHashedDeviceId.ToArray());
 				}
-				catch (ArgumentException ex)
+				catch (Exception ex)
 				{
-					Framework.Logging.LogException(ex,
-						string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-							tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					//Framework.Logging.LogException(ex);
 				}
+				//catch (ArgumentException ex)
+				//{
+				//	Framework.Logging.LogException(ex,
+				//		string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+				//			tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+				//}
 			}
 			else if (pushUri.PlatformType == (int)Platforms.iPad || pushUri.PlatformType == (int)Platforms.iPhone)
 			{
@@ -106,12 +118,16 @@ namespace Resgrid.Providers.Bus
 				{
 					var result = await hubClient.CreateAppleNativeRegistrationAsync(pushUri.DeviceId, tagsWithHashedDeviceId.ToArray());
 				}
-				catch (ArgumentException ex)
+				catch (Exception ex)
 				{
-					Framework.Logging.LogException(ex,
-						string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-							tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+					//Framework.Logging.LogException(ex);
 				}
+				//catch (ArgumentException ex)
+				//{
+				//	Framework.Logging.LogException(ex,
+				//		string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
+				//			tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
+				//}
 			}
 
 		}

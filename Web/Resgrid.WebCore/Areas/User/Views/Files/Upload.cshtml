@@ -1,7 +1,7 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.WebCore.Areas.User.Models.Files.UploadFileView
 @{
-  ViewBag.Title = "Resgrid | New File Upload";
+  ViewBag.Title = "Resgrid | New Upload";
 }
 
 @section Styles
@@ -17,7 +17,7 @@
         <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
       </li>
       <li class="active">
-        <strong>New File Upload</strong>
+        <strong>New Upload</strong>
       </li>
     </ol>
   </div>
@@ -45,7 +45,17 @@
                 }
               </div>
             </div>
-
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Type</label>
+              <div class="col-sm-10">@if (Model.Type == 1)
+                                {
+                                    <span>Call File</span>
+                                } else if (Model.Type == 2)
+                                {
+                                    <span>Call Image</span>
+                                }
+                            </div>
+            </div>
             <div class="form-group">
               <label class="col-sm-2 control-label">Name</label>
               <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the File" asp-for="Name"></div>

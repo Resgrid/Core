@@ -22,7 +22,7 @@ namespace Resgrid.Model.Services
 		List<IdentityUser> GetAllMembershipsForDepartment(int departmentId);
 		IdentityUser SaveUser(IdentityUser user);
 		void InitUserExtInfo(string userId);
-		List<UserGroupRole> GetUserGroupAndRolesByDepartmentId(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
+		Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
 		IdentityUser UpdateEmail(string userId, string newEmail);
 		Task<bool> DoesUserHaveAnyActiveDepartments(string userName);
 		void ClearCacheForDepartment(int departmentId);

@@ -91,9 +91,9 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public List<string> GetAllowedUsers(Permission permission, int departmentId, int? sourceGroupId, bool isUserDepartmentAdmin, bool isUserGroupAdmin, List<PersonnelRole> roles)
+		public async Task<List<string>> GetAllowedUsersAsync(Permission permission, int departmentId, int? sourceGroupId, bool isUserDepartmentAdmin, bool isUserGroupAdmin, List<PersonnelRole> roles)
 		{
-			var allUsers = _usersService.GetUserGroupAndRolesByDepartmentId(departmentId, true, false, false);
+			var allUsers = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(departmentId, true, false, false);
 
 			if (permission == null)
 				return allUsers.Select(x => x.UserId).ToList();

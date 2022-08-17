@@ -122,5 +122,10 @@
 		public const string Voice_Update = "Voice_Update";
 		public const string Voice_Create = "Voice_Create";
 		public const string Voice_Delete = "Voice_Delete";
+
+		public const string CustomStates_View = "CustomStates_View";
+		public const string CustomStates_Update = "CustomStates_Update";
+		public const string CustomStates_Create = "CustomStates_Create";
+		public const string CustomStates_Delete = "CustomStates_Delete";
 	}
 }

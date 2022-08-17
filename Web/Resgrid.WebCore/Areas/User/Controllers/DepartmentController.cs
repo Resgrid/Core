@@ -142,7 +142,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var user = _usersService.GetUserByEmail(email);
 				if (user != null)
 				{
-					ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department or another. Email address can only be used once per account in the system.", email));
+					ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department or another. Email address can only be used once per account in the system. If the user previously has a Resgrid account they need to be added via the Add a Person page.", email));
 				}
 			}
 
@@ -1105,7 +1105,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				await _callsService.SaveNewCallTypeAsync(model.NewCallType, DepartmentId, model.CallTypeIcon, cancellationToken);
+				CallType newCallType = new CallType();
+				newCallType.DepartmentId = DepartmentId;
+				newCallType.Type = model.NewCallType;
+
+				if (model.CallTypeIcon >= 0)
+					newCallType.MapIconType = model.CallTypeIcon;
+				
+				await _callsService.SaveCallTypeAsync(newCallType, cancellationToken);
 			}
 
 			return RedirectToAction("Types");

@@ -67,22 +67,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		/// <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
 		/// <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
-		[HttpGet("GetMessages")]
+		[HttpGet("GetInboxMessages")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Messages_View)]
-		public async Task<ActionResult<GetMessagesResult>> GetInboxMessages([FromHeader(Name = "X-RESGRID-Page")]int? page, [FromHeader(Name = "X-RESGRID-PageSize")]int? pageSize)
+		public async Task<ActionResult<GetMessagesResult>> GetInboxMessages([FromHeader(Name = "X-RESGRID-Page")] int? page, [FromHeader(Name = "X-RESGRID-PageSize")] int? pageSize)
 		{
 			var result = new GetMessagesResult();
 			var messages =
 				(await _messageService.GetInboxMessagesByUserIdAsync(UserId)).OrderByDescending(x => x.SentOn);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			var currentMessages = new List<MessageResultData>();
 			if (messages != null && messages.Any())
 			{
 				foreach (var m in messages)
 				{
-					currentMessages.Add(ConvertMessageResultData(m, department, UserId));
+					currentMessages.Add(ConvertMessageResultData(m, department, UserId, names));
 				}
 
 				if (pageSize.HasValue && page.HasValue)
@@ -116,19 +117,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetOutboxMessages")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Messages_View)]
-		public async Task<ActionResult<GetMessagesResult>> GetOutboxMessages([FromHeader(Name = "X-RESGRID-Page")]int? page, [FromHeader(Name = "X-RESGRID-PageSize")]int? pageSize)
+		public async Task<ActionResult<GetMessagesResult>> GetOutboxMessages([FromHeader(Name = "X-RESGRID-Page")] int? page, [FromHeader(Name = "X-RESGRID-PageSize")] int? pageSize)
 		{
 			var result = new GetMessagesResult();
 			var messages = (await _messageService.GetSentMessagesByUserIdAsync(UserId)).OrderBy(x => x.SentOn)
 				.OrderByDescending(x => x.SentOn);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			var currentMessages = new List<MessageResultData>();
 			if (messages != null && messages.Any())
 			{
 				foreach (var m in messages)
 				{
-					currentMessages.Add(ConvertMessageResultData(m, department, UserId));
+					currentMessages.Add(ConvertMessageResultData(m, department, UserId, names));
 				}
 
 				if (pageSize.HasValue && page.HasValue)
@@ -168,6 +170,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new GetMessageResult();
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var savedMessage = await _messageService.GetMessageByIdAsync(messageId);
+			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			if (savedMessage != null)
 			{
@@ -176,7 +179,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
 
-				result.Data = ConvertMessageResultData(savedMessage, department, UserId);
+				result.Data = ConvertMessageResultData(savedMessage, department, UserId, names);
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Success;
 			}
@@ -185,6 +188,58 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.PageSize = 0;
 				result.Status = ResponseHelper.NotFound;
 			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Gets all the recipients in the department plus default values the system accepts
+		/// </summary>
+		/// <param name="disallowNoone">Disallow adding a noone option</param>
+		/// <returns>MessageResult object populated with message information from the system.</returns>
+		[HttpGet("GetRecipients")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Messages_View)]
+		public async Task<ActionResult<GetRecipientsResult>> GetRecipients(bool disallowNoone)
+		{
+			var result = new GetRecipientsResult();
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			var personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+
+			result.Data.Add(new RecipientsResultData { Id = "0", Type = "", Name = "Everyone" });
+
+			if (!disallowNoone)
+				result.Data.Add(new RecipientsResultData { Id = "-1", Type = "", Name = "Nobody" });
+
+			if (groups != null && groups.Any())
+			{
+				foreach (var group in groups)
+				{
+					result.Data.Add(new RecipientsResultData { Id = "G:" + group.DepartmentGroupId, Type = "Groups", Name = group.Name });
+				}
+			}
+
+			if (roles != null && roles.Any())
+			{
+				foreach (var role in roles)
+				{
+					result.Data.Add(new RecipientsResultData { Id = "R:" + role.PersonnelRoleId, Type = "Roles", Name = role.Name });
+				}
+			}
+
+			if (personnel != null && personnel.Any())
+			{
+				foreach (var p in personnel)
+				{
+					result.Data.Add(new RecipientsResultData { Id = "P:" + p.UserId, Type = "Personnel", Name = p.Name });
+				}
+			}
+
+			result.PageSize = result.Data.Count();
+			result.Status = ResponseHelper.Success;
 
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
@@ -409,7 +464,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok();
 		}
 
-		public static MessageResultData ConvertMessageResultData(Message savedMessage, Department department, string currentUserId)
+		public static MessageResultData ConvertMessageResultData(Message savedMessage, Department department, string currentUserId, List<PersonName> names)
 		{
 			var message = new MessageResultData();
 			message.MessageId = savedMessage.MessageId.ToString();
@@ -425,7 +480,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			message.ExpiredOn = savedMessage.ExpireOn;
 
 			if (!String.IsNullOrWhiteSpace(savedMessage.SendingUserId))
+			{
 				message.SendingUserId = savedMessage.SendingUserId;
+
+				if (names != null && names.Any())
+				{
+					var name = names.FirstOrDefault(x => x.UserId == savedMessage.SendingUserId);
+					if (name != null)
+						message.SendingName = name.Name;
+				}
+			}
 
 			bool outboxMessage = savedMessage.SendingUserId == currentUserId;
 
@@ -460,6 +524,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 					recipResult.Note = recipient.Note;
 					recipResult.RespondedOn = recipient.ReadOn;
 
+					if (names != null && names.Any())
+					{
+						var name = names.FirstOrDefault(x => x.UserId == recipient.UserId);
+						if (name != null)
+							recipResult.Name = name.Name;
+					}
+
 					message.Recipients.Add(recipResult);
 				}
 			}
@@ -475,6 +546,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 					recipResult.Response = recipient.Response;
 					recipResult.Note = recipient.Note;
 					recipResult.RespondedOn = recipient.ReadOn;
+
+					if (names != null && names.Any())
+					{
+						var name = names.FirstOrDefault(x => x.UserId == recipient.UserId);
+						if (name != null)
+							recipResult.Name = name.Name;
+					}
 
 					message.Recipients.Add(recipResult);
 				}

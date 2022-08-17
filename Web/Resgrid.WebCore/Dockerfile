@@ -6,7 +6,9 @@ ARG BUILD_VERSION
 WORKDIR /app
 EXPOSE 80
 
+FROM node:16.10-bullseye-slim AS node_base
 FROM mcr.microsoft.com/dotnet/sdk:6.0.101-bullseye-slim-amd64 AS build
+COPY --from=node_base . .
 ARG BUILD_VERSION
 WORKDIR /src
 COPY ["Web/Resgrid.WebCore/Resgrid.WebCore.csproj", "Web/Resgrid.WebCore/"]

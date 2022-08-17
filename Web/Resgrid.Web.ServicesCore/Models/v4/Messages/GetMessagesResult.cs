@@ -38,6 +38,11 @@ public class MessageResultData
 	public string Subject { get; set; }
 
 	/// <summary>
+	/// The name of the sending user
+	/// </summary>
+	public string SendingName { get; set; }
+
+	/// <summary>
 	/// UserId of the sending user
 	/// </summary>
 	public string SendingUserId { get; set; }
@@ -112,6 +117,11 @@ public class MessageRecipientResultData
 	/// UserId of the receiving user
 	/// </summary>
 	public string UserId { get; set; }
+
+	/// <summary>
+	/// Name of the receiving user
+	/// </summary>
+	public string Name { get; set; }
 
 	/// <summary>
 	/// Responded/Read on (for Callback and Poll)

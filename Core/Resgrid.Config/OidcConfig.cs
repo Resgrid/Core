@@ -13,6 +13,8 @@
 
 		public static int RefreshTokenExpiryDays = 30;
 
+		public static int NonMobileRefreshTokenExpiryDays = 2;
+
 		public static string EncryptionCert = "";
 
 		public static string SigningCert = "";

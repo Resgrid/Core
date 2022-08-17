@@ -11,7 +11,7 @@
 {
   <link rel="stylesheet" href="~/lib/jplayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" />
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css" />
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.3.22/plyr.css">
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.3.22/plyr.css" />
 }
 
 @Html.HiddenFor(m => m.Latitude)
@@ -42,6 +42,7 @@
 		@if (ClaimsAuthorizationHelper.CanCreateCall())
 		{
 			<a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">Edit Call</a>
+			<a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">Close Call</a>
 		}
       </div>
     </div>

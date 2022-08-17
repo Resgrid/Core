@@ -7,10 +7,12 @@
 
   <ItemGroup>
     <None Remove="Sql\EF0001_PopulateOIDCDb.sql" />
+    <None Remove="Sql\EF0002_PopulateAuditDb.sql" />
     <None Remove="Sql\M0001_InitialMigration.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Sql\EF0002_PopulateAuditDb.sql" />
     <EmbeddedResource Include="Sql\EF0001_PopulateOIDCDb.sql" />
     <EmbeddedResource Include="Sql\M0001_InitialMigration.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

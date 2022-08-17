@@ -137,14 +137,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (request.GetScopes() != null && request.GetScopes().Contains("mobile"))
 				{
 					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
-					//principal.SetAuthorizationCodeLifetime(TimeSpan.FromMinutes(1));
-					//principal.SetIdentityTokenLifetime(TimeSpan.FromMinutes(30));
 					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
-				} else
+				}
+				else
 				{
 					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
-					//principal.SetAuthorizationCodeLifetime(TimeSpan.FromMinutes(1));
-					//principal.SetIdentityTokenLifetime(TimeSpan.FromMinutes(30));
 					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.NonMobileRefreshTokenExpiryDays));
 				}
 

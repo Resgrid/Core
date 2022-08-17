@@ -37,6 +37,24 @@ namespace Resgrid.Model
 		//[NotMapped]
 		public DateTime? LoggedOn { get; set; }
 
+		[ProtoMember(8)]
+		public string IpAddress { get; set; }
+
+		[ProtoMember(9)]
+		public bool Successful { get; set; }
+
+		[ProtoMember(10)]
+		public string ServerName { get; set; }
+
+		[ProtoMember(11)]
+		public string ObjectId { get; set; }
+
+		[ProtoMember(12)]
+		public int ObjectDepartmentId { get; set; }
+
+		[ProtoMember(13)]
+		public string UserAgent { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

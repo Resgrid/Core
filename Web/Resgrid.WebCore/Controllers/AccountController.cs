@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Config;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 using Resgrid.Web.Helpers;
+using Resgrid.WebCore.Helpers;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Resgrid.Web.Controllers
 {
@@ -40,12 +43,13 @@ namespace Resgrid.Web.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IEmailMarketingProvider _emailMarketingProvider;
 		private readonly ISystemAuditsService _systemAuditsService;
-
+		private readonly ICacheProvider _cacheProvider;
+		
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
 						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider,
-						ISystemAuditsService systemAuditsService)
+						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -59,6 +63,7 @@ namespace Resgrid.Web.Controllers
 			_eventAggregator = eventAggregator;
 			_emailMarketingProvider = emailMarketingProvider;
 			_systemAuditsService = systemAuditsService;
+			_cacheProvider = cacheProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -114,9 +119,26 @@ namespace Resgrid.Web.Controllers
 									AllowRefresh = false
 								});
 
+							try
+							{
+								var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimarySid)?.Value;
+
+								if (!string.IsNullOrWhiteSpace(userId))
+								{
+									var token = await ApiAuthHelper.GetBearerApiTokenAsync(model.Username, model.Password);
+									await _cacheProvider.SetStringAsync(CacheConfig.ApiBearerTokenKeyName + $"_${userId}", token, new TimeSpan(48, 0, 0));
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+							}
+
 							Response.Cookies.Delete(".AspNetCore.Identity.Application");
 							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC1");
 							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC2");
+							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC3");
+							
 							if (!String.IsNullOrWhiteSpace(returnUrl))
 								return RedirectToLocal(returnUrl);
 							else

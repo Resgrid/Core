@@ -23,9 +23,6 @@
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
                 <a title="Create PTT Channel" class="btn btn-success" asp-controller="Voice" asp-action="New" asp-route-area="User">New Channel</a>
             </div>
-            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a title="Resync Users" class="btn btn-info" asp-controller="Voice" asp-action="Resync" asp-route-area="User" data-confirm="Only resync users if you've made user changes, this takes a while and users may loose conneciton, do not close or refresh your browser." rel="nofollow">Resync Users</a>
-            </div>
         </div>
     }
 </div>
@@ -90,10 +87,8 @@
                                         <td>
                                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                             {
-                                                if (Model.Voice.Channels.Count <= 1)
-                                                {
-                                                    <a href="@Url.Action("Delete", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this channel. Are you sure you want to delete the channel @c.Name ?" rel="nofollow">Delete</a>
-                                                }
+                                                <a href="@Url.Action("Edit", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-info'>Edit</a>
+                                                <a href="@Url.Action("Delete", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this channel. Are you sure you want to delete the channel @c.Name ?" rel="nofollow">Delete</a>
                                             }
                                         </td>
                                     </tr>

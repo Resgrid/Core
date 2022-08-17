@@ -37,11 +37,11 @@
 	</div>
 	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 	{
-		<div class="col-sm-8">
+		@*<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 				<a title="Manage POIs" class="btn btn-success" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Manage POIs</a>
 			</div>
-		</div>
+		</div>*@
 	}
 </div>
 
@@ -50,7 +50,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<div id="map" style="height: 750px; width: 100%;"></div>
+					<rg-map showbuttons="1" mapheight="750px"></rg-map>
 				</div>
 			</div>
 		</div>
@@ -98,11 +98,11 @@
 
 @section Scripts
 {
-<script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
+@*<script src="~/clib/markerwithlabel/markerwithlabel.js"></script>
 <script src="~/clib/mapMarkers/map-icons.min.js"></script>
 	<script>
 		var centerLat = '@Model.Latitude';
 		var centerLon = '@Model.Longitude';
 	</script>
-	<script src="~/js/app/internal/mapping/resgrid.mapping.index.js" type="text/javascript"></script>
+	<script src="~/js/app/internal/mapping/resgrid.mapping.index.js" type="text/javascript"></script>*@
 }

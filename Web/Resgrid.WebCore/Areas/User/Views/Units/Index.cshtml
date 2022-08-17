@@ -123,15 +123,73 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
                     @{
+                        if (Model.Units != null && Model.Units.Any())
+                        {
+                            @Html.Raw("<div id='unitsTab-1' class='unitTabPannel'>")
+                            @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_0'>")
+
+                            foreach (var u in Model.Units)
+                            {
+                                var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
+                                var stateText = "Unknown";
+                                var stateColor = "#000000";
+                                var stateTextColor = "#FFFFFF";
+
+                                if (unitStatus != null)
+                                {
+                                    var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
+
+                                    if (state != null)
+                                    {
+                                        stateText = state.ButtonText;
+                                        stateColor = state.ButtonColor;
+                                        stateTextColor = state.TextColor;
+                                    }
+                                }
+
+
+                                var customState = 1;
+                                if (Model.UnitCustomStates.ContainsKey(u.UnitId))
+                                {
+                                    customState = Model.UnitCustomStates[u.UnitId].CustomStateId;
+                                }
+
+
+                                @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
+
+                                @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>")
+
+                                @Html.Raw("<td>")
+
+                                @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;")
+
+                                @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                {
+                                    @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>")
+                                }
+
+                                @Html.Raw("</td>")
+                                @Html.Raw("</tr>")
+
+                            }
+                            @Html.Raw("</tbody></table></div></div>")
+                        }
+                        else
+                        {
+                            @Html.Raw("<div style='text-align:center;'><h3>No Units in Department</h3></div>")
+                        }
+                    }
+
+                    @{
                         var count2 = 0;
 
                         var ungroupedUnits2 = Model.Units.Where(x => x.StationGroupId == null);
                         if (ungroupedUnits2 != null && ungroupedUnits2.Any())
                         {
-                            @Html.Raw("<div id='unitsTab0' class='unitTabPannel'>")
-                            ;
+                            @Html.Raw("<div id='unitsTab0' class='unitTabPannel' style='display: none;'>")
+                            
                             @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_0'>")
-                            ;
+                            
 
                             if (ungroupedUnits2 != null && ungroupedUnits2.Any())
                             {
@@ -163,13 +221,13 @@
 
 
                                     @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
-                                    ;
+                                    
                                     @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>")
-                                    ;
+                                    
                                     @Html.Raw("<td>")
-                                    ;
+                                    
                                     @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;")
-                                    ;
+                                    
 
                                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                     {
@@ -179,11 +237,11 @@
 
                                     @Html.Raw("</td>")
                                     @Html.Raw("</tr>")
-                                    ;
+                                    
                                 }
                             }
                             @Html.Raw("</tbody></table></div></div>")
-                            ;
+                            
                             count2++;
                         }
                         else
@@ -321,8 +379,8 @@
 
         @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
         {
-                          <a type="button" href="@Url.Action("EditUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-warning">Edit</a>
-                          <a type="button" href="@Url.Action("DeleteUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this unit. Are you sure you want to delete the unit #=Name#?" rel="nofollow">Delete</a>
+                              <a type="button" href="@Url.Action("EditUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-warning">Edit</a>
+                              <a type="button" href="@Url.Action("DeleteUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this unit. Are you sure you want to delete the unit #=Name#?" rel="nofollow">Delete</a>
         }
     </script>
 

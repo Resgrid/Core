@@ -152,9 +152,10 @@ namespace Resgrid.Repositories.DataRepository
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
 				return db.Query<IdentityUser>(@"SELECT u.* 
-																				FROM AspNetUsers u
-																				INNER JOIN DepartmentGroupMembers dgm ON u.Id = dgm.UserId
-																				WHERE dgm.DepartmentGroupId = @groupId", new { groupId = groupId }).ToList();
+												FROM AspNetUsers u
+												INNER JOIN DepartmentGroupMembers dgm ON u.Id = dgm.UserId
+												INNER JOIN DepartmentMembers dm ON u.Id = dm.UserId
+												WHERE dgm.DepartmentGroupId = @groupId AND dm.IsDeleted = 0", new { groupId = groupId }).ToList();
 			}
 
 			return null;
@@ -227,11 +228,11 @@ namespace Resgrid.Repositories.DataRepository
 			return null;
 		}
 
-		public List<UserGroupRole> GetAllUsersGroupsAndRoles(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
+		public async Task<List<UserGroupRole>> GetAllUsersGroupsAndRolesAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
 		{
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
-				var query = db.Query<UserGroupRole>(@"SELECT dgm.DepartmentGroupId, u.Id as 'UserId',
+				var query = await db.QueryAsync<UserGroupRole>(@"SELECT dgm.DepartmentGroupId, u.Id as 'UserId',
 												(SELECT STUFF((
 														SELECT ',' +  CONVERT(varchar, pru.PersonnelRoleId)
 														FROM PersonnelRoleUsers pru

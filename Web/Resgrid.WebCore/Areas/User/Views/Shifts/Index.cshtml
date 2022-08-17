@@ -54,12 +54,12 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
-					<h5>Shifts</h5>
+					<h5>Recurring Group Shifts</h5>
 					<div class="ibox-tools">
 						@if (ClaimsAuthorizationHelper.CanCreateShift())
 						{
 							<div class="buttons-actions">
-								<a id="manageInvitesButton" title="Invite multiple people" class="btn btn-success" asp-controller="Shifts" asp-action="NewShift" asp-route-area="User">Add Shift</a>
+								<a id="manageInvitesButton" title="Invite multiple people" class="btn btn-success" asp-controller="Shifts" asp-action="NewShift" asp-route-area="User">Add Recurring Group Shift</a>
 							</div>
 						}
 					</div>
@@ -169,16 +169,35 @@
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div id="shiftCalendar"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+    <div class="col-xs-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Calendar</h5>
+          <div class="ibox-tools">
+            @if (ClaimsAuthorizationHelper.CanCreateShift())
+			{
+              <div class="buttons-actions">
+                <a id="addUnitShiftButton" title="Add a new static shift" class="btn btn-success" href="@Url.Action("New", "Workshifts", new {area = "User"})">Add Static Shift</a>
+              </div>
+			}
+          </div>
+        </div>
+        <div class="ibox-content">
+          <rg-shifts-calendar></rg-shifts-calendar>
+          @*<div id="shiftCalendar"></div>*@
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      &nbsp;&nbsp;<br/>
+	  &nbsp;&nbsp;<br/>
+	  &nbsp;&nbsp;<br/>
+	  &nbsp;&nbsp;
+    </div>
+  </div>
 
 @section Scripts
 {

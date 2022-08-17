@@ -76,6 +76,7 @@ namespace Resgrid.Services
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();
 			builder.RegisterType<AuditEventService>().As<IAuditEventService>().SingleInstance();
+			builder.RegisterType<WorkShiftsService>().As<IWorkShiftsService>().SingleInstance();
 
 
 			// Stripe Services

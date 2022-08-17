@@ -59,6 +59,8 @@ namespace Resgrid.Console.Commands
 				.ConfigureRunner(rb => rb
 					// Add SQL Server support to FluentMigrator
 					.AddSqlServer()
+					// Set the timeout
+					.WithGlobalCommandTimeout(TimeSpan.Zero)
 					// Set the connection string
 					.WithGlobalConnectionString(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
 					// Define the assembly containing the migrations
@@ -76,7 +78,7 @@ namespace Resgrid.Console.Commands
 		{
 			// Instantiate the runner
 			var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
-
+			
 			// Execute the migrations
 			runner.MigrateUp();
 		}

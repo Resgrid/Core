@@ -211,6 +211,54 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<CalendarItem>> GetAllCalendarItemsByDepartmentIdAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<CalendarItem>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectCalendarItemByDIdQuery>();
+
+					var dictionary = new Dictionary<int, CalendarItem>();
+					var result = await x.QueryAsync<CalendarItem, CalendarItemAttendee, CalendarItem>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: CalendarItemRecipientMapping(dictionary),
+						splitOn: "CalendarItemAttendeeId");
+
+					if (dictionary.Count > 0)
+						return dictionary.Select(y => y.Value);
+
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
 		private static Func<CalendarItem, CalendarItemAttendee, CalendarItem> CalendarItemRecipientMapping(Dictionary<int, CalendarItem> dictionary)
 		{
 			return new Func<CalendarItem, CalendarItemAttendee, CalendarItem>((calendarItem, calendarItemAttendee) =>

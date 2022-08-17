@@ -218,5 +218,7 @@ namespace Resgrid.Model.Services
 		/// <param name="groupId">The group identifier.</param>
 		/// <returns>List&lt;IdentityUser&gt;.</returns>
 		List<IdentityUser> GetAllUsersForGroup(int groupId);
+
+		Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

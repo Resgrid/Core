@@ -38,5 +38,7 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<DepartmentMember>> GetAllDepartmentMemberByUserIdAsync(string userId);
 		//List<UserProfileMaintenance> GetAllMissingUserProfiles();
 		//List<UserProfileMaintenance> GetAllUserProfilesWithEmptyNames();
+
+		Task<IEnumerable<DepartmentMember>> GetAllDepartmentMembersUnlimitedIncDelAsync(int departmentId);
 	}
 }

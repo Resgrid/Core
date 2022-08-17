@@ -66,7 +66,8 @@
                                             }
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallType", "Department", new { area = "User", callTypeId = c.CallTypeId })" data-confirm="WARNING: This will permanently delete this call type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                                             <a class="btn btn-xs btn-primary" href="@Url.Action("EditCallType", "Types", new { area = "User", callTypeId = c.CallTypeId })">Edit</a>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallType", "Department", new { area = "User", callTypeId = c.CallTypeId })" data-confirm="WARNING: This will permanently delete this call type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow">Delete</a>
                                         </td>
                                     </tr>
                                 }
@@ -221,49 +222,6 @@
                                         <td>
                                             <a class="btn btn-xs btn-primary" href="@Url.Action("EditUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })"><i class="icon-pencil"></i> Edit</a>
                                             <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteUnitType", "Department", new { area = "User", unitTypeId = c.UnitTypeId })" data-confirm="WARNING: This will permanently delete this unit type. Are you sure you want to delete the unit type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <div class="wrapper wrapper-content">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>Certification Types</h5>
-                    <div class="ibox-tools">
-                        <div class="buttons-actions">
-                            <a title="Add a new Certification type" class="btn btn-success" data-target="#newCertificationTypeModal" data-toggle="modal"><i class="icon-plus"></i> New Certification Type</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="ibox-content">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Type Name</th>
-                                    <th>&nbsp;</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var c in Model.CertificationTypes)
-                                {
-                                    <tr>
-                                        <td>
-                                            @c.Type
-                                        </td>
-
-                                        <td>
-                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Department", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="WARNING: This will permanently delete this Certification Type. Are you sure you want to delete the call type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
                                         </td>
                                     </tr>
                                 }

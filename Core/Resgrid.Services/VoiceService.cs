@@ -57,7 +57,7 @@ namespace Resgrid.Services
 				var voice = await GetOrCreateDepartmentVoiceRecordAsync(department);
 				var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId, true, true);
 				var userProfiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId, true);
-
+				
 				if (users != null && users.Any())
 				{
 					foreach (var user in users)
@@ -100,35 +100,38 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentVoiceUser> SaveUserToVoipProviderAsync(DepartmentVoice voice, UserProfile profile, string emailAddress, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if (await CanDepartmentUseVoiceAsync(voice.DepartmentId))
+			if (Config.SystemBehaviorConfig.VoipProviderType == Config.VoipProviderTypes.Kazoo)
 			{
-				var userVoice = await _departmentVoiceUserRepository.GetDepartmentVoiceUserByUserIdAsync(profile.UserId);
-				string systemUserId = string.Empty;
-				string deviceId = string.Empty;
-
-				if (userVoice != null)
+				if (await CanDepartmentUseVoiceAsync(voice.DepartmentId))
 				{
-					if (!string.IsNullOrWhiteSpace(userVoice.SystemUserId))
-						systemUserId = userVoice.SystemUserId;
+					var userVoice = await _departmentVoiceUserRepository.GetDepartmentVoiceUserByUserIdAsync(profile.UserId);
+					string systemUserId = string.Empty;
+					string deviceId = string.Empty;
 
-					if (!string.IsNullOrWhiteSpace(userVoice.SystemDeviceId))
-						deviceId = userVoice.SystemDeviceId;
+					if (userVoice != null)
+					{
+						if (!string.IsNullOrWhiteSpace(userVoice.SystemUserId))
+							systemUserId = userVoice.SystemUserId;
+
+						if (!string.IsNullOrWhiteSpace(userVoice.SystemDeviceId))
+							deviceId = userVoice.SystemDeviceId;
+					}
+
+					systemUserId = await _voipProvider.CreateUserIfNotExistsAsync(systemUserId, emailAddress, profile, voice.DepartmentId);
+					deviceId = await _voipProvider.CreateDeviceForUserIfNotExistsAsync(systemUserId, deviceId, profile, voice.DepartmentId);
+
+					if (userVoice == null)
+						userVoice = new DepartmentVoiceUser();
+
+					userVoice.DepartmentVoiceId = voice.DepartmentVoiceId;
+					userVoice.UserId = profile.UserId;
+					userVoice.SystemUserId = systemUserId;
+					userVoice.SystemDeviceId = deviceId;
+
+					var savedResult = await _departmentVoiceUserRepository.SaveOrUpdateAsync(userVoice, cancellationToken, true);
+
+					return savedResult;
 				}
-
-				systemUserId = await _voipProvider.CreateUserIfNotExistsAsync(systemUserId, emailAddress, profile, voice.DepartmentId);
-				deviceId = await _voipProvider.CreateDeviceForUserIfNotExistsAsync(systemUserId, deviceId, profile, voice.DepartmentId);
-
-				if (userVoice == null)
-					userVoice = new DepartmentVoiceUser();
-
-				userVoice.DepartmentVoiceId = voice.DepartmentVoiceId;
-				userVoice.UserId = profile.UserId;
-				userVoice.SystemUserId = systemUserId;
-				userVoice.SystemDeviceId = deviceId;
-
-				var savedResult = await _departmentVoiceUserRepository.SaveOrUpdateAsync(userVoice, cancellationToken, true);
-
-				return savedResult;
 			}
 
 			return null;
@@ -154,16 +157,33 @@ namespace Resgrid.Services
 				if (channel == null)
 					channel = new DepartmentVoiceChannel();
 
-				var conference = await _voipProvider.CreateConferenceIfNotExistsAsync(channel.DepartmentVoiceChannelId, voice.DepartmentId, name,
+				if (Config.SystemBehaviorConfig.VoipProviderType == Config.VoipProviderTypes.Kazoo)
+				{
+					var conference = await _voipProvider.CreateConferenceIfNotExistsAsync(channel.DepartmentVoiceChannelId, voice.DepartmentId, name,
 					_departmentsService.ConvertDepartmentCodeToDigitPin(department.Code), confNumber);
 
-				if (conference != null)
+					if (conference != null)
+					{
+						channel.DepartmentId = department.DepartmentId;
+						channel.DepartmentVoiceId = voice.DepartmentVoiceId;
+						channel.ConferenceNumber = confNumber;
+						channel.SystemConferenceId = conference.Item1;
+						channel.SystemCallflowId = conference.Item2;
+						channel.Name = name;
+						channel.IsDefault = isDefault;
+
+						var savedChannel = await _departmentVoiceChannelRepository.SaveOrUpdateAsync(channel, cancellationToken);
+
+						return savedChannel;
+					}
+				}
+				else
 				{
 					channel.DepartmentId = department.DepartmentId;
 					channel.DepartmentVoiceId = voice.DepartmentVoiceId;
 					channel.ConferenceNumber = confNumber;
-					channel.SystemConferenceId = conference.Item1;
-					channel.SystemCallflowId = conference.Item2;
+					channel.SystemConferenceId = "NA";
+					channel.SystemCallflowId = "NA";
 					channel.Name = name;
 					channel.IsDefault = isDefault;
 
@@ -172,6 +192,7 @@ namespace Resgrid.Services
 					return savedChannel;
 				}
 			}
+
 
 			return null;
 		}
@@ -206,6 +227,30 @@ namespace Resgrid.Services
 				return Config.VoipConfig.BaseChannelExtensionNumber;
 
 			return latestVoiceDepartment.StartConferenceNumber + Config.VoipConfig.BaseChannelExtensionBump;
+		}
+
+		public async Task<DepartmentVoiceChannel> GetVoiceChannelByIdAsync(string voiceChannelId)
+		{
+			return await _departmentVoiceChannelRepository.GetByIdAsync(voiceChannelId);
+		}
+
+		public async Task<DepartmentVoiceChannel> SaveOrUpdateVoiceChannelAsync(DepartmentVoiceChannel voiceChannel, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (voiceChannel.IsDefault)
+			{
+				var voiceChannels = await _departmentVoiceChannelRepository.GetDepartmentVoiceChannelByDepartmentIdAsync(departmentId);
+
+				if (voiceChannels != null && voiceChannels.Any())
+				{
+					foreach (var channel in voiceChannels)
+					{
+						channel.IsDefault = false;
+						await _departmentVoiceChannelRepository.SaveOrUpdateAsync(channel, cancellationToken, true);
+					}
+				}
+			}
+			
+			return await _departmentVoiceChannelRepository.SaveOrUpdateAsync(voiceChannel, cancellationToken, true);
 		}
 	}
 }

@@ -36,10 +36,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUnitsService _unitsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IWorkShiftsService _workshiftsService;
 
 		public ShiftsController(IShiftsService shiftsService, IDepartmentGroupsService departmentGroupsService, IDepartmentsService departmentService,
 			IPersonnelRolesService personnelRolesService, IUserProfileService userProfileService, IEventAggregator eventAggregator,
-			IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService)
+			IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
+			IWorkShiftsService workshiftsService)
 		{
 			_shiftsService = shiftsService;
 			_departmentGroupsService = departmentGroupsService;
@@ -50,6 +52,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentSettingsService = departmentSettingsService;
 			_unitsService = unitsService;
 			_authorizationService = authorizationService;
+			_workshiftsService = workshiftsService;
 		}
 
 		[HttpGet]
@@ -974,6 +977,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 							item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 23, 59, 59, DateTimeKind.Local);
 						}
 
+						item.Color = shift.Color;
 						item.Title = shift.Name;
 						item.Description = shift.Name;
 						item.ItemType = day.ShiftId; // The Color in the calendar
@@ -1039,6 +1043,34 @@ namespace Resgrid.Web.Areas.User.Controllers
 						}
 
 						calendarItems.Add(item);
+					}
+				}
+			}
+
+			var workshifts = await _workshiftsService.GetAllWorkshiftsByDepartmentAsync(DepartmentId);
+
+			if (workshifts != null && workshifts.Any())
+			{
+				var department = await _departmentService.GetDepartmentByIdAsync(DepartmentId);
+
+				foreach (var workshift in workshifts)
+				{
+					if (workshift.Days != null && workshift.Days.Any())
+					{
+						foreach (var day in workshift.Days)
+						{
+							var item = new ShiftCalendarItemJson();
+							item.Color = workshift.Color;
+							item.Title = workshift.Name;
+							item.Description = workshift.Name;
+							item.SignupType = 2;
+							item.WorkshiftId = workshift.WorkshiftId;
+							item.WorkshiftDayId = day.WorkshiftDayId;
+							item.Start = day.Day.TimeConverter(department).SetToMidnight();
+							item.End = day.Day.TimeConverter(department).SetToEndOfDay();
+
+							calendarItems.Add(item);
+						}
 					}
 				}
 			}

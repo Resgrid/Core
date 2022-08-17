@@ -222,7 +222,7 @@ namespace Resgrid.Services
 			if (identity == null)
 				return null;
 
-			var dm = (from x in await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId)
+			var dm = (from x in await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedIncDelAsync(departmentId)
 					  where x.UserId == identity.Id
 					  select x).FirstOrDefault();
 

@@ -81,7 +81,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
 			//var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 
-			var users = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+			var users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 
 
 			Department department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);

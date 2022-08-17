@@ -266,6 +266,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (shiftData.Personnel != null && shiftData.Personnel.Any(x => x.UserId == currentUserId))
 				shift.InShift = true;
 
+			if (shiftData.Days != null && shiftData.Days.Any())
+			{
+				shift.Days = new List<ShiftDayResultData>();
+				foreach (var shiftDay in shiftData.Days)
+				{
+					var dayResult = new ShiftDayResultData();
+					dayResult.ShiftDayId = shiftDay.ShiftDayId.ToString();
+					dayResult.ShiftId = shiftDay.ShiftId.ToString(); ;
+					dayResult.ShiftName = shiftData.Name;
+					dayResult.ShitDay = shiftDay.Day;
+					dayResult.Start = shiftDay.Start;
+					dayResult.End = shiftDay.End;
+					dayResult.ShiftType = shiftData.AssignmentType;
+					dayResult.SignedUp = shift.InShift;
+					
+					shift.Days.Add(dayResult);
+				}
+			}
+
 			return shift;
 		}
 

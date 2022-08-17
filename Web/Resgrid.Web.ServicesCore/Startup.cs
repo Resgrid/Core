@@ -419,7 +419,8 @@ namespace Resgrid.Web.ServicesCore
 						Scopes.Profile,
 						Scopes.Email,
 						Scopes.OfflineAccess,
-						"mobile");
+						"mobile",
+						"web");
 
 					// Enable the token endpoint.
 					options.SetTokenEndpointUris("/api/v4/connect/token");

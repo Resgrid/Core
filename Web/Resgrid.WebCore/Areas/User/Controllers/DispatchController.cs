@@ -937,6 +937,95 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> FlagCallNote(int callId, int callNoteId)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+				Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false);
+			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
+			
+			if (call.CallNotes == null || !call.CallNotes.Any())
+				Unauthorized();
+			
+			var note = call.CallNotes.FirstOrDefault(x => x.CallNoteId == callNoteId);
+			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			
+			if (note == null)
+				Unauthorized();
+
+			FlagCallNoteView model = new FlagCallNoteView();
+			model.CallId = call.CallId;
+			model.CallNoteId = note.CallNoteId;
+			model.CallNote = note.Note;
+			model.IsFlagged = note.IsFlagged;
+			model.FlagNote = note.FlaggedReason;
+			model.AddedOn = note.Timestamp.FormatForDepartment(department);
+			model.AddedBy = names.FirstOrDefault(x => x.UserId == note.UserId)?.Name;
+			
+			if (note.IsFlagged)
+			{
+				model.FlaggedOn = note.Timestamp.FormatForDepartment(department);
+				model.FlaggedBy = names.FirstOrDefault(x => x.UserId == note.FlaggedByUserId)?.Name;
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> FlagCallNote(FlagCallNoteView model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+				Unauthorized();
+			
+			var call = await _callsService.GetCallByIdAsync(model.CallId);
+
+			if (call == null)
+				Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false);
+			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
+
+			if (call.CallNotes == null || !call.CallNotes.Any())
+				Unauthorized();
+
+			var note = call.CallNotes.FirstOrDefault(x => x.CallNoteId == model.CallNoteId);
+			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+
+			if (note == null)
+				Unauthorized();
+
+			if (ModelState.IsValid)
+			{
+				note.IsFlagged = model.IsFlagged;
+
+				if (note.IsFlagged)
+				{ 
+					note.FlaggedReason = model.FlagNote;
+					note.FlaggedOn = DateTime.UtcNow;
+				}
+				else
+				{
+					note.FlaggedReason = null;
+					note.FlaggedOn = null;
+				}
+
+				await _callsService.SaveCallNoteAsync(note, cancellationToken);
+
+				return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = model.CallId });
+			}
+
+			return View(model);
+		}
+
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Call_Update)]
 		public async Task<IActionResult> AddCallNote([FromBody] AddCallNoteInput model, CancellationToken cancellationToken)
@@ -979,6 +1068,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (name != null)
 				{
 					CallNoteJson note = new CallNoteJson();
+					note.CallNoteId = callNote.CallNoteId;
+					note.IsFlagged = callNote.IsFlagged;
 					note.Name = name.Name;
 					note.Timestamp = callNote.Timestamp.TimeConverter(call.Department).FormatForDepartment(call.Department);
 					note.Note = callNote.Note;
@@ -1792,7 +1883,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, model.Call.CallId)).OrderBy(y => y.Timestamp).ToList();
 			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, model.Call.CallId)).OrderBy(y => y.Timestamp).ToList();
 
-			model.UserGroupRoles = _usersService.GetUserGroupAndRolesByDepartmentId(model.Call.DepartmentId, true, true, true);
+			model.UserGroupRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(model.Call.DepartmentId, true, true, true);
 
 			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(model.Department.DepartmentId);
 

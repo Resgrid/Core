@@ -400,6 +400,37 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-xs-12">
+                <strong><small>Attached Images</small></strong>
+                @foreach (var img in Model.Call.Attachments.Where(x => x.CallAttachmentType == 2))
+                {
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-condensed">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <strong><small>Name</small></strong>
+                                            <span style="display: block;">@img.Name</span>
+                                        </td>
+                                        <td>
+                                            <strong><small>Timestamp</small></strong>
+                                            <span style="display: block;">@img.Timestamp?.TimeConverterToString(Model.Department)</span>
+                                        </td>
+                                        <td>
+                                            <strong><small>Added By</small></strong>
+                                            <span style="display: block;">@(await UserHelper.GetFullNameForUser(img.UserId))</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <img style="max-width:600px;" src="@Url.Action("GetCallImage", "Dispatch", new {Area = "User", callId = img.CallId, attachmentId = img.CallAttachmentId})" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xs-12" style="text-align: right;">
                 @DateTime.UtcNow.TimeConverterToString(Model.Department)
             </div>

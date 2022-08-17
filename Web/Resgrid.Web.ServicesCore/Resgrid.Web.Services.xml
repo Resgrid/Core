@@ -382,6 +382,11 @@
             <param name="input">Input to deregister the device for</param>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
+            <summary>
+            Operations to support Dispatch operations
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
             <summary>
             Operations to support Dispatch operations
@@ -970,14 +975,19 @@
             Department Id
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput.CalId">
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput">
             <summary>
-            
+            Input object to set the attendace to a calendar event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput.CalendarEventId">
+            <summary>
+            The identifier of the calendar event
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput.Note">
             <summary>
-            
+            An optional note for the status
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput.Type">
@@ -3483,6 +3493,13 @@
             <param name="messageId">Integer message Identifier</param>
             <returns>MessageResult object populated with message information from the system.</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetRecipients(System.Boolean)">
+            <summary>
+            Gets all the recipients in the department plus default values the system accepts
+            </summary>
+            <param name="disallowNoone">Disallow adding a noone option</param>
+            <returns>MessageResult object populated with message information from the system.</returns>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.SendMessage(Resgrid.Web.Services.Models.v4.Messages.NewMessageInput,System.Threading.CancellationToken)">
             <summary>
             Sends a new message to users in the system
@@ -5701,6 +5718,11 @@
             Subject of the Message
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.SendingName">
+            <summary>
+            The name of the sending user
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.SendingUserId">
             <summary>
             UserId of the sending user
@@ -5776,6 +5798,11 @@
             UserId of the receiving user
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageRecipientResultData.Name">
+            <summary>
+            Name of the receiving user
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageRecipientResultData.RespondedOn">
             <summary>
             Responded/Read on (for Callback and Poll)
@@ -5789,6 +5816,46 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageRecipientResultData.Note">
             <summary>
             Note for Response (for Callback and Poll)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Messages.GetRecipientsResult">
+            <summary>
+            Gets the messages for a user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.GetRecipientsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Messages.GetRecipientsResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData">
+            <summary>
+            Holds Resgrid message data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData.Id">
+            <summary>
+            Identifier of the recipient
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData.Type">
+            <summary>
+            Type of the recipient
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData.Name">
+            <summary>
+            The name of the recipient
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData.Selected">
+            <summary>
+            Is the recipient selected or not
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Messages.NewMessageInput">
@@ -6773,12 +6840,12 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.Signups">
             <summary>
-            Signups for the shift
+            Signups for the shift (this may be null)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.Needs">
             <summary>
-            What does this shift day need
+            What does this shift day need (this may be null)
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Shifts.ShiftDaySignupResultData">
@@ -6904,6 +6971,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftsResultData.NextDayId">
             <summary>
             Next shift day id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftsResultData.Days">
+            <summary>
+            Days for the shift (this may be null)
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.StandardApiResponseV4Base">

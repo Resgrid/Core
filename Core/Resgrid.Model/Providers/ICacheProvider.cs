@@ -10,5 +10,7 @@ namespace Resgrid.Model.Providers
 		void Remove(string cacheKey);
 		Task<bool> RemoveAsync(string cacheKey);
 		bool IsConnected();
+		Task<bool> SetStringAsync(string cacheKey, string value, TimeSpan expiration);
+		Task<string> GetStringAsync(string cacheKey);
 	}
 }

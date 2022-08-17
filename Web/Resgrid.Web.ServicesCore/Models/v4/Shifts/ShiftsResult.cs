@@ -81,5 +81,10 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		/// Next shift day id
 		/// </summary>
 		public string NextDayId { get; set; }
+
+		/// <summary>
+		/// Days for the shift (this may be null)
+		/// </summary>
+		public List<ShiftDayResultData> Days { get; set; }
 	}
 }

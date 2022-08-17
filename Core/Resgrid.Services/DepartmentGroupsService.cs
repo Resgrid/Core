@@ -447,5 +447,10 @@ namespace Resgrid.Services
 		{
 			return _identityRepository.GetAllUsersForGroup(groupId);
 		}
+
+		public async Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _departmentGroupMembersRepository.DeleteGroupMembersByGroupIdAsync(groupId, departmentId, cancellationToken);
+		}
 	}
 }

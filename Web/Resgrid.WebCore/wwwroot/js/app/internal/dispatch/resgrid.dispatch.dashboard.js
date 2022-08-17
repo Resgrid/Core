@@ -115,21 +115,21 @@ var resgrid;
                         "Timestamp"
                     ]
                 });
-                var mapCenter = new google.maps.LatLng(centerLat, centerLon);
-                var mapOptions = {
-                    zoom: zoomLevel,
-                    center: mapCenter
-                };
-                var mapDom = document.getElementById('map');
-                if (mapDom) {
-                    //var widget = document.getElementById('map').parentNode.parentNode.parentNode.parentNode.parentNode;
-                    //var tempHeight = widget.clientHeight - 70;
-                    //height = tempHeight + "px";
-                    height = "330px";
-                    width = "100%";
-                }
-                map = new google.maps.Map(document.getElementById('map'), mapOptions);
-                initMap();
+                //var mapCenter = new google.maps.LatLng(centerLat, centerLon);
+                //var mapOptions = {
+                //    zoom: zoomLevel,
+                //    center: mapCenter
+                //};
+                //var mapDom = document.getElementById('map');
+               // if (mapDom) {
+               //     //var widget = document.getElementById('map').parentNode.parentNode.parentNode.parentNode.parentNode;
+               //     //var tempHeight = widget.clientHeight - 70;
+               //     //height = tempHeight + "px";
+               //     height = "330px";
+               //     width = "100%";
+               // }
+                //map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                //initMap();
             });
             function refreshCalls() {
                 $('#activeCallsList').data('kendoGrid').dataSource.read();

@@ -336,7 +336,10 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		public async Task<ActionResult> SetCalendarAttendingStatus(CalendarItemAttendInput input)
 		{
-			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(input.CalId);
+			if (String.IsNullOrWhiteSpace(input.CalendarEventId))
+				return NotFound();
+			
+			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(int.Parse(input.CalendarEventId));
 
 			if (calendarItem == null)
 				return NotFound();
@@ -344,7 +347,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (calendarItem.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			var result = await _calendarService.SignupForEvent(input.CalId, UserId, input.Note, input.Type);
+			var result = await _calendarService.SignupForEvent(int.Parse(input.CalendarEventId), UserId, input.Note, input.Type);
 
 			return CreatedAtAction(nameof(SetCalendarAttendingStatus), new { id = result.CalendarItemAttendeeId }, result);
 		}

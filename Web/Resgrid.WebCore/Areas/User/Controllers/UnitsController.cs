@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Resgrid.Model.Providers;
 using Resgrid.WebCore.Areas.User.Models.Units;
 using Resgrid.WebCore.Areas.User.Models;
+using Resgrid.WebCore.Areas.User.Models.Personnel;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -102,9 +103,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			List<BSTreeModel> trees = new List<BSTreeModel>();
+			var tree0 = new BSTreeModel();
+			tree0.id = "TreeGroup_-1";
+			tree0.text = "All Units";
+			tree0.icon = "";
+			trees.Add(tree0);
+			
 			var tree1 = new BSTreeModel();
 			tree1.id = "TreeGroup_0";
-			tree1.text = "Units";
+			tree1.text = "Ungrouped Units";
 			tree1.icon = "";
 			trees.Add(tree1);
 			
@@ -144,7 +151,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new UnitStaffingView();
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Users = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
 
 			return View(model);
@@ -155,7 +162,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> UnitStaffing(UnitStaffingView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Users = _usersService.GetUserGroupAndRolesByDepartmentId(DepartmentId, false, false, false);
+			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
 
 
@@ -1268,6 +1275,64 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Content(buttonHtml);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+
+		public async Task<IActionResult> GetPersonnelForUnitStaffingJson(string search)
+		{
+			List<PersonGroupRolesJson> personsJson = new List<PersonGroupRolesJson>();
+
+			var users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			var activeRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
+
+			foreach (var user in users)
+			{
+				var personJson = new PersonGroupRolesJson();
+				personJson.UserId = user.UserId;
+				personJson.Name = user.Name;
+				personJson.GroupName = user.DepartmentGroupName;
+				personJson.Roles = user.RoleNames;
+
+				if (String.IsNullOrWhiteSpace(search) || user.Name.ToLower().Contains(search.ToLower()))
+				{
+					personsJson.Add(personJson);
+				}
+			}
+
+			return Json(personsJson);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+
+		public async Task<IActionResult> GetActivePersonnelForUnitStaffingRoleJson(string unitId, string activeRole)
+		{
+			List<PersonGroupRolesJson> personsJson = new List<PersonGroupRolesJson>();
+
+			var users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			var activeRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
+
+			var role = activeRoles.FirstOrDefault(x => x.UnitId == int.Parse(unitId) && x.Role == activeRole);
+
+			if (role != null)
+			{
+				var user = users.FirstOrDefault(x => x.UserId == role.UserId);
+
+				if (user != null)
+				{
+					var personJson = new PersonGroupRolesJson();
+					personJson.UserId = user.UserId;
+					personJson.Name = user.Name;
+					personJson.GroupName = user.DepartmentGroupName;
+					personJson.Roles = user.RoleNames;
+
+					personsJson.Add(personJson);
+				}
+			}
+
+			return Json(personsJson);
 		}
 	}
 }

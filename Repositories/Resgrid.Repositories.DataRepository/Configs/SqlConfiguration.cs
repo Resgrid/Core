@@ -45,6 +45,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectMembersWithinLimitsQuery { get; set; }
 		public string SelectMembersByDidUserIdQuery { get; set; }
 		public string SelectMembersByUserIdQuery { get; set; }
+		public string SelectMembersUnlimitedInclDelQuery { get; set; }
 
 		#endregion Department Members
 
@@ -70,6 +71,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectInventoryByTypeIdQuery { get; set; }
 		public string SelectInventoryByDIdQuery { get; set; }
 		public string SelectInventoryByInventoryIdQuery { get; set; }
+		public string DeleteInventoryByGroupIdQuery { get; set; }
 		#endregion Inventory
 
 		#region Queues
@@ -190,6 +192,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCalendarItemAttendeeByUserQuery { get; set; }
 		public string SelectCalendarItemsByDateQuery { get; set; }
 		public string SelectCalendarItemByIdQuery { get; set; }
+		public string SelectCalendarItemByDIdQuery { get; set; }
 		#endregion Calendar
 
 		#region User Profile
@@ -345,6 +348,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectGroupByDispatchCodeQuery { get; set; }
 		public string SelectGroupByMessageCodeQuery { get; set; }
 		public string SelectGroupByGroupIdQuery { get; set; }
+		public string DeleteGroupMembersByGroupIdDidQuery { get; set; }
 		#endregion Department Groups
 
 		#region Payments
@@ -451,5 +455,16 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string RemoveLoginForUserQuery { get; set; }
 		public string UpdateClaimForUserQuery { get; set; }
 		#endregion
+
+		#region Workshifts
+		public string WorkshiftsTable { get; set; }
+		public string WorkshiftDaysTable { get; set; }
+		public string WorkshiftEntitiesTable { get; set; }
+		public string WorkshiftFillsTable { get; set; }
+		public string SelectAllWorkshiftsAndDaysByDidQuery { get; set; }
+		public string SelectWorkshiftByIdQuery { get; set; }
+		public string SelectWorkshiftEntitiesByWorkshiftIdQuery { get; set; }
+		public string SelectWorkshiftFillsByWorkshiftIdQuery { get; set; }
+		#endregion Workshifts
 	}
 }

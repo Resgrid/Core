@@ -86,5 +86,10 @@ namespace Resgrid.Services
 		{
 			return null;
 		}
+
+		public async Task<Payment> ProcessStripeInvoicePaidAsync(Invoice invoice)
+		{
+			return null;
+		}
 	}
 }

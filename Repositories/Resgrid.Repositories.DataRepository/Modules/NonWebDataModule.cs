@@ -141,6 +141,10 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<OidcRepository>().As<IOidcRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemAuditsRepository>().As<ISystemAuditsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AutofillsRepository>().As<IAutofillsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkshiftsRepository>().As<IWorkshiftsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkshiftEntitysRepository>().As<IWorkshiftEntitysRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkshiftFillsRepository>().As<IWorkshiftFillsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkshiftDaysRepository>().As<IWorkshiftDaysRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

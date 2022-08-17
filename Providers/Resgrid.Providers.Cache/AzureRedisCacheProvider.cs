@@ -150,6 +150,59 @@ namespace Resgrid.Providers.Cache
 			return data;
 		}
 
+		public async Task<bool> SetStringAsync(string cacheKey, string value, TimeSpan expiration)
+		{
+			IDatabase cache = null;
+
+			if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+			{
+				cache = _connection.GetDatabase();
+				
+				if (value != null && cache != null)
+				{
+					try
+					{
+						return await cache.StringSetAsync(SetCacheKeyForEnv(cacheKey), value, expiration);
+					}
+					catch (TimeoutException)
+					{ }
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public async Task<string> GetStringAsync(string cacheKey)
+		{
+			IDatabase cache = null;
+
+			if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+			{
+				cache = _connection.GetDatabase();
+
+				if (cache != null)
+				{
+					try
+					{
+						var cacheValue = await cache.StringGetAsync(SetCacheKeyForEnv(cacheKey));
+
+						if (cacheValue.HasValue)
+							return cacheValue.ToString();
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+
+			return null;
+		}
+
 		public async Task<bool> RemoveAsync(string cacheKey)
 		{
 			try

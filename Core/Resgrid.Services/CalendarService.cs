@@ -29,7 +29,7 @@ namespace Resgrid.Services
 
 		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId)
 		{
-			return (from ci in await _calendarItemRepository.GetAllByDepartmentIdAsync(departmentId)
+			return (from ci in await _calendarItemRepository.GetAllCalendarItemsByDepartmentIdAsync(departmentId)
 										where ci.IsV2Schedule
 										select ci).ToList();
 		}

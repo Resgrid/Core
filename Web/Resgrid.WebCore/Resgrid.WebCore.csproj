@@ -1,48 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-	<Description>Cloud system for First Responders</Description>
-	<VersionPrefix>3.0.0</VersionPrefix>
-	<Authors>Resgrid, LLC.</Authors>
-	<TargetFramework>net6.0</TargetFramework>
-	<AssemblyName>Resgrid.WebCore</AssemblyName>
-	<PackageId>Resgrid.WebCore</PackageId>
-	<UserSecretsId>aspnet-Resgrid.WebCore-6372c5f2-c359-4243-b5a9-1fc7a5aaeb3b</UserSecretsId>
-	<Configurations>Debug;Release;Azure;Docker</Configurations>
-	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	<DockerfileContext>..\..</DockerfileContext>
-	<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
-	<StartupObject>Resgrid.Web.Program</StartupObject>
-	<Company>Resgrid, LLC.</Company>
-	<EnableNETAnalyzers>true</EnableNETAnalyzers>
-	<SpaRoot>Areas\User\Apps\</SpaRoot>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Description>Cloud system for First Responders</Description>
+		<VersionPrefix>3.0.0</VersionPrefix>
+		<Authors>Resgrid, LLC.</Authors>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>Resgrid.WebCore</AssemblyName>
+		<PackageId>Resgrid.WebCore</PackageId>
+		<UserSecretsId>aspnet-Resgrid.WebCore-6372c5f2-c359-4243-b5a9-1fc7a5aaeb3b</UserSecretsId>
+		<Configurations>Debug;Release;Azure;Docker</Configurations>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+		<StartupObject>Resgrid.Web.Program</StartupObject>
+		<Company>Resgrid, LLC.</Company>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<SpaRoot>Areas\User\Apps\</SpaRoot>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Azure|AnyCPU'" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Azure|AnyCPU'" />
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Staging|AnyCPU'" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Staging|AnyCPU'" />
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Docker|AnyCPU'">
-	<DefineConstants>DOCKER</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Docker|AnyCPU'">
+		<DefineConstants>DOCKER</DefineConstants>
+	</PropertyGroup>
 
-  <ItemGroup>
-	<Content Remove="package-lock.json" />
-	<Content Remove="wwwroot\robots.txt" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Remove="package-lock.json" />
+		<Content Remove="wwwroot\robots.txt" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<None Remove="Properties\PublishProfiles\egistry.resgrid.com_resgrid_.pubxml" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Properties\PublishProfiles\egistry.resgrid.com_resgrid_.pubxml" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<None Update="Views\**\*;Areas\**\Views;Areas\**\*.cshtml">
-	  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	</None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Views\**\*;Areas\**\Views;Areas\**\*.cshtml">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AspNetCoreRateLimit" Version="4.0.1" />
+		<PackageReference Include="IdentityModel" Version="6.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
@@ -98,83 +99,91 @@
 		<PackageReference Include="Vereyon.Web.HtmlSanitizer" Version="1.6.0.1" />
 	</ItemGroup>
 
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-	<Exec Command="libman restore" />
-  </Target>
+	<Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+		<Exec Command="libman restore" />
+	</Target>
 
-  <ItemGroup>
-	<EmbeddedResource Include="wwwroot\robots.txt">
-	  <Generator>MSBuild:Compile</Generator>
-	</EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="wwwroot\robots.txt">
+			<Generator>MSBuild:Compile</Generator>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-	<None Include="wwwroot\lib\jquery-idletimer\jquery-idletimer.sln" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="wwwroot\lib\jquery-idletimer\jquery-idletimer.sln" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<WCFMetadata Include="Service References" />
-  </ItemGroup>
+	<ItemGroup>
+		<WCFMetadata Include="Service References" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<Content Update="Areas\User\Views\Calendar\Edit.cshtml">
-	  <Pack>$(IncludeRazorContentInPack)</Pack>
-	</Content>
-	<Content Update="Areas\User\Views\Calendar\New.cshtml">
-	  <Pack>$(IncludeRazorContentInPack)</Pack>
-	</Content>
-	<Content Update="Areas\User\Views\Command\Edit.cshtml">
-	  <Pack>$(IncludeRazorContentInPack)</Pack>
-	</Content>
-	<Content Update="Areas\User\Views\Command\View.cshtml">
-	  <Pack>$(IncludeRazorContentInPack)</Pack>
-	</Content>
-	<Content Update="Views\Home\OpenSource.cshtml">
-	  <Pack>$(IncludeRazorContentInPack)</Pack>
-	</Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Update="Areas\User\Views\Calendar\Edit.cshtml">
+			<Pack>$(IncludeRazorContentInPack)</Pack>
+		</Content>
+		<Content Update="Areas\User\Views\Calendar\New.cshtml">
+			<Pack>$(IncludeRazorContentInPack)</Pack>
+		</Content>
+		<Content Update="Areas\User\Views\Command\Edit.cshtml">
+			<Pack>$(IncludeRazorContentInPack)</Pack>
+		</Content>
+		<Content Update="Areas\User\Views\Command\View.cshtml">
+			<Pack>$(IncludeRazorContentInPack)</Pack>
+		</Content>
+		<Content Update="Views\Home\OpenSource.cshtml">
+			<Pack>$(IncludeRazorContentInPack)</Pack>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-	<Folder Include="Service References\" />
-	<Folder Include="wwwroot\lib\jquery-ui.multidatespicker\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Service References\" />
+		<Folder Include="wwwroot\js\ng\" />
+		<Folder Include="wwwroot\lib\jquery-ui.multidatespicker\" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
-	<ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
-	<ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
-	<ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
-	<ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
-	<ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+		<ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+		<ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+		<ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
+		<ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="WebOptimizer.Core">
-      <HintPath>..\..\References\WebOptimizer\WebOptimizer.Core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="WebOptimizer.Core">
+			<HintPath>..\..\References\WebOptimizer\WebOptimizer.Core.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <!-- Used to support React apps on pages. Disabling for now
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-	<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-	<Exec WorkingDirectory="$(SpaRoot)" Command="npm run buildNewForm" />
-  </Target>
+	<ItemGroup>
+		<Content Remove="$(SpaRoot)**" />
+		<None Remove="$(SpaRoot)**" />
+		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+	</ItemGroup>
 
-  <Target Name="PublishRunWebpack" AfterTargets="AfterBuild">
-	<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-	<Exec WorkingDirectory="$(SpaRoot)" Command="npm run buildNewFormDev" />
-  </Target>
-  -->
+
+	<Target Name="BuildClientApps" AfterTargets="BeforeBuild">
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production --output-hashing=none --output-path=./dist/core --delete-output-path=true" />
+	</Target>
+
+	<Target Name="CopyClientApps" AfterTargets="AfterBuild">
+		<ItemGroup>
+			<ClientAppFiles Include="$(SpaRoot)dist\**\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(ClientAppFiles)" DestinationFolder="wwwroot\js\ng" />
+	</Target>
 </Project>

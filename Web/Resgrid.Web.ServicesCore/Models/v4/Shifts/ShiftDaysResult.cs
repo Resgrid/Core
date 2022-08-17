@@ -68,12 +68,12 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		public int ShiftType { get; set; }
 
 		/// <summary>
-		/// Signups for the shift
+		/// Signups for the shift (this may be null)
 		/// </summary>
 		public List<ShiftDaySignupResultData> Signups { get; set; }
 
 		/// <summary>
-		/// What does this shift day need
+		/// What does this shift day need (this may be null)
 		/// </summary>
 		public List<ShiftDayGroupNeedsResultData> Needs { get; set; }
 	}

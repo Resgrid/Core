@@ -36,6 +36,8 @@ namespace Resgrid.Model
 
 		public DateTime? LastDispatchedOn { get; set; }
 
+		public DateTime DispatchedOn { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

@@ -112,6 +112,12 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.UserId
 					WHERE [DepartmentId] = %ID% AND [IsDeleted] = 0";
 
+			SelectMembersUnlimitedInclDelQuery = @"
+					SELECT %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
+					FROM %SCHEMA%.%DEPARTMENTMEMBERSTABLE%
+					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.UserId
+					WHERE [DepartmentId] = %ID%";
+
 			SelectMembersWithinLimitsQuery = @"DECLARE @limit INT
 							SET @limit = (SELECT TOP 1 pl.LimitValue FROM Payments p
 							INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
@@ -321,7 +327,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%INVENTORYTABLE% i
 					INNER JOIN %SCHEMA%.%INVENTORYTYPESTABE% it ON it.[InventoryTypeId] = i.[TypeId]
 					WHERE i.[InventoryId] = %INVENTORYID%";
-
+			DeleteInventoryByGroupIdQuery = @"
+					DELETE FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID% AND GroupId = %ID%";
 			#endregion Inventory
 
 			#region Messages
@@ -568,7 +576,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%CALENDARITEMSTABLE% ci
 					LEFT OUTER JOIN %SCHEMA%.%CALITEMATTENDEESTABLE% cia ON cia.[CalendarItemId] = ci.[CalendarItemId]
 					WHERE ci.[CalendarItemId] = %CALENDARITEMID%";
-
+			SelectCalendarItemByDIdQuery = @"
+					SELECT ci.*, cia.*
+					FROM %SCHEMA%.%CALENDARITEMSTABLE% ci
+					LEFT OUTER JOIN %SCHEMA%.%CALITEMATTENDEESTABLE% cia ON cia.[CalendarItemId] = ci.[CalendarItemId]
+					WHERE ci.[DepartmentId] = %DID%";
 			#endregion Calendar
 
 			#region Logs
@@ -1093,7 +1105,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectAllGroupsByDidQuery = @"
 					SELECT dg.*, dgm.*
 					FROM %SCHEMA%.%GROUPSTABLE% dg
-					LEFT JOIN %SCHEMA%.%GROUPMEMBERSSTABLE% dgm ON dgm.[DepartmentGroupId] =  dg.[DepartmentGroupId]
+					LEFT JOIN (SELECT dgm1.*
+						FROM %SCHEMA%.%GROUPMEMBERSSTABLE% dgm1
+						INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSSTABLE% dm ON dgm1.[UserId] = dm.[UserId]
+						WHERE dm.[IsDeleted] = 0) AS dgm ON dgm.[DepartmentGroupId] = dg.[DepartmentGroupId]
 					WHERE dg.[DepartmentId] = %DID%";
 			SelectAllGroupsByParentIdQuery = @"
 					SELECT %SCHEMA%.%GROUPSTABLE%.*, %SCHEMA%.%GROUPMEMBERSSTABLE%.*
@@ -1115,7 +1130,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%GROUPSTABLE% dg
 					LEFT JOIN %SCHEMA%.%GROUPMEMBERSSTABLE% dgm ON dgm.[DepartmentGroupId] = dg.[DepartmentGroupId]
 					WHERE dg.[DepartmentGroupId] = %GROUPID%";
-
+			DeleteGroupMembersByGroupIdDidQuery = @"
+					DELETE FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID% AND DepartmentGroupId = %ID%";
 			#endregion Department Groups
 
 			#region Payments
@@ -1262,6 +1279,31 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = us.[UnitId]
 					WHERE us.[UnitId] = %UNITID% AND us.[Timestamp] >= %STARTDATE% AND us.[Timestamp] <= %ENDDATE%";
 			#endregion Unit States
+
+			#region Workshifts
+			WorkshiftsTable = "Workshifts";
+			WorkshiftDaysTable = "WorkshiftDays";
+			WorkshiftEntitiesTable = "WorkshiftEntities";
+			WorkshiftFillsTable = "WorkshiftFills";
+			SelectAllWorkshiftsAndDaysByDidQuery = @"
+					SELECT ws.*, wsd.*
+					FROM %SCHEMA%.%WORKSHIFTSTABLE% ws
+					LEFT OUTER JOIN %SCHEMA%.%WORKSHIFTDAYSTABLE% wsd ON ws.WorkshiftId = wsd.WorkshiftId
+					WHERE ws.[DepartmentId] = %DID%";
+			SelectWorkshiftByIdQuery = @"
+					SELECT ws.*, wsd.*
+					FROM %SCHEMA%.%WORKSHIFTSTABLE% ws
+					LEFT OUTER JOIN %SCHEMA%.%WORKSHIFTDAYSTABLE% wsd ON ws.WorkshiftId = wsd.WorkshiftId
+					WHERE ws.[WorkshiftId] = %ID%";
+			SelectWorkshiftEntitiesByWorkshiftIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%WORKSHIFTENTITIESTABLE%
+					WHERE [WorkshiftId] = %ID%";
+			SelectWorkshiftFillsByWorkshiftIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%WORKSHIFTFILLSTABLE%
+					WHERE [WorkshiftId] = %ID%";
+			#endregion Workshifts
 		}
-	}
+}
 }

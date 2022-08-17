@@ -55,6 +55,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var items = await _calendarService.GetAllCalendarItemsForDepartmentAsync(DepartmentId);
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			if (items != null && items.Any())
 			{
@@ -64,11 +65,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (item.ItemType > 0)
 					{
 						var itemType = types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
-						result.Data.Add(ConvertCalendarItemData(item, department, UserId, itemType));
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, itemType, presonnelNames));
 					}
 					else
 					{
-						result.Data.Add(ConvertCalendarItemData(item, department, UserId, null));
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, null, presonnelNames));
 					}
 				}
 
@@ -104,7 +105,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var items = await _calendarService.GetAllCalendarItemsForDepartmentInRangeAsync(DepartmentId, start.SetToMidnight(), end.SetToEndOfDay());
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-
+			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			
 			if (items != null && items.Any())
 			{
 
@@ -113,11 +115,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (item.ItemType > 0)
 					{
 						var itemType = types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
-						result.Data.Add(ConvertCalendarItemData(item, department, UserId, itemType));
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, itemType, presonnelNames));
 					}
 					else
 					{
-						result.Data.Add(ConvertCalendarItemData(item, department, UserId, null));
+						result.Data.Add(ConvertCalendarItemData(item, department, UserId, null, presonnelNames));
 					}
 				}
 
@@ -149,7 +151,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var item = await _calendarService.GetCalendarItemByIdAsync(id);
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-
+			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			
 			if (item != null)
 			{
 				if (item.DepartmentId != DepartmentId)
@@ -158,11 +161,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (item.ItemType > 0)
 				{
 					var itemType = types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
-					result.Data = ConvertCalendarItemData(item, department, UserId, itemType);
+					result.Data = ConvertCalendarItemData(item, department, UserId, itemType, presonnelNames);
 				}
 				else
 				{
-					result.Data = ConvertCalendarItemData(item, department, UserId, null);
+					result.Data = ConvertCalendarItemData(item, department, UserId, null, presonnelNames);
 				}
 
 				result.PageSize = 1;
@@ -224,7 +227,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<SetCalendarAttendingResult>> SetCalendarAttendingStatus(CalendarItemAttendInput input)
 		{
 			var result = new SetCalendarAttendingResult();
-			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(input.CalId);
+
+			if (string.IsNullOrWhiteSpace(input.CalendarEventId))
+				return NotFound();
+
+			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(int.Parse(input.CalendarEventId));
 
 			if (calendarItem == null)
 				return NotFound();
@@ -232,7 +239,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (calendarItem.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			var signupResult = await _calendarService.SignupForEvent(input.CalId, UserId, input.Note, input.Type);
+			var signupResult = await _calendarService.SignupForEvent(int.Parse(input.CalendarEventId), UserId, input.Note, input.Type);
 
 			if (signupResult == null)
 			{
@@ -251,7 +258,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
-		public static GetAllCalendarItemResultData ConvertCalendarItemData(CalendarItem item, Department department, string currentUserId, CalendarItemType type)
+		public static GetAllCalendarItemResultData ConvertCalendarItemData(CalendarItem item, Department department, string currentUserId, CalendarItemType type, List<PersonName> personnelNames)
 		{
 			var calendarItem = new GetAllCalendarItemResultData();
 			calendarItem.CalendarItemId = item.CalendarItemId.ToString();
@@ -310,6 +317,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 					attend.UserId = attendee.UserId;
 					attend.AttendeeType = attendee.AttendeeType;
 					attend.Note = attendee.Note;
+					attend.Timestamp = attendee.Timestamp.TimeConverter(department);
+
+					if (personnelNames != null && personnelNames.Any())
+					{
+						var name = personnelNames.FirstOrDefault(x => x.UserId == attendee.UserId);
+						if (name != null)
+							attend.Name = name.Name;
+					}
 
 					calendarItem.Attendees.Add(attend);
 				}

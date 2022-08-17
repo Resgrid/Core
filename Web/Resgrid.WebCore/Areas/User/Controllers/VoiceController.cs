@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -78,6 +79,65 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Voice_Create)]
+		public async Task<IActionResult> Edit(string id)
+		{
+			var model = new NewChannelModel();
+
+			if (String.IsNullOrWhiteSpace(id))
+				Unauthorized();
+
+			var voiceChannel = await _voiceService.GetVoiceChannelByIdAsync(id);
+
+			if (voiceChannel == null)
+				Unauthorized();
+
+			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
+
+			if (!canUseVoice)
+				Unauthorized();
+
+			if (voiceChannel.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			model.Id = voiceChannel.DepartmentVoiceChannelId;
+			model.ChannelName = voiceChannel.Name;
+			model.IsDefault = voiceChannel.IsDefault;
+
+			return View(model);
+		}
+		
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Voice_Create)]
+		public async Task<IActionResult> Edit(NewChannelModel model, CancellationToken cancellationToken)
+		{
+			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
+
+			if (!canUseVoice)
+				Unauthorized();
+
+			if (ModelState.IsValid)
+			{
+				var voiceChannel = await _voiceService.GetVoiceChannelByIdAsync(model.Id);
+
+				if (voiceChannel == null)
+					Unauthorized();
+
+				if (voiceChannel.DepartmentId != DepartmentId)
+					Unauthorized();
+
+				voiceChannel.Name = model.ChannelName;
+				voiceChannel.IsDefault = model.IsDefault;
+
+				await _voiceService.SaveOrUpdateVoiceChannelAsync(voiceChannel, DepartmentId, cancellationToken);
+
+				return RedirectToAction("Index");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Voice_Create)]
 		public async Task<IActionResult> Resync()
 		{
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
@@ -95,12 +155,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
 		{
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
-
+			
 			if (!canUseVoice)
 				Unauthorized();
 
 			var channel = await _voiceService.GetDepartmentVoiceChannelByIdAsync(id);
-			if (channel != null)
+			if (channel != null && channel.DepartmentId == DepartmentId)
 			{
 				var result = await _voiceService.DeleteDepartmentVoiceChannelAsync(channel, cancellationToken);
 			}

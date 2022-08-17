@@ -21,6 +21,15 @@ var resgrid;
                         return false;
                     }
                 });
+                var quillNote = new Quill('#note-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+                $(document).on('submit', '#updateCallForm', function () {
+                    $('#Call_Notes').val(quillNote.root.innerHTML);
+
+                    return true;
+                });
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetMapDataForCall?callId=' + callId,
                     contentType: 'application/json; charset=utf-8',

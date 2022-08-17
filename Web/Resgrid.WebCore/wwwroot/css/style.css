@@ -9343,10 +9343,10 @@ color: #555;
 background: transparent;
 }
 
-body.md-skin {
+/*body.md-skin {
 font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 background-color: #ffffff;
-}
+}*/
 
 .md-skin {
 /*.wrapper-content {
@@ -9364,9 +9364,9 @@ background-color: #2F4050;
 background-image: url("patterns/header-profile.png") no-repeat;
 }
 
-.md-skin .label, .md-skin .badge {
+/*.md-skin .label, .md-skin .badge {
 font-family: 'Roboto';
-}
+}*/
 
 .md-skin .font-bold {
 font-weight: 500;

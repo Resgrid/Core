@@ -452,6 +452,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("CallSummaryReport", new { start = model.Start, end = model.End });
 		}
 
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> ActiveCallsResourcesReport()
+		{
+			return View(await ActiveCallsResourcesReportModel(DepartmentId));
+		}
 		#endregion Views
 
 		[HttpGet]
@@ -1655,6 +1661,96 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				model.Units.Add(summary);
+			}
+
+			return model;
+		}
+
+		private async Task<OpenCallResourceView> ActiveCallsResourcesReportModel(int departmentId)
+		{
+			var model = new OpenCallResourceView();
+
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+
+			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var activeRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
+			
+			foreach (var call in calls)
+			{
+				var summary = new OpenCallResource();
+				summary.Number = call.Number;
+				summary.Name = call.Name;
+				summary.LoggedOn = call.LoggedOn.TimeConverter(model.Department);
+				summary.Type = call.Type;
+
+				var callData = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false);
+
+				if (callData != null)
+				{
+					if (callData.Dispatches != null && callData.Dispatches.Any())
+					{
+						foreach (var dispatch in callData.Dispatches)
+						{
+							var person = personnel.FirstOrDefault(x => x.UserId == dispatch.UserId);
+
+							if (person != null)
+							{
+								var personResource = new OpenCallResourcePerson();
+								personResource.Name = person.Name;
+								personResource.Roles = person.RoleNames;
+								personResource.GroupName = person.DepartmentGroupName;
+								personResource.DispatchedOn = dispatch.DispatchedOn.TimeConverter(model.Department);
+
+								summary.Personnel.Add(personResource);
+							}
+						}
+					}
+
+					if (callData.UnitDispatches != null && callData.UnitDispatches.Any())
+					{
+						foreach (var disaptch in callData.UnitDispatches)
+						{
+							var unit = units.FirstOrDefault(x => x.UnitId == disaptch.UnitId);
+
+							if (unit != null)
+							{
+								var unitResource = new OpenCallResourceUnit();
+								unitResource.UnitName = unit.Name;
+								unitResource.DispatchedOn = disaptch.DispatchedOn.TimeConverter(model.Department);
+
+								if (unit.Roles != null && unit.Roles.Any())
+								{
+									foreach (var role in unit.Roles)
+									{
+										var activeRole = activeRoles.FirstOrDefault(x => x.Role == role.Name);
+
+										if (activeRole != null)
+										{
+											var activeRolePerson = personnel.FirstOrDefault(x => x.UserId == activeRole.UserId);
+
+											if (activeRolePerson != null)
+											{
+												var roleUnitPerson = new OpenCallResourcePerson();
+												roleUnitPerson.Name = activeRolePerson.Name;
+												roleUnitPerson.Roles = activeRolePerson.RoleNames;
+												roleUnitPerson.GroupName = activeRolePerson.DepartmentGroupName;
+
+												unitResource.Roles.Add(role.Name, roleUnitPerson);
+											}
+										}
+									}
+								}
+
+								summary.Units.Add(unitResource);
+							}
+						}
+					}
+
+					model.Calls.Add(summary);
+				}	
 			}
 
 			return model;

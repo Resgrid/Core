@@ -25,5 +25,9 @@ namespace Resgrid.Model.Services
 
 		Task<bool> DeleteDepartmentVoiceChannelAsync(DepartmentVoiceChannel channel,
 			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<DepartmentVoiceChannel> GetVoiceChannelByIdAsync(string voiceChannelId);
+
+		Task<DepartmentVoiceChannel> SaveOrUpdateVoiceChannelAsync(DepartmentVoiceChannel voiceChannel, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

@@ -340,7 +340,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.Before = group.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				await _deleteService.DeleteGroupAsync(group.DepartmentGroupId, UserId);
+				await _deleteService.DeleteGroupAsync(group.DepartmentGroupId, DepartmentId, UserId, cancellationToken);
 			}
 
 			return RedirectToAction("Index", "Groups", new { Area = "User" });

@@ -13,13 +13,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitOutboundQueueProvider : IRabbitOutboundQueueProvider
 	{
-		private static bool _hasBeenInitialized = false;
-
-		public RabbitOutboundQueueProvider()
-		{
-			VerifyAndCreateClients();
-		}
-
 		public bool EnqueueCall(CallQueueItem callQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(callQueue);
@@ -83,149 +76,72 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return SendMessage(ServiceBusConfig.AuditQueueName, serializedObject);
 		}
 
+		public bool EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent)
+		{
+			var serializedObject = ObjectSerialization.Serialize(unitLocationEvent);
+
+			return SendMessage(ServiceBusConfig.UnitLoactionQueueName, serializedObject, false, "300000");
+		}
+
 		public bool VerifyAndCreateClients()
 		{
-			if (!_hasBeenInitialized)
-			{
-				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				{
-					try
-					{
-						//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						using (var connection = CreateConnection())
-						{
-							using (var channel = connection.CreateModel())
-							{
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-
-								channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
-											 durable: true,
-											 exclusive: false,
-											 autoDelete: false,
-											 arguments: null);
-							}
-						}
-
-						_hasBeenInitialized = true;
-
-						return true;
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
-						return false;
-					}
-				}
-			}
-
-			return false;
+			return RabbitConnection.VerifyAndCreateClients();
 		}
 
-		private IConnection CreateConnection()
+		private bool SendMessage(string queueName, string message, bool durable = true, string expiration = "36000000")
 		{
-			ConnectionFactory factory;
-			IConnection connection;
+			if (String.IsNullOrWhiteSpace(queueName))
+				throw new ArgumentNullException("queueName");
 
-			// I know....I know.....
-			try
-			{
-				factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				connection = factory.CreateConnection();
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-
-				try
-				{
-					factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					connection = factory.CreateConnection();
-				}
-				catch (Exception ex2)
-				{
-					Logging.LogException(ex2);
-
-					try
-					{
-						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						connection = factory.CreateConnection();
-					}
-					catch (Exception ex3)
-					{
-						Logging.LogException(ex3);
-						throw;
-					}
-				}
-			}
-
-			return connection;
-		}
-
-		private bool SendMessage(string queueName, string message)
-		{
+			if (String.IsNullOrWhiteSpace(message))
+				throw new ArgumentNullException("message");
+			
 			//if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			//{
 			try
 			{
 				// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
 				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = CreateConnection())
+				using (var connection = RabbitConnection.CreateConnection())
 				{
-					using (var channel = connection.CreateModel())
+					if (connection != null)
 					{
-						IBasicProperties props = channel.CreateBasicProperties();
-						props.DeliveryMode = 2;
-						props.Expiration = "36000000";
-						props.Headers = new Dictionary<string, object>();
-						props.Headers.Add("x-redelivered-count", 0);
+						using (var channel = connection.CreateModel())
+						{
+							if (channel != null)
+							{
+								IBasicProperties props = channel.CreateBasicProperties();
+								props.Headers = new Dictionary<string, object>();
+								
+								if (durable)
+								{
+									props.DeliveryMode = 2;
+									props.Headers.Add("x-redelivered-count", 0);
+								}
+								else
+									props.DeliveryMode = 1;
 
-						channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
-										 routingKey: SetQueueNameForEnv(queueName),
-										 basicProperties: props,
-										 body: Encoding.ASCII.GetBytes(message));
+								props.Expiration = expiration;
+
+								channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
+												 routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
+												 basicProperties: props,
+												 body: Encoding.ASCII.GetBytes(message));
+
+								return true;
+							}
+							else
+							{
+								Logging.LogError("RabbitOutboundQueueProvider->SendMessage channel is null.");
+							}
+						}
+					}
+					else
+					{
+						Logging.LogError("RabbitOutboundQueueProvider->SendMessage connection is null.");
 					}
 
-					return true;
+					return false;
 				}
 			}
 			catch (Exception ex)
@@ -236,18 +152,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 			//}
 
 			//return false;
-		}
-
-		private static string SetQueueNameForEnv(string cacheKey)
-		{
-			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
-				return $"DEV{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
-				return $"QA{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
-				return $"ST{cacheKey}";
-
-			return cacheKey;
 		}
 	}
 }

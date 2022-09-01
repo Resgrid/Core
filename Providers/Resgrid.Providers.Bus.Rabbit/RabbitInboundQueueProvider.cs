@@ -14,10 +14,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitInboundQueueProvider
 	{
-		private ConnectionFactory _factory;
-		private IConnection _connection;
 		private IModel _channel;
-
 		public Func<CallQueueItem, Task> CallQueueReceived;
 		public Func<MessageQueueItem, Task> MessageQueueReceived;
 		public Func<DistributionListQueueItem, Task> DistributionListQueueReceived;
@@ -26,6 +23,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<CqrsEvent, Task> CqrsEventQueueReceived;
 		public Func<CqrsEvent, Task> PaymentEventQueueReceived;
 		public Func<AuditEvent, Task> AuditEventQueueReceived;
+		public Func<UnitLocationEvent, Task> UnitLocationEventQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -34,45 +32,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public async Task Start()
 		{
-			VerifyAndCreateClients();
-			await StartMonitoring();
-		}
+			var connection = RabbitConnection.CreateConnection();
 
-		private void VerifyAndCreateClients()
-		{
-			// I know....I know.....
-			try
+			if (connection != null)
 			{
-				_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				_connection = _factory.CreateConnection();
+				_channel = connection.CreateModel();
+				await StartMonitoring();
 			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-
-				try
-				{
-					_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					_connection = _factory.CreateConnection();
-				}
-				catch (Exception ex2)
-				{
-					Logging.LogException(ex2);
-
-					try
-					{
-						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						_connection = _factory.CreateConnection();
-					}
-					catch (Exception ex3)
-					{
-						Logging.LogException(ex3);
-						throw;
-					}
-				}
-			}
-
-			_channel = _connection.CreateModel();
 		}
 
 		private async Task StartMonitoring()
@@ -382,7 +348,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 						{
 							if (audit != null)
 							{
-								if (PaymentEventQueueReceived != null)
+								if (AuditEventQueueReceived != null)
 								{
 									await AuditEventQueueReceived.Invoke(audit);
 									_channel.BasicAck(ea.DeliveryTag, false);
@@ -400,46 +366,88 @@ namespace Resgrid.Providers.Bus.Rabbit
 					}
 				};
 
+				var unitLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				unitLocationQueueReceivedConsumer.Received += async (model, ea) =>
+				{
+					if (ea != null && ea.Body.Length > 0)
+					{
+						UnitLocationEvent unitLocation = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							unitLocation = ObjectSerialization.Deserialize<UnitLocationEvent>(message);
+						}
+						catch (Exception ex)
+						{
+							//_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
+
+						try
+						{
+							if (unitLocation != null)
+							{
+								if (UnitLocationEventQueueReceived != null)
+								{
+									await UnitLocationEventQueueReceived.Invoke(unitLocation);
+									//_channel.BasicAck(ea.DeliveryTag, false);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							// Discard unit location events.
+							Logging.LogException(ex);
+							//_channel.BasicNack(ea.DeliveryTag, false, true);
+						}
+					}
+				};
 
 				String callQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
 					autoAck: false,
 					consumer: callQueueReceivedConsumer);
 
 				String messageQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
 					autoAck: false,
 					consumer: messageQueueReceivedConsumer);
 
 				String distributionListQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
 					autoAck: false,
 					consumer: distributionListQueueReceivedConsumer);
 
 				String notificationQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
 					autoAck: false,
 					consumer: notificationQueueReceivedConsumer);
 
 				String shiftNotificationQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
 					autoAck: false,
 					consumer: shiftNotificationQueueReceivedConsumer);
 
 				String cqrsEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 					autoAck: false,
 					consumer: cqrsEventQueueReceivedConsumer);
 
 				String paymentEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
 					autoAck: false,
 					consumer: paymentEventQueueReceivedConsumer);
 
 				String auditEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
 					autoAck: false,
 					consumer: auditEventQueueReceivedConsumer);
+
+				String unitLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
+					autoAck: true,
+					consumer: unitLocationQueueReceivedConsumer);
 			}
 		}
 
@@ -465,7 +473,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 					return true;
 
 				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = CreateConnection())
+				using (var connection = RabbitConnection.CreateConnection())
 				{
 					using (var channel = connection.CreateModel())
 					{
@@ -493,58 +501,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Logging.LogException(ex);
 				return false;
 			}
-		}
-
-		private IConnection CreateConnection()
-		{
-			ConnectionFactory factory;
-			IConnection connection;
-
-			// I know....I know.....
-			try
-			{
-				factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				connection = factory.CreateConnection();
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-
-				try
-				{
-					factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					connection = factory.CreateConnection();
-				}
-				catch (Exception ex2)
-				{
-					Logging.LogException(ex2);
-
-					try
-					{
-						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						connection = factory.CreateConnection();
-					}
-					catch (Exception ex3)
-					{
-						Logging.LogException(ex3);
-						throw;
-					}
-				}
-			}
-
-			return connection;
-		}
-
-		private static string SetQueueNameForEnv(string cacheKey)
-		{
-			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
-				return $"DEV{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
-				return $"QA{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
-				return $"ST{cacheKey}";
-
-			return cacheKey;
 		}
 	}
 }

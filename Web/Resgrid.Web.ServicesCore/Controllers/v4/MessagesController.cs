@@ -27,16 +27,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class MessagesController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
-
-		private ICallsService _callsService;
-		private IDepartmentsService _departmentsService;
-		private IUserProfileService _userProfileService;
-		private IGeoLocationProvider _geoLocationProvider;
+		private readonly ICallsService _callsService;
+		private readonly IDepartmentsService _departmentsService;
+		private readonly IUserProfileService _userProfileService;
+		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IMessageService _messageService;
 		private readonly IUsersService _usersService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IUnitsService _unitsService;
 
 		public MessagesController(
 			ICallsService callsService,
@@ -47,7 +47,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IMessageService messageService,
 			IUsersService usersService,
 			IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService)
+			IPersonnelRolesService personnelRolesService,
+			IUnitsService unitsService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
@@ -58,6 +59,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_usersService = usersService;
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
+			_unitsService = unitsService;
 		}
 
 		#endregion Members and Constructors
@@ -197,12 +199,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Gets all the recipients in the department plus default values the system accepts
 		/// </summary>
 		/// <param name="disallowNoone">Disallow adding a noone option</param>
+		/// <param name="includeUnits">Include units in the response list</param>
 		/// <returns>MessageResult object populated with message information from the system.</returns>
 		[HttpGet("GetRecipients")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[Authorize(Policy = ResgridResources.Messages_View)]
-		public async Task<ActionResult<GetRecipientsResult>> GetRecipients(bool disallowNoone)
+		public async Task<ActionResult<GetRecipientsResult>> GetRecipients(bool disallowNoone, bool includeUnits)
 		{
 			var result = new GetRecipientsResult();
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
@@ -235,6 +238,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var p in personnel)
 				{
 					result.Data.Add(new RecipientsResultData { Id = "P:" + p.UserId, Type = "Personnel", Name = p.Name });
+				}
+			}
+
+			if (includeUnits)
+			{
+				var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+				if (units != null && units.Any())
+				{
+					foreach (var u in units)
+					{
+						result.Data.Add(new RecipientsResultData { Id = "U:" + u.UnitId, Type = "Unit", Name = u.Name });
+					}
 				}
 			}
 

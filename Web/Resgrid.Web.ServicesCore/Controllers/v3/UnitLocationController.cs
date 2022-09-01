@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation;
@@ -22,12 +23,12 @@ namespace Resgrid.Web.Services.Controllers.Version3
 	public class UnitLocationController : V3AuthenticatedApiControllerbase
 	{
 		private readonly IUnitsService _unitsService;
-		private readonly ICqrsProvider _cqrsProvider;
+		private readonly IUnitLocationEventProvider _unitLocationEventProvider;
 
-		public UnitLocationController(IUnitsService unitsService, ICqrsProvider cqrsProvider)
+		public UnitLocationController(IUnitsService unitsService, IUnitLocationEventProvider unitLocationEventProvider)
 		{
 			_unitsService = unitsService;
-			_cqrsProvider = cqrsProvider;
+			_unitLocationEventProvider = unitLocationEventProvider;
 		}
 
 		/// <summary>
@@ -56,9 +57,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			{
 				try
 				{
-					CqrsEvent locationEvent = new CqrsEvent();
-					UnitLocation location = new UnitLocation();
+					var location = new UnitLocationEvent();
 					location.UnitId = locationInput.Uid;
+					location.DepartmentId = DepartmentId;
 
 					if (locationInput.Tms.HasValue)
 						location.Timestamp = locationInput.Tms.Value;
@@ -85,11 +86,9 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						if (!String.IsNullOrWhiteSpace(locationInput.Hdn) && locationInput.Hdn != "NaN")
 							location.Heading = decimal.Parse(locationInput.Hdn);
 
-						locationEvent.Type = (int) CqrsEventTypes.UnitLocation;
-						locationEvent.Data = ObjectSerialization.Serialize(location);
-						await _cqrsProvider.EnqueueCqrsEventAsync(locationEvent);
+						await _unitLocationEventProvider.EnqueueUnitLocationEventAsync(location);
 
-						return CreatedAtAction(nameof(SetUnitLocation), new { id = locationInput.Uid }, locationEvent);
+						return CreatedAtAction(nameof(SetUnitLocation), new { id = locationInput.Uid }, location);
 					}
 					else
 					{

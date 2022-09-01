@@ -4,6 +4,7 @@ using Quidjibo.Misc;
 using Resgrid.Model;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Workers.Console.Commands;
+using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
 using System.Threading;
 using System.Threading.Tasks;

@@ -382,11 +382,6 @@
             <param name="input">Input to deregister the device for</param>
             <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
-            <summary>
-            Operations to support Dispatch operations
-            </summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
             <summary>
             Operations to support Dispatch operations
@@ -3493,11 +3488,12 @@
             <param name="messageId">Integer message Identifier</param>
             <returns>MessageResult object populated with message information from the system.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetRecipients(System.Boolean)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetRecipients(System.Boolean,System.Boolean)">
             <summary>
             Gets all the recipients in the department plus default values the system accepts
             </summary>
             <param name="disallowNoone">Disallow adding a noone option</param>
+            <param name="includeUnits">Include units in the response list</param>
             <returns>MessageResult object populated with message information from the system.</returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.SendMessage(Resgrid.Web.Services.Models.v4.Messages.NewMessageInput,System.Threading.CancellationToken)">

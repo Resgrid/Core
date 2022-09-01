@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Model.Identity;
+using System.Threading.Tasks;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Services.CallEmailTemplates
 {
@@ -33,15 +35,18 @@ namespace Resgrid.Services.CallEmailTemplates
 			_templates.Add((int)CallEmailTypes.FourPartPipe, new FourPartPipeTemplate());
 			_templates.Add((int)CallEmailTypes.RandR, new RandRTemplate());
 			_templates.Add((int)CallEmailTypes.Active911, new Active911lTemplate());
+			_templates.Add((int)CallEmailTypes.OttawaCounty, new OttawaCountyTemplate());
 		}
 
-		public Call GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
+		public async Task<Call> GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users,
+			Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities,
+			List<CallType> callTypes, IGeoLocationProvider geolocationProvider)
 		{
 			Call call = null;
 
 			try
 			{
-				call = _templates[(int)type].GenerateCall(email, managingUser, users, department, activeCalls, units, priority, activePriorities);
+				call = await _templates[(int)type].GenerateCall(email, managingUser, users, department, activeCalls, units, priority, activePriorities, callTypes, geolocationProvider);
 			}
 			catch (Exception ex)
 			{

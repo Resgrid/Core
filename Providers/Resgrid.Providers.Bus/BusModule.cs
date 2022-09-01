@@ -13,6 +13,7 @@ namespace Resgrid.Providers.Bus
 			builder.RegisterType<InboundEventProvider>().As<IInboundEventProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<PaymentProvider>().As<IPaymentProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<AuditEventProvider>().As<IAuditEventProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitLocationEventProvider>().As<IUnitLocationEventProvider>().InstancePerLifetimeScope();
 
 			builder.RegisterType<OutboundQueueProvider>().As<IOutboundQueueProvider>().SingleInstance();
 			builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();

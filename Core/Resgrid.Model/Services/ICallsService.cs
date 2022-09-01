@@ -203,10 +203,11 @@ namespace Resgrid.Model.Services
 		/// <param name="units">The units.</param>
 		/// <param name="priority">The priority.</param>
 		/// <param name="activePriorities">The active priorities.</param>
+		/// <param name="callTypes">The active call types.</param>
 		/// <returns>Call.</returns>
-		Call GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users,
+		Task<Call> GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users,
 			Department department, List<Call> activeCalls, List<Unit> units, int priority,
-			List<DepartmentCallPriority> activePriorities);
+			List<DepartmentCallPriority> activePriorities, List<CallType> callTypes);
 
 		/// <summary>
 		/// Saves the call note asynchronous.

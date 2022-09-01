@@ -148,21 +148,24 @@ namespace Resgrid.Services
 			{
 				var group1 = await _departmentGroupsRepository.GetGroupByGroupIdAsync(departmentGroupId);
 
-				if (group1 != null && group1.AddressId.HasValue && group1.Address == null)
-					group1.Address = await _addressService.GetAddressByIdAsync(group1.AddressId.Value);
-
-				if (group1.ParentDepartmentGroupId.HasValue)
+				if (group1 != null)
 				{
-					group1.Parent = await GetGroupByIdAsync(group1.ParentDepartmentGroupId.Value);
+					if (group1.AddressId.HasValue && group1.Address == null)
+						group1.Address = await _addressService.GetAddressByIdAsync(group1.AddressId.Value);
+
+					if (group1.ParentDepartmentGroupId.HasValue)
+					{
+						group1.Parent = await GetGroupByIdAsync(group1.ParentDepartmentGroupId.Value);
+					}
+
+					var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(group1.DepartmentGroupId);
+
+					if (childGroups != null && childGroups.Any())
+						group1.Children = childGroups.ToList();
+					else
+						group1.Children = new List<DepartmentGroup>();
 				}
-
-				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(group1.DepartmentGroupId);
-
-				if (childGroups != null && childGroups.Any())
-					group1.Children = childGroups.ToList();
-				else
-					group1.Children = new List<DepartmentGroup>();
-
+				
 				return group1;
 			}
 

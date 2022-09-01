@@ -382,6 +382,11 @@
             <param name="input">Input to deregister the device for</param>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
+            <summary>
+            Operations to support Dispatch operations
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
             <summary>
             Operations to support Dispatch operations

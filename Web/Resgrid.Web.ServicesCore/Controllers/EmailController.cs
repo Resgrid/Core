@@ -345,6 +345,8 @@ namespace Resgrid.Web.Services.Controllers
 								var activeCalls = await _callsService.GetLatest10ActiveCallsByDepartmentAsync(emailSettings.Department.DepartmentId);
 								var units = await _unitsService.GetUnitsForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
+								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
+								
 								int defaultPriority = (int)CallPriority.High;
 
 								if (priorities != null && priorities.Any())
@@ -355,9 +357,10 @@ namespace Resgrid.Web.Services.Controllers
 										defaultPriority = defaultPrio.DepartmentCallPriorityId;
 								}
 
-								var call = _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
+								var call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
 																				 emailSettings.Department.ManagingUserId,
-																				 departmentUsers, emailSettings.Department, activeCalls, units, defaultPriority, priorities);
+																				 departmentUsers, emailSettings.Department, activeCalls, units,
+																				 defaultPriority, priorities, callTypes);
 
 								if (call != null && call.CallId <= 0)
 								{
@@ -501,6 +504,7 @@ namespace Resgrid.Web.Services.Controllers
 						{
 							try
 							{
+								var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentGroup.DepartmentId);
 								var emailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(departmentGroup.DepartmentId);
 								var departmentGroupUsers = _departmentGroupsService.GetAllMembersForGroupAndChildGroups(departmentGroup);
 
@@ -535,16 +539,16 @@ namespace Resgrid.Web.Services.Controllers
 									emailSettings = new DepartmentCallEmail();
 									emailSettings.FormatType = (int)CallEmailTypes.Generic;
 									emailSettings.DepartmentId = departmentGroup.DepartmentId;
-
-									if (departmentGroup.Department != null)
-										emailSettings.Department = departmentGroup.Department;
-									else
-										emailSettings.Department = await _departmentsService.GetDepartmentByIdAsync(departmentGroup.DepartmentId);
 								}
+
+								if (departmentGroup.Department != null)
+									emailSettings.Department = departmentGroup.Department;
+								else
+									emailSettings.Department = await _departmentsService.GetDepartmentByIdAsync(departmentGroup.DepartmentId);
 
 								var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(emailSettings.Department.DepartmentId);
 								var units = await _unitsService.GetAllUnitsForGroupAsync(departmentGroup.DepartmentGroupId);
-
+								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								int defaultPriority = (int)CallPriority.High;
 
@@ -556,9 +560,10 @@ namespace Resgrid.Web.Services.Controllers
 										defaultPriority = defaultPrio.DepartmentCallPriorityId;
 								}
 
-								var call = _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
+								var call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
 																				 emailSettings.Department.ManagingUserId,
-																				 departmentGroupUsers.Select(x => x.User).ToList(), emailSettings.Department, activeCalls, units, defaultPriority, priorities);
+																				 users.Where(x => departmentGroupUsers.Select(y => y.UserId).Contains(x.Id)).ToList(),
+																				 emailSettings.Department, activeCalls, units, defaultPriority, priorities, callTypes);
 
 								if (call != null)
 								{

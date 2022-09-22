@@ -46,7 +46,7 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			_logger.LogInformation($"{Name}: Audit Queue Received with an id of {auditEvent.EventId}, starting processing...");
 			await AuditQueueLogic.ProcessAuditQueueItem(auditEvent);
-			_logger.LogInformation($"{Name}: Finished processing of Payment queue item with an id of {auditEvent.EventId}.");
+			_logger.LogInformation($"{Name}: Finished processing of Audit queue item with an id of {auditEvent.EventId}.");
 		}
 	}
 }

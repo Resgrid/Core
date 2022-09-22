@@ -142,7 +142,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		private IConnection CreateConnection()
 		{
 			ConnectionFactory factory;
-			IConnection connection;
+			IConnection connection = null;
 
 			// I know....I know.....
 			try
@@ -154,24 +154,30 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				Logging.LogException(ex);
 
-				try
+				if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
 				{
-					factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					connection = factory.CreateConnection();
-				}
-				catch (Exception ex2)
-				{
-					Logging.LogException(ex2);
-
 					try
 					{
-						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 						connection = factory.CreateConnection();
 					}
-					catch (Exception ex3)
+					catch (Exception ex2)
 					{
-						Logging.LogException(ex3);
-						throw;
+						Logging.LogException(ex2);
+
+						if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
+						{
+							try
+							{
+								factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+								connection = factory.CreateConnection();
+							}
+							catch (Exception ex3)
+							{
+								Logging.LogException(ex3);
+								throw;
+							}
+						}
 					}
 				}
 			}

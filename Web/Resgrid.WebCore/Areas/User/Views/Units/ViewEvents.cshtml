@@ -1,107 +1,103 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Units.ViewLogsView
 @{
-  ViewBag.Title = "Resgrid | View Unit Events";
+    ViewBag.Title = "Resgrid | View Unit Events";
 }
 @section Styles
-{
+    {
 
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>Events for @Model.Unit.Name</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
-      </li>
-      <li class="active">
-        <strong>Events for @Model.Unit.Name</strong>
-      </li>
-    </ol>
-  </div>
-  <div class="col-sm-8">
-    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-      
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-4">
+            <h2>Events for @Model.Unit.Name</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                </li>
+                <li>
+                    <a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
+                </li>
+                <li class="active">
+                    <strong>Events for @Model.Unit.Name</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+            {
+                <span><a data-toggle="modal" data-target="#confirmClearAllActionLogsModal" class="btn btn-xs btn-danger">Clear out all Events For Unit</a> </span>
+            }
+        </div>
     </div>
-  </div>
 </div>
 @using (Html.BeginForm("GenerateReport", "Units", FormMethod.Post, new { area = "User", @class = "form-horizontal" }))
 {
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="wrapper wrapper-content">
-        <div class="ibox float-e-margins">
-          <div class="ibox-content">
-            <div class="row">
-              <div class="col-xs-7">
-                <div id="eventsGrid"></div>
-              </div>
-              <div class="col-xs-5 text-center">
-                <div id="eventsMap" name="eventsMap" style="position: relative; width: 100%; height: 500px;"></div>
-                <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Generate Report" />
-              </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-xs-7">
+                                <div id="eventsGrid"></div>
+                            </div>
+                            <div class="col-xs-5 text-center">
+                                <div id="eventsMap" name="eventsMap" style="position: relative; width: 100%; height: 500px;"></div>
+                                <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Generate Report" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-              <div class="col-xs-12">
-                @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				{
-
-                  <div class="well">
-                    <span><a data-toggle="modal" data-target="#confirmClearAllActionLogsModal" class="btn btn-xs btn-danger">Clear out all Events For Unit</a> </span>
-                  </div>
-				}
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 }
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="confirmClearAllActionLogsModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Delete All Unit Events</h4>
-      </div>
-      @using (Html.BeginForm("ClearAllUnitEvents", "Units", FormMethod.Post, new { area = "User", id = "clear_all" }))
-	  {
-        <div class="modal-body">
-          <span class="alert alert-error">
-            @Html.ValidationSummary(false)
-            @Html.HiddenFor(m => m.Unit.UnitId)
-            @Html.AntiForgeryToken()
-          </span>
-          <div class="form-group">
-            <label class=" control-label">
-              Are you sure you want to permanently delete all events for this unit?
-            </label>
-            <div class="controls">
-              @Html.CheckBoxFor(m => m.ConfirmClearAll) Yes I'm sure
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Delete All Unit Events</h4>
             </div>
-          </div>
+            @using (Html.BeginForm("ClearAllUnitEvents", "Units", FormMethod.Post, new { area = "User", id = "clear_all" }))
+            {
+                <div class="modal-body">
+                    <span class="alert alert-error">
+                        @Html.ValidationSummary(false)
+                        @Html.HiddenFor(m => m.Unit.UnitId)
+                        @Html.AntiForgeryToken()
+                    </span>
+                    <div class="form-group">
+                        <label class=" control-label">
+                            Are you sure you want to permanently delete all events for this unit?
+                        </label>
+                        <div class="controls">
+                            @Html.CheckBoxFor(m => m.ConfirmClearAll) Yes I'm sure
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn" data-dismiss="modal">Close</a>
+                    <input class="btn btn-primary" id="group_submit_action" name="commit" type="submit"
+                       value="Delete All" />
+                </div>
+            }
         </div>
-        <div class="modal-footer">
-          <a href="#" class="btn" data-dismiss="modal">Close</a>
-          <input class="btn btn-primary" id="group_submit_action" name="commit" type="submit"
-				 value="Delete All" />
-        </div>
-	  }
     </div>
-  </div>
 </div>
 
 @section Scripts
-{
-  <script>
-		var unitId = '@Model.Unit.UnitId';
-		var osmKey = '@Model.OSMKey';
-		var centerLat = '@Model.CenterLat';
-		var centerLon = '@Model.CenterLon';
-  </script>
-  <script src="@Url.Content("~/js/app/internal/units/resgrid.units.viewevents.js")"></script>
+    {
+    <script>
+        var unitId = '@Model.Unit.UnitId';
+        var osmKey = '@Model.OSMKey';
+        var centerLat = '@Model.CenterLat';
+        var centerLon = '@Model.CenterLon';
+    </script>
+    <script src="@Url.Content("~/js/app/internal/units/resgrid.units.viewevents.js")"></script>
 }

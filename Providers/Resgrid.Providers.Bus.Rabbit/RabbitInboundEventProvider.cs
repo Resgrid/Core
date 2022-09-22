@@ -43,24 +43,31 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				Logging.LogException(ex);
 
-				try
+				if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
 				{
-					_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					_connection = _factory.CreateConnection();
-				}
-				catch (Exception ex2)
-				{
-					Logging.LogException(ex2);
-
 					try
 					{
-						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 						_connection = _factory.CreateConnection();
 					}
-					catch (Exception ex3)
+					catch (Exception ex2)
 					{
-						Logging.LogException(ex3);
-						throw;
+						Logging.LogException(ex2);
+
+
+						if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
+						{
+							try
+							{
+								_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+								_connection = _factory.CreateConnection();
+							}
+							catch (Exception ex3)
+							{
+								Logging.LogException(ex3);
+								throw;
+							}
+						}
 					}
 				}
 			}

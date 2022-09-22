@@ -769,29 +769,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitEvent.EventId = e.UnitStateId;
 				unitEvent.UnitId = e.UnitId;
 				unitEvent.UnitName = e.Unit.Name;
-				unitEvent.State = StringHelpers.GetDescription(((UnitStateTypes)e.State));
+
+				var customState = await _customStateService.GetCustomUnitStateAsync(e);
+
+				unitEvent.State = customState?.ButtonText;
 				unitEvent.Timestamp = e.Timestamp.TimeConverterToString(department);
 				unitEvent.Note = e.Note;
 
-				if (((UnitStateTypes)e.State) == UnitStateTypes.Enroute)
-				{
-					if (e.DestinationId.HasValue)
-					{
-						var station = await _departmentGroupsService.GetGroupByIdAsync(e.DestinationId.Value, false);
-
-						if (station != null)
-							unitEvent.DestinationName = station.Name;
-						else
-							unitEvent.DestinationName = "Station";
-					}
-					else
-					{
-						unitEvent.DestinationName = "Station";
-					}
-				}
-				else if (((UnitStateTypes)e.State) == UnitStateTypes.Responding || ((UnitStateTypes)e.State) == UnitStateTypes.Committed
-						|| ((UnitStateTypes)e.State) == UnitStateTypes.OnScene || ((UnitStateTypes)e.State) == UnitStateTypes.Staging
-						 || ((UnitStateTypes)e.State) == UnitStateTypes.Released || ((UnitStateTypes)e.State) == UnitStateTypes.Cancelled)
+				if (customState?.DetailType == (int)CustomStateDetailTypes.Calls)
 				{
 					if (e.DestinationId.HasValue)
 					{
@@ -800,9 +785,49 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (call != null)
 							unitEvent.DestinationName = call.Name;
 						else
-							unitEvent.DestinationName = "Scene";
+							unitEvent.DestinationName = "Call Not Found";
 					}
 				}
+				else if (customState?.DetailType == (int)CustomStateDetailTypes.Stations)
+				{
+					if (e.DestinationId.HasValue)
+					{
+						var station = await _departmentGroupsService.GetGroupByIdAsync(e.DestinationId.Value, false);
+
+						if (station != null)
+							unitEvent.DestinationName = station.Name;
+						else
+							unitEvent.DestinationName = "Station Not Found";
+					}
+					else
+					{
+						unitEvent.DestinationName = "Station Not Supplied";
+					}
+				}
+				else if (customState?.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
+				{
+					if (e.DestinationId.HasValue)
+					{
+						var station = await _departmentGroupsService.GetGroupByIdAsync(e.DestinationId.Value, false);
+
+						if (station != null && station.DepartmentId == DepartmentId)
+							unitEvent.DestinationName = station.Name;
+						else
+						{
+							var call = await _callsService.GetCallByIdAsync(e.DestinationId.Value, false);
+
+							if (call != null && call.DepartmentId == DepartmentId)
+								unitEvent.DestinationName = call.Name;
+							else
+								unitEvent.DestinationName = "Scene";
+						}
+					}
+					else
+					{
+						unitEvent.DestinationName = "Call or Station";
+					}
+				}
+
 
 				if (e.LocalTimestamp.HasValue)
 					unitEvent.LocalTimestamp = e.LocalTimestamp.Value.ToString();

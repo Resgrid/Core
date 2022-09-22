@@ -13,6 +13,7 @@
 		public static string SystemQueueName = "resgridsys";
 		public static string PaymentQueueName = "payment";
 		public static string AuditQueueName = "audit";
+		public static string UnitLoactionQueueName = "unitlocation";
 
 		#region Azure Service Bus Values
 		public static string SignalRServiceBusConnectionString = "";

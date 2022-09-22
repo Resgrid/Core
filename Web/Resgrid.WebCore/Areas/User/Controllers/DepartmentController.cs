@@ -963,6 +963,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						active911.Code = v.ToString();
 						callEmailTypes.Add(active911);
 						break;
+					case CallEmailTypes.OttawaCounty:
+						CallEmailTypesForJson ottawaCounty = new CallEmailTypesForJson();
+						ottawaCounty.Id = (int)v;
+						ottawaCounty.Name = "OttawaCounty";
+						ottawaCounty.Code = v.ToString();
+						callEmailTypes.Add(ottawaCounty);
+						break;
 				}
 			}
 

@@ -11,6 +11,7 @@ using System;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Providers.Claims;
+using Resgrid.Model.Events;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -24,12 +25,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IUnitsService _unitsService;
-		private readonly ICqrsProvider _cqrsProvider;
+		private readonly IUnitLocationEventProvider _unitLocationEventProvider;
 
-		public UnitLocationController(IUnitsService unitsService, ICqrsProvider cqrsProvider)
+		public UnitLocationController(IUnitsService unitsService, IUnitLocationEventProvider unitLocationEventProvider)
 		{
 			_unitsService = unitsService;
-			_cqrsProvider = cqrsProvider;
+			_unitLocationEventProvider = unitLocationEventProvider;
 		}
 		#endregion Members and Constructors
 
@@ -67,8 +68,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				CqrsEvent locationEvent = new CqrsEvent();
-				UnitLocation location = new UnitLocation();
+				var location = new UnitLocationEvent();
+				location.DepartmentId = DepartmentId;
 				location.UnitId = int.Parse(locationInput.UnitId);
 
 				if (locationInput.Timestamp.HasValue)
@@ -96,9 +97,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!String.IsNullOrWhiteSpace(locationInput.Heading) && locationInput.Heading != "NaN")
 						location.Heading = decimal.Parse(locationInput.Heading);
 
-					locationEvent.Type = (int)CqrsEventTypes.UnitLocation;
-					locationEvent.Data = ObjectSerialization.Serialize(location);
-					await _cqrsProvider.EnqueueCqrsEventAsync(locationEvent);
+					await _unitLocationEventProvider.EnqueueUnitLocationEventAsync(location);
 
 					result.Id = "";
 					result.PageSize = 0;

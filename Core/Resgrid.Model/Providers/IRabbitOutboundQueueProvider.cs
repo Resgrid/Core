@@ -12,6 +12,7 @@ namespace Resgrid.Model.Providers
 		bool EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
 		bool EnqueueCqrsEvent(CqrsEvent cqrsEvent);
 		bool EnqueueAuditEvent(AuditEvent auditEvent);
+		bool EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent);
 		bool VerifyAndCreateClients();
 	}
 }

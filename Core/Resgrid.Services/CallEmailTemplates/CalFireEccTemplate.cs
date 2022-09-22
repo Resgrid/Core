@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Resgrid.Model.Identity;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
+using System.Threading.Tasks;
 
 namespace Resgrid.Services.CallEmailTemplates
 {
 	public class CalFireEccTemplate: ICallEmailTemplate
 	{
-		public Call GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
+		public async Task<Call> GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units,
+			int priority, List<DepartmentCallPriority> activePriorities, List<CallType> callTypes, IGeoLocationProvider geolocationProvider)
 		{
 			if (email == null)
 				return null;

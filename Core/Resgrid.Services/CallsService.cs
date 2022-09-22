@@ -37,13 +37,15 @@ namespace Resgrid.Services
 		private readonly IDepartmentCallPriorityRepository _departmentCallPriorityRepository;
 		private readonly IShortenUrlProvider _shortenUrlProvider;
 		private readonly ICallProtocolsRepository _callProtocolsRepository;
+		private readonly IGeoLocationProvider _geoLocationProvider;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
 			ICacheProvider cacheProvider, ICallNotesRepository callNotesRepository,
 			ICallAttachmentRepository callAttachmentRepository, ICallDispatchGroupRepository callDispatchGroupRepository,
 			ICallDispatchUnitRepository callDispatchUnitRepository, ICallDispatchRoleRepository callDispatchRoleRepository,
-			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider, ICallProtocolsRepository callProtocolsRepository)
+			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
+			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
@@ -59,6 +61,7 @@ namespace Resgrid.Services
 			_departmentCallPriorityRepository = departmentCallPriorityRepository;
 			_shortenUrlProvider = shortenUrlProvider;
 			_callProtocolsRepository = callProtocolsRepository;
+			_geoLocationProvider = geoLocationProvider;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
@@ -313,9 +316,9 @@ namespace Resgrid.Services
 			return await _callTypesRepository.SaveOrUpdateAsync(callType, cancellationToken);
 		}
 
-		public Call GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities)
+		public async Task<Call> GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities, List<CallType> callTypes)
 		{
-			return _callEmailFactory.GenerateCallFromEmailText((CallEmailTypes)type, email, managingUser, users, department, activeCalls, units, priority, activePriorities);
+			return await _callEmailFactory.GenerateCallFromEmailText((CallEmailTypes)type, email, managingUser, users, department, activeCalls, units, priority, activePriorities, callTypes, _geoLocationProvider);
 		}
 
 		public async Task<CallNote> SaveCallNoteAsync(CallNote note, CancellationToken cancellationToken = default(CancellationToken))

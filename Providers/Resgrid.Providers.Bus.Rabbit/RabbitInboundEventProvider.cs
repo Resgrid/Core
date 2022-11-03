@@ -8,6 +8,7 @@ using RabbitMQ.Client.Events;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 
 namespace Resgrid.Providers.Bus.Rabbit
@@ -18,12 +19,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 		private IConnection _connection;
 		private IModel _channel;
 
-		public Func<int, int, Task> ProcessPersonnelStatusChanged;
-		public Func<int, int, Task> ProcessUnitStatusChanged;
-		public Func<int, int, Task> ProcessCallStatusChanged;
-		public Func<int, int, Task> ProcessCallAdded;
-		public Func<int, int, Task> ProcessCallClosed;
-		public Func<int, int, Task> ProcessPersonnelStaffingChanged;
+		public Func<int, string, Task> ProcessPersonnelStatusChanged;
+		public Func<int, string, Task> ProcessUnitStatusChanged;
+		public Func<int, string, Task> ProcessCallStatusChanged;
+		public Func<int, string, Task> ProcessCallAdded;
+		public Func<int, string, Task> ProcessCallClosed;
+		public Func<int, string, Task> ProcessPersonnelStaffingChanged;
+		public Func<int, PersonnelLocationUpdatedEvent, Task> PersonnelLocationUpdated;
+		public Func<int, UnitLocationUpdatedEvent, Task> UnitLocationUpdated;
 
 		public async Task Start()
 		{
@@ -121,6 +124,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 								if (ProcessPersonnelStaffingChanged != null)
 									await ProcessPersonnelStaffingChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
 								break;
+							case EventingTypes.PersonnelLocationUpdated:
+								if (PersonnelLocationUpdated != null)
+									await PersonnelLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<PersonnelLocationUpdatedEvent>(eventingMessage.Payload));
+								break;
+							case EventingTypes.UnitLocationUpdated:
+								if (UnitLocationUpdated != null)
+									await UnitLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<UnitLocationUpdatedEvent>(eventingMessage.Payload));
+								break;
 							default:
 								throw new ArgumentOutOfRangeException();
 						}
@@ -140,12 +151,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return _channel.IsOpen;
 		}
 
-		public void RegisterForEvents(Func<int, int, Task> personnelStatusChanged,
-									  Func<int, int, Task> unitStatusChanged,
-									  Func<int, int, Task> callStatusChanged,
-									  Func<int, int, Task> personnelStaffingChanged,
-									  Func<int, int, Task> callAdded,
-									  Func<int, int, Task> callClosed)
+		public void RegisterForEvents(Func<int, string, Task> personnelStatusChanged,
+									  Func<int, string, Task> unitStatusChanged,
+									  Func<int, string, Task> callStatusChanged,
+									  Func<int, string, Task> personnelStaffingChanged,
+									  Func<int, string, Task> callAdded,
+									  Func<int, string, Task> callClosed,
+									  Func<int, PersonnelLocationUpdatedEvent, Task> personnelLocationUpdated,
+									  Func<int, UnitLocationUpdatedEvent, Task> unitLocationUpdated)
 		{
 			ProcessPersonnelStatusChanged = personnelStatusChanged;
 			ProcessUnitStatusChanged = unitStatusChanged;
@@ -153,6 +166,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 			ProcessPersonnelStaffingChanged = personnelStaffingChanged;
 			ProcessCallAdded = callAdded;
 			ProcessCallClosed = callClosed;
+			PersonnelLocationUpdated = personnelLocationUpdated;
+			UnitLocationUpdated = unitLocationUpdated;
 		}
 
 		private static string SetQueueNameForEnv(string cacheKey)

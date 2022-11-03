@@ -594,6 +594,21 @@
         "dist/vendor/bootstrap5/utilities/_api.scss",
         "dist/vendor/bootstrap5/vendor/_rfs.scss"
       ]
+    },
+    {
+      "library": "@geoman-io/leaflet-geoman-free@2.13.0",
+      "destination": "wwwroot/lib/geoman-io/leaflet-geoman-free/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@claviska/jquery-minicolors@2.3.6",
+      "destination": "wwwroot/lib/claviska/jquery-minicolors/",
+      "files": [
+        "jquery.minicolors.css",
+        "jquery.minicolors.js",
+        "jquery.minicolors.min.js",
+        "jquery.minicolors.png"
+      ]
     }
   ]
 }

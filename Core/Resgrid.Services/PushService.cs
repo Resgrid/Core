@@ -161,7 +161,7 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendPush)
 				await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
-
+			
 			return true;
 		}
 

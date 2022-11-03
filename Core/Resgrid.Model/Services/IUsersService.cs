@@ -27,5 +27,8 @@ namespace Resgrid.Model.Services
 		Task<bool> DoesUserHaveAnyActiveDepartments(string userName);
 		void ClearCacheForDepartment(int departmentId);
 		Task<IdentityUser> GetUserByNameAsync(string userName);
+		Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation);
+		Task<List<PersonnelLocation>> GetLatestLocationsForDepartmentPersonnelAsync(int departmentId);
+		Task<PersonnelLocation> GetPersonnelLocationByIdAsync(string id);
 	}
 }

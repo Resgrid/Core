@@ -43,5 +43,11 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> DeletePOITypeAsync(int poiTypeId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<MapLayer> SaveMapLayerAsync(MapLayer mapLayer);
+
+		Task<List<MapLayer>> GetMapLayersForTypeDepartmentAsync(int departmentId, MapLayerTypes type);
+
+		Task<MapLayer> GetMapLayersByIdAsync(string id);
 	}
 }

@@ -329,22 +329,16 @@ namespace Resgrid.Providers.Bus
 				string appleNotification = null;
 				string category = null;
 
-				if (type == ((int)PushSoundTypes.CallEmergency).ToString() ||
-					type == ((int)PushSoundTypes.CallHigh).ToString() ||
-					type == ((int)PushSoundTypes.CallMedium).ToString() ||
-					type == ((int)PushSoundTypes.CallLow).ToString())
-				{
+				if (eventCode.ToLower().StartsWith("m")) // message
+					category = "messages";
+				else if (eventCode.ToLower().StartsWith("c")) //call
 					category = "calls";
-				}
-				else if (type == ((int)PushSoundTypes.Message).ToString())
-				{
-					category = "message";
-				}
-				else if (type == ((int)PushSoundTypes.Notifiation).ToString())
-				{
-					category = "notif";
-				}
-
+				else if (eventCode.ToLower().StartsWith("n")) // notification
+					category = "notifications";
+				else if (eventCode.ToLower().StartsWith("t")) // 1 on 1 chat
+					category = "chats";
+				else if (eventCode.ToLower().StartsWith("g")) // group chat
+					category = "chats";
 
 				var apnsPayload = new ApnsPayload
 				{
@@ -359,13 +353,11 @@ namespace Resgrid.Providers.Bus
 						category = category,
 						sound = GetSoundFileNameFromType(Platforms.iPhone, type, enableCustomSounds)
 					},
-					eventCode = eventCode
-
+					eventCode = eventCode,
+					type = type
 				};
 
 				appleNotification = JsonConvert.SerializeObject(apnsPayload);
-
-
 
 				var appleOutcome = await hubClient.SendAppleNativeNotificationAsync(appleNotification, string.Format("unitId:{0}", unitId));
 
@@ -415,7 +407,7 @@ namespace Resgrid.Providers.Bus
 				if (platform == Platforms.iPhone)
 					return "beep.caf";
 
-				return "beep.wav";
+				return "beep.mp3";
 			}
 
 			if (type == ((int)PushSoundTypes.CallEmergency).ToString())
@@ -431,44 +423,42 @@ namespace Resgrid.Providers.Bus
 				if (platform == Platforms.iPhone)
 					return "callhigh.caf";
 
-				return "callhigh.wav";
+				return "callhigh.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.CallMedium).ToString())
 			{
 				if (platform == Platforms.iPhone)
 					return "callmedium.caf";
 
-				return "callmedium.wav";
+				return "callmedium.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.CallLow).ToString())
 			{
 				if (platform == Platforms.iPhone)
 					return "calllow.caf";
 
-				return "calllow.wav";
+				return "calllow.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.Notifiation).ToString())
 			{
 				if (platform == Platforms.iPhone)
 					return "notification.caf";
 
-				return "notification.wav";
+				return "notification.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.Message).ToString())
 			{
 				if (platform == Platforms.iPhone)
 					return "message.caf";
 
-				return "message.wav";
+				return "message.mp3";
 			}
 			else
 			{
 				if (platform == Platforms.iPhone)
-					//return "beep.caf";
-					return $"CallPAudio_{type}.caf";
+					return $"{type}.caf";
 
-				//return "beep.wav";
-				return $"CallPAudio_{type}.wav";
+				return $"{type}.mp3";
 			}
 		}
 
@@ -488,30 +478,30 @@ namespace Resgrid.Providers.Bus
 			if (count == 0)
 				count = 1;
 
-			string soundFilename = FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type, true));
-
 			dynamic pushNotification = new JObject();
+
 			pushNotification.notification = new JObject();
 			pushNotification.notification.title = title;
 			pushNotification.notification.body = subTitle;
 			pushNotification.notification.android_channel_id = type;
-			//pushNotification.notification.sound = soundFilename + ".wav";
-			pushNotification.data = new JObject();
-			pushNotification.data["content-available"] = 1;
-			pushNotification.data["force-start"] = 1;
-			pushNotification.data.notId = eventCode;
-			pushNotification.data.eventCode = eventCode;
+
+			pushNotification.android = new JObject();
+			pushNotification.android.ttl = "86400";
+			pushNotification.android.notification = new JObject();
+			//pushNotification.android.notification.color = color;
+			pushNotification.android.notification.channel_id = type;
+			//pushNotification.android.notification.sound = soundFilename;
+			pushNotification.android.notification.defaultSound = true;
 
 			if (channel != null && channel == "calls")
-				pushNotification.data.priority = "high";
+				pushNotification.android.notification.priority = "high";
 
-			pushNotification.data.sound = soundFilename;
-			pushNotification.data.color = color;
-			pushNotification.data.count = count;
-			//pushNotification.data.ledColor = new JArray(0, int.Parse(color.Substring(1, 2), System.Globalization.NumberStyles.HexNumber),
-			//	int.Parse(color.Substring(3, 2), System.Globalization.NumberStyles.HexNumber), int.Parse(color.Substring(5, 2), System.Globalization.NumberStyles.HexNumber));
-			pushNotification.data.vibrationPattern = new JArray(500, 1000, 500);
-			pushNotification.data.android_channel_id = type;
+			pushNotification.data = new JObject();
+			pushNotification.data.title = title;
+			pushNotification.data.message = subTitle;
+			pushNotification.data.notId = eventCode;
+			pushNotification.data.eventCode = eventCode;
+			pushNotification.data.type = type;
 
 			return pushNotification.ToString();
 		}

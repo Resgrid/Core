@@ -7,9 +7,14 @@ import {
   Input,
   ChangeDetectorRef,
 } from '@angular/core';
-import { MapDataAndMarkersData, MappingService } from '@resgrid/ngx-resgridlib';
+import {
+  GetMapDataAndMarkersResult,
+  MapDataAndMarkersData,
+  MappingService,
+} from '@resgrid/ngx-resgridlib';
 import { environment } from 'src/environments/environment';
-import * as L from "leaflet";
+import * as L from 'leaflet';
+import { debounceTime, distinctUntilChanged, Observable, take } from 'rxjs';
 
 @Component({
   templateUrl: './map.component.html',
@@ -17,13 +22,20 @@ import * as L from "leaflet";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements OnInit {
-  @ViewChild("map") mapContainer;
+  @ViewChild('map') mapContainer;
+  @ViewChild('filterTextInput') filterTextInput;
+
   public map: any;
+  public layerControl: any;
+  public baseMaps: any;
   public markers: any[];
+  public layers: any[];
   public showCalls: boolean = true;
   public showStations: boolean = true;
   public showUnits: boolean = true;
   public showPersonnel: boolean = true;
+  public hideLabels: boolean = false;
+  public filterText: string = '';
 
   @Input()
   public showbuttons: boolean;
@@ -31,12 +43,17 @@ export class MapComponent implements OnInit {
   @Input()
   public mapheight: string;
 
-  public constructor(private mapProvider: MappingService, private cdRef: ChangeDetectorRef) {
+  public constructor(
+    private mapProvider: MappingService,
+    private cdRef: ChangeDetectorRef
+  ) {
     this.markers = [];
   }
 
   ngOnInit(): void {
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => { this.processMapData(data.Data); });
+    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+      this.processMapData(data.Data);
+    });
 
     if (typeof this.showbuttons === 'undefined') {
       this.showbuttons = false;
@@ -47,6 +64,17 @@ export class MapComponent implements OnInit {
     }
 
     this.cdRef.detectChanges();
+  }
+
+  ngAfterViewInit() {
+    this.filterTextInput.valueChanges
+      .pipe(debounceTime(500))
+      .pipe(distinctUntilChanged())
+      .subscribe((value) => {
+        this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+          this.processMapData(data.Data);
+        });
+      });
   }
 
   ngOnChanges(): void {
@@ -60,52 +88,140 @@ export class MapComponent implements OnInit {
 
     this.cdRef.detectChanges();
   }
- 
+
+  public changeHideLabels(event) {
+    var checked = event.target.checked;
+    this.hideLabels = checked;
+
+    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+      this.processMapData(data.Data);
+    });
+  }
+
   public changeShowCalls(event) {
     var checked = event.target.checked;
     this.showCalls = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => { this.processMapData(data.Data); });
+    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+      this.processMapData(data.Data);
+    });
   }
 
   public changeShowStations(event) {
     var checked = event.target.checked;
     this.showStations = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => { this.processMapData(data.Data); });
+    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+      this.processMapData(data.Data);
+    });
   }
 
   public changeShowUnits(event) {
     var checked = event.target.checked;
     this.showUnits = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => { this.processMapData(data.Data); });
+    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+      this.processMapData(data.Data);
+    });
   }
 
   public changeShowPeople(event) {
     var checked = event.target.checked;
-    this.showPersonnel = checked; 
+    this.showPersonnel = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => { this.processMapData(data.Data); });
+    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+      this.processMapData(data.Data);
+    });
+  }
+
+  private getMapLayers() {
+    this.mapProvider
+      .getMayLayers(0)
+      .pipe(take(1))
+      .subscribe((data) => {
+        if (data && data.Data && data.Data.LayerJson) {
+          this.clearLayers();
+
+          var jsonData = JSON.parse(data.Data.LayerJson);
+          if (jsonData) {
+            jsonData.forEach((json) => {
+              var myLayer = L.geoJSON(json, {
+                //onEachFeature: this.colorlayer,
+                style: {
+                  color: json.features[0].properties.color,
+                  opacity: 0.7,
+                  fillColor: json.features[0].properties.color,
+                  //fillColor: json.features[0].properties.fillColor,
+                  fillOpacity: 0.1,
+                },
+              }); //.addData(json);//.addTo(this.map);
+              this.layerControl.addOverlay(
+                myLayer,
+                json.features[0].properties.name
+              );
+
+              this.layers.push(myLayer);
+              //myLayer.addData(json);
+            });
+          }
+        }
+      });
+  }
+
+  private clearLayers() {
+    if (this.layers && this.layers.length > 0) {
+      this.layers.forEach((layer) => {
+        this.layerControl.removeLayer(layer);
+        this.map.removeLayer(layer);
+      });
+      this.layers = [];
+    } else {
+      this.layers = [];
+    }
+  }
+
+  public colorlayer(feature, layer) {
+    layer.on('mouseover', function (e) {
+      layer.setStyle({
+        fillOpacity: 0.4,
+      });
+    });
+    layer.on('mouseout', function (e) {
+      layer.setStyle({
+        fillOpacity: 0,
+      });
+    });
   }
 
   private processMapData(data: MapDataAndMarkersData) {
     if (data) {
+      this.clearLayers();
+
       var mapCenter = this.getMapCenter(data);
 
       if (!this.map) {
+        const mapKey = window['rgOsmKey'];
+
+        var osm = L.tileLayer(
+          'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' + mapKey,
+          {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap',
+          }
+        );
+
+        this.baseMaps = {
+          OpenStreetMap: osm,
+        };
+
         this.map = L.map(this.mapContainer.nativeElement, {
           //dragging: false,
           doubleClickZoom: false,
-          zoomControl: false,
+          zoomControl: true,
+          layers: [osm],
         });
 
-        const mapKey = window['rgOsmKey'];
-
-        L.tileLayer("https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=" + mapKey, {
-          attribution:
-            '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-        }).addTo(this.map);
+        this.layerControl = L.control.layers(this.baseMaps).addTo(this.map);
       }
 
       //this.mapProvider.setMarkersForMap(this.map);
@@ -130,25 +246,58 @@ export class MapComponent implements OnInit {
       if (data.MapMakerInfos && data.MapMakerInfos.length > 0) {
         if (data && data.MapMakerInfos) {
           data.MapMakerInfos.forEach((markerInfo) => {
+            if (
+              this.filterText === '' ||
+              markerInfo.Title.toLowerCase().indexOf(
+                this.filterText.toLowerCase()
+              ) >= 0
+            ) {
+              let markerTitle = '';
+              let marker = null;
+              if (!this.hideLabels) markerTitle = markerInfo.Title;
 
-            if ((markerInfo.Type == 0 && this.showCalls) || 
+              if (
+                (markerInfo.Type == 0 && this.showCalls) ||
                 (markerInfo.Type == 1 && this.showUnits) ||
-                (markerInfo.Type == 2 && this.showStations)) {
-              let marker = L.marker([markerInfo.Latitude, markerInfo.Longitude], {
-                icon: L.icon({
-                  iconUrl: "/images/mapping/" + markerInfo.ImagePath + ".png",
-                  iconSize: [32, 37],
-                  iconAnchor: [16, 37],
-                }),
-                draggable: false,
-                title: markerInfo.Title,
-                //tooltip: markerInfo.Title,
-              })
-                .bindTooltip(markerInfo.Title, {
-                  permanent: true,
-                  direction: "bottom",
-                })
-                .addTo(this.map);
+                (markerInfo.Type == 2 && this.showStations)
+              ) {
+                if (!this.hideLabels) {
+                  marker = L.marker(
+                    [markerInfo.Latitude, markerInfo.Longitude],
+                    {
+                      icon: L.icon({
+                        iconUrl:
+                          '/images/mapping/' + markerInfo.ImagePath + '.png',
+                        iconSize: [32, 37],
+                        iconAnchor: [16, 37],
+                      }),
+                      draggable: false,
+                      title: markerTitle,
+                      //tooltip: markerInfo.Title,
+                    }
+                  )
+                    .bindTooltip(markerTitle, {
+                      permanent: true,
+                      direction: 'bottom',
+                    })
+                    .addTo(this.map);
+                } else {
+                  marker = L.marker(
+                    [markerInfo.Latitude, markerInfo.Longitude],
+                    {
+                      icon: L.icon({
+                        iconUrl:
+                          '/images/mapping/' + markerInfo.ImagePath + '.png',
+                        iconSize: [32, 37],
+                        iconAnchor: [16, 37],
+                      }),
+                      draggable: false,
+                      title: markerTitle,
+                      //tooltip: markerInfo.Title,
+                    }
+                  ).addTo(this.map);
+                }
+              }
 
               this.markers.push(marker);
             }
@@ -159,6 +308,8 @@ export class MapComponent implements OnInit {
         this.map.fitBounds(group.getBounds());
       }
     }
+
+    this.getMapLayers();
   }
 
   private getMapCenter(data: MapDataAndMarkersData) {

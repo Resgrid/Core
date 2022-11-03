@@ -24,6 +24,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<CqrsEvent, Task> PaymentEventQueueReceived;
 		public Func<AuditEvent, Task> AuditEventQueueReceived;
 		public Func<UnitLocationEvent, Task> UnitLocationEventQueueReceived;
+		public Func<PersonnelLocationEvent, Task> PersonnelLocationEventQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -404,6 +405,44 @@ namespace Resgrid.Providers.Bus.Rabbit
 					}
 				};
 
+				var personnelLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+				personnelLocationQueueReceivedConsumer.Received += async (model, ea) =>
+				{
+					if (ea != null && ea.Body.Length > 0)
+					{
+						PersonnelLocationEvent personnelLocation = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							personnelLocation = ObjectSerialization.Deserialize<PersonnelLocationEvent>(message);
+						}
+						catch (Exception ex)
+						{
+							//_channel.BasicNack(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
+
+						try
+						{
+							if (personnelLocation != null)
+							{
+								if (UnitLocationEventQueueReceived != null)
+								{
+									await PersonnelLocationEventQueueReceived.Invoke(personnelLocation);
+									//_channel.BasicAck(ea.DeliveryTag, false);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							// Discard unit location events.
+							Logging.LogException(ex);
+							//_channel.BasicNack(ea.DeliveryTag, false, true);
+						}
+					}
+				};
+
 				String callQueueReceivedConsumerTag = _channel.BasicConsume(
 					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
 					autoAck: false,
@@ -448,6 +487,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
 					autoAck: true,
 					consumer: unitLocationQueueReceivedConsumer);
+
+				String personnelLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
+					autoAck: true,
+					consumer: personnelLocationQueueReceivedConsumer);
 			}
 		}
 

@@ -164,6 +164,7 @@ namespace Resgrid.Web.Eventing
 				endpoints.MapControllers();
 
 				endpoints.MapHub<EventingHub>("/eventingHub");
+				endpoints.MapHub<GeolocationHub>("/geolocationHub");
 			});
 		}
 	}

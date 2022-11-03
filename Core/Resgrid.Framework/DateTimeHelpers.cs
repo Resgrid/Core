@@ -252,12 +252,16 @@ namespace Resgrid.Framework
 
 				if (timeParts.Count() == 2)
 				{
-					hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
-					minute = int.Parse(timeParts[1].ToLower().Replace("am", "").Replace("pm", "").Trim());
+					if (!String.IsNullOrWhiteSpace(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim()))
+						hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
+
+					if (!String.IsNullOrWhiteSpace(timeParts[1].ToLower().Replace("am", "").Replace("pm", "").Trim()))
+						minute = int.Parse(timeParts[1].ToLower().Replace("am", "").Replace("pm", "").Trim());
 				}
 				else if (timeParts.Count() == 1)
 				{
-					hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
+					if (!String.IsNullOrWhiteSpace(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim()))
+						hour = int.Parse(timeParts[0].ToLower().Replace("am", "").Replace("pm", "").Trim());
 
 					if (!time.ToUpper().Contains("AM") || !time.ToUpper().Contains("PM"))
 						if (hour < 12)

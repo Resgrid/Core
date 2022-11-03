@@ -10,6 +10,8 @@ import { NgxResgridLibModule } from '@resgrid/ngx-resgridlib';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MapComponent } from './componetns/map/map.component';
+import { OverlayModule } from "@angular/cdk/overlay";
+import { FormsModule } from '@angular/forms';
 
 const getBaseUrl = (): string => {
   if (window['rgApiBaseUrl'] && window['rgApiBaseUrl'].length > 0) {
@@ -42,11 +44,13 @@ const getEventingUrl = (): string => {
     CommonModule,
 		HttpClientModule,
     BrowserModule,
+    FormsModule,
     BrowserAnimationsModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
+    OverlayModule,
     NgxResgridLibModule.forRoot({
 			baseApiUrl: getBaseUrl,
 			apiVersion: 'v4',

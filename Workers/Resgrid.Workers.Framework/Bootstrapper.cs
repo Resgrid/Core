@@ -33,6 +33,7 @@ namespace Resgrid.Workers.Framework
 
 				var builder = new ContainerBuilder();
 				builder.RegisterModule(new DataModule());
+				builder.RegisterModule(new NoSqlDataModule());
 				builder.RegisterModule(new ServicesModule());
 				builder.RegisterModule(new ProviderModule());
 				builder.RegisterModule(new EmailProviderModule());

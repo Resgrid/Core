@@ -111,6 +111,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 							 autoDelete: false,
 							 arguments: null);
 
+				channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
+							 durable: false,
+							 exclusive: false,
+							 autoDelete: false,
+							 arguments: null);
 
 			}
 

@@ -132,8 +132,11 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendMessageAsync(Message message, string senderName, UserProfile profile = null, IdentityUser user = null)
+		public async Task<bool> SendMessageAsync(Message message, string senderName, int departmentId, UserProfile profile = null, IdentityUser user = null)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+			
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
@@ -296,6 +299,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendInviteAsync(Invite invite, string senderName, string senderEmail)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(invite.DepartmentId))
+				return false;
+			
 			if (invite == null)
 				return false;
 
@@ -308,7 +314,7 @@ namespace Resgrid.Services
 		}
 
 		public async Task<bool> SendDistributionListEmail(MimeMessage message, string emailAddress, string name, string listUsername, string listEmail)
-		{
+		{			
 			// VERP https://www.limilabs.com/blog/verp-variable-envelope-return-path-net
 
 			message.From.Clear();
@@ -326,6 +332,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendPaymentReceiptEmailAsync(Payment payment, Department department)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(department.DepartmentId))
+				return false;
+			
 			IdentityUser user;
 
 			if (department.ManagingUser != null)
@@ -344,6 +353,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendCancellationEmailAsync(Payment payment, Department department)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(department.DepartmentId))
+				return false;
+			
 			if (department == null && payment != null && payment.Department != null)
 				department = payment.Department;
 
@@ -367,6 +379,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendChargeFailedEmailAsync(Payment payment, Department department, Resgrid.Model.Plan plan)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(department.DepartmentId))
+				return false;
+			
 			if (payment != null && department != null)
 			{
 				var user = _usersService.GetUserById(department.ManagingUserId, false);
@@ -387,6 +402,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendCancellationWithRefundEmailAsync(Payment payment, Charge charge, Department department)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(department.DepartmentId))
+				return false;
+			
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
@@ -398,6 +416,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendUserCancellationNotificationToTeamAsync(Department department, Payment payment, string userId, string reason)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(department.DepartmentId))
+				return false;
+			
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
@@ -415,6 +436,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendRefundIssuedNotificationToTeam(Payment payment, Charge charge, Department department)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(department.DepartmentId))
+				return false;
+			
 			await _emailProvider.TEAM_SendNotifyRefundIssued(department.DepartmentId.ToString(), department.Name, DateTime.UtcNow.ToShortDateString() + " " + DateTime.UtcNow.ToShortTimeString(),
 													(float.Parse(charge.AmountRefunded.ToString()) / 100f).ToString("C", Cultures.UnitedStates), ((PaymentMethods)payment.Method).ToString(), charge.Id, payment.PaymentId.ToString());
 
@@ -423,6 +447,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendUpgradePaymentReceiptEmail(Payment newPayment, Payment oldPayment, Department department)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(department.DepartmentId))
+				return false;
+
 			var user = _usersService.GetUserById(department.ManagingUserId, false);
 
 			await  _emailProvider.SendUpgradePaymentReciept(department.Name, newPayment.PurchaseOn.ToShortDateString() + " (UTC)", newPayment.Amount.ToString("C", Cultures.UnitedStates), user.Email,
@@ -466,8 +493,11 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public async Task<bool> SendNotificationAsync(string userId, string message, UserProfile profile = null)
+		public async Task<bool> SendNotificationAsync(string userId, string message, int departmentId, UserProfile profile = null)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 

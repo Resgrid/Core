@@ -145,8 +145,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
 					var signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDay.ShiftDayId);
 					var isUserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(shiftDay, UserId, null);
-
-					result.Data.Add(ConvertShiftDayResultData(shiftDay, needs, personnelRoles, signups, isUserSignedUp));
+					var departmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+					var departmentRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+					
+					result.Data.Add(ConvertShiftDayResultData(shiftDay, needs, personnelRoles, signups, isUserSignedUp, departmentGroups, departmentRoles));
 				}
 
 				result.PageSize = 1;
@@ -187,8 +189,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var personnelRoles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
 				var signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(id);
 				var isUserSignedUp = await _shiftsService.IsUserSignedUpForShiftDayAsync(shiftDay, UserId, null);
+				var departmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+				var departmentRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
 
-				result.Data = ConvertShiftDayResultData(shiftDay, needs, personnelRoles, signups, isUserSignedUp);
+				result.Data = ConvertShiftDayResultData(shiftDay, needs, personnelRoles, signups, isUserSignedUp, departmentGroups, departmentRoles);
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Success;
 			}
@@ -275,7 +279,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					dayResult.ShiftDayId = shiftDay.ShiftDayId.ToString();
 					dayResult.ShiftId = shiftDay.ShiftId.ToString(); ;
 					dayResult.ShiftName = shiftData.Name;
-					dayResult.ShitDay = shiftDay.Day;
+					dayResult.ShiftDay = shiftDay.Day;
 					dayResult.Start = shiftDay.Start;
 					dayResult.End = shiftDay.End;
 					dayResult.ShiftType = shiftData.AssignmentType;
@@ -287,16 +291,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			return shift;
 		}
-
+		
 		public static ShiftDayResultData ConvertShiftDayResultData(ShiftDay shiftDay, Dictionary<int, Dictionary<int, int>> needs,
-			Dictionary<string, List<PersonnelRole>> personnelRoles, List<ShiftSignup> signups, bool isUserSignedUp)
+			Dictionary<string, List<PersonnelRole>> personnelRoles, List<ShiftSignup> signups, bool isUserSignedUp,
+			List<DepartmentGroup> groups, List<PersonnelRole> roles)
 		{
 			var dayResult = new ShiftDayResultData();
 
 			dayResult.ShiftDayId = shiftDay.ShiftDayId.ToString();
 			dayResult.ShiftId = shiftDay.ShiftId.ToString();;
 			dayResult.ShiftName = shiftDay.Shift.Name;
-			dayResult.ShitDay = shiftDay.Day;
+			dayResult.ShiftDay = shiftDay.Day;
 			dayResult.Start = shiftDay.Start;
 			dayResult.End = shiftDay.End;
 			dayResult.ShiftType = shiftDay.Shift.AssignmentType;
@@ -324,11 +329,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var dayNeed = new ShiftDayGroupNeedsResultData();
 					dayNeed.GroupId = need.ToString();
 
+					var group = groups.FirstOrDefault(x => x.DepartmentGroupId == need);
+
+					if (group != null)
+						dayNeed.GroupName = group.Name;
+					
 					dayNeed.GroupNeeds = new List<ShiftDayGroupRoleNeedsResultData>();
 					foreach (var dNeed in needs[need])
 					{
 						var groupNeed = new ShiftDayGroupRoleNeedsResultData();
 						groupNeed.RoleId = dNeed.Key.ToString();
+						
+						var role = roles.FirstOrDefault(x => x.PersonnelRoleId == dNeed.Key);
+
+						if (role != null)
+							groupNeed.RoleName = role.Name;
+						
 						groupNeed.Needed = dNeed.Value;
 
 						dayNeed.GroupNeeds.Add(groupNeed);

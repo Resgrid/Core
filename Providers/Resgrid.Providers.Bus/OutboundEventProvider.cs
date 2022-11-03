@@ -4,6 +4,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Providers.Bus.Rabbit;
 using System;
+using System.Threading.Tasks;
 
 namespace Resgrid.Providers.Bus
 {
@@ -47,6 +48,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(shiftCreatedEventHandler);
 			_eventAggregator.AddListener(shiftUpdatedEventHandler);
 			_eventAggregator.AddListener(shiftDaysAddedEventHandler);
+			_eventAggregator.AddListener(auditEventHandler);
 
 			// Topics (SignalR Integration)
 			_eventAggregator.AddListener(personnelStatusChangedTopicHandler);
@@ -55,6 +57,8 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(callAddedTopicHandler);
 			_eventAggregator.AddListener(callUpdatedTopicHandler);
 			_eventAggregator.AddListener(callClosedTopicHandler);
+			_eventAggregator.AddListener(personnelLocationUpdatedTopicHandler);
+			_eventAggregator.AddListener(unitLocationUpdatedTopicHandler);
 		}
 
 		public Action<UnitStatusEvent> unitStatusHandler = async delegate(UnitStatusEvent message)
@@ -413,6 +417,11 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};
 
+		private Action<AuditEvent> auditEventHandler = async delegate (AuditEvent message)
+		{
+			await _outboundQueueProvider.EnqueueAuditEvent(message);
+		};
+
 		#region Topic Based Events
 		public Action<DepartmentSettingsChangedEvent> departmentSettingsChangedHandler = async delegate(DepartmentSettingsChangedEvent message)
 		{
@@ -438,15 +447,7 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserStatusEvent> personnelStatusChangedTopicHandler = async delegate (UserStatusEvent message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitTopicProvider.PersonnelStatusChanged(message);
-			}
-			else
-			{
-
-				
-			}
+			_rabbitTopicProvider.PersonnelStatusChanged(message);
 		};
 
 
@@ -458,49 +459,32 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UnitStatusEvent> unitStatusTopicHandler = async delegate(UnitStatusEvent message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitTopicProvider.UnitStatusChanged(message);
-			}
-			else
-			{
-			}
+			_rabbitTopicProvider.UnitStatusChanged(message);
 		};
 
 		public Action<CallAddedEvent> callAddedTopicHandler = async delegate(CallAddedEvent message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitTopicProvider.CallAdded(message);
-			}
-			else
-			{
-				
-			}
+			_rabbitTopicProvider.CallAdded(message);
 		};
 
 		public Action<CallUpdatedEvent> callUpdatedTopicHandler = async delegate (CallUpdatedEvent message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitTopicProvider.CallUpdated(message);
-			}
-			else
-			{
-
-			}
+			_rabbitTopicProvider.CallUpdated(message);
 		};
 
 		public Action<CallClosedEvent> callClosedTopicHandler = async delegate (CallClosedEvent message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			{
-				_rabbitTopicProvider.CallClosed(message);
-			}
-			else
-			{
+			_rabbitTopicProvider.CallClosed(message);
+		};
 
-			}
+		public Action<PersonnelLocationUpdatedEvent> personnelLocationUpdatedTopicHandler = async delegate (PersonnelLocationUpdatedEvent message)
+		{
+			_rabbitTopicProvider.PersonnelLocationUnidatedChanged(message);
+		};
+
+		public Action<UnitLocationUpdatedEvent> unitLocationUpdatedTopicHandler = async delegate (UnitLocationUpdatedEvent message)
+		{
+			_rabbitTopicProvider.UnitLocationUpdatedChanged(message);
 		};
 		#endregion Topic Based Events
 	}

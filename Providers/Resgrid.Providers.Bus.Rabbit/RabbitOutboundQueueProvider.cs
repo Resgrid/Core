@@ -83,6 +83,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return SendMessage(ServiceBusConfig.UnitLoactionQueueName, serializedObject, false, "300000");
 		}
 
+		public bool EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent)
+		{
+			var serializedObject = ObjectSerialization.Serialize(personnelLocationEvent);
+
+			return SendMessage(ServiceBusConfig.PersonnelLoactionQueueName, serializedObject, false, "300000");
+		}
+
 		public bool VerifyAndCreateClients()
 		{
 			return RabbitConnection.VerifyAndCreateClients();

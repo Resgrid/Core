@@ -53,8 +53,8 @@ var resgrid;
 							var tableHtml;
 							$.each(results, function (index, value) {
 								var tr = '<tr>';
-								tr += '<td>' + value.name + " on " + value.computer.name + '</td>';
-								tr += `<td><a class="btn btn-xs btn-primary" onclick='resgrid.groups.newgroup.selectPrinter("${value.id}","${value.name.replace(/\//g, "-").replace(/ /g, "_")}");' data-dismiss="modal">Select this Printer</a></td>`;
+								tr += '<td>' + value.Name + " on " + value.Computer.Name + '</td>';
+								tr += `<td><a class="btn btn-xs btn-primary" onclick='resgrid.groups.newgroup.selectPrinter("${value.Id}","${value.Name.replace(/\//g, "-").replace(/ /g, "_")}");' data-dismiss="modal">Select this Printer</a></td>`;
 								tr += '</tr>';
 								tableHtml += tr;
 							});

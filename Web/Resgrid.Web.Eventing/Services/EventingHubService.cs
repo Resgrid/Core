@@ -1,31 +1,32 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Resgrid.Config;
+using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Eventing.Hubs;
+using Resgrid.Web.Eventing.Hubs.Models;
 
 namespace Resgrid.Web.Eventing.Services
 {
 	public class EventingHubService
 	{
 		private readonly IHubContext<EventingHub> _eventingHub;
-		private readonly IInboundEventProvider _inboundEventProvider;
+		private readonly IHubContext<GeolocationHub> _geolocationHub;
 		private readonly IRabbitInboundEventProvider _rabbitInboundEventProvider;
 
-		public EventingHubService(IHubContext<EventingHub> eventingHub, IInboundEventProvider inboundEventProvider, IRabbitInboundEventProvider rabbitInboundEventProvider)
+		public EventingHubService(IHubContext<EventingHub> eventingHub, IHubContext<GeolocationHub> geolocationHub,
+			IRabbitInboundEventProvider rabbitInboundEventProvider)
 		{
 			_eventingHub = eventingHub;
-			_inboundEventProvider = inboundEventProvider;
+			_geolocationHub = geolocationHub;
 			_rabbitInboundEventProvider = rabbitInboundEventProvider;
-
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated, PersonnelStaffingUpdated, CallAdded, CallClosed);
-			else
-				_inboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated, PersonnelStaffingUpdated);
+			_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated,
+				PersonnelStaffingUpdated, CallAdded, CallClosed, PersonnelLocationUpdated, UnitLocationUpdated);
 		}
-
-		public async Task PersonnelStatusUpdated(int departmentId, int id)
+		
+		public async Task PersonnelStatusUpdated(int departmentId, string id)
 		{
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
@@ -33,7 +34,7 @@ namespace Resgrid.Web.Eventing.Services
 				await group.SendAsync("personnelStatusUpdated", id);
 		}
 
-		public async Task PersonnelStaffingUpdated(int departmentId, int id)
+		public async Task PersonnelStaffingUpdated(int departmentId, string id)
 		{
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
@@ -41,7 +42,7 @@ namespace Resgrid.Web.Eventing.Services
 				await group.SendAsync("personnelStaffingUpdated", id);
 		}
 
-		public async Task UnitStatusUpdated(int departmentId, int id)
+		public async Task UnitStatusUpdated(int departmentId, string id)
 		{
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
@@ -49,7 +50,7 @@ namespace Resgrid.Web.Eventing.Services
 				await group.SendAsync("unitStatusUpdated", id);
 		}
 
-		public async Task CallsUpdated(int departmentId, int id)
+		public async Task CallsUpdated(int departmentId, string id)
 		{
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
@@ -65,7 +66,7 @@ namespace Resgrid.Web.Eventing.Services
 				await group.SendAsync("departmentUpdated");
 		}
 
-		public async Task CallAdded(int departmentId, int id)
+		public async Task CallAdded(int departmentId, string id)
 		{
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
@@ -73,12 +74,42 @@ namespace Resgrid.Web.Eventing.Services
 				await group.SendAsync("callAdded", id);
 		}
 
-		public async Task CallClosed(int departmentId, int id)
+		public async Task CallClosed(int departmentId, string id)
 		{
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
 				await group.SendAsync("callClosed", id);
+		}
+
+		public async Task PersonnelLocationUpdated(int departmentId, PersonnelLocationUpdatedEvent update)
+		{
+			var group = _geolocationHub.Clients.Group(departmentId.ToString());
+
+			var location = new PersonnelLocationUpdate();
+			location.DepartmentId = update.DepartmentId;
+			location.UserId = update.UserId;
+			location.Latitude = update.Latitude;
+			location.Longitude = update.Longitude;
+			location.RecordId = update.RecordId;
+
+			if (group != null)
+				await group.SendAsync("onPersonnelLocationUpdated", location);
+		}
+
+		public async Task UnitLocationUpdated(int departmentId, UnitLocationUpdatedEvent update)
+		{
+			var group = _geolocationHub.Clients.Group(departmentId.ToString());
+
+			var location = new UnitLocationUpdate();
+			location.DepartmentId = update.DepartmentId;
+			location.UnitId = update.UnitId;
+			location.Latitude = update.Latitude;
+			location.Longitude = update.Longitude;
+			location.RecordId = update.RecordId;
+
+			if (group != null)
+				await group.SendAsync("onUnitLocationUpdated", location);
 		}
 	}
 }

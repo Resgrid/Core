@@ -16,7 +16,7 @@ using Resgrid.Model.Events;
 namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
-	/// Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
+	/// Operations involving the location of a unit setting the real-time location or getting the latest location for a unit.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]

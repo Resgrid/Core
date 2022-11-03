@@ -12,6 +12,8 @@ namespace Resgrid.Model
 
 		public int DepartmentId { get; set; }
 
-		public int ItemId { get; set; }
+		public string ItemId { get; set; }
+
+		public string Payload { get;set;}
 	}
 }

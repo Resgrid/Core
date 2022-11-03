@@ -141,11 +141,11 @@ namespace Resgrid.Web.ServicesCore
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 			});
 
-			services.AddApiVersioning(x =>  
-			{  
+			services.AddApiVersioning(x =>
+			{
 				x.DefaultApiVersion = new ApiVersion(3, 0);
 				x.AssumeDefaultVersionWhenUnspecified = true;
-				x.ReportApiVersions = true;  
+				x.ReportApiVersions = true;
 			});
 
 			services.AddMemoryCache();
@@ -206,7 +206,7 @@ namespace Resgrid.Web.ServicesCore
 						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
 					}
 				);
- 
+
 				var filePath = Path.Combine(AppContext.BaseDirectory, "Resgrid.Web.Services.xml");
 				options.IncludeXmlComments(filePath);
 				//options.DescribeAllEnumsAsStrings();
@@ -536,6 +536,7 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
 
 			builder.RegisterModule(new DataModule());
+			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
 			builder.RegisterModule(new ProviderModule());
 			builder.RegisterModule(new EmailProviderModule());

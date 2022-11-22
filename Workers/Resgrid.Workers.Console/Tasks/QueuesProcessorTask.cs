@@ -45,7 +45,8 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.PaymentEventQueueReceived += OnPaymentEventQueueReceived;
 			queue.AuditEventQueueReceived += OnAuditEventQueueReceived;
 			queue.UnitLocationEventQueueReceived += OnUnitLocationEventQueueReceived;
-
+			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
+			
 			await queue.Start();
 
 			while (!_cancellationToken.IsCancellationRequested)
@@ -118,6 +119,13 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger.LogInformation($"{Name}: Unit Location Queue Received with an id of {unitLocationEvent.EventId}, starting processing...");
 			await UnitLocationQueueLogic.ProcessUnitLocationQueueItem(unitLocationEvent, _cancellationToken);
 			_logger.LogInformation($"{Name}: Finished processing of Unit Location queue item with an id of {unitLocationEvent.EventId}.");
+		}
+
+		private async Task OnPersonnelLocationEventQueueReceived(PersonnelLocationEvent personnelLocationEvent)
+		{
+			_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
+			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent);
+			_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
 		}
 	}
 }

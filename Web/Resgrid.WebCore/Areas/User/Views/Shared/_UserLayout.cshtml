@@ -4,105 +4,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@ViewData["Title"]</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"
-		asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-		asp-fallback-test-class="sr-only"
-		asp-fallback-test-property="position"
-		asp-fallback-test-value="absolute" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute" />
 
-  <link rel="stylesheet" href="~/lib/fullcalendar/dist/fullcalendar.print.min.css" media="print" />
-  <link rel="stylesheet" href="/css/int-bundle.css" />
+    <link rel="stylesheet" href="~/lib/fullcalendar/dist/fullcalendar.print.min.css" media="print" />
+    <link rel="stylesheet" href="/css/int-bundle.css" />
 
-  <link rel="stylesheet" href="/js/ng/styles.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="/js/ng/styles.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-  <!-- Add local styles, mostly for plugins css file -->
-  @if (IsSectionDefined("Styles"))
-  {
-	@RenderSection("Styles", required: false)
-  }
-  <script src="https://js.stripe.com/v3/"></script>
+    <!-- Add local styles, mostly for plugins css file -->
+    @if (IsSectionDefined("Styles"))
+    {
+        @RenderSection("Styles", required: false)
+    }
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-  <!-- Wrapper-->
-  <div id="wrapper" class="md-skin">
+    <!-- Wrapper-->
+    <div id="wrapper" class="md-skin">
 
-	<!-- Navigation -->
-	@await Html.PartialAsync("_Navigation")
+        <!-- Navigation -->
+        @await Html.PartialAsync("_Navigation")
 
-	<!-- Page wraper -->
-	<div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
+        <!-- Page wraper -->
+        <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
 
-	  <!-- Top Navbar -->
-	  @await Html.PartialAsync("_TopNavbar")
+            <!-- Top Navbar -->
+            @await Html.PartialAsync("_TopNavbar")
 
-	  <!-- Main view  -->
-	  @RenderBody()
+            <!-- Main view  -->
+            @RenderBody()
 
-	  <div id="setupWizard"></div>
+            <div id="setupWizard"></div>
 
-	  <!-- Footer -->
-	  @await Html.PartialAsync("_Footer")
-	</div>
-	<!-- End page wrapper-->
-  </div>
-  <!-- End wrapper-->
+            <!-- Footer -->
+            @await Html.PartialAsync("_Footer")
+        </div>
+        <!-- End page wrapper-->
+    </div>
+    <!-- End wrapper-->
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"
-		  asp-fallback-src="lib/jquery/jquery-1.12.3.min.js"
-		  asp-fallback-test="window.jQuery"
-		  crossorigin="anonymous"
-		  integrity="sha384-ugqypGWrzPLdx2zEQTF17cVktjb01piRKaDNnbYGRSxyEoeAm+MKZVtbDUYjxfZ6">
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/js/bootstrap.min.js"
-		  asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
-		  asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-		  crossorigin="anonymous"
-		  integrity="sha384-vhJnz1OVIdLktyixHY4Uk3OHEwdQqPppqYR8+5mjsauETgLOcEynD9oPHhhz18Nw">
-  </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"
+            asp-fallback-src="lib/jquery/jquery-1.12.3.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha384-ugqypGWrzPLdx2zEQTF17cVktjb01piRKaDNnbYGRSxyEoeAm+MKZVtbDUYjxfZ6">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/js/bootstrap.min.js"
+            asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+            crossorigin="anonymous"
+            integrity="sha384-vhJnz1OVIdLktyixHY4Uk3OHEwdQqPppqYR8+5mjsauETgLOcEynD9oPHhhz18Nw">
+    </script>
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
-  
-  <script src="/js/int-bundle.js"></script>
-  <script src="~/js/app/resgrid.js" asp-append-version="true"></script>
-  <script src="~/js/app/internal/resgrid.user.js" asp-append-version="true"></script>
-  <script src="~/js/app/common/analytics/resgrid.common.analytics.js" asp-append-version="true"></script>
-  <script src="~/js/app/common/notifications/resgrid.common.notifications.js" asp-append-version="true"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
 
-  <script>
-	var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
-	var userId = '@(ClaimsAuthorizationHelper.GetUserId())';
-	window.rgApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
-	window.rgGoogleMapsKey = "@Resgrid.Config.MappingConfig.GoogleMapsJSKey";
-	window.rgChannelUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
-	window.rgOsmKey = "@Resgrid.Config.MappingConfig.OSMKey";
+    <script src="/js/int-bundle.js"></script>
+    <script src="~/js/app/resgrid.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/resgrid.user.js" asp-append-version="true"></script>
+    <script src="~/js/app/common/analytics/resgrid.common.analytics.js" asp-append-version="true"></script>
+    <script src="~/js/app/common/notifications/resgrid.common.notifications.js" asp-append-version="true"></script>
 
-	resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
-	resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
-	resgrid.absoluteEventingBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
+    <script>
+        var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
+        var userId = '@(ClaimsAuthorizationHelper.GetUserId())';
+        window.rgApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
+        window.rgGoogleMapsKey = "@Resgrid.Config.MappingConfig.GoogleMapsJSKey";
+        window.rgChannelUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
+        window.rgOsmKey = "@Resgrid.Config.MappingConfig.OSMKey";
 
-    localStorage.setItem("RgWebApp.auth-tokens", '@Html.Raw(await JavasriptHelpers.GetApiToken())');
-  </script>
+        resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
+        resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
+        resgrid.absoluteEventingBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
 
-  <script src="/js/ng/app.js"></script>
+        localStorage.setItem("RgWebApp.auth-tokens", '@Html.Raw(await JavasriptHelpers.GetApiToken())');
+    </script>
 
-  @if (IsSectionDefined("Scripts"))
-  {
-	@RenderSection("Scripts", required: false)
-  }
+    <environment names="Release,Staging,Production,Docker">
+        <script src="/js/ng/app.js"></script>
+    </environment>
 
-  @Html.Raw(ViewBag.BodyObjects)
+    <environment names="Development">
+        <script src="/js/ng/runtime.js" asp-append-version="false"></script>
+        <script src="/js/ng/polyfills.js" asp-append-version="false"></script>
+        <script src="/js/ng/vendor.js" asp-append-version="false"></script>
+        <script src="/js/ng/main.js" asp-append-version="false"></script>
+    </environment>
 
-  <script>
-	resgrid.init();
-  </script>
+    @if (IsSectionDefined("Scripts"))
+    {
+        @RenderSection("Scripts", required: false)
+    }
 
-  @*@await Html.PartialAsync("_ChatWidget")*@
+    @Html.Raw(ViewBag.BodyObjects)
+
+    <script>
+        resgrid.init();
+    </script>
+
+    @*@await Html.PartialAsync("_ChatWidget")*@
 </body>
 </html>

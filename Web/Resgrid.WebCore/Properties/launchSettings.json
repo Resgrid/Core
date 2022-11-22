@@ -1,16 +1,4 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": true,
-    "anonymousAuthentication": true,
-    "iis": {
-      "applicationUrl": "https://localhost:44319",
-      "sslPort": 0
-    },
-    "iisExpress": {
-      "applicationUrl": "https://localhost:44318/",
-      "sslPort": 44318
-    }
-  },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -36,6 +24,18 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/",
       "publishAllPorts": true,
       "useSSL": true
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": true,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "https://localhost:44319",
+      "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "https://localhost:44318/",
+      "sslPort": 44318
     }
   }
 }

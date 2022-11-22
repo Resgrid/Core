@@ -10,5 +10,6 @@ namespace Resgrid.Providers.Bus.Models
 	{
 		public ApnsHeader aps { get; set; }
 		public string eventCode { get; set; }
+		public string type { get; set; }
 	}
 }

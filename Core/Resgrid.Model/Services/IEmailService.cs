@@ -63,8 +63,7 @@ namespace Resgrid.Model.Services
 		/// <param name="profile">The profile.</param>
 		/// <param name="user">The user.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SendMessageAsync(Message message, string senderName, UserProfile profile = null,
-			IdentityUser user = null);
+		Task<bool> SendMessageAsync(Message message, string senderName, int departmentId, UserProfile profile = null, IdentityUser user = null);
 
 		/// <summary>
 		/// Sends the call asynchronous.
@@ -182,7 +181,7 @@ namespace Resgrid.Model.Services
 		/// <param name="message">The message.</param>
 		/// <param name="profile">The profile.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SendNotificationAsync(string userId, string message, UserProfile profile = null);
+		Task<bool> SendNotificationAsync(string userId, string message, int departmentId, UserProfile profile = null);
 
 		/// <summary>
 		/// Sends the new department link mail asynchronous.

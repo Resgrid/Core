@@ -12,6 +12,11 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using System;
 using Resgrid.Web.Services.Models.v4.Mapping;
+using Resgrid.Web.Services.Models.v4.Roles;
+using GeoJSON.Net;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using GeoJSON.Net.Feature;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -36,6 +41,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly IMappingService _mappingService;
 
 		public MappingController(
 			IUsersService usersService,
@@ -49,7 +55,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IPersonnelRolesService personnelRolesService,
 			ICustomStateService customStateService,
 			IDepartmentSettingsService departmentSettingsService,
-			IGeoLocationProvider geoLocationProvider
+			IGeoLocationProvider geoLocationProvider,
+			IMappingService mappingService
 			)
 		{
 			_usersService = usersService;
@@ -64,6 +71,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_customStateService = customStateService;
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
+			_mappingService = mappingService;
 		}
 		#endregion Members and Constructors
 
@@ -334,6 +342,59 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the user created map layers in the system.
+		/// </summary>
+		/// <returns>GetMapLayersResult object</returns>
+		[HttpGet("GetMayLayers")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetMapLayersResult>> GetMayLayers(int type)
+		{
+			var result = new GetMapLayersResult();
+
+			var layers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, (MapLayerTypes)type);
+
+			if (layers != null && layers.Count > 0)
+			{
+				foreach (var layer in layers)
+				{
+					result.Data.Layers.Add(ConvertMapLayerData(layer));
+				}
+			}
+
+			result.Data.LayerJson = JsonConvert.SerializeObject(result.Data.Layers.Select(x => x.Data.Features).ToList());
+
+			result.PageSize = result.Data.Layers.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		public static GetMapLayersData ConvertMapLayerData(MapLayer layer)
+		{
+			var result = new GetMapLayersData();
+
+			result.Id = layer.Id.ToString();
+			result.DepartmentId = layer.DepartmentId;
+			result.Name = layer.Name;
+			result.Type = layer.Type;
+			result.Color = layer.Color;
+			result.IsSearchable = layer.IsSearchable;
+			result.IsOnByDefault = layer.IsOnByDefault;
+			result.AddedById = layer.AddedById;
+			result.AddedOn = layer.AddedOn;
+			result.UpdatedById = layer.UpdatedById;
+			result.UpdatedOn = layer.UpdatedOn;
+
+			result.Data = new GetMapLayersDataInfo();
+			result.Data.Type = ((GeoJSONObjectType)layer.Type).ToString();
+			result.Data.Features = layer.Data.Convert();
+
+			return result;
 		}
 	}
 }

@@ -32,6 +32,10 @@ namespace Resgrid.Workers.Framework.Logic
 					auditLog.DepartmentId = auditEvent.DepartmentId;
 					auditLog.UserId = auditEvent.UserId;
 					auditLog.LogType = (int)auditEvent.Type;
+					auditLog.IpAddress = auditEvent.IpAddress;
+					auditLog.UserAgent = auditEvent.UserAgent;
+					auditLog.ServerName = auditEvent.ServerName;
+					auditLog.Successful = auditEvent.Successful;
 
 					switch (auditEvent.Type)
 					{

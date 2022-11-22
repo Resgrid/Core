@@ -39,6 +39,10 @@ namespace Resgrid.Workers.Console
 
 		static async Task Main(string[] args)
 		{
+#if DEBUG
+			Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = true;
+#endif
+			
 			System.Console.WriteLine("Resgrid Worker Engine");
 			System.Console.WriteLine("-----------------------------------------");
 

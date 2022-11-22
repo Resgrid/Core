@@ -13,6 +13,7 @@ namespace Resgrid.Model.Providers
 		bool EnqueueCqrsEvent(CqrsEvent cqrsEvent);
 		bool EnqueueAuditEvent(AuditEvent auditEvent);
 		bool EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent);
+		bool EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent);
 		bool VerifyAndCreateClients();
 	}
 }

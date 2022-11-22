@@ -69,7 +69,7 @@ namespace Resgrid.Tests.Services
 
 				await _communicationService.SendMessageAsync(message, "Test Sender", "0000000", 1, profile);
 				_smsServiceMock.Verify(m => m.SendMessageAsync(message, "0000000", 1, profile));
-				_emailServiceMock.Verify(m => m.SendMessageAsync(message, "Test Sender", profile, message.ReceivingUser));
+				_emailServiceMock.Verify(m => m.SendMessageAsync(message, "Test Sender", 1, profile, message.ReceivingUser));
 				_pushServiceMock.Verify(m => m.PushMessage(It.IsAny<StandardPushMessage>(), TestData.Users.TestUser1Id, profile));
 			}
 

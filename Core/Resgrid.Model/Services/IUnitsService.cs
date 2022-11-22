@@ -298,7 +298,7 @@ namespace Resgrid.Model.Services
 		/// <param name="location">The location.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;UnitLocation&gt;.</returns>
-		Task<UnitLocation> AddUnitLocationAsync(UnitLocation location,
+		Task<UnitsLocation> AddUnitLocationAsync(UnitsLocation location, int departmentId,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
@@ -307,7 +307,7 @@ namespace Resgrid.Model.Services
 		/// <param name="unitId">The unit identifier.</param>
 		/// <param name="timestamp">The timestamp.</param>
 		/// <returns>Task&lt;UnitLocation&gt;.</returns>
-		Task<UnitLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null);
+		Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null);
 
 		/// <summary>
 		/// Gets the current roles for unit asynchronous.
@@ -328,5 +328,7 @@ namespace Resgrid.Model.Services
 		Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<List<UnitActiveRole>> GetAllActiveRolesForUnitsByDepartmentIdAsync(int departmentId);
+
+		Task<List<UnitsLocation>> GetLatestUnitLocationsAsync(int departmentId);
 	}
 }

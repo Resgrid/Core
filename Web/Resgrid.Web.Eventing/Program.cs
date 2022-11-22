@@ -24,6 +24,12 @@ namespace Resgrid.Web.Eventing
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
+					webBuilder.ConfigureKestrel(serverOptions =>
+					{
+						serverOptions.Limits.MaxRequestBufferSize = 302768;
+						serverOptions.Limits.MaxRequestLineSize = 302768;
+					});
+
 					webBuilder.UseStartup<Startup>();
 				});
 	}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Resgrid.Framework;
@@ -88,7 +89,20 @@ namespace Resgrid.Providers.Bus
 		private void Create()
 		{
 			_hubConnection = new HubConnectionBuilder()
-				.WithUrl($"{Config.SystemBehaviorConfig.ResgridEventingBaseUrl}/eventingHub")
+				.WithUrl($"{Config.SystemBehaviorConfig.ResgridEventingBaseUrl}/eventingHub", options => {
+					options.UseDefaultCredentials = true;
+					options.HttpMessageHandlerFactory = (msg) =>
+					{
+						if (msg is HttpClientHandler clientHandler)
+						{
+							// bypass SSL certificate validation
+							clientHandler.ServerCertificateCustomValidationCallback +=
+								(sender, certificate, chain, sslPolicyErrors) => { return true; };
+						}
+
+						return msg;
+					};
+				})
 				.WithAutomaticReconnect()
 				.Build();
 

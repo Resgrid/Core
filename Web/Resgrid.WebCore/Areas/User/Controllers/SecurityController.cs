@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -298,6 +299,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.Type = AuditLogTypes.PermissionsChanged;
 				auditEvent.Before = before.CloneJsonToString();
 				auditEvent.After = result.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return new StatusCodeResult((int)HttpStatusCode.OK);
@@ -319,6 +324,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.Type = AuditLogTypes.PermissionsChanged;
 				auditEvent.Before = before.CloneJsonToString();
 				auditEvent.After = result.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return new StatusCodeResult((int)HttpStatusCode.OK);

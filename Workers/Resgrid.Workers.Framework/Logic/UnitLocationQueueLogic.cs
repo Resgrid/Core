@@ -21,20 +21,24 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					var unitService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
 
-					var unitLocation = new UnitLocation();
-					unitLocation.UnitId = unitLocationEvent.UnitId;
-					unitLocation.Timestamp = unitLocationEvent.Timestamp;
-					unitLocation.Latitude = unitLocationEvent.Latitude;
-					unitLocation.Longitude = unitLocationEvent.Longitude;
-					unitLocation.Accuracy = unitLocationEvent.Accuracy;
-					unitLocation.Altitude = unitLocationEvent.Altitude;
-					unitLocation.AltitudeAccuracy = unitLocationEvent.AltitudeAccuracy;
-					unitLocation.Speed = unitLocationEvent.Speed;
-					unitLocation.Heading = unitLocationEvent.Heading;
-
-					if (unitLocation.UnitId > 0)
+					if (unitLocationEvent.Latitude.HasValue && unitLocationEvent.Longitude.HasValue)
 					{
-						await unitService.AddUnitLocationAsync(unitLocation, cancellationToken);
+						var unitLocation = new UnitsLocation();
+						unitLocation.DepartmentId = unitLocationEvent.DepartmentId;
+						unitLocation.UnitId = unitLocationEvent.UnitId;
+						unitLocation.Timestamp = unitLocationEvent.Timestamp;
+						unitLocation.Latitude = unitLocationEvent.Latitude.Value;
+						unitLocation.Longitude = unitLocationEvent.Longitude.Value;
+						unitLocation.Accuracy = unitLocationEvent.Accuracy;
+						unitLocation.Altitude = unitLocationEvent.Altitude;
+						unitLocation.AltitudeAccuracy = unitLocationEvent.AltitudeAccuracy;
+						unitLocation.Speed = unitLocationEvent.Speed;
+						unitLocation.Heading = unitLocationEvent.Heading;
+
+						if (unitLocation.UnitId > 0)
+						{
+							await unitService.AddUnitLocationAsync(unitLocation, unitLocationEvent.DepartmentId, cancellationToken);
+						}
 					}
 				}
 				catch (Exception ex)

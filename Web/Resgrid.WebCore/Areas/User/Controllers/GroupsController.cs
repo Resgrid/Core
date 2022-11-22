@@ -240,6 +240,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.GroupAdded;
 				auditEvent.After = model.NewGroup.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
@@ -338,6 +342,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.GroupRemoved;
 				auditEvent.Before = group.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				await _deleteService.DeleteGroupAsync(group.DepartmentGroupId, DepartmentId, UserId, cancellationToken);
@@ -416,6 +424,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.UserId = UserId;
 			auditEvent.Type = AuditLogTypes.GroupChanged;
 			auditEvent.Before = group.CloneJsonToString();
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 
 			group.Name = model.EditGroup.Name;
 

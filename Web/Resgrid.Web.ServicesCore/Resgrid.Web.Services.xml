@@ -3316,6 +3316,18 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ConfigController">
+            <summary>
+            Generic configuration api endpoints
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetConfig(System.String)">
+            <summary>
+            Gets the config values for a key
+            </summary>
+            <returns></returns>
+            <param name="key">The key to get config data for</param>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ConnectController">
             <summary>
             Service to generate an authentication token that is required to communicate with all other v4 services
@@ -3373,7 +3385,21 @@
             Removed a Unit Push Notification support by PushUriId.
             </summary>
             <param name="deviceUuid">Input to deregister the device for</param>
-            <returns></returns>
+            <returns>Result for the unregistration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.RegisterDevice(Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput)">
+            <summary>
+            Register a device to receive push notification from the Resgrid system
+            </summary>
+            <param name="registrationInput">Input to create the registration for</param>
+            <returns>Result for the registration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterDevice(System.String)">
+            <summary>
+            Removed a Push Notification support by PushUriId.
+            </summary>
+            <param name="deviceUuid">Input to deregister the device for</param>
+            <returns>Result for the unregistration</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DispatchController">
             <summary>
@@ -3466,6 +3492,12 @@
             Data to center the map and it's default location plus marker information for displaying makers on the map.
             </summary>
             <returns>GetMapDataResult object</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMayLayers(System.Int32)">
+            <summary>
+            Gets the user created map layers in the system.
+            </summary>
+            <returns>GetMapLayersResult object</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MessagesController">
             <summary>
@@ -3563,6 +3595,24 @@
             Gets all the options available to filter personnel against compatible Resgrid APIs
             </summary>
             <returns>GetPersonnelFilterOptionsResult with information pertaining to each filter option</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController">
+            <summary>
+            Operations involving the location of a person setting the real-time location or getting the latest location for people.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController.SetPersonLocation(Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput)">
+            <summary>
+            Sets the location of a person
+            </summary>
+            <param name="locationInput">PersonnelLocationInput object with the gps information.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController.GetLatestPersonLocation(System.String)">
+            <summary>
+            Gets the latest location for a specified unit
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController">
             <summary>
@@ -3738,7 +3788,7 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
+            Operations involving the location of a unit setting the real-time location or getting the latest location for a unit.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.UnitLocationController.SetUnitLocation(Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput)">
@@ -5154,6 +5204,71 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetConfigResult">
+            <summary>
+            Gets Configuration Information by a key
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Configs.GetConfigResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData">
+            <summary>
+            All the data required to populate the New Call form
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.W3WKey">
+            <summary>
+            The key for What3Words
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.GoogleMapsKey">
+            <summary>
+            The key for Google Maps
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.LoggingKey">
+            <summary>
+            The key for Logging
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapUrl">
+            <summary>
+            The Url for the leaflet map api
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapAttribution">
+            <summary>
+            The Attribution for the leaflet map
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PersonnelLocationStaleSeconds">
+            <summary>
+            How many seconds to prevent a duplicate gps location from being logged for personnel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.UnitLocationStaleSeconds">
+            <summary>
+            How many seconds to prevent a duplicate gps location from being logged for units
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PersonnelLocationMinMeters">
+            <summary>
+            How many meters between subsuquent gps locations to allow the position update to go through for personnel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.UnitLocationMinMeters">
+            <summary>
+            How many meters between subsuquent gps locations to allow the position update to go through for units
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CustomStatuses.CustomStatusesResult">
             <summary>
             Custom defined Status for Personnel and Units
@@ -5669,6 +5784,26 @@
             Default constructor
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResultData.LayerJson">
+            <summary>
+            GeoJson text of the map layers
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResultData.Layers">
+            <summary>
+            Map Layers
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Messages.DeleteMessageResult">
             <summary>
             The result of deleting a message
@@ -6007,6 +6142,116 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Notes.GetNoteResult.Data">
             <summary>
             Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput">
+            <summary>
+            A GPS location for a point in time of a specificed person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.UserId">
+            <summary>
+            PersonId of the person that the location is for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.Timestamp">
+            <summary>
+            The timestamp of the location in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.Latitude">
+            <summary>
+            GPS Latitude of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.Longitude">
+            <summary>
+            GPS Longitude of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.Altitude">
+            <summary>
+            GPS Altitude of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.Speed">
+            <summary>
+            GPS Speed of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput.Heading">
+            <summary>
+            GPS Heading of the Person
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResult">
+            <summary>
+            A unit location in the Resgrid system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData">
+            <summary>
+            The information about a specific unit's location
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.UserId">
+            <summary>
+            Id of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.Timestamp">
+            <summary>
+            The Timestamp for the location in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.Latitude">
+            <summary>
+            GPS Latitude of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.Longitude">
+            <summary>
+            GPS Longitude of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.Altitude">
+            <summary>
+            GPS Altitude of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.Speed">
+            <summary>
+            GPS Speed of the Person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationResultData.Heading">
+            <summary>
+            GPS Heading of the Person
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.PersonnelStaffing.GetCurrentStaffingResult">
@@ -6814,7 +7059,7 @@
             Shift Day Identifier (this object)
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.ShitDay">
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.ShiftDay">
             <summary>
             DateTime of the shift day
             </summary>
@@ -6879,6 +7124,11 @@
             Group Identifier
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayGroupNeedsResultData.GroupName">
+            <summary>
+            Group Name
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayGroupNeedsResultData.GroupNeeds">
             <summary>
             Role needs of the group
@@ -6892,6 +7142,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayGroupRoleNeedsResultData.RoleId">
             <summary>
             Role Identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayGroupRoleNeedsResultData.RoleName">
+            <summary>
+            Role Name
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayGroupRoleNeedsResultData.Needed">

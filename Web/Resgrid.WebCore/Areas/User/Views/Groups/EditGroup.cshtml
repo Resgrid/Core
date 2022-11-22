@@ -1,290 +1,290 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Groups.EditGroupView
 @{
-  ViewBag.Title = "Resgrid | Edit Group";
+    ViewBag.Title = "Resgrid | Edit Group";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>Edit Group</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
-      </li>
-      <li class="active">
-        <strong>Edit Group</strong>
-      </li>
-    </ol>
-  </div>
+    <div class="col-sm-4">
+        <h2>Edit Group</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li>
+                <a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
+            </li>
+            <li class="active">
+                <strong>Edit Group</strong>
+            </li>
+        </ol>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <form class="form-horizontal" role="form" asp-controller="Groups" asp-action="EditGroup" asp-route-area="User" method="post">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Groups" asp-action="EditGroup" asp-route-area="User" method="post">
 
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(m => m.EditGroup.DepartmentGroupId)
-            @Html.HiddenFor(m => m.EditGroup.Type)
-            @Html.HiddenFor(m => m.PrinterId)
-            @Html.HiddenFor(m => m.PrinterApiKey)
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.EditGroup.DepartmentGroupId)
+                        @Html.HiddenFor(m => m.EditGroup.Type)
+                        @Html.HiddenFor(m => m.PrinterId)
+                        @Html.HiddenFor(m => m.PrinterApiKey)
 
-            <div asp-validation-summary="All" class="text-danger"></div>
-            @if (!String.IsNullOrEmpty(Model.Message))
-			{
-              <div class="alert alert-success">
-                @Model.Message
-              </div>
-			}
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @if (!String.IsNullOrEmpty(Model.Message))
+                        {
+                            <div class="alert alert-success">
+                                @Model.Message
+                            </div>
+                        }
 
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Group type</label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-sm-12">
-                    <label class="col-sm-2 control-label" style="padding-top:0px;">Organizational Group</label>
-                    @if (Model.EditGroup.Type.HasValue && Model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
-					{
-                      <input type="radio" value="1" id="groupTypeOrgRadio" title="Organizational Group" disabled="">
-					}
-					else
-					{
-                      <input type="radio" value="1" id="groupTypeOrgRadio" title="Organizational Group" checked="checked" disabled="">
-					}
-                  </div>
-                </div>
-                <div class="row">
-				  <div class="col-sm-12">
-				    <label class="col-sm-2 control-label" style="padding-top:0px;">Station Group</label>
-				    @if (Model.EditGroup.Type.HasValue && Model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
-					{
-				      <input type="radio" value="2" title="Station Group" checked="checked" disabled="">
-					}
-					else
-					{
-				      <input type="radio" value="2" title="Station Group" disabled="">
-					}
-				  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Group Name</label>
-              <div class="col-sm-10"><input type="text" asp-for="EditGroup.Name" class="form-control" /></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Parent Group</label>
-              <div class="col-sm-10">@Html.DropDownListFor(m => m.EditGroup.ParentDepartmentGroupId, Model.StationGroups)</div>
-            </div>
-            <div class="form-group" id="StationAddress">
-              <label class="col-sm-2 control-label">
-                Station Address
-              </label>
-              <div class="col-sm-10">
-                <div class="well">
-                  <span>Station groups require a physical location (as personnel and units can respond to them). Please enter an Address or GPS Coordinates or a <a href="https://what3words.com/about/" target="_blank">what3words address.</a></span>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label required">
-                      Street
-                    </label>
-                    <div class="col-sm-10">
-                      @Html.TextBoxFor(m => m.Address1, new { @class = "form-control" })
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label required">
-                      City
-                    </label>
-                    <div class="col-sm-10">
-                      @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label required">
-                      State/Province
-                    </label>
-                    <div class="col-sm-10">
-                      @Html.TextBoxFor(m => m.State, new { @class = "form-control" })
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label required">
-                      Zip/Postal Code
-                    </label>
-                    <div class="col-sm-10">
-                      @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control" })
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label required">
-                      Country
-                    </label>
-                    <div class="col-sm-10">
-                      @Html.DropDownListFor(m => m.Country, new SelectList(Countries.CountryNames), new { @class = "form-control", style = "width: 300px" })
-                    </div>
-                  </div>
-                  <div style="text-align: center;">
-                    <h4>Or</h4>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label">
-                      Gps Coordinates
-                    </label>
-                    <div class="controls">
-                      <div class="col-md-4">
-                        @Html.TextBoxFor(m => m.Latitude, new { @class = "form-control" })
-                        <span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
-                      </div>
-                      <div class="col-md-4">
-                        @Html.TextBoxFor(m => m.Longitude, new { @class = "form-control" })
-                        <span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div style="text-align: center;">
-                    <h4>Or</h4>
-                  </div>
-                  <div class="form-group">
-                    <label class="control-label">
-                      what3words Address
-                    </label>
-                    <div class="controls">
-                      <div class="col-md-8">
-                        @Html.TextBoxFor(m => m.What3Word, new { @class = "form-control", @style = "width:250px;", autocomplete = "off", placeholder = "what.three.words", tabindex = "8" })
-                        <span class="help-inline">w3w Address (i.e. humble.echo.sticky)</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label required">
-                <a href="https://www.printnode.com">PrintNode</a> Printer
-              </label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-xs-4">
-                    <a class="btn btn-sm btn-inverse" href="#selectPrinterModal" data-toggle="modal" id="selectPrinter">Select Printer</a>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-10">
-                    <p><a href="https://www.printnode.com">PrintNode</a> is a service that allows us to submit print jobs to a local computer or server on your network to a specific printer. You must have an active PrintNode account and it's software setup with the printer active.</p>
-                  </div>
-                </div>
-                <div class="row">
-				  <div class="col-xs-4">
-				    @Html.TextBoxFor(m => m.PrinterName, new { @class = "form-control" })
-				  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Print Calls to Printer</label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-sm-10">
-                    <input type="checkbox" asp-for="EditGroup.DispatchToPrinter">
-                  </div>
-                </div>
-                <span class="help-block m-b-none">Enabling this option will print a call to the selected Printer when a unit or person from this group is attached (dispatched) to a call</span>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-10 col-md-offset-2">
-                <p>Users can only be in one group at a time. If you don't see your user in the list they are already in a group.</p>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label required">
-                Group Admins
-              </label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-xs-4"><select id="groupAdmins" name="groupAdmins"></select></div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label required">
-                Group Users
-              </label>
-              <div class="col-sm-10">
-                <select id="groupUsers" name="groupUsers"></select>
-              </div>
-            </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Group type</label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-2 control-label" style="padding-top:0px;">Organizational Group</label>
+                                        @if (Model.EditGroup.Type.HasValue && Model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
+                                        {
+                                            <input type="radio" value="1" id="groupTypeOrgRadio" title="Organizational Group" disabled="">
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" value="1" id="groupTypeOrgRadio" title="Organizational Group" checked="checked" disabled="">
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-2 control-label" style="padding-top:0px;">Station Group</label>
+                                        @if (Model.EditGroup.Type.HasValue && Model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
+                                        {
+                                            <input type="radio" value="2" title="Station Group" checked="checked" disabled="">
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" value="2" title="Station Group" disabled="">
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Group Name</label>
+                            <div class="col-sm-10"><input type="text" asp-for="EditGroup.Name" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Parent Group</label>
+                            <div class="col-sm-10">@Html.DropDownListFor(m => m.EditGroup.ParentDepartmentGroupId, Model.StationGroups)</div>
+                        </div>
+                        <div class="form-group" id="StationAddress">
+                            <label class="col-sm-2 control-label">
+                                Station Address
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="well">
+                                    <span>Station groups require a physical location (as personnel and units can respond to them). Please enter an Address or GPS Coordinates or a <a href="https://what3words.com/about/" target="_blank">what3words address.</a></span>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required">
+                                            Street
+                                        </label>
+                                        <div class="col-sm-10">
+                                            @Html.TextBoxFor(m => m.Address1, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required">
+                                            City
+                                        </label>
+                                        <div class="col-sm-10">
+                                            @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required">
+                                            State/Province
+                                        </label>
+                                        <div class="col-sm-10">
+                                            @Html.TextBoxFor(m => m.State, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required">
+                                            Zip/Postal Code
+                                        </label>
+                                        <div class="col-sm-10">
+                                            @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required">
+                                            Country
+                                        </label>
+                                        <div class="col-sm-10">
+                                            @Html.DropDownListFor(m => m.Country, new SelectList(Countries.CountryNames), new { @class = "form-control", style = "width: 300px" })
+                                        </div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <h4>Or</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            Gps Coordinates
+                                        </label>
+                                        <div class="controls">
+                                            <div class="col-md-4">
+                                                @Html.TextBoxFor(m => m.Latitude, new { @class = "form-control" })
+                                                <span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
+                                            </div>
+                                            <div class="col-md-4">
+                                                @Html.TextBoxFor(m => m.Longitude, new { @class = "form-control" })
+                                                <span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <h4>Or</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            what3words Address
+                                        </label>
+                                        <div class="controls">
+                                            <div class="col-md-8">
+                                                @Html.TextBoxFor(m => m.What3Word, new { @class = "form-control", @style = "width:250px;", autocomplete = "off", placeholder = "what.three.words", tabindex = "8" })
+                                                <span class="help-inline">w3w Address (i.e. humble.echo.sticky)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                <a href="https://www.printnode.com">PrintNode</a> Printer
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <a class="btn btn-sm btn-inverse" href="#selectPrinterModal" data-toggle="modal" id="selectPrinter">Select Printer</a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <p><a href="https://www.printnode.com">PrintNode</a> is a service that allows us to submit print jobs to a local computer or server on your network to a specific printer. You must have an active PrintNode account and it's software setup with the printer active.</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        @Html.TextBoxFor(m => m.PrinterName, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Print Calls to Printer</label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="EditGroup.DispatchToPrinter">
+                                    </div>
+                                </div>
+                                <span class="help-block m-b-none">Enabling this option will print a call to the selected Printer when a unit or person from this group is attached (dispatched) to a call</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-2">
+                                <p>Users can only be in one group at a time. If you don't see your user in the list they are already in a group.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                Group Admins
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-xs-4"><select id="groupAdmins" name="groupAdmins"></select></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                Group Users
+                            </label>
+                            <div class="col-sm-10">
+                                <select id="groupUsers" name="groupUsers"></select>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-              <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save Group</button>
-              </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Save Group</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="selectPrinterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">Select Printer</h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="assignment-name" class="control-label">Api Key:</label>
-          <input type="text" class="form-control" id="apiKey">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Select Printer</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="assignment-name" class="control-label">Api Key:</label>
+                    <input type="text" class="form-control" id="apiKey">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-inverse" id="getPrintersButton">Get Printers</button>
+                </div>
+                <table class="table table-bordered table-striped table-hover data-table">
+                    <thead>
+                        <tr>
+                            <th>Printer</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody id="printersTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="form-group">
-          <button type="button" class="btn btn-inverse" id="getPrintersButton">Get Printers</button>
-        </div>
-        <table class="table table-bordered table-striped table-hover data-table">
-          <thead>
-            <tr>
-              <th>Phone Number</th>
-              <th>&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody id="printersTableBody"></tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
     </div>
-  </div>
 </div>
 
 @section Scripts
-{
-  @if (Model.EditGroup.Type.HasValue && Model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
-  {
-    <script>
-	  $(document).ready(function () {
-		$("#ParentFields").hide();
-		$("#StationAddress").show();
-	  });
-    </script>
-  }
-  else
-  {
-    <script>
-	  $(document).ready(function () {
-		$("#ParentFields").show();
-		$("#StationAddress").hide();
-	  });
-    </script>
-  }
+    {
+    @if (Model.EditGroup.Type.HasValue && Model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
+    {
+        <script>
+            $(document).ready(function () {
+                $("#ParentFields").hide();
+                $("#StationAddress").show();
+            });
+        </script>
+    }
+    else
+    {
+        <script>
+            $(document).ready(function () {
+                $("#ParentFields").show();
+                $("#StationAddress").hide();
+            });
+        </script>
+    }
 
-  <script src="~/js/app/internal/groups/resgrid.groups.editgroup.js"></script>
+    <script src="~/js/app/internal/groups/resgrid.groups.editgroup.js"></script>
 }

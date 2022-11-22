@@ -36,6 +36,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+			
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
@@ -55,7 +58,7 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					await _emailService.SendMessageAsync(message, sendersName, profile, message.ReceivingUser);
+					await _emailService.SendMessageAsync(message, sendersName, departmentId, profile, message.ReceivingUser);
 				}
 				catch (Exception ex)
 				{
@@ -272,6 +275,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, string title = "Notification", UserProfile profile = null)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+			
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
@@ -279,7 +285,7 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					await _emailService.SendNotificationAsync(userId, $"{title} {message}", profile);
+					await _emailService.SendNotificationAsync(userId, $"{title} {message}", departmentId, profile);
 
 				}
 				catch (Exception ex)

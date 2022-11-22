@@ -1,0 +1,251 @@
+﻿
+@model Resgrid.Web.Areas.User.Models.Mapping.NewLayerView
+@{
+	ViewBag.Title = "Resgrid | New Layer";
+}
+
+@section Styles
+{
+	<link rel="stylesheet" href="~/clib/mapMarkers/map-icons.css"/>
+
+	<style>
+		.map {
+			height: 500px;
+		}
+
+		.icons .map-icon {
+			font-size: 24px;
+			line-height: 1;
+			vertical-align: middle;
+		}
+
+		.icons {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+			.icons li {
+				float: left;
+				margin: 10px 0;
+				padding: 0;
+				width: 10%;
+			}
+	</style>
+
+	<link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+			<h2>New Layer</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+			</li>
+			<li class="active">
+					<strong>New Layer</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+						<form id="newLayerForm" name="newLayerForm" class="form-horizontal" role="form" asp-controller="Mapping" asp-action="NewLayer" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+
+								@if (!String.IsNullOrWhiteSpace(Model.Message))
+								{
+									<div class="alert alert-success">
+										@Model.Message
+									</div>
+								}
+                                @Html.HiddenFor(m => m.GeoJson)
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Name
+							</label>
+							<div class="controls">
+								<div class="col-md-6">
+									@Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Is Visible By Default
+							</label>
+							<div class="controls">
+								<div class="col-md-6">
+									@Html.CheckBoxFor(x => x.IsOnByDefault)
+									<span class="help-inline">Do you want this layer to be visible every time a map loads? Note: Having too many layers visible by default will complicate the map. Users can turn layers on if they want to see them in the map control.</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Is Destination
+							</label>
+							<div class="controls">
+								<div class="col-md-6">
+									@Html.CheckBoxFor(x => x.IsSearchable)
+									<span class="help-inline">This will allow address searching to use coordinates from this layer in the search. Note, if you don't have searchable points (text fields) don't mark as searchable as it can slow down dispatching.'</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Color
+							</label>
+							<div class="controls">
+								<div class="col-md-6">
+									@Html.TextBoxFor(x => x.Color, new { @class = "form-control" })
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">
+								Layer Elements
+							</label>
+							<div class="col-md-12">
+								<div class="map" id="mapContainer"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">Cancel</a>
+								<a id="addLayerButton" class="btn btn-primary">Add Layer</a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	@if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
+	{
+		<script type="text/javascript">
+			var centerLat = @(Model.CenterCoordinates.Latitude.Value);
+			var centerLng = @(Model.CenterCoordinates.Longitude.Value);
+		</script>
+	}
+
+	<script>
+		$(document).ready(function () {
+			$("#Color").minicolors({
+				  animationSpeed: 50,
+				  animationEasing: 'swing',
+				  changeDelay: 0,
+				  control: 'hue',
+				  defaultValue: '#0080ff',
+				  format: 'hex',
+				  showSpeed: 100,
+				  hideSpeed: 100,
+				  inline: false,
+				  theme: 'bootstrap'
+			});
+
+			const tiles1 = L.tileLayer(
+				'@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()',
+				{
+					maxZoom: 19,
+					attribution:
+						'@Resgrid.Config.MappingConfig.LeafletAttribution',
+				}
+			);
+
+			const map = L.map('mapContainer').setView([centerLat, centerLng], 13).addLayer(tiles1);
+
+			map.pm.addControls({
+				drawMarker: true,
+				drawPolygon: true,
+				editMode: true,
+				drawPolyline: true,
+				removalMode: true,
+			});
+
+			$('#addLayerButton').click(function () {
+				var form$ = $("#newLayerForm");
+				let fg = L.featureGroup();
+				let layers = map.pm.getGeomanLayers();//getGeomanDrawLayers(); // or getGeomanLayers()
+
+
+				const features = layers.map((layer) => {
+					const geo = layer.toGeoJSON();
+					geo.properties.shape = layer.pm.getShape();
+					geo.properties.color = $('#Color').val();
+					geo.properties.name = $('#Name').val();
+					geo.properties.category = "default";
+
+					switch (geo.properties.shape) {
+						case "Circle": {
+							//const circle = layer as L.Circle;
+							geo.properties.radius = layer.getRadius(); //circle.getRadius();
+							break;
+						}
+						case "Text":
+							geo.properties.text = layer.pm.getText().trim();
+							break;
+						default:
+					}
+                    
+                    return geo;
+				});
+
+				const featureCollection = {
+					type: "FeatureCollection",
+					features,
+				};
+
+				//for (let i = 0; i < layers.length; i++) {
+
+				//	const geo = layers[i].toGeoJSON();
+				//	geo.properties.shape = layers[i].pm.getShape();
+				//	geo.properties.color = $('#Color').val();
+				//	geo.properties.name = $('#Name').val();
+				//	geo.properties.category = "default";
+
+				//	switch (geo.properties.shape) {
+				//		case "Text":
+				//			geo.properties.text = layer.pm.getText().trim();
+				//			break;
+				//		default:
+				//	}
+                    
+				//	//layers[i].setStyle({ color: $('#Color').val() });
+				//	fg.addLayer(layers[i]);
+				//}
+
+                //const geojson = fg.toGeoJSON();
+				//const json = JSON.stringify(geojson);
+				const json = JSON.stringify(featureCollection);
+                
+				//const json = JSON.stringify(map.pm.getGeomanLayers(true).toGeoJSON());
+				$('#GeoJson').val(json);
+
+				$("#newLayerForm").submit();
+			});
+		});
+	</script>
+
+	<script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+}

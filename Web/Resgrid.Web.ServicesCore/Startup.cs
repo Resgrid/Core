@@ -55,6 +55,7 @@ using OpenIddict.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Security.Cryptography.X509Certificates;
+using Resgrid.Web.Services;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -141,11 +142,11 @@ namespace Resgrid.Web.ServicesCore
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 			});
 
-			services.AddApiVersioning(x =>  
-			{  
+			services.AddApiVersioning(x =>
+			{
 				x.DefaultApiVersion = new ApiVersion(3, 0);
 				x.AssumeDefaultVersionWhenUnspecified = true;
-				x.ReportApiVersions = true;  
+				x.ReportApiVersions = true;
 			});
 
 			services.AddMemoryCache();
@@ -206,7 +207,7 @@ namespace Resgrid.Web.ServicesCore
 						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
 					}
 				);
- 
+
 				var filePath = Path.Combine(AppContext.BaseDirectory, "Resgrid.Web.Services.xml");
 				options.IncludeXmlComments(filePath);
 				//options.DescribeAllEnumsAsStrings();
@@ -424,13 +425,19 @@ namespace Resgrid.Web.ServicesCore
 
 					// Enable the token endpoint.
 					options.SetTokenEndpointUris("/api/v4/connect/token");
+					options.SetIntrospectionEndpointUris("/api/v4/connect/introspect");
 
 					options.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
 					options.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
 
 					// Enable the password and the refresh token flows.
-					options.AllowPasswordFlow()
-						   .AllowRefreshTokenFlow();
+					//options.AllowPasswordFlow()
+					//	   .AllowRefreshTokenFlow();
+					options//.AllowAuthorizationCodeFlow()
+					   //.AllowHybridFlow()
+					   .AllowClientCredentialsFlow()
+					   .AllowPasswordFlow()
+					   .AllowRefreshTokenFlow();
 
 					// Accept anonymous clients (i.e clients that don't send a client_id).
 					options.AcceptAnonymousClients();
@@ -528,6 +535,7 @@ namespace Resgrid.Web.ServicesCore
 
 			//this.meterProvider = providerBuilder.Build();
 
+			services.AddHostedService<Worker>();
 			this.Services = services;
 		}
 
@@ -536,6 +544,7 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
 
 			builder.RegisterModule(new DataModule());
+			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
 			builder.RegisterModule(new ProviderModule());
 			builder.RegisterModule(new EmailProviderModule());
@@ -600,7 +609,6 @@ namespace Resgrid.Web.ServicesCore
 			app.UseStaticFiles();
 
 			app.UseAuthentication();
-			app.UseAuthorization();
 			app.UseAuthorization();
 
 			app.UseSwagger();

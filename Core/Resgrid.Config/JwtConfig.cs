@@ -12,5 +12,9 @@
 		public static string Audience = "resgrid.local";
 
 		public static int Duration = 30;
+
+		public static string EventsClientId = "Events";
+
+		public static string EventsClientSecret = "EventsClientSecret";
 	}
 }

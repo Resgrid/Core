@@ -1,4 +1,5 @@
-﻿using Resgrid.Model.Queue;
+﻿using Resgrid.Model.Events;
+using Resgrid.Model.Queue;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Providers
@@ -10,5 +11,6 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueueNotification(NotificationItem notificationQueue);
 		Task<bool> EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
 		Task<bool> EnqueueDistributionList(DistributionListQueueItem distributionListQueue);
+		Task<bool> EnqueueAuditEvent(AuditEvent auditEvent);
 	}
 }

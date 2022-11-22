@@ -45,7 +45,7 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		/// <summary>
 		/// DateTime of the shift day
 		/// </summary>
-		public DateTime ShitDay { get; set; }
+		public DateTime ShiftDay { get; set; }
 
 		/// <summary>
 		/// When did the shift day start
@@ -110,6 +110,11 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		public string GroupId { get; set; }
 
 		/// <summary>
+		/// Group Name
+		/// </summary>
+		public string GroupName { get; set; }
+
+		/// <summary>
 		/// Role needs of the group
 		/// </summary>
 		public List<ShiftDayGroupRoleNeedsResultData> GroupNeeds { get; set; }
@@ -124,6 +129,11 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		/// Role Identifier
 		/// </summary>
 		public string RoleId { get; set; }
+
+		/// <summary>
+		/// Role Name
+		/// </summary>
+		public string RoleName { get; set; }
 
 		/// <summary>
 		/// Number of that role that is needed

@@ -141,7 +141,7 @@ namespace Resgrid.Web
 				//{
 				//	Configuration = CacheConfig.RedisConnectionString
 				//});
-				
+
 				options.Events.OnSignedIn = (context) =>
 				{
 					context.HttpContext.User = context.Principal;
@@ -300,21 +300,24 @@ namespace Resgrid.Web
 			services.AddWebOptimizer(pipeline =>
 			{
 				// jquery/js app files and css
+#if !DEBUG
 				pipeline.MinifyJsFiles("/js/**/*.js");
+#endif
 				pipeline.MinifyCssFiles("/css/**/*.css");
 
 				// Public (external website) public style bundles
 				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
 
 				// Angular App code
-				pipeline.AddJavaScriptBundle("/js/ng/app.js", "js/ng/runtime.js", "js/ng/runtime.js", "js/ng/polyfills.js", "js/ng/main.js");
+				pipeline.AddJavaScriptBundle("/js/ng/app.js", "js/ng/vendor.js", "js/ng/runtime.js", "js/ng/polyfills.js", "js/ng/main.js");
 
 				// Internal app style bundle
 				pipeline.AddCssBundle("/css/int-bundle.css", "lib/font-awesome/css/font-awesome.min.css", "lib/metisMenu/dist/metisMenu.min.css", "lib/bootstrap-tour/build/css/bootstrap-tour.min.css",
 					"css/animate.css", "lib/select2/dist/css/select2.min.css", "clib/kendo/styles/kendo.common.min.css", "clib/kendo/styles/kendo.material.min.css",
 					"lib/toastr/toastr.min.css", "lib/jqueryui/themes/cupertino/jquery-ui.css", "lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
 					"clib/picEdit/css/picedit.min.css", "clib/bootstrap-wizard/bootstrap-wizard.css", "lib/quill/dist/quill.snow.css", "lib/leaflet/dist/leaflet.css",
-					"lib/fullcalendar/dist/fullcalendar.min.css", "lib/bstreeview/dist/css/bstreeview.min.css", "lib/selectize/selectize/dist/css/selectize.default.css", "css/style.css");
+					"lib/fullcalendar/dist/fullcalendar.min.css", "lib/bstreeview/dist/css/bstreeview.min.css",
+					"lib/selectize/selectize/dist/css/selectize.default.css", "lib/claviska/jquery-minicolors/jquery.minicolors.css", "css/style.css");
 
 				// Internal app js bundle
 				pipeline.AddJavaScriptBundle("/js/int-bundle.js", "lib/metisMenu/dist/metisMenu.min.js", "lib/slimScroll/jquery.slimscroll.js", "lib/pace/pace.js",
@@ -322,7 +325,8 @@ namespace Resgrid.Web
 					"clib/markerwithlabel/markerwithlabel.js", "clib/ujs/jquery-ujs.js", "lib/jquery-validate/dist/jquery.validate.min.js", "lib/jqueryui/jquery-ui.min.js",
 					"lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js", "lib/signalr/dist/browser/signalr.js", "clib/picEdit/js/picedit.min.js",
 					"lib/sweetalert/dist/sweetalert.min.js", "clib/bootstrap-wizard/bootstrap-wizard.min.js", "lib/quill/dist/quill.min.js", "lib/moment/min/moment.min.js",
-					"lib/fullcalendar/dist/fullcalendar.min.js", "lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js", "lib/selectize/selectize/dist/js/standalone/selectize.min.js", "js/site.min.js");
+					"lib/fullcalendar/dist/fullcalendar.min.js", "lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js",
+					"lib/selectize/selectize/dist/js/standalone/selectize.min.js", "lib/claviska/jquery-minicolors/jquery.minicolors.min.js", "js/site.min.js");
 			});
 
 
@@ -366,6 +370,7 @@ namespace Resgrid.Web
 			builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
 
 			builder.RegisterModule(new DataModule());
+			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
 			builder.RegisterModule(new ProviderModule());
 			builder.RegisterModule(new EmailProviderModule());

@@ -37,11 +37,11 @@
 	</div>
 	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 	{
-		@*<div class="col-sm-8">
+		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Manage POIs" class="btn btn-success" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Manage POIs</a>
+				<a title="Manage POIs" class="btn btn-success" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">Manage Layers</a>
 			</div>
-		</div>*@
+		</div>
 	}
 </div>
 
@@ -50,7 +50,8 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<rg-map showbuttons="1" mapheight="750px"></rg-map>
+					<rg-map showbuttons="1" mapheight="750px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()" mapattribution="@Resgrid.Config.MappingConfig.LeafletAttribution"></rg-map>
+					<br/>
 				</div>
 			</div>
 		</div>

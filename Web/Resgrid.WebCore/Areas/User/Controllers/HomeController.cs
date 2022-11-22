@@ -565,6 +565,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.ProfileUpdated;
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 
 				var savedProfile = await _userProfileService.GetProfileByUserIdAsync(model.UserId);
 

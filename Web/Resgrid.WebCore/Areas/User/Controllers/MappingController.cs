@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using GeoJSON.Net.Feature;
+using GeoJSON.Net.Geometry;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -14,6 +19,7 @@ using Resgrid.Web.Areas.User.Models.Home;
 using Resgrid.Web.Areas.User.Models.Mapping;
 using Resgrid.Web.Helpers;
 using Resgrid.WebCore.Areas.User.Models.Mapping;
+using SharpKml.Dom;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -133,6 +139,139 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Layers()
+		{
+			var model = new LayersView();
+			model.Layers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, MapLayerTypes.TopLevel);
+			
+			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> NewLayer()
+		{
+			var model = new NewLayerView();
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> NewLayer(NewLayerView model)
+		{
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
+
+			if (ModelState.IsValid)
+			{
+				var newLayer = new MapLayer();
+				newLayer.DepartmentId = DepartmentId;
+				newLayer.Name = model.Name;
+				newLayer.Color = model.Color;
+				newLayer.IsOnByDefault = model.IsOnByDefault;
+				newLayer.IsSearchable = model.IsSearchable;
+
+				newLayer.Data = new MapLayerData();// JsonConvert.DeserializeObject<MapLayerData>(model.GeoJson);
+				var feature = JsonConvert.DeserializeObject<FeatureCollection>(model.GeoJson);
+				newLayer.Data.Hydrate(feature);
+
+				newLayer.AddedById = UserId;
+				newLayer.AddedOn = DateTime.UtcNow;
+
+				var mapLayer = await _mappingService.SaveMapLayerAsync(newLayer);
+
+				if (mapLayer.Id.Timestamp == 0)
+				{
+					ModelState.AddModelError("", "There was an error saving the layer. Please try again.");
+					return View(model);
+				}
+				else
+				{
+					return RedirectToAction("Layers");
+				}
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> EditLayer(string layerId)
+		{
+			if (String.IsNullOrWhiteSpace(layerId))
+				return RedirectToAction("Layers");
+			
+			var model = new EditLayerView();
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
+			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
+
+			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
+				Unauthorized();
+
+			var feature = layer.Data.Convert();
+			model.GeoJson = JsonConvert.SerializeObject(feature);
+
+			model.Id = layer.Id.ToString();
+			model.Name = layer.Name;
+			model.Color = layer.Color;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> EditLayer(EditLayerView model)
+		{
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
+
+			if (ModelState.IsValid)
+			{
+				var newLayer = await _mappingService.GetMapLayersByIdAsync(model.Id);
+				newLayer.DepartmentId = DepartmentId;
+				newLayer.Name = model.Name;
+				newLayer.Color = model.Color;
+				newLayer.IsOnByDefault = model.IsOnByDefault;
+				newLayer.IsSearchable = model.IsSearchable;
+
+				newLayer.Data = new MapLayerData();// JsonConvert.DeserializeObject<MapLayerData>(model.GeoJson);
+				var feature = JsonConvert.DeserializeObject<FeatureCollection>(model.GeoJson);
+				newLayer.Data.Hydrate(feature);
+
+				newLayer.UpdatedById = UserId;
+				newLayer.UpdatedOn = DateTime.UtcNow;
+
+				var mapLayer = await _mappingService.SaveMapLayerAsync(newLayer);
+
+				return RedirectToAction("Layers");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> DeleteLayer(string layerId)
+		{
+			if (String.IsNullOrWhiteSpace(layerId))
+				return RedirectToAction("Layers");
+
+			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
+
+			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
+				Unauthorized();
+
+			layer.IsDeleted = true;
+			layer.UpdatedById = UserId;
+			layer.UpdatedOn = DateTime.UtcNow;
+
+			var mapLayer = await _mappingService.SaveMapLayerAsync(layer);
+
+			return RedirectToAction("Layers");
 		}
 
 		public async Task<IActionResult> POIs()
@@ -357,7 +496,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					catch (Exception ex)
 					{
-						//Logging.LogException(ex);	
+						//Logging.LogException(ex);
 					}
 				}
 			}

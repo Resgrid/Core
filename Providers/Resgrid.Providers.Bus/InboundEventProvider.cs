@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Resgrid.Config;
-using Resgrid.Framework;
-using Resgrid.Model;
 using Resgrid.Model.Providers;
 
 namespace Resgrid.Providers.Bus

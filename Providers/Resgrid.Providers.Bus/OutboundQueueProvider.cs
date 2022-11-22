@@ -1,4 +1,5 @@
 ﻿using Resgrid.Config;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Providers.Bus.Rabbit;
@@ -53,6 +54,11 @@ namespace Resgrid.Providers.Bus
 				return _rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
 
 			return false;
+		}
+
+		public async Task<bool> EnqueueAuditEvent(AuditEvent auditEvent)
+		{
+			return _rabbitOutboundQueueProvider.EnqueueAuditEvent(auditEvent);
 		}
 	}
 }

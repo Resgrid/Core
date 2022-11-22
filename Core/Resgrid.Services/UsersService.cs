@@ -7,6 +7,9 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using MongoDB.Bson;
+using System.Collections.ObjectModel;
+using Resgrid.Model.Events;
 
 namespace Resgrid.Services
 {
@@ -34,14 +37,19 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IIdentityRepository _identityRepository;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IMongoRepository<PersonnelLocation> _personnelLocationRepository;
+		private readonly IEventAggregator _eventAggregator;
 
 		public UsersService(IDepartmentMembersRepository departmentMembersRepository, ICacheProvider cacheProvider,
-			IIdentityRepository identityRepository, IDepartmentSettingsService departmentSettingsService)
+			IIdentityRepository identityRepository, IDepartmentSettingsService departmentSettingsService,
+			IMongoRepository<PersonnelLocation> personnelLocationRepository, IEventAggregator eventAggregator)
 		{
 			_departmentMembersRepository = departmentMembersRepository;
 			_cacheProvider = cacheProvider;
 			_identityRepository = identityRepository;
 			_departmentSettingsService = departmentSettingsService;
+			_personnelLocationRepository = personnelLocationRepository;
+			_eventAggregator = eventAggregator;
 		}
 
 		public List<IdentityUser> GetAll()
@@ -92,7 +100,7 @@ namespace Resgrid.Services
 		{
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				Func<IdentityUser> getUser = delegate()
+				Func<IdentityUser> getUser = delegate ()
 				{
 					return _identityRepository.GetUserById(userId.ToString());
 				};
@@ -210,6 +218,87 @@ namespace Resgrid.Services
 		public int GetUsersCount()
 		{
 			return _identityRepository.GetAll().Count();
+		}
+
+		public async Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation)
+		{
+			if (personnelLocation.Id.Timestamp == 0)
+				await _personnelLocationRepository.InsertOneAsync(personnelLocation);
+			else
+				await _personnelLocationRepository.ReplaceOneAsync(personnelLocation);
+
+			try
+			{
+				_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
+					DepartmentId = personnelLocation.DepartmentId,
+					UserId = personnelLocation.UserId,
+					Latitude = personnelLocation.Latitude,
+					Longitude = personnelLocation.Longitude,
+					RecordId = personnelLocation.Id.ToString(),
+				});
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			return personnelLocation;
+		}
+
+		public async Task<List<PersonnelLocation>> GetLatestLocationsForDepartmentPersonnelAsync(int departmentId)
+		{
+			/*
+			var pipeline = new BsonDocument[]
+				{
+					new BsonDocument("$match",
+					new BsonDocument
+					{
+							{ "departmentId", departmentId }
+						}),
+					new BsonDocument("$sort",
+					new BsonDocument("timestamp", -1)),
+					new BsonDocument("$group",
+						new BsonDocument
+						{
+							{ "_id",
+								new BsonDocument
+								{
+									{ "userId", "$userId" },
+									{ "departmentId", "$departmentId" }
+								}
+							},
+							{ "Carddetails",
+								new BsonDocument("$first", "$Carddetails")
+							}
+						}
+					),
+					new BsonDocument("$project",
+						new BsonDocument
+						{
+							{ "_id", 0 },
+							{ "studentid", "$_id.studentid" },
+							{ "dept", "$_id.dept" },
+							{ "Carddetails", "$Carddetails" }
+						}
+					)
+				};
+
+			var result = await _personnelLocationRepository.Aggregate<BsonDocument>(pipeline);
+			*/
+
+			var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+				.GroupBy(x => x.UserId).First();
+
+			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+
+			return locations.ToList();
+		}
+
+		public async Task<PersonnelLocation> GetPersonnelLocationByIdAsync(string id)
+		{
+			var layers = await _personnelLocationRepository.FindByIdAsync(id);
+
+			return layers;
 		}
 	}
 }

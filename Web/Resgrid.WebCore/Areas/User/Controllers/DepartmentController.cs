@@ -26,6 +26,9 @@ using Resgrid.Web.Models.AccountViewModels;
 using Resgrid.Model.Providers;
 using Resgrid.WebCore.Areas.User.Models.Dispatch;
 using Resgrid.Web.Areas.User.Models.Dispatch;
+using Elasticsearch.Net;
+using Microsoft.AspNetCore.Identity;
+using AuditEvent = Resgrid.Model.Events.AuditEvent;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -337,6 +340,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.DepartmentId = DepartmentId;
 			auditEvent.UserId = UserId;
 			auditEvent.Type = AuditLogTypes.DepartmentSettingsChanged;
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 
 			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			auditEvent.Before = d.CloneJsonToString();
@@ -1646,7 +1653,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> GetPrinterNetPrinters(string key)
 		{
-			return Json(_printerProvider.GetPrinters(key));
+			return Json(await _printerProvider.GetPrinters(key));
 		}
 	}
 

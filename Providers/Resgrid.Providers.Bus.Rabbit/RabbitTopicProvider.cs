@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Newtonsoft.Json;
+using RabbitMQ.Client;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -24,7 +25,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Type = (int)EventingTypes.PersonnelStatusUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.Status.DepartmentId,
-				ItemId = message.Status.ActionLogId
+				ItemId = message.Status.ActionLogId.ToString()
 			}.SerializeJson());
 		}
 
@@ -36,7 +37,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Type = (int)EventingTypes.PersonnelStaffingUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
-				ItemId = message.Staffing.UserStateId
+				ItemId = message.Staffing.UserStateId.ToString()
 			}.SerializeJson());
 		}
 
@@ -48,7 +49,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Type = (int)EventingTypes.UnitStatusUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
-				ItemId = message.Status.UnitStateId
+				ItemId = message.Status.UnitStateId.ToString()
 			}.SerializeJson());
 		}
 
@@ -60,7 +61,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Type = (int)EventingTypes.CallAdded,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
-				ItemId = message.Call.CallId
+				ItemId = message.Call.CallId.ToString()
 			}.SerializeJson());
 		}
 
@@ -72,7 +73,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Type = (int)EventingTypes.CallsUpdated,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
-				ItemId = message.Call.CallId
+				ItemId = message.Call.CallId.ToString()
 			}.SerializeJson());
 		}
 
@@ -84,7 +85,33 @@ namespace Resgrid.Providers.Bus.Rabbit
 				Type = (int)EventingTypes.CallClosed,
 				TimeStamp = DateTime.UtcNow,
 				DepartmentId = message.DepartmentId,
-				ItemId = message.Call.CallId
+				ItemId = message.Call.CallId.ToString()
+			}.SerializeJson());
+		}
+
+		public bool PersonnelLocationUnidatedChanged(PersonnelLocationUpdatedEvent message)
+		{
+			return SendMessage(Topics.EventingTopic, new EventingMessage
+			{
+				Id = Guid.NewGuid(),
+				Type = (int)EventingTypes.PersonnelLocationUpdated,
+				TimeStamp = DateTime.UtcNow,
+				DepartmentId = message.DepartmentId,
+				ItemId = message.RecordId,
+				Payload = JsonConvert.SerializeObject(message)
+			}.SerializeJson());
+		}
+
+		public bool UnitLocationUpdatedChanged(UnitLocationUpdatedEvent message)
+		{
+			return SendMessage(Topics.EventingTopic, new EventingMessage
+			{
+				Id = Guid.NewGuid(),
+				Type = (int)EventingTypes.UnitLocationUpdated,
+				TimeStamp = DateTime.UtcNow,
+				DepartmentId = message.DepartmentId,
+				ItemId = message.RecordId,
+				Payload = JsonConvert.SerializeObject(message)
 			}.SerializeJson());
 		}
 
@@ -114,22 +141,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			try
 			{
-				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				using (var connection = CreateConnection())
 				{
-					//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					using (var connection = CreateConnection())
+					using (var channel = connection.CreateModel())
 					{
-						using (var channel = connection.CreateModel())
-						{
-							channel.BasicPublish(exchange: SetQueueNameForEnv(topicName),
-										 routingKey: "",
-										 basicProperties: null,
-										 body: Encoding.ASCII.GetBytes(message));
-						}
+						channel.BasicPublish(exchange: SetQueueNameForEnv(topicName),
+									 routingKey: "",
+									 basicProperties: null,
+									 body: Encoding.ASCII.GetBytes(message));
 					}
-
-					return true;
 				}
+
+				return true;
 			}
 			catch (Exception ex)
 			{

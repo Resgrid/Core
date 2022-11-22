@@ -1,10 +1,34 @@
-<div>
-  <div style="width: 100%; float: right; text-align: right;" *ngIf="showbuttons == true">
-    Show Calls: <input type="checkbox" [checked]="showCalls" (change)="changeShowCalls($event)"> &nbsp;&nbsp;&nbsp;
-    Show Stations: <input type="checkbox" [checked]="showStations" (change)="changeShowStations($event)"> &nbsp;&nbsp;&nbsp;
-    Show Units: <input type="checkbox" [checked]="showUnits" (change)="changeShowUnits($event)"> &nbsp;&nbsp;&nbsp;
-    Show Personnel: <input type="checkbox" [checked]="showPersonnel" (change)="changeShowPeople($event)">
+<ng-template  [cdkConnectedOverlayOpen]="map === null" cdkConnectedOverlay>
+  <div class="text-center">
+    <div class="sk-spinner sk-spinner-wave">
+      <div class="sk-rect1"></div>
+      <div class="sk-rect2" style="padding-left: 4px;"></div>
+      <div class="sk-rect3" style="padding-left: 4px;"></div>
+      <div class="sk-rect4" style="padding-left: 4px;"></div>
+      <div class="sk-rect5" style="padding-left: 4px;"></div>
+    </div> <br />
+    Loading map...
+  </div>
+</ng-template>
+
+<div cdkOverlayOrigin>
+  <div style="width: 100%; padding-bottom: 4px;" *ngIf="showbuttons == true">
+    <div style="width: 50%; float: left; text-align: left;">
+      <input type="text" placeholder="filter markers text" #filterTextInput="ngModel" [(ngModel)]="filterText">&nbsp;&nbsp;&nbsp;
+      Hide Labels: <input type="checkbox" [checked]="hideLabels" (change)="changeHideLabels($event)">
+    </div>
+    <div style="width: 50%; float: right; text-align: right;">
+      Show Calls: <input type="checkbox" [checked]="showCalls" (change)="changeShowCalls($event)"> &nbsp;&nbsp;&nbsp;
+      Show Stations: <input type="checkbox" [checked]="showStations" (change)="changeShowStations($event)"> &nbsp;&nbsp;&nbsp;
+      Show Units: <input type="checkbox" [checked]="showUnits" (change)="changeShowUnits($event)"> &nbsp;&nbsp;&nbsp;
+      Show Personnel: <input type="checkbox" [checked]="showPersonnel" (change)="changeShowPeople($event)">
+    </div>
   </div>
   <div #map id="map" name="map" style="width: 100%;" [style.height]="mapheight">
+  </div>
+  <div style="width: 100%;">
+    <div style="font-size: 10px; width: 90%; float: right; text-align: right; margin-bottom: 8px;">
+      Last Update: {{updateDate}}
+    </div>
   </div>
 </div>

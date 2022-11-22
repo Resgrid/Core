@@ -7,6 +7,8 @@
 		CallsUpdated = 3,
 		PersonnelStaffingUpdated = 4,
 		CallAdded = 5,
-		CallClosed = 6
+		CallClosed = 6,
+		PersonnelLocationUpdated = 7,
+		UnitLocationUpdated = 8
 	}
 }

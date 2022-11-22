@@ -14,6 +14,7 @@
 		public static string PaymentQueueName = "payment";
 		public static string AuditQueueName = "audit";
 		public static string UnitLoactionQueueName = "unitlocation";
+		public static string PersonnelLoactionQueueName = "personnellocation";
 
 		#region Azure Service Bus Values
 		public static string SignalRServiceBusConnectionString = "";

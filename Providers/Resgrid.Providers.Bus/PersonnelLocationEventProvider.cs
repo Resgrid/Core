@@ -19,13 +19,9 @@ namespace Resgrid.Providers.Bus
 			if (_rabbitOutboundQueueProvider == null)
 				_rabbitOutboundQueueProvider = new RabbitOutboundQueueProvider();
 			
-			if (Config.SystemBehaviorConfig.ServiceBusType == Config.ServiceBusTypes.Rabbit)
-			{
-				_rabbitOutboundQueueProvider.EnqueuePersonnelLocationEvent(personnelLocationEvent);
-				return true;
-			}
+			_rabbitOutboundQueueProvider.EnqueuePersonnelLocationEvent(personnelLocationEvent);
 
-			return false;
+			return true;
 		}
 	}
 }

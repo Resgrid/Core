@@ -8,6 +8,9 @@ using Resgrid.Framework;
 
 namespace Resgrid.Model
 {
+	/* DEPRICATED! Being replaced by UnitsLocation, will eventually
+	 * rename that to UnitLocation once this goes away.
+	 */
 	[ProtoContract]
 	[Table("UnitLocations")]
 	public class UnitLocation : IEntity

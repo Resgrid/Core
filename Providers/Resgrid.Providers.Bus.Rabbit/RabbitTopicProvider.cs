@@ -141,22 +141,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			try
 			{
-				if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+				using (var connection = CreateConnection())
 				{
-					//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					using (var connection = CreateConnection())
+					using (var channel = connection.CreateModel())
 					{
-						using (var channel = connection.CreateModel())
-						{
-							channel.BasicPublish(exchange: SetQueueNameForEnv(topicName),
-										 routingKey: "",
-										 basicProperties: null,
-										 body: Encoding.ASCII.GetBytes(message));
-						}
+						channel.BasicPublish(exchange: SetQueueNameForEnv(topicName),
+									 routingKey: "",
+									 basicProperties: null,
+									 body: Encoding.ASCII.GetBytes(message));
 					}
-
-					return true;
 				}
+
+				return true;
 			}
 			catch (Exception ex)
 			{

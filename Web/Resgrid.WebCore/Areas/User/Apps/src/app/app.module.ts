@@ -58,8 +58,10 @@ const getEventingUrl = (): string => {
 			googleApiKey: getGoogleMapKey(),
 			channelUrl: getEventingUrl(),
 			channelHubName: 'eventingHub',
+      realtimeGeolocationHubName: '/geolocationHub',
 			logLevel: 0,
 			isMobileApp: false,
+      cacheProvider: null
 		})
   ],
   providers: [],

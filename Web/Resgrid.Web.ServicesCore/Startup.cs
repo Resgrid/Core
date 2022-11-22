@@ -55,6 +55,7 @@ using OpenIddict.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Security.Cryptography.X509Certificates;
+using Resgrid.Web.Services;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -424,13 +425,19 @@ namespace Resgrid.Web.ServicesCore
 
 					// Enable the token endpoint.
 					options.SetTokenEndpointUris("/api/v4/connect/token");
+					options.SetIntrospectionEndpointUris("/api/v4/connect/introspect");
 
 					options.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
 					options.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
 
 					// Enable the password and the refresh token flows.
-					options.AllowPasswordFlow()
-						   .AllowRefreshTokenFlow();
+					//options.AllowPasswordFlow()
+					//	   .AllowRefreshTokenFlow();
+					options//.AllowAuthorizationCodeFlow()
+					   //.AllowHybridFlow()
+					   .AllowClientCredentialsFlow()
+					   .AllowPasswordFlow()
+					   .AllowRefreshTokenFlow();
 
 					// Accept anonymous clients (i.e clients that don't send a client_id).
 					options.AcceptAnonymousClients();
@@ -528,6 +535,7 @@ namespace Resgrid.Web.ServicesCore
 
 			//this.meterProvider = providerBuilder.Build();
 
+			services.AddHostedService<Worker>();
 			this.Services = services;
 		}
 
@@ -601,7 +609,6 @@ namespace Resgrid.Web.ServicesCore
 			app.UseStaticFiles();
 
 			app.UseAuthentication();
-			app.UseAuthorization();
 			app.UseAuthorization();
 
 			app.UseSwagger();

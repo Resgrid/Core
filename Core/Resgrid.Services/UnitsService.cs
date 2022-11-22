@@ -20,7 +20,7 @@ namespace Resgrid.Services
 		private readonly IUnitTypesRepository _unitTypesRepository;
 		private readonly IUnitRolesRepository _unitRolesRepository;
 		private readonly IUnitStateRoleRepository _unitStateRoleRepository;
-		private readonly IUnitLocationRepository _unitLocationRepository;
+		private readonly IMongoRepository<UnitsLocation> _unitLocationRepository;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IUserStateService _userStateService;
 		private readonly IEventAggregator _eventAggregator;
@@ -30,7 +30,7 @@ namespace Resgrid.Services
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
-			IEventAggregator eventAggregator, ICustomStateService customStateService, IUnitLocationRepository unitLocationRepository,
+			IEventAggregator eventAggregator, ICustomStateService customStateService, IMongoRepository<UnitsLocation> unitLocationRepository,
 			IUnitActiveRolesRepository unitActiveRolesRepository)
 		{
 			_unitsRepository = unitsRepository;
@@ -493,22 +493,49 @@ namespace Resgrid.Services
 			return unitStates;
 		}
 
-		public async Task<UnitLocation> AddUnitLocationAsync(UnitLocation location, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<UnitsLocation> AddUnitLocationAsync(UnitsLocation location, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitLocationRepository.SaveOrUpdateAsync(location, cancellationToken);
-		}
-
-		public async Task<UnitLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null)
-		{
-			UnitLocation location = null;
-
-			if (timestamp == null)
-				location = await _unitLocationRepository.GetLastUnitLocationByUnitIdAsync(unitId);
+			if (location.Id.Timestamp == 0)
+				await _unitLocationRepository.InsertOneAsync(location);
 			else
-				location = await _unitLocationRepository.GetLastUnitLocationByUnitIdTimestampAsync(unitId, timestamp.Value);
-			
+				await _unitLocationRepository.ReplaceOneAsync(location);
+
+			try
+			{
+					_eventAggregator.SendMessage<UnitLocationUpdatedEvent>(new UnitLocationUpdatedEvent()
+					{
+						DepartmentId = departmentId,
+						UnitId = location.UnitId.ToString(),
+						Latitude = double.Parse(location.Latitude.ToString()),
+						Longitude = double.Parse(location.Longitude.ToString()),
+						RecordId = location.Id.ToString(),
+					});
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
 
 			return location;
+		}
+
+		public async Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null)
+		{
+			var location = _unitLocationRepository.AsQueryable().Where(x => x.UnitId == unitId).OrderByDescending(y => y.Timestamp).First();
+
+			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+
+			return location;
+		}
+
+		public async Task<List<UnitsLocation>> GetLatestUnitLocationsAsync(int departmentId)
+		{
+			var locations = _unitLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+				.GroupBy(x => x.UnitId).First();
+
+			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+
+			return locations.ToList();
 		}
 
 		public async Task<List<UnitStateRole>> GetCurrentRolesForUnitAsync(int unitId)

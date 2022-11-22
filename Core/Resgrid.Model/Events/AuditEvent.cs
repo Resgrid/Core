@@ -27,16 +27,16 @@ namespace Resgrid.Model.Events
 		[ProtoMember(4)]
 		public string Difference { get; set; }
 
-		[ProtoMember(7)]
+		[ProtoMember(8)]
 		public string IpAddress { get; set; }
 
-		[ProtoMember(8)]
+		[ProtoMember(9)]
 		public string UserAgent { get; set; }
 
-		[ProtoMember(9)]
+		[ProtoMember(10)]
 		public string ServerName { get; set; }
 
-		[ProtoMember(10)]
+		[ProtoMember(11)]
 		public bool Successful { get; set; }
 
 		public AuditEvent()

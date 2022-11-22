@@ -145,6 +145,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.NonMobileRefreshTokenExpiryDays));
 				}
 
+				principal.SetResources(JwtConfig.EventsClientId);
+
 				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 			}
 

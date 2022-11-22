@@ -8,13 +8,18 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import {
+  ConnectionState,
+  Consts,
+  EventsService,
   GetMapDataAndMarkersResult,
   MapDataAndMarkersData,
   MappingService,
+  RealtimeGeolocationService,
 } from '@resgrid/ngx-resgridlib';
 import { environment } from 'src/environments/environment';
 import * as L from 'leaflet';
 import { debounceTime, distinctUntilChanged, Observable, take } from 'rxjs';
+import * as _ from 'lodash';
 
 @Component({
   templateUrl: './map.component.html',
@@ -36,6 +41,8 @@ export class MapComponent implements OnInit {
   public showPersonnel: boolean = true;
   public hideLabels: boolean = false;
   public filterText: string = '';
+  public updateDate: string = '';
+  private signalRStarted: boolean = false;
 
   @Input()
   public showbuttons: boolean;
@@ -43,16 +50,32 @@ export class MapComponent implements OnInit {
   @Input()
   public mapheight: string;
 
+  @Input()
+  public departmentId: string;
+
+  @Input()
+  public leafletosmurl: string;
+
+  @Input()
+  public mapattribution: string;
+
   public constructor(
     private mapProvider: MappingService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private realtimeGeolocationService: RealtimeGeolocationService,
+    private events: EventsService,
+    private consts: Consts
   ) {
     this.markers = [];
   }
 
   ngOnInit(): void {
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+    const date = new Date();
+    this.updateDate = date.toString();
+
+    this.mapProvider.getMapDataAndMarkers().pipe(take(1)).subscribe((data) => {
       this.processMapData(data.Data);
+      this.startSignalR();
     });
 
     if (typeof this.showbuttons === 'undefined') {
@@ -67,14 +90,16 @@ export class MapComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.filterTextInput.valueChanges
-      .pipe(debounceTime(500))
-      .pipe(distinctUntilChanged())
-      .subscribe((value) => {
-        this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
-          this.processMapData(data.Data);
+    if (this.filterTextInput) {
+      this.filterTextInput.valueChanges
+        .pipe(debounceTime(500))
+        .pipe(distinctUntilChanged())
+        .subscribe((value) => {
+          this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+            this.processMapData(data.Data);
+          });
         });
-      });
+    }
   }
 
   ngOnChanges(): void {
@@ -90,48 +115,58 @@ export class MapComponent implements OnInit {
   }
 
   public changeHideLabels(event) {
-    var checked = event.target.checked;
-    this.hideLabels = checked;
+    if (event && event.target) {
+      var checked = event.target.checked;
+      this.hideLabels = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
-      this.processMapData(data.Data);
-    });
+      this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+        this.processMapData(data.Data);
+      });
+    }
   }
 
   public changeShowCalls(event) {
-    var checked = event.target.checked;
-    this.showCalls = checked;
+    if (event && event.target) {
+      var checked = event.target.checked;
+      this.showCalls = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
-      this.processMapData(data.Data);
-    });
+      this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+        this.processMapData(data.Data);
+      });
+    }
   }
 
   public changeShowStations(event) {
-    var checked = event.target.checked;
-    this.showStations = checked;
+    if (event && event.target) {
+      var checked = event.target.checked;
+      this.showStations = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
-      this.processMapData(data.Data);
-    });
+      this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+        this.processMapData(data.Data);
+      });
+    }
   }
 
   public changeShowUnits(event) {
-    var checked = event.target.checked;
-    this.showUnits = checked;
+    if (event && event.target) {
+      var checked = event.target.checked;
+      this.showUnits = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
-      this.processMapData(data.Data);
-    });
+      this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+        this.processMapData(data.Data);
+      });
+    }
   }
 
   public changeShowPeople(event) {
-    var checked = event.target.checked;
-    this.showPersonnel = checked;
+    if (event && event.target) {
+      var checked = event.target.checked;
+      this.showPersonnel = checked;
 
-    this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
-      this.processMapData(data.Data);
-    });
+      this.mapProvider.getMapDataAndMarkers().subscribe((data) => {
+        this.processMapData(data.Data);
+      });
+    }
   }
 
   private getMapLayers() {
@@ -171,8 +206,12 @@ export class MapComponent implements OnInit {
   private clearLayers() {
     if (this.layers && this.layers.length > 0) {
       this.layers.forEach((layer) => {
-        this.layerControl.removeLayer(layer);
-        this.map.removeLayer(layer);
+        try {
+          this.layerControl.removeLayer(layer);
+          this.map.removeLayer(layer);
+        } catch (error) {
+          
+        }
       });
       this.layers = [];
     } else {
@@ -195,18 +234,18 @@ export class MapComponent implements OnInit {
 
   private processMapData(data: MapDataAndMarkersData) {
     if (data) {
+      const date = new Date();
+      this.updateDate = date.toString();
       this.clearLayers();
 
       var mapCenter = this.getMapCenter(data);
 
       if (!this.map) {
-        const mapKey = window['rgOsmKey'];
-
         var osm = L.tileLayer(
-          'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' + mapKey,
+          this.leafletosmurl,
           {
             maxZoom: 19,
-            attribution: '© OpenStreetMap',
+            attribution: this.mapattribution,
           }
         );
 
@@ -272,15 +311,14 @@ export class MapComponent implements OnInit {
                         iconAnchor: [16, 37],
                       }),
                       draggable: false,
-                      title: markerTitle,
-                      //tooltip: markerInfo.Title,
+                      title: markerTitle
                     }
-                  )
-                    .bindTooltip(markerTitle, {
+                  ).bindTooltip(markerTitle, {
                       permanent: true,
                       direction: 'bottom',
-                    })
-                    .addTo(this.map);
+                    }).addTo(this.map);
+
+                    marker.elementId = markerInfo.Id;
                 } else {
                   marker = L.marker(
                     [markerInfo.Latitude, markerInfo.Longitude],
@@ -292,20 +330,25 @@ export class MapComponent implements OnInit {
                         iconAnchor: [16, 37],
                       }),
                       draggable: false,
-                      title: markerTitle,
-                      //tooltip: markerInfo.Title,
+                      title: markerTitle
                     }
                   ).addTo(this.map);
+
+                  marker.elementId = markerInfo.Id;
                 }
               }
 
-              this.markers.push(marker);
+              if (marker) {
+                this.markers.push(marker);
+              }
             }
           });
         }
 
-        var group = L.featureGroup(this.markers);
-        this.map.fitBounds(group.getBounds());
+        if (this.markers && this.markers.length > 0) {
+          var group = L.featureGroup(this.markers);
+          this.map.fitBounds(group.getBounds());
+        }
       }
     }
 
@@ -318,5 +361,57 @@ export class MapComponent implements OnInit {
 
   private getMapZoomLevel(data: MapDataAndMarkersData): any {
     return data.ZoomLevel;
+  }
+
+  public startSignalR() {
+    if (!this.signalRStarted) {
+      Object.defineProperty(WebSocket, 'OPEN', { value: 1, });
+      this.realtimeGeolocationService.connectionState$.subscribe(
+        (state: ConnectionState) => {
+          if (state === ConnectionState.Disconnected) {
+            //this.realtimeGeolocationService.restart(this.departmentId);
+          }
+        }
+      );
+
+      this.signalrInit();
+      this.realtimeGeolocationService.start();
+
+      this.signalRStarted = true;
+    }
+  }
+
+  public stopSignalR() {
+    this.realtimeGeolocationService.stop();
+    this.signalRStarted = false;
+  }
+
+  private signalrInit() {
+    this.events.subscribe(
+      this.consts.SIGNALR_EVENTS.PERSONNEL_LOCATION_UPDATED,
+      (data: any) => {
+        console.log('person location updated event');
+        if (data) {
+          let personMarker = _.find(this.markers, ['elementId', `p${data.userId}`]);
+
+          if (personMarker) {
+            personMarker.setLatLng([data.latitude, data.longitude]);
+          }
+        }
+      }
+    );
+    this.events.subscribe(
+      this.consts.SIGNALR_EVENTS.UNIT_LOCATION_UPDATED,
+      (data: any) => {
+        console.log('unit location updated event');
+        if (data) {
+          let unitMarker = _.find(this.markers, ['elementId', `u${data.unitId}`]);
+
+          if (unitMarker) {
+            unitMarker.setLatLng([data.latitude, data.longitude]);
+          }
+        }
+      }
+    );
   }
 }

@@ -179,7 +179,8 @@
 
 	<Target Name="BuildClientApps" AfterTargets="BeforeBuild">
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production --output-hashing=none --output-path=./dist/core --delete-output-path=true" />
+		<Exec WorkingDirectory="$(SpaRoot)" Condition="'$(Configuration)' == 'Debug'" Command="npm run build -- --configuration development --output-hashing=none --output-path=./dist/core --delete-output-path=true" />
+		<Exec WorkingDirectory="$(SpaRoot)" Condition="'$(Configuration)' != 'Debug'" Command="npm run build -- --configuration production --output-hashing=none --output-path=./dist/core --delete-output-path=true" />
 	</Target>
 
 	<Target Name="CopyClientApps" AfterTargets="AfterBuild">

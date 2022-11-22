@@ -77,13 +77,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var action = await _actionLogsService.GetLastActionLogForUserAsync(userId, DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
-			if (action != null && action.DepartmentId != DepartmentId)
-				return Unauthorized();
-
-			result.Data = ConvertPersonStatus(action, department, userId);
-
-			result.PageSize = 1;
-			result.Status = ResponseHelper.Success;
+			if (action != null)
+			{
+				result.Data = ConvertPersonStatus(action, department, userId);
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.Data = null;
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
 
 			ResponseHelper.PopulateV4ResponseData(result);
 

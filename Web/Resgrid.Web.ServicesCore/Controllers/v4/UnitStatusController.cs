@@ -313,7 +313,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 
-		public static UnitStatusResultData ConvertUnitStatusData(Unit unit, UnitState stateFound, UnitLocation latestUnitLocation,
+		public static UnitStatusResultData ConvertUnitStatusData(Unit unit, UnitState stateFound, UnitsLocation latestUnitLocation,
 			CustomStateDetail customState, DepartmentGroup group, string timeZone, List<Call> activeCalls, List<DepartmentGroup> groups)
 		{
 			var state = "Unknown";

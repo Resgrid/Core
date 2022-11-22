@@ -227,13 +227,20 @@ namespace Resgrid.Services
 			else
 				await _personnelLocationRepository.ReplaceOneAsync(personnelLocation);
 
-			_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
-				DepartmentId = personnelLocation.DepartmentId,
-				UserId = personnelLocation.UserId,
-				Latitude = personnelLocation.Latitude,
-				Longitude = personnelLocation.Longitude,
-				RecordId = personnelLocation.Id.ToString(),
-			});
+			try
+			{
+				_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
+					DepartmentId = personnelLocation.DepartmentId,
+					UserId = personnelLocation.UserId,
+					Latitude = personnelLocation.Latitude,
+					Longitude = personnelLocation.Longitude,
+					RecordId = personnelLocation.Id.ToString(),
+				});
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
 
 			return personnelLocation;
 		}

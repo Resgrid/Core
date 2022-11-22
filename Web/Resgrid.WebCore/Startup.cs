@@ -300,14 +300,16 @@ namespace Resgrid.Web
 			services.AddWebOptimizer(pipeline =>
 			{
 				// jquery/js app files and css
+#if !DEBUG
 				pipeline.MinifyJsFiles("/js/**/*.js");
+#endif
 				pipeline.MinifyCssFiles("/css/**/*.css");
 
 				// Public (external website) public style bundles
 				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
 
 				// Angular App code
-				pipeline.AddJavaScriptBundle("/js/ng/app.js", "js/ng/runtime.js", "js/ng/runtime.js", "js/ng/polyfills.js", "js/ng/main.js");
+				pipeline.AddJavaScriptBundle("/js/ng/app.js", "js/ng/vendor.js", "js/ng/runtime.js", "js/ng/polyfills.js", "js/ng/main.js");
 
 				// Internal app style bundle
 				pipeline.AddCssBundle("/css/int-bundle.css", "lib/font-awesome/css/font-awesome.min.css", "lib/metisMenu/dist/metisMenu.min.css", "lib/bootstrap-tour/build/css/bootstrap-tour.min.css",

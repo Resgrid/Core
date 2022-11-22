@@ -165,17 +165,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
-		public static UnitLocationResultData ConvertUnitLocation(UnitLocation unitLocation)
+		public static UnitLocationResultData ConvertUnitLocation(UnitsLocation unitLocation)
 		{
 			var result = new UnitLocationResultData();
 			result.UnitId = unitLocation.UnitId.ToString();
 			result.Timestamp = unitLocation.Timestamp;
 
-			if (unitLocation.Latitude.HasValue)
-				result.Latitude = unitLocation.Latitude.Value.ToString();
-
-			if (unitLocation.Longitude.HasValue)
-				result.Longitude = unitLocation.Longitude.Value.ToString();
+			result.Latitude = unitLocation.Latitude.ToString();
+			result.Longitude = unitLocation.Longitude.ToString();
 
 			if (unitLocation.Accuracy.HasValue)
 				result.Accuracy = unitLocation.Accuracy.Value.ToString();

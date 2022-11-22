@@ -77,13 +77,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var userState = await _userStateService.GetLastUserStateByUserIdAsync(UserId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
-			if (userState != null && userState.DepartmentId != DepartmentId)
-				return Unauthorized();
-
-			result.Data = ConvertPersonStaffing(userState, department, userId);
-
-			result.PageSize = 1;
-			result.Status = ResponseHelper.Success;
+			if (userState != null)
+			{
+				result.Data = ConvertPersonStaffing(userState, department, userId);
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.Data = null;
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
 
 			ResponseHelper.PopulateV4ResponseData(result);
 

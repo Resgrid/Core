@@ -65,7 +65,8 @@
     <div class="col-lg-4">
       <div class="ibox float-e-margins">
         <div class="ibox-content">
-          <rg-map showbuttons="false" mapheight="330px"></rg-map>
+          <rg-map showbuttons="false" mapheight="330px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()" mapattribution="@Resgrid.Config.MappingConfig.LeafletAttribution"></rg-map>
+          <br/>
         </div>
       </div>
     </div>

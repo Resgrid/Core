@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   web:
-    image: "resgridllc/resgridwebcore:0.5.23"
+    image: "resgridllc/resgridwebcore:0.6.70"
     ports:
       - "5151:80"
     env_file:
@@ -14,12 +14,13 @@ services:
       - redis
       - rabbitmq
       - worker
+      - mongodb
     environment:
-      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,api:80
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,api:80,mongodb:27017
       - WAIT_TIMEOUT=300
 
   api:
-    image: "resgridllc/resgridwebservices:0.5.23"
+    image: "resgridllc/resgridwebservices:0.6.70"
     ports:
       - "5152:80"
     env_file:
@@ -30,12 +31,13 @@ services:
       - redis
       - rabbitmq
       - worker
+      - mongodb
     environment:
-      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,events:80
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,events:80,mongodb:27017
       - WAIT_TIMEOUT=300
 
   events:
-    image: "resgridllc/resgridwebevents:0.5.23"
+    image: "resgridllc/resgridwebevents:0.6.70"
     ports:
       - "5153:80"
     env_file:
@@ -50,15 +52,16 @@ services:
       - WAIT_TIMEOUT=300
 
   worker:
-    image: "resgridllc/resgridworkersconsole:0.5.23"
+    image: "resgridllc/resgridworkersconsole:0.6.70"
     env_file:
       - resgrid.env
     depends_on:
       - db
       - redis
       - rabbitmq
+      - mongodb
     environment:
-      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,mongodb:27017
       - WAIT_AFTER=90
       - WAIT_TIMEOUT=180
 
@@ -102,3 +105,18 @@ services:
       - "5163:5601"
       - "5164:9200"
       - "5165:5044"
+      
+   mongodb:
+    image: mongo:4.4.18
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=resgrid
+      - MONGO_INITDB_ROOT_USERNAME=resgridUser
+      - MONGO_INITDB_ROOT_PASSWORD=Resgrid123!!
+    volumes:
+      # seeding scripts
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      # named volumes
+      - mongodb:/data/db
+      - mongoconfig:/data/configdb

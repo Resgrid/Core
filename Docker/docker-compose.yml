@@ -106,7 +106,7 @@ services:
       - "5164:9200"
       - "5165:5044"
       
-   mongodb:
+  mongodb:
     image: mongo:4.4.18
     ports:
       - 27017:27017
@@ -115,8 +115,6 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=resgridUser
       - MONGO_INITDB_ROOT_PASSWORD=Resgrid123!!
     volumes:
-      # seeding scripts
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d
-      # named volumes
       - mongodb:/data/db
       - mongoconfig:/data/configdb

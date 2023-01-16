@@ -92,12 +92,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
 			var gpsCoordinates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
 			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
-			//var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
+			var unitLocations = await _unitsService.GetLatestUnitLocationsAsync(DepartmentId);
 			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
-			//var personnelViewModels = (await GetPersonnelStatuses()).Value;
+			var personnelStates = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var personnelLocations = await _usersService.GetLatestLocationsForDepartmentPersonnelAsync(DepartmentId);
 
 			string weatherUnits = "";
 			double? centerLat = null;
@@ -190,152 +193,189 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 
 			result.Data.CenterLat = centerLat.Value;
-				result.Data.CenterLon = centerLon.Value;
+			result.Data.CenterLon = centerLon.Value;
 			result.Data.ZoomLevel = zoomLevel.HasValue ? zoomLevel.Value : 9;
 
-
-			foreach (var station in stations)
+			if (stations != null && stations.Any())
 			{
-				MapMakerInfoData info = new MapMakerInfoData();
-				info.Id = $"s{station.DepartmentGroupId}";
-				info.ImagePath = "Station";
-				info.Title = station.Name;
-				info.InfoWindowContent = station.Name;
-				info.Type = 2;
-
-				if (station.Address != null)
-				{
-					string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", station.Address.Address1,
-																		station.Address.City,
-																		station.Address.State,
-																		station.Address.PostalCode));
-
-					if (!String.IsNullOrEmpty(coordinates))
-					{
-						info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
-						info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
-
-						result.Data.MapMakerInfos.Add(info);
-					}
-				}
-				else if (!String.IsNullOrWhiteSpace(station.Latitude) && !String.IsNullOrWhiteSpace(station.Longitude))
-				{
-					info.Latitude = double.Parse(station.Latitude);
-					info.Longitude = double.Parse(station.Longitude);
-
-					result.Data.MapMakerInfos.Add(info);
-				}
-			}
-
-			foreach (var call in calls)
-			{
-				MapMakerInfoData info = new MapMakerInfoData();
-				info.ImagePath = "Call";
-				info.Id = $"c{call.CallId}";
-				info.Title = call.Name;
-				info.InfoWindowContent = call.NatureOfCall;
-				info.Type = 0;
-
-				if (callTypes != null && callTypes.Count > 0 && !String.IsNullOrWhiteSpace(call.Type))
-				{
-					var type = callTypes.FirstOrDefault(x => x.Type == call.Type);
-
-					if (type != null && type.MapIconType.HasValue)
-						info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
-				}
-
-				if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
-				{
-					try
-					{
-						info.Latitude = double.Parse(call.GeoLocationData.Split(char.Parse(","))[0]);
-						info.Longitude = double.Parse(call.GeoLocationData.Split(char.Parse(","))[1]);
-
-						result.Data.MapMakerInfos.Add(info);
-					}
-					catch { }
-				}
-				else if (!String.IsNullOrEmpty(call.Address))
-				{
-					string coordinates = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
-					if (!String.IsNullOrEmpty(coordinates))
-					{
-						info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
-						info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
-					}
-
-					result.Data.MapMakerInfos.Add(info);
-				}
-			}
-
-			foreach (var unit in unitStates)
-			{
-				if (unit.Latitude.HasValue && unit.Latitude.Value != 0 && unit.Longitude.HasValue &&
-					unit.Longitude.Value != 0)
+				foreach (var station in stations)
 				{
 					MapMakerInfoData info = new MapMakerInfoData();
-					info.ImagePath = "Engine_Responding";
-					info.Id = $"u{unit.UnitId}";
-					info.Title = unit.Unit.Name;
-					info.InfoWindowContent = "";
-					info.Latitude = double.Parse(unit.Latitude.Value.ToString());
-					info.Longitude = double.Parse(unit.Longitude.Value.ToString());
-					info.Type = 1;
+					info.Id = $"s{station.DepartmentGroupId}";
+					info.ImagePath = "Station";
+					info.Title = station.Name;
+					info.InfoWindowContent = station.Name;
+					info.Type = 2;
 
-					if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Unit.Type))
+					if (station.Address != null)
 					{
-						var type = unitTypes.FirstOrDefault(x => x.Type == unit.Unit.Type);
+						string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", station.Address.Address1,
+																			station.Address.City,
+																			station.Address.State,
+																			station.Address.PostalCode));
+
+						if (!String.IsNullOrEmpty(coordinates))
+						{
+							info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
+							info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+					}
+					else if (!String.IsNullOrWhiteSpace(station.Latitude) && !String.IsNullOrWhiteSpace(station.Longitude))
+					{
+						info.Latitude = double.Parse(station.Latitude);
+						info.Longitude = double.Parse(station.Longitude);
+
+						result.Data.MapMakerInfos.Add(info);
+					}
+				}
+			}
+
+			if (calls != null && calls.Any())
+			{
+				foreach (var call in calls)
+				{
+					MapMakerInfoData info = new MapMakerInfoData();
+					info.ImagePath = "Call";
+					info.Id = $"c{call.CallId}";
+					info.Title = call.Name;
+					info.InfoWindowContent = call.NatureOfCall;
+					info.Type = 0;
+
+					if (callTypes != null && callTypes.Count > 0 && !String.IsNullOrWhiteSpace(call.Type))
+					{
+						var type = callTypes.FirstOrDefault(x => x.Type == call.Type);
 
 						if (type != null && type.MapIconType.HasValue)
 							info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
 					}
 
-					result.Data.MapMakerInfos.Add(info);
+					if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+					{
+						try
+						{
+							info.Latitude = double.Parse(call.GeoLocationData.Split(char.Parse(","))[0]);
+							info.Longitude = double.Parse(call.GeoLocationData.Split(char.Parse(","))[1]);
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+						catch { }
+					}
+					else if (!String.IsNullOrEmpty(call.Address))
+					{
+						string coordinates = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
+						if (!String.IsNullOrEmpty(coordinates))
+						{
+							info.Latitude = double.Parse(coordinates.Split(char.Parse(","))[0]);
+							info.Longitude = double.Parse(coordinates.Split(char.Parse(","))[1]);
+						}
+
+						result.Data.MapMakerInfos.Add(info);
+					}
 				}
 			}
 
-			//foreach (var person in personnelViewModels)
-			//{
-			//	if (person.Latitude.HasValue && person.Latitude.Value != 0 && person.Longitude.HasValue &&
-			//		person.Longitude.Value != 0)
-			//	{
-			//		MapMakerInfoData info = new MapMakerInfoData();
+			if (units != null && units.Any())
+			{
+				foreach (var unit in units)
+				{
+					var latestLocation = unitLocations.FirstOrDefault(x => x.UnitId == unit.UnitId);
+					var state = unitStates.FirstOrDefault(x => x.UnitId == unit.UnitId);
 
-			//		if (person.StatusValue <= 25)
-			//		{
-			//			if (person.StatusValue == 5)
-			//				info.ImagePath = "Person_RespondingStation";
-			//			else if (person.StatusValue == 6)
-			//				info.ImagePath = "Person_RespondingCall";
-			//			else if (person.StatusValue == 3)
-			//				info.ImagePath = "Person_OnScene";
-			//			else
-			//				info.ImagePath = "Person_RespondingCall";
-			//		}
-			//		else if (person.DestinationType > 0)
-			//		{
-			//			if (person.DestinationType == 1)
-			//				info.ImagePath = "Person_RespondingStation";
-			//			else if (person.DestinationType == 2)
-			//				info.ImagePath = "Person_RespondingCall";
-			//			else
-			//				info.ImagePath = "Person_RespondingCall";
-			//		}
-			//		else
-			//		{
-			//			info.ImagePath = "Person_RespondingCall";
-			//		}
+					if (latestLocation != null)
+					{
+						MapMakerInfoData info = new MapMakerInfoData();
 
-			//		//info.Id = $"p{person.}";
-			//		info.Title = person.Name;
-			//		info.InfoWindowContent = "";
-			//		info.Latitude = double.Parse(person.Latitude.Value.ToString());
-			//		info.Longitude = double.Parse(person.Longitude.Value.ToString());
-			//		info.Type = 3;
+						info.ImagePath = "Engine_Responding";
+						info.Id = $"u{unit.UnitId}";
+						info.Title = unit.Name;
+						info.InfoWindowContent = "";
+						info.Latitude = double.Parse(latestLocation.Latitude.ToString());
+						info.Longitude = double.Parse(latestLocation.Longitude.ToString());
+						info.Type = 1;
 
-			//		result.Data.MapMakerInfos.Add(info);
-			//	}
-			//}
+						if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
+						{
+							var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
+
+							if (type != null && type.MapIconType.HasValue)
+								info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
+						}
+
+						result.Data.MapMakerInfos.Add(info);
+					}
+					else if (state != null)
+					{
+						if (state.Latitude.HasValue && state.Latitude.Value != 0 && state.Longitude.HasValue &&
+						state.Longitude.Value != 0)
+						{
+							MapMakerInfoData info = new MapMakerInfoData();
+
+							info.ImagePath = "Engine_Responding";
+							info.Id = $"u{unit.UnitId}";
+							info.Title = unit.Name;
+							info.InfoWindowContent = "";
+							info.Latitude = double.Parse(state.Latitude.Value.ToString());
+							info.Longitude = double.Parse(state.Longitude.Value.ToString());
+							info.Type = 1;
+
+							if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
+							{
+								var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
+
+								if (type != null && type.MapIconType.HasValue)
+									info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
+							}
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+					}
+				}
+			}
+
+			if (personnelNames != null && personnelNames.Any())
+			{
+				foreach (var person in personnelNames)
+				{
+					var latestLocation = personnelLocations.FirstOrDefault(x => x.UserId == person.UserId);
+					var state = personnelStates.FirstOrDefault(x => x.UserId == person.UserId);
+
+					if (latestLocation != null)
+					{
+						MapMakerInfoData info = new MapMakerInfoData();
+
+						info.ImagePath = "Person_RespondingCall";
+						info.Id = $"p{person.UserId}";
+						info.Title = person.Name;
+						info.InfoWindowContent = "";
+						info.Latitude = (double)latestLocation.Latitude;
+						info.Longitude = (double)latestLocation.Longitude;
+						info.Type = 3;
+
+						result.Data.MapMakerInfos.Add(info);
+					}
+					else if (state != null)
+					{
+						var location = state.GetCoordinates();
+
+						if (location != null && location.Latitude.HasValue && location.Longitude.HasValue)
+						{
+							MapMakerInfoData info = new MapMakerInfoData();
+
+							info.ImagePath = "Person_RespondingCall";
+							info.Id = $"p{person.UserId}";
+							info.Title = person.Name;
+							info.InfoWindowContent = "";
+							info.Latitude = location.Latitude.Value;
+							info.Longitude = location.Longitude.Value;
+							info.Type = 3;
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+					}
+				}
+			}
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

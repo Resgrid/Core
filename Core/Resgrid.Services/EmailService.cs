@@ -531,6 +531,44 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendCalendarAsync(string userId, string message, int departmentId, UserProfile profile = null)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			if (profile != null && profile.SendNotificationEmail)
+			{
+				string email = null;
+
+				if (!String.IsNullOrWhiteSpace(profile.MembershipEmail))
+					email = profile.MembershipEmail;
+				else if (profile.User != null && profile.User != null)
+					email = profile.User.Email;
+				else
+					email = _usersService.GetMembershipByUserId(userId).Email;
+
+				if (email != null)
+				{
+					using (var mail = new MailMessage())
+					{
+						mail.To.Add(email);
+						mail.Subject = "Calendar";
+						mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
+
+						mail.Body = message;
+						mail.IsBodyHtml = false;
+
+						await _emailSender.SendEmail(mail);
+					}
+				}
+			}
+
+			return true;
+		}
+
 		public async Task<bool> SendNewDepartmentLinkMailAsync(DepartmentLink link)
 		{
 			var sourceDepartment = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId);

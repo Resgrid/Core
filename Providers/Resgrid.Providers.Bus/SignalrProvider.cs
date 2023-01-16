@@ -90,7 +90,7 @@ namespace Resgrid.Providers.Bus
 		{
 			_hubConnection = new HubConnectionBuilder()
 				.WithUrl($"{Config.SystemBehaviorConfig.ResgridEventingBaseUrl}/eventingHub", options => {
-					options.UseDefaultCredentials = true;
+					//options.UseDefaultCredentials = true;
 					options.HttpMessageHandlerFactory = (msg) =>
 					{
 						if (msg is HttpClientHandler clientHandler)

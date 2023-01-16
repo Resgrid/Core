@@ -99,5 +99,18 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendTextMessageAsync(string userId, string title, string message, int departmentId,
 			string departmentNumber, UserProfile profile = null);
+
+		/// <summary>
+		/// Sends the calendar notification asynchronous.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="departmentNumber">The department number.</param>
+		/// <param name="title">The title.</param>
+		/// <param name="profile">The profile.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> SendCalendarAsync(string userId, int departmentId, string message, string departmentNumber,
+			string title = "Notification", UserProfile profile = null);
 	}
 }

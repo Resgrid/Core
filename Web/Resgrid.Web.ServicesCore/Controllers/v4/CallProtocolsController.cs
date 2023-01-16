@@ -65,6 +65,56 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>
+		/// Gets a single protocol by id
+		/// </summary>
+		/// <returns>List of ProtocolResult objects.</returns>
+		[HttpGet("GetProtocol")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public async Task<ActionResult<CallProtocolResult>> GetProtocol(int protocolId)
+		{
+			var result = new CallProtocolResult();
+			var protocol = await _protocolsService.GetProtocolByIdAsync(protocolId);
+
+			if (protocol == null)
+				return NotFound();
+
+			if (protocol.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			result.Data = ConvertProtocolData(protocol);
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets a protocol attachment by it's id
+		/// </summary>
+		/// <param name="protocolAttachmentId">ID of the protocol attachment</param>
+		/// <returns></returns>
+		[HttpGet("GetFile")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public async Task<ActionResult> GetFile(int protocolAttachmentId)
+		{
+			var attachment = await _protocolsService.GetAttachmentByIdAsync(protocolAttachmentId);
+
+			if (attachment == null)
+				return NotFound();
+
+			var protocol = await _protocolsService.GetProtocolByIdAsync(attachment.DispatchProtocolId);
+
+			if (protocol == null || protocol.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			return File(attachment.Data, attachment.FileType);
+		}
+
 		public static CallProtocolResultData ConvertProtocolData(DispatchProtocol dp)
 		{
 			var protocol = new CallProtocolResultData();

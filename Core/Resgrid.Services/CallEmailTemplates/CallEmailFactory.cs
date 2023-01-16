@@ -36,6 +36,7 @@ namespace Resgrid.Services.CallEmailTemplates
 			_templates.Add((int)CallEmailTypes.RandR, new RandRTemplate());
 			_templates.Add((int)CallEmailTypes.Active911, new Active911lTemplate());
 			_templates.Add((int)CallEmailTypes.OttawaCounty, new OttawaCountyTemplate());
+			_templates.Add((int)CallEmailTypes.OttawaKingstonToronto, new OttawaKingstonTorontoTemplate());
 		}
 
 		public async Task<Call> GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users,

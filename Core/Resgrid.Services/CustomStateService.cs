@@ -127,18 +127,31 @@ namespace Resgrid.Services
 			{
 				var states = await _customStateRepository.GetCustomStatesByDepartmentIdAsync(departmentId);
 
-				foreach (var state in states)
+				if (states != null)
 				{
-					if (state.Details == null)
-						state.Details = new List<CustomStateDetail>();
-				}
+					foreach (var state in states)
+					{
+						if (state.Details == null)
+							state.Details = new List<CustomStateDetail>();
+					}
 
-				return states.ToList();
+					return states.ToList();
+				}
+				else
+				{
+					return new List<CustomState>();
+				}
 			}
 
 			if (Config.SystemBehaviorConfig.CacheEnabled)
-				return await _cacheProvider.RetrieveAsync<List<CustomState>>(string.Format(CacheKey, departmentId), getCustomStates,
-					CacheLength);
+			{
+				var result = await _cacheProvider.RetrieveAsync<List<CustomState>>(string.Format(CacheKey, departmentId), getCustomStates, CacheLength);
+
+				if (result == null || result.Count() <= 0)
+					return await getCustomStates();
+
+				return result;
+			}
 			else
 				return await getCustomStates();
 		}

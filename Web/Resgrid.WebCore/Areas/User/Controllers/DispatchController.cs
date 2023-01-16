@@ -742,6 +742,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				var year = model.Call.LoggedOn.Year;
+
 				model.Call.ReportingUserId = UserId;
 				model.Call.DepartmentId = DepartmentId;
 				model.Call.Priority = (int)model.CallPriority;
@@ -857,7 +859,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.ReCalcuateCallNumbers)
 				{
-					await _callsService.RegenerateCallNumbersAsync(DepartmentId, cancellationToken);
+					await _callsService.RegenerateCallNumbersAsync(DepartmentId, year, cancellationToken);
 				}
 
 				return RedirectToAction("ArchivedCalls", "Dispatch", new { Area = "User" });

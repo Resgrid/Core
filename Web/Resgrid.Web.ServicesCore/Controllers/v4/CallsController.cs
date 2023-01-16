@@ -591,6 +591,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.Dispatches = new Collection<CallDispatch>();
 			call.GroupDispatches = new List<CallDispatchGroup>();
 			call.RoleDispatches = new List<CallDispatchRole>();
+			call.UnitDispatches = new List<CallDispatchUnit>();
 
 			if (newCallInput.DispatchList == "0")
 			{

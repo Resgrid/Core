@@ -366,19 +366,19 @@ namespace Resgrid.Tests.Services
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
 				email.TextBody =
-					@"CALL: Medical Unknown Problems                        
+					@"CALL: Medical Unknown Problems
 				ADDR: -76.0254669,41.513334
-				ADDR1: 555 MAIN ST                                     
+				ADDR1: 555 MAIN ST
 				ID: 2020-000698745-MED
 				Date/Time:Date/Time: 1/1/2020 3:19:00 AM
 				MAP: http://www.google.com/maps/place/41.513334,-76.0254669
-				UNITS: MEDIC01, 
-				NARR: 55 YOM 
-				NARR: CONSCIOUS / WILL NOT RESPOND 
+				UNITS: MEDIC01,
+				NARR: 55 YOM
+				NARR: CONSCIOUS / WILL NOT RESPOND
 				NARR: NO OTHER SYMPTOMS OF COVID
-				NARR: HAS COPD 
-				NARR: 1057 ENR TO SCENE 
-				NARR: 1057 ON SCENE 
+				NARR: HAS COPD
+				NARR: 1057 ENR TO SCENE
+				NARR: 1057 ON SCENE
 				NARR: DISCONTINUE TIME STAMPS";
 				email.Subject = "ACTIVE 9-1-1";
 
@@ -407,19 +407,19 @@ namespace Resgrid.Tests.Services
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
 				email.TextBody =
-					@"CALL: Medical Unknown Problems                        
+					@"CALL: Medical Unknown Problems
 				ADDR: -76.0254669,41.513334
-				ADDR1: 555 MAIN ST                                     
+				ADDR1: 555 MAIN ST
 				ID: 2020-000698745-MED
 				Date/Time:Date/Time: 1/1/2020 3:19:00 AM
 				MAP: http://www.google.com/maps/place/41.513334,-76.0254669
-				UNITS: MEDIC01, 
-				NARR: 55 YOM 
-				NARR: CONSCIOUS / WILL NOT RESPOND 
+				UNITS: MEDIC01,
+				NARR: 55 YOM
+				NARR: CONSCIOUS / WILL NOT RESPOND
 				NARR: NO OTHER SYMPTOMS OF COVID
-				NARR: HAS COPD 
-				NARR: 1057 ENR TO SCENE 
-				NARR: 1057 ON SCENE 
+				NARR: HAS COPD
+				NARR: 1057 ENR TO SCENE
+				NARR: 1057 ON SCENE
 				NARR: DISCONTINUE TIME STAMPS";
 				email.Subject = "ACTIVE 9-1-1";
 
@@ -453,19 +453,19 @@ namespace Resgrid.Tests.Services
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
 				email.TextBody =
-					@"CALL: Medical Unknown Problems                        
+					@"CALL: Medical Unknown Problems
 				ADDR: -76.0254669,41.513334
-				ADDR1: 555 MAIN ST                                     
+				ADDR1: 555 MAIN ST
 				ID: 2020-000698745-MED
 				Date/Time:Date/Time: 1/1/2020 3:19:00 AM
 				MAP: http://www.google.com/maps/place/41.513334,-76.0254669
-				UNITS: MEDIC01, 
-				NARR: 55 YOM 
-				NARR: CONSCIOUS / WILL NOT RESPOND 
+				UNITS: MEDIC01,
+				NARR: 55 YOM
+				NARR: CONSCIOUS / WILL NOT RESPOND
 				NARR: NO OTHER SYMPTOMS OF COVID
-				NARR: HAS COPD 
-				NARR: 1057 ENR TO SCENE 
-				NARR: 1057 ON SCENE 
+				NARR: HAS COPD
+				NARR: 1057 ENR TO SCENE
+				NARR: 1057 ON SCENE
 				NARR: DISCONTINUE TIME STAMPS";
 				email.Subject = "ACTIVE 9-1-1";
 
@@ -496,6 +496,84 @@ namespace Resgrid.Tests.Services
 				call.Priority.Should().Be(501);
 
 				return true;
+			}
+
+			[Test]
+			public async Task should_work_for_ottawa_template()
+			{
+				CallEmail email = new CallEmail();
+				email.MessageId = "100";
+				email.TextBody = "0001001 14:42:20 18-06-22 POCSAG-1  ALPHA   512  LT1 & FOY- MEDICAL ASSIST (47 LA RUE MILLS RD) UNC. MALE POST SEIZURE";
+				email.Subject = "CALL";
+
+				string mmId = Guid.NewGuid().ToString();
+				var priority = (int)CallPriority.High;
+
+				var department = new Department();
+				department.DepartmentId = 500;
+
+				var prios = new List<DepartmentCallPriority>();
+				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 500, Name = "MVA" });
+				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 501, Name = "MEDICAL" });
+				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 502, Name = "Unknown" });
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.OttawaKingstonToronto, email, mmId, _dispatchUsers, department, null, null, priority, prios, null, null);
+
+				//call.Should().NotBeNull();
+				//call.ReportingUserId.Should().Be(mmId);
+				//call.IncidentNumber.Should().Be("2020-000698745-MED");
+				//call.SourceIdentifier.Should().Be("100");
+				//call.CallSource.Should().Be((int)CallSources.EmailImport);
+				////call.Type.Should().Be("Medical/EMS");
+				//call.Address.Should().Be("555 MAIN ST");
+				//call.NatureOfCall.Should().NotBeNull();
+				//call.Notes.Should().BeNull();
+				//call.Name.Should().Be("Medical Unknown Problems");
+				//call.Type.Should().Be("Medical");
+				//call.Priority.Should().Be(501);
+
+				//return true;
+			}
+		}
+
+		[TestFixture]
+		public class when_importing_an_ottawakingstonToronto_call : with_the_calls_email_factory
+		{
+			[Test]
+			public async Task should_work_for_base_template()
+			{
+				CallEmail email = new CallEmail();
+				email.MessageId = "100";
+				email.TextBody = "0001001 14:42:20 18-06-22 POCSAG-1  ALPHA   512  LT1 & FOY- MEDICAL ASSIST (555 Main St) UNC. MALE POST SEIZURE";
+				email.Subject = "CALL";
+
+				string mmId = Guid.NewGuid().ToString();
+				var priority = (int)CallPriority.High;
+
+				var department = new Department();
+				department.DepartmentId = 500;
+
+				var prios = new List<DepartmentCallPriority>();
+				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 500, Name = "MVA" });
+				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 501, Name = "MEDICAL" });
+				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 502, Name = "Unknown" });
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.OttawaKingstonToronto, email, mmId, _dispatchUsers, department, null, null, priority, prios, null, null);
+
+				//call.Should().NotBeNull();
+				//call.ReportingUserId.Should().Be(mmId);
+				//call.IncidentNumber.Should().Be("2020-000698745-MED");
+				//call.SourceIdentifier.Should().Be("100");
+				//call.CallSource.Should().Be((int)CallSources.EmailImport);
+				////call.Type.Should().Be("Medical/EMS");
+				//call.Address.Should().Be("555 MAIN ST");
+				//call.NatureOfCall.Should().NotBeNull();
+				//call.Notes.Should().BeNull();
+				//call.Name.Should().Be("Medical Unknown Problems");
+				//call.Type.Should().Be("Medical");
+				//call.Priority.Should().Be(501);
+
+				//return true;
 			}
 		}
 	}

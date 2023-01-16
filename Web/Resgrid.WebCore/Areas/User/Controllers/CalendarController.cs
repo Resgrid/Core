@@ -123,7 +123,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Item.RepeatOnDay = model.WeekdayDayOfWeek;
 				}
 
-				await _calendarService.AddNewCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
+				var calendarItem = await _calendarService.AddNewCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
+
+				if (calendarItem != null)
+				{
+					try
+					{
+						await _calendarService.NotifyNewCalendarItemAsync(calendarItem);
+					}
+					catch
+					{ }
+				}
 
 				return RedirectToAction("Index");
 			}

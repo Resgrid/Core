@@ -71,6 +71,6 @@ namespace Resgrid.Model.Services
 
 		int NotificationTypeToMinutes(int notificationType);
 
-
+		Task<bool> NotifyNewCalendarItemAsync(CalendarItem calendarItem);
 	}
 }

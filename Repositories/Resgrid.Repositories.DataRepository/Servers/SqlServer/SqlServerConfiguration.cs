@@ -479,9 +479,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			CustomStatesTable = "CustomStates";
 			CustomStateDetailsTable = "CustomStateDetails";
 			SelectStatesByDidUserQuery = @"
-					SELECT %SCHEMA%.%CUSTOMSTATESTABLE%.*, %SCHEMA%.%MCUSTOMSTATEDETAILSTABLE%.*
+					SELECT %SCHEMA%.%CUSTOMSTATESTABLE%.*, %SCHEMA%.%CUSTOMSTATEDETAILSTABLE%.*
 					FROM %SCHEMA%.%CUSTOMSTATESTABLE%
-					LEFT JOIN %SCHEMA%.%MCUSTOMSTATEDETAILSTABLE% ON %SCHEMA%.%MCUSTOMSTATEDETAILSTABLE%.[CustomStateId] =  %SCHEMA%.%CUSTOMSTATESTABLE%.[CustomStateId]
+					LEFT JOIN %SCHEMA%.%CUSTOMSTATEDETAILSTABLE% ON %SCHEMA%.%CUSTOMSTATEDETAILSTABLE%.[CustomStateId] = %SCHEMA%.%CUSTOMSTATESTABLE%.[CustomStateId]
 					WHERE [DepartmentId] = %DID%";
 			SelectStatesByIdQuery = @"
 					SELECT cs.*, csd.*
@@ -1226,7 +1226,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT f.*, fa.*
 					FROM %SCHEMA%.%FORMSTABLE% f
 					LEFT OUTER JOIN %SCHEMA%.%FORMAUTOMATIONSTABLE% fa ON fa.[FormId] = f.[FormId]
-					WHERE f.[DepartmentId] = %DID%";
+					WHERE f.[DepartmentId] = %DID% AND [IsDeleted] = 0";
 			SelectFormAutomationsByFormIdQuery = @"
 					SELECT fa.*
 					FROM %SCHEMA%.%FORMAUTOMATIONSTABLE% fa

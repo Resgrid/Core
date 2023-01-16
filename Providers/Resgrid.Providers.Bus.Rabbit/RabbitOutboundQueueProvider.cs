@@ -102,54 +102,55 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			if (String.IsNullOrWhiteSpace(message))
 				throw new ArgumentNullException("message");
-			
+
 			//if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			//{
 			try
 			{
 				// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
 				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = RabbitConnection.CreateConnection())
+				//using (var connection = RabbitConnection.CreateConnection())
+				//{
+				var connection = RabbitConnection.CreateConnection();
+				if (connection != null)
 				{
-					if (connection != null)
+					using (var channel = connection.CreateModel())
 					{
-						using (var channel = connection.CreateModel())
+						if (channel != null)
 						{
-							if (channel != null)
+							IBasicProperties props = channel.CreateBasicProperties();
+							props.Headers = new Dictionary<string, object>();
+
+							if (durable)
 							{
-								IBasicProperties props = channel.CreateBasicProperties();
-								props.Headers = new Dictionary<string, object>();
-								
-								if (durable)
-								{
-									props.DeliveryMode = 2;
-									props.Headers.Add("x-redelivered-count", 0);
-								}
-								else
-									props.DeliveryMode = 1;
-
-								props.Expiration = expiration;
-
-								channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
-												 routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
-												 basicProperties: props,
-												 body: Encoding.ASCII.GetBytes(message));
-
-								return true;
+								props.DeliveryMode = 2;
+								props.Headers.Add("x-redelivered-count", 0);
 							}
 							else
-							{
-								Logging.LogError("RabbitOutboundQueueProvider->SendMessage channel is null.");
-							}
+								props.DeliveryMode = 1;
+
+							props.Expiration = expiration;
+
+							channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
+											 routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
+											 basicProperties: props,
+											 body: Encoding.ASCII.GetBytes(message));
+
+							return true;
+						}
+						else
+						{
+							Logging.LogError("RabbitOutboundQueueProvider->SendMessage channel is null.");
 						}
 					}
-					else
-					{
-						Logging.LogError("RabbitOutboundQueueProvider->SendMessage connection is null.");
-					}
-
-					return false;
 				}
+				else
+				{
+					Logging.LogError("RabbitOutboundQueueProvider->SendMessage connection is null.");
+				}
+
+				return false;
+				//}
 			}
 			catch (Exception ex)
 			{

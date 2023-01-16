@@ -287,11 +287,14 @@ namespace Resgrid.Services
 			*/
 
 			var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
-				.GroupBy(x => x.UserId).First();
+				.GroupBy(x => x.UserId).FirstOrDefault();
 
 			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
-			return locations.ToList();
+			if (locations != null)
+				return locations.ToList();
+
+			return new List<PersonnelLocation>();
 		}
 
 		public async Task<PersonnelLocation> GetPersonnelLocationByIdAsync(string id)

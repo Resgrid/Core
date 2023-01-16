@@ -122,7 +122,7 @@ namespace Resgrid.Web.Services.Controllers
 					if (!String.IsNullOrWhiteSpace(message.TextBody))
 						builder.TextBody = message.TextBody;
 
-					int type = 0; // 1 = dispatch // 2 = email list // 3 = group dispatch // 4 = group message 
+					int type = 0; // 1 = dispatch // 2 = email list // 3 = group dispatch // 4 = group message
 					string emailAddress = String.Empty;
 					string bounceEmail = String.Empty;
 					string name = String.Empty;
@@ -346,7 +346,7 @@ namespace Resgrid.Web.Services.Controllers
 								var units = await _unitsService.GetUnitsForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
-								
+
 								int defaultPriority = (int)CallPriority.High;
 
 								if (priorities != null && priorities.Any())
@@ -596,13 +596,14 @@ namespace Resgrid.Web.Services.Controllers
 
 						if (departmentGroup != null)
 						{
+							var department = await _departmentsService.GetDepartmentByIdAsync(departmentGroup.DepartmentId);
 							try
 							{
 								var departmentGroupUsers = _departmentGroupsService.GetAllMembersForGroupAndChildGroups(departmentGroup);
 
 								var newMessage = new Message();
 								newMessage.SentOn = DateTime.UtcNow;
-								newMessage.SendingUserId = departmentGroup.Department.ManagingUserId;
+								newMessage.SendingUserId = department.ManagingUserId;
 								newMessage.IsBroadcast = true;
 								newMessage.Subject = message.Subject;
 								newMessage.SystemGenerated = true;

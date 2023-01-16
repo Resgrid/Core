@@ -517,7 +517,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 					return true;
 
 				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				using (var connection = RabbitConnection.CreateConnection())
+				//using (var connection = RabbitConnection.CreateConnection())
+				//{
+				var connection = RabbitConnection.CreateConnection();
+				if (connection != null)
 				{
 					using (var channel = connection.CreateModel())
 					{
@@ -539,6 +542,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 					return true;
 				}
+
+				return false;
+				//}
 			}
 			catch (Exception ex)
 			{

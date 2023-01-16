@@ -7,6 +7,10 @@ services:
       - "5151:80"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.51
     depends_on:
       - api
       - events
@@ -25,6 +29,10 @@ services:
       - "5152:80"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.52
     depends_on:
       - events
       - db
@@ -42,6 +50,10 @@ services:
       - "5153:80"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.53
     depends_on:
       - db
       - redis
@@ -55,6 +67,10 @@ services:
     image: "resgridllc/resgridworkersconsole:0.6.70"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.54
     depends_on:
       - db
       - redis
@@ -68,6 +84,9 @@ services:
   db:
     ports:
       - "5157:1433"
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.55
     build: ./db
     environment:
       - SA_PASSWORD=Resgrid123!!
@@ -89,6 +108,10 @@ services:
     command: redis-server --save 60 1 --loglevel warning
     ports:
      - "5158:6379"
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.56
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -98,6 +121,10 @@ services:
     ports:
       - "5160:15672"
       - "5159:5672"
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.57
 
   elk:
     image: sebp/elk
@@ -105,16 +132,50 @@ services:
       - "5163:5601"
       - "5164:9200"
       - "5165:5044"
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.58
       
   mongodb:
     image: mongo:4.4.18
     ports:
       - 27017:27017
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.59
     environment:
       - MONGO_INITDB_DATABASE=resgrid
       - MONGO_INITDB_ROOT_USERNAME=resgridUser
       - MONGO_INITDB_ROOT_PASSWORD=Resgrid123!!
     volumes:
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d
-      - mongodb:/data/db
-      - mongoconfig:/data/configdb
+      - ./docker-data/mongo/db:/data/configdb
+      - ./docker-data/mongo/configdb:/data/db
+
+  nginx:
+      image: nginx:1.15-alpine
+      restart: unless-stopped
+      volumes:
+        - ./docker-data/nginx:/etc/nginx/conf.d
+        - ./docker-data/certbot/conf:/etc/letsencrypt
+        - ./docker-data/certbot/www:/var/www/certbot
+      ports:
+        - "80:80"
+        - "443:443"
+      command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  certbot:
+      image: certbot/certbot
+      restart: unless-stopped
+      volumes:
+        - ./docker-data/certbot/conf:/etc/letsencrypt
+        - ./docker-data/certbot/www:/var/www/certbot
+      entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+    rgmain:
+        ipam:
+            driver: default
+            config:
+              - subnet: 172.16.193.0/24

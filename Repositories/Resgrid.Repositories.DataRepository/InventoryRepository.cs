@@ -42,7 +42,7 @@ namespace Resgrid.Repositories.DataRepository
 
 					var query = _queryFactory.GetQuery<SelectInventoryByTypeIdQuery>();
 
-					return await x.QueryFirstOrDefaultAsync<IEnumerable<Inventory>>(sql: query,
+					return await x.QueryAsync<Inventory>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction);
 				});

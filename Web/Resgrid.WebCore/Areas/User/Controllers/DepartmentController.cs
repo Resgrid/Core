@@ -977,6 +977,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						ottawaCounty.Code = v.ToString();
 						callEmailTypes.Add(ottawaCounty);
 						break;
+					case CallEmailTypes.OttawaKingstonToronto:
+						CallEmailTypesForJson ottawaKingstonToronto = new CallEmailTypesForJson();
+						ottawaKingstonToronto.Id = (int)v;
+						ottawaKingstonToronto.Name = "OttawaKingstonToronto";
+						ottawaKingstonToronto.Code = v.ToString();
+						callEmailTypes.Add(ottawaKingstonToronto);
+						break;
 				}
 			}
 
@@ -1125,7 +1132,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.CallTypeIcon >= 0)
 					newCallType.MapIconType = model.CallTypeIcon;
-				
+
 				await _callsService.SaveCallTypeAsync(newCallType, cancellationToken);
 			}
 

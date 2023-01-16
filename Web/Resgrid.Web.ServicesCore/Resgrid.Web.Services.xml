@@ -382,11 +382,6 @@
             <param name="input">Input to deregister the device for</param>
             <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
-            <summary>
-            Operations to support Dispatch operations
-            </summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
             <summary>
             Operations to support Dispatch operations
@@ -3229,6 +3224,19 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetProtocol(System.Int32)">
+            <summary>
+            Gets a single protocol by id
+            </summary>
+            <returns>List of ProtocolResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetFile(System.Int32)">
+            <summary>
+            Gets a protocol attachment by it's id
+            </summary>
+            <param name="protocolAttachmentId">ID of the protocol attachment</param>
+            <returns></returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallsController">
             <summary>
             Calls, also referred to as Dispatches.
@@ -3812,6 +3820,18 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetRolesForUnit(System.String)">
             <summary>
             Gets the accountability roles for a unit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetRoleAssignmentsForUnit(System.String)">
+            <summary>
+            Gets the accountability roles and the current assignments for a unit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.SetRoleAssignmentsForUnit(Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesInput,System.Threading.CancellationToken)">
+            <summary>
+            Sets the accountability roles and the current assignments for a unit
             </summary>
             <returns></returns>
         </member>
@@ -7607,6 +7627,42 @@
         <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.ActiveUnitRoleResultData.UpdatedOn">
             <summary>
             When the user was assigned to the role
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesInput">
+            <summary>
+            Object inputs for setting a users Status/Action. If this object is used in an operation that sets
+            a status for the current user the UserId value in this object will be ignored.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesInput.UnitId">
+            <summary>
+            UnitId of the apparatus that the roles are being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesInput.Roles">
+            <summary>
+            The accountability roles filed for this event
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesRoleInput">
+            <summary>
+            Role filled by a User on a Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesRoleInput.UserId">
+            <summary>
+            UserId of the user filling the role
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesRoleInput.RoleId">
+            <summary>
+            RoleId of the role being filled
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesRoleInput.Name">
+            <summary>
+             The name of the Role
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitRoles.UnitRoleResult">

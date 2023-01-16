@@ -23,9 +23,10 @@ namespace Resgrid.Model.Services
 		/// Regenerates the call numbers asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="year">The local year to regenerate call numbers for.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> RegenerateCallNumbersAsync(int departmentId,
+		Task<bool> RegenerateCallNumbersAsync(int departmentId, int year,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

@@ -45,11 +45,18 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
-				return await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
+				var knownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
 																					FROM ScheduledTasks st
-																					INNER JOIN DepartmentMembers dm on dm.UserId = st.UserId
+																					INNER JOIN Departments d ON d.DepartmentId = st.DepartmentId
+																					WHERE st.DepartmentId > 0 AND st.Active = 1 AND st.TaskType IN @types", new { types = types });
+
+				var unknownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
+																					FROM ScheduledTasks st
+																					INNER JOIN DepartmentMembers dm ON dm.UserId = st.UserId
 																					INNER JOIN Departments d ON d.DepartmentId = dm.DepartmentId
-																					WHERE st.Active = 1 AND st.TaskType IN @types", new { types = types });
+																					WHERE st.DepartmentId = 0 AND st.Active = 1 AND st.TaskType IN @types", new { types = types });
+
+				return knownDepartments.Concat(unknownDepartments);
 			}
 		}
 

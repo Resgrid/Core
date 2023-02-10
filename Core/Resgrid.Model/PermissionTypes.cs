@@ -16,6 +16,10 @@
 		CanSeePersonnelLocations,
 		CanSeeUnitLocations,
 		CreateMessage,
-		ViewGroupUsers
+		ViewGroupUsers,
+		DeleteCall,
+		CloseCall,
+		AddCallData
 	}
+
 }

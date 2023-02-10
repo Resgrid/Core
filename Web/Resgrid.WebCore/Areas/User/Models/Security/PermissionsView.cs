@@ -49,5 +49,21 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int ViewGroupsUsers { get; set; }
 		public bool LockViewGroupsUsersToGroup { get; set; }
 		public SelectList ViewGroupUsersPermissions { get; set; }
+
+		public int DeleteCall { get; set; }
+		public bool LockDeleteCallToGroup { get; set; }
+		public SelectList DeleteCallPermissions { get; set; }
+
+		public int CloseCall { get; set; }
+		public bool LockCloseCallToGroup { get; set; }
+		public SelectList CloseCallPermissions { get; set; }
+
+		public int FlagCallData { get; set; }
+		public bool LockFlagCallDataToGroup { get; set; }
+		public SelectList FlagCallDataPermissions { get; set; }
+
+		public int AddCallData { get; set; }
+		public bool LockAddCallDataToGroup { get; set; }
+		public SelectList AddCallDataPermissions { get; set; }
 	}
 }

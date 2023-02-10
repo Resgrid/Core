@@ -32,16 +32,16 @@ namespace Resgrid.Workers.Framework.Logic
 				try
 				{
 					if (item.ScheduledTask.TaskType == (int)TaskTypes.UserStaffingLevel)
+					{
 						await _userStateService.CreateUserState(item.ScheduledTask.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data), item.ScheduledTask.Note);
+					}
 					else if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStaffingReset)
 					{
-						//var department = _departmentsService.GetDepartmentByUserId(item.ScheduledTask.UserId);
-						//var users = _departmentsService.GetAllUsersForDepartment(department.DepartmentId, true);
 						var users = _departmentsService.GetAllUsersForDepartment(item.ScheduledTask.DepartmentId, true);
 
 						foreach (var user in users)
 						{
-							await _userStateService.CreateUserState(user.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
+							await _userStateService.CreateUserState(user.UserId, item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data), $"Department Staffing Reset {item.ScheduledTask.ScheduledTaskId}");
 						}
 					}
 				}

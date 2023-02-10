@@ -755,5 +755,122 @@ namespace Resgrid.Services
 
 			return false;
 		}
+
+		public async Task<bool> CanUserDeleteCallAsync(string userId, int callId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.DeleteCall);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (!department.IsUserInDepartment(userId))
+				return false;
+
+			bool isGroupAdmin = false;
+			bool isUserGroupInDispatch = false;
+			int userGroupId = 0;
+			int callGroupId = -1;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+			if (group != null)
+			{
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+				userGroupId = group.DepartmentGroupId;
+			}
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != departmentId)
+				return false;
+
+			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false);
+
+			if (group != null)
+			{
+				isUserGroupInDispatch = call.HasGroupBeenDispatched(group.DepartmentGroupId);
+
+				if (isUserGroupInDispatch)
+					callGroupId = userGroupId;
+			}
+
+			return _permissionsService.IsUserAllowed(permission, departmentId, callGroupId, userGroupId, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserCloseCallAsync(string userId, int callId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CloseCall);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (!department.IsUserInDepartment(userId))
+				return false;
+
+			bool isGroupAdmin = false;
+			bool isUserGroupInDispatch = false;
+			int userGroupId = 0;
+			int callGroupId = -1;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+			if (group != null)
+			{
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+				userGroupId = group.DepartmentGroupId;
+			}
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != departmentId)
+				return false;
+
+			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false);
+
+			if (group != null)
+			{
+				isUserGroupInDispatch = call.HasGroupBeenDispatched(group.DepartmentGroupId);
+
+				if (isUserGroupInDispatch)
+					callGroupId = userGroupId;
+			}
+
+			return _permissionsService.IsUserAllowed(permission, departmentId, callGroupId, userGroupId, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserAddCallDataAsync(string userId, int callId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AddCallData);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (!department.IsUserInDepartment(userId))
+				return false;
+
+			bool isGroupAdmin = false;
+			bool isUserGroupInDispatch = false;
+			int userGroupId = 0;
+			int callGroupId = -1;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+			if (group != null)
+			{
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+				userGroupId = group.DepartmentGroupId;
+			}
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != departmentId)
+				return false;
+
+			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false);
+
+			if (group != null)
+			{
+				isUserGroupInDispatch = call.HasGroupBeenDispatched(group.DepartmentGroupId);
+
+				if (isUserGroupInDispatch)
+					callGroupId = userGroupId;
+			}
+
+			return _permissionsService.IsUserAllowed(permission, departmentId, callGroupId, userGroupId, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
 	}
 }

@@ -225,7 +225,10 @@ namespace Resgrid.Services
 			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			if (states != null && states.Count > 0)
-				return states.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == detailId)).FirstOrDefault(detail => detail != null);
+			{
+				var detail = states.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == detailId)).FirstOrDefault(detail => detail != null);
+				return detail;
+			}
 
 			return null;
 		}

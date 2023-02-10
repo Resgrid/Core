@@ -151,7 +151,7 @@ namespace Resgrid.Tests.Services
 			[Ignore("")]
 			public async Task should_set_all_logs_for_department()
 			{
-				await _actionLogsService.SetActionForEntireDepartmentAsync(2, (int)ActionTypes.Responding);
+				await _actionLogsService.SetActionForEntireDepartmentAsync(2, (int)ActionTypes.Responding, String.Empty);
 
 				var fetchLogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(2);
 
@@ -170,7 +170,7 @@ namespace Resgrid.Tests.Services
 			[Ignore("")]
 			public async Task should_set_all_logs_for_department_group()
 			{
-				await _actionLogsService.SetActionForDepartmentGroupAsync(1, (int)ActionTypes.RespondingToScene);
+				await _actionLogsService.SetActionForDepartmentGroupAsync(1, (int)ActionTypes.RespondingToScene, String.Empty);
 
 				var fetchLogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(1);
 

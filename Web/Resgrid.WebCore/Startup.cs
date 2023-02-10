@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Audit.Core;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
@@ -361,6 +362,13 @@ namespace Resgrid.Web
 //#endif
 
 			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
+
+
+			Audit.Core.Configuration.Setup()
+				.UseMongoDB(config => config
+					.ConnectionString(Config.DataConfig.NoSqlConnectionString)
+					.Database("Audit")
+					.Collection("Event"));
 
 			this.Services = services;
 		}

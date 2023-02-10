@@ -103,36 +103,43 @@ namespace Resgrid.Services
 				var newLocation = String.Empty;
 				var points = center.Setting.Split(char.Parse(","));
 
-				if (points.Length == 2)
+				try
 				{
-					if (!String.IsNullOrWhiteSpace(points[0]))
+					if (points.Length == 2)
 					{
-						if (Framework.LocationHelpers.IsDMSLocation(points[0]))
+						if (!String.IsNullOrWhiteSpace(points[0]))
 						{
-							newLocation = Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[0]).ToString() + ",";
+							if (Framework.LocationHelpers.IsDMSLocation(points[0]))
+							{
+								newLocation = Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[0]).ToString() + ",";
+							}
+							else
+							{
+								newLocation = LocationHelpers.StripNonDecimalCharacters(points[0]) + ",";
+							}
 						}
-						else
-						{
-							newLocation = LocationHelpers.StripNonDecimalCharacters(points[0]) + ",";
-						}
-					}
 
-					if (!String.IsNullOrWhiteSpace(points[1]))
+						if (!String.IsNullOrWhiteSpace(points[1]))
+						{
+							if (Framework.LocationHelpers.IsDMSLocation(points[1]))
+							{
+								newLocation = newLocation + Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[1]).ToString();
+							}
+							else
+							{
+								newLocation = newLocation + LocationHelpers.StripNonDecimalCharacters(points[1]);
+							}
+						}
+
+					}
+					else
 					{
-						if (Framework.LocationHelpers.IsDMSLocation(points[1]))
-						{
-							newLocation = newLocation + Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[1]).ToString();
-						}
-						else
-						{
-							newLocation = newLocation + LocationHelpers.StripNonDecimalCharacters(points[1]);
-						}
+						newLocation = center.Setting;
 					}
-
 				}
-				else
+				catch (Exception ex)
 				{
-					newLocation = center.Setting;
+					newLocation = "0,0";
 				}
 
 				return newLocation;

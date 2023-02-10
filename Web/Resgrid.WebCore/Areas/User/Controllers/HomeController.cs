@@ -774,7 +774,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> ResetAllToStandingBy()
 		{
-			await _actionLogsService.SetActionForEntireDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, (int)ActionTypes.StandingBy);
+			await _actionLogsService.SetActionForEntireDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, (int)ActionTypes.StandingBy, String.Empty);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
@@ -782,7 +782,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> ResetGroupToStandingBy(int groupId)
 		{
-			await _actionLogsService.SetActionForDepartmentGroupAsync(groupId, (int)ActionTypes.StandingBy);
+			await _actionLogsService.SetActionForDepartmentGroupAsync(groupId, (int)ActionTypes.StandingBy, String.Empty);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}

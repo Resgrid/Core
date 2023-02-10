@@ -305,7 +305,7 @@ namespace Resgrid.Services
 			return await SaveActionLogAsync(al, cancellationToken);
 		}
 
-		public async Task<bool> SetActionForEntireDepartmentAsync(int departmentId, int actionType)
+		public async Task<bool> SetActionForEntireDepartmentAsync(int departmentId, int actionType, string note)
 		{
 			var members = await _departmentMembersRepository.GetAllByDepartmentIdAsync(departmentId);
 
@@ -317,6 +317,7 @@ namespace Resgrid.Services
 				al.DepartmentId = departmentId;
 				al.UserId = member.UserId;
 				al.Timestamp = DateTime.UtcNow;
+				al.Note = note;
 
 				logs.Add(al);
 			}
@@ -324,7 +325,7 @@ namespace Resgrid.Services
 			return await SaveAllActionLogsAsync(logs);
 		}
 
-		public async Task<bool> SetActionForDepartmentGroupAsync(int departmentGroupId, int actionType)
+		public async Task<bool> SetActionForDepartmentGroupAsync(int departmentGroupId, int actionType, string note)
 		{
 			var group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
 
@@ -338,6 +339,7 @@ namespace Resgrid.Services
 					al.DepartmentId = group.DepartmentId;
 					al.UserId = member.UserId;
 					al.Timestamp = DateTime.UtcNow;
+					al.Note = note;
 
 					logs.Add(al);
 				}

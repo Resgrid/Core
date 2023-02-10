@@ -189,5 +189,15 @@ namespace Resgrid.Model.Services
 		/// <param name="link">The link.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendNewDepartmentLinkMailAsync(DepartmentLink link);
+
+
+		/// <summary>
+		/// Sends the calendar notification asynchronous.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="profile">The profile.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> SendCalendarAsync(string userId, string message, int departmentId, UserProfile profile = null);
 	}
 }

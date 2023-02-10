@@ -27,7 +27,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.CustomStates
 																			  },
 																 new string[] {
 																				"%CUSTOMSTATESTABLE%",
-																				"%MCUSTOMSTATEDETAILSTABLE%"
+																				"%CUSTOMSTATEDETAILSTABLE%"
 																 },
 																 new string[] {
 																				_sqlConfiguration.CustomStatesTable,

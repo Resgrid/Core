@@ -17,14 +17,23 @@ namespace Resgrid.Services
 		private readonly ICalendarItemTypeRepository _calendarItemTypeRepository;
 		private readonly ICalendarItemAttendeeRepository _calendarItemAttendeeRepository;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly ICommunicationService _communicationService;
+		private readonly IUserProfileService _userProfileService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
 		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
-			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService)
+			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService, ICommunicationService communicationService,
+			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService)
 		{
 			_calendarItemRepository = calendarItemRepository;
 			_calendarItemTypeRepository = calendarItemTypeRepository;
 			_calendarItemAttendeeRepository = calendarItemAttendeeRepository;
 			_departmentsService = departmentsService;
+			_communicationService = communicationService;
+			_userProfileService = userProfileService;
+			_departmentGroupsService = departmentGroupsService;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
 		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId)
@@ -403,6 +412,68 @@ namespace Resgrid.Services
 		public async Task<CalendarItemAttendee> GetCalendarItemAttendeeByUserAsync(int calendarEventItemId, string userId)
 		{
 			return await _calendarItemAttendeeRepository.GetCalendarItemAttendeeByUserAsync(calendarEventItemId, userId);
+		}
+
+		public async Task<bool> NotifyNewCalendarItemAsync(CalendarItem calendarItem)
+		{
+			if (calendarItem != null && !String.IsNullOrWhiteSpace(calendarItem.Entities))
+			{
+				var items = calendarItem.Entities.Split(char.Parse(","));
+
+				var message = String.Empty;
+				var title = String.Empty;
+				var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(calendarItem.DepartmentId);
+				var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(calendarItem.DepartmentId);
+				var department = await _departmentsService.GetDepartmentByIdAsync(calendarItem.DepartmentId, false);
+
+				var adjustedDateTime = calendarItem.Start.TimeConverter(department);
+				title = $"New: {calendarItem.Title}";
+
+				if (String.IsNullOrWhiteSpace(calendarItem.Location))
+					message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()}";
+				else
+					message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {calendarItem.Location}";
+
+				if (ConfigHelper.CanTransmit(department.DepartmentId))
+				{
+					if (items.Any(x => x.StartsWith("D:")))
+					{
+						// Notify the entire department
+						foreach (var profile in profiles)
+						{
+							await _communicationService.SendCalendarAsync(profile.Key, calendarItem.DepartmentId, message, departmentNumber, title, profile.Value);
+						}
+					}
+					else
+					{
+						var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(calendarItem.DepartmentId);
+						foreach (var val in items)
+						{
+							int groupId = 0;
+							if (int.TryParse(val.Replace("G:", ""), out groupId))
+							{
+								var group = groups.FirstOrDefault(x => x.DepartmentGroupId == groupId);
+
+								if (group != null)
+								{
+									foreach (var member in group.Members)
+									{
+										if (profiles.ContainsKey(member.UserId))
+											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId]);
+										else
+											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, null);
+									}
+								}
+							}
+						}
+					}
+				}
+
+
+				return true;
+			}
+
+			return false;
 		}
 
 		public async Task<List<CalendarItem>> GetCalendarItemsToNotifyAsync(DateTime timestamp)

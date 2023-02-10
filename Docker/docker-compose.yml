@@ -2,11 +2,15 @@ version: '3.9'
 
 services:
   web:
-    image: "resgridllc/resgridwebcore:0.5.23"
+    image: "resgridllc/resgridwebcore:0.6.70"
     ports:
       - "5151:80"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.51
     depends_on:
       - api
       - events
@@ -14,32 +18,42 @@ services:
       - redis
       - rabbitmq
       - worker
+      - mongodb
     environment:
-      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,api:80
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,api:80,mongodb:27017
       - WAIT_TIMEOUT=300
 
   api:
-    image: "resgridllc/resgridwebservices:0.5.23"
+    image: "resgridllc/resgridwebservices:0.6.70"
     ports:
       - "5152:80"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.52
     depends_on:
       - events
       - db
       - redis
       - rabbitmq
       - worker
+      - mongodb
     environment:
-      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,events:80
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,events:80,mongodb:27017
       - WAIT_TIMEOUT=300
 
   events:
-    image: "resgridllc/resgridwebevents:0.5.23"
+    image: "resgridllc/resgridwebevents:0.6.70"
     ports:
       - "5153:80"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.53
     depends_on:
       - db
       - redis
@@ -50,21 +64,29 @@ services:
       - WAIT_TIMEOUT=300
 
   worker:
-    image: "resgridllc/resgridworkersconsole:0.5.23"
+    image: "resgridllc/resgridworkersconsole:0.6.70"
     env_file:
       - resgrid.env
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.54
     depends_on:
       - db
       - redis
       - rabbitmq
+      - mongodb
     environment:
-      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672,mongodb:27017
       - WAIT_AFTER=90
       - WAIT_TIMEOUT=180
 
   db:
     ports:
       - "5157:1433"
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.55
     build: ./db
     environment:
       - SA_PASSWORD=Resgrid123!!
@@ -86,6 +108,10 @@ services:
     command: redis-server --save 60 1 --loglevel warning
     ports:
      - "5158:6379"
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.56
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -95,6 +121,10 @@ services:
     ports:
       - "5160:15672"
       - "5159:5672"
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.57
 
   elk:
     image: sebp/elk
@@ -102,3 +132,50 @@ services:
       - "5163:5601"
       - "5164:9200"
       - "5165:5044"
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.58
+      
+  mongodb:
+    image: mongo:4.4.18
+    ports:
+      - 27017:27017
+    restart: always
+    networks:
+      - rgmain:
+          ipv4_address: 172.16.193.59
+    environment:
+      - MONGO_INITDB_DATABASE=resgrid
+      - MONGO_INITDB_ROOT_USERNAME=resgridUser
+      - MONGO_INITDB_ROOT_PASSWORD=Resgrid123!!
+    volumes:
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      - ./docker-data/mongo/db:/data/configdb
+      - ./docker-data/mongo/configdb:/data/db
+
+  nginx:
+      image: nginx:1.15-alpine
+      restart: unless-stopped
+      volumes:
+        - ./docker-data/nginx:/etc/nginx/conf.d
+        - ./docker-data/certbot/conf:/etc/letsencrypt
+        - ./docker-data/certbot/www:/var/www/certbot
+      ports:
+        - "80:80"
+        - "443:443"
+      command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  certbot:
+      image: certbot/certbot
+      restart: unless-stopped
+      volumes:
+        - ./docker-data/certbot/conf:/etc/letsencrypt
+        - ./docker-data/certbot/www:/var/www/certbot
+      entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+    rgmain:
+        ipam:
+            driver: default
+            config:
+              - subnet: 172.16.193.0/24

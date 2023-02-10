@@ -183,7 +183,7 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="actionType">Type of the action.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SetActionForEntireDepartmentAsync(int departmentId, int actionType);
+		Task<bool> SetActionForEntireDepartmentAsync(int departmentId, int actionType, string note);
 
 		/// <summary>
 		/// Sets the action for department group asynchronous.
@@ -191,7 +191,7 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentGroupId">The department group identifier.</param>
 		/// <param name="actionType">Type of the action.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SetActionForDepartmentGroupAsync(int departmentGroupId, int actionType);
+		Task<bool> SetActionForDepartmentGroupAsync(int departmentGroupId, int actionType, string note);
 
 		/// <summary>
 		/// Deletes the action logs for user asynchronous.

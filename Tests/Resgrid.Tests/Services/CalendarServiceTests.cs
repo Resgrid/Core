@@ -24,6 +24,10 @@ namespace Resgrid.Tests.Services
 			protected readonly Mock<ICalendarItemsRepository> _calendarItemRepositoryMock;
 			protected readonly Mock<ICalendarItemTypeRepository> _calendarItemTypeRepositoryMock;
 			protected readonly Mock<ICalendarItemAttendeeRepository> _calendarItemAttendeeRepositoryMock;
+			protected readonly Mock<ICommunicationService> _communicationServiceMock;
+			protected readonly Mock<IUserProfileService> _userProfileServiceMock;
+			protected readonly Mock<IDepartmentGroupsService> _departmentGroupsServiceMock;
+			protected readonly Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
 
 			protected with_the_calendar_service()
 			{
@@ -31,6 +35,10 @@ namespace Resgrid.Tests.Services
 				_calendarItemRepositoryMock = new Mock<ICalendarItemsRepository>();
 				_calendarItemTypeRepositoryMock = new Mock<ICalendarItemTypeRepository>();
 				_calendarItemAttendeeRepositoryMock = new Mock<ICalendarItemAttendeeRepository>();
+				_communicationServiceMock = new Mock<ICommunicationService>();
+				_userProfileServiceMock = new Mock<IUserProfileService>();
+				_departmentGroupsServiceMock = new Mock<IDepartmentGroupsService>();
+				_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
 
 				#region Departments
 				_testDepartment = new Department()
@@ -58,7 +66,8 @@ namespace Resgrid.Tests.Services
 				_departmentsServiceMock.Setup(x => x.GetDepartmentByIdAsync(999, false)).ReturnsAsync(_testDepartment);
 
 				_calendarService = new CalendarService(_calendarItemRepositoryMock.Object, _calendarItemTypeRepositoryMock.Object,
-					_calendarItemAttendeeRepositoryMock.Object, _departmentsServiceMock.Object);
+					_calendarItemAttendeeRepositoryMock.Object, _departmentsServiceMock.Object, _communicationServiceMock.Object,
+					_userProfileServiceMock.Object, _departmentGroupsServiceMock.Object, _departmentSettingsServiceMock.Object);
 			}
 		}
 

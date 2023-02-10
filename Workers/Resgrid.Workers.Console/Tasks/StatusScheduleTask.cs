@@ -34,7 +34,7 @@ namespace Resgrid.Workers.Console.Tasks
 				//{
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var _scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
-				var logic = new StaffingScheduleLogic();
+				var logic = new StatusScheduleLogic();
 
 				var allDepartments = await _departmentsService.GetAllAsync();
 				var allItems = await _scheduledTasksService.GetAllUpcomingStatusScheduledTasksAsync();
@@ -60,7 +60,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 						foreach (var i in items)
 						{
-							var qi = new StaffingScheduleQueueItem();
+							var qi = new StatusScheduleQueueItem();
 							qi.ScheduledTask = i.ScheduledTask;
 							qi.Department = i.Department;
 

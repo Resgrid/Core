@@ -74,10 +74,10 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						foreach (var d in cqi.Call.Dispatches)
 						{
-							dispatchedUsers.Add(d.UserId);
-
 							try
 							{
+								dispatchedUsers.Add(d.UserId);
+
 								var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == d.UserId);
 
 								if (profile != null)
@@ -85,8 +85,9 @@ namespace Resgrid.Workers.Framework.Logic
 									await _communicationService.SendCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 								}
 							}
-							catch (SocketException sex)
+							catch (Exception ex)
 							{
+								Logging.LogException(ex);
 							}
 						}
 					}

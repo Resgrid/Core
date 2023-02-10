@@ -177,7 +177,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
 		[HttpPost("SaveUnitStatus")]
 		[Consumes(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<ActionResult<SaveUnitStatusResult>> SaveUnitStatus(UnitStatusInput statusInput)

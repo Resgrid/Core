@@ -395,6 +395,9 @@ export class MapComponent implements OnInit {
           let personMarker = _.find(this.markers, ['elementId', `p${data.userId}`]);
 
           if (personMarker) {
+            const date = new Date();
+            this.updateDate = date.toString();
+          
             personMarker.setLatLng([data.latitude, data.longitude]);
           }
         }
@@ -408,6 +411,9 @@ export class MapComponent implements OnInit {
           let unitMarker = _.find(this.markers, ['elementId', `u${data.unitId}`]);
 
           if (unitMarker) {
+            const date = new Date();
+            this.updateDate = date.toString();
+            
             unitMarker.setLatLng([data.latitude, data.longitude]);
           }
         }

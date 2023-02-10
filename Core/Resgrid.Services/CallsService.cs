@@ -38,6 +38,7 @@ namespace Resgrid.Services
 		private readonly IShortenUrlProvider _shortenUrlProvider;
 		private readonly ICallProtocolsRepository _callProtocolsRepository;
 		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly IDepartmentsService _departmentsService;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
@@ -45,7 +46,7 @@ namespace Resgrid.Services
 			ICallAttachmentRepository callAttachmentRepository, ICallDispatchGroupRepository callDispatchGroupRepository,
 			ICallDispatchUnitRepository callDispatchUnitRepository, ICallDispatchRoleRepository callDispatchRoleRepository,
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
-			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider)
+			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
@@ -62,6 +63,7 @@ namespace Resgrid.Services
 			_shortenUrlProvider = shortenUrlProvider;
 			_callProtocolsRepository = callProtocolsRepository;
 			_geoLocationProvider = geoLocationProvider;
+			_departmentsService = departmentsService;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
@@ -115,17 +117,22 @@ namespace Resgrid.Services
 			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 		}
 
-		public async Task<bool> RegenerateCallNumbersAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> RegenerateCallNumbersAsync(int departmentId, int year, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var calls = (await _callsRepository.GetAllByDepartmentIdAsync(departmentId)).OrderBy(x => x.LoggedOn);
-			int year = DateTime.UtcNow.Year;
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			var start = (new DateTime(year, 1, 1, 1, 1, 1, DateTimeKind.Local)).SetToMidnight();
+			var end = (new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Local)).SetToEndOfDay();
+
+			//var calls = (await _callsRepository.GetAllByDepartmentIdAsync(departmentId)).OrderBy(x => x.LoggedOn);
+			var calls = await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, DateTimeHelpers.ConvertToUtc(start, department.TimeZone), DateTimeHelpers.ConvertToUtc(end, department.TimeZone));
+			calls = calls.OrderBy(x => x.LoggedOn);
 			int count = 1;
 
 			foreach (var call in calls)
 			{
 				call.Number = string.Format("{0}-{1}", year % 100, count);
-
 				await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
+				count++;
 			}
 
 			return true;
@@ -133,9 +140,15 @@ namespace Resgrid.Services
 
 		public async Task<string> GetCurrentCallNumberAsync(int departmentId)
 		{
-			int year = DateTime.UtcNow.Year;
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
-			var count = (await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, new DateTime(year - 1, 12, 30), new DateTime(year, 12, 31))).Count(x => x.LoggedOn.Year == year) + 1;
+			int year = DateTimeHelpers.GetLocalDateTime(DateTime.UtcNow, department.TimeZone).Year;
+			var start = (new DateTime(year, 1, 1, 1, 1, 1, DateTimeKind.Local)).SetToMidnight();
+			var end = (new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Local)).SetToEndOfDay();
+
+			var calls = await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, DateTimeHelpers.ConvertToUtc(start, department.TimeZone), DateTimeHelpers.ConvertToUtc(end, department.TimeZone));
+			//var count = calls.Count(x => x.LoggedOn.Year == year) + 1;
+			var count = calls.Count() + 1;
 
 			return string.Format("{0}-{1}", year % 100, count);
 		}

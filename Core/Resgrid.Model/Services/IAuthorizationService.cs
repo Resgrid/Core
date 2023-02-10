@@ -266,5 +266,11 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> CanUserViewPersonAsync(string userId, string targetUserId, int departmentId);
+
+		Task<bool> CanUserDeleteCallAsync(string userId, int callId, int departmentId);
+
+		Task<bool> CanUserCloseCallAsync(string userId, int callId, int departmentId);
+
+		Task<bool> CanUserAddCallDataAsync(string userId, int callId, int departmentId);
 	}
 }

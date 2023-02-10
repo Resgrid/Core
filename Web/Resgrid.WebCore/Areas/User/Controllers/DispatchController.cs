@@ -167,6 +167,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> NewCall()
 		{
+			if (!await _authorizationService.CanUserCreateCallAsync(UserId, DepartmentId))
+				Unauthorized();
+
 			var model = new NewCallView();
 			model.Call = new Call();
 			model = await FillNewCallView(model);
@@ -192,6 +195,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_Create)]
 		public async Task<IActionResult> NewCall(NewCallView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserCreateCallAsync(UserId, DepartmentId))
+				Unauthorized();
+
 			model = await FillNewCallView(model);
 
 			if (ModelState.IsValid)
@@ -389,7 +395,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 									model.Call.Dispatches.Add(cd);
 									shiftUserIds.Add(signup.UserId);
 								}
-							}	
+							}
 						}
 					}
 				}
@@ -670,16 +676,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_Delete)]
-		public async Task<IActionResult> DeleteCall(int callId, CancellationToken cancellationToken)
+		public async Task<IActionResult> DeleteCall(int callId)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+			if (!await _authorizationService.CanUserDeleteCallAsync(UserId, callId, DepartmentId))
 				Unauthorized();
 
-			var call = await _callsService.GetCallByIdAsync(callId);
-			call.IsDeleted = true;
+			var model = new DeleteCallView();
 
-			await _callsService.SaveCallAsync(call, cancellationToken);
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Call_Delete)]
+		public async Task<IActionResult> DeleteCall(DeleteCallView model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserDeleteCallAsync(UserId, model.CallId, DepartmentId))
+				Unauthorized();
+
+			if (ModelState.IsValid)
+			{
+				var call = await _callsService.GetCallByIdAsync(model.CallId);
+				call.DeletedOn = DateTime.UtcNow;
+				call.DeletedByUserId = UserId;
+				call.DeletedReason = model.DeleteCallNotes;
+				call.IsDeleted = true;
+
+				await _callsService.SaveCallAsync(call, cancellationToken);
+			}
+
 			return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 		}
 
@@ -742,6 +768,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				var year = model.Call.LoggedOn.Year;
+
 				model.Call.ReportingUserId = UserId;
 				model.Call.DepartmentId = DepartmentId;
 				model.Call.Priority = (int)model.CallPriority;
@@ -857,7 +885,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.ReCalcuateCallNumbers)
 				{
-					await _callsService.RegenerateCallNumbersAsync(DepartmentId, cancellationToken);
+					await _callsService.RegenerateCallNumbersAsync(DepartmentId, year, cancellationToken);
 				}
 
 				return RedirectToAction("ArchivedCalls", "Dispatch", new { Area = "User" });
@@ -901,7 +929,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_Update)]
 		public async Task<IActionResult> CloseCall(int callId)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+			if (!await _authorizationService.CanUserCloseCallAsync(UserId, callId, DepartmentId))
 				Unauthorized();
 
 			CloseCallView model = new CloseCallView();
@@ -916,7 +944,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_Update)]
 		public async Task<IActionResult> CloseCall(CloseCallView model, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+			if (!await _authorizationService.CanUserCloseCallAsync(UserId, model.CallId, DepartmentId))
 				Unauthorized();
 
 			model = await FillCloseCallView(model);
@@ -951,13 +979,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false);
 			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
-			
+
 			if (call.CallNotes == null || !call.CallNotes.Any())
 				Unauthorized();
-			
+
 			var note = call.CallNotes.FirstOrDefault(x => x.CallNoteId == callNoteId);
 			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
-			
+
 			if (note == null)
 				Unauthorized();
 
@@ -969,7 +997,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.FlagNote = note.FlaggedReason;
 			model.AddedOn = note.Timestamp.FormatForDepartment(department);
 			model.AddedBy = names.FirstOrDefault(x => x.UserId == note.UserId)?.Name;
-			
+
 			if (note.IsFlagged)
 			{
 				model.FlaggedOn = note.Timestamp.FormatForDepartment(department);
@@ -985,7 +1013,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
 				Unauthorized();
-			
+
 			var call = await _callsService.GetCallByIdAsync(model.CallId);
 
 			if (call == null)
@@ -1008,7 +1036,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				note.IsFlagged = model.IsFlagged;
 
 				if (note.IsFlagged)
-				{ 
+				{
 					note.FlaggedReason = model.FlagNote;
 					note.FlaggedOn = DateTime.UtcNow;
 				}
@@ -1138,6 +1166,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (call == null)
 					Unauthorized();
 
+				if (!await _authorizationService.CanUserViewCallAsync(UserId, call.CallId))
+					Unauthorized();
+
 				var model = new CallExportView();
 				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
@@ -1160,6 +1191,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var call = await _callsService.GetCallByIdAsync(int.Parse(items[0]));
 
 				if (call == null)
+					Unauthorized();
+
+				if (!await _authorizationService.CanUserViewCallAsync(UserId, call.CallId))
 					Unauthorized();
 
 				var model = new CallExportView();
@@ -1260,6 +1294,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetCallDispatchAudio(int callId)
 		{
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				Unauthorized();
+
 			var call = await _callsService.GetCallByIdAsync(callId);
 			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false);
 
@@ -1589,11 +1626,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
 				callJson.Priority = await _callsService.CallPriorityToStringAsync(call.Priority, DepartmentId);
 				callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, DepartmentId);
+				callJson.CanDeleteCall = await _authorizationService.CanUserDeleteCallAsync(UserId, call.CallId, DepartmentId);
+				callJson.CanCloseCall = await _authorizationService.CanUserCloseCallAsync(UserId, call.CallId, DepartmentId);
 
 				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || call.ReportingUserId == UserId)
-					callJson.CanDeleteCall = true;
+					callJson.CanUpdateCall = true;
 				else
-					callJson.CanDeleteCall = false;
+					callJson.CanUpdateCall = false;
 
 				callsJson.Add(callJson);
 			}

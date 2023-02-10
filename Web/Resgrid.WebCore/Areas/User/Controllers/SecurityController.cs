@@ -229,6 +229,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			viewGroupUsersPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
 			model.ViewGroupUsersPermissions = new SelectList(viewGroupUsersPermissions, "Id", "Name");
 
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.DeleteCall))
+				model.DeleteCall = permissions.First(x => x.PermissionType == (int)PermissionTypes.DeleteCall).Action;
+			else
+				model.DeleteCall = 3;
+
+			var deleteCallPermissions = new List<dynamic>();
+			deleteCallPermissions.Add(new { Id = 3, Name = "Everyone" });
+			deleteCallPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			deleteCallPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			deleteCallPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.DeleteCallPermissions = new SelectList(deleteCallPermissions, "Id", "Name");
+
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CloseCall))
+				model.CloseCall = permissions.First(x => x.PermissionType == (int)PermissionTypes.CloseCall).Action;
+			else
+				model.CloseCall = 3;
+
+			var closeCallPermissions = new List<dynamic>();
+			closeCallPermissions.Add(new { Id = 3, Name = "Everyone" });
+			closeCallPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			closeCallPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			closeCallPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.CloseCallPermissions = new SelectList(closeCallPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.AddCallData))
+				model.AddCallData = permissions.First(x => x.PermissionType == (int)PermissionTypes.AddCallData).Action;
+			else
+				model.AddCallData = 3;
+
+			var addCallDataPermissions = new List<dynamic>();
+			addCallDataPermissions.Add(new { Id = 3, Name = "Everyone" });
+			addCallDataPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			addCallDataPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			addCallDataPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.AddCallDataPermissions = new SelectList(addCallDataPermissions, "Id", "Name");
+
 			return View(model);
 		}
 

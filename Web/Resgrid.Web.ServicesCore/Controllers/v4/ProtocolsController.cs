@@ -102,8 +102,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult> GetFile(int protocolAttachmentId)
 		{
-			var result = Ok();
-
 			var attachment = await _protocolsService.GetAttachmentByIdAsync(protocolAttachmentId);
 
 			if (attachment == null)

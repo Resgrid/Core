@@ -314,6 +314,47 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendCalendarAsync(string userId, int departmentId, string message, string departmentNumber, string title = "Notification", UserProfile profile = null)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
+
+			if (profile == null || profile.SendNotificationEmail)
+			{
+				try
+				{
+					await _emailService.SendCalendarAsync(userId, $"{title} {message}", departmentId, profile);
+
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			if (profile == null || profile.SendNotificationPush)
+			{
+				var spm = new StandardPushMessage();
+				spm.Title = "Calendar";
+				spm.SubTitle = $"{title} {message}";
+
+				try
+				{
+					await _pushService.PushNotification(spm, userId, profile);
+
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			return true;
+		}
+
 		public async Task<bool> SendChat(string chatId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients)
 		{
 			var spm = new StandardPushMessage();

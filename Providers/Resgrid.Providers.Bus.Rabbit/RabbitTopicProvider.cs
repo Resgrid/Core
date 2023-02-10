@@ -121,8 +121,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				try
 				{
-					var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					using (var connection = factory.CreateConnection())
+					//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					//using (var connection = factory.CreateConnection())
+					var connection = RabbitConnection.CreateConnection();
+
+					if (connection != null)
 					{
 						using (var channel = connection.CreateModel())
 						{
@@ -141,7 +144,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			try
 			{
-				using (var connection = CreateConnection())
+				//using (var connection = RabbitConnection.CreateConnection())
+				var connection = RabbitConnection.CreateConnection();
+				if (connection != null)
 				{
 					using (var channel = connection.CreateModel())
 					{
@@ -160,52 +165,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
-		}
-
-		private IConnection CreateConnection()
-		{
-			ConnectionFactory factory;
-			IConnection connection = null;
-
-			// I know....I know.....
-			try
-			{
-				factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				connection = factory.CreateConnection();
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-
-				if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
-				{
-					try
-					{
-						factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						connection = factory.CreateConnection();
-					}
-					catch (Exception ex2)
-					{
-						Logging.LogException(ex2);
-
-						if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
-						{
-							try
-							{
-								factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-								connection = factory.CreateConnection();
-							}
-							catch (Exception ex3)
-							{
-								Logging.LogException(ex3);
-								throw;
-							}
-						}
-					}
-				}
-			}
-
-			return connection;
 		}
 
 		private static string SetQueueNameForEnv(string cacheKey)

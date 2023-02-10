@@ -163,6 +163,12 @@ namespace Resgrid.Model
 
 		public int? LinkedCallId { get; set; }
 
+		public string DeletedReason { get; set; }
+
+		public string DeletedByUserId { get; set; }
+
+		public DateTime? DeletedOn { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -213,6 +219,21 @@ namespace Resgrid.Model
 				var dispatch = from d in UnitDispatches
 							   where d.UnitId == unitId
 							   select d;
+
+				if (dispatch != null && dispatch.Any())
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasGroupBeenDispatched(int groupId)
+		{
+			if (GroupDispatches != null && GroupDispatches.Any())
+			{
+				var dispatch = from d in GroupDispatches
+					where d.DepartmentGroupId == groupId
+					select d;
 
 				if (dispatch != null && dispatch.Any())
 					return true;

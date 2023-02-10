@@ -16,6 +16,8 @@
 		SubscriptionUpdated,
 		SubscriptionCreated,
 		SubscriptionCancelled,
-		SubscriptionBillingInfoUpdated
+		SubscriptionBillingInfoUpdated,
+		// New
+		CallReactivated
 	}
 }

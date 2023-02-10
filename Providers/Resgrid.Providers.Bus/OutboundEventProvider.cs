@@ -76,7 +76,15 @@ namespace Resgrid.Providers.Bus
 			nqi.Value = message.Status.State.ToString();
 
 			await _outboundQueueProvider.EnqueueNotification(nqi);
-			await _signalrProvider.UnitStatusUpdated(message.DepartmentId, message.Status);
+
+			try
+			{
+				await _signalrProvider.UnitStatusUpdated(message.DepartmentId, message.Status);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
 		};
 
 		public Action<UnitStatusEvent> unitTypeGroupAvailabilityHandler = async delegate(UnitStatusEvent message)

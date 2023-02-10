@@ -560,6 +560,8 @@ var resgrid;
                     }).done(function (results) {
                     });
                 });
+
+                // View unit location
                 $('#ViewUnitLocation').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -620,6 +622,8 @@ var resgrid;
                     }).done(function (results) {
                     });
                 });
+
+                // Create message
                 $('#CreateMessage').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -675,6 +679,7 @@ var resgrid;
                     }).done(function (results) {
                     });
                 });
+                // Create message
                 $("#createMessagesRoles").kendoMultiSelect({
                     placeholder: "Select roles...",
                     dataTextField: "Name",
@@ -714,6 +719,198 @@ var resgrid;
                         multiSelect.value(data.split(","));
                     }
                 });
+
+                // Delete Call
+                ////////////////////////////////////////////////////////
+                $('#DeleteCall').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=15&perm=' + val + '&lockToGroup=' + $('#LockDeleteCallToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#DeleteCall").val() === "2") {
+                        $('#deleteCallsRolesSpan').hide();
+                        $('#deleteCallsRolesDiv').show();
+                    }
+                    else {
+                        $('#deleteCallsRolesSpan').show();
+                        $('#deleteCallsRolesDiv').hide();
+                    }
+                });
+                if ($("#DeleteCall").val() === "2") {
+                    $('#deleteCallsRolesSpan').hide();
+                    $('#deleteCallsRolesDiv').show();
+                }
+                else {
+                    $('#deleteCallsRolesSpan').show();
+                    $('#deleteCallsRolesDiv').hide();
+                }
+                $("#deleteCallsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#deleteCallsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=15&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=15',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#deleteCallsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                $('#LockDeleteCallToGroup').change(function () {
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=15&perm=' + $('#DeleteCall').val() + '&lockToGroup=' + $('#LockDeleteCallToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                });
+                ////////////////////////////////////////////////////////
+
+                // Close Call
+                ////////////////////////////////////////////////////////
+                $('#CloseCall').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=16&perm=' + val + '&lockToGroup=' + $('#LockCloseCallToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#CloseCall").val() === "2") {
+                        $('#closeCallsRolesSpan').hide();
+                        $('#closeCallsRolesDiv').show();
+                    }
+                    else {
+                        $('#closeCallsRolesSpan').show();
+                        $('#closeCallsRolesDiv').hide();
+                    }
+                });
+                if ($("#CloseCall").val() === "2") {
+                    $('#closeCallsRolesSpan').hide();
+                    $('#closeCallsRolesDiv').show();
+                }
+                else {
+                    $('#closeCallsRolesSpan').show();
+                    $('#closeCallsRolesDiv').hide();
+                }
+                $("#closeCallsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#closeCallsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=16&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=16',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#closeCallsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                $('#LockCloseCallToGroup').change(function () {
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=16&perm=' + $('#CloseCall').val() + '&lockToGroup=' + $('#LockCloseCallToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                });
+                ////////////////////////////////////////////////////////
+
+                // Add Call Data
+                ////////////////////////////////////////////////////////
+                $('#AddCallData').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=17&perm=' + val + '&lockToGroup=' + $('#LockAddCallDataToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#AddCallData").val() === "2") {
+                        $('#addCallDataRolesSpan').hide();
+                        $('#addCallDataRolesDiv').show();
+                    }
+                    else {
+                        $('#addCallDataRolesSpan').show();
+                        $('#addCallDataRolesDiv').hide();
+                    }
+                });
+                if ($("#AddCallData").val() === "2") {
+                    $('#addCallDataRolesSpan').hide();
+                    $('#addCallDataRolesDiv').show();
+                }
+                else {
+                    $('#addCallDataRolesSpan').show();
+                    $('#addCallDataRolesDiv').hide();
+                }
+                $("#addCallDataRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#addCallDataRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=17&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=17',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#addCallDataRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                $('#LockAddCallDataToGroup').change(function () {
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=17&perm=' + $('#AddCallData').val() + '&lockToGroup=' + $('#LockAddCallDataToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                });
+                ////////////////////////////////////////////////////////
             });
         })(permissions = security.permissions || (security.permissions = {}));
     })(security = resgrid.security || (resgrid.security = {}));

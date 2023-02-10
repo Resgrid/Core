@@ -33,7 +33,7 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStatusReset)
 					{
-						await _actionLogsService.SetActionForEntireDepartmentAsync(item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data));
+						await _actionLogsService.SetActionForEntireDepartmentAsync(item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data), $"Department Status Reset {item.ScheduledTask.ScheduledTaskId}");
 					}
 				}
 				catch (Exception ex)

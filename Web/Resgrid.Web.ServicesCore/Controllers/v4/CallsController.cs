@@ -158,6 +158,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (c.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, int.Parse(callId)))
+				return Unauthorized();
+
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true);
 
 			string address = "";
@@ -213,6 +216,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (call.DepartmentId != DepartmentId)
 				Unauthorized();
+
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
 
@@ -591,6 +597,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.Dispatches = new Collection<CallDispatch>();
 			call.GroupDispatches = new List<CallDispatchGroup>();
 			call.RoleDispatches = new List<CallDispatchRole>();
+			call.UnitDispatches = new List<CallDispatchUnit>();
 
 			if (newCallInput.DispatchList == "0")
 			{
@@ -1164,7 +1171,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, int.Parse(callId));
+			var canDoOperation = await _authorizationService.CanUserCloseCallAsync(UserId, int.Parse(callId), DepartmentId);
 
 			if (!canDoOperation)
 				return Unauthorized();
@@ -1212,7 +1219,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, int.Parse(closeCallInput.Id));
+			var canDoOperation = await _authorizationService.CanUserDeleteCallAsync(UserId, int.Parse(closeCallInput.Id), DepartmentId);
 
 			if (!canDoOperation)
 				return Unauthorized();

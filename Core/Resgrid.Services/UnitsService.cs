@@ -521,7 +521,7 @@ namespace Resgrid.Services
 
 		public async Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null)
 		{
-			var location = _unitLocationRepository.AsQueryable().Where(x => x.UnitId == unitId).OrderByDescending(y => y.Timestamp).First();
+			var location = _unitLocationRepository.AsQueryable().Where(x => x.UnitId == unitId).OrderByDescending(y => y.Timestamp).FirstOrDefault();
 
 			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
@@ -531,11 +531,14 @@ namespace Resgrid.Services
 		public async Task<List<UnitsLocation>> GetLatestUnitLocationsAsync(int departmentId)
 		{
 			var locations = _unitLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
-				.GroupBy(x => x.UnitId).First();
+				.GroupBy(x => x.UnitId).FirstOrDefault();
 
 			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
-			return locations.ToList();
+			if (locations != null)
+				return locations.ToList();
+
+			return new List<UnitsLocation>();
 		}
 
 		public async Task<List<UnitStateRole>> GetCurrentRolesForUnitAsync(int unitId)

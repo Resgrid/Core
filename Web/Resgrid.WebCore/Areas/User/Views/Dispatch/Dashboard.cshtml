@@ -104,10 +104,14 @@
 
   <script id="callCommand-template" type="text/x-kendo-template">
     <a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-eye-open"></i><span class="hidden-sm hidden-xs"> View</span></a>
+    #if(CanUpdateCall){#
+      <a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("UpdateCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-pencil"></i><span class="hidden-sm hidden-xs"> Update</span></a>
+    #}#
+    #if(CanCloseCall){#
+      <a style="text-decoration:none;" class="btn btn-xs btn-warning" href="@Url.Action("CloseCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-stop"></i> <span class="hidden-sm hidden-xs"> Close</span></a>
+    #}#
     #if(CanDeleteCall){#
-    <a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("UpdateCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-pencil"></i><span class="hidden-sm hidden-xs"> Update</span></a>
-    <a style="text-decoration:none;" class="btn btn-xs btn-warning" href="@Url.Action("CloseCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-stop"></i> <span class="hidden-sm hidden-xs"> Close</span></a>
-    <a href="@Url.Action("DeleteCall", "Dispatch", new { area = "User" })?callId=#=CallId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this call. Are you sure you want to delete the call #=Name#?" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
+      <a href="@Url.Action("DeleteCall", "Dispatch", new { area = "User" })?callId=#=CallId#" class="btn btn-xs btn-danger" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
     #}#
 
   </script>

@@ -195,7 +195,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 							activeRole.UpdatedBy = UserId;
 							activeRole.UpdatedOn = DateTime.UtcNow;
 
-							await _unitsService.SaveActiveRoleAsync(activeRole);
+							await _unitsService.SaveActiveRoleAsync(activeRole, cancellationToken);
 						}
 					}
 				}

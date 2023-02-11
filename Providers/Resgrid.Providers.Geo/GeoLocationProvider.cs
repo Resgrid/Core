@@ -38,16 +38,15 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			async Task<string> getAddressFromCords()
 			{
-				IGeocoder googleGeoCoder = new GoogleGeocoder()
-				{
-					ApiKey = Config.MappingConfig.GoogleMapsApiKey
-				};
-				IGeocoder bingGeoCoder = new BingMapsGeocoder(Config.MappingConfig.BingMapsApiKey);
-
 				string address = null;
 
 				try
 				{
+					IGeocoder googleGeoCoder = new GoogleGeocoder()
+					{
+						ApiKey = Config.MappingConfig.GoogleMapsApiKey
+					};
+
 					var addresses = await googleGeoCoder.ReverseGeocodeAsync(lat, lon);
 
 					if (addresses != null && addresses.Any())
@@ -71,6 +70,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					try
 					{
+						IGeocoder bingGeoCoder = new BingMapsGeocoder(Config.MappingConfig.BingMapsApiKey);
+
 						var addresses = await bingGeoCoder.ReverseGeocodeAsync(lat, lon);
 
 						if (addresses != null && addresses.Count() > 0)
@@ -88,15 +89,15 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			async Task<string> getCordsFromAddress()
 			{
-				IGeocoder googleGeoCoder = new GoogleGeocoder()
-				{
-					ApiKey = Config.MappingConfig.GoogleMapsApiKey
-				};
-				IGeocoder bingGeoCoder = new BingMapsGeocoder(Config.MappingConfig.BingMapsApiKey);
 				string coordinates = null;
 
 				try
 				{
+					IGeocoder googleGeoCoder = new GoogleGeocoder()
+					{
+						ApiKey = Config.MappingConfig.GoogleMapsApiKey
+					};
+
 					var addresses = await googleGeoCoder.GeocodeAsync(address);
 
 					if (addresses != null && addresses.Any())
@@ -124,6 +125,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					try
 					{
+						IGeocoder bingGeoCoder = new BingMapsGeocoder(Config.MappingConfig.BingMapsApiKey);
+
 						var addresses = await bingGeoCoder.GeocodeAsync(address);
 
 						if (addresses != null && addresses.Count() > 0)
@@ -140,30 +143,36 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 		public async Task<RouteInformation> GetRoute(double startLat, double startLon, double endLat, double endLon)
 		{
-
-			DirectionsRequest directionsRequest = new DirectionsRequest()
-			{
-				Origin = string.Format("{0},{1}", startLat, startLon),
-				Destination = string.Format("{0},{1}", endLat, endLon),
-				ApiKey = Config.MappingConfig.GoogleMapsApiKey
-			};
-
 			async Task<RouteInformation> getRoute()
 			{
-				DirectionsResponse directions = await GoogleMapsApi.GoogleMaps.Directions.QueryAsync(directionsRequest);
-
 				var info = new RouteInformation();
 
-				if (directions != null && directions.Status == DirectionsStatusCodes.OK)
+				try
 				{
-					var route = directions.Routes.FirstOrDefault();
-
-					if (route != null)
+					DirectionsRequest directionsRequest = new DirectionsRequest()
 					{
-						info.Name = route.Summary;
-						info.ProcessedOn = DateTime.UtcNow;
-						info.Successful = true;
+						Origin = string.Format("{0},{1}", startLat, startLon),
+						Destination = string.Format("{0},{1}", endLat, endLon),
+						ApiKey = Config.MappingConfig.GoogleMapsApiKey
+					};
+					DirectionsResponse directions = await GoogleMapsApi.GoogleMaps.Directions.QueryAsync(directionsRequest);
+
+					if (directions != null && directions.Status == DirectionsStatusCodes.OK)
+					{
+						var route = directions.Routes.FirstOrDefault();
+
+						if (route != null)
+						{
+							info.Name = route.Summary;
+							info.ProcessedOn = DateTime.UtcNow;
+							info.Successful = true;
+						}
 					}
+				}
+				catch
+				{
+					info.ProcessedOn = DateTime.UtcNow;
+					info.Successful = false;
 				}
 
 				return info;
@@ -177,37 +186,45 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(end))
 				return new RouteInformation();
 
-			DirectionsRequest directionsRequest = new DirectionsRequest()
-			{
-				Origin = start,
-				Destination = end,
-				ApiKey = Config.MappingConfig.GoogleMapsApiKey
-			};
-
 			async Task<RouteInformation> getRoute()
 			{
-				DirectionsResponse directions = await GoogleMapsApi.GoogleMaps.Directions.QueryAsync(directionsRequest);
-
 				var info = new RouteInformation();
 
-				if (directions != null && directions.Status == DirectionsStatusCodes.OK)
+				try
 				{
-					var route = directions.Routes.FirstOrDefault();
-
-					if (route != null)
+					DirectionsRequest directionsRequest = new DirectionsRequest()
 					{
-						var leg = route.Legs.FirstOrDefault();
+						Origin = start,
+						Destination = end,
+						ApiKey = Config.MappingConfig.GoogleMapsApiKey
+					};
 
-						if (leg != null)
+					DirectionsResponse directions = await GoogleMapsApi.GoogleMaps.Directions.QueryAsync(directionsRequest);
+
+					if (directions != null && directions.Status == DirectionsStatusCodes.OK)
+					{
+						var route = directions.Routes.FirstOrDefault();
+
+						if (route != null)
 						{
-							info.Name = route.Summary;
-							info.ProcessedOn = DateTime.UtcNow;
-							info.Successful = true;
-							info.TimeString = leg.Duration.Text;
-							info.Seconds = leg.Duration.Value.TotalSeconds;
-							info.DistanceInMeters = leg.Distance.Value;
+							var leg = route.Legs.FirstOrDefault();
+
+							if (leg != null)
+							{
+								info.Name = route.Summary;
+								info.ProcessedOn = DateTime.UtcNow;
+								info.Successful = true;
+								info.TimeString = leg.Duration.Text;
+								info.Seconds = leg.Duration.Value.TotalSeconds;
+								info.DistanceInMeters = leg.Distance.Value;
+							}
 						}
 					}
+				}
+				catch
+				{
+					info.ProcessedOn = DateTime.UtcNow;
+					info.Successful = false;
 				}
 
 				return info;
@@ -220,19 +237,23 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			Func<Task<Coordinates>> getLocationFromW3W = async () =>
 			{
-				var client = new RestClient("https://api.what3words.com");
-				var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.Get);
-
-				var response = await client.ExecuteAsync<W3WResponse>(request);
-
-				if (response.Data != null && response.Data.geometry != null)
+				try
 				{
-					var coords = new Coordinates();
-					coords.Latitude = response.Data.geometry.lat;
-					coords.Longitude = response.Data.geometry.lng;
+					var client = new RestClient("https://api.what3words.com");
+					var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.Get);
 
-					return coords;
+					var response = await client.ExecuteAsync<W3WResponse>(request);
+
+					if (response.Data != null && response.Data.geometry != null)
+					{
+						var coords = new Coordinates();
+						coords.Latitude = response.Data.geometry.lat;
+						coords.Longitude = response.Data.geometry.lng;
+
+						return coords;
+					}
 				}
+				catch { /* Don't report on GeoLocation failures */ }
 
 				return null;
 			};
@@ -244,19 +265,23 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			Func<Task<Coordinates>> getLocationFromW3W = async () =>
 			{
-				var client = new RestClient("https://api.what3words.com");
-				var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.Get);
-
-				var response = await client.ExecuteAsync<W3WResponse>(request);
-
-				if (response.Data != null && response.Data.geometry != null)
+				try
 				{
-					var coords = new Coordinates();
-					coords.Latitude = response.Data.geometry.lat;
-					coords.Longitude = response.Data.geometry.lng;
+					var client = new RestClient("https://api.what3words.com");
+					var request = new RestRequest($"/v2/forward?key={Config.MappingConfig.What3WordsApiKey}&lang=en&addr={words}", Method.Get);
 
-					return coords;
+					var response = await client.ExecuteAsync<W3WResponse>(request);
+
+					if (response.Data != null && response.Data.geometry != null)
+					{
+						var coords = new Coordinates();
+						coords.Latitude = response.Data.geometry.lat;
+						coords.Longitude = response.Data.geometry.lng;
+
+						return coords;
+					}
 				}
+				catch { /* Don't report on GeoLocation failures */ }
 
 				return null;
 			};
@@ -268,15 +293,19 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			Func<Task<string>> getLocationFromW3W = async () =>
 			{
-				var client = new RestClient("https://api.what3words.com");
-				var request = new RestRequest($"/v2/reverse?key={Config.MappingConfig.What3WordsApiKey}&coords={$"{coordinates.Latitude},{coordinates.Longitude}"}", Method.Get);
-
-				var response = await client.ExecuteAsync<ReverseW3WResponse>(request);
-
-				if (response.Data != null && !String.IsNullOrWhiteSpace(response.Data.words))
+				try
 				{
-					return response.Data.words;
+					var client = new RestClient("https://api.what3words.com");
+					var request = new RestRequest($"/v2/reverse?key={Config.MappingConfig.What3WordsApiKey}&coords={$"{coordinates.Latitude},{coordinates.Longitude}"}", Method.Get);
+
+					var response = await client.ExecuteAsync<ReverseW3WResponse>(request);
+
+					if (response.Data != null && !String.IsNullOrWhiteSpace(response.Data.words))
+					{
+						return response.Data.words;
+					}
 				}
+				catch { /* Don't report on GeoLocation failures */ }
 
 				return null;
 			};

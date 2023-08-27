@@ -148,9 +148,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\Resgrid\Core\Resgrid.Localization\Resgrid.Localization.csproj" />
 		<ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
 		<ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+		<ProjectReference Include="..\..\Core\Resgrid.Localization\Resgrid.Localization.csproj" />
 		<ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
 		<ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
 		<ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />

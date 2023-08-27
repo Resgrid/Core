@@ -166,7 +166,7 @@ namespace Resgrid.Repositories.DataRepository
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
 				return db.Query<IdentityUser>(@"DECLARE @limit INT
-												IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) > 1)
+												IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) >= 1)
 													BEGIN
 														SET @limit = (SELECT TOP 1 pl.LimitValue FROM Payments p
 														INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
@@ -192,7 +192,7 @@ namespace Resgrid.Repositories.DataRepository
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
 				var result = await db.QueryAsync<IdentityUser>(@"DECLARE @limit INT
-												IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) > 1)
+												IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) >= 1)
 													BEGIN
 														SET @limit = (SELECT TOP 1 pl.LimitValue FROM Payments p
 														INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId

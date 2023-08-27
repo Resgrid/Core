@@ -1,7 +1,8 @@
 ﻿@using Resgrid.Framework
 @model Resgrid.WebCore.Areas.User.Models.Units.UnitStaffingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
 @{
-    ViewBag.Title = "Resgrid | Unit Staffing";
+    ViewBag.Title = "Resgrid | " + @localizer["UnitStaffingHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
@@ -78,16 +79,16 @@
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
-            <h2>Unit Staffing</h2>
+            <h2>@localizer["UnitStaffingHeader"]</h2>
             <ol class="breadcrumb">
                 <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
                 </li>
                 <li>
-                    <a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
+                    <a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a>
                 </li>
                 <li class="active">
-                    <strong>Units Staffing</strong>
+                    <strong>@localizer["UnitStaffingHeader"]</strong>
                 </li>
             </ol>
         </div>
@@ -107,7 +108,7 @@
                                 </div>
                             </div>
 
-                        @foreach (var unit in Model.Units)
+                            @foreach (var unit in Model.Units)
                         {
                             if (unit.Roles.Any())
                             {
@@ -124,11 +125,11 @@
                                                     <select id="Role_@role.UnitRoleId" name="Role_@role.UnitRoleId" class="selectize personnelDropdown" style="width:100%;">
                                                         @if (activeRole == null)
                                                         {
-                                                            <option value="" selected>Not Occupied</option>
+                                                            <option value="" selected>@localizer["NotOccupied"]</option>
                                                         }
                                                         else
                                                         {
-                                                            <option value="">Not Occupied</option>
+                                                            <option value="">@localizer["NotOccupied"]</option>
                                                         }
                                                         @foreach (var user in Model.Users)
                                                         {
@@ -151,8 +152,8 @@
                         }
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Set Unit Staffing</button>
+                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
                             </div>
                         </div>
                     </form>

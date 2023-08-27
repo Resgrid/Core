@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Template\Call.html" />
+    <EmbeddedResource Include="Template\DeleteDepartment.html" />
     <EmbeddedResource Include="Template\Invitation.html" />
     <EmbeddedResource Include="Template\Message.html" />
     <EmbeddedResource Include="Template\PasswordReset.html" />

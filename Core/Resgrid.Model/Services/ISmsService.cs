@@ -17,7 +17,7 @@ namespace Resgrid.Model.Services
 		/// <param name="profile">The profile.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendMessageAsync(Message message, string departmentNumber, int departmentId,
-			UserProfile profile = null);
+			UserProfile profile = null, Payment payment = null);
 
 		/// <summary>
 		/// Sends the call asynchronous.
@@ -30,7 +30,7 @@ namespace Resgrid.Model.Services
 		/// <param name="address">The address.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId,
-			UserProfile profile = null, string address = null);
+			UserProfile profile = null, string address = null, Payment payment = null);
 
 		/// <summary>
 		/// Sends the trouble alert.

@@ -34,7 +34,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="EditShiftDays" asp-route-area="User" method="post">
+					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="EditShiftDays" asp-route-area="User" method="post" id="edit_shift_days" name="edit_shift_days">
 
 						<div class="row">
 							<div class="col-md-8 col-md-offset-1">
@@ -120,7 +120,8 @@
 		function submitForm() {
 			var dates = $('#manualScheduleCalendar').multiDatesPicker('getDates');
 			$('#Dates').val(dates);
-			$("form")[0].submit();
+			$("form#edit_shift_days")[0].submit();
+			//$("form")[0].submit();
 		}
 	</script>
 }

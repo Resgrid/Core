@@ -1,5 +1,5 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Messages.TopUnreadMessagesView
-
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> localizer
 @if (Model.UnreadMessages != null && Model.UnreadMessages.Count() > 0)
 {
   foreach (var message in Model.UnreadMessages.Take(4))
@@ -18,7 +18,7 @@
 			}
 			else
 			{
-              <strong>System</strong><br>
+              <strong>@commonLocalizer["System"]</strong><br>
 			}
             <small class="text-muted">@message.SentOn.TimeConverterToString(Model.Department)</small>
           </a>

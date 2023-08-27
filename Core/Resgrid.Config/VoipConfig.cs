@@ -21,6 +21,11 @@
 
 		public static string OpenViduUrl = "";
 		public static string OpenViduSecret = "";
+
+		public static string LiveKitServerApiUrl = "";
+		public static string LiveKitServerUrl = "";
+		public static string LiveKitServerApiKey = "";
+		public static string LiveKitServerApiSecret = "";
 	}
 
 	/// <summary>
@@ -29,6 +34,7 @@
 	public enum VoipProviderTypes
 	{
 		Kazoo = 0,
-		OpenVidu = 1
+		OpenVidu = 1,
+		LiveKit = 2
 	}
 }

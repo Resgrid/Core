@@ -1,0 +1,90 @@
+﻿@model Resgrid.Web.Areas.User.Models.Departments.DeleteDepartmentView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["DeleteDepartmentHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["DeleteDepartmentHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["DeleteDepartmentHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <h5>@localizer["DeleteDepartmentHeader"]</h5>
+                        @if (Model.CurrentDeleteRequest != null)
+                        {
+                            <p>
+                                @localizer["DeleteDepartmentCurrentlyPendingInfo"]
+                            </p>
+                            
+                            <dl>
+                                <dt>Requested On</dt>
+                                <dd>@Model.CurrentDeleteRequest.QueuedOn.FormatForDepartment(Model.Department)</dd>
+                                <dt>Requested By</dt>
+                                <dd>@Model.Profile.FullName.AsFirstNameLastName</dd>
+                                <dt>To be Completed After</dt>
+                                <dd>@Model.CurrentDeleteRequest.ToBeCompletedOn.Value.FormatForDepartment(Model.Department)</dd>
+                            </dl>
+
+                            <fieldset class="form-actions">
+                                <a class="btn btn-large btn-info" href="@Url.Action("CancelDepartmentDeleteRequest", "Department", new { area = "User" })">@localizer["CancelDepartmentDeletion"]</a>
+                            </fieldset>
+                        }
+                        else
+                        {
+                            <p>
+                                @localizer["DeleteDepartmentInfo"]
+                            </p>
+
+                            <form id="account_delete_form" name="account_delete_form" class="form-horizontal" role="form" asp-controller="Department" asp-action="DeleteDepartment" asp-route-area="User" method="post">
+
+                                @Html.AntiForgeryToken()
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <div class='alert alert-warning'>
+                                    <i class='picons-16-basic1-104'></i>@localizer["CheckToDelete"]
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">@localizer["ConfirmDelete"]</label>
+                                    <div class="col-sm-10">
+                                        <div class="checkbox checkbox-primary">
+                                            <input type="checkbox" class="checkbox checkbox-primary" asp-for="AreYouSure">
+                                            <label></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                        <button class="btn btn-danger" id="submit-button" name="submit-button" type="submit">@commonLocalizer["Delete"]</button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+}

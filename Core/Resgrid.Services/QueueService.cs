@@ -34,6 +34,49 @@ namespace Resgrid.Services
 			return await _queueItemsRepository.GetByIdAsync(queueItemId);
 		}
 
+		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)
+		{
+			var allItems = await _queueItemsRepository.GetAllAsync();
+			var depItem = allItems.FirstOrDefault(x =>
+				x.SourceId == departmentId.ToString() && x.ToBeCompletedOn > DateTime.UtcNow && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null);
+
+			return depItem;
+		}
+
+		public async Task<List<QueueItem>> GetAllPendingDeleteDepartmentQueueItemsAsync()
+		{
+			var allItems = await _queueItemsRepository.GetAllAsync();
+			var depItems = allItems.Where(x =>
+				x.ToBeCompletedOn > DateTime.UtcNow && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null).ToList();
+
+			return depItems;
+		}
+
+		public async Task<QueueItem> EnqueuePendingDeleteDepartmentAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			QueueItem item = new QueueItem();
+			item.QueueType = (int)QueueTypes.DeleteDepartment;
+			item.SourceId = departmentId.ToString();
+			item.QueuedOn = DateTime.UtcNow;
+			item.ToBeCompletedOn = item.QueuedOn.AddDays(25);
+			item.QueuedByUserId = userId;
+
+			var result = await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
+
+			return result;
+		}
+
+		public async Task<QueueItem> CancelPendingDepartmentDeletionRequest(int departmentId, string name, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			QueueItem item = await GetPendingDeleteDepartmentQueueItemAsync(departmentId);
+			item.CompletedOn = DateTime.UtcNow;
+			item.Data = $"{name} cancelled the department deletion request.";
+
+			var result = await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
+
+			return result;
+		}
+
 		public async Task<List<QueueItem>> DequeueAsync(QueueTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var items = await _queueItemsRepository.GetPendingQueueItemsByTypeIdAsync((int)type);
@@ -127,7 +170,10 @@ namespace Resgrid.Services
 						cqi.Address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 					}
 				}
-				catch { /* Ignore */ }
+				catch
+				{
+					/* Ignore */
+				}
 			}
 			else
 			{
@@ -146,7 +192,7 @@ namespace Resgrid.Services
 			//}
 
 			if (cqi.Call.Attachments != null &&
-				cqi.Call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
+			    cqi.Call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
 			{
 				var audio = cqi.Call.Attachments.FirstOrDefault(x =>
 					x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
@@ -155,7 +201,7 @@ namespace Resgrid.Services
 					cqi.CallDispatchAttachmentId = audio.CallAttachmentId;
 			}
 
-			// We can't queue up any attachment data as it'll be too large. 
+			// We can't queue up any attachment data as it'll be too large.
 			cqi.Call.Attachments = null;
 
 			return await _outboundQueueProvider.EnqueueCall(cqi);
@@ -198,6 +244,11 @@ namespace Resgrid.Services
 
 			item.CompletedOn = DateTime.UtcNow;
 
+			return await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
+		}
+
+		public async Task<QueueItem> UpdateQueueItem(QueueItem item, CancellationToken cancellationToken = default(CancellationToken))
+		{
 			return await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
 		}
 	}

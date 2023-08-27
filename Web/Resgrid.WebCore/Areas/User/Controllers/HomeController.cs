@@ -28,6 +28,11 @@ using Resgrid.Model.Helpers;
 using Resgrid.Web.Areas.User.Models.BigBoardX;
 using Resgrid.Model.Identity;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
+using Microsoft.Extensions.Localization;
+using System.Reflection;
+using Resgrid.Localization;
+using Microsoft.AspNetCore.Localization;
+using System.Web;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -37,6 +42,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public class HomeController : SecureBaseController
 	{
 		#region Private Members and Constructors
+		private readonly IStringLocalizer _localizer;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUsersService _usersService;
 		private readonly IActionLogsService _actionLogsService;
@@ -56,12 +62,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IOptions<AppOptions> _appOptionsAccessor;
 		private readonly UserManager<IdentityUser> _userManager;
+		private readonly ISubscriptionsService _subscriptionsService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, ICallsService callsService, IGeoLocationProvider geoLocationProvider, IDepartmentSettingsService departmentSettingsService,
 			IUnitsService unitsService, IAddressService addressService, IPersonnelRolesService personnelRolesService, IPushService pushService, ILimitsService limitsService,
-			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<IdentityUser> userManager)
+			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<IdentityUser> userManager,
+			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -82,6 +90,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 			_appOptionsAccessor = appOptionsAccessor;
 			_userManager = userManager;
+			_subscriptionsService = subscriptionsService;
+
+			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
 		#endregion Private Members and Constructors
 
@@ -93,7 +104,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var staffingLevel = await _userStateService.GetLastUserStateByUserIdAsync(UserId);
 			model.UserState = staffingLevel.State;
-			model.StateNote = staffingLevel.Note;
+			//model.StateNote = staffingLevel.Note;
 
 			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
@@ -334,6 +345,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.Carriers = model.Carrier.ToSelectList().OrderBy(x => x.Text);
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
+			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
 
 			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name");
 			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, DepartmentId);
@@ -420,6 +432,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.EnableSms = model.Profile.SendSms;
+			var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(DepartmentId);
+
+			if (payment != null)
+				model.IsFreePlan = payment.IsFreePlan();
+
+			if (String.IsNullOrWhiteSpace(model.Profile.Language))
+				model.Profile.Language = "en";
 
 			return View(model);
 		}
@@ -447,6 +466,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.Carriers = model.Carrier.ToSelectList();
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
+			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
 
 			if (!String.IsNullOrEmpty(model.Profile.MobileNumber))
 			{
@@ -595,6 +615,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.HomeNumber = model.Profile.HomeNumber;
 				savedProfile.IdentificationNumber = model.Profile.IdentificationNumber;
 				savedProfile.TimeZone = model.Profile.TimeZone;
+				savedProfile.Language = model.Profile.Language;
 
 				if (model.CanEnableVoice)
 				{
@@ -688,6 +709,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					savedProfile.MailingAddressId = mailingAddress.AddressId;
 				}
 
+				if (model.IsFreePlan)
+				{
+					savedProfile.SendSms = false;
+					savedProfile.SendMessageSms = false;
+				}
+
 				savedProfile.LastUpdated = DateTime.UtcNow;
 				await _userProfileService.SaveProfileAsync(DepartmentId, savedProfile, cancellationToken);
 
@@ -734,6 +761,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				_departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);
 				_departmentsService.InvalidateDepartmentMembers();
 				_usersService.ClearCacheForDepartment(DepartmentId);
+
+				if (!String.IsNullOrWhiteSpace(savedProfile.Language))
+				{
+					Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(savedProfile.Language)), new CookieOptions { Expires = DateTime.UtcNow.AddYears(1) });
+					// This guy I think is causing issues with like DateTime rendering mm/dd/yy vs dd/mm/yy, so need to look into that more. -SJ
+					//Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo(savedProfile.Language);
+					Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo(savedProfile.Language);
+				}
 
 				return RedirectToAction("Index", "Personnel", new { area = "User" });
 			}
@@ -846,18 +881,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task Unsubscribe(string emailAddress)
 		{
-			try
-			{
-				var client = new RestClient("https://app.mailerlite.com");
-				var request = new RestRequest("/api/v1/subscribers/unsubscribe/", Method.Post);
-				request.AddObject(new
-				{
-					apiKey = "QDrnoEf6hBONlGye26aZFh5Iv1KEgdJM",
-					email = emailAddress
-				});
-				var response = await client.ExecuteAsync(request);
-			}
-			catch { }
+			//try
+			//{
+			//	var client = new RestClient("https://app.mailerlite.com");
+			//	var request = new RestRequest("/api/v1/subscribers/unsubscribe/", Method.Post);
+			//	request.AddObject(new
+			//	{
+			//		apiKey = "QDrnoEf6hBONlGye26aZFh5Iv1KEgdJM",
+			//		email = emailAddress
+			//	});
+			//	var response = await client.ExecuteAsync(request);
+			//}
+			//catch { }
 		}
 	}
 }

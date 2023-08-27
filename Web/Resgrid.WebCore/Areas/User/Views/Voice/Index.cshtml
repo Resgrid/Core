@@ -1,30 +1,90 @@
 ﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.WebCore.Areas.User.Models.Voice.VoiceIndexModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Voice.Voice> localizer
 @{
-    ViewBag.Title = "Resgrid | Push-To-Talk";
+    ViewBag.Title = "Resgrid |" + @localizer["VoiceHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Push-To-Talk</h2>
+        <h2>@localizer["VoiceHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
             </li>
             <li class="active">
-                <strong>Push-To-Talk</strong>
+                <strong>@localizer["VoiceHeader"]</strong>
             </li>
         </ol>
     </div>
-    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanUseVoice)
-    {
-        <div class="col-sm-8">
-            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a title="Create PTT Channel" class="btn btn-success" asp-controller="Voice" asp-action="New" asp-route-area="User">New Channel</a>
+
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <a title="Create Audio Stream" class="btn btn-info" asp-controller="Voice" asp-action="NewAudio" asp-route-area="User">@localizer["AddAudio"]</a>
+            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanUseVoice)
+            {
+                <a title="Create PTT Channel" class="btn btn-success" asp-controller="Voice" asp-action="New" asp-route-area="User">@localizer["AddVoice"]</a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox-title">
+                <h5>@localizer["AudioStreams"]</h5>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @commonLocalizer["Name"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Type"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Data"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Actions"]
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.Audios)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Name
+                                        </td>
+                                        <td>
+                                            Audio Stream
+                                        </td>
+                                        <td>
+                                            @c.Data
+                                        </td>
+                                        <td>
+                                            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                            {
+                                                <a href="@Url.Action("EditAudio", "Voice", new { area = "User", id = c.DepartmentAudioId })" class='btn btn-xs btn-info'>@commonLocalizer["Edit"]</a>
+                                                <a href="@Url.Action("DeleteAudio", "Voice", new { area = "User", id = c.DepartmentAudioId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this audio stream. Are you sure you want to delete the audio stream @c.Name ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    }
+    </div>
 </div>
 
 @if (!Model.CanUseVoice)
@@ -34,8 +94,8 @@
             &nbsp;
             <div class="alert alert-danger fade in">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                <h4>Push-To-Talk Addon Not Purchased</h4>
-                <p>Your department has not purchased the Push-To-Talk addon. Your departments Managing Member can purchase the addon from the Subscription and Billing page. Push-To-Talk allows your department to enable real-time voice communications though the Resgrid applications.</p>
+                <h4>@localizer["PTTNotPurchased"]</h4>
+                <p>@localizer["PTTNotPurchasedInfo"]</p>
             </div>
         </div>
     </div>
@@ -44,6 +104,9 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="wrapper wrapper-content">
+            <div class="ibox-title">
+                <h5>@localizer["VoiceChannels"]</h5>
+            </div>
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
                     <div class="table-responsive">
@@ -51,16 +114,16 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        Channel Name
+                                        @localizer["ChannelName"]
                                     </th>
                                     <th>
-                                        Is Default
+                                        @localizer["IsDefault"]
                                     </th>
                                     <th>
-                                        Participants
+                                        @localizer["Participants"]
                                     </th>
                                     <th>
-                                        Action
+                                        @commonLocalizer["Actions"]
                                     </th>
                                 </tr>
                             </thead>
@@ -74,11 +137,11 @@
                                         <td>
                                             @if (c.IsDefault)
                                             {
-                                                <span>Yes</span>
+                                                <span>@commonLocalizer["Yes"]</span>
                                             }
                                             else
                                             {
-                                                <span>No</span>
+                                                <span>@commonLocalizer["No"]</span>
                                             }
                                         </td>
                                         <td>
@@ -87,8 +150,8 @@
                                         <td>
                                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                             {
-                                                <a href="@Url.Action("Edit", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-info'>Edit</a>
-                                                <a href="@Url.Action("Delete", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this channel. Are you sure you want to delete the channel @c.Name ?" rel="nofollow">Delete</a>
+                                                <a href="@Url.Action("Edit", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-info'>@commonLocalizer["Edit"]</a>
+                                                <a href="@Url.Action("Delete", "Voice", new { area = "User", id = c.DepartmentVoiceChannelId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this channel. Are you sure you want to delete the channel @c.Name ?" rel="nofollow">@commonLocalizer["Delete"]</a>
                                             }
                                         </td>
                                     </tr>
@@ -111,6 +174,6 @@
 </div>
 
 @section Scripts
-{
+    {
 
 }

@@ -383,7 +383,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		public async Task<ActionResult<CallResult>> GetCall(int callId)
 		{
 			var c = await _callsService.GetCallByIdAsync(callId);
-			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, false);
+			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, false, true);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
@@ -476,7 +476,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (call.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
@@ -759,7 +759,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (!string.IsNullOrWhiteSpace(newCallInput.Geo))
 				call.GeoLocationData = newCallInput.Geo;
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address) && call.GeoLocationData.Length > 1)
+			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
 				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
 			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
@@ -964,7 +964,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 					ReferenceNumber = callInput.ReferenceNumber
 				};
 
-				if (!string.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1 && !string.IsNullOrWhiteSpace(call.Address))
+				if (!string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
 					call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
 				if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
@@ -1138,7 +1138,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 		{
 			var call = await _callsService.GetCallByIdAsync(editCallInput.Cid);
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (call == null)
@@ -1192,7 +1192,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (!string.IsNullOrWhiteSpace(editCallInput.Geo))
 				call.GeoLocationData = editCallInput.Geo;
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address) && call.GeoLocationData.Length > 1)
+			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
 				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
 			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
@@ -1402,7 +1402,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
 
 			if (call.CallNotes == null || !call.CallNotes.Any())
 				return NotFound();
@@ -1453,7 +1453,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				return Unauthorized();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false);
 
 			var baseUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 

@@ -684,9 +684,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			DeleteUnitActiveRolesByUnitIdQuery = @"DELETE FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID%";
 			SelectActiveRolesForUnitsByDidQuery = @"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID%";
 			SelectUnitsByDIdQuery = @"
-					SELECT u.*, dg.*
+					SELECT u.*, ur.*
 					FROM [dbo].[Units] u
-					LEFT JOIN [dbo].[DepartmentGroups] dg ON dg.[DepartmentGroupId] = u.[StationGroupId]
+					LEFT JOIN [dbo].[UnitRoles] ur ON ur.[UnitId] = u.[UnitId]
 					WHERE u.[DepartmentId] = %DID%";
 
 			#endregion Units
@@ -1304,6 +1304,20 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%WORKSHIFTFILLSTABLE%
 					WHERE [WorkshiftId] = %ID%";
 			#endregion Workshifts
+
+			#region CallReferences
+			CallReferencesTable = "CallReferences";
+			SelectAllCallReferencesBySourceCallIdQuery = @"
+					SELECT cr.*, c.*
+					FROM %SCHEMA%.%CALLREFERENCESTABLE% cr
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON cr.TargetCallId = c.CallId
+					WHERE cr.[SourceCallId] = %CALLID%";
+			SelectAllCallReferencesByTargetCallIdQuery = @"
+					SELECT cr.*, c.*
+					FROM %SCHEMA%.%CALLREFERENCESTABLE% cr
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON cr.SourceCallId = c.CallId
+					WHERE cr.[TargetCallId] = %CALLID%";
+			#endregion CallReferences
 		}
-}
+	}
 }

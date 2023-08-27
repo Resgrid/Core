@@ -502,5 +502,15 @@ namespace Resgrid.Services
 		{
 			return null;
 		}
+
+		public bool CanPlanSendMessageSms(int planId)
+		{
+			return true;
+		}
+
+		public bool CanPlanSendCallSms(int planId)
+		{
+			return true;
+		}
 	}
 }

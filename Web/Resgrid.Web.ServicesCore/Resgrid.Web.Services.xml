@@ -3910,6 +3910,18 @@
             </summary>
             <returns>Voice connection result containing the data needed to connect to a voip session</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.CanConnectToVoiceSession(System.String)">
+            <summary>
+            Determines if a user can connect to an voice session, limited to only LiveKit.
+            </summary>
+            <returns>Voice connection result containing the data needed to determine if a user can connect to a voice session</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.GetDepartmentAudioStreams">
+            <summary>
+            Returns all the department audio streams
+            </summary>
+            <returns>Array of RecipientResult objects for each responding option in the department</returns>
+        </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
             Gets or sets the on authentication failed.
@@ -5292,6 +5304,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.UnitLocationMinMeters">
             <summary>
             How many meters between subsuquent gps locations to allow the position update to go through for units
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.OpenWeatherApiKey">
+            <summary>
+            API Key for the OpenWeatherAPI
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CustomStatuses.CustomStatusesResult">
@@ -8231,6 +8248,36 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Voice.CanConnectToVoiceSessionResult">
+            <summary>
+            Result of checking if the user can connect to a voice session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.CanConnectToVoiceSessionResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Voice.CanConnectToVoiceSessionResultData">
+            <summary>
+            Data needed to verify the user can connect to a voice session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.CanConnectToVoiceSessionResultData.CanConnect">
+            <summary>
+            Can the User Connect to the voice session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.CanConnectToVoiceSessionResultData.CurrentSessions">
+            <summary>
+            Current active voice session count
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.CanConnectToVoiceSessionResultData.MaxSessions">
+            <summary>
+            Max session count
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Voice.ConnectToSessionInput">
             <summary>
             Connects to a voip session
@@ -8244,6 +8291,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Voice.ConnectToSessionInput.Name">
             <summary>
             Name of the person or unit connecting
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Voice.DepartmentAudioResult.Data">
+            <summary>
+            Response Data
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Voice.DepartmentVoiceResult.Data">

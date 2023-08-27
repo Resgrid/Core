@@ -1,6 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Logs.NewLogView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Logs.Logs> localizer
 @{
-	ViewBag.Title = "Resgrid | New Log";
+	ViewBag.Title = "Resgrid | " + @localizer["NewLogHeader"];
 }
 
 @section Styles
@@ -14,16 +15,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>New Log</h2>
+		<h2>@localizer["NewLogHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Logs" asp-action="Index" asp-route-area="User">Logs</a>
+				<a asp-controller="Logs" asp-action="Index" asp-route-area="User">@commonLocalizer["LogsModule"]</a>
 			</li>
 			<li class="active">
-				<strong>New Log</strong>
+				<strong>@localizer["NewLogHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -35,7 +36,7 @@
 			<div class="wrapper wrapper-content">
 				<div class="ibox float-e-margins">
 					<div class="ibox-title">
-						<h5>New Log</h5>
+						<h5>@localizer["NewLogHeader"]</h5>
 					</div>
 					<div class="ibox-content">
 						<div class="row">
@@ -58,8 +59,7 @@
 										@Model.ErrorMessage
 									</span>
 								}
-
-								Below you can add a new log to the system (i.e. run report, station work, training, event, etc). Logs an be used to detail information about call runs, meetings and trainings. Fields in blue italics are required.
+								@localizer["NewLogInfo"]
 								<div asp-validation-summary="All" class="text-danger"></div>
 							</div>
 						</div>
@@ -76,12 +76,12 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>General</h5>
+					<h5>@commonLocalizer["General"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Type
+							@commonLocalizer["Type"]
 						</label>
 						<div class="col-sm-10">
 							@Html.DropDownListFor(m => m.LogType, Model.Types, new { @class = "sl2", style="width:150px;" })
@@ -89,7 +89,7 @@
 					</div>
 					<div class="form-group call-related">
 						<label class="col-sm-2 control-label">
-							Id
+							@commonLocalizer["Id"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-2" style="padding-left: 0;">
@@ -99,7 +99,7 @@
 					</div>
 					<div class="form-group coroner-related">
 						<label class="col-sm-2 control-label">
-							Case #
+							@localizer["CaseNumber"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-2" style="padding-left: 0;">
@@ -109,7 +109,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Station
+							@commonLocalizer["Station"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-2" style="padding-left: 0;padding-bottom: 6px;">
@@ -131,25 +131,25 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Call</h5>
+					<h5>@commonLocalizer["Call"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Call
+							@commonLocalizer["Call"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
 								<div class="btn-group">
-									<a id="newCallOption" onclick=" resgrid.logs.newlog.newCall(); " class="btn btn-default active">New Call</a>
-									<a id="selectCallOption" onclick=" resgrid.logs.newlog.selectCall(); " class="btn btn-default">Select Call</a>
+									<a id="newCallOption" onclick=" resgrid.logs.newlog.newCall(); " class="btn btn-default active">@localizer["NewCall"]</a>
+									<a id="selectCallOption" onclick=" resgrid.logs.newlog.selectCall(); " class="btn btn-default">@localizer["SelectCall"]</a>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Call Name
+							@localizer["CallName"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -159,7 +159,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Call Priority
+							@localizer["CallPriority"]
 						</label>
 						<div class="col-sm-10">
 							@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { })
@@ -167,7 +167,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Type
+							@commonLocalizer["Type"]
 						</label>
 						<div class="col-sm-10">
 							@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 360px;" })
@@ -175,7 +175,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Call Timestamp
+							@localizer["CallTimestamp"]
 						</label>
 						<div class="col-sm-10">
 							@Html.TextBoxFor(m => m.Call.LoggedOn, new { @class = "form-control call-validation", onkeydown = "javascript:return false;", style="width:250px;" })
@@ -183,7 +183,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Nature of Call
+							@localizer["NatureOfCall"]
 						</label>
 						<div class="col-sm-10">
 							@Html.TextAreaFor(m => m.Call.NatureOfCall, new { id = "NatureOfCall", @class = "call-validation", rows = "10", cols = "30", style = "width:450px;height:200px" })
@@ -191,7 +191,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Call Address
+							@localizer["CallAddress"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -211,12 +211,12 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Training</h5>
+					<h5>@localizer["Training"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Course\Training
+							@localizer["TrainingOrCourse"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -226,7 +226,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Course\Training Code
+							@localizer["TrainingCode"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -236,7 +236,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Instructors
+							@localizer["Instructors"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -246,18 +246,18 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Start
+							@localizer["Start"]
 						</label>
 						<div class="col-sm-10">
-							@Html.TextBoxFor(m => m.Log.StartedOn, new { @class = "form-control training-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Training start time is required." })
+							@Html.TextBoxFor(m => m.Log.StartedOn, new { @class = "form-control training-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = @localizer["TrainingStartError"] })
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							End
+							@localizer["End"]
 						</label>
 						<div class="col-sm-10">
-							@Html.TextBoxFor(m => m.Log.EndedOn, new { @class = "form-control training-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Training end time is required." })
+							@Html.TextBoxFor(m => m.Log.EndedOn, new { @class = "form-control training-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = @localizer["TrainingEndError"] })
 						</div>
 					</div>
 				</div>
@@ -272,23 +272,23 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Work Log</h5>
+					<h5>@localizer["WorkLog"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Start
+							@localizer["Start"]
 						</label>
 						<div class="col-sm-10">
-							@Html.TextBoxFor(m => m.Log.StartedOn, new { id = "workStartTime", @class = "form-control work-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Work start time is required." })
+							@Html.TextBoxFor(m => m.Log.StartedOn, new { id = "workStartTime", @class = "form-control work-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = @localizer["WorkLogStartRequired"] })
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							End
+							@localizer["End"]
 						</label>
 						<div class="col-sm-10">
-							@Html.TextBoxFor(m => m.Log.EndedOn, new { id = "workEndTime", @class = "form-control work-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Work end time is required." })
+							@Html.TextBoxFor(m => m.Log.EndedOn, new { id = "workEndTime", @class = "form-control work-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = @localizer["WorkLogEndRequired"] })
 						</div>
 					</div>
 				</div>
@@ -303,32 +303,32 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Meeting</h5>
+					<h5>@localizer["Meeting"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Meeting Type
+							@localizer["MeetingType"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
-								@Html.TextBoxFor(m => m.Log.Type, new { @class = "form-control meeting-validation", data_val = "true", data_val_required = "Meeting type is required." })
+								@Html.TextBoxFor(m => m.Log.Type, new { @class = "form-control meeting-validation", data_val = "true", data_val_required = @localizer["MeetingTypeReq"] })
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Location
+							@localizer["Location"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
-								@Html.TextBoxFor(m => m.Log.Location, new { @class = "form-control meeting-validation", data_val = "true", data_val_required = "Meeting location is required." })
+								@Html.TextBoxFor(m => m.Log.Location, new { @class = "form-control meeting-validation", data_val = "true", data_val_required = @localizer["MeetingLocationReq"] })
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Presiding Person(s)
+							@localizer["PresidingPeople"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -338,7 +338,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Other Attendees
+							@localizer["OtherAttendees"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -348,18 +348,18 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Start
+							@localizer["Start"]
 						</label>
 						<div class="col-sm-10">
-							@Html.TextBoxFor(m => m.Log.StartedOn, new { id = "meetingStartedOn", @class = "form-control meeting-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Meeting start time is required." })
+							@Html.TextBoxFor(m => m.Log.StartedOn, new { id = "meetingStartedOn", @class = "form-control meeting-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = @localizer["MeetingStartReq"] })
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							End
+							@localizer["End"]
 						</label>
 						<div class="col-sm-10">
-							@Html.TextBoxFor(m => m.Log.EndedOn, new { id = "meetingEndedOn", @class = "form-control meeting-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = "Meeting end time is required." })
+							@Html.TextBoxFor(m => m.Log.EndedOn, new { id = "meetingEndedOn", @class = "form-control meeting-validation", onkeydown = "javascript:return false;", data_val = "true", data_val_required = @localizer["MeetingEndReq"] })
 						</div>
 					</div>
 				</div>
@@ -374,40 +374,40 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Coroner</h5>
+					<h5>@localizer["Coroner"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Date
+							@localizer["Date"]
 						</label>
 						<div class="col-sm-10">
-							<input type="text" id="coronerDate" name="coronerDate" class="form-control coroner-validation" onkeydown="javascript:return false;" data-val="true" data-val-required="Date is required." />
+							<input type="text" id="coronerDate" name="coronerDate" class="form-control coroner-validation" onkeydown="javascript:return false;" data-val="true" data-val-required="@localizer["PronouncedDeceasedDateReq"]" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Pronounced Deceased By
+							@localizer["PronouncedDeceasedBy"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
-								@Html.TextBoxFor(m => m.Log.PronouncedDeceasedBy, new { @class = "form-control coroner-validation", data_val = "true", data_val_required = "Pronounced Deceased By is required." })
+								@Html.TextBoxFor(m => m.Log.PronouncedDeceasedBy, new { @class = "form-control coroner-validation", data_val = "true", data_val_required = @localizer["PronouncedDeceasedByReq"] })
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Body Location
+							@localizer["BodyLocation"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
-								@Html.TextBoxFor(m => m.Log.BodyLocation, new { @class = "form-control coroner-validation", data_val = "true", data_val_required = "Body Location is required." })
+								@Html.TextBoxFor(m => m.Log.BodyLocation, new { @class = "form-control coroner-validation", data_val = "true", data_val_required = @localizer["BodyLocationReq"] })
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Senior (OIC)
+							@localizer["SeniorOIC"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -417,7 +417,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Destination Location
+							@localizer["DestinationLocation"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -427,7 +427,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Others Having Contact with Body
+							@localizer["OthersHavingContact"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -447,24 +447,24 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Call</h5>
+					<h5>@commonLocalizer["Call"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Call
+							@commonLocalizer["Call"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
 								<div class="btn-group">
-									<a id="selectCallOption" onclick=" resgrid.logs.newlog.selectCall(); " class="btn btn-default">Select Call</a>
+									<a id="selectCallOption" onclick=" resgrid.logs.newlog.selectCall(); " class="btn btn-default">@localizer["SelectCall"]</a>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Call Name
+							@localizer["CallName"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -484,15 +484,15 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Units and Personnel</h5>
+					<h5>@localizer["UnitsAndPersonnel"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div id="unitsList" class="form-group">
 						<label class="col-sm-2 control-label">
-							Units
+							@localizer["Units"]
 						</label>
 						<div class="col-sm-10">
-							<a id="selectUnit" onclick="resgrid.logs.newlog.showUnits();" class="btn btn-info">Add Unit to Log</a>
+							<a id="selectUnit" onclick="resgrid.logs.newlog.showUnits();" class="btn btn-info">@localizer["AddUnitsToLog"]</a>
 							<div id="unitsContainer" class="col-xs-12">
 
 							</div>
@@ -500,7 +500,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Personnel
+							@localizer["Personnel"]
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
@@ -521,12 +521,12 @@
 					<span class="icon">
 						<i class="icon-reorder"></i>
 					</span>
-					<h5>Log Information</h5>
+					<h5>@localizer["LogInfo"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="form-group call-related">
 						<label class="col-sm-2 control-label">
-							Condition
+							@localizer["Condition"]
 						</label>
 						<div class="col-sm-10">
 							@Html.TextAreaFor(m => m.Log.InitialReport, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
@@ -534,7 +534,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label required">
-							Narrative
+							@localizer["Narrative"]
 						</label>
 						<div class="col-sm-10">
 							@Html.TextAreaFor(m => m.Log.Narrative, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
@@ -542,7 +542,7 @@
 					</div>
 					<div class="form-group call-related">
 						<label class="col-sm-2 control-label">
-							Cause
+							@localizer["Cause"]
 						</label>
 						<div class="col-sm-10">
 							@Html.TextAreaFor(m => m.Log.Cause, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
@@ -550,7 +550,7 @@
 					</div>
 					<div class="form-group call-related">
 						<label class="col-sm-2 control-label">
-							Investigator
+							@localizer["Investigator"]
 						</label>
 						<div class="col-sm-10">
 							@Html.DropDownListFor(m => m.Log.InvestigatedByUserId, new SelectList(Model.Users, "Key", "Value"), new { @class = "sl2" })
@@ -558,7 +558,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label">
-							Attachments
+							@localizer["Attachments"]
 						</label>
 						<div class="col-sm-10">
 							<input name="files" id="files" type="file" multiple="multiple" />
@@ -567,8 +567,8 @@
 
 					<div class="form-group">
 						<div class="col-sm-4 col-sm-offset-2">
-							<a class="btn btn-white" asp-controller="Logs" asp-action="Index" asp-route-area="User">Cancel</a>
-							<button class="btn btn-primary" type="submit">Add Log</button>
+							<a class="btn btn-white" asp-controller="Logs" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+							<button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
 						</div>
 					</div>
 

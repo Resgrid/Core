@@ -62,5 +62,9 @@ namespace Resgrid.Framework
 
 			return (degrees + minutes + seconds) * multiplier;
 		}
+
+		public static bool IsValidLatitude(string latitude) => double.TryParse(latitude, out var l) && -90 <= l && l <= 90;
+
+		public static bool IsValidLongitude(string longitude) => double.TryParse(longitude, out var l) && -180 <= l && l <= 180;
 	}
 }

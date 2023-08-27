@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllDay" xml:space="preserve">
+    <value>Todo el dia</value>
+  </data>
+  <data name="CalendarHeader" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="CalendarItemHeader" xml:space="preserve">
+    <value>Detalle del evento</value>
+  </data>
+  <data name="CalendarTypesDeleteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este tipo. ¿Estás seguro de que quieres eliminar el tipo?</value>
+  </data>
+  <data name="CalendarTypesHeader" xml:space="preserve">
+    <value>Tipos de calendario</value>
+  </data>
+  <data name="DaysOfTheWeek" xml:space="preserve">
+    <value>Días de la semana</value>
+  </data>
+  <data name="DeleteEvent" xml:space="preserve">
+    <value>Evento de eliminación</value>
+  </data>
+  <data name="DeleteEventOccurrences" xml:space="preserve">
+    <value>Eliminar evento y ocurrencias</value>
+  </data>
+  <data name="EditCalendarTypeHeader" xml:space="preserve">
+    <value>Editar el tipo de calendario</value>
+  </data>
+  <data name="EditEntryeHeader" xml:space="preserve">
+    <value>Editar entrada de calendario</value>
+  </data>
+  <data name="EditEntryWarning" xml:space="preserve">
+    <value>Este es el artículo principal de recurrencia. Si verifica la casilla de verificación "Aplicar a todos" que actualizará todos los elementos de recurrencia con los datos de este elemento. Si elimina este artículo, todos los artículos de recurrencia infantil también se eliminarán.</value>
+  </data>
+  <data name="EditEvent" xml:space="preserve">
+    <value>Evento de edición</value>
+  </data>
+  <data name="EndOnHelp" xml:space="preserve">
+    <value>Deja en blanco (vacío) para nunca caducar o terminar</value>
+  </data>
+  <data name="EndOnLabel" xml:space="preserve">
+    <value>Finalizará el</value>
+  </data>
+  <data name="EntitiesToNotify" xml:space="preserve">
+    <value>Entidades para notificar</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>primera</value>
+  </data>
+  <data name="Forth" xml:space="preserve">
+    <value>adelante</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Última</value>
+  </data>
+  <data name="ManageTypes" xml:space="preserve">
+    <value>Gestionar tipos</value>
+  </data>
+  <data name="ManageTypesHelp" xml:space="preserve">
+    <value>Administrar tipos de calendario</value>
+  </data>
+  <data name="NewCalendarEntryHeader" xml:space="preserve">
+    <value>Nueva entrada de calendario</value>
+  </data>
+  <data name="NewCalendarTypeHeader" xml:space="preserve">
+    <value>Nuevo tipo de calendario</value>
+  </data>
+  <data name="NewEntry" xml:space="preserve">
+    <value>Nueva entrada</value>
+  </data>
+  <data name="NewEntryHelp" xml:space="preserve">
+    <value>Agregue una nueva entrada de calendario</value>
+  </data>
+  <data name="NoCustomTypes" xml:space="preserve">
+    <value>Sin tipos personalizados</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+  <data name="NoNote" xml:space="preserve">
+    <value>Sin nota</value>
+  </data>
+  <data name="NoUpcomingItems" xml:space="preserve">
+    <value>No hay elementos próximos</value>
+  </data>
+  <data name="RecurrenceChildWarning" xml:space="preserve">
+    <value>Este es el elemento de recurrencia del niño. No puede alterar la configuración de recurrencia para este elemento. Si necesita cambiar un patrón de recurrencia para esta entrada, deberá eliminarlo y volver a agregarlo desde la entrada principal.</value>
+  </data>
+  <data name="RecurrenceParentWarning" xml:space="preserve">
+    <value>Este es el artículo principal de recurrencia. No puede alterar la configuración de recurrencia para este elemento. Si necesita cambiar un patrón de recurrencia que primero debe eliminar, cree una nueva entrada de recurrencia. Puede cambiar cualquiera de los otros detalles en la entrada.</value>
+  </data>
+  <data name="Reminder" xml:space="preserve">
+    <value>Recordatorio</value>
+  </data>
+  <data name="RemoveHelp" xml:space="preserve">
+    <value>Eliminar de este evento</value>
+  </data>
+  <data name="RemoveMe" xml:space="preserve">
+    <value>Quitame</value>
+  </data>
+  <data name="RepeatOn" xml:space="preserve">
+    <value>Repetir</value>
+  </data>
+  <data name="RSVP" xml:space="preserve">
+    <value>RSVP</value>
+  </data>
+  <data name="Second" xml:space="preserve">
+    <value>segunda</value>
+  </data>
+  <data name="Signup" xml:space="preserve">
+    <value>Registrarse (RSVP)</value>
+  </data>
+  <data name="Third" xml:space="preserve">
+    <value>tercera</value>
+  </data>
+  <data name="TitleCalendarPlaceholder" xml:space="preserve">
+    <value>Título de la entrada del calendario</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>Título de la entrada del calendario</value>
+  </data>
+  <data name="TypeColor" xml:space="preserve">
+    <value>Tipo de color</value>
+  </data>
+  <data name="TypeName" xml:space="preserve">
+    <value>Escribe un nombre</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Próxima</value>
+  </data>
+</root>

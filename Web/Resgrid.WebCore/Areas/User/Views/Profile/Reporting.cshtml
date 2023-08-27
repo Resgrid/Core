@@ -1,60 +1,61 @@
 ﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Profile.ReportingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-  ViewBag.Title = "Resgrid | Report Delivery Schedules";
+    ViewBag.Title = "Resgrid | " + @localizer["ReportDeliverySchedulesHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>Report Delivery Schedules</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
-      </li>
-      <li class="active">
-        <strong>Report Delivery Schedules</strong>
-      </li>
-    </ol>
-  </div>
+    <div class="col-sm-4">
+        <h2>@localizer["ReportDeliverySchedulesHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["EditProfile"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ReportDeliverySchedulesHeader"]</strong>
+            </li>
+        </ol>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Schedules</h5>
-          <div class="ibox-tools">
-            <div class="buttons-actions">
-              <a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewScheduledReport" asp-route-area="User">Add Scheduled Report</a>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["Schedules"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewScheduledReport" asp-route-area="User">@localizer["AddScheduledReport"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div id="reportingScheduleGrid"></div>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="ibox-content">
-          <div id="reportingScheduleGrid"></div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 @section Scripts
-{
-  <script id="reportingSchedules-template" type="text/x-kendo-template">
-    # if(IsActive == 1) { #
-    <a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditScheduledReport", "Profile", new { Area = "User" })?scheduleId=#=ScheduleId#">Edit</a>
-    <a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.reporting.deactivateSchedule(#=ScheduleId#);">Deactivate</a>
-    <a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.reporting.deleteSchedule(#=ScheduleId#);">Delete</a>
-    # } else { #
-    <a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditScheduledReport", "Profile", new { Area = "User" })?scheduleId=#=ScheduleId#">Edit</a>
-    <a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.reporting.activateSchedule(#=ScheduleId#);">Activate</a>
-    <a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.reporting.deleteSchedule(#=ScheduleId#);">Delete</a>
-    # } #
-  </script>
+    {
+    <script id="reportingSchedules-template" type="text/x-kendo-template">
+        # if(IsActive == 1) { #
+        <a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditScheduledReport", "Profile", new { Area = "User" })?scheduleId=#=ScheduleId#">@commonLocalizer["Edit"]</a>
+        <a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.reporting.deactivateSchedule(#=ScheduleId#);">@commonLocalizer["Deactivate"]</a>
+        <a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.reporting.deleteSchedule(#=ScheduleId#);">@commonLocalizer["Delete"]</a>
+        # } else { #
+        <a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditScheduledReport", "Profile", new { Area = "User" })?scheduleId=#=ScheduleId#">@commonLocalizer["Edit"]</a>
+        <a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.reporting.activateSchedule(#=ScheduleId#);">@commonLocalizer["Activate"]</a>
+        <a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.reporting.deleteSchedule(#=ScheduleId#);">@commonLocalizer["Delete"]</a>
+        # } #
+    </script>
 
-  <script src="~/js/app/internal/profile/resgrid.profile.reporting.js" type="text/javascript"></script>
+    <script src="~/js/app/internal/profile/resgrid.profile.reporting.js" type="text/javascript"></script>
 }

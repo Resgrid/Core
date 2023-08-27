@@ -56,6 +56,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 								auditLog.Data = $"New UserId: {newProfile.UserId}";
 							}
+
 							break;
 						case AuditLogTypes.UserRemoved:
 
@@ -78,6 +79,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 								auditLog.Data = $"GroupId: {groupAddedGroup.DepartmentGroupId}";
 							}
+
 							break;
 						case AuditLogTypes.GroupRemoved:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
@@ -86,6 +88,7 @@ namespace Resgrid.Workers.Framework.Logic
 								auditLog.Message = string.Format("{0} removed group {1}", profile.FullName.AsFirstNameLastName, groupRemovedGroup.Name);
 								auditLog.Data = "No Data";
 							}
+
 							break;
 						case AuditLogTypes.GroupChanged:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
@@ -99,6 +102,7 @@ namespace Resgrid.Workers.Framework.Logic
 								ComparisonResult resultGroup = compareLogicGroup.Compare(groupUpdatedBeforeGroup, groupUpdatedAfterGroup);
 								auditLog.Data = resultGroup.DifferencesString;
 							}
+
 							break;
 						case AuditLogTypes.UnitAdded:
 							if (!String.IsNullOrWhiteSpace(auditEvent.After))
@@ -107,6 +111,7 @@ namespace Resgrid.Workers.Framework.Logic
 								auditLog.Message = string.Format("{0} added unit {1}", profile.FullName.AsFirstNameLastName, unitedAddedUnit.Name);
 								auditLog.Data = $"UnitId: {unitedAddedUnit.UnitId}";
 							}
+
 							break;
 						case AuditLogTypes.UnitRemoved:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
@@ -115,6 +120,7 @@ namespace Resgrid.Workers.Framework.Logic
 								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed unit {unitedRemovedUnit.Name}";
 								auditLog.Data = "No Data";
 							}
+
 							break;
 						case AuditLogTypes.UnitChanged:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
@@ -128,6 +134,7 @@ namespace Resgrid.Workers.Framework.Logic
 								ComparisonResult resultUnit = compareLogicUnit.Compare(unitUpdatedBeforeUnit, unitUpdatedAfterUnit);
 								auditLog.Data = resultUnit.DifferencesString;
 							}
+
 							break;
 						case AuditLogTypes.ProfileUpdated:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
@@ -141,6 +148,7 @@ namespace Resgrid.Workers.Framework.Logic
 								ComparisonResult resultProfile = compareLogicProfile.Compare(profileUpdatedBeforeProfile, profileUpdatedAfterProfile);
 								auditLog.Data = resultProfile.DifferencesString;
 							}
+
 							break;
 						case AuditLogTypes.PermissionsChanged:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
@@ -154,9 +162,11 @@ namespace Resgrid.Workers.Framework.Logic
 								ComparisonResult resultProfile = compareLogicProfile.Compare(updatePermissionBefore, updatePermissionAfter);
 								auditLog.Data = resultProfile.DifferencesString;
 							}
+
 							break;
 						case AuditLogTypes.SubscriptionUpdated:
-							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} changed (upgrade or downgrade) the active subscription of department id {auditEvent.DepartmentId}";
+							auditLog.Message =
+								$"{profile.FullName.AsFirstNameLastName} changed (upgrade or downgrade) the active subscription of department id {auditEvent.DepartmentId}";
 							auditLog.Data = "No Data";
 							break;
 						case AuditLogTypes.SubscriptionBillingInfoUpdated:
@@ -169,6 +179,21 @@ namespace Resgrid.Workers.Framework.Logic
 							break;
 						case AuditLogTypes.SubscriptionCreated:
 							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created a new active subscription for department id {auditEvent.DepartmentId}";
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.UserAccountDeleted:
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} has deleted their own account";
+
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.DeleteDepartmentRequested:
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} has requested that the Resgrid department be deleted";
+
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.DeleteDepartmentRequestedCancelled:
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} cancelled the pending department deletion request";
+
 							auditLog.Data = "No Data";
 							break;
 					}

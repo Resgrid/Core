@@ -4,8 +4,9 @@
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Calls.ViewCallView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
-	ViewBag.Title = "Resgrid | Call Data";
+	ViewBag.Title = "Resgrid | " + @commonLocalizer["Documents"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
@@ -15,16 +16,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>@Model.Call.Name Data</h2>
+		<h2>@Model.Call.Name @commonLocalizer["Documents"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
 			</li>
 			<li class="active">
-				<strong>@Model.Call.Name Data</strong>
+				<strong>@Model.Call.Name @commonLocalizer["Documents"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -35,7 +36,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
-					<h5>Call Documents</h5>
+					<h5>@localizer["CallDocumentsHeader"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="table-responsive">
@@ -43,19 +44,19 @@
 							<thead>
 								<tr>
 									<th>
-										Name
+										@commonLocalizer["Name"]
 									</th>
 									<th>
-										Uploaded By
+										@commonLocalizer["UploadedBy"]
 									</th>
 									<th>
-										Uploaded On
+										@commonLocalizer["UploadedOn"]
 									</th>
 									<th>
-										Type
+										@commonLocalizer["Type"]
 									</th>
 									<th>
-										Size
+										@commonLocalizer["Size"]
 									</th>
 									<th>
 
@@ -74,7 +75,7 @@
 											}
 											else
 											{
-												<td>Unknown</td>
+												<td>@commonLocalizer["Unknown"]</td>
 											}
 											@if (!String.IsNullOrWhiteSpace(a.UserId))
 											{
@@ -91,7 +92,7 @@
 											}
 											else
 											{
-												<td>Unknown</td>
+												<td>@commonLocalizer["Unknown"]</td>
 											}
 
 											<td>File</td>
@@ -100,14 +101,14 @@
 											{
 												<td>@a.Size.Value</td>
 											}
-											<td><a class="button btn-success btn-xs" href="@Url.Action("GetCallFile", "Dispatch", new {callAttachmentId = a.CallAttachmentId})">Download</a></td>
+											<td><a class="button btn-success btn-xs" href="@Url.Action("GetCallFile", "Dispatch", new {callAttachmentId = a.CallAttachmentId})">@commonLocalizer["Download"]</a></td>
 										</tr>
 									}
 								}
 								else
 								{
 									<tr>
-										<td colspan="6">No files attached to this Call</td>
+										<td colspan="6">@localizer["NoFiles"]</td>
 									</tr>
 								}
 							</tbody>
@@ -117,10 +118,10 @@
 							{
 								<input id="CallId" name="CallId" type="hidden" value="@Model.Call.CallId">
 
-								<input placeholder="Enter attachment name" type="text" class="form-control input-small" id="FriendlyName" name="FriendlyName" required />
+								<input placeholder="@localizer["AddFilePlaceholder"]" type="text" class="form-control input-small" id="FriendlyName" name="FriendlyName" required />
 								<input name="fileToUpload" id="fileToUpload" type="file" />
 
-								<button class="btn btn-success btn-small" type="submit">Add File</button>
+								<button class="btn btn-success btn-small" type="submit">@localizer["AddFile"]</button>
 							}
 						</div>
 					</div>
@@ -135,7 +136,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
-					<h5>Call Notes</h5>
+					<h5>@localizer["CallNotesHeader"]</h5>
 				</div>
 				<div class="ibox-content">
 					<div class="chat-content">
@@ -145,9 +146,9 @@
 						</div>
 						<div class="chat-message well">
 							<span class="input-box input-group">
-								<input placeholder="Enter note here..." type="text" class="form-control input-small" name="note-box" id="note-box" />
+								<input placeholder="@localizer["AddNotePlaceholder"]" type="text" class="form-control input-small" name="note-box" id="note-box" />
 								<span class="input-group-btn">
-									<button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.callData.addCallNote()">Add Note</button>
+									<button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.callData.addCallNote()">@localizer["AddNote"]</button>
 								</span>
 							</span>
 						</div>

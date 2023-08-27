@@ -165,6 +165,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 				newChatEvent.RecipientUserIds = notifyChatInput.RecipientUserIds;
 				newChatEvent.SendingUserId = notifyChatInput.SendingUserId;
 				newChatEvent.Type = notifyChatInput.Type;
+				newChatEvent.DepartmentId = DepartmentId;
 
 				CqrsEvent registerUnitPushEvent = new CqrsEvent();
 				registerUnitPushEvent.Type = (int)CqrsEventTypes.NewChatMessage;

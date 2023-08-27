@@ -18,6 +18,11 @@
 		public static string LoqateApiKey = "";
 
 		/***********************************
+		 * OpenWeatherApi Keys
+		 ***********************************/
+		public static string BigBoardOpenWeatherApiKey = "";
+
+		/***********************************
 		 * Leaflet OSM Keys (used for Mapping and Map display)
 		 ***********************************/
 

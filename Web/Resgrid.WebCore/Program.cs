@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -10,6 +11,7 @@ namespace Resgrid.Web
 	{
 		public static void Main(string[] args)
 		{
+			ThreadPool.SetMinThreads(200, 200);
 			CreateHostBuilder(args).Build().Run();
 		}
 

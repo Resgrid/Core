@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Providers
 {
@@ -38,5 +39,9 @@ namespace Resgrid.Model.Providers
 		Task<bool> SendChargeFailed(string name, string email, string endDate, string departmentName, string planName);
 		Task<bool> SendNewDepartmentLinkMail(string name, string departmentName, string data, string email, int departmentId);
 		Task<bool> SendTroubleAlertMail(string email, string unitName, string gpsLocation, string personnel, string callAddress, string unitAddress, string dispatchedOn, string callName);
+
+
+		// Internal Template Only Emails
+		Task<bool> SendDeleteDepartmentEmail(string requesterName, string departmentName, DateTime localCompletedOn, string sendingToPersonName, string email);
 	}
 }

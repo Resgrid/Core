@@ -10,6 +10,7 @@ using Resgrid.Model.Services;
 using MongoDB.Bson;
 using System.Collections.ObjectModel;
 using Resgrid.Model.Events;
+using Resgrid.Framework;
 
 namespace Resgrid.Services
 {
@@ -222,13 +223,13 @@ namespace Resgrid.Services
 
 		public async Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation)
 		{
-			if (personnelLocation.Id.Timestamp == 0)
-				await _personnelLocationRepository.InsertOneAsync(personnelLocation);
-			else
-				await _personnelLocationRepository.ReplaceOneAsync(personnelLocation);
-
 			try
 			{
+				if (personnelLocation.Id.Timestamp == 0)
+					await _personnelLocationRepository.InsertOneAsync(personnelLocation);
+				else
+					await _personnelLocationRepository.ReplaceOneAsync(personnelLocation);
+
 				_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
 					DepartmentId = personnelLocation.DepartmentId,
 					UserId = personnelLocation.UserId,
@@ -286,22 +287,46 @@ namespace Resgrid.Services
 			var result = await _personnelLocationRepository.Aggregate<BsonDocument>(pipeline);
 			*/
 
-			var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
-				.GroupBy(x => x.UserId).FirstOrDefault();
+			try
+			{
+				var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+					.GroupBy(x => x.UserId).FirstOrDefault();
 
-			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
-			if (locations != null)
-				return locations.ToList();
+				if (locations != null)
+					return locations.ToList();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 
 			return new List<PersonnelLocation>();
 		}
 
 		public async Task<PersonnelLocation> GetPersonnelLocationByIdAsync(string id)
 		{
-			var layers = await _personnelLocationRepository.FindByIdAsync(id);
+			try
+			{
+				var layers = await _personnelLocationRepository.FindByIdAsync(id);
 
-			return layers;
+				return layers;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return null;
+		}
+
+		public async Task<bool> ClearOutUserLoginAsync(string userId)
+		{
+			await _identityRepository.ClearOutUserLoginAsync(userId);
+			await _identityRepository.CleanUpOIDCTokensByUserAsync(userId);
+
+			return true;
 		}
 	}
 }

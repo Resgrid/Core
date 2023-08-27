@@ -45,8 +45,9 @@ namespace Resgrid.Model.Services
 		/// Processes the stripe subscription refund asynchronous.
 		/// </summary>
 		/// <param name="stripeCharge">The stripe charge.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;Payment&gt;.</returns>
-		Task<Payment> ProcessStripeSubscriptionRefundAsync(Charge stripeCharge);
+		Task<Payment> ProcessStripeSubscriptionRefundAsync(Charge stripeCharge, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Processes the stripe charge failed asynchronous.
@@ -64,9 +65,10 @@ namespace Resgrid.Model.Services
 		/// <param name="planId">The plan identifier.</param>
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="departmentName">Name of the department.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Session.</returns>
-		Task<Session> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId,
-			string emailAddress, string departmentName);
+		Task<Session> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string emailAddress, string departmentName,
+			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Creates the stripe session for update.
@@ -75,9 +77,10 @@ namespace Resgrid.Model.Services
 		/// <param name="stripeCustomerId">The stripe customer identifier.</param>
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="departmentName">Name of the department.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Session.</returns>
-		Task<Session> CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress,
-			string departmentName);
+		Task<Session> CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress, string departmentName,
+			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Processes the stripe checkout completed asynchronous.
@@ -92,16 +95,18 @@ namespace Resgrid.Model.Services
 		/// Gets the active stripe subscription.
 		/// </summary>
 		/// <param name="stripeCustomerId">The stripe customer identifier.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Subscription.</returns>
-		Subscription GetActiveStripeSubscription(string stripeCustomerId);
+		Task<Subscription> GetActiveStripeSubscriptionAsync(string stripeCustomerId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Changes the active subscription.
 		/// </summary>
 		/// <param name="stripeCustomerId">The stripe customer identifier.</param>
 		/// <param name="stripePlanId">The stripe plan identifier.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Invoice.</returns>
-		Invoice ChangeActiveSubscription(string stripeCustomerId, string stripePlanId);
+		Task<Invoice> ChangeActiveSubscriptionAsync(string stripeCustomerId, string stripePlanId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Processes the stripe checkout update.
@@ -113,5 +118,13 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<Payment> ProcessStripeInvoicePaidAsync(Invoice invoice);
+
+		Task<bool> ModifyPTTAddonSubscription(string stripeCustomerId, long quantity, PlanAddon addon, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<Stripe.BillingPortal.Session> CreateStripeSessionForCustomerPortal(int departmentId, string stripeCustomerId, string customerConfigId, string emailAddress, string departmentName, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<Subscription> GetActivePTTStripeSubscriptionAsync(string stripeCustomerId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<bool> CancelSubscriptionAsync(string stripeCustomerId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

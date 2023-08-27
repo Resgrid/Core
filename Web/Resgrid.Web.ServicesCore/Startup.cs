@@ -56,12 +56,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Security.Cryptography.X509Certificates;
 using Resgrid.Web.Services;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace Resgrid.Web.ServicesCore
 {
 	public class Startup
 	{
-		public IConfigurationRoot Configuration { get; private set; }
+        //public IConfiguration Configuration { get; }
+        public IConfigurationRoot Configuration { get; private set; }
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
@@ -91,7 +94,7 @@ namespace Resgrid.Web.ServicesCore
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrl);
+			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForApi);
 
 			//var manager = new ApplicationPartManager();
 			//manager.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
@@ -537,6 +540,17 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddHostedService<Worker>();
 			this.Services = services;
+
+			if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+			{
+				services.AddSingleton<ITelemetryInitializer, ApiTelemetryInitializer>();
+
+				var aiOptions = new ApplicationInsightsServiceOptions();
+				aiOptions.InstrumentationKey = ExternalErrorConfig.ApplicationInsightsInstrumentationKey;
+				aiOptions.ConnectionString = ExternalErrorConfig.ApplicationInsightsConnectionString;
+
+				services.AddApplicationInsightsTelemetry(aiOptions);
+			}
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)

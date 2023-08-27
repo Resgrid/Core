@@ -91,5 +91,50 @@ namespace Resgrid.Services
 		{
 			return null;
 		}
+
+		public Task<Payment> ProcessStripeSubscriptionRefundAsync(Charge stripeCharge, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Session> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string emailAddress, string departmentName, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Session> CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string emailAddress, string departmentName, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Subscription> GetActiveStripeSubscriptionAsync(string stripeCustomerId, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Invoice> ChangeActiveSubscriptionAsync(string stripeCustomerId, string stripePlanId, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<bool> ModifyPTTAddonSubscription(string stripeCustomerId, long quantity, PlanAddon addon, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Stripe.BillingPortal.Session> CreateStripeSessionForCustomerPortal(int departmentId, string stripeCustomerId, string customerConfigId, string emailAddress, string departmentName, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Subscription> GetActivePTTStripeSubscriptionAsync(string stripeCustomerId, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<bool> CancelSubscriptionAsync(string stripeCustomerId, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
 	}
 }

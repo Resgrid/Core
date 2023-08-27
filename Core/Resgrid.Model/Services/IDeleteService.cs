@@ -24,5 +24,12 @@ namespace Resgrid.Model.Services
 		/// <param name="currentUserId">The current user identifier.</param>
 		/// <returns>Task&lt;DeleteGroupResults&gt;.</returns>
 		Task<DeleteGroupResults> DeleteGroupAsync(int departmentGroupId, int departmentId, string currentUserId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<DeleteUserResults> DeleteUserAccountAsync(int departmentId, string authorizingUserId, string userIdToDelete, string ipAddress, string userAgent, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<DeleteDepartmentResults> DeleteDepartment(int departmentId, string authorizingUserId, string ipAddress, string userAgent,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<DeleteDepartmentResults> HandlePendingDepartmentDeletionRequestAsync(QueueItem item, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

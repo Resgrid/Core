@@ -15,10 +15,18 @@
 		#endregion Elk Settings
 
 		#region Sentry Settings
-		public static string ExternalErrorServiceUrl = "";
+		public static string ExternalErrorServiceUrlForApi = "";
 		public static string ExternalErrorServiceUrlForWebsite = "";
 		public static string ExternalErrorServiceUrlForWebjobs = "";
+		public static string ExternalErrorServiceUrlForEventing = "";
+		public static double SentryPerfSampleRate = 1.0;
 		#endregion Sentry Settings
+
+		#region Application Insights Settings
+		public static bool ApplicationInsightsEnabled = false;
+		public static string ApplicationInsightsInstrumentationKey = "";
+		public static string ApplicationInsightsConnectionString = "";
+		#endregion Application Insights Settings
 	}
 
 	public enum ErrorLoggerTypes

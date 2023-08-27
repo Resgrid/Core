@@ -1,0 +1,369 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountInformationHeader" xml:space="preserve">
+    <value>Información de la cuenta</value>
+  </data>
+  <data name="AddAPerson" xml:space="preserve">
+    <value>Agregar una persona</value>
+  </data>
+  <data name="AddAPersonHelp" xml:space="preserve">
+    <value>Añadir una sola persona</value>
+  </data>
+  <data name="AddExistingUserHeader" xml:space="preserve">
+    <value>Usuario existente añadido</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Agregar persona</value>
+  </data>
+  <data name="AddRank" xml:space="preserve">
+    <value>Agregar rango</value>
+  </data>
+  <data name="AddRoleHeader" xml:space="preserve">
+    <value>Agregar rol</value>
+  </data>
+  <data name="CallOptionsLabel" xml:space="preserve">
+    <value>Opciones de llamada</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambiar la contraseña</value>
+  </data>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value>Haga clic en la casilla de verificación a continuación para eliminar este usuario.</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>¿Confirmar eliminación?</value>
+  </data>
+  <data name="ConfirmPasswordHelp" xml:space="preserve">
+    <value>Confirme la contraseña de los usuarios (debe coincidir con la anterior)</value>
+  </data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve">
+    <value>confirmar Contraseña</value>
+  </data>
+  <data name="ContactDetailsHeader" xml:space="preserve">
+    <value>Detalles de contacto</value>
+  </data>
+  <data name="DeleteAreYouSure" xml:space="preserve">
+    <value>¿Está seguro de que desea eliminar este usuario?</value>
+  </data>
+  <data name="DeleteAreYouSure2" xml:space="preserve">
+    <value>Si elige eliminar a este usuario, la información a continuación se eliminará de forma permanente. El procedimiento recomendado es deshabilitar al usuario si deja el departamento u organización. Solo elimine el usuario después de que haya pasado suficiente tiempo, la cuenta fue un error o nunca se usó.</value>
+  </data>
+  <data name="DeletePersonHeader" xml:space="preserve">
+    <value>Eliminar persona</value>
+  </data>
+  <data name="EditRoleHeader" xml:space="preserve">
+    <value>Editar rol</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="EmailAddressHelp" xml:space="preserve">
+    <value>Las direcciones de correo electrónico deben ser únicas</value>
+  </data>
+  <data name="EmailAddressLabel" xml:space="preserve">
+    <value>Dirección de correo electrónico</value>
+  </data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve">
+    <value>Dirección de correo electrónico (debe ser única)</value>
+  </data>
+  <data name="ExistingUserHelp1" xml:space="preserve">
+    <value>este usuario</value>
+  </data>
+  <data name="ExistingUserHelp2" xml:space="preserve">
+    <value>, según la dirección de correo electrónico, ya tenía una cuenta de Resgrid en otro departamento. La cuenta de usuario ahora se ha agregado &lt;b&gt;con su configuración de perfil anterior (nombre, números de teléfono, preferencias, etc.)&lt;/b&gt; al departamento. Debido a que el usuario está en varios departamentos, necesita activar este departamento para ver su información desde su opción "Ver sus departamentos" en el menú desplegable de su perfil (debajo de la imagen de perfil en la esquina superior izquierda).</value>
+  </data>
+  <data name="FirstNameLabel" xml:space="preserve">
+    <value>Nombre de pila</value>
+  </data>
+  <data name="FirstNamePlaceholder" xml:space="preserve">
+    <value>Nombre de pila</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupo</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Hogar</value>
+  </data>
+  <data name="IDNumberLabel" xml:space="preserve">
+    <value>Número de identificación</value>
+  </data>
+  <data name="IDNumberPlaceholder" xml:space="preserve">
+    <value>Número de identificación personalizado</value>
+  </data>
+  <data name="IsGroupAdminLabel" xml:space="preserve">
+    <value>¿Es administrador del grupo?</value>
+  </data>
+  <data name="LastNameLabel" xml:space="preserve">
+    <value>Apellido</value>
+  </data>
+  <data name="LastNamePlaceholder" xml:space="preserve">
+    <value>Apellido</value>
+  </data>
+  <data name="ManageInvites" xml:space="preserve">
+    <value>Administrar invitaciones</value>
+  </data>
+  <data name="ManageInvitesHelp" xml:space="preserve">
+    <value>Invitar a varias personas</value>
+  </data>
+  <data name="ManageRoles" xml:space="preserve">
+    <value>Administrar funciones</value>
+  </data>
+  <data name="MessageOptionsLabel" xml:space="preserve">
+    <value>Opciones de mensaje</value>
+  </data>
+  <data name="Mobile" xml:space="preserve">
+    <value>Móvil</value>
+  </data>
+  <data name="MobileCarrierLabel" xml:space="preserve">
+    <value>Operador de telefonía móvil</value>
+  </data>
+  <data name="MobileNumberLabel" xml:space="preserve">
+    <value>Número de teléfono móvil</value>
+  </data>
+  <data name="MobileNumberPlaceholder" xml:space="preserve">
+    <value>Número de teléfono móvil</value>
+  </data>
+  <data name="NewPasswordHelp" xml:space="preserve">
+    <value>Las contraseñas deben tener 8 caracteres o más e incluir un dígito (número), una letra mayúscula y minúscula</value>
+  </data>
+  <data name="NewPasswordLabel" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
+  <data name="NoPersonnelInDepartment" xml:space="preserve">
+    <value>Sin personal en el departamento</value>
+  </data>
+  <data name="NoPersonnelInThisGroup" xml:space="preserve">
+    <value>No hay personal en este grupo</value>
+  </data>
+  <data name="NotificationOptionsLabel" xml:space="preserve">
+    <value>Opciones de notificación</value>
+  </data>
+  <data name="NotifyUser" xml:space="preserve">
+    <value>¿Notificar al usuario?</value>
+  </data>
+  <data name="NotifyWarning" xml:space="preserve">
+    <value>Desmarque si no desea que Resgrid notifique al usuario sobre la creación de esta cuenta.</value>
+  </data>
+  <data name="NoUnGroupedPersonnel" xml:space="preserve">
+    <value>Sin Personal Desagrupado</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="PhoneNumbers" xml:space="preserve">
+    <value>Números de teléfono)</value>
+  </data>
+  <data name="Push" xml:space="preserve">
+    <value>Empujar</value>
+  </data>
+  <data name="RankDeleteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este rango. ¿Está seguro de que desea eliminar el rango?</value>
+  </data>
+  <data name="RanksHeader" xml:space="preserve">
+    <value>Rangos de personal</value>
+  </data>
+  <data name="ReactivatePersonHeader" xml:space="preserve">
+    <value>Reactivar persona</value>
+  </data>
+  <data name="ReactivatePersonText1" xml:space="preserve">
+    <value>este usuario</value>
+  </data>
+  <data name="ReactivatePersonText2" xml:space="preserve">
+    <value>basado en la dirección de correo electrónico, ya tenía una cuenta en el</value>
+  </data>
+  <data name="ReactivatePersonText3" xml:space="preserve">
+    <value>departamento pero fue borrado previamente. La cuenta de usuario ahora se ha recuperado y reactivado dentro de este departamento y aparecerá &lt;b&gt;con su configuración de perfil anterior (nombre, números de teléfono, preferencias, etc.)&lt;/b&gt; en el departamento.</value>
+  </data>
+  <data name="RoleDeleteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este rol. ¿Estás seguro de que quieres eliminar el rol?</value>
+  </data>
+  <data name="RoleDescriptionPlaceholder" xml:space="preserve">
+    <value>Una descripción del rol.</value>
+  </data>
+  <data name="RoleNamePlaceholder" xml:space="preserve">
+    <value>Nombre del Rol</value>
+  </data>
+  <data name="RolesHeader" xml:space="preserve">
+    <value>Funciones del personal</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>roles</value>
+  </data>
+  <data name="SetPersonStaffingHeader" xml:space="preserve">
+    <value>Establecer personal de persona</value>
+  </data>
+  <data name="SetPersonStatusHeader" xml:space="preserve">
+    <value>Establecer estado de persona</value>
+  </data>
+  <data name="SetStaffing" xml:space="preserve">
+    <value>Establecer dotación de personal</value>
+  </data>
+  <data name="SetStaffingForSelectedPersonnel" xml:space="preserve">
+    <value>Establecer dotación de personal para el personal seleccionado</value>
+  </data>
+  <data name="SetStatus" xml:space="preserve">
+    <value>Establecer estado</value>
+  </data>
+  <data name="SetStatusForSelectedPersonnel" xml:space="preserve">
+    <value>Establecer estado para el personal seleccionado</value>
+  </data>
+  <data name="SpecialNote" xml:space="preserve">
+    <value>Nota especial</value>
+  </data>
+  <data name="SpecialNoteText" xml:space="preserve">
+    <value>Los datos de usuario subyacentes se conservan en el sistema para que los registros, los informes y el historial se conserven correctamente para el departamento. Se recomienda modificar toda la PII/PHI de la cuenta de usuario para eliminarla, es decir, números de teléfono, direcciones, etc., antes de eliminar al usuario.</value>
+  </data>
+  <data name="Staffing" xml:space="preserve">
+    <value>dotación de personal</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="TextWarning" xml:space="preserve">
+    <value>Puede incurrir en cambios adicionales para SMS/Texto dependiendo de su plan móvil.</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Usuario</value>
+  </data>
+  <data name="UserDetailHeader" xml:space="preserve">
+    <value>Detalles de usuario</value>
+  </data>
+  <data name="UsernameHelp" xml:space="preserve">
+    <value>El nombre de usuario debe ser único</value>
+  </data>
+  <data name="UsernameLabel" xml:space="preserve">
+    <value>Nombre de usuario</value>
+  </data>
+  <data name="UsersInRank" xml:space="preserve">
+    <value>Usuarios en rango</value>
+  </data>
+  <data name="UsersInRole" xml:space="preserve">
+    <value>Usuarios en Rol</value>
+  </data>
+  <data name="ViewPersonHeader" xml:space="preserve">
+    <value>Ver persona</value>
+  </data>
+  <data name="ViewRoleHeader" xml:space="preserve">
+    <value>Ver rol</value>
+  </data>
+</root>

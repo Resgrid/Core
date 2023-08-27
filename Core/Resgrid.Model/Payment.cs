@@ -137,5 +137,13 @@ namespace Resgrid.Model
 
 			return DateTime.MinValue;
 		}
+
+		public bool IsFreePlan()
+		{
+			if (PlanId == 1)
+				return true;
+
+			return false;
+		}
 	}
 }

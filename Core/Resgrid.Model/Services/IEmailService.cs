@@ -199,5 +199,7 @@ namespace Resgrid.Model.Services
 		/// <param name="profile">The profile.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendCalendarAsync(string userId, string message, int departmentId, UserProfile profile = null);
+
+		Task<bool> SendDeleteDepartmentEmail(string sendingToEmail, string sendingToName, QueueItem queueItem);
 	}
 }

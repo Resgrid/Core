@@ -41,7 +41,7 @@ namespace Resgrid.Workers.Console.Tasks
 					foreach (var call in pendingCalls)
 					{
 						var cqi = new CallQueueItem();
-						cqi.Call = await callsService.PopulateCallData(call, true, false, false, true, true, true, true);
+						cqi.Call = await callsService.PopulateCallData(call, true, false, false, true, true, true, true, false);
 
 						if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
 							cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());

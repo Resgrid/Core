@@ -50,6 +50,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				result.Data.MapUrl = MappingConfig.GetDispatchAppOSMUrl();
 			}
+			else if (key == InfoConfig.BigBoardKey)
+			{
+				result.Data.MapUrl = MappingConfig.GetBigBoardAppOSMUrl();
+				result.Data.OpenWeatherApiKey = MappingConfig.BigBoardOpenWeatherApiKey;
+			}
 
 			result.Data.MapAttribution = MappingConfig.LeafletAttribution;
 

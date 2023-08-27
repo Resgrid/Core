@@ -10,7 +10,7 @@ namespace Resgrid.Model
 	{
 		public string PlanAddonId { get; set; }
 
-		public int PlanId { get; set; }
+		public int? PlanId { get; set; }
 
 		public virtual Plan Plan { get; set; }
 
@@ -20,9 +20,16 @@ namespace Resgrid.Model
 
 		public string ExternalId { get; set; }
 
+		public string TestExternalId { get; set; }
+
+		[NotMapped]
 		public bool IsCancelled { get; set; }
 
+		[NotMapped]
 		public DateTime? EndingOn { get; set; }
+
+		[NotMapped]
+		public long Quantity { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]
@@ -42,7 +49,7 @@ namespace Resgrid.Model
 		public int IdType => 1;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Plan", "IsCancelled", "EndingOn" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Plan", "IsCancelled", "EndingOn", "Quantity" };
 
 		public DateTime GetEndDateFromNow()
 		{
@@ -61,7 +68,8 @@ namespace Resgrid.Model
 				}
 			}
 
-			return DateTime.MinValue;
+			// No plan, which means no plan frequency, so default to 1 month.
+			return DateTime.UtcNow.AddMonths(1).AddDays(7).SetToEndOfDay();
 		}
 
 		public string GetAddonName()

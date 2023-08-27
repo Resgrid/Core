@@ -1,105 +1,105 @@
-﻿
-@model Resgrid.Web.Areas.User.Models.Profile.EditCertificationView
+﻿@model Resgrid.Web.Areas.User.Models.Profile.EditCertificationView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-		ViewBag.Title = "Resgrid | Edit Certification";
+    ViewBag.Title = "Resgrid | " + @localizer["EditCertificationsHeader"];
 }
 
 @section Styles
-{
+    {
 
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Edit Certification</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
-			</li>
-			<li>
-				<a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Certifications</a>
-			</li>
-			<li class="active">
-				<strong>Edit Certification</strong>
-			</li>
-		</ol>
-	</div>
-</div>
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-4">
+            <h2>@localizer["EditCertificationsHeader"]</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["EditProfile"]</a>
+                </li>
+                <li>
+                    <a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["CertificationsHeader"]</a>
+                </li>
+                <li class="active">
+                    <strong>@localizer["EditCertificationsHeader"]</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
 
-<div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" method="post">
-						@Html.AntiForgeryToken()
-						@Html.HiddenFor(m => m.CertificationId)
-						@if (!String.IsNullOrEmpty(Model.Message))
-						{
-							<div class="alert alert-success">
-								@Model.Message
-							</div>
-						}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" method="post">
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.CertificationId)
+                            @if (!String.IsNullOrEmpty(Model.Message))
+                        {
+                            <div class="alert alert-success">
+                                @Model.Message
+                            </div>
+                        }
 
-						<div asp-validation-summary="All" class="text-danger"></div>
-						<div class="form-group">
-							<label class="col-sm-1 control-label"></label>
-							<div class="col-sm-10">
-								<p>Enter the information below to edit a certification in your profile. Example certifications are EMT certs, CPR/BLS, Hazmat, etc. Tracking certifications can be useful to ensure they are updated/renewed before they expire and the department knows who's certified for what. Fields in <span class="required">blue italics</span> are required.</p>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label required">Name</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Certification Name" asp-for="Name"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Type</label>
-							<div class="col-sm-10"><select asp-for="Type" asp-items="Model.CertificationTypes" style="padding-left: 0; width: 70%;"></select></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">ID # \ Cert #</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="ID # \ Cert #" asp-for="Number"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Valid Area</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Area certification in valid in" asp-for="Area"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Issued By</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Issuing Authority name" asp-for="IssuedBy"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Issued On</label>
-							<div class="col-sm-10"><input type="text" asp-for="RecievedOn"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Expires On</label>
-							<div class="col-sm-10"><input type="text" asp-for="ExpiresOn"></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Attachment</label>
-							<div class="col-sm-10">
-								<input name="fileToUpload" id="fileToUpload" type="file" />
-							</div>
-						</div>
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label"></label>
+                            <div class="col-sm-10">
+                                <p>@localizer["EditCertificationInfo"]</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">@commonLocalizer["Name"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CertificationNamePlaceholder"]" asp-for="Name"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Type"]</label>
+                            <div class="col-sm-10"><select asp-for="Type" asp-items="Model.CertificationTypes" style="padding-left: 0; width: 70%;"></select></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CertificationId"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CertificationIdPlaceholder"]" asp-for="Number"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["ValidAreaLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ValidAreaPlaceholder"]" asp-for="Area"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["IssuedByLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IssuedByPlaceholder"]" asp-for="IssuedBy"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["IssuedOnLabel"]</label>
+                            <div class="col-sm-10"><input type="text" asp-for="RecievedOn"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["ExpiresOnLabel"]</label>
+                            <div class="col-sm-10"><input type="text" asp-for="ExpiresOn"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Attachment"]</label>
+                            <div class="col-sm-10">
+                                <input name="fileToUpload" id="fileToUpload" type="file" />
+                            </div>
+                        </div>
 
-						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Cancel</a>
-								<button class="btn btn-primary" type="submit">Update Certification</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
-		<script src="~/js/app/internal/profile/resgrid.profile.editcertification.js" type="text/javascript"></script>
+    {
+    <script src="~/js/app/internal/profile/resgrid.profile.editcertification.js" type="text/javascript"></script>
 }

@@ -70,5 +70,10 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		/// How many meters between subsuquent gps locations to allow the position update to go through for units
 		/// </summary>
 		public int UnitLocationMinMeters { get; set; }
+
+		/// <summary>
+		/// API Key for the OpenWeatherAPI
+		/// </summary>
+		public string OpenWeatherApiKey { get; set; }
 	}
 }

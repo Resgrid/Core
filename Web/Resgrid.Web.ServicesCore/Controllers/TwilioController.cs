@@ -431,7 +431,7 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			var response = new VoiceResponse();
 			var call = await _callsService.GetCallByIdAsync(callId);
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, false);
 
 			if (call == null)
 			{

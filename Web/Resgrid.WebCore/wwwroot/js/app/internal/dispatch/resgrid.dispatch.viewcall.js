@@ -6,27 +6,28 @@ var resgrid;
 		var viewcall;
 		(function (viewcall) {
 			$(document).ready(function () {
-				marker = null;
+                callMarker = null;
+                map = null;
 				$.ajax({
 					url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetMapDataForCall?callId=' + callId,
 					contentType: 'application/json; charset=utf-8',
 					type: 'GET'
 				}).done(function (result) {
-					var data = result;
-					var mapCenter = new google.maps.LatLng(data.centerLat, data.centerLon);
-					var mapOptions = {
-						zoom: 10,
-						center: mapCenter
-					};
-					map = new google.maps.Map(document.getElementById('callMap'), mapOptions);
-					marker = new google.maps.Marker({
-						position: mapCenter,
-						map: map,
-						title: 'Call Location',
-						animation: google.maps.Animation.DROP,
-						draggable: true,
-						bounds: false
-					});
+                    var data = result;
+
+                    const tiles1 = L.tileLayer(
+                        osmTileUrl,
+                        {
+                            maxZoom: 19,
+                            attribution: osmTileAttribution
+                        }
+                    );
+
+                    map = L.map('callMap', {
+                        scrollWheelZoom: false
+                    }).setView([data.centerLat, data.centerLon], 11).addLayer(tiles1);
+
+                    callMarker = new L.marker(new L.LatLng(data.centerLat, data.centerLon), { draggable: false }).addTo(map);
 				});
 
 				$('.callImages').slick({

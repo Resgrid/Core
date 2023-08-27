@@ -255,5 +255,7 @@ namespace Resgrid.Model.Services
 		Task<int> GetShiftCallReleasePersonnelStatusToSetAsync(int departmentId);
 
 		Task<bool> GetAllowSignupsForMultipleShiftGroupsAsync(int departmentId);
+
+		Task<DepartmentSuppressStaffingInfo> GetDepartmentStaffingSuppressInfoAsync(int departmentId, bool bypassCache = false);
 	}
 }

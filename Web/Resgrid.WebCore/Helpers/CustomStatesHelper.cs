@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Autofac;
 using CommonServiceLocator;
 using Resgrid.Model;
@@ -68,6 +69,15 @@ namespace Resgrid.Web.Helpers
 		{
 			if (state.State <= 25)
 			{
+				var customStateService = ServiceLocator.Current.GetInstance<ICustomStateService>();
+				var defaultStatuses = customStateService.GetDefaultUnitStatuses();
+
+				var status = defaultStatuses.FirstOrDefault(x => x.CustomStateDetailId == state.State);
+
+				if (status != null)
+					return status;
+
+				// Old code needed to support status we don't show by default anymore.
 				var detail = new CustomStateDetail();
 
 				detail.ButtonText = state.ToStateDisplayText();

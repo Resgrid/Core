@@ -42,7 +42,7 @@ namespace Resgrid.Workers.Console
 #if DEBUG
 			Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = true;
 #endif
-			
+
 			System.Console.WriteLine("Resgrid Worker Engine");
 			System.Console.WriteLine("-----------------------------------------");
 
@@ -73,7 +73,7 @@ namespace Resgrid.Workers.Console
 
 					services.AddSingleton<IHostedService, QueuesProcessingService>();
 					services.AddSingleton<IHostedService, ScheduledJobsService>();
-					
+
 				})
 				.ConfigureLogging((hostingContext, logging) => {
 					logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
@@ -274,6 +274,12 @@ namespace Resgrid.Workers.Console
 				await client.ScheduleAsync("Clean OIDC Tokens",
 					new Commands.CleanOIDCCommand(13),
 					Cron.MinuteIntervals(30),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling System SQL Queue");
+				await client.ScheduleAsync("System SQL Queue",
+					new Commands.SystemSqlQueueCommand(14),
+					Cron.Daily(3, 0),
 					stoppingToken);
 			}
 			else

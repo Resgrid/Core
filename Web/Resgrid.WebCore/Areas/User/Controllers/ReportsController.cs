@@ -624,68 +624,72 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
-				var departmentUser = await _departmentsService.GetDepartmentMemberAsync(user.UserId, DepartmentId);
-				var person = new PersonnelReportRow();
-				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
-				var savedProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
+				var departmentUser = await _departmentsService.GetDepartmentMemberAsync(user.UserId, DepartmentId, false);
 
-				if (departmentUser.IsAdmin.HasValue && departmentUser.IsAdmin.Value ||
-				    model.Department.ManagingUserId == user.UserId)
-					person.DepartmentRole = "Admin";
-				else
-					person.DepartmentRole = "Available";
-
-				if (group != null)
-					person.Group = group.Name;
-
-				person.Email = user.Email;
-				person.Username = user.UserName;
-
-				var sb = new StringBuilder();
-				var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
-				foreach (var role in roles)
+				if (departmentUser != null)
 				{
-					if (sb.Length > 0)
-						sb.Append(", ");
+					var person = new PersonnelReportRow();
+					var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+					var savedProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 
-					sb.Append(role.Name);
-				}
+					if (departmentUser.IsAdmin.HasValue && departmentUser.IsAdmin.Value ||
+						model.Department.ManagingUserId == user.UserId)
+						person.DepartmentRole = "Admin";
+					else
+						person.DepartmentRole = "Available";
 
-				person.Roles = sb.ToString();
+					if (group != null)
+						person.Group = group.Name;
 
-				if (savedProfile != null)
-				{
-					person.Name = savedProfile.FullName.AsFirstNameLastName;
-					person.ID = savedProfile.IdentificationNumber;
-					person.MobilePhoneNumber = savedProfile.MobileNumber;
+					person.Email = user.Email;
+					person.Username = user.UserName;
 
-					if (savedProfile.MailingAddressId.HasValue)
+					var sb = new StringBuilder();
+					var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
+					foreach (var role in roles)
 					{
-						var mailingAddress =
-							await _addressService.GetAddressByIdAsync(savedProfile.MailingAddressId.Value);
+						if (sb.Length > 0)
+							sb.Append(", ");
 
-						StringBuilder address = new StringBuilder();
-						address.Append("<address>");
-						address.Append(mailingAddress.Address1);
-						address.Append("&nbsp<br>");
-						address.Append(mailingAddress.City);
-						address.Append(mailingAddress.State);
-						address.Append(mailingAddress.PostalCode);
-						address.Append("&nbsp<br>");
-						address.Append(mailingAddress.Country);
-						address.Append("&nbsp<br>");
-						address.Append("</address>");
-
-						person.MailingAddress = address.ToString();
+						sb.Append(role.Name);
 					}
-				}
-				else
-				{
-					var userProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
-					person.Name = userProfile.FullName.AsFirstNameLastName;
-				}
 
-				model.Rows.Add(person);
+					person.Roles = sb.ToString();
+
+					if (savedProfile != null)
+					{
+						person.Name = savedProfile.FullName.AsFirstNameLastName;
+						person.ID = savedProfile.IdentificationNumber;
+						person.MobilePhoneNumber = savedProfile.MobileNumber;
+
+						if (savedProfile.MailingAddressId.HasValue)
+						{
+							var mailingAddress =
+								await _addressService.GetAddressByIdAsync(savedProfile.MailingAddressId.Value);
+
+							StringBuilder address = new StringBuilder();
+							address.Append("<address>");
+							address.Append(mailingAddress.Address1);
+							address.Append("&nbsp<br>");
+							address.Append(mailingAddress.City);
+							address.Append(mailingAddress.State);
+							address.Append(mailingAddress.PostalCode);
+							address.Append("&nbsp<br>");
+							address.Append(mailingAddress.Country);
+							address.Append("&nbsp<br>");
+							address.Append("</address>");
+
+							person.MailingAddress = address.ToString();
+						}
+					}
+					else
+					{
+						var userProfile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
+						person.Name = userProfile.FullName.AsFirstNameLastName;
+					}
+
+					model.Rows.Add(person);
+				}
 			}
 
 			return model;
@@ -793,89 +797,94 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(department);
 
-			foreach (var shift in shifts)
+			foreach (var s1 in shifts)
 			{
-				bool readyShift = true;
-				var shiftRow = new UpcomingShiftReadinessReportRow();
-				var nextShiftDay = (from s in shift.Days
-					where s.Day > DateTime.UtcNow.TimeConverter(department)
-					orderby s.Day.Day descending
-					select s).FirstOrDefault();
+				var shift = await _shiftsService.PopulateShiftData(s1, true, true, true, true, true);
 
-				if (nextShiftDay != null)
+				if (shift != null && shift.Days != null && shift.Days.Count > 0)
 				{
-					var shiftRoleDeltas = await _shiftsService.GetShiftDayNeedsAsync(nextShiftDay.ShiftDayId);
+					bool readyShift = true;
+					var shiftRow = new UpcomingShiftReadinessReportRow();
+					var nextShiftDay = (from s in shift.Days
+										where s.Day > DateTime.UtcNow.TimeConverter(department)
+										orderby s.Day.Day descending
+										select s).FirstOrDefault();
 
-					shiftRow.ShiftName = shift.Name;
-					shiftRow.ShiftDate = nextShiftDay.Day.ToShortDateString();
-					shiftRow.Type = ((ShiftAssignmentTypes)shift.AssignmentType).ToString();
-
-					foreach (var group in shift.Groups)
+					if (nextShiftDay != null)
 					{
-						var shiftSubRow = new UpcomingShiftReadinessReportSubRow();
-						shiftSubRow.GroupName = group.DepartmentGroup.Name;
+						var shiftRoleDeltas = await _shiftsService.GetShiftDayNeedsAsync(nextShiftDay.ShiftDayId);
 
-						foreach (var role in group.Roles)
+						shiftRow.ShiftName = shift.Name;
+						shiftRow.ShiftDate = nextShiftDay.Day.ToShortDateString();
+						shiftRow.Type = ((ShiftAssignmentTypes)shift.AssignmentType).ToString();
+
+						foreach (var group in shift.Groups)
 						{
-							var subRowRoles = new UpcomingShiftReadinessGroupRole();
-							subRowRoles.Name = role.Role.Name;
-							subRowRoles.Required = role.Required;
-							subRowRoles.Optional = role.Optional;
+							var shiftSubRow = new UpcomingShiftReadinessReportSubRow();
+							shiftSubRow.GroupName = group.DepartmentGroup.Name;
 
-							if (shiftRoleDeltas != null && shiftRoleDeltas.ContainsKey(group.DepartmentGroupId))
+							foreach (var role in group.Roles)
 							{
-								var roleDelta = shiftRoleDeltas[group.DepartmentGroupId];
+								var subRowRoles = new UpcomingShiftReadinessGroupRole();
+								subRowRoles.Name = role.Role.Name;
+								subRowRoles.Required = role.Required;
+								subRowRoles.Optional = role.Optional;
 
-								if (roleDelta.ContainsKey(role.PersonnelRoleId))
-									subRowRoles.Delta = roleDelta[role.PersonnelRoleId];
+								if (shiftRoleDeltas != null && shiftRoleDeltas.ContainsKey(group.DepartmentGroupId))
+								{
+									var roleDelta = shiftRoleDeltas[group.DepartmentGroupId];
 
-								if (subRowRoles.Delta > 0)
-									readyShift = false;
+									if (roleDelta.ContainsKey(role.PersonnelRoleId))
+										subRowRoles.Delta = roleDelta[role.PersonnelRoleId];
+
+									if (subRowRoles.Delta > 0)
+										readyShift = false;
+								}
+								else
+								{
+									subRowRoles.Delta = 0;
+								}
+
+								shiftSubRow.Roles.Add(subRowRoles);
 							}
-							else
-							{
-								subRowRoles.Delta = 0;
-							}
 
-							shiftSubRow.Roles.Add(subRowRoles);
-						}
-
-						foreach (var person in shift.Personnel)
-						{
-							var subRowPerson = new UpcomingShiftReadinessPersonnel();
-							subRowPerson.Name = await UserHelper.GetFullNameForUser(person.UserId);
-							subRowPerson.Roles =
-								(await _personnelRolesService.GetRolesForUserAsync(person.UserId, DepartmentId))
-								.Select(x => x.Name).ToList();
-
-							shiftSubRow.Personnel.Add(subRowPerson);
-						}
-
-						var shiftSignupsForDay =
-							await _shiftsService.GetShiftSignpsForShiftDayAsync(nextShiftDay.ShiftDayId);
-						if (shiftSignupsForDay != null)
-						{
-							foreach (var signup in shiftSignupsForDay.Where(x =>
-								         x.DepartmentGroupId.Value == group.DepartmentGroupId))
+							foreach (var person in shift.Personnel)
 							{
 								var subRowPerson = new UpcomingShiftReadinessPersonnel();
-								subRowPerson.Name = await UserHelper.GetFullNameForUser(signup.UserId);
+								subRowPerson.Name = await UserHelper.GetFullNameForUser(person.UserId);
 								subRowPerson.Roles =
-									(await _personnelRolesService.GetRolesForUserAsync(signup.UserId, DepartmentId))
+									(await _personnelRolesService.GetRolesForUserAsync(person.UserId, DepartmentId))
 									.Select(x => x.Name).ToList();
 
 								shiftSubRow.Personnel.Add(subRowPerson);
 							}
+
+							var shiftSignupsForDay =
+								await _shiftsService.GetShiftSignpsForShiftDayAsync(nextShiftDay.ShiftDayId);
+							if (shiftSignupsForDay != null)
+							{
+								foreach (var signup in shiftSignupsForDay.Where(x =>
+											 x.DepartmentGroupId.Value == group.DepartmentGroupId))
+								{
+									var subRowPerson = new UpcomingShiftReadinessPersonnel();
+									subRowPerson.Name = await UserHelper.GetFullNameForUser(signup.UserId);
+									subRowPerson.Roles =
+										(await _personnelRolesService.GetRolesForUserAsync(signup.UserId, DepartmentId))
+										.Select(x => x.Name).ToList();
+
+									shiftSubRow.Personnel.Add(subRowPerson);
+								}
+							}
+
+							shiftRow.SubRows.Add(shiftSubRow);
 						}
 
-						shiftRow.SubRows.Add(shiftSubRow);
+						if (shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
+							readyShift = true;
+
+						shiftRow.Ready = readyShift;
+						model.Rows.Add(shiftRow);
 					}
-
-					if (shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
-						readyShift = true;
-
-					shiftRow.Ready = readyShift;
-					model.Rows.Add(shiftRow);
 				}
 			}
 
@@ -1686,7 +1695,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				summary.LoggedOn = call.LoggedOn.TimeConverter(model.Department);
 				summary.Type = call.Type;
 
-				var callData = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false);
+				var callData = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false);
 
 				if (callData != null)
 				{

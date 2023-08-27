@@ -1,8 +1,9 @@
 ﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.EditProfileModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-	ViewBag.Title = "Resgrid | Schedule";
+	ViewBag.Title = "Resgrid | " + @localizer["StaffingSchedulesHeader"];
 }
 
 
@@ -11,22 +12,22 @@
 		<h2>
 			@if (Model.Self)
 			{
-				<h1>Schedule</h1>
+				<h1>@localizer["StaffingSchedulesHeader"]</h1>
 			}
 			else
 			{
-				<h1>@Model.Name's Schedule</h1>
+				<h1>@Model.Name's @localizer["StaffingSchedulesHeader"]</h1>
 			}
 		</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
+				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["EditProfile"]</a>
 			</li>
 			<li class="active">
-				<strong>Staffing Schedule</strong>
+				<strong>@localizer["StaffingSchedulesHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -42,11 +43,11 @@
 						<div class="buttons-actions">
 							@if (Model.Self)
 							{
-								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewStaffingSchedule" asp-route-area="User">Add Staffing Schedule</a>
+								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewStaffingSchedule" asp-route-area="User">@localizer["AddStaffingSchedule"]</a>
 							}
 							else
 							{
-								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewStaffingSchedule" asp-route-area="User" asp-route-userId="@Model.User.UserId">Add Staffing Schedule</a>
+								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddNewStaffingSchedule" asp-route-area="User" asp-route-userId="@Model.User.UserId">@localizer["AddStaffingSchedule"]</a>
 							}
 						</div>
 					</div>
@@ -64,13 +65,13 @@
 {
 	<script id="command-template" type="text/x-kendo-template">
 		# if(IsActive == 1) { #
-		<a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#">Edit</a>
-		<a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.schedule.deactivateSchedule(#=ScheduleId#);">Deactivate</a>
-		<a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);">Delete</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#">@commonLocalizer["Edit"]</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.schedule.deactivateSchedule(#=ScheduleId#);">@commonLocalizer["Deactivate"]</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);">@commonLocalizer["Delete"]</a>
 		# } else { #
-		<a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#">Edit</a>
-		<a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.schedule.activateSchedule(#=ScheduleId#);">Activate</a>
-		<a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);">Delete</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditStaffingSchedule","Profile", new {Area = "User"})?scheduleId=#=ScheduleId#">@commonLocalizer["Edit"]</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.schedule.activateSchedule(#=ScheduleId#);">@commonLocalizer["Activate"]</a>
+		<a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.schedule.deleteSchedule(#=ScheduleId#);">@commonLocalizer["Delete"]</a>
 		# } #
 	</script>
 

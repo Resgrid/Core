@@ -233,7 +233,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 									var sendingUserProfile = await userProfileService.GetProfileByUserIdAsync(newChatEvent.SendingUserId);
 
-									var chatResult = await communicationService.SendChat(newChatEvent.Id, newChatEvent.SendingUserId, newChatEvent.GroupName, newChatEvent.Message, sendingUserProfile, profiles);
+									var chatResult = await communicationService.SendChat(newChatEvent.Id, newChatEvent.DepartmentId, newChatEvent.SendingUserId, newChatEvent.GroupName, newChatEvent.Message, sendingUserProfile, profiles);
 								}
 
 								userProfileService = null;

@@ -16,6 +16,7 @@
 		<Company>Resgrid, LLC.</Company>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<SpaRoot>Areas\User\Apps\</SpaRoot>
+		<ApplicationInsightsResourceId>/subscriptions/bc1ffca7-bf1a-49f9-88f7-b99be887fe9d/resourceGroups/ResgridUSWest/providers/microsoft.insights/components/resgridinsights</ApplicationInsightsResourceId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Azure|AnyCPU'" />
@@ -48,6 +49,7 @@
 		<PackageReference Include="Audit.NET.MongoDB" Version="20.1.3" />
 		<PackageReference Include="GeoJSON.Net" Version="1.2.19" />
 		<PackageReference Include="IdentityModel" Version="6.0.0" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
@@ -146,6 +148,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\Resgrid\Core\Resgrid.Localization\Resgrid.Localization.csproj" />
 		<ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
 		<ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
 		<ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />

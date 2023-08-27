@@ -30,5 +30,6 @@ namespace Resgrid.Model.Services
 		Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation);
 		Task<List<PersonnelLocation>> GetLatestLocationsForDepartmentPersonnelAsync(int departmentId);
 		Task<PersonnelLocation> GetPersonnelLocationByIdAsync(string id);
+		Task<bool> ClearOutUserLoginAsync(string userId);
 	}
 }

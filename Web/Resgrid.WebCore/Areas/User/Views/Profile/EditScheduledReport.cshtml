@@ -1,206 +1,207 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Profile.EditScheduledReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-  ViewBag.Title = "Resgrid | Edit Scheduled Report";
+    ViewBag.Title = "Resgrid | " + @localizer["EditScheduledReportHeader"];
 }
 
 @section Styles
-{
-  <style>
-	.k-select {
-	line-height: 1.5em !important;
-	}
-  </style>
+    {
+    <style>
+        .k-select {
+            line-height: 1.5em !important;
+        }
+    </style>
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>Edit Scheduled Report</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
-      </li>
-      <li>
-        <a asp-controller="Profile" asp-action="Reporting" asp-route-area="User">Report Delivery</a>
-      </li>
-      <li class="active">
-        <strong>Edit Schedule</strong>
-      </li>
-    </ol>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="EditScheduledReport" asp-route-area="User" method="post">
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(x => x.ScheduleId)
-            @if (!String.IsNullOrEmpty(Model.Message))
-			{
-              <div class="alert alert-success">
-                @Model.Message
-              </div>
-			}
-
-            <div asp-validation-summary="All" class="text-danger"></div>
-
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Priority</label>
-              <div class="col-sm-10">
-                @Html.DropDownListFor(m => m.SpecificDatetime, new SelectList(
-					new List<Object>{
-						new { value = true, text = "Specific Date"  },
-						new { value = false, text = "Days of the Week" }
-					},
-					"value",
-					"text"
-					), new { @style = "width: 140px;" })
-              </div>
-            </div>
-
-            <div class="form-group" id="specificdatetimearea">
-              <label class="col-sm-2 control-label">Specific DateTime</label>
-              <div class="col-sm-10"><input type="text" asp-for="SpecifcDate" id="SpecifcDateTime" onkeydown="javascript:return false;"></div>
-            </div>
-
-
-            <div class="form-group" id="daysoftheweekarea">
-              <label class="col-sm-2 control-label">
-                Days of the Week
-              </label>
-              <div class="col-sm-10">
-                <div class="form-group">
-                  <label class="col-sm-1 control-label">Sunday</label>
-                  <div class="col-sm-8">
-                    <div class="switch">
-                      <div class="onoffswitch">
-                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Sunday">
-                        <label class="onoffswitch-label" for="Sunday">
-                          <span class="onoffswitch-inner"></span>
-                          <span class="onoffswitch-switch"></span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-1 control-label">Monday</label>
-                  <div class="col-sm-8">
-                    <div class="switch">
-                      <div class="onoffswitch">
-                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Monday">
-                        <label class="onoffswitch-label" for="Monday">
-                          <span class="onoffswitch-inner"></span>
-                          <span class="onoffswitch-switch"></span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-1 control-label">Tuesday</label>
-                  <div class="col-sm-8">
-                    <div class="switch">
-                      <div class="onoffswitch">
-                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Tuesday">
-                        <label class="onoffswitch-label" for="Tuesday">
-                          <span class="onoffswitch-inner"></span>
-                          <span class="onoffswitch-switch"></span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-1 control-label">Wednesday</label>
-                  <div class="col-sm-8">
-                    <div class="switch">
-                      <div class="onoffswitch">
-                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Wednesday">
-                        <label class="onoffswitch-label" for="Wednesday">
-                          <span class="onoffswitch-inner"></span>
-                          <span class="onoffswitch-switch"></span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-1 control-label">Thursday</label>
-                  <div class="col-sm-8">
-                    <div class="switch">
-                      <div class="onoffswitch">
-                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Thursday">
-                        <label class="onoffswitch-label" for="Thursday">
-                          <span class="onoffswitch-inner"></span>
-                          <span class="onoffswitch-switch"></span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-1 control-label">Friday</label>
-                  <div class="col-sm-8">
-                    <div class="switch">
-                      <div class="onoffswitch">
-                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Friday">
-                        <label class="onoffswitch-label" for="Friday">
-                          <span class="onoffswitch-inner"></span>
-                          <span class="onoffswitch-switch"></span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-1 control-label">Saturday</label>
-                  <div class="col-sm-8">
-                    <div class="switch">
-                      <div class="onoffswitch">
-                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Saturday">
-                        <label class="onoffswitch-label" for="Saturday">
-                          <span class="onoffswitch-inner"></span>
-                          <span class="onoffswitch-switch"></span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group" id="daysoftheweekarea_time">
-              <label class="col-sm-2 control-label">Time To Run</label>
-              <div class="col-sm-10"><input type="text" asp-for="Time" id="DayOfWeekTime" onkeydown="javascript:return false;"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">
-                Report To Run
-              </label>
-              <div class="col-sm-10">
-                @Html.DropDownListFor(m => m.ReportType, Model.ReportTypes, new { })
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save changes</button>
-              </div>
-            </div>
-          </form>
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-4">
+            <h2>@localizer["EditScheduledReportHeader"]</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["EditProfile"]</a>
+                </li>
+                <li>
+                    <a asp-controller="Profile" asp-action="Reporting" asp-route-area="User">@localizer["ReportDeliveryHeader"]</a>
+                </li>
+                <li class="active">
+                    <strong>@localizer["EditScheduledReportHeader"]</strong>
+                </li>
+            </ol>
         </div>
-      </div>
     </div>
-  </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="EditScheduledReport" asp-route-area="User" method="post">
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(x => x.ScheduleId)
+                            @if (!String.IsNullOrEmpty(Model.Message))
+                        {
+                            <div class="alert alert-success">
+                                @Model.Message
+                            </div>
+                        }
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Priority"]</label>
+                            <div class="col-sm-10">
+                                @Html.DropDownListFor(m => m.SpecificDatetime, new SelectList(
+                                new List<Object>{
+                                new { value = true, text = @localizer["SpecificDate"]  },
+                                new { value = false, text = @localizer["DaysOfWeek"] }
+                                },
+                                "value",
+                                "text"
+                                ), new { @style = "width: 140px;" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="specificdatetimearea">
+                            <label class="col-sm-2 control-label">@localizer["SpecificDateTime"]</label>
+                            <div class="col-sm-10"><input type="text" asp-for="SpecifcDate" id="SpecifcDateTime" onkeydown="javascript:return false;"></div>
+                        </div>
+
+
+                        <div class="form-group" id="daysoftheweekarea">
+                            <label class="col-sm-2 control-label">
+                                @localizer["DaysOfWeek"]
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Sunday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Sunday">
+                                                <label class="onoffswitch-label" for="Sunday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Monday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Monday">
+                                                <label class="onoffswitch-label" for="Monday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Tuesday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Tuesday">
+                                                <label class="onoffswitch-label" for="Tuesday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Wednesday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Wednesday">
+                                                <label class="onoffswitch-label" for="Wednesday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Thursday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Thursday">
+                                                <label class="onoffswitch-label" for="Thursday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Friday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Friday">
+                                                <label class="onoffswitch-label" for="Friday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Saturday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Saturday">
+                                                <label class="onoffswitch-label" for="Saturday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="daysoftheweekarea_time">
+                            <label class="col-sm-2 control-label">@localizer["TimeToRun"]</label>
+                            <div class="col-sm-10"><input type="text" asp-for="Time" id="DayOfWeekTime" onkeydown="javascript:return false;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                @localizer["ReportToRun"]
+                            </label>
+                            <div class="col-sm-10">
+                                @Html.DropDownListFor(m => m.ReportType, Model.ReportTypes, new { })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
-  <script src="~/js/app/internal/profile/resgrid.profile.addscheduledreport.js"></script>
+    {
+    <script src="~/js/app/internal/profile/resgrid.profile.addscheduledreport.js"></script>
 }

@@ -1,7 +1,8 @@
 ﻿@using Resgrid.Web.Areas.User.Models
 @model Resgrid.Web.Areas.User.Models.AddPersonModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-  ViewBag.Title = "Resgrid | Add Person";
+  ViewBag.Title = "Resgrid | " + @localizer["AddPersonHeader"];
 }
 
 @section Styles
@@ -11,16 +12,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Add Person</h2>
+    <h2>@localizer["AddPersonHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li>
-        <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+        <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
       </li>
       <li class="active">
-        <strong>Add Person</strong>
+        <strong>@localizer["AddPersonHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -37,61 +38,61 @@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <h3>
-              Account Information
+              @localizer["AccountInformationHeader"]
             </h3>
             <div class="form-group">
-              <label class="col-sm-2 control-label">UserName</label>
+              <label class="col-sm-2 control-label">@localizer["UsernameLabel"]</label>
               <div class="col-sm-10">
                 <input type="text" class="form-control" asp-for="Username" autocomplete="off">
-                <span class="help-block m-b-none">The User Name must be unique</span>
+                <span class="help-block m-b-none">@localizer["UsernameHelp"]</span>
               </div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">New Password</label>
+              <label class="col-sm-2 control-label">@localizer["NewPasswordLabel"]</label>
               <div class="col-sm-10">
                 <input type="password" class="form-control pr-password" asp-for="NewPassword" autocomplete="off">
-                <span class="help-block m-b-none">Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</span>
+                <span class="help-block m-b-none">@localizer["NewPasswordHelp"]</span>
               </div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Confirm Password</label>
+              <label class="col-sm-2 control-label">@localizer["ConfirmPasswordLabel"]</label>
               <div class="col-sm-10">
                 <input type="password" class="form-control" asp-for="ConfirmPassword" autocomplete="off">
-                <span class="help-block m-b-none">Confirm the users password (must match the one above)</span>
+                <span class="help-block m-b-none">@localizer["ConfirmPasswordHelp"]</span>
               </div>
             </div>
 
             <h3>
-              User Details
+              @localizer["UserDetailHeader"]
             </h3>
             <div class="form-group">
-              <label class="col-sm-2 control-label">ID Number</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Custom Identication Number" asp-for="Profile.IdentificationNumber"></div>
+              <label class="col-sm-2 control-label">@localizer["IDNumberLabel"]</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IDNumberPlaceholder"]" asp-for="Profile.IdentificationNumber"></div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">First Name</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="First Name" asp-for="FirstName"></div>
+              <label class="col-sm-2 control-label">@localizer["FirstNameLabel"]</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FirstNamePlaceholder"]" asp-for="FirstName"></div>
             </div>
 		    <div class="form-group">
-		      <label class="col-sm-2 control-label">Last Name</label>
-		      <div class="col-sm-10"><input type="text" class="form-control" placeholder="Last Name" asp-for="LastName"></div>
+		      <label class="col-sm-2 control-label">@localizer["LastNameLabel"]</label>
+		      <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["LastNamePlaceholder"]" asp-for="LastName"></div>
 		    </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Email Address</label>
+              <label class="col-sm-2 control-label">@localizer["EmailAddressLabel"]</label>
               <div class="col-sm-10">
-                <input type="email" class="form-control" placeholder="Email Address (must be unique)" asp-for="Email">
-                <span class="help-block m-b-none">Email Addresses must be unique</span>
+                <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Email">
+                <span class="help-block m-b-none">@localizer["EmailAddressHelp"]</span>
               </div>
             </div>
             <h3>
               Group Details
             </h3>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Group</label>
+              <label class="col-sm-2 control-label">@localizer["GroupLabel"]</label>
               <div class="col-sm-10"><select asp-for="UserGroup" asp-items="Model.Groups" style="padding-left: 0; width: 100%;"></select></div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Is Group Admin?</label>
+              <label class="col-sm-2 control-label">@localizer["IsGroupAdminLabel"]</label>
               <div class="col-sm-10">
                 <div class="checkbox checkbox-primary">
                   <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsUserGroupAdmin">
@@ -102,92 +103,92 @@
             <div class="hr-line-dashed"></div>
 
             <div class="form-group">
-              <label class="col-sm-2 control-label">Roles</label>
+              <label class="col-sm-2 control-label">@localizer["RolesLabel"]</label>
               <div class="col-sm-10"><select id="roles" name="roles"></select></div>
             </div>
             <div class="hr-line-dashed"></div>
 
             <h3>
-              Contact Details
+              @localizer["ContactDetailsHeader"]
             </h3>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Mobile Number</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Mobile Phone Number" asp-for="Profile.MobileNumber"></div>
+              <label class="col-sm-2 control-label">@localizer["MobileNumberLabel"]</label>
+              <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MobileNumberPlaceholder"]" asp-for="Profile.MobileNumber"></div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Mobile Carrier</label>
+              <label class="col-sm-2 control-label">@localizer["MobileCarrierLabel"]</label>
               <div class="col-sm-10"><select asp-for="Carrier" asp-items="ViewBag.Carriers" style="padding-left: 0; width: 100%;"></select></div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Call Options</label>
+              <label class="col-sm-2 control-label">@localizer["CallOptionsLabel"]</label>
               <div class="col-sm-10">
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendEmail">
-                  <label for="inlineCheckbox1"> Email </label>
+                  <label for="inlineCheckbox1"> @commonLocalizer["Email"] </label>
                 </div>
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendSms">
-                  <label for="inlineCheckbox2"> Text/SMS </label>
+                  <label for="inlineCheckbox2"> @commonLocalizer["Text"] </label>
                 </div>
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendPush">
-                  <label for="inlineCheckbox3"> Push </label>
+                  <label for="inlineCheckbox3"> @commonLocalizer["Push"] </label>
                 </div>
-                <p class="help-block"><strong>Note:</strong> You may incur additional changes for SMS/Text depending on your mobile plan.</p>
+                <p class="help-block"><strong>@commonLocalizer["Note"]:</strong> @localizer["TextWarning"]</p>
               </div>
             </div>
             <div class="control-group" id="user_message_options_input">
-              <label class="col-sm-2 control-label">Message Options</label>
+              <label class="col-sm-2 control-label">@localizer["MessageOptionsLabel"]</label>
               <div class="col-sm-10">
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendMessageEmail">
-                  <label for="inlineCheckbox1"> Email </label>
+                  <label for="inlineCheckbox1"> @commonLocalizer["Email"] </label>
                 </div>
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendMessageSms">
-                  <label for="inlineCheckbox2"> Text/SMS </label>
+                  <label for="inlineCheckbox2"> @commonLocalizer["Text"] </label>
                 </div>
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendMessagePush">
-                  <label for="inlineCheckbox3"> Push </label>
+                  <label for="inlineCheckbox3"> @commonLocalizer["Push"] </label>
                 </div>
-                <p class="help-block"><strong>Note:</strong> You may incur additional changes for SMS/Text depending on your mobile plan.</p>
+                <p class="help-block"><strong>@commonLocalizer["Note"]:</strong> @localizer["TextWarning"]</p>
               </div>
             </div>
             <div id="notificationOptionsSection" class="form-group">
-              <label class="col-sm-2 control-label">Notification Options</label>
+              <label class="col-sm-2 control-label">@localizer["NotificationOptionsLabel"]</label>
               <div class="col-sm-10">
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendNotificationEmail">
-                  <label for="inlineCheckbox1"> Email </label>
+                  <label for="inlineCheckbox1"> @commonLocalizer["Email"] </label>
                 </div>
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendNotificationSms">
-                  <label for="inlineCheckbox2"> Text/SMS </label>
+                  <label for="inlineCheckbox2"> @commonLocalizer["Text"] </label>
                 </div>
                 <div class="checkbox checkbox-primary checkbox-inline">
                   <input type="checkbox" asp-for="Profile.SendNotificationPush">
-                  <label for="inlineCheckbox3"> Push </label>
+                  <label for="inlineCheckbox3"> @commonLocalizer["Push"] </label>
                 </div>
-                <p class="help-block"><strong>Note:</strong> You may incur additional changes for SMS/Text depending on your mobile plan.</p>
+                <p class="help-block"><strong>@commonLocalizer["Note"]:</strong> @localizer["TextWarning"]</p>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="col-sm-2 control-label">Notify User?</label>
+              <label class="col-sm-2 control-label">@localizer["NotifyUser"]</label>
               <div class="col-sm-10">
                 <div class="checkbox checkbox-primary">
                   <input type="checkbox" class="checkbox checkbox-primary" asp-for="SendAccountCreationNotification">
                   <label></label>
                 </div>
-                <p class="help-block"><strong>Note:</strong> Uncheck if you don't want Resgrid to notify the user of this account creation.</p>
+                <p class="help-block"><strong>@commonLocalizer["Note"]:</strong> @localizer["NotifyWarning"]</p>
               </div>
             </div>
 
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Add User</button>
+                <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                <button class="btn btn-primary" type="submit">@localizer["AddPersonHeader"]</button>
               </div>
             </div>
           </form>

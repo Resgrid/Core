@@ -13,6 +13,7 @@
 		<DockerfileContext>..\..</DockerfileContext>
 		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
 		<Configurations>Debug;Release;Docker</Configurations>
+		<ApplicationInsightsResourceId>/subscriptions/bc1ffca7-bf1a-49f9-88f7-b99be887fe9d/resourceGroups/ResgridUSWest/providers/microsoft.insights/components/resgridinsights</ApplicationInsightsResourceId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -47,6 +48,7 @@
 	<ItemGroup>
 		<PackageReference Include="AspNetCoreRateLimit" Version="4.0.1" />
 		<PackageReference Include="GeoJSON.Net" Version="1.2.19" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.1" />

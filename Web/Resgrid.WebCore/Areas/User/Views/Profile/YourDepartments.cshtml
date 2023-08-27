@@ -2,28 +2,29 @@
 @using Resgrid.Web.Helpers
 @using System.Text;
 @model Resgrid.Web.Areas.User.Models.Profile.YourDepartmentsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-  ViewBag.Title = "Resgrid | Your Departments";
+  ViewBag.Title = "Resgrid | " + @localizer["YourDepartmentsHeader"];
 }
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
     <h2>
-      <h1>Your Departments</h1>
+      <h1>@localizer["YourDepartmentsHeader"]</h1>
     </h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li class="active">
-        <strong>Your Departments</strong>
+        <strong>@localizer["YourDepartmentsHeader"]</strong>
       </li>
     </ol>
   </div>
   <div class="col-sm-8">
     <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-      <a title="Join Department" class="btn btn-success" href="#joinDepartmentModal" data-toggle="modal">Join Department</a>
+      <a title="Join Department" class="btn btn-success" href="#joinDepartmentModal" data-toggle="modal">@localizer["JoinDepartment"]</a>
     </div>
   </div>
 </div>
@@ -37,11 +38,11 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Department</th>
-                  <th>Active</th>
-                  <th>Default</th>
-                  <th>Status</th>
-                  <th>Options</th>
+                  <th>@commonLocalizer["Department"]</th>
+                  <th>@commonLocalizer["Active"]</th>
+                  <th>@commonLocalizer["Default"]</th>
+                  <th>@commonLocalizer["Status"]</th>
+                  <th>@commonLocalizer["Options"]</th>
                 </tr>
               </thead>
               <tbody>
@@ -86,17 +87,17 @@
                     <td class="center">
                       @if (!m.IsActive)
 					  {
-                        <a asp-controller="Profile" onclick="resgrid.profile.yourDepartments.switchActiveDepartment(@m.DepartmentId)" class="btn btn-xs btn-success" data-confirm="WARNING: This will change your current active department to @m.Department.Name, you can only be logged into one department at a time, are you sure?" rel="nofollow">Set As Active</a>
+                        <a asp-controller="Profile" onclick="resgrid.profile.yourDepartments.switchActiveDepartment(@m.DepartmentId)" class="btn btn-xs btn-success" data-confirm="@localizer["SetAsActiveWarning"]" rel="nofollow">@localizer["SetAsActive"]</a>
 					  }
 
                       @if (!m.IsDefault)
 					  {
-                        <a asp-controller="Profile" asp-action="SetDefaultDepartment" asp-route-area="User" asp-route-departmentId="@m.DepartmentId"  class="btn btn-xs btn-info" data-confirm="WARNING: This will change your default department to @m.Department.Name, if you want to view this department you will need to activate it afterwards." rel="nofollow">Set As Default</a>
+                        <a asp-controller="Profile" asp-action="SetDefaultDepartment" asp-route-area="User" asp-route-departmentId="@m.DepartmentId"  class="btn btn-xs btn-info" data-confirm="@localizer["SetAsDefaultWarning"]" rel="nofollow">@localizer["SetAsDefault"]</a>
 					  }
 
                       @if (m.Department.ManagingUserId != Model.UserId && Model.Members.Count > 1)
 					  {
-                        <a asp-controller="Profile" asp-action="DeleteDepartmentLink" asp-route-area="User" asp-route-departmentId="@m.DepartmentId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove you from the @m.Department.Name department. Are you sure you sure?" rel="nofollow">Remove Yourself From Department</a>
+                        <a asp-controller="Profile" asp-action="DeleteDepartmentLink" asp-route-area="User" asp-route-departmentId="@m.DepartmentId" class="btn btn-xs btn-danger" data-confirm="@localizer["RemoveFromDepartmentWarning"]" rel="nofollow">@localizer["RemoveYourself"]</a>
 					  }
                     </td>
                   </tr>
@@ -115,13 +116,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Join Department</h4>
+        <h4 class="modal-title">@localizer["JoinDepartmentHeader"]</h4>
       </div>
       @using (Html.BeginForm("JoinDepartment", "Profile", FormMethod.Post, new { area = "User", id = "joinDepartmentForm", @class = "form-horizontal" }))
 	  {
         <div class="modal-body">
           <span>
-            You need to supply the current Department Id and Code for the Resgrid Department you wish to join.
+            @localizer["JoinDepartmentInfo"]
           </span>
           <div class="alert alert-danger" role="alert" id="errorMessage" style="display: none;">
 
@@ -129,7 +130,7 @@
           <div class="modal-body">
             <div class="form-group">
               <label class="control-label">
-                Department Id
+                @localizer["DepartmentId"]
               </label>
               <div class="controls">
                 <input type="text" id="deparmentId" name="deparmentId" class="form-control" />
@@ -137,7 +138,7 @@
             </div>
             <div class="form-group">
               <label class="control-label">
-                Department Code
+                @localizer["DepartmentCode"]
               </label>
               <div class="controls">
                 <input type="text" id="departmentCode" name="departmentCode" class="form-control" />
@@ -145,8 +146,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <a href="@Url.Action("YourDepartments", "Profile", new { area = "User" })" class="btn">Close</a>
-            <input class="btn btn-primary" id="submit-button" name="commit" type="submit" value="Join Department" />
+            <a href="@Url.Action("YourDepartments", "Profile", new { area = "User" })" class="btn">@commonLocalizer["Close"]</a>
+            <input class="btn btn-primary" id="submit-button" name="commit" type="submit" value="@localizer["JoinDepartment"]" />
           </div>
         </div>
 	  }

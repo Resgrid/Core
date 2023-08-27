@@ -1,135 +1,135 @@
-﻿
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Profile.CertificationsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-	ViewBag.Title = "Resgrid | Certifications";
+    ViewBag.Title = "Resgrid | " + @localizer["CertificationsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>
-			@if (Model.Self)
-			{
-				<h1>Certifications</h1>
-			}
-			else
-			{
-				<h1>@Model.Name's Certifications</h1>
-			}
-		</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
-			</li>
-			<li class="active">
-				<strong>Certifications</strong>
-			</li>
-		</ol>
-	</div>
+    <div class="col-sm-4">
+        <h2>
+            @if (Model.Self)
+            {
+                <h1>@localizer["CertificationsHeader"]</h1>
+            }
+            else
+            {
+                <h1>@Model.Name's @localizer["CertificationsHeader"]</h1>
+            }
+        </h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["EditProfile"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["CertificationsHeader"]</strong>
+            </li>
+        </ol>
+    </div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-title">
-					<h5>Certifications</h5>
-					<div class="ibox-tools">
-						<div class="buttons-actions">
-							@if (Model.Self)
-							{
-								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User">Add Certification</a>
-							}
-							else
-							{
-								<a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User" asp-route-userId="@Model.UserId">Add Certification</a>
-							}
-						</div>
-					</div>
-				</div>
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>
-										Name
-									</th>
-									<th>
-										Number
-									</th>
-									<th>
-										Type
-									</th>
-									<th>
-										Expires On
-									</th>
-									<th>
-										Status
-									</th>
-									<th class="span1">
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var g in Model.Certifications)
-								{
-									<tr>
-										<td>
-											@g.Name
-										</td>
-										<td>
-											@g.Number
-										</td>
-										<td>
-											@g.Type
-										</td>
-										<td>
-											@if (g.ExpiresOn.HasValue)
-											{
-												@g.ExpiresOn.Value.ToShortDateString()
-											}
-											else
-											{
-												<span>Never</span>
-											}
-										</td>
-										<td>
-											@if (g.ExpiresOn.HasValue && g.ExpiresOn.Value <= DateTime.UtcNow.TimeConverter(Model.Department))
-											{
-												<span class="label label-danger">Expired</span>
-											}
-											else
-											{
-												<span class="label label-success">Valid</span>
-											}
-										</td>
-										<td>
-											<a class="btn btn-xs btn-danger" asp-controller="Profile" asp-action="DeleteCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId" data-confirm="WARNING: This will permanently delete this certification. Are you sure you want to delete the certification?" rel="nofollow">Delete</a>
-											<a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId">Edit</a>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["CertificationsHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            @if (Model.Self)
+                            {
+                                <a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User">@localizer["AddCertification"]</a>
+                            }
+                            else
+                            {
+                                <a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["AddCertification"]</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @commonLocalizer["Name"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Number"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Type"]
+                                    </th>
+                                    <th>
+                                        @localizer["ExpiresOn"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Status"]
+                                    </th>
+                                    <th class="span1">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var g in Model.Certifications)
+                                {
+                                    <tr>
+                                        <td>
+                                            @g.Name
+                                        </td>
+                                        <td>
+                                            @g.Number
+                                        </td>
+                                        <td>
+                                            @g.Type
+                                        </td>
+                                        <td>
+                                            @if (g.ExpiresOn.HasValue)
+                                            {
+                                                @g.ExpiresOn.Value.ToShortDateString()
+                                            }
+                                            else
+                                            {
+                                                <span>Never</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (g.ExpiresOn.HasValue && g.ExpiresOn.Value <= DateTime.UtcNow.TimeConverter(Model.Department))
+                                            {
+                                                <span class="label label-danger">@commonLocalizer["Expired"]</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-success">@commonLocalizer["Valid"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-danger" asp-controller="Profile" asp-action="DeleteCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId" data-confirm="@localizer["CertificationDeleteWarning"]" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            <a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId">Edit</a>
 
-											@if (g.Data != null)
-											{
-												<a class="btn btn-xs btn-success" asp-controller="Profile" asp-action="GetCertificationData" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId">Download</a>
-											}
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                            @if (g.Data != null)
+                                            {
+                                                <a class="btn btn-xs btn-success" asp-controller="Profile" asp-action="GetCertificationData" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId">@commonLocalizer["Download"]</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
+    {
 
 }

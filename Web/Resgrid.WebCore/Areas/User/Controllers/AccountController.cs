@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Account;
+using Resgrid.Web.Helpers;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -41,9 +44,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Roles = SystemRoles.Users)]
-		public IActionResult DeleteAccount()
+		public async Task<IActionResult> DeleteAccount()
 		{
 			DeleteAccountModel model = new DeleteAccountModel();
+
+			var allDepartments = await _departmentsService.GetAllDepartmentsForUserAsync(UserId);
+
+			foreach (var dm in allDepartments)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(dm.DepartmentId);
+
+				if (department != null && department.ManagingUserId == UserId)
+					model.IsDepartmentOwner = true;
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Roles = SystemRoles.Users)]
+		public async Task<IActionResult> DeleteAccount(DeleteAccountModel model, CancellationToken cancellationToken)
+		{
+			if (model.AreYouSure == false)
+				ModelState.AddModelError("AreYouSure", "You need to confirm the delete.");
+
+			if (ModelState.IsValid)
+			{
+				await _deleteService.DeleteUserAccountAsync(DepartmentId, UserId, UserId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+				return RedirectToAction("LogOff", "Account", new { area = "" });
+			}
 
 			return View(model);
 		}

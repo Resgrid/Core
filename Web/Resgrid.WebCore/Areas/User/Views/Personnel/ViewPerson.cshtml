@@ -1,24 +1,24 @@
-﻿
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Personnel.ViewPersonView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-	ViewBag.Title = "Resgrid | View Profile";
+	ViewBag.Title = "Resgrid | View Profile" + @localizer["ViewPersonHeader"];
 }
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>View Person</h2>
+		<h2>@localizer["ViewPersonHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
 			</li>
 			<li class="active">
-				<strong>View Person</strong>
+				<strong>@localizer["ViewPersonHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -51,7 +51,7 @@
 										}
 										else
 										{
-											<td><span class="label label-default">Standing By</span></td>
+											<td><span class="label label-default">@commonLocalizer["StandingBy"]</span></td>
 										}
 									</tr>
 									<tr>
@@ -71,15 +71,15 @@
 										}
 										else
 										{
-											<td><span class="label label-default">Available</span></td>
+											<td><span class="label label-default">@commonLocalizer["Available"]</span></td>
 										}
 									</tr>
 									<tr>
-										<td>State:</td>
+										<td>@commonLocalizer["State"]:</td>
 										<td>@Model.State</td>
 									</tr>
 									<tr>
-										<td>Group:</td>
+										<td>@commonLocalizer["Group"]:</td>
 
 										@if (Model.Group != null)
 										{
@@ -87,30 +87,30 @@
 										}
 										else
 										{
-											<td>None</td>
+											<td>@commonLocalizer["None"]</td>
 										}
 									</tr>
 									<tr>
-										<td>Roles:</td>
+										<td>@commonLocalizer["Roles"]:</td>
 										<td>@Model.Roles</td>
 									</tr>
 									@if (ClaimsAuthorizationHelper.CanViewPII())
 									{
 										<tr>
-											<td>Email</td>
+											<td>@commonLocalizer["Email"]</td>
 											<td><a href="mailto:@Model.User.Email">@Model.User.Email</a></td>
 										</tr>
 										<tr>
-											<td>Phone Number(s)</td>
+											<td>@localizer["PhoneNumbers"]</td>
 											<td>
 												@if (!String.IsNullOrWhiteSpace(Model.Profile.HomeNumber))
 												{
-													<span>@Model.Profile.HomeNumber (Home)</span>
+													<span>@Model.Profile.HomeNumber (@localizer["Home"])</span>
 													<br />
 												}
 												@if (!String.IsNullOrWhiteSpace(Model.Profile.MobileNumber))
 												{
-													<span>@Model.Profile.MobileNumber (Mobile)</span>
+													<span>@Model.Profile.MobileNumber (@localizer["Mobile"])</span>
 												}
 											</td>
 										</tr>

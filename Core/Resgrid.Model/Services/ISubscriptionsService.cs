@@ -224,5 +224,9 @@ namespace Resgrid.Model.Services
 		Task<List<PlanAddon>> GetAllAddonPlansAsync();
 
 		Task<PaymentAddon> SavePaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default(CancellationToken));
+
+		bool CanPlanSendMessageSms(int planId);
+
+		bool CanPlanSendCallSms(int planId);
 	}
 }

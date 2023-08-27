@@ -27,6 +27,7 @@
 	</div>
 	<div class="col-sm-8">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a href="@Url.Action("GetDocument", "Documents", new {area = "User", documentId = Model.Document.DocumentId})" class="btn btn-info">View Document</a>
 			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || @Model.Document.UserId == Model.UserId)
 			{
 				<a href="@Url.Action("DeleteDocument", "Documents", new {area = "User", documentId = Model.Document.DocumentId})" class="btn btn-danger" data-confirm="WARNING: This will permanently delete this document. Are you sure you want to delete the document @Model.Document.Name?" rel="nofollow">Delete</a>

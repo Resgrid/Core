@@ -22,6 +22,7 @@ using Resgrid.Web.Helpers;
 using Resgrid.WebCore.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Localization;
 
 namespace Resgrid.Web.Controllers
 {
@@ -425,7 +426,7 @@ namespace Resgrid.Web.Controllers
 
 					_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent()
 					{
-						DepartmentId = model.Invite.Department.DepartmentId,
+						DepartmentId = model.Invite.DepartmentId,
 						Name = $"{model.FirstName} {model.LastName}",
 						User = user
 					});
@@ -435,10 +436,12 @@ namespace Resgrid.Web.Controllers
 					_usersService.ClearCacheForDepartment(model.Invite.DepartmentId);
 					_departmentsService.InvalidateDepartmentMembers();
 
+					var department = await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId);
+
 					await _invitesService.CompleteInviteAsync(model.Invite.Code, user.UserId, cancellationToken);
 					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
-					await _emailService.SendWelcomeEmail(model.Invite.Department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Password, model.Invite.DepartmentId);
+					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Password, model.Invite.DepartmentId);
 
 					await _signInManager.SignInAsync(user, isPersistent: false);
 
@@ -460,6 +463,26 @@ namespace Resgrid.Web.Controllers
 		public IActionResult AccessDenied()
 		{
 			return RedirectToAction("Unauthorized", "Public");
+		}
+
+		[AllowAnonymous]
+		[HttpPost]
+		public IActionResult SetLanugage(string culture, string returnUrl)
+		{
+			if (!String.IsNullOrWhiteSpace(culture))
+			{
+				Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)), new CookieOptions { Expires = DateTime.UtcNow.AddYears(1) });
+				// This guy I think is causing issues with like DateTime rendering mm/dd/yy vs dd/mm/yy, so need to look into that more. -SJ
+				//Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo(culture);
+				Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo(culture);
+
+				if (!String.IsNullOrWhiteSpace(returnUrl))
+					return RedirectToLocal(returnUrl);
+				else
+					return RedirectToAction("LogOn");
+			}
+
+			return RedirectToAction("LogOn");
 		}
 
 		#region Helpers

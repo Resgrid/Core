@@ -1,17 +1,18 @@
 ﻿@model Resgrid.Web.Areas.User.Models.DepartmentSettingsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @{
-  ViewBag.Title = "Resgrid | API Settings";
+  ViewBag.Title = "Resgrid | " + @localizer["ApiSettingsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>API Settings</h2>
+    <h2>@localizer["ApiSettingsHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li class="active">
-        <strong>API Settings</strong>
+        <strong>@localizer["ApiSettingsHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -23,18 +24,18 @@
       <div class="ibox float-e-margins">
         <div class="ibox-content">
           <div class="form-horizontal">
-            <h5>RSS Active Call Feed</h5>
+            <h5>@localizer["RssActiveCallFeedHeader"]</h5>
             <p>
-              Resgrid allows your department’s active calls to be accessed via a RSS feed. This allows any feed reader (like a blog reader, or even Microsoft Outlook) to actively display and notify of new calls. For maximum compatible Resgrid will generate a unique URL for RSS 2.0 readers. This URL has no other protection (username\password, etc) so it’s important that it’s not publicly shared if you which not to have active calls data public.
+                @localizer["RssActiveCallFeedInfo"]
             </p>
             @if (String.IsNullOrEmpty(Model.ActiveCallRssKey))
 			{
               <p>
-                Your department does not have RSS feed Urls provisioned. Click the button below to provision your RSS Urls. Only provision RSS\Atom Urls when your department needs it.
+                  @localizer["RssActiveCallNoFeedInfo"]
               </p>
 
               <fieldset class="form-actions">
-                <a class="btn btn-large btn-inverse" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">Provision Rss\Atm Urls</a>
+                <a class="btn btn-large btn-inverse" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">@localizer["Provision"]</a>
               </fieldset>
 			}
 			else
@@ -43,11 +44,9 @@
               <dl class="dl-horizontal">
                 <dt>RSS 2.0</dt>
                 <dd><a href="https://api.resgrid.com/api/v3/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey">https://api.resgrid.com/api/v3/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey</a></dd>
-                @*<dt>Atom 1.0</dt>
-				  <dd><a href="http://api.resgrid.com/Feeds/GetActiveCallsAsAtom/@Model.ActiveCallRssKey">http://api.resgrid.com/Feeds/GetActiveCallsAsAtom/@Model.ActiveCallRssKey</a></dd>*@
               </dl>
               <fieldset class="form-actions">
-                <a class="btn btn-mini btn-danger" data-confirm="WARNING: Regenerating your Rss\Atom Urls will require all readers\consumers to update to the a new Url. Are you sure you want to regenerate?" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">Regenerate RSS Urls</a>
+                <a class="btn btn-mini btn-danger" data-confirm="@localizer["RegenerateWarning"]" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">@localizer["Regenerate"]</a>
               </fieldset>
 			}
           </div>

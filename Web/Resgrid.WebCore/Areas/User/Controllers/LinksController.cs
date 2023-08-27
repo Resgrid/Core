@@ -54,7 +54,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanCreateLinks = await _limitsService.CanDepartmentUseLinksAsync(DepartmentId);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			model.Code = department.LinkCode;
+
+			if (department != null)
+				model.Code = department.LinkCode;
 
 			return View(model);
 		}

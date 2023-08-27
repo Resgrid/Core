@@ -78,7 +78,7 @@ namespace Resgrid.Web.Eventing
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrl);
+			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForEventing);
 
 			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
 			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);

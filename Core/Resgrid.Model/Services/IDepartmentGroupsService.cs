@@ -220,5 +220,7 @@ namespace Resgrid.Model.Services
 		List<IdentityUser> GetAllUsersForGroup(int groupId);
 
 		Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<DepartmentGroup>> GetAllGroupsForDepartmentUnlimitedThinAsync(int departmentId);
 	}
 }

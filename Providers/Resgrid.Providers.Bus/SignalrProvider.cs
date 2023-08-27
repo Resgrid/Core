@@ -29,7 +29,7 @@ namespace Resgrid.Providers.Bus
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				Logging.LogException(e);
+				//Logging.LogException(e);
 			}
 
 			return false;
@@ -46,7 +46,7 @@ namespace Resgrid.Providers.Bus
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				Logging.LogException(e);
+				//Logging.LogException(e);
 			}
 
 			return false;
@@ -63,7 +63,7 @@ namespace Resgrid.Providers.Bus
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				Logging.LogException(e);
+				//Logging.LogException(e);
 			}
 
 			return false;
@@ -80,7 +80,7 @@ namespace Resgrid.Providers.Bus
 			catch (Exception e)
 			{
 				// Disabling due to unnecessary logging of redundant exceptions.
-				Logging.LogException(e);
+				//Logging.LogException(e);
 			}
 
 			return false;
@@ -122,7 +122,7 @@ namespace Resgrid.Providers.Bus
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex);
+				//Logging.LogException(ex);
 				//Create();
 			}
 		}

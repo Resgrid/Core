@@ -270,5 +270,31 @@ namespace Resgrid.Repositories.DataRepository
 
 			return false;
 		}
+
+		public async Task<bool> ClearOutUserLoginAsync(string userId)
+		{
+			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			{
+				var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
+													 SET UserName = @deleteid,
+													 Email = @deleteid + '@resgrid.del' 
+													 WHERE Id = @userId",
+								new { userId = userId, deleteid = Guid.NewGuid().ToString() });
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CleanUpOIDCTokensByUserAsync(string userId)
+		{
+			using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+			{
+				var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+													 WHERE Subject = @userId",
+								new { userId = userId });
+			}
+
+			return false;
+		}
 	}
 }

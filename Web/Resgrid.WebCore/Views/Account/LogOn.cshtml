@@ -3,114 +3,176 @@
 @using Microsoft.AspNetCore.Authentication
 @model LoginViewModel
 @inject SignInManager<Resgrid.Model.Identity.IdentityUser> SignInManager
-
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Account.Login> localizer
 @{
-  ViewData["Title"] = "Resgrid | Log On";
+    ViewData["Title"] = "Resgrid | " + @localizer["LogOnHeader"];
 }
 
 @{
-  Layout = null;
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@ViewData["Title"]</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  @Html.Partial("_StylePartial")
+    @Html.Partial("_StylePartial")
 </head>
 <body class="gray-bg">
 
-  <div class="loginColumns animated fadeInDown">
-    @if (ViewData["LoginNotice"] != null && !String.IsNullOrWhiteSpace(ViewData["LoginNotice"].ToString()))
-	{
-      <div class="row">
-        <div class="col-md-12">
-          <div class="alert alert-danger alert-block">
-            <h4 class="alert alert-heading">Notice</h4>
-            @ViewData["LoginNotice"]
-          </div>
-        </div>
-      </div>
-	}
-    <div class="row">
-      <div class="col-md-6">
-        <div style="text-align: center;">
-          <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
-        </div>
-        <p>
-          Enter your username and password to login.
-        </p>
-
-        <p>
-          If your department has already signed up ask that departments admin for an invite.
-        </p>
-
-        <p>
-          If your department has not yet signed up for Resgrid you can create a new account which will create the department for you.
-        </p>
-
-        <p>
-          <small>Maintenance is performed weekly on Saturday starting at 2000 hours Pacific.</small>
-        </p>
-
-        <p>
-          <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
-        </p>
-      </div>
-      <div class="col-md-6">
-        <div class="ibox-content">
-          <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
+    <div class="loginColumns animated fadeInDown">
+        @if (ViewData["LoginNotice"] != null && !String.IsNullOrWhiteSpace(ViewData["LoginNotice"].ToString()))
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-danger alert-block">
+                        <h4 class="alert alert-heading">@localizer["Notice"]</h4>
+                        @ViewData["LoginNotice"]
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-              <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="">
+        }
+        <div class="row">
+            <div class="col-md-6">
+                <div style="text-align: center;">
+                    <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+                </div>
+                <p>
+                    @localizer["LoginMessage1"]
+                </p>
+
+                <p>
+                    @localizer["LoginMessage2"]
+                </p>
+
+                <p>
+                    @localizer["LoginMessage3"]
+                </p>
+
+                <p>
+                    <small>@localizer["LoginMessage4"]</small>
+                </p>
+
+                <p>
+                    <small><a asp-controller="Home" asp-action="Index">@localizer["GoBack"]</a></small>
+                </p>
             </div>
-            <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+            <div class="col-md-6">
+                <div class="ibox-content">
+                    <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="">
+                        </div>
+                        <button type="submit" class="btn btn-primary block full-width m-b">@localizer["LogOnHeader"]</button>
 
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="All" class="text-danger"></div>
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
 
-            <a asp-controller="Account" asp-action="ForgotPassword" asp-route-area="">
-              <small>Forgot your username or password?</small>
-            </a>
+                        <a asp-controller="Account" asp-action="ForgotPassword" asp-route-area="">
+                            <small>@localizer["ForgotPassword"]</small>
+                        </a>
 
-            @if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
-			{
-              <p class="text-muted text-center">
-                <small>Do not have an account?</small>
-              </p>
-              <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">Create an account</a>
-			}
-          </form>
-          <p class="m-t">
+                        @if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
+                        {
+                            <p class="text-muted text-center">
+                                <small>@localizer["DontHaveAccount"]</small>
+                            </p>
+                            <a class="btn btn-sm btn-success btn-block" asp-controller="Account" asp-action="Register">@localizer["CreateAccount"]</a>
+                        }
+                    </form>
+                    <p class="m-t">
 
-          </p>
+                    </p>
+                </div>
+            </div>
+            <div style="float: right; padding-right:15px;">
+                <form id="setLanguageForm" asp-controller="Account" asp-action="SetLanugage" asp-route-area="" method="post">
+                    <input type="hidden" id="culture" name="culture" value="" />
+                    <input type="hidden" id="returnUrl" name="returnUrl" value="" />
+                    <div class="dropdown">
+                        <a href="#" id="languageDropdown" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                            <img id="languageDropdownCurrentLang" src="/images/flags/32/United-States.png" width="32" height="32">
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="en"><img src="/images/flags/32/United-States.png" width="32" height="32"> English</a>
+                            </li>
+                            <li class="dropdown-item langDropdownSelection">
+                                <a href="#" class="langDropdownSelection" data-locale="es"><img src="/images/flags/32/Mexico.png" width="32" height="32"> Spanish</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                Resgrid, LLC.
+            </div>
+            <div class="col-md-6 text-right">
+                <small>© @DateTime.Now.Year</small>
+            </div>
+        </div>
     </div>
-    <hr />
-    <div class="row">
-      <div class="col-md-6">
-        Resgrid, LLC.
-      </div>
-      <div class="col-md-6 text-right">
-        <small>© @DateTime.Now.Year</small>
-      </div>
-    </div>
-  </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
-  <script src="~/clib/ujs/jquery-ujs.js"></script>
-  <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-  <script src="~/lib/select2/js/select2.min.js"></script>
-  <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"
+            asp-fallback-src="lib/jquery/jquery-1.12.3.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha384-ugqypGWrzPLdx2zEQTF17cVktjb01piRKaDNnbYGRSxyEoeAm+MKZVtbDUYjxfZ6">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/js/bootstrap.min.js"
+            asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+            crossorigin="anonymous"
+            integrity="sha384-vhJnz1OVIdLktyixHY4Uk3OHEwdQqPppqYR8+5mjsauETgLOcEynD9oPHhhz18Nw">
+    </script>
+    <script src="~/clib/ujs/jquery-ujs.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/lib/select2/dist/js/select2.min.js"></script>
+    <script src="~/clib/bootstrap-wizard/bootstrap-wizard.min.js"></script>
 
-  @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+         $(document).ready(function () {
+            let lanCookieString = RegExp(".AspNetCore.Culture" + "=[^;]+").exec(document.cookie);
+            let langCookieValue = decodeURIComponent(!!lanCookieString ? lanCookieString.toString().replace(/^[^=]+./, "") : "");
+
+            if (langCookieValue) {
+                if (langCookieValue.indexOf("c=en") > -1) {
+                    $('#languageDropdownCurrentLang').attr('src', "/images/flags/32/United-States.png");
+                } else if (langCookieValue.indexOf("c=es") > -1) {
+                    $('#languageDropdownCurrentLang').attr('src', "/images/flags/32/Mexico.png");
+                }
+            }
+
+            $(".langDropdownSelection").click(function (e) {
+                if (e) {
+                    e.preventDefault();
+
+                    let target = $(e.currentTarget);
+                    let locale = target.data("locale");
+
+                    if (locale) {
+                        $('#culture').val(locale);
+                        $('#returnUrl').val(window.location.pathname);
+
+                        $('#setLanguageForm').submit();
+                    }
+                }
+            });  
+        });
+    </script>
 </body>
 </html>
 

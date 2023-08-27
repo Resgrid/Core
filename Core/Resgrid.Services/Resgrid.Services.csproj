@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
     <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj" />

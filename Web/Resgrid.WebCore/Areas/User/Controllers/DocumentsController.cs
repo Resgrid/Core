@@ -60,7 +60,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Documents_View)]
 		public async Task<IActionResult> GetDepartmentDocumentCategories()
 		{
-			return Json(_documentsService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId));
+			return Json(await _documentsService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId));
 		}
 
 		[Authorize(Policy = ResgridResources.Documents_View)]

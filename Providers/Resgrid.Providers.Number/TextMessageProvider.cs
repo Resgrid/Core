@@ -28,6 +28,23 @@ namespace Resgrid.Providers.NumberProvider
 
 		public async Task<bool> SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false)
 		{
+			var wasTwillioSuccessful = await SendTextMessageViaTwillio(number, message, departmentNumber);
+
+			if (!wasTwillioSuccessful && isCall)
+			{
+				return await SendTextMessageViaSignalWire(number, message, departmentNumber);
+			}
+
+			return wasTwillioSuccessful;
+
+			/* I'm leaving the abomination below as a comment just in case I need to quickly reference the code block for any missing
+			 * edge cases at 1AM Dealing with a production issue. The below is the result of trying to give as much functionality
+			 * to the free and low paying tiers as possible by lowering Resgrid's costs. But the Greedflation of the 2020's has
+			 * killed my ability to stem the tide anymore. Signalwire will still be used but now only as a backup for calls only.
+			 * Free tiers don't do SMS anymore at all and Standard and Permium tiers no longer can use Message based SMS. -SJ 6-20-2023.
+			 */ 
+
+			/*
 			if (carrier == MobileCarriers.Telstra)
 			{
 				return await SendTextMessageViaNexmo(number, message, departmentNumber);
@@ -99,6 +116,7 @@ namespace Resgrid.Providers.NumberProvider
 					return await SendTextMessageViaSignalWire(number, message, departmentNumber);
 				}
 			}
+			*/
 		}
 
 		private async Task<bool> SendTextMessageViaNexmo(string number, string message, string departmentNumber)
@@ -241,19 +259,27 @@ namespace Resgrid.Providers.NumberProvider
 		{
 			var sendingPhoneNumber = Config.NumberProviderConfig.SignalWireResgridNumber;
 
-			try
-			{
-				var zone = GetZoneForAreaCode(number);
-				var possibleNumbers = Config.NumberProviderConfig.SignalWireZones[zone];
-				var sendingNumber = possibleNumbers.Random();
+			/* 
+			 * Logic below was to work around some issues sending messages to numbers via
+			 * Signalwire, it looks like they would 'spam' block or rate limit if all sent
+			 * from one number. So added regions and message would be sent to users from a
+			 * Region their number is located in, also helped them get stuff from a local'ish
+			 * number. But it makes sense to just migrate this to toll-free numbers now. -SJ
+			 * 
+			 */ 
+			//try
+			//{
+			//	var zone = GetZoneForAreaCode(number);
+			//	var possibleNumbers = Config.NumberProviderConfig.SignalWireZones[zone];
+			//	var sendingNumber = possibleNumbers.Random();
 
-				if (!String.IsNullOrWhiteSpace(sendingNumber))
-					sendingPhoneNumber = sendingNumber;
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-			}
+			//	if (!String.IsNullOrWhiteSpace(sendingNumber))
+			//		sendingPhoneNumber = sendingNumber;
+			//}
+			//catch (Exception ex)
+			//{
+			//	Logging.LogException(ex);
+			//}
 
 			return sendingPhoneNumber;
 		}

@@ -198,10 +198,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 						}
 						else if (afilter.Substring(0, 2) == "U:")
 						{
-							if (state != null && (state.State.ToString() == text || state.State.ToString() == text.Replace(" ", "")))
+							if (state != null && !String.IsNullOrWhiteSpace(text))
 							{
-								result.Data.Add(s);
-								break;
+								if (state.State.ToString() == text || state.State.ToString() == text.Replace(" ", ""))
+								{
+									result.Data.Add(s);
+									break;
+								}
 							}
 						}
 

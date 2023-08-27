@@ -1,121 +1,146 @@
 ﻿@model Resgrid.Web.Models.CompleteInviteModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Account.Login> localizer
 @{
-  ViewData["Title"] = "Resgrid | Complete Invite";
-  Layout = null;
+    ViewData["Title"] = "Resgrid | " + @localizer["CompleteInviteHeader"];
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@ViewData["Title"]</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  @Html.Partial("_StylePartial")
+    @Html.Partial("_StylePartial")
 </head>
 <body class="gray-bg">
 
-  <div class="loginColumns animated fadeInDown">
-    <div class="row">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
 
-      <div class="col-md-6">
-        <div style="text-align: center;">
-          <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+            <div class="col-md-6">
+                <div style="text-align: center;">
+                    <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+                </div>
+                <p>
+                    @localizer["CompleteInviteText1"] @Model.DepartmentName.
+                </p>
+
+                <p>
+                    @localizer["CompleteInviteText2"]
+                </p>
+
+                <p>
+                    @localizer["CompleteInviteText3"]
+                </p>
+
+                <div class='alert alert-info'>
+                    @localizer["SignUpTerms1"] Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">@localizer["TermsOfUse"]</a> &
+                    <a asp-controller="Public" asp-action="Privacy" target="_blank">@localizer["PrivacyPolicy"]</a>
+                </div>
+
+                <p>
+                    <small><a asp-controller="Home" asp-action="Index">@localizer["GoBack"]</a></small>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox-content">
+                    <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="@localizer["FirstName"]" asp-for="FirstName" required="">
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="@localizer["LastName"]" asp-for="LastName" required="">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="@localizer["EmailAddress"]" required="" value="@Model.Email" disabled>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="@localizer["Username"]" asp-for="UserName" required="">
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <span>@localizer["PasswordHelp"]</span>
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="Password" class="pr-password form-control" placeholder="@localizer["Password"]" required="" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="@localizer["ConfirmPassword"]" required="" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary block full-width m-b">@localizer["Resgister"]</button>
+
+                        @Html.HiddenFor(x => x.Email)
+                        @Html.HiddenFor(x => x.Code)
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                    </form>
+                    <p class="m-t">
+
+                    </p>
+                </div>
+            </div>
         </div>
-        <p>
-          Supply the information to create your own Resgrid account and join @Model.DepartmentName.
-        </p>
-
-        <p>
-          The information you are supplying is used to create your account in Resgrid. If you already have an account your existing account will be linked with the department as part of this invite.
-        </p>
-
-        <p>
-          If you are having trouble completing the invite or are running into issues, please reach out to the Administrator of the department for the invite you are trying to complete for assistance. They can manually add your account if necessary.
-        </p>
-
-        <div class='alert alert-info'>
-          By signing up, you accept Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">
-            terms of use
-          </a> and <a asp-controller="Public" asp-action="Privacy" target="_blank">
-            privacy
-            policy
-          </a>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                Resgrid, LLC.
+            </div>
+            <div class="col-md-6 text-right">
+                <small>© @DateTime.Now.Year</small>
+            </div>
         </div>
-
-        <p>
-          <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
-        </p>
-      </div>
-      <div class="col-md-6">
-        <div class="ibox-content">
-          <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="First Name" asp-for="FirstName" required="">
-              <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Last Name" asp-for="LastName" required="">
-              <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-              <input type="email" class="form-control" placeholder="Email Address" required="" value="@Model.Email" disabled>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Username" asp-for="UserName" required="">
-              <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-              <input asp-for="Password" class="form-control" placeholder="Password" required="" />
-              <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-              <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required="" />
-              <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-
-
-            <button type="submit" class="btn btn-primary block full-width m-b">Register</button>
-
-            @Html.HiddenFor(x => x.Email)
-            @Html.HiddenFor(x => x.Code)
-            <div asp-validation-summary="All" class="text-danger"></div>
-          </form>
-          <p class="m-t">
-
-          </p>
-        </div>
-      </div>
     </div>
-    <hr />
-    <div class="row">
-      <div class="col-md-6">
-        Resgrid, LLC.
-      </div>
-      <div class="col-md-6 text-right">
-        <small>© @DateTime.Now.Year</small>
-      </div>
-    </div>
-  </div>
 
-  <script>
-	$(function () {
-	  deleteAllCookies();
-	});
+    <script>
+        $(function() {
+            $(document).ready(function () {
+                $(".pr-password").passwordRequirements({
+                  numCharacters: 8,
+                  useLowercase: true,
+                  useUppercase: true,
+                  useNumbers: true,
+                  useSpecial: false
+                });
 
-	function deleteAllCookies() {
-	  var cookies = document.cookie.split(";");
+              $(document).on('submit', '#registrationForm', function () {
+                var crep = $('#g-recaptcha-response').val();
+                $('#GoogleReCaptchaResponse').val(crep);
 
-	  for (var i = 0; i < cookies.length; i++) {
-		var cookie = cookies[i];
-		var eqPos = cookie.indexOf("=");
-		var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-		document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-	  }
-	}
-  </script>
-  @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+                if ($(this).valid()) {
+                  // On submit disable form submit button
+                  $('#registerButton').prop('disabled', true);
+                }
+
+                return true;
+              });
+            });
+
+            deleteAllCookies();
+        });
+
+        function deleteAllCookies() {
+            var cookies = document.cookie.split(";");
+
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                var eqPos = cookie.indexOf("=");
+                var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+        }
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
 </body>
 </html>

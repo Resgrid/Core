@@ -1,9 +1,9 @@
 ﻿@model Resgrid.Web.Areas.User.Models.CallsDashboardModel
-
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Dashboard> localizer
 @{
-  ViewBag.Title = "Resgrid | Dispatch";
+  ViewBag.Title = "Resgrid | " + @commonLocalizer["CallsModule"];
   Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
@@ -27,23 +27,23 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Calls</h2>
+    <h2>@commonLocalizer["CallsModule"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li class="active">
-        <strong>Calls</strong>
+        <strong>@commonLocalizer["CallsModule"]</strong>
       </li>
     </ol>
   </div>
   <div class="col-sm-8">
     <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
       <div class="buttons-actions">
-        <a title="Archived Calls" class="btn btn-info" asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">Archived Calls</a>
+        <a title="Archived Calls" class="btn btn-info" asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@localizer["ArchivedCalls"]</a>
         @if (ClaimsAuthorizationHelper.CanCreateCall())
 		{
-          <a id="addPersonButton" title="Add a new call" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">New Call</a>
+          <a id="addPersonButton" title="@localizer["NewCallHelp"]" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">@localizer["NewCall"]</a>
 		}
       </div>
     </div>
@@ -55,7 +55,7 @@
     <div class="col-lg-8">
       <div class="ibox float-e-margins">
         <div class="ibox-title">
-          <h5>Unit Statuses</h5>
+          <h5>@localizer["UnitStatusesHeader"]</h5>
         </div>
         <div class="ibox-content">
           <div id="unitsStatusesList"></div>
@@ -77,12 +77,12 @@
     <div class="col-lg-12">
       <div class="ibox float-e-margins">
         <div class="ibox-title">
-          <h5>Active Calls</h5>
+          <h5>@localizer["ActiveCallsHeader"]</h5>
           <div class="ibox-tools">
             @if (ClaimsAuthorizationHelper.CanCreateCall())
 			{
               <div class="buttons-actions">
-                <a id="addPersonButton" title="Add a new call" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new {area = "User"})">New Call</a>
+                <a id="addPersonButton" title="Add a new call" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new {area = "User"})">@localizer["NewCall"]</a>
               </div>
 			}
           </div>
@@ -103,15 +103,15 @@
   </script>
 
   <script id="callCommand-template" type="text/x-kendo-template">
-    <a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-eye-open"></i><span class="hidden-sm hidden-xs"> View</span></a>
+    <a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewCall", "Dispatch", new {area = "User"})?callId=#=CallId#">@commonLocalizer["View"]</a>
     #if(CanUpdateCall){#
-      <a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("UpdateCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-pencil"></i><span class="hidden-sm hidden-xs"> Update</span></a>
+      <a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("UpdateCall", "Dispatch", new {area = "User"})?callId=#=CallId#">@commonLocalizer["Update"]</a>
     #}#
     #if(CanCloseCall){#
-      <a style="text-decoration:none;" class="btn btn-xs btn-warning" href="@Url.Action("CloseCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-stop"></i> <span class="hidden-sm hidden-xs"> Close</span></a>
+      <a style="text-decoration:none;" class="btn btn-xs btn-warning" href="@Url.Action("CloseCall", "Dispatch", new {area = "User"})?callId=#=CallId#">@commonLocalizer["Close"]</a>
     #}#
     #if(CanDeleteCall){#
-      <a href="@Url.Action("DeleteCall", "Dispatch", new { area = "User" })?callId=#=CallId#" class="btn btn-xs btn-danger" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
+      <a href="@Url.Action("DeleteCall", "Dispatch", new { area = "User" })?callId=#=CallId#" class="btn btn-xs btn-danger" rel="nofollow">@commonLocalizer["Delete"]</a>
     #}#
 
   </script>

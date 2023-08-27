@@ -15,7 +15,10 @@ namespace Resgrid.Services
 	{
 		private static string DisableAutoAvailableCacheKey = "DSetAutoAvailable_{0}";
 		private static string StripeCustomerCacheKey = "DSetStripeCus_{0}";
+		private static string BigBoardCenterGps = "DSetBBCenterGps_{0}";
+		private static string StaffingSupressInfo = "DSetStaffingSupress_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
+		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
 
 		private readonly IDepartmentSettingsRepository _departmentSettingsRepository;
@@ -47,6 +50,20 @@ namespace Resgrid.Services
 			}
 			else
 			{
+				// Clear out Cache
+				switch (type)
+				{
+					case DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates:
+						_cacheProvider.Remove(string.Format(BigBoardCenterGps, departmentId));
+						break;
+					case DepartmentSettingTypes.DisabledAutoAvailable:
+						_cacheProvider.Remove(string.Format(DisableAutoAvailableCacheKey, departmentId));
+						break;
+					case DepartmentSettingTypes.StaffingSuppressStaffingLevels:
+						_cacheProvider.Remove(string.Format(StaffingSupressInfo, departmentId));
+						break;
+				}
+
 				savedSetting.Setting = setting;
 				return await _departmentSettingsRepository.SaveOrUpdateAsync(savedSetting, cancellationToken);
 			}
@@ -96,56 +113,71 @@ namespace Resgrid.Services
 
 		public async Task<string> GetBigBoardCenterGpsCoordinatesDepartmentAsync(int departmentId)
 		{
-			var center = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates);
+			string location;
 
-			if (center != null)
+			async Task<string> getLocation()
 			{
-				var newLocation = String.Empty;
-				var points = center.Setting.Split(char.Parse(","));
+				var center = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates);
 
-				try
+				if (center != null)
 				{
-					if (points.Length == 2)
+					var newLocation = String.Empty;
+					var points = center.Setting.Split(char.Parse(","));
+
+					try
 					{
-						if (!String.IsNullOrWhiteSpace(points[0]))
+						if (points.Length == 2)
 						{
-							if (Framework.LocationHelpers.IsDMSLocation(points[0]))
+							if (!String.IsNullOrWhiteSpace(points[0]))
 							{
-								newLocation = Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[0]).ToString() + ",";
+								if (Framework.LocationHelpers.IsDMSLocation(points[0]))
+								{
+									newLocation = Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[0]).ToString() + ",";
+								}
+								else
+								{
+									newLocation = LocationHelpers.StripNonDecimalCharacters(points[0]) + ",";
+								}
 							}
-							else
-							{
-								newLocation = LocationHelpers.StripNonDecimalCharacters(points[0]) + ",";
-							}
-						}
 
-						if (!String.IsNullOrWhiteSpace(points[1]))
+							if (!String.IsNullOrWhiteSpace(points[1]))
+							{
+								if (Framework.LocationHelpers.IsDMSLocation(points[1]))
+								{
+									newLocation = newLocation + Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[1]).ToString();
+								}
+								else
+								{
+									newLocation = newLocation + LocationHelpers.StripNonDecimalCharacters(points[1]);
+								}
+							}
+
+						}
+						else
 						{
-							if (Framework.LocationHelpers.IsDMSLocation(points[1]))
-							{
-								newLocation = newLocation + Framework.LocationHelpers.ConvertDegreeAngleToDouble(points[1]).ToString();
-							}
-							else
-							{
-								newLocation = newLocation + LocationHelpers.StripNonDecimalCharacters(points[1]);
-							}
+							newLocation = center.Setting;
 						}
-
 					}
-					else
+					catch (Exception ex)
 					{
-						newLocation = center.Setting;
+						newLocation = "0,0";
 					}
-				}
-				catch (Exception ex)
-				{
-					newLocation = "0,0";
+
+					return newLocation;
 				}
 
-				return newLocation;
+				return null;
 			}
 
-			return null;
+			if (Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				return await _cacheProvider.RetrieveAsync<string>(string.Format(BigBoardCenterGps, departmentId),
+					getLocation, TwoYearCacheLength);
+			}
+			else
+			{
+				return await getLocation();
+			}
 		}
 
 		public async Task<bool?> GetBigBoardHideUnavailableDepartmentAsync(int departmentId)
@@ -559,6 +591,36 @@ namespace Resgrid.Services
 		private async Task<DepartmentSetting> GetSettingBySettingTypeAsync(string setting, DepartmentSettingTypes settingType)
 		{
 			return await _departmentSettingsRepository.GetDepartmentSettingBySettingTypeAsync(setting, settingType);
+		}
+
+		public async Task<DepartmentSuppressStaffingInfo> GetDepartmentStaffingSuppressInfoAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<DepartmentSuppressStaffingInfo> getSetting()
+			{
+				var actualSetting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.StaffingSuppressStaffingLevels);
+
+				if (actualSetting != null)
+				{
+					var setting = ObjectSerialization.Deserialize<DepartmentSuppressStaffingInfo>(actualSetting.Setting);
+
+					if (setting != null)
+						return setting;
+					else
+						return new DepartmentSuppressStaffingInfo();
+				}
+
+				return new DepartmentSuppressStaffingInfo();
+			}
+
+			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				var cachedValue = await _cacheProvider.RetrieveAsync<DepartmentSuppressStaffingInfo>(string.Format(StaffingSupressInfo, departmentId),
+					getSetting, ThatsNotLongThisIsLongCacheLength);
+
+				return cachedValue;
+			}
+
+			return await getSetting();
 		}
 	}
 }

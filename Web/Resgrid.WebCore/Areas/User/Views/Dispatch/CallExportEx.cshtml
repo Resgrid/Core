@@ -3,6 +3,7 @@
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Dispatch.CallExportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
     Layout = null;
 }
@@ -11,7 +12,7 @@
 
 <html lang="en">
 <head>
-    <title>Resgrid Call Export</title>
+    <title>@localizer["CallExportHeader"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Resgrid Log Report">
     <meta name="author" content="Resgrid">
@@ -50,7 +51,7 @@
     <div id="runLog" class="container">
         <div class="row">
             <div class="col-xs-12">
-                <div class="alert alert-warning" role="alert">This is an unauthenticated page for viewing this call only. You are not logged into Resgrid. Do not share this url.</div>
+                <div class="alert alert-warning" role="alert">@localizer["ExportUnauthHeader"]</div>
             </div>
         </div>
         <div class="row">
@@ -58,7 +59,7 @@
                 <a href="https://resgrid.com/Account/LogOn"><img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid" alt="Resgrid" style="margin-top: 10px; margin-bottom: 5px;"></a>
             </div>
             <div class="col-xs-6" style="text-align: right;">
-                <h3 style="margin-top: 10px;">Call Export</h3>
+                <h3 style="margin-top: 10px;">@localizer["CallExportHeader"]</h3>
             </div>
         </div>
         <div class="row">
@@ -67,15 +68,15 @@
                     <tbody>
                         <tr>
                             <td>
-                                <strong><small>Id</small></strong>
+                                <strong><small>@localizer["CallIdLabel"]</small></strong>
                                 <span style="display: block;">@Model.Call.CallId</span>
                             </td>
                             <td>
-                                <strong><small>Number</small></strong>
+                                <strong><small>@localizer["CallNumberLabel"]</small></strong>
                                 <span style="display: block;">@Model.Call.Number</span>
                             </td>
                             <td>
-                                <strong><small>Incident Id</small></strong>
+                                <strong><small>@localizer["IncidentIdLabel"]</small></strong>
 
                                 @if (!String.IsNullOrWhiteSpace(Model.Call.IncidentNumber))
                                 {
@@ -83,60 +84,60 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">None</span>
+                                    <span style="display: block;">@commonLocalizer["None"]</span>
                                 }
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <strong><small>Call Name</small></strong>
+                                <strong><small>@localizer["NameLabel"]</small></strong>
                                 <span style="display: block;">@Model.Call.Name</span>
                             </td>
                             <td>
-                                <strong><small>Call Type</small></strong>
+                                <strong><small>@localizer["TypeLabel"]</small></strong>
                                 @if (!String.IsNullOrWhiteSpace(Model.Call.Type))
                                 {
                                     <span style="display: block;">@Model.Call.Type</span>
                                 }
                                 else
                                 {
-                                    <span style="display: block;">No Type</span>
+                                    <span style="display: block;">@localizer["NoType"]</span>
                                 }
                             </td>
                             <td>
-                                <strong><small>Priority</small></strong>
+                                <strong><small>@localizer["PrioirtyLabel"]</small></strong>
                                 <span style="display: block;">@(((CallPriority)Model.Call.Priority).ToString())</span>
                             </td>
 
                         </tr>
                         <tr>
                             <td>
-                                <strong><small>Logged On</small></strong>
+                                <strong><small>@localizer["LoggedOnLabel"]</small></strong>
                                 <span style="display: block;">@Model.Call.LoggedOn.TimeConverterToString(Model.Department)</span>
                             </td>
 
                             <td>
-                                <strong><small>Logged By</small></strong>
+                                <strong><small>@localizer["LoggedByLabel"]</small></strong>
                                 <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</span>
                             </td>
 
                             <td>
-                                <strong><small>State</small></strong>
+                                <strong><small>@localizer["StateLabel"]</small></strong>
                                 @if (Model.Call.State == (int)CallStates.Active)
                                 {
-                                    <span style="display: block; color: green;">Active</span>
+                                    <span style="display: block; color: green;">@commonLocalizer["Active"]</span>
                                 }
                                 else if (Model.Call.State == (int)CallStates.Cancelled)
                                 {
-                                    <span style="display: block; color: gray;">Canceled</span>
+                                    <span style="display: block; color: gray;">@commonLocalizer["Canceled"]</span>
                                 }
                                 else if (Model.Call.State == (int)CallStates.Closed)
                                 {
-                                    <span style="display: block; color: black;">Closed</span>
+                                    <span style="display: block; color: black;">@commonLocalizer["Closed"]</span>
                                 }
                                 else if (Model.Call.State == (int)CallStates.Unfounded)
                                 {
-                                    <span style="display: block; color: blue;">Unfounded</span>
+                                    <span style="display: block; color: blue;">@commonLocalizer["Unfounded"]</span>
                                 }
                             </td>
                         </tr>
@@ -144,22 +145,22 @@
                             @if (Model.Call.ClosedOn.HasValue)
                             {
                                 <td>
-                                    <strong><small>Closed On</small></strong>
+                                    <strong><small>@localizer["ClosedOnLabel"]</small></strong>
                                     <span style="display: block;">@Model.Call.ClosedOn.Value.TimeConverterToString(Model.Department)</span>
                                 </td>
                                 <td>
-                                    <strong><small>Closed By</small></strong>
+                                    <strong><small>@localizer["ClosedByLabel"]</small></strong>
                                     <span style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Call.ClosedByUser.UserId))</span>
                                 </td>
                             }
                             else
                             {
                                 <td>
-                                    <strong><small>Closed On</small></strong>
+                                    <strong><small>@localizer["ClosedOnLabel"]</small></strong>
                                     <span style="display: block;">Not Closed</span>
                                 </td>
                                 <td>
-                                    <strong><small>Closed By</small></strong>
+                                    <strong><small>@localizer["ClosedByLabel"]</small></strong>
                                     <span style="display: block;"></span>
                                 </td>
                             }
@@ -169,22 +170,22 @@
                             @if (Model.Call != null)
                             {
                                 <td colspan="2">
-                                    <strong><small>Call Address</small></strong>
+                                    <strong><small>@localizer["LocationLabel"]</small></strong>
                                     <span style="display: block;">@Model.Call.Address</span>
                                 </td>
                                 <td colspan="1">
-                                    <strong><small>GPS</small></strong>
+                                    <strong><small>@localizer["GPSLabel"]</small></strong>
                                     <span style="font-size: 10px; display: block;">@Model.Call.GeoLocationData</span>
                                 </td>
                             }
                             else
                             {
                                 <td colspan="2">
-                                    <strong><small>Call Address</small></strong>
+                                    <strong><small>@localizer["LocationLabel"]</small></strong>
                                     <span style="display: block;">Not Supplied</span>
                                 </td>
                                 <td colspan="1">
-                                    <strong><small>GPS</small></strong>
+                                    <strong><small>@localizer["GPSLabel"]</small></strong>
                                     <span style="display: block;">Not Supplied</span>
                                 </td>
                             }
@@ -196,13 +197,13 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Dispatched Units</small></strong>
+                <strong><small>@localizer["DispatchedUnits"]</small></strong>
                 <table class="table table-condensed table-bordered">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Station</th>
-                            <th>Type</th>
+                            <th>@commonLocalizer["Name"]</th>
+                            <th>@commonLocalizer["Station"]</th>
+                            <th>@commonLocalizer["Type"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -237,13 +238,13 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Dispatched Personnel</small></strong>
+                <strong><small>@localizer["DispatchedPersonnel"]</small></strong>
                 <table class="table table-condensed table-bordered">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Station</th>
-                            <th>Name</th>
+                            <th>@commonLocalizer["Id"]</th>
+                            <th>@commonLocalizer["Station"]</th>
+                            <th>@commonLocalizer["Name"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -262,31 +263,31 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Nature</small></strong>
+                <strong><small>@localizer["CallNatureLabel"]</small></strong>
                 <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.NatureOfCall)</div>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Notes</small></strong>
+                <strong><small>@localizer["NotesLabel"]</small></strong>
                 <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.Notes)</div>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Completed Notes</small></strong>
+                <strong><small>@localizer["CompletedNotesLabel"]</small></strong>
                 <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.CompletedNotes)</div>
             </div>
         </div>
          <div class="row">
             <div class="col-xs-12">
-                <strong><small>Notes</small></strong>
+                <strong><small>@commonLocalizer["Notes"]</small></strong>
                 <table class="table table-condensed table-bordered">
                     <thead>
                         <tr>
-                            <th>Timestamp</th>
-                            <th>Name</th>
-                            <th>Note</th>
+                            <th>@commonLocalizer["Timestamp"]</th>
+                            <th>@commonLocalizer["Name"]</th>
+                            <th>@commonLocalizer["Note"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -306,14 +307,80 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Unit Events</small></strong>
+                <strong>@localizer["CallsLinkedFromThisHeader"]</strong>
+                <table class="table table-striped table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@localizer["CallNumber"]</th>
+                            <th>@commonLocalizer["Name"]</th>
+                            <th>@localizer["LoggedOnLabel"]</th>
+                            <th>@commonLocalizer["Note"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var linkedCalls in Model.Call.References)
+                        {
+                            <tr>
+                                <td>
+                                    <span>@linkedCalls.TargetCall.Number</span>
+                                </td>
+                                <td>
+                                    <span>@linkedCalls.TargetCall.Name</span>
+                                </td>
+                                <td>
+                                    <span>@linkedCalls.TargetCall.LoggedOn.FormatForDepartment(Model.Department)</span>
+                                </td>
+                                <td>
+                                    @linkedCalls.Note
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+                <strong>@localizer["CallsLinkedToThisHeader"]</strong>
+                <table class="table table-striped table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@localizer["CallNumber"]</th>
+                            <th>@commonLocalizer["Name"]</th>
+                            <th>@localizer["LoggedOnLabel"]</th>
+                            <th>@commonLocalizer["Note"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var linkedCalls in Model.ChildCalls)
+                        {
+                            <tr>
+                                <td>
+                                    <span>@linkedCalls.SourceCall.Number</span>
+                                </td>
+                                <td>
+                                    <span>@linkedCalls.SourceCall.Name</span>
+                                </td>
+                                <td>
+                                    <span>@linkedCalls.SourceCall.LoggedOn.FormatForDepartment(Model.Department)</span>
+                                </td>
+                                <td>
+                                    @linkedCalls.Note
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <strong><small>@localizer["UnitEvents"]</small></strong>
                 <table class="table table-condensed table-bordered">
                     <thead>
                         <tr>
-                            <th>Unit</th>
-                            <th>Event</th>
-                            <th>Timestamp</th>
-                            <th>Note</th>
+                            <th>@commonLocalizer["Unit"]</th>
+                            <th>@commonLocalizer["Event"]</th>
+                            <th>@commonLocalizer["Timestamp"]</th>
+                            <th>@commonLocalizer["Note"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -341,14 +408,14 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Personnel Events</small></strong>
+                <strong><small>@localizer["PersonnelEvents"]</small></strong>
                 <table class="table table-condensed table-bordered">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Event</th>
-                            <th>Timestamp</th>
-                            <th>Note</th>
+                            <th>@commonLocalizer["Name"]</th>
+                            <th>@commonLocalizer["Event"]</th>
+                            <th>@commonLocalizer["Timestamp"]</th>
+                            <th>@commonLocalizer["Note"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -379,7 +446,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div style="text-align:center;">
-                        <h3>Driving Directions from @Model.Station.Name</h3>
+                        <h3>@localizer["DrivingDirections"] @Model.Station.Name</h3>
                     </div>
                 </div>
             </div>
@@ -396,7 +463,7 @@
         }
         <div class="row">
             <div class="col-xs-12">
-                <strong><small>Attached Images</small></strong>
+                <strong><small>@localizer["AttachedImages"]</small></strong>
                 @foreach (var img in Model.Call.Attachments.Where(x => x.CallAttachmentType == 2))
                 {
                     <div class="row">
@@ -405,15 +472,15 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <strong><small>Name</small></strong>
+                                            <strong><small>@commonLocalizer["Name"]</small></strong>
                                             <span style="display: block;">@img.Name</span>
                                         </td>
                                         <td>
-                                            <strong><small>Timestamp</small></strong>
+                                            <strong><small>@commonLocalizer["Timestamp"]</small></strong>
                                             <span style="display: block;">@img.Timestamp?.TimeConverterToString(Model.Department)</span>
                                         </td>
                                         <td>
-                                            <strong><small>Added By</small></strong>
+                                            <strong><small>@localizer["AddedBy"]</small></strong>
                                             <span style="display: block;">@(await UserHelper.GetFullNameForUser(img.UserId))</span>
                                         </td>
                                     </tr>

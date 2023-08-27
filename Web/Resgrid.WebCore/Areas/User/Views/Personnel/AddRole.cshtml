@@ -1,23 +1,24 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Personnel.AddRoleModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-	ViewBag.Title = "Resgrid | Add Role";
+	ViewBag.Title = "Resgrid | " + @localizer["AddRoleHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>New Role</h2>
+		<h2>@localizer["AddRoleHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Personnel" asp-action="Roles" asp-route-area="User">Roles</a>
+				<a asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@commonLocalizer["Roles"]</a>
 			</li>
 			<li class="active">
-				<strong>New Role</strong>
+				<strong>@localizer["AddRoleHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -38,18 +39,18 @@
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Name</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Role" asp-for="Role.Name"></div>
+							<label class="col-sm-2 control-label">@commonLocalizer["Name"]</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["RoleNamePlaceholder"]" asp-for="Role.Name"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Description</label>
-							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A description of the role" asp-for="Role.Description"></textarea></div>
+							<label class="col-sm-2 control-label">@commonLocalizer["Description"]</label>
+							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="@localizer["RoleDescriptionPlaceholder"]" asp-for="Role.Description"></textarea></div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Add Role</button>
+								<a class="btn btn-white" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
 							</div>
 						</div>
 					</form>

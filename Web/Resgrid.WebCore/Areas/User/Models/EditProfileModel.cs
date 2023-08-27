@@ -25,6 +25,7 @@ namespace Resgrid.Web.Areas.User.Models
 		public bool HasCustomIamge { get; set; }
 		public List<PersonnelRole> UsersRoles { get; set; }
 		public bool IsOwnProfile { get; set; }
+		public bool IsFreePlan { get; set; }
 			
 		[Required]
 		[MaxLength(50)]

@@ -593,6 +593,7 @@ namespace Resgrid.Services
 
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);
+			InvalidateAllDepartmentsCache(departmentMember.DepartmentId);
 
 			return saved;
 		}

@@ -98,7 +98,7 @@ namespace Resgrid.Services
 			{
 				if (group.ParentDepartmentGroupId.HasValue)
 				{
-					group.Parent = await GetGroupByIdAsync(group.ParentDepartmentGroupId.Value);
+					group.Parent = await GetGroupByIdAsync(group.ParentDepartmentGroupId.Value, false);
 				}
 
 				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(group.DepartmentGroupId);
@@ -128,7 +128,7 @@ namespace Resgrid.Services
 
 				if (g.ParentDepartmentGroupId.HasValue)
 				{
-					g.Parent = await GetGroupByIdAsync(g.ParentDepartmentGroupId.Value);
+					g.Parent = await GetGroupByIdAsync(g.ParentDepartmentGroupId.Value, false);
 				}
 
 				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(g.DepartmentGroupId);
@@ -138,6 +138,13 @@ namespace Resgrid.Services
 				else
 					g.Children = new List<DepartmentGroup>();
 			}
+
+			return groups.ToList();
+		}
+
+		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentUnlimitedThinAsync(int departmentId)
+		{
+			var groups = await _departmentGroupsRepository.GetAllGroupsByDepartmentIdAsync(departmentId);
 
 			return groups.ToList();
 		}

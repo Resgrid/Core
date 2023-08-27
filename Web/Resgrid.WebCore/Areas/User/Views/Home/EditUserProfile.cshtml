@@ -1,531 +1,563 @@
 ﻿@model Resgrid.Web.Areas.User.Models.EditProfileModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> localizer
 @{
-  ViewData["Title"] = "Resgrid | Edit User Profile";
+    ViewData["Title"] = "Resgrid | Edit User Profile";
 }
 @section Styles
-  {
-  <link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
+    {
+    <link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
 }
 
-<form id="edit_user" class="form-horizontal" role="form" asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" method="post">
+    <form id="edit_user" class="form-horizontal" role="form" asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" method="post">
 
-  @Html.AntiForgeryToken()
-  @Html.HiddenFor(m => m.UserId)
-  @Html.HiddenFor(m => m.Profile.UserProfileId)
-  @Html.HiddenFor(m => m.Profile.UserId)
-  @Html.HiddenFor(m => m.IsOwnProfile)
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.UserId)
+        @Html.HiddenFor(m => m.Profile.UserProfileId)
+        @Html.HiddenFor(m => m.Profile.UserId)
+        @Html.HiddenFor(m => m.IsOwnProfile)
+        @Html.HiddenFor(m => m.IsFreePlan)
 
-  <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-4">
-      <h2>Edit @Model.FirstName @Model.LastName's Profile</h2>
-      <ol class="breadcrumb">
-        <li>
-          <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-        </li>
-        <li class="active">
-          <strong>Edit Profile</strong>
-        </li>
-      </ol>
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-4">
+                <h2>@localizer["EditTitle"] @Model.FirstName @Model.LastName @localizer["ProfileTitle"]</h2>
+                <ol class="breadcrumb">
+                    <li>
+                        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+                    </li>
+                    <li class="active">
+                        <strong>@localizer["Title"]</strong>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-sm-8">
+                <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                    @if (Model.IsOwnProfile)
+                {
+                    <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">@localizer["ReportDelivery"]</a>
+                }
+                else
+                {
+                    <a id="changePassword" class="btn btn-primary top-button" title="Change Users Password" asp-controller="Profile" asp-action="ResetPasswordForUser" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["ChangeUserPassword"]</a>
+                }
+                <a id="staffingScheduleButton" class="btn btn-primary top-button" title="Edit Staffing Schedule" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["StaffingSchedule"]</a>
+                <a id="certificationsButton" class="btn btn-primary top-button" title="Edit Certifications" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["Certifications"]</a>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        @if (Model.IsOwnProfile)
-		{
-          <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">Report Delivery</a>
-		}
-		else
-		{
-          <a id="changePassword" class="btn btn-primary top-button" title="Change Users Password" asp-controller="Profile" asp-action="ResetPasswordForUser" asp-route-area="User" asp-route-userId="@Model.UserId">Change Users Password</a>
-		}
-        <a id="staffingScheduleButton" class="btn btn-primary top-button" title="Edit Staffing Schedule" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@Model.UserId">Staffing Schedules</a>
-        <a id="certificationsButton" class="btn btn-primary top-button" title="Edit Certifications" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@Model.UserId">Certifications</a>
-      </div>
-    </div>
-  </div>
 
-  @if (!ViewData.ModelState.IsValid)
-  {
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            @{
+                                var validationErrors = ViewData.ModelState.Values.Where(E => E.Errors.Count > 0)
+                                .SelectMany(E => E.Errors)
+                                .Select(E => E.ErrorMessage)
+                                .ToList();
+                            }
+                            <span style="color:red;font-weight:bold;">@localizer["ErrorSpan"]</span>
+                            <br />
+                            <ul>
+                                @foreach (var error in validationErrors)
+                                {
+                                    <li style="color:red;">@error</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     <div class="row">
-      <div class="col-lg-9">
-        <div class="wrapper wrapper-content animated fadeInUp">
-          <div class="ibox">
-            <div class="ibox-content">
-              @{
-				var validationErrors = ViewData.ModelState.Values.Where(E => E.Errors.Count > 0)
-				  .SelectMany(E => E.Errors)
-				  .Select(E => E.ErrorMessage)
-				  .ToList();
-              }
-              <span style="color:red;font-weight:bold;">There were errors in the profile below and it could not be saved. Please correct the errors below and try saving again.</span>
-              <br />
-              <ul>
-                @foreach (var error in validationErrors)
-				{
-                  <li style="color:red;">@error</li>
-				}
-              </ul>
+        <div class="col-lg-9">
+            <div class="wrapper wrapper-content animated fadeInUp">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["IDNumberLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IDNumberPlaceholder"]" asp-for="Profile.IdentificationNumber"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["FirstNameLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FirstNamePlaceholder"]" asp-for="FirstName" required=""></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["LastNameLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["LastNamePlaceholder"]" asp-for="LastName" required=""></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["EmailAddressLabel"]</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Email" required="">
+                                <span class="help-block m-b-none">@localizer["EmailAddressHelper"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Language"]</label>
+                            <div class="col-sm-10">
+                                <select asp-for="Profile.Language" asp-items="ViewBag.Languages" style="padding-left: 0; width: 100%;"></select>
+                                <span class="help-block m-b-none">@localizer["LanguagesHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["TimeZoneLabel"]</label>
+                            <div class="col-sm-10"><select asp-for="Profile.TimeZone" asp-items="ViewBag.TimeZones" style="padding-left: 0; width: 100%;"></select></div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["HomeNumberLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["HomeNumberPlaceholder"]" asp-for="Profile.HomeNumber"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["MobileNumberLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MobileNumberPlaceholder"]" asp-for="Profile.MobileNumber"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["MobileCarrierLabel"]</label>
+                            <div class="col-sm-10"><select asp-for="Carrier" asp-items="ViewBag.Carriers" style="padding-left: 0; width: 100%;"></select></div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["GroupLabel"]</label>
+                                <div class="col-sm-10"><select asp-for="UserGroup" asp-items="Model.Groups" style="padding-left: 0; width: 100%;"></select></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["IsGroupAdminLabel"]</label>
+                                <div class="col-sm-10">
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsUserGroupAdmin">
+                                        <label></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                        }
+                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.IsUserGroupAdmin(Model.UserGroup))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["RolesLabel"]</label>
+                                <div class="col-sm-10"><select id="roles" name="roles"></select></div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                        }
+
+                        <h3>
+                            @localizer["PhysicalAddressHeader"]
+                        </h3>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["AddressLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["AddressPlaceholder"]" asp-for="PhysicalAddress1"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CityLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CityPlaceholder"]" asp-for="PhysicalCity"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["StateLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["StatePlaceholder"]" asp-for="PhysicalState"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PostalCodeLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["PostalCodePlaceholder"]" asp-for="PhysicalPostalCode"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CountryLabel"]</label>
+                            <div class="col-sm-10"><select asp-for="PhysicalCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select></div>
+                        </div>
+
+                        <h3>
+                            Mailing Address
+                        </h3>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["SameAsPhysical"]</label>
+                            <div class="col-sm-10"><input type="checkbox" class="checkbox checkbox-primary" asp-for="MailingAddressSameAsPhysical"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["MailingAddressLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingAddressPlaceholder"]" asp-for="MailingAddress1"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["MailingCityLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingCityPlaceholder"]" asp-for="MailingCity"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["MailingStateLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingStatePlaceholder"]" asp-for="MailingState"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["MailingPostalCodeLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingPostalCodePlaceholder"]" asp-for="MailingPostalCode"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["MailingCountryLabel"]</label>
+                            <div class="col-sm-10"><select asp-for="MailingCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select></div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.Department.ManagingUserId != Model.UserId)
+                        {
+                            <h3>
+                                @localizer["DepartmentSettingsHeader"]
+                            </h3>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["UserTypeLabel"]</label>
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-2 control-label" style="padding-top:0px;">@localizer["NormalUserLabel"]</label>
+                                            <input type="radio" asp-for="IsDepartmentAdmin" value="false">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-2 control-label" style="padding-top:0px;">@localizer["DepartmentAdminLabel"]</label>
+                                            <input type="radio" asp-for="IsDepartmentAdmin" value="true">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["DisableUserLabel"]</label>
+                                <div class="col-sm-10">
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsDisabled">
+                                        <label></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["HideUserLabel"]</label>
+                                <div class="col-sm-10">
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsHidden">
+                                        <label></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                        }
+
+                        @if (Model.IsOwnProfile)
+                        {
+                            <h3>
+                                @localizer["AccountInfoHeader"]
+                            </h3>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["NewUsernameLabel"]</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" asp-for="NewUsername" autocomplete="off">
+                                    <span class="help-block m-b-none">@localizer["NewUsernameHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["NewPasswordLabel"]</label>
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" asp-for="NewPassword" autocomplete="off">
+                                    <span class="help-block m-b-none">@localizer["NewPasswordHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["ConfirmPasswordLabel"]</label>
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" asp-for="ConfirmPassword" autocomplete="off">
+                                    <span class="help-block m-b-none">@localizer["ConfirmPasswordHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["CurrentPasswordLabel"]</label>
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" asp-for="OldPassword" autocomplete="off">
+                                    <span class="help-block m-b-none">@localizer["CurrentPasswordHelp"]</span>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-          </div>
         </div>
-      </div>
+        <div class="col-lg-3">
+            <div class="wrapper wrapper-content animated fadeInUp">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div id="gravatarSection" style="text-align: center; padding-top: 10px;">
+                            <div id="avatar" class="center" style="text-align: center;">
+                                @if (Model.HasCustomIamge)
+                                {
+                                    <img style="width: 100px; height: 100px; text-align: center;" src="@Model.ApiUrl/api/v3/Avatars/Get?id=@Model.UserId" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'" />
+                                }
+                                else
+                                {
+                                    <img style="width: 100px; height: 100px; text-align: center;" src="~/images/defaultProfile.png" />
+                                }
+                            </div>
+                            <div>&nbsp;</div>
+                            <div id="avatar-text" style="color: #337ab7; cursor: pointer;">@localizer["SetPictureLabel"]</div>
+                            <div style="color: #777">@localizer["SetPictureHelpText"]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>@localizer["CallOptionsHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["CallEmailLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendEmail">
+                                        <label class="onoffswitch-label" for="Profile_SendEmail">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (!Model.IsFreePlan)
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">@localizer["CallTextlLabel"]</label>
+                                <div class="col-sm-8">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendSms">
+                                            <label class="onoffswitch-label" for="Profile_SendSms">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["CallPushlLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendPush">
+                                        <label class="onoffswitch-label" for="Profile_SendPush">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>@localizer["TelephoneHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        @if (Model.CanEnableVoice)
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">@localizer["TelephoneEnable"]</label>
+                                <div class="col-sm-8">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceForCall">
+                                            <label class="onoffswitch-label" for="Profile_VoiceForCall">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">@localizer["TelephoneCallHome"]</label>
+                                <div class="col-sm-8">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceCallHome">
+                                            <label class="onoffswitch-label" for="Profile_VoiceCallHome">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">@localizer["TelephoneCallMobile"]</label>
+                                <div class="col-sm-8">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceCallMobile">
+                                            <label class="onoffswitch-label" for="Profile_VoiceCallMobile">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger fade in">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <h4>@localizer["TelephoneWrongPlanHeader"]</h4>
+                                <p>@localizer["TelephoneWrongPlanText"]</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>@localizer["MessageOptionsHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["MessageEmailLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessageEmail">
+                                        <label class="onoffswitch-label" for="Profile_SendMessageEmail">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (!Model.IsFreePlan)
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">@localizer["MessageTextLabel"]</label>
+                                <div class="col-sm-8">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessageSms">
+                                            <label class="onoffswitch-label" for="Profile_SendMessageSms">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["MessagePushLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessagePush">
+                                        <label class="onoffswitch-label" for="Profile_SendMessagePush">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>@localizer["NotificationHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["NotificationEmailLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendNotificationEmail">
+                                        <label class="onoffswitch-label" for="Profile_SendNotificationEmail">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["NotificationPushLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendNotificationPush">
+                                        <label class="onoffswitch-label" for="Profile_SendNotificationPush">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>@localizer["NotificationOtherHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["NewsletterLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.DoNotRecieveNewsletters">
+                                        <label class="onoffswitch-label" for="Profile_DoNotRecieveNewsletters">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>@localizer["DeleteUserAccount"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class='row'>
+                            <div class="col-md-12">
+                                <p>@localizer["DeleteUserAccountInfo"]</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <a class="btn btn-w-m btn-block btn-danger" asp-controller="Account" asp-action="DeleteAccount" asp-route-area="User">@localizer["DeleteUserAccount"]</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  }
-
-  <div class="row">
-    <div class="col-lg-9">
-      <div class="wrapper wrapper-content animated fadeInUp">
-        <div class="ibox">
-          <div class="ibox-content">
-            <div class="form-group">
-              <label class="col-sm-2 control-label">ID Number</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Custom Identication Number" asp-for="Profile.IdentificationNumber"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">First Name</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="First Name" asp-for="FirstName" required=""></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Last Name</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Last Name" asp-for="LastName" required=""></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Email Address</label>
-              <div class="col-sm-10">
-                <input type="email" class="form-control" placeholder="Email Address" asp-for="Email" required="">
-                <span class="help-block m-b-none">Email Addresses must be unique</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Time Zone</label>
-              <div class="col-sm-10"><select asp-for="Profile.TimeZone" asp-items="ViewBag.TimeZones" style="padding-left: 0; width: 100%;"></select></div>
-            </div>
-            <div class="hr-line-dashed"></div>
-
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Home Number</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Home Phone Number" asp-for="Profile.HomeNumber"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Mobile Number</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Mobile Phone Number" asp-for="Profile.MobileNumber"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Mobile Carrier</label>
-              <div class="col-sm-10"><select asp-for="Carrier" asp-items="ViewBag.Carriers" style="padding-left: 0; width: 100%;"></select></div>
-            </div>
-            <div class="hr-line-dashed"></div>
-
-            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-			{
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Group</label>
-                <div class="col-sm-10"><select asp-for="UserGroup" asp-items="Model.Groups" style="padding-left: 0; width: 100%;"></select></div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Is Group Admin?</label>
-                <div class="col-sm-10">
-                  <div class="checkbox checkbox-primary">
-                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsUserGroupAdmin">
-                    <label></label>
-                  </div>
-                </div>
-              </div>
-              <div class="hr-line-dashed"></div>
-			}
-            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.IsUserGroupAdmin(Model.UserGroup))
-			{
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Roles</label>
-                <div class="col-sm-10"><select id="roles" name="roles"></select></div>
-              </div>
-              <div class="hr-line-dashed"></div>
-			}
-
-            <h3>
-              Physical Address
-            </h3>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address 1</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Physical Street Address" asp-for="PhysicalAddress1"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">City</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Physical City" asp-for="PhysicalCity"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">State</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Physical State\Province" asp-for="PhysicalState"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Postal Code</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Physical Zip\Postal Code" asp-for="PhysicalPostalCode"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Country</label>
-              <div class="col-sm-10"><select asp-for="PhysicalCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select></div>
-            </div>
-
-            <h3>
-              Mailing Address
-            </h3>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Same as Physical?</label>
-              <div class="col-sm-10"><input type="checkbox" class="checkbox checkbox-primary" asp-for="MailingAddressSameAsPhysical"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address 1</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Mailing Street Address" asp-for="MailingAddress1"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">City</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Mailing City" asp-for="MailingCity"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">State</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Mailing State\Province" asp-for="MailingState"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Postal Code</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Mailing Zip\Postal Code" asp-for="MailingPostalCode"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Country</label>
-              <div class="col-sm-10"><select asp-for="MailingCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select></div>
-            </div>
-            <div class="hr-line-dashed"></div>
-
-            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.Department.ManagingUserId != Model.UserId)
-			{
-              <h3>
-                Department Settings
-              </h3>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">User Type</label>
-                <div class="col-sm-10">
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <label class="col-sm-2 control-label" style="padding-top:0px;">Normal User</label>
-                      <input type="radio" asp-for="IsDepartmentAdmin" value="false">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <label class="col-sm-2 control-label" style="padding-top:0px;">Department Admin</label>
-                      <input type="radio" asp-for="IsDepartmentAdmin" value="true">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Disable User</label>
-                <div class="col-sm-10">
-                  <div class="checkbox checkbox-primary">
-                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsDisabled">
-                    <label></label>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Hide User</label>
-                <div class="col-sm-10">
-                  <div class="checkbox checkbox-primary">
-                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsHidden">
-                    <label></label>
-                  </div>
-                </div>
-              </div>
-              <div class="hr-line-dashed"></div>
-			}
-
-            @if (Model.IsOwnProfile)
-			{
-              <h3>
-                Account Information
-              </h3>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">New UserName</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" asp-for="NewUsername" autocomplete="off">
-                  <span class="help-block m-b-none">Leave blank if you don't want to change your UserName (i.e. keep your current UserName that you log in with)</span>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">New Password</label>
-                <div class="col-sm-10">
-                  <input type="password" class="form-control" asp-for="NewPassword" autocomplete="off">
-                  <span class="help-block m-b-none">Leave blank if you don't want to change your password</span>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Confirm Password</label>
-                <div class="col-sm-10">
-                  <input type="password" class="form-control" asp-for="ConfirmPassword" autocomplete="off">
-                  <span class="help-block m-b-none">If your changing your password you need to re-enter your NEW password here</span>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Current Password</label>
-                <div class="col-sm-10">
-                  <input type="password" class="form-control" asp-for="OldPassword" autocomplete="off">
-                  <span class="help-block m-b-none">If your changing your password you need enter your current password (not the new one) here</span>
-                </div>
-              </div>
-			}
-
-            <div class="form-group">
-              <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save changes</button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3">
-      <div class="wrapper wrapper-content animated fadeInUp">
-        <div class="ibox">
-          <div class="ibox-content">
-            <div id="gravatarSection" style="text-align: center; padding-top: 10px;">
-              <div id="avatar" class="center" style="text-align: center;">
-                @if (Model.HasCustomIamge)
-				{
-                  <img style="width: 100px; height: 100px; text-align: center;" src="@Model.ApiUrl/api/v3/Avatars/Get?id=@Model.UserId" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'" />
-				}
-				else
-				{
-                  <img style="width: 100px; height: 100px; text-align: center;" src="~/images/defaultProfile.png" />
-				}
-              </div>
-              <div>&nbsp;</div>
-              <div id="avatar-text" style="color: #337ab7; cursor: pointer;">click here to set a picture</div>
-              <div style="color: #777">picture changes may take up to 24 hours</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Call Options</h5>
-          </div>
-          <div class="ibox-content">
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Email</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendEmail">
-                    <label class="onoffswitch-label" for="Profile_SendEmail">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Text</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendSms">
-                    <label class="onoffswitch-label" for="Profile_SendSms">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Push</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendPush">
-                    <label class="onoffswitch-label" for="Profile_SendPush">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Telephone (Voice) Options</h5>
-          </div>
-          <div class="ibox-content">
-            @if (Model.CanEnableVoice)
-			{
-              <div class="form-group">
-                <label class="col-sm-4 control-label">Enabled</label>
-                <div class="col-sm-8">
-                  <div class="switch">
-                    <div class="onoffswitch">
-                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceForCall">
-                      <label class="onoffswitch-label" for="Profile_VoiceForCall">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-4 control-label">Call Home</label>
-                <div class="col-sm-8">
-                  <div class="switch">
-                    <div class="onoffswitch">
-                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceCallHome">
-                      <label class="onoffswitch-label" for="Profile_VoiceCallHome">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-4 control-label">Call Mobile</label>
-                <div class="col-sm-8">
-                  <div class="switch">
-                    <div class="onoffswitch">
-                      <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.VoiceCallMobile">
-                      <label class="onoffswitch-label" for="Profile_VoiceCallMobile">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-			}
-			else
-			{
-              <div class="alert alert-danger fade in">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                <h4>Wrong Plan</h4>
-                <p>Your department's current plan doesn't support voice Telephone Alerting. Upgrade your plan to Ultimate or higher to get this feature.</p>
-              </div>
-			}
-          </div>
-        </div>
-
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Message Options</h5>
-          </div>
-          <div class="ibox-content">
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Email</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessageEmail">
-                    <label class="onoffswitch-label" for="Profile_SendMessageEmail">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Text</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessageSms">
-                    <label class="onoffswitch-label" for="Profile_SendMessageSms">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Push</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendMessagePush">
-                    <label class="onoffswitch-label" for="Profile_SendMessagePush">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Notification Options</h5>
-          </div>
-          <div class="ibox-content">
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Email</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendNotificationEmail">
-                    <label class="onoffswitch-label" for="Profile_SendNotificationEmail">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Push</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.SendNotificationPush">
-                    <label class="onoffswitch-label" for="Profile_SendNotificationPush">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Other Notification Options</h5>
-          </div>
-          <div class="ibox-content">
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Don't Receive Newsletters</label>
-              <div class="col-sm-8">
-                <div class="switch">
-                  <div class="onoffswitch">
-                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.DoNotRecieveNewsletters">
-                    <label class="onoffswitch-label" for="Profile_DoNotRecieveNewsletters">
-                      <span class="onoffswitch-inner"></span>
-                      <span class="onoffswitch-switch"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </form>
 
 
@@ -535,20 +567,20 @@
 
 
 @section Scripts
-  {
-  <script>
-		var sameAddress = '@Model.MailingAddressSameAsPhysical';
-  </script>
-  <script src="~/clib/croppic/js/croppic.js" type="text/javascript"></script>
-  <script>
-		var croppicContainerModalOptions = {
-			uploadUrl: resgrid.absoluteBaseUrl + '/User/Profile/Upload?id=@Model.UserId',
-			cropUrl: resgrid.absoluteBaseUrl + '/User/Profile/Crop',
-			modal: true,
-			imgEyecandyOpacity: 0.4,
-			loaderHtml: '<div class="loader bubblingG"><span id="bubblingG_1"></span><span id="bubblingG_2"></span><span id="bubblingG_3"></span></div> '
-		}
-		var cropContainerModal = new Croppic('avatar', croppicContainerModalOptions);
-  </script>
-  <script src="~/js/app/internal/home/resgrid.home.edituserprofile.js" type="text/javascript"></script>
+    {
+    <script>
+        var sameAddress = '@Model.MailingAddressSameAsPhysical';
+    </script>
+    <script src="~/clib/croppic/js/croppic.js" type="text/javascript"></script>
+    <script>
+        var croppicContainerModalOptions = {
+            uploadUrl: resgrid.absoluteBaseUrl + '/User/Profile/Upload?id=@Model.UserId',
+            cropUrl: resgrid.absoluteBaseUrl + '/User/Profile/Crop',
+            modal: true,
+            imgEyecandyOpacity: 0.4,
+            loaderHtml: '<div class="loader bubblingG"><span id="bubblingG_1"></span><span id="bubblingG_2"></span><span id="bubblingG_3"></span></div> '
+        }
+        var cropContainerModal = new Croppic('avatar', croppicContainerModalOptions);
+    </script>
+    <script src="~/js/app/internal/home/resgrid.home.edituserprofile.js" type="text/javascript"></script>
 }

@@ -1,6 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Units.ViewLogsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
 @{
-    ViewBag.Title = "Resgrid | View Unit Events";
+    ViewBag.Title = "Resgrid | " + @localizer["ViewUnitEventsHeader"];
 }
 @section Styles
     {
@@ -9,16 +10,16 @@
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
-            <h2>Events for @Model.Unit.Name</h2>
+            <h2>@localizer["EventsFor"] @Model.Unit.Name</h2>
             <ol class="breadcrumb">
                 <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
                 </li>
                 <li>
-                    <a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
+                    <a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a>
                 </li>
                 <li class="active">
-                    <strong>Events for @Model.Unit.Name</strong>
+                    <strong>@localizer["EventsFor"] @Model.Unit.Name</strong>
                 </li>
             </ol>
         </div>
@@ -26,7 +27,7 @@
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
             {
-                <span><a data-toggle="modal" data-target="#confirmClearAllActionLogsModal" class="btn btn-xs btn-danger">Clear out all Events For Unit</a> </span>
+                <span><a data-toggle="modal" data-target="#confirmClearAllActionLogsModal" class="btn btn-xs btn-danger">@localizer["ClearAllStatuses"]</a> </span>
             }
         </div>
     </div>
@@ -44,7 +45,7 @@
                             </div>
                             <div class="col-xs-5 text-center">
                                 <div id="eventsMap" name="eventsMap" style="position: relative; width: 100%; height: 500px;"></div>
-                                <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Generate Report" />
+                                <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="@localizer["GenerateReport"]" />
                             </div>
                         </div>
                         <div class="row">
@@ -62,7 +63,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Delete All Unit Events</h4>
+                <h4 class="modal-title">@localizer["ClearAllStatuses"]</h4>
             </div>
             @using (Html.BeginForm("ClearAllUnitEvents", "Units", FormMethod.Post, new { area = "User", id = "clear_all" }))
             {
@@ -74,17 +75,17 @@
                     </span>
                     <div class="form-group">
                         <label class=" control-label">
-                            Are you sure you want to permanently delete all events for this unit?
+                            @localizer["AreYouSure"]
                         </label>
                         <div class="controls">
-                            @Html.CheckBoxFor(m => m.ConfirmClearAll) Yes I'm sure
+                            @Html.CheckBoxFor(m => m.ConfirmClearAll) @localizer["YesImSure"]
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="#" class="btn" data-dismiss="modal">Close</a>
+                    <a href="#" class="btn" data-dismiss="modal">@commonLocalizer["Cancel"]</a>
                     <input class="btn btn-primary" id="group_submit_action" name="commit" type="submit"
-                       value="Delete All" />
+                       value="@localizer["DeleteAll"]" />
                 </div>
             }
         </div>

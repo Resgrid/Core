@@ -1,7 +1,7 @@
-﻿
-@model Resgrid.Web.Areas.User.Models.ComposeMessageModel
+﻿@model Resgrid.Web.Areas.User.Models.ComposeMessageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> localizer
 @{
-	ViewBag.Title = "Resgrid | Compose Message";
+	ViewBag.Title = "Resgrid | " + @localizer["ComposeMessageHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
@@ -15,13 +15,13 @@
 			<div class="ibox float-e-margins">
 				<div class="ibox-content mailbox-content">
 					<div class="file-manager">
-						<a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">Compose Message</a>
+						<a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">@localizer["ComposeMessageHeader"]</a>
 
 						<div class="space-25"></div>
-						<h5>Folders</h5>
+						<h5>@localizer["FoldersHeader"]</h5>
 						<ul class="folder-list m-b-md" style="padding: 0">
-							<li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> Inbox</a></li>
-							<li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> Sent Messages</a></li>
+							<li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> @localizer["Inbox"]</a></li>
+							<li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> @localizer["SentMessages"]</a></li>
 						</ul>
 						<div class="clearfix"></div>
 					</div>
@@ -31,7 +31,7 @@
 		<div class="col-lg-9 animated fadeInRight">
 			<div class="mail-box-header">
 				<h2>
-					Compose Message
+					@localizer["ComposeMessageHeader"]
 				</h2>
 			</div>
 			<div class="mail-box">
@@ -45,17 +45,17 @@
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">To:</label>
+							<label class="col-sm-2 control-label">@localizer["ToLabel"]:</label>
 							<div class="col-sm-10">
 								<div class="row">
 									<div class="col-xs-12">
 										<div class="checkbox checkbox-inline checkbox-primary">
 											<input type="checkbox" id="SendToAll" asp-for="SendToAll">
-											<label for="SendToAll"> Send to all Personnel </label>
+											<label for="SendToAll"> @localizer["SendToAllPersonnelLabel"] </label>
 										</div>
 										<div class="checkbox checkbox-inline checkbox-primary">
 											<input type="checkbox" id="SendToMatchOnly" asp-for="SendToMatchOnly">
-											<label for="SendToMatchOnly"> Send to Personnel only in selected Role(s)/Group(s) </label>
+											<label for="SendToMatchOnly"> @localizer["SendToPersonnelSelectedRoleGroupLabel"] </label>
 										</div>
 										<br /><br />
 									</div>
@@ -69,8 +69,8 @@
 						</div>
 						<br />
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Subject:</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="The subject/title of the message" asp-for="Message.Subject"></div>
+							<label class="col-sm-2 control-label">@localizer["SubjectLabel"]:</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["SubjectPlaceholder"]" asp-for="Message.Subject"></div>
 						</div>
 
 
@@ -87,21 +87,21 @@
 					</div>
 					<hr />
 					<div class="form-group">
-						<label class="col-sm-2 control-label">Type:</label>
+						<label class="col-sm-2 control-label">@localizer["TypeLabel"]:</label>
 						<div class="col-sm-2">@Html.DropDownListFor(m => m.MessageType, Model.Types)</div>
 					</div>
 					<div id="expiresBlock" class="form-group" style="display: none;">
-						<label class="col-sm-2 control-label">Expires:</label>
+						<label class="col-sm-2 control-label">@localizer["ExpiresLabel"]:</label>
 						<div class="col-sm-4"><input type="text" class="form-control" onkeydown="javascript:return false;" asp-for="Message.ExpireOn"></div>
 					</div>
 					<div id="shiftsBlock" class="form-group" style="display: none;">
-						<label class="col-sm-2 control-label">Exclude Shifts:</label>
+						<label class="col-sm-2 control-label">@localizer["ExcludeShiftsLabel"]:</label>
 						<div class="col-sm-4"><select id="exludedShifts" name="exludedShifts"></select></div>
 					</div>
 
 					<div class="mail-body text-right tooltip-demo">
-						<button type="submit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-reply"></i> Send</button>
-						<a asp-controller="Messages" asp-action="Inbox" asp-route-area="User" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Discard email"><i class="fa fa-times"></i> Discard</a>
+						<button type="submit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-reply"></i> @commonLocalizer["Send"]</button>
+						<a asp-controller="Messages" asp-action="Inbox" asp-route-area="User" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Discard email"><i class="fa fa-times"></i> @commonLocalizer["Discard"]</a>
 					</div>
 					<div class="clearfix"></div>
 				</form>

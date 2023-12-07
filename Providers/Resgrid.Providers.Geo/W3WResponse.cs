@@ -6,10 +6,9 @@ namespace Resgrid.Providers.GeoLocationProvider
 	{
 		public string type { get; set; }
 		public string words { get; set; }
-		public Geometry geometry { get; set; }
+		public Geometry coordinates { get; set; }
 		public string language { get; set; }
 		public string map { get; set; }
-		public dynamic crs { get; set; }
 		public dynamic bounds { get; set; }
 	}
 
@@ -17,10 +16,9 @@ namespace Resgrid.Providers.GeoLocationProvider
 	{
 		public string type { get; set; }
 		public string words { get; set; }
-		public Geometry geometry { get; set; }
+		public Geometry coordinates { get; set; }
 		public string language { get; set; }
 		public string map { get; set; }
-		public dynamic crs { get; set; }
 		public dynamic bounds { get; set; }
 	}
 

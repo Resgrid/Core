@@ -28,7 +28,7 @@
 		public static string DispatchAppOSMKey = "";
 		public static string BigBoardOSMKey = "";
 
-		public static string LeafletTileUrl = "";
+		public static string LeafletTileUrl = "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=";
 		public static string LeafletAttribution = "© OpenStreetMap contributors CC-BY-SA";
 
 		public static string GetWebsiteOSMUrl()

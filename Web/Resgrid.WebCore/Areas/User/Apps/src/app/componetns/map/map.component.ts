@@ -242,7 +242,7 @@ export class MapComponent implements OnInit {
 
       if (!this.map) {
         var osm = L.tileLayer(
-          this.leafletosmurl,
+          this.leafletosmurl+window['rgOsmKey'],
           {
             maxZoom: 19,
             attribution: this.mapattribution,

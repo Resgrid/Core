@@ -58,83 +58,83 @@
 				case MapIconTypes.Search:
 					return "search";
 				case MapIconTypes.Blast:
-					return "";
+					return "blast";
 				case MapIconTypes.CarAccident:
-					return "";
+					return "caraccident";
 				case MapIconTypes.CrimeScene:
-					return "";
+					return "crimescene";
 				case MapIconTypes.Earthquake:
-					return "";
+					return "earthquake";
 				case MapIconTypes.EmergencyPhone:
-					return "";
+					return "emergencyphone";
 				case MapIconTypes.Fire:
-					return "";
+					return "fire";
 				case MapIconTypes.FirstAid:
-					return "";
+					return "firstaid";
 				case MapIconTypes.Flood:
-					return "";
+					return "flood";
 				case MapIconTypes.Tools:
-					return "";
+					return "tools";
 				case MapIconTypes.LineDown:
-					return "";
+					return "linedown";
 				case MapIconTypes.Industry:
-					return "";
+					return "industry";
 				case MapIconTypes.PowerOutage:
-					return "";
+					return "poweroutage";
 				case MapIconTypes.Radiation:
-					return "";
+					return "radiation";
 				case MapIconTypes.Shooting:
-					return "";
+					return "shooting";
 				case MapIconTypes.Poison:
-					return "";
+					return "poison";
 				case MapIconTypes.Gathering:
-					return "";
+					return "gathering";
 				case MapIconTypes.TreeDown:
-					return "";
+					return "treedown";
 				case MapIconTypes.Worksite:
-					return "";
+					return "worksite";
 				case MapIconTypes.Workshop:
-					return "";
+					return "workshop";
 				case MapIconTypes.Aircraft:
-					return "";
+					return "aircraft";
 				case MapIconTypes.Ambulance:
-					return "";
+					return "ambulance";
 				case MapIconTypes.Bulldozer:
-					return "";
+					return "bulldozer";
 				case MapIconTypes.Bus:
-					return "";
+					return "bus";
 				case MapIconTypes.Car:
-					return "";
+					return "car";
 				case MapIconTypes.CarTwo:
-					return "";
+					return "car2";
 				case MapIconTypes.Check:
-					return "";
+					return "check";
 				case MapIconTypes.Flag:
-					return "";
+					return "flag";
 				case MapIconTypes.FourByFour:
-					return "";
+					return "fourbyfour";
 				case MapIconTypes.Group:
-					return "";
+					return "group";
 				case MapIconTypes.Helicopter:
-					return "";
+					return "helicopter";
 				case MapIconTypes.Motorcycle:
-					return "";
+					return "motorcycle";
 				case MapIconTypes.Pickup:
-					return "";
+					return "pickup";
 				case MapIconTypes.Camper:
-					return "";
+					return "camper";
 				case MapIconTypes.Plowtruck:
-					return "";
+					return "plowtruck";
 				case MapIconTypes.Tires:
-					return "";
+					return "tires";
 				case MapIconTypes.Truck:
-					return "";
+					return "truck";
 				case MapIconTypes.Van:
-					return "";
+					return "van";
 				case MapIconTypes.Velocimeter:
-					return "";
+					return "velocimeter";
 				case MapIconTypes.Watercraft:
-					return "";
+					return "watercraft";
 			}
 
 			return "";

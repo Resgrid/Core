@@ -5,7 +5,7 @@
 @model Resgrid.Web.Areas.User.Models.Calls.ViewCallView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
-    ViewBag.Title = "Resgrid | " + @localizer["ViewCallHeader"];
+    ViewBag.Title = $"Resgrid | " + @localizer["ViewCallHeader"] + ": " + @Model.Call.Name;
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
@@ -510,7 +510,10 @@
 
                                                 <div class="chat-message well">
                                                     <span class="input-box input-group">
-                                                        <input placeholder="@localizer["AddNotePlaceholder"]" type="text" class="form-control input-small" name="note-box1" id="note-box1" />
+                                                        <div id="note-container" style="width:100%; height: 300px;">
+
+                                                        </div>
+
                                                         <span class="input-group-btn">
                                                             <button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.viewcall.addCallNote1()" id="note-box-submit1">@localizer["AddNote"]</button>
                                                         </span>

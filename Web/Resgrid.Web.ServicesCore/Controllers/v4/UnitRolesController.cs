@@ -46,15 +46,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<UnitRolesResult>> GetRolesForUnit(string unitId)
 		{
 			var result = new UnitRolesResult();
+			int uId = 0;
 
-			if (string.IsNullOrWhiteSpace(unitId))
+			if (string.IsNullOrWhiteSpace(unitId) || !int.TryParse(unitId, out uId))
 			{
 				ResponseHelper.PopulateV4ResponseNotFound(result);
 
 				return Ok(result);
 			}
 
-			var unit = await _unitsService.GetUnitByIdAsync(int.Parse(unitId));
+			var unit = await _unitsService.GetUnitByIdAsync(uId);
 
 			if (unit == null)
 			{

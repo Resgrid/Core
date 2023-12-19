@@ -393,4 +393,40 @@
   <data name="SupressStaffingsInfo" xml:space="preserve">
     <value>Select the Personnel Staffing Levels below that will be prevented from receiving any notifications, dispatches, alerts, messages, or any other communication. Most commonly these are your "Off Duty" or "On Leave" staffing levels.</value>
   </data>
+  <data name="MappingSettingsHeader" xml:space="preserve">
+    <value>Mapping Settings</value>
+  </data>
+  <data name="SavedMappingSettings" xml:space="preserve">
+    <value>Successfully saved Mapping Settings.</value>
+  </data>
+  <data name="MappingSettingsPersonnelHeader" xml:space="preserve">
+    <value>Personnel Mapping Settings</value>
+  </data>
+  <data name="MappingSettingsUnitsHeader" xml:space="preserve">
+    <value>Units Mapping Settings</value>
+  </data>
+  <data name="MappingSettingsPersonnelAllowOverwriteLabel" xml:space="preserve">
+    <value>Allow Status with No Location Data to hide previous location</value>
+  </data>
+  <data name="MappingSettingsPersonnelTTLLabel" xml:space="preserve">
+    <value>TTL In Minutes for Personnel Locations</value>
+  </data>
+  <data name="MappingSettingsUnitAllowOverwriteLabel" xml:space="preserve">
+    <value>Allow Unit Status with No Location Data to hide previous location</value>
+  </data>
+  <data name="MappingSettingsUnitTTLLabel" xml:space="preserve">
+    <value>TTL In Minutes for Unit Locations</value>
+  </data>
+  <data name="PersonnelAllowOverwriteHelp" xml:space="preserve">
+    <value>If enabled and a status comes in for that user (i.e. Standing By) without a geolocation it'll hide the users location on the map. Otherwise the last location of the user will be shown even if it's older.</value>
+  </data>
+  <data name="UnitAllowOverwriteHelp" xml:space="preserve">
+    <value>If enabled and a status comes in for that unit (i.e. In Quarters) without a geolocation it'll hide the units location on the map. Otherwise the last location of the user will be shown even if it's older.</value>
+  </data>
+  <data name="PersonnelTTLHelp" xml:space="preserve">
+    <value>In Minutes, how long locations are valid for to be shown in the map. I.e. a value of 60 would mean a marker for a person would show on the maps for up to 60 minutes, afterwards would not be shown. Setting 0 disables TTL and a location, no matter how old, will be shown on the map.</value>
+  </data>
+  <data name="UnitTTLHelp" xml:space="preserve">
+    <value>In Minutes, how long locations are valid for to be shown in the map. I.e. a value of 60 would mean a marker for a unit would show on the maps for up to 60 minutes, afterwards would not be shown. Setting 0 disables TTL and a location, no matter how old, will be shown on the map.</value>
+  </data>
 </root>

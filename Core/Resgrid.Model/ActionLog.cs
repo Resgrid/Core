@@ -137,7 +137,9 @@ namespace Resgrid.Model
 			{
 				string[] values = GeoLocationData.Split(char.Parse(","));
 
-				if (values != null && values.Count() == 2)
+				// Yes 0,0 is a valid coordinate set, but it's unlikely based on the system's use cases. More likely
+				// it's a default int,double,decimal value which would equate to 'null' for our purposes. -SJ
+				if (values != null && values.Count() == 2 && double.Parse(values[0]) != 0 && double.Parse(values[1]) != 0)
 				{
 					var coordinates = new Coordinates();
 					coordinates.Latitude = double.Parse(values[0]);
@@ -148,6 +150,15 @@ namespace Resgrid.Model
 			}
 
 			return null;
+		}
+
+		public bool HasLocation()
+		{
+			var location = GetCoordinates();
+			if (location != null && location.Latitude.HasValue && location.Longitude.HasValue)
+				return true;
+
+			return false;
 		}
 	}
 

@@ -203,7 +203,7 @@ namespace Resgrid.Services
 		public async Task<int?> GetDepartmentIdForRssKeyAsync(string key)
 		{
 			var department = await GetSettingBySettingTypeAsync(key, DepartmentSettingTypes.RssFeedKeyForActiveCalls);
-			
+
 			if (department != null)
 				return department.DepartmentId;
 
@@ -582,6 +582,48 @@ namespace Resgrid.Services
 			return false;
 		}
 		#endregion Shift Group Dispatch Settings
+
+		#region Department Mapping Settings
+		public async Task<int> GetMappingPersonnelLocationTTLAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingPersonnelLocationTTL);
+
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
+
+			return 0;
+		}
+
+		public async Task<int> GetMappingUnitLocationTTLAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingUnitLocationTTL);
+
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
+
+			return 0;
+		}
+
+		public async Task<bool> GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingPersonnelAllowStatusWithNoLocationToOverwrite);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+
+		public async Task<bool> GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingUnitAllowStatusWithNoLocationToOverwrite);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+		#endregion Department Mapping Settings
 
 		private async Task<DepartmentSetting> GetSettingByDepartmentIdType(int departmentId, DepartmentSettingTypes settingType)
 		{

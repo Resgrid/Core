@@ -215,7 +215,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			#region Departments
 
 			DepartmentsTable = "Departments";
-			SelectDepartmentByLinkCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [LinkCode] = %CODE%";
+			SelectDepartmentByLinkCodeQuery = @"
+					SELECT %SCHEMA%.%DEPARTMENTSTABLE%.*, %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.*
+						FROM %SCHEMA%.%DEPARTMENTSTABLE%
+						LEFT JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% ON %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.[DepartmentId] =  %SCHEMA%.%DEPARTMENTSTABLE%.[DepartmentId]
+					WHERE [LinkCode] = %CODE%";
 			SelectDepartmentByIdQuery = @"
 					SELECT d.*, dt.*
 					FROM %SCHEMA%.%DEPARTMENTSTABLE% d
@@ -253,12 +257,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							INNER JOIN Departments d ON d.DepartmentId = dm1.DepartmentId
 							INNER JOIN DepartmentMembers dm ON dm.DepartmentId = d.DepartmentId
 							WHERE u.UserName = %USERNAME% AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = 0 AND (dm.IsActive = 1 OR dm.IsDefault = 1)";
-			SelectDepartmentByUserIdQuery = @"SELECT d.*, dm.*
-							FROM AspNetUsers u
-							INNER JOIN DepartmentMembers dm1 ON dm1.UserId = u.Id
+			SelectDepartmentByUserIdQuery =@"SELECT d.*, dm.*
+							FROM DepartmentMembers dm1
 							INNER JOIN Departments d ON d.DepartmentId = dm1.DepartmentId
 							INNER JOIN DepartmentMembers dm ON dm.DepartmentId = d.DepartmentId
-							WHERE u.Id = %USERID% AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = 0";
+							WHERE dm.UserId = %USERID% AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = 0 AND (dm.IsActive = 1 OR dm.IsDefault = 1)";
 			SelectValidDepartmentByUsernameQuery =
 				@"SELECT dm.UserId as 'UserId', dm.IsDisabled as 'IsDisabled', dm.IsDeleted as 'IsDeleted', d.DepartmentId as 'DepartmentId', d.Code as 'Code'
 							FROM AspNetUsers u
@@ -1318,6 +1321,19 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON cr.SourceCallId = c.CallId
 					WHERE cr.[TargetCallId] = %CALLID%";
 			#endregion CallReferences
+
+			#region Scheduled Tasks
+
+			ScheduledTasksTable = "ScheduledTasks";
+			SelectAllUpcomingOrRecurringReportTasksQuery = @"
+					SELECT st.*, d.TimeZone as 'DepartmentTimeZone', u.Email as 'UserEmailAddress'
+					FROM %SCHEMA%.%SCHEDULEDTASKSTABLE% st
+					INNER JOIN %SCHEMA%.%DEPARTMENTSTABLE% d ON st.DepartmentId = d.DepartmentId
+					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON st.UserId = u.Id
+					WHERE st.[Active] = 1 AND st.[TaskType] = 3 AND (st.[SpecifcDate] IS NULL OR st.[SpecifcDate] > %DATETIME%) AND st.[DepartmentId] != 0
+			";
+
+			#endregion Scheduled Tasks
 		}
 	}
 }

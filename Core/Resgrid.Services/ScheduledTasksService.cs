@@ -220,6 +220,18 @@ namespace Resgrid.Services
 			return await GetUpcomingScheduledTasksAsync(DateTime.UtcNow, null);
 		}
 
+		public async Task<List<ScheduledTask>> GetAllUpcomingOrRecurringReportDeliveryTasksAsync()
+		{
+			var items = await _scheduledTaskRepository.GetAllUpcomingOrRecurringReportDeliveryTasksAsync();
+
+			if (items != null && items.Any())
+			{
+				return items.ToList();
+			}
+
+			return new List<ScheduledTask>();
+		}
+
 		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksAsync(DateTime currentTime, List<ScheduledTask> tasks)
 		{
 			//Logging.LogTrace("ScheduledTasksService: Entering GetUpcomingScheduledTaks");

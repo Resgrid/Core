@@ -11,9 +11,11 @@ using Resgrid.Workers.Framework.Logic;
 using Resgrid.Workers.Framework.Workers.ReportDelivery;
 using Serilog.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MongoDB.Driver.Linq;
 
 namespace Resgrid.Workers.Console.Tasks
 {
@@ -28,41 +30,46 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger = logger;
 		}
 
-		public async Task ProcessAsync(ReportDeliveryTaskCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
+		public async Task ProcessAsync(ReportDeliveryTaskCommand command, IQuidjiboProgress progress,
+			CancellationToken cancellationToken)
 		{
 			try
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				//await Task.Run(async () =>
-				//{
-				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var _scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
-				var _usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
 				var logic = new ReportDeliveryLogic();
 
-				var allItems = await _scheduledTasksService.GetUpcomingScheduledTasksAsync();
+				/* Ok, I legit don't know what happened here. It was working and now it's kinda not.
+				 * So I'm replacing the Linq query with this loop, not as fancy but it works. Also
+				 * I'm pushing the join back down to the repo to improve perf. -SJ
+				 */
+				var allItems = await _scheduledTasksService.GetAllUpcomingOrRecurringReportDeliveryTasksAsync();
 
-				if (allItems != null)
+				var items = new List<(ScheduledTask ScheduledTask, Department Department, string Email)>();
+				if (allItems != null && allItems.Any())
 				{
-					// TODO: Ehhh, maybe .Result will work?
-					// Filter only the past items and ones that are 5 minutes 30 seconds in the future
-					var items = from st in allItems
-								let department = _departmentsService.GetDepartmentByUserIdAsync(st.UserId).Result
-								let email = _usersService.GetMembershipByUserId(st.UserId).Email
-								let runTime = st.WhenShouldJobBeRun(TimeConverterHelper.TimeConverter(DateTime.UtcNow, department))
-								where
-									st.TaskType == (int)TaskTypes.ReportDelivery && runTime.HasValue &&
-									runTime.Value >= TimeConverterHelper.TimeConverter(DateTime.UtcNow, department) &&
-									runTime.Value <= TimeConverterHelper.TimeConverter(DateTime.UtcNow, department).AddMinutes(5).AddSeconds(30)
-								select new
-								{
-									ScheduledTask = st,
-									Department = department,
-									Email = email
-								};
+					foreach (var st in allItems)
+					{
+						var department = new Department();
+						department.DepartmentId = st.DepartmentId;
+						department.TimeZone = st.DepartmentTimeZone;
 
-					if (items != null && items.Count() > 0)
+						var convertedUtcNow = DateTime.UtcNow.TimeConverter(department);
+						var runTime = st.WhenShouldJobBeRun(convertedUtcNow);
+
+						if (runTime != null)
+						{
+							// Filter only the past items and ones that are 5 minutes 30 seconds in the future
+							if (runTime.Value >= convertedUtcNow ||
+							    runTime.Value <= convertedUtcNow.AddMinutes(5).AddSeconds(30))
+							{
+								items.Add((st, department, st.UserEmailAddress));
+							}
+						}
+					}
+
+					if (items.Any())
 					{
 						_logger.LogInformation("ReportDelivery::Reports to Deliver: " + items.Count());
 
@@ -73,23 +80,24 @@ namespace Resgrid.Workers.Console.Tasks
 							qi.Department = i.Department;
 							qi.Email = i.Email;
 
-							_logger.LogInformation("ReportDelivery::Processing Report:" + qi.ScheduledTask.ScheduledTaskId);
+							_logger.LogInformation("ReportDelivery::Processing Report:" +
+							                       qi.ScheduledTask.ScheduledTaskId);
 
 							var result = await logic.Process(qi);
 
 							if (result.Item1)
 							{
-								_logger.LogInformation($"ReportDelivery::Processed Report {qi.ScheduledTask.ScheduledTaskId} successfully.");
+								_logger.LogInformation(
+									$"ReportDelivery::Processed Report {qi.ScheduledTask.ScheduledTaskId} successfully.");
 							}
 							else
 							{
-								_logger.LogInformation($"ReportDelivery::Failed to Process report {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
+								_logger.LogInformation(
+									$"ReportDelivery::Failed to Process report {qi.ScheduledTask.ScheduledTaskId} error {result.Item2}");
 							}
 						}
-
 					}
 				}
-				//}, cancellationToken);
 
 				progress.Report(100, $"Finishing the {Name} Task");
 			}

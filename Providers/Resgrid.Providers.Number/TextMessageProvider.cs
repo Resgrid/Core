@@ -42,7 +42,7 @@ namespace Resgrid.Providers.NumberProvider
 			 * to the free and low paying tiers as possible by lowering Resgrid's costs. But the Greedflation of the 2020's has
 			 * killed my ability to stem the tide anymore. Signalwire will still be used but now only as a backup for calls only.
 			 * Free tiers don't do SMS anymore at all and Standard and Permium tiers no longer can use Message based SMS. -SJ 6-20-2023.
-			 */ 
+			 */
 
 			/*
 			if (carrier == MobileCarriers.Telstra)
@@ -144,41 +144,19 @@ namespace Resgrid.Providers.NumberProvider
 			MessageResource messageResource;
 			try
 			{
-				if (String.IsNullOrWhiteSpace(departmentNumber) || NumberHelper.IsNexmoNumber(departmentNumber))
-				{
-					//textMessage = twilio.SendMessage(Settings.Default.TwilioResgridNumber, number, message);
+				messageResource = await MessageResource.CreateAsync(
+					from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
+					to: new PhoneNumber(number),
+					body: message);
 
-					messageResource = await MessageResource.CreateAsync(
-						from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
-						to: new PhoneNumber(number),
-						body: message);
-
-					if (messageResource != null)
-						return true;
-					else
-						return false;
-				}
+				if (messageResource != null)
+					return true;
 				else
-				{
-					//textMessage = twilio.SendMessage(departmentNumber, number, message);
-
-					//messageResource = MessageResource.Create(
-					//	from: new PhoneNumber(departmentNumber),
-					//	to: new PhoneNumber(number),
-					//	body: message);
-					messageResource = await MessageResource.CreateAsync(
-						from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
-						to: new PhoneNumber(number),
-						body: message);
-
-					if (messageResource != null)
-						return true;
-					else
-						return false;
-				}
+					return false;
 			}
 			catch (Exception ex)
 			{
+				Framework.Logging.LogException(ex);
 				return false;
 			}
 
@@ -266,7 +244,7 @@ namespace Resgrid.Providers.NumberProvider
 			 * Region their number is located in, also helped them get stuff from a local'ish
 			 * number. But it makes sense to just migrate this to toll-free numbers now. -SJ
 			 * 
-			 */ 
+			 */
 			//try
 			//{
 			//	var zone = GetZoneForAreaCode(number);

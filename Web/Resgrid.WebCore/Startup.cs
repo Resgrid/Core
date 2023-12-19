@@ -47,6 +47,7 @@ using Resgrid.Repositories.DataRepository.Stores;
 using Resgrid.Services;
 using Resgrid.Web.Options;
 using Resgrid.WebCore.Middleware;
+using Sentry.Extensibility;
 using StackExchange.Redis;
 using Stripe;
 
@@ -389,6 +390,15 @@ namespace Resgrid.Web
 					.Database("Audit")
 					.Collection("Event"));
 
+			// Sentry logging
+			if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
+			{
+				//services.AddSingleton<ISentryEventExceptionProcessor, SentryExceptionProcessor>();
+				services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
+
+				services.AddSentryTunneling();
+			}
+
 			this.Services = services;
 
 			if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
@@ -508,6 +518,12 @@ namespace Resgrid.Web
 			app.UseSession();
 
 			app.UseRequestLocalization();
+
+			// Sentry logging
+			if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
+			{
+				app.UseSentryTunneling();
+			}
 
 			app.UseMvc(routes =>
 			{

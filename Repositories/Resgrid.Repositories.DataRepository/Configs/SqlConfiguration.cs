@@ -428,7 +428,10 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllCallReferencesByTargetCallIdQuery { get; set; }
 		#endregion CallReferences
 
-
+		#region Scheduled Tasks
+		public string ScheduledTasksTable { get; set; }
+		public string SelectAllUpcomingOrRecurringReportTasksQuery { get; set; }
+		#endregion Scheduled Tasks
 
 		// Identity
 

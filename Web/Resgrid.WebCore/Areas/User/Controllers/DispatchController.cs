@@ -1247,11 +1247,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> CallExportEx(string query)
 		{
 			if (String.IsNullOrWhiteSpace(query))
-				Unauthorized();
+				return NotFound();
 
-			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query)).Trim();
-
-			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			string decryptedQuery = "";
+			string decodedQuery = "";
+			try
+			{
+				decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query)).Trim();
+				decryptedQuery  = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			}
+			catch (Exception ex)
+			{
+				return NotFound();
+			}
 
 			if (!decryptedQuery.Contains("|"))
 			{

@@ -102,6 +102,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			var personnelLocations = await _usersService.GetLatestLocationsForDepartmentPersonnelAsync(DepartmentId);
 
+			var personnelLocationTTL = await _departmentSettingsService.GetMappingPersonnelLocationTTLAsync(DepartmentId);
+			var unitLocationTTL = await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId);
+			var personnelAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
+			var unitAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
+
 			string weatherUnits = "";
 			double? centerLat = null;
 			double? centerLon = null;
@@ -283,53 +288,66 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var latestLocation = unitLocations.FirstOrDefault(x => x.UnitId == unit.UnitId);
 					var state = unitStates.FirstOrDefault(x => x.UnitId == unit.UnitId);
 
-					if (latestLocation != null)
+					MapMakerInfoData info = new MapMakerInfoData();
+					info.ImagePath = "Engine_Responding";
+					info.Id = $"u{unit.UnitId}";
+					info.Title = unit.Name;
+					info.InfoWindowContent = "";
+					info.Type = 1;
+
+					// Department has a TTL setup for units
+					if (unitLocationTTL > 0 && latestLocation != null)
 					{
-						MapMakerInfoData info = new MapMakerInfoData();
-
-						info.ImagePath = "Engine_Responding";
-						info.Id = $"u{unit.UnitId}";
-						info.Title = unit.Name;
-						info.InfoWindowContent = "";
-						info.Latitude = double.Parse(latestLocation.Latitude.ToString());
-						info.Longitude = double.Parse(latestLocation.Longitude.ToString());
-						info.Type = 1;
-
-						if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
-						{
-							var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
-
-							if (type != null && type.MapIconType.HasValue)
-								info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
-						}
-
-						result.Data.MapMakerInfos.Add(info);
+						// Unit location TTL has expired the latest unit location we have.
+						if (DateTime.UtcNow.AddMinutes(-unitLocationTTL) > latestLocation.Timestamp)
+							latestLocation = null;
 					}
-					else if (state != null)
+
+					if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
 					{
-						if (state.Latitude.HasValue && state.Latitude.Value != 0 && state.Longitude.HasValue &&
-						state.Longitude.Value != 0)
+						var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
+
+						if (type != null && type.MapIconType.HasValue)
+							info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
+					}
+
+					if (latestLocation != null && state != null)
+					{
+						if (latestLocation.Timestamp > state.Timestamp)
 						{
-							MapMakerInfoData info = new MapMakerInfoData();
-
-							info.ImagePath = "Engine_Responding";
-							info.Id = $"u{unit.UnitId}";
-							info.Title = unit.Name;
-							info.InfoWindowContent = "";
-							info.Latitude = double.Parse(state.Latitude.Value.ToString());
-							info.Longitude = double.Parse(state.Longitude.Value.ToString());
-							info.Type = 1;
-
-							if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
-							{
-								var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
-
-								if (type != null && type.MapIconType.HasValue)
-									info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
-							}
+							info.Latitude = double.Parse(latestLocation.Latitude.ToString());
+							info.Longitude = double.Parse(latestLocation.Longitude.ToString());
 
 							result.Data.MapMakerInfos.Add(info);
 						}
+						else if (state.HasLocation())
+						{
+							info.Latitude = double.Parse(state.Latitude.Value.ToString());
+							info.Longitude = double.Parse(state.Longitude.Value.ToString());
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+						else if (!unitAllowStatusWithNoLocationToOverwrite) // State was newer then location ping but did not have a valid location
+						{
+							info.Latitude = double.Parse(latestLocation.Latitude.ToString());
+							info.Longitude = double.Parse(latestLocation.Longitude.ToString());
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+					}
+					else if (latestLocation != null)
+					{
+						info.Latitude = double.Parse(latestLocation.Latitude.ToString());
+						info.Longitude = double.Parse(latestLocation.Longitude.ToString());
+
+						result.Data.MapMakerInfos.Add(info);
+					}
+					else if (state != null && state.HasLocation())
+					{
+						info.Latitude = double.Parse(state.Latitude.Value.ToString());
+						info.Longitude = double.Parse(state.Longitude.Value.ToString());
+
+						result.Data.MapMakerInfos.Add(info);
 					}
 				}
 			}
@@ -341,35 +359,62 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var latestLocation = personnelLocations.FirstOrDefault(x => x.UserId == person.UserId);
 					var state = personnelStates.FirstOrDefault(x => x.UserId == person.UserId);
 
-					if (latestLocation != null)
-					{
-						MapMakerInfoData info = new MapMakerInfoData();
+					MapMakerInfoData info = new MapMakerInfoData();
 
-						info.ImagePath = "Person_RespondingCall";
-						info.Id = $"p{person.UserId}";
-						info.Title = person.Name;
-						info.InfoWindowContent = "";
+					info.ImagePath = "Person_RespondingCall";
+					info.Id = $"p{person.UserId}";
+					info.Title = person.Name;
+					info.InfoWindowContent = "";
+					info.Type = 3;
+
+					// Department has a TTL setup for personnel
+					if (personnelLocationTTL > 0 && latestLocation != null)
+					{
+						// Person location TTL has expired the latest personnel location we have.
+						if (DateTime.UtcNow.AddMinutes(-personnelLocationTTL) > latestLocation.Timestamp)
+							latestLocation = null;
+					}
+
+					if (latestLocation != null && state != null)
+					{
+						if (latestLocation.Timestamp > state.Timestamp) // Location ping newer then state
+						{
+							info.Latitude = double.Parse(latestLocation.Latitude.ToString());
+							info.Longitude = double.Parse(latestLocation.Longitude.ToString());
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+						else if (state.HasLocation()) // State is newer then location ping and has a valid location
+						{
+							var location = state.GetCoordinates();
+							info.Latitude = double.Parse(location.Latitude.Value.ToString());
+							info.Longitude = double.Parse(location.Longitude.Value.ToString());
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+						else if (!personnelAllowStatusWithNoLocationToOverwrite) // State was newer then location ping but did not have a valid location
+						{
+							info.Latitude = double.Parse(latestLocation.Latitude.ToString());
+							info.Longitude = double.Parse(latestLocation.Longitude.ToString());
+
+							result.Data.MapMakerInfos.Add(info);
+						}
+					}
+					else if (latestLocation != null)
+					{
 						info.Latitude = (double)latestLocation.Latitude;
 						info.Longitude = (double)latestLocation.Longitude;
-						info.Type = 3;
 
 						result.Data.MapMakerInfos.Add(info);
 					}
 					else if (state != null)
 					{
-						var location = state.GetCoordinates();
-
-						if (location != null && location.Latitude.HasValue && location.Longitude.HasValue)
+						if (state.HasLocation())
 						{
-							MapMakerInfoData info = new MapMakerInfoData();
+							var location = state.GetCoordinates();
 
-							info.ImagePath = "Person_RespondingCall";
-							info.Id = $"p{person.UserId}";
-							info.Title = person.Name;
-							info.InfoWindowContent = "";
 							info.Latitude = location.Latitude.Value;
 							info.Longitude = location.Longitude.Value;
-							info.Type = 3;
 
 							result.Data.MapMakerInfos.Add(info);
 						}

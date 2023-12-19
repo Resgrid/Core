@@ -58,6 +58,8 @@ using System.Security.Cryptography.X509Certificates;
 using Resgrid.Web.Services;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
+using Sentry.Extensibility;
+using Resgrid.Web.ServicesCore.Middleware;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -147,7 +149,7 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddApiVersioning(x =>
 			{
-				x.DefaultApiVersion = new ApiVersion(3, 0);
+				x.DefaultApiVersion = new ApiVersion(4, 0);
 				x.AssumeDefaultVersionWhenUnspecified = true;
 				x.ReportApiVersions = true;
 			});
@@ -187,17 +189,17 @@ namespace Resgrid.Web.ServicesCore
 					{securityScheme, new string[] { }}
 				});
 
-				options.SwaggerDoc("v3",
+				//options.SwaggerDoc("v3",
 
-					new OpenApiInfo
-					{
-						Title = "Resgrid API",
-						Version = "v3",
-						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
-						Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
-						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
-					}
-				);
+				//	new OpenApiInfo
+				//	{
+				//		Title = "Resgrid API",
+				//		Version = "v3",
+				//		Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
+				//		Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
+				//		TermsOfService = new Uri("https://resgrid.com/Public/Terms")
+				//	}
+				//);
 
 				options.SwaggerDoc("v4",
 
@@ -538,6 +540,8 @@ namespace Resgrid.Web.ServicesCore
 
 			//this.meterProvider = providerBuilder.Build();
 
+			services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
+
 			services.AddHostedService<Worker>();
 			this.Services = services;
 
@@ -628,7 +632,7 @@ namespace Resgrid.Web.ServicesCore
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
 			{
-				c.SwaggerEndpoint($"/swagger/v3/swagger.json", "Resgrid API V3");
+				//c.SwaggerEndpoint($"/swagger/v3/swagger.json", "Resgrid API V3");
 				c.SwaggerEndpoint($"/swagger/v4/swagger.json", "Resgrid API V4");
 
 				c.RoutePrefix = string.Empty;

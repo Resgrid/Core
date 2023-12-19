@@ -3318,6 +3318,14 @@
             <param name="callId">CallId to get data for</param>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCalls(System.DateTime,System.DateTime)">
+            <summary>
+            Returns all the calls for the department inclusive in the date range
+            </summary>
+            <param name="startDate">Start date as UTC to get calls for</param>
+            <param name="endDate">End date as UTC to get calls for</param>
+            <returns>Array of CallResult objects for each call in the department within the range</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -3456,6 +3464,11 @@
             </summary>
             <returns>Array of CallTemplateResult objects for each role in the department</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.FeedsController">
+            <summary>
+            Gets calls and other data formatted for different feed formats, like RSS.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FormsController">
             <summary>
             User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
@@ -3583,6 +3596,35 @@
             title of "Dispatch" or a note in a Category of "Dispatch".
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetAllUnexpiredNotesByCategory(System.String,System.Boolean)">
+            <summary>
+            Get's all the notes in a department that are not expired by a category
+            </summary>
+            <param name="category">Category name to get notes for</param>
+            <param name="includeUnCategorized">Also include notes that do not have a </param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetNote(System.Int32)">
+            <summary>
+            Gets the dispatch note (if any). A dispatch note is a Department note with the
+            title of "Dispatch" or a note in a Category of "Dispatch".
+            </summary>
+            <param name="noteId">Id of the note to get</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.SaveNote(Resgrid.Web.Services.Models.v4.Notes.NewNoteInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a new note in the system
+            </summary>
+            <param name="newNoteInput">Input data to send a new note</param>
+            <returns>Created result if the note was saved</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetNoteCategories">
+            <summary>
+            Get's all the note Categories for a Department
+            </summary>
+            <returns>List of string of distinct note category.</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelController">
             <summary>
@@ -5271,6 +5313,16 @@
             The key for Google Maps
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.DirectionsMapKey">
+            <summary>
+            The key for a Directions API
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.NavigationMapKey">
+            <summary>
+            The key for a Navigation API
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.LoggingKey">
             <summary>
             The key for Logging
@@ -6176,6 +6228,31 @@
             When the note was added on
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Notes.GetNoteCategoriesResult">
+            <summary>
+            Result containing all the note categories
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.GetNoteCategoriesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Notes.NoteCategoryData">
+            <summary>
+            Data about a note category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.NoteCategoryData.NoteCategoryId">
+            <summary>
+            Note Category Identification number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.NoteCategoryData.Category">
+            <summary>
+            Category text
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Notes.GetNoteResult">
             <summary>
             Result containing a single note from the system
@@ -6184,6 +6261,46 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Notes.GetNoteResult.Data">
             <summary>
             Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Notes.NewNoteInput">
+            <summary>
+            New note input
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.NewNoteInput.Title">
+            <summary>
+            The title/subject of the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.NewNoteInput.Body">
+            <summary>
+            The body/content of the note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.NewNoteInput.Category">
+            <summary>
+            Note Category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.NewNoteInput.IsAdminOnly">
+            <summary>
+            Is the note only visible to admins
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.NewNoteInput.ExpiresOn">
+            <summary>
+            When the note expires on (optional)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Notes.SaveNoteResult">
+            <summary>
+            The result of saving a note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Notes.SaveNoteResult.Id">
+            <summary>
+            Identifier of the new npte
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput">

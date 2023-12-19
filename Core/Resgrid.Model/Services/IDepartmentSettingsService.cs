@@ -257,5 +257,13 @@ namespace Resgrid.Model.Services
 		Task<bool> GetAllowSignupsForMultipleShiftGroupsAsync(int departmentId);
 
 		Task<DepartmentSuppressStaffingInfo> GetDepartmentStaffingSuppressInfoAsync(int departmentId, bool bypassCache = false);
+
+		Task<int> GetMappingPersonnelLocationTTLAsync(int departmentId);
+
+		Task<int> GetMappingUnitLocationTTLAsync(int departmentId);
+
+		Task<bool> GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(int departmentId);
+
+		Task<bool> GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(int departmentId);
 	}
 }

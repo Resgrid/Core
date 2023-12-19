@@ -1757,6 +1757,48 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#endregion Dispatch Settings
 
+		#region Mapping Settings
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> MappingSettings()
+		{
+			var model = new MappingSettingsView();
+
+			model.PersonnelLocationTTL = await _departmentSettingsService.GetMappingPersonnelLocationTTLAsync(DepartmentId);
+			model.UnitLocationTTL = await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId);
+			model.PersonnelAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
+			model.UnitAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> MappingSettings(MappingSettingsView model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelLocationTTL.ToString(),
+					DepartmentSettingTypes.MappingPersonnelLocationTTL, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitLocationTTL.ToString(),
+					DepartmentSettingTypes.MappingUnitLocationTTL, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelAllowStatusWithNoLocationToOverwrite.ToString(),
+					DepartmentSettingTypes.MappingPersonnelAllowStatusWithNoLocationToOverwrite, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitAllowStatusWithNoLocationToOverwrite.ToString(),
+					DepartmentSettingTypes.MappingUnitAllowStatusWithNoLocationToOverwrite, cancellationToken);
+
+				model.SaveSuccess = true;
+				return View(model);
+			}
+
+			model.SaveSuccess = false;
+			return View(model);
+		}
+
+		#endregion Mapping Settings
+
 		#region Delete Department
 
 		[HttpGet]

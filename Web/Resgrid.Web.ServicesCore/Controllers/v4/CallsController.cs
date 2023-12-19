@@ -1499,6 +1499,59 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// Returns all the calls for the department inclusive in the date range
+		/// </summary>
+		/// <param name="startDate">Start date as UTC to get calls for</param>
+		/// <param name="endDate">End date as UTC to get calls for</param>
+		/// <returns>Array of CallResult objects for each call in the department within the range</returns>
+		[HttpGet("GetCalls")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<ActiveCallsResult>> GetCalls(DateTime startDate, DateTime endDate)
+		{
+			var result = new ActiveCallsResult();
+
+			var calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)).OrderByDescending(x => x.LoggedOn);
+
+			if (calls != null && calls.Any())
+			{
+				foreach (var c in calls)
+				{
+					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true);
+
+					string address = "";
+					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
+					{
+						var geo = c.GeoLocationData.Split(char.Parse(","));
+
+						if (geo.Length == 2)
+						{
+							double lat, lng;
+							if (double.TryParse(geo[0], out lat) && double.TryParse(geo[1], out lng))
+							{
+								address = await _geoLocationProvider.GetAddressFromLatLong(lat, lng);
+							}
+						}
+					}
+					else
+						address = c.Address;
+
+					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone));
+				}
+				result.PageSize = result.Data.Count();
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
 		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone)
 		{
 			var callResult = new CallResultData();

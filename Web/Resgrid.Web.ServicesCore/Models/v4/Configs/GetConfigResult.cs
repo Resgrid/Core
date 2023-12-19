@@ -37,6 +37,16 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string GoogleMapsKey { get; set; }
 
 		/// <summary>
+		/// The key for a Directions API
+		/// </summary>
+		public string DirectionsMapKey { get; set; }
+
+		/// <summary>
+		/// The key for a Navigation API
+		/// </summary>
+		public string NavigationMapKey { get; set; }
+
+		/// <summary>
 		/// The key for Logging
 		/// </summary>
 		public string LoggingKey { get; set; }

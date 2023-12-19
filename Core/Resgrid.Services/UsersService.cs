@@ -289,13 +289,35 @@ namespace Resgrid.Services
 
 			try
 			{
-				var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
-					.GroupBy(x => x.UserId).FirstOrDefault();
+				//var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+				//	.GroupBy(x => x.UserId).FirstOrDefault();
 
 				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
+
+				//var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).ToList();//.OrderByDescending(y => y.Timestamp);//.GroupBy(x => x.UnitId).ToList();//.FirstOrDefault();
+
+				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+
+				//if (locations != null)
+				//	return locations.OrderBy(y => y.Timestamp)
+				//					.GroupBy(x => x.UserId)
+				//					.Select(y => y.First()).ToList();
+
+
+				var locations = _personnelLocationRepository
+									.AsQueryable()
+									.Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+									.GroupBy(pv => pv.UserId, (key, group) => new
+									{
+										key,
+										LatestLocation = group.First()
+									});
+
 				if (locations != null)
-					return locations.ToList();
+					return locations.Select(x => x.LatestLocation).ToList();
+
+				return null;
 			}
 			catch (Exception ex)
 			{

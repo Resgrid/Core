@@ -16,5 +16,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="types">The types.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ScheduledTask&gt;&gt;.</returns>
 		Task<IEnumerable<ScheduledTask>> GetAllActiveTasksForTypesAsync(List<int> types);
+
+		Task<IEnumerable<ScheduledTask>> GetAllUpcomingOrRecurringReportDeliveryTasksAsync();
 	}
 }

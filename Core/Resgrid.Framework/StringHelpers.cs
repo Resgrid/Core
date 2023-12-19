@@ -105,9 +105,11 @@ namespace Resgrid.Framework
 			sanitizer.Tag("ul");
 			sanitizer.Tag("ol");
 			sanitizer.Tag("li");
-			//sanitizer.Tag("a"); //.SetAttribute("rel", "nofollow")
-								//				.CheckAttribute("href", HtmlSanitizerCheckType.Url)
-								//				.RemoveEmpty();
+			sanitizer.Tag("img").CheckAttribute("src", HtmlSanitizerCheckType.Url)
+				.RemoveEmpty();
+			sanitizer.Tag("a").SetAttribute("rel", "nofollow")
+							  .CheckAttribute("href", HtmlSanitizerCheckType.Url)
+							  .RemoveEmpty();
 
 			string cleanHtml = sanitizer.Sanitize(source);
 

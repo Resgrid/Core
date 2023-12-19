@@ -18,9 +18,26 @@
 		public static string LoqateApiKey = "";
 
 		/***********************************
+		 * GoogleMaps Api Keys
+		 ***********************************/
+		public static string UnitAppGoogleMapsKey = "";
+		public static string ResponderAppGoogleMapsKey = "";
+
+		/***********************************
 		 * OpenWeatherApi Keys
 		 ***********************************/
 		public static string BigBoardOpenWeatherApiKey = "";
+
+		/***********************************
+		 * MapBox Api Keys used for Navigation and Routing, i.e. the Unit App
+		 ***********************************/
+		public static string UnitAppMapBoxKey = "";
+
+		/***********************************
+		 * what3words Api Keys
+		 ***********************************/
+		public static string UnitAppWhat3WordsKey = "";
+		public static string ResponderAppWhat3WordsKey = "";
 
 		/***********************************
 		 * Leaflet OSM Keys (used for Mapping and Map display)

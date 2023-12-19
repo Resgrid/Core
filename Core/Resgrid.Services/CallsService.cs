@@ -824,6 +824,10 @@ namespace Resgrid.Services
 					return "Cancelled";
 				case CallStates.Unfounded:
 					return "Unfounded";
+				case CallStates.Founded:
+					return "Founded";
+				case CallStates.Minor:
+					return "Minor";
 				default:
 					return "Unknown";
 			}

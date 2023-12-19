@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -549,12 +550,43 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				var locations = _unitLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp).GroupBy(x => x.UnitId).FirstOrDefault();
+
+				//var locations = _unitLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp).GroupBy(x => x.UnitId);//.FirstOrDefault();
+
+				var locations = _unitLocationRepository
+									.AsQueryable()
+									.Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+									.GroupBy(pv => pv.UnitId, (key, group) => new
+									{
+										key,
+										LatestLocation = group.First()
+									});
+
+				//var locations2 = _unitLocationRepository
+				//					.AsQueryable()
+				//					.Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp);
+
+				//var locations = _unitLocationRepository.AsQueryable()
+				//.Where(x => x.DepartmentId == departmentId)
+				//.OrderByDescending(y => y.Timestamp)
+				//.GroupBy(s => new { s.UnitId })
+				//.Select(n => new
+				//{
+				//	Value = n.Key,
+				//	Location = n.First()
+				//}).ForEachAsync();
 
 				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
+				//if (locations != null)
+				//	return locations.OrderBy(y => y.Timestamp)
+				//					.GroupBy(x => x.UnitId)
+				//					.Select(y => y.First()).ToList();
+
 				if (locations != null)
-					return locations.ToList();
+					return locations.Select(x => x.LatestLocation).ToList();
+
+				return null;
 			}
 			catch (Exception ex)
 			{

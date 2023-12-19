@@ -74,6 +74,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.13" />
 		<PackageReference Include="NUglify" Version="1.17.10" />
 		<PackageReference Include="protobuf-net" Version="3.0.101" />
+		<PackageReference Include="Sentry" Version="3.40.1" />
+		<PackageReference Include="Sentry.AspNetCore" Version="3.40.1" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />

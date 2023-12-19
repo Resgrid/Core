@@ -43,7 +43,7 @@
               <h4>Your Active Call Feed Urls are</h4>
               <dl class="dl-horizontal">
                 <dt>RSS 2.0</dt>
-                <dd><a href="https://api.resgrid.com/api/v3/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey">https://api.resgrid.com/api/v3/Feeds/GetActiveCallsAsRSS/@Model.ActiveCallRssKey</a></dd>
+                <dd><a href="https://api.resgrid.com/api/v4/Feeds/GetActiveCallsAsRSS?key=@Model.ActiveCallRssKey">https://api.resgrid.com/api/v4/Feeds/GetActiveCallsAsRSS?key=@Model.ActiveCallRssKey</a></dd>
               </dl>
               <fieldset class="form-actions">
                 <a class="btn btn-mini btn-danger" data-confirm="@localizer["RegenerateWarning"]" href="@Url.Action("ProvisionActiveCallRssKey", "Department", new { area = "User" })">@localizer["Regenerate"]</a>

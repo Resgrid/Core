@@ -20,4 +20,40 @@
     <data name="DeleteDepartmentCurrentlyPendingInfo" xml:space="preserve">
         <value />
     </data>
+    <data name="MappingSettingsHeader" xml:space="preserve">
+        <value />
+    </data>
+    <data name="SavedMappingSettings" xml:space="preserve">
+        <value />
+    </data>
+    <data name="MappingSettingsPersonnelHeader" xml:space="preserve">
+        <value />
+    </data>
+    <data name="MappingSettingsUnitsHeader" xml:space="preserve">
+        <value />
+    </data>
+    <data name="MappingSettingsPersonnelAllowOverwriteLabel" xml:space="preserve">
+        <value />
+    </data>
+    <data name="MappingSettingsPersonnelTTLLabel" xml:space="preserve">
+        <value />
+    </data>
+    <data name="MappingSettingsUnitAllowOverwriteLabel" xml:space="preserve">
+        <value />
+    </data>
+    <data name="MappingSettingsUnitTTLLabel" xml:space="preserve">
+        <value />
+    </data>
+    <data name="PersonnelAllowOverwriteHelp" xml:space="preserve">
+        <value />
+    </data>
+    <data name="UnitAllowOverwriteHelp" xml:space="preserve">
+        <value />
+    </data>
+    <data name="PersonnelTTLHelp" xml:space="preserve">
+        <value />
+    </data>
+    <data name="UnitTTLHelp" xml:space="preserve">
+        <value />
+    </data>
 </root>

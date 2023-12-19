@@ -1,0 +1,103 @@
+﻿@model Resgrid.Web.Areas.User.Models.Departments.MappingSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["MappingSettingsHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["MappingSettingsHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["MappingSettingsHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form role="form" class="form-horizontal" asp-controller="Department" asp-action="MappingSettings" asp-route-area="User" method="post">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-horizontal">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="All" class="text-danger"></div>
+
+                            @if (Model.SaveSuccess.GetValueOrDefault())
+				            {
+                              <div class="alert alert-success">
+                                @localizer["SavedMappingSettings"]
+                              </div>
+				            }
+
+                            <h3>@localizer["MappingSettingsPersonnelHeader"]</h3>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["MappingSettingsPersonnelAllowOverwriteLabel"]</label>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="checkbox" asp-for="PersonnelAllowStatusWithNoLocationToOverwrite">
+                                        </div>
+                                    </div>
+                                    <span class="help-block m-b-none">@localizer["PersonnelAllowOverwriteHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["MappingSettingsPersonnelTTLLabel"]</label>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="number" asp-for="PersonnelLocationTTL" min="0" max="1440">
+                                        </div>
+                                    </div>
+                                    <span class="help-block m-b-none">@localizer["PersonnelTTLHelp"]</span>
+                                </div>
+                            </div>
+                            
+                            <h3>@localizer["MappingSettingsUnitsHeader"]</h3>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["MappingSettingsUnitAllowOverwriteLabel"]</label>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="checkbox" asp-for="UnitAllowStatusWithNoLocationToOverwrite">
+                                        </div>
+                                    </div>
+                                    <span class="help-block m-b-none">@localizer["UnitAllowOverwriteHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["MappingSettingsUnitTTLLabel"]</label>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="number" asp-for="UnitLocationTTL" min="0" max="1440">
+                                        </div>
+                                    </div>
+                                    <span class="help-block m-b-none">@localizer["UnitTTLHelp"]</span>
+                                </div>
+                            </div>
+ 
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts
+{
+
+}

@@ -370,7 +370,7 @@ namespace Resgrid.Web.Services.Controllers
 						}
 					}
 				}
-				else if (textMessage.To == "17753765253") // Resgrid master text number
+				else if (textMessage.To == Config.NumberProviderConfig.TwilioResgridNumber) //"17753765253") // Resgrid master text number
 				{
 					var profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 					var payload = _textCommandService.DetermineType(textMessage.Text);

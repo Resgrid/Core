@@ -370,7 +370,7 @@ namespace Resgrid.Web
 			});
 			//#endif
 
-			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
+			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.GetStripeApiKey();
 
 			services.AddLocalization();
 

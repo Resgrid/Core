@@ -621,7 +621,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			//var users = await _departmentsService.GetAllUsersForDepartment(DepartmentId);//.GetAllUsersForDepartmentUnlimitedMinusDisabled(DepartmentId);
 			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
 
-			var personGroupRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			var personGroupRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 
 			foreach (var user in personGroupRoles)
@@ -835,7 +835,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartment(DepartmentId);
 			var canGroupAdminsDelete = await _authorizationService.CanGroupAdminsRemoveUsersAsync(DepartmentId);
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentIncDisabledDeletedAsync(DepartmentId);
-			var userGroupRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, false);
+			var userGroupRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, true, true, false);
 
 			var sortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 

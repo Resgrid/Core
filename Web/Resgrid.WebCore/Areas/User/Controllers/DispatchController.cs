@@ -1034,6 +1034,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CloseCallView model = new CloseCallView();
 			model = await FillCloseCallView(model);
 			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+				Unauthorized();
+
 			model.CallId = call.CallId;
 
 			return View(model);

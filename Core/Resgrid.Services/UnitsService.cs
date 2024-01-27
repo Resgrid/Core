@@ -11,6 +11,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
+using static Resgrid.Framework.Testing.TestData;
 
 namespace Resgrid.Services
 {
@@ -29,12 +30,13 @@ namespace Resgrid.Services
 		private readonly ICustomStateService _customStateService;
 		private readonly IUnitActiveRolesRepository _unitActiveRolesRepository;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly ILimitsService _limitsService;
 
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, IMongoRepository<UnitsLocation> unitLocationRepository,
-			IUnitActiveRolesRepository unitActiveRolesRepository, IDepartmentGroupsService departmentGroupsService)
+			IUnitActiveRolesRepository unitActiveRolesRepository, IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService)
 		{
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
@@ -49,6 +51,7 @@ namespace Resgrid.Services
 			_unitLocationRepository = unitLocationRepository;
 			_unitActiveRolesRepository = unitActiveRolesRepository;
 			_departmentGroupsService = departmentGroupsService;
+			_limitsService = limitsService;
 		}
 
 		public async Task<List<Unit>> GetAllAsync()
@@ -64,6 +67,8 @@ namespace Resgrid.Services
 		public async Task<Unit> SaveUnitAsync(Unit unit, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
+			await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
+
 			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
 
 			return saved;
@@ -78,20 +83,23 @@ namespace Resgrid.Services
 		{
 			List<Unit> systemUnts = new List<Unit>();
 			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdAsync(departmentId)).ToList();
-
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedThinAsync(departmentId);
-			int limit = (await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId)).GetLimitForTypeAsInt(PlanLimitTypes.Units);
-			int count = units.Count < limit ? units.Count : limit;
+			var limit = await _limitsService.GetLimitsForEntityPlanWithFallbackAsync(departmentId);
 
-			// Only return units up to the plans unit limit
-			for (int i = 0; i < count; i++)
+			if (units != null && units.Any())
 			{
-				//units[i].Roles = await GetRolesForUnitAsync(units[i].UnitId);
+				if (units.Count() > limit.UnitsLimit)
+					units = units.Take(limit.UnitsLimit).ToList();
 
-				if (units[i].StationGroupId.HasValue)
-					units[i].StationGroup = groups.FirstOrDefault(x => x.DepartmentGroupId == units[i].StationGroupId.Value);
+				foreach (var unit in units)
+				{
+					//unit.Roles = await GetRolesForUnitAsync(unit.UnitId);
 
-				systemUnts.Add(units[i]);
+					if (unit.StationGroupId.HasValue)
+						unit.StationGroup = groups.FirstOrDefault(x => x.DepartmentGroupId == unit.StationGroupId.Value);
+
+					systemUnts.Add(unit);
+				}
 			}
 
 			return systemUnts;
@@ -100,6 +108,18 @@ namespace Resgrid.Services
 		public async Task<List<Unit>> GetUnitsForDepartmentUnlimitedAsync(int departmentId)
 		{
 			var units = await _unitsRepository.GetAllUnitsByDepartmentIdAsync(departmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedThinAsync(departmentId);
+
+			if (units != null && units.Any())
+			{
+				foreach (var unit in units)
+				{
+					//unit.Roles = await GetRolesForUnitAsync(unit.UnitId);
+
+					if (unit.StationGroupId.HasValue)
+						unit.StationGroup = groups.FirstOrDefault(x => x.DepartmentGroupId == unit.StationGroupId.Value);
+				}
+			}
 
 			return units.ToList();
 		}
@@ -127,6 +147,7 @@ namespace Resgrid.Services
 
 				await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unit.UnitId, cancellationToken);
 				await _unitsRepository.DeleteAsync(unit, cancellationToken);
+				await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
 
 				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
 

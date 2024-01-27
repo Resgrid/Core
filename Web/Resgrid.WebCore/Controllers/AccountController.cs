@@ -236,7 +236,7 @@ namespace Resgrid.Web.Controllers
 					await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
 
 					// Guard, in case testing has caching turned on for the shared redis cache there can be artifacts
-					_departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
+					await _departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
 					_departmentsService.InvalidateDepartmentMembers();
 
 					await _emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);

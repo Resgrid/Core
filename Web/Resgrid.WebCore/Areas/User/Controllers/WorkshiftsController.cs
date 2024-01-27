@@ -102,7 +102,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			model.Personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 
 			return View(model);
 		}

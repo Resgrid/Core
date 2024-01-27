@@ -47,7 +47,7 @@
 							{
 								<li>
 									<div class="user-thumb">
-										<img style="width: 40px; height: 40px;" src="@Model.ImageUrl" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'" />
+										<img style="width: 40px; height: 40px;" src="@Model.ImageUrl" onerror="this.src = 'https://app.resgrid.com/images/defaultProfile.png'" />
 									</div>
 									<div class="article-post">
 										<span class="user-info"> By @(await UserHelper.GetFullNameForUser(post.CreatedByUserId)) on @post.CreatedOn.FormatForDepartment(Model.Department, true)</span>

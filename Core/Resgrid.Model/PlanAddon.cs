@@ -31,6 +31,14 @@ namespace Resgrid.Model
 		[NotMapped]
 		public long Quantity { get; set; }
 
+		public string GetExternalKey()
+		{
+			if (Config.PaymentProviderConfig.IsTestMode)
+				return TestExternalId;
+			else
+				return ExternalId;
+		}
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

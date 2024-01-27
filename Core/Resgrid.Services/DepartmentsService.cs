@@ -14,6 +14,7 @@ using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
 using Resgrid.Repositories.DataRepository.Queries.ActionLogs;
 using System.Text;
+using static Resgrid.Framework.Testing.TestData;
 
 namespace Resgrid.Services
 {
@@ -40,12 +41,13 @@ namespace Resgrid.Services
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IIdentityRepository _identityRepository;
 		private readonly IDepartmentCallPruningRepository _departmentCallPruningDapperRepository;
+		private readonly ILimitsService _limitsService;
 
 
 		public DepartmentsService(IDepartmentsRepository departmentRepository, IDepartmentMembersRepository departmentMembersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentCallEmailsRepository departmentCallEmailsRepository,
 			IDepartmentCallPruningRepository departmentCallPruningRepository, ICacheProvider cacheProvider, IUsersService usersService,
-			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileRepository,
+			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileRepository, ILimitsService limitsService,
 			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository)
 		{
 			_departmentRepository = departmentRepository;
@@ -60,6 +62,7 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 			_identityRepository = identityRepository;
 			_departmentCallPruningDapperRepository = departmentCallPruningDapperRepository;
+			_limitsService = limitsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -128,7 +131,7 @@ namespace Resgrid.Services
 			return dep;
 		}
 
-		public void InvalidateAllDepartmentsCache(int departmentId)
+		public async Task<bool> InvalidateAllDepartmentsCache(int departmentId)
 		{
 			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
 			InvalidateDepartmentUsersInCache(departmentId);
@@ -136,6 +139,9 @@ namespace Resgrid.Services
 			InvalidatePersonnelNamesInCache(departmentId);
 			InvalidateDepartmentMembers();
 			_usersService.ClearCacheForDepartment(departmentId);
+			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
+
+			return true;
 		}
 
 		public void InvalidateDepartmentInCache(int departmentId)
@@ -269,6 +275,8 @@ namespace Resgrid.Services
 			dm.IsDisabled = false;
 			dm.IsHidden = false;
 
+			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
+
 			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
 		}
 
@@ -293,7 +301,7 @@ namespace Resgrid.Services
 					auditEvent.After = member2.CloneJsonToString();
 					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-					InvalidateAllDepartmentsCache(departmentId);
+					await InvalidateAllDepartmentsCache(departmentId);
 					InvalidateDepartmentUsersInCache(departmentId);
 					InvalidatePersonnelNamesInCache(departmentId);
 					_usersService.ClearCacheForDepartment(departmentId);
@@ -465,46 +473,57 @@ namespace Resgrid.Services
 			return true;
 		}
 
-
-		public List<IdentityUser> GetAllUsersForDepartment(int departmentId, bool retrieveHidden = false, bool bypassCache = false)
+		/// <summary>
+		/// Deprecated, use GetAllUsersForDepartmentAsync instead
+		/// </summary>
+		/// <param name="departmentId"></param>
+		/// <param name="retrieveHidden"></param>
+		/// <param name="bypassCache"></param>
+		/// <returns></returns>
+		public async Task<List<IdentityUser>> GetAllUsersForDepartment(int departmentId, bool retrieveHidden = false, bool bypassCache = false)
 		{
-			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
-			{
-				Func<List<IdentityUser>> getUsersForDepartment = delegate ()
-				{
-					var users = _identityRepository.GetAllUsersForDepartmentWithinLimits(departmentId, retrieveHidden);
-
-					return users;
-				};
-
-
-				return _cacheProvider.Retrieve<List<IdentityUser>>(string.Format(DepartmentUsersCacheKey, departmentId, retrieveHidden), getUsersForDepartment, CacheLength);
-			}
-			else
+			async Task<List<IdentityUser>> getUsersForDepartment()
 			{
 				var users = _identityRepository.GetAllUsersForDepartmentWithinLimits(departmentId, retrieveHidden);
 
+				var limit = await _limitsService.GetLimitsForEntityPlanWithFallbackAsync(departmentId);
+
+				if (users != null && users.Any())
+				{
+					if (users.Count() > limit.PersonnelLimit)
+						users = users.Take(limit.PersonnelLimit).ToList();
+				}
+
 				return users;
 			}
+
+			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
+				return await _cacheProvider.RetrieveAsync<List<IdentityUser>>(string.Format(DepartmentUsersCacheKey, departmentId, retrieveHidden), getUsersForDepartment, CacheLength);
+			else
+				return await getUsersForDepartment();
 		}
 
 		public async Task<List<IdentityUser>> GetAllUsersForDepartmentAsync(int departmentId, bool retrieveHidden = false, bool bypassCache = false)
 		{
-			Func<Task<List<IdentityUser>>> getUsersForDepartment = async () =>
+			async Task<List<IdentityUser>> getUsersForDepartment()
 			{
 				var users = await _identityRepository.GetAllUsersForDepartmentWithinLimitsAsync(departmentId, retrieveHidden);
 
+				var limit = await _limitsService.GetLimitsForEntityPlanWithFallbackAsync(departmentId);
+
+				if (users != null && users.Any())
+				{
+					if (users.Count() > limit.PersonnelLimit)
+						users = users.Take(limit.PersonnelLimit).ToList();
+				}
+
 				return users;
-			};
+			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
-			{
 				return await _cacheProvider.RetrieveAsync<List<IdentityUser>>(string.Format(DepartmentUsersCacheKey, departmentId, retrieveHidden), getUsersForDepartment, CacheLength);
-			}
 			else
-			{
 				return await getUsersForDepartment();
-			}
 		}
 
 		public async Task<List<PersonName>> GetAllPersonnelNamesForDepartmentAsync(int departmentId)
@@ -532,10 +551,18 @@ namespace Resgrid.Services
 		{
 			var members = await _departmentMembersRepository.GetAllDepartmentMembersWithinLimitsAsync(departmentId);
 
-			foreach (var member in members)
+			var limit = await _limitsService.GetLimitsForEntityPlanWithFallbackAsync(departmentId);
+
+			if (members != null && members.Any())
 			{
-				if (member.User == null)
-					member.User = _usersService.GetUserById(member.UserId);
+				if (members.Count() > limit.PersonnelLimit)
+					members = members.Take(limit.PersonnelLimit).ToList();
+
+				foreach (var member in members)
+				{
+					if (member.User == null)
+						member.User = _usersService.GetUserById(member.UserId);
+				}
 			}
 
 			return members.ToList();
@@ -593,7 +620,7 @@ namespace Resgrid.Services
 
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);
-			InvalidateAllDepartmentsCache(departmentMember.DepartmentId);
+			await InvalidateAllDepartmentsCache(departmentMember.DepartmentId);
 
 			return saved;
 		}

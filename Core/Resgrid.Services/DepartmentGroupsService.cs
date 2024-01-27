@@ -76,23 +76,25 @@ namespace Resgrid.Services
 
 		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentAsync(int departmentId)
 		{
-			List<DepartmentGroup> departmentGroups = new List<DepartmentGroup>();
+			//List<DepartmentGroup> departmentGroups = new List<DepartmentGroup>();
 
-			var groups = await GetAllGroupsForDepartmentUnlimitedAsync(departmentId);
+			//var groups = await GetAllGroupsForDepartmentUnlimitedAsync(departmentId);
 
-			int limit = 0;
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				limit = int.MaxValue;
-			else
-				limit = (await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId)).GetLimitForTypeAsInt(PlanLimitTypes.Groups);
+			//int limit = 0;
+			//if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
+			//	limit = int.MaxValue;
+			//else
+			//	limit = (await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId)).GetLimitForTypeAsInt(PlanLimitTypes.Groups);
 
-			int count = groups.Count < limit ? groups.Count : limit;
+			//int count = groups.Count < limit ? groups.Count : limit;
 
-			// Only return users up to the plans group limit
-			for (int i = 0; i < count; i++)
-			{
-				departmentGroups.Add(groups[i]);
-			}
+			//// Only return users up to the plans group limit
+			//for (int i = 0; i < count; i++)
+			//{
+			//	departmentGroups.Add(groups[i]);
+			//}
+
+			var departmentGroups = await GetAllGroupsForDepartmentUnlimitedAsync(departmentId);
 
 			foreach (var group in departmentGroups)
 			{

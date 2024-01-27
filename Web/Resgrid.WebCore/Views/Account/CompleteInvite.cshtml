@@ -23,7 +23,7 @@
 
             <div class="col-md-6">
                 <div style="text-align: center;">
-                    <a asp-controller="Home" asp-action="Index"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
+                    <a href="@Resgrid.Config.UrlsConfig.HomeUrl"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
                 </div>
                 <p>
                     @localizer["CompleteInviteText1"] @Model.DepartmentName.
@@ -43,7 +43,7 @@
                 </div>
 
                 <p>
-                    <small><a asp-controller="Home" asp-action="Index">@localizer["GoBack"]</a></small>
+                    <small><a href="@Resgrid.Config.UrlsConfig.HomeUrl">@localizer["GoBack"]</a></small>
                 </p>
             </div>
             <div class="col-md-6">

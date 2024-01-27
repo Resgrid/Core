@@ -82,5 +82,20 @@ namespace Resgrid.Services
 		{
 			return true;
 		}
+
+		public async Task<DepartmentLimits> GetLimitsForEntityPlanWithFallbackAsync(int departmentId, bool bypassCache = false)
+		{
+			var departmentLimits = new DepartmentLimits();
+			departmentLimits.PersonnelLimit = int.MaxValue;
+			departmentLimits.UnitsLimit = int.MaxValue;
+			departmentLimits.IsEntityPlan = false;
+
+			return await Task.FromResult(departmentLimits);
+		}
+
+		public async Task<bool> InvalidateDepartmentsEntityLimitsCache(int departmentId)
+		{
+			return await Task.FromResult(true);
+		}
 	}
 }

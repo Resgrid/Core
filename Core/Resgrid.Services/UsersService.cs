@@ -40,10 +40,12 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IMongoRepository<PersonnelLocation> _personnelLocationRepository;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ILimitsService _limitsService;
 
 		public UsersService(IDepartmentMembersRepository departmentMembersRepository, ICacheProvider cacheProvider,
 			IIdentityRepository identityRepository, IDepartmentSettingsService departmentSettingsService,
-			IMongoRepository<PersonnelLocation> personnelLocationRepository, IEventAggregator eventAggregator)
+			IMongoRepository<PersonnelLocation> personnelLocationRepository, IEventAggregator eventAggregator,
+			ILimitsService limitsService)
 		{
 			_departmentMembersRepository = departmentMembersRepository;
 			_cacheProvider = cacheProvider;
@@ -51,6 +53,7 @@ namespace Resgrid.Services
 			_departmentSettingsService = departmentSettingsService;
 			_personnelLocationRepository = personnelLocationRepository;
 			_eventAggregator = eventAggregator;
+			_limitsService = limitsService;
 		}
 
 		public List<IdentityUser> GetAll()
@@ -112,7 +115,31 @@ namespace Resgrid.Services
 			return _identityRepository.GetUserById(userId.ToString());
 		}
 
-		public async Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
+		public async Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
+		{
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(departmentId);
+			var users = await _identityRepository.GetAllUsersGroupsAndRolesAsync(departmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+
+			if (users != null && users.Any())
+			{
+				switch (personnelSortOrder)
+				{
+					case PersonnelSortOrders.FirstName:
+						users = users.OrderBy(x => x.FirstName).ToList();
+						break;
+					case PersonnelSortOrders.LastName:
+						users = users.OrderBy(x => x.LastName).ToList();
+						break;
+					case PersonnelSortOrders.Group:
+						users = users.OrderBy(x => x.DepartmentGroupId).ToList();
+						break;
+				}
+			}
+
+			return users;
+		}
+
+		public async Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdInLimitAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
 		{
 			////Func<List<UserGroupRole>> getUserGroupRole = delegate ()
 			//{
@@ -124,11 +151,16 @@ namespace Resgrid.Services
 			//else
 			//	return getUserGroupRole();
 
-			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(deparmentId);
-			var users = await _identityRepository.GetAllUsersGroupsAndRolesAsync(deparmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(departmentId);
+			var users = await _identityRepository.GetAllUsersGroupsAndRolesAsync(departmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+
+			var limit = await _limitsService.GetLimitsForEntityPlanWithFallbackAsync(departmentId);
 
 			if (users != null && users.Any())
 			{
+				if (users.Count > limit.PersonnelLimit)
+					users = users.Take(limit.PersonnelLimit).ToList();
+
 				switch (personnelSortOrder)
 				{
 					case PersonnelSortOrders.FirstName:

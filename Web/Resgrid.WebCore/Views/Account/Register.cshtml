@@ -67,12 +67,12 @@
                 </div>
 
                 <div class='alert alert-info'>
-                    @localizer["SignUpTerms1"] Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">@localizer["TermsOfUse"]</a> &
-                    <a asp-controller="Public" asp-action="Privacy" target="_blank">@localizer["PrivacyPolicy"]</a>
+                    @localizer["SignUpTerms1"] Resgrid's <a href="@Resgrid.Config.UrlsConfig.TermsOfUseUrl" target="_blank">@localizer["TermsOfUse"]</a> &
+                    <a href="@Resgrid.Config.UrlsConfig.PrivacyPolicyUrl" target="_blank">@localizer["PrivacyPolicy"]</a>
                 </div>
 
                 <p>
-                    <small><a asp-controller="Home" asp-action="Index">@localizer["GoBack"]</a></small>
+                    <small><a href="@Resgrid.Config.UrlsConfig.HomeUrl">@localizer["GoBack"]</a></small>
                 </p>
             </div>
             <div class="col-md-6">

@@ -118,14 +118,20 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.UserId
 					WHERE [DepartmentId] = %ID%";
 
-			SelectMembersWithinLimitsQuery = @"DECLARE @limit INT
-							SET @limit = (SELECT TOP 1 pl.LimitValue FROM Payments p
-							INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
-							WHERE DepartmentId = %ID% AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
-							ORDER BY PaymentId DESC)
+			//SelectMembersWithinLimitsQuery = @"DECLARE @limit INT
+			//				SET @limit = (SELECT TOP 1 (pl.LimitValue * p.Quantity) FROM Payments p
+			//				INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
+			//				WHERE DepartmentId = %ID% AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
+			//				ORDER BY PaymentId DESC)
 
 
-							SELECT TOP (@limit) %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
+			//				SELECT TOP (@limit) %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
+			//				FROM %SCHEMA%.%DEPARTMENTMEMBERSTABLE%
+			//				INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.UserId
+			//				WHERE [DepartmentId] = %ID% AND [IsDeleted] = 0";
+
+			SelectMembersWithinLimitsQuery = @"
+							SELECT %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
 							FROM %SCHEMA%.%DEPARTMENTMEMBERSTABLE%
 							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.UserId
 							WHERE [DepartmentId] = %ID% AND [IsDeleted] = 0";
@@ -1143,7 +1149,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			PaymentsTable = "Payments";
 			SelectGetDepartmentPlanCountsQuery = @"
 					SELECT
-					(SELECT COUNT(*) FROM DepartmentMembers dm WHERE dm.DepartmentId = %DID% AND IsDisabled = 1) AS 'UsersCount',
+					(SELECT COUNT(*) FROM DepartmentMembers dm WHERE dm.DepartmentId = %DID% AND IsDisabled = 0 AND IsDeleted = 0) AS 'UsersCount',
 					(SELECT COUNT(*) FROM DepartmentGroups dg WHERE dg.DepartmentId = %DID%) AS 'GroupsCount',
 					(SELECT COUNT(*) FROM Units u WHERE u.DepartmentId = %DID%) AS 'UnitsCount'";
 			SelectPaymentByTransactionIdQuery =

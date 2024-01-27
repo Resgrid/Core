@@ -25,12 +25,12 @@
             {
                 <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})">@localizer["AddAPerson"]</a>
                 <a id="manageInvitesButton" title="@localizer["ManageInvitesHelp"]" class="btn btn-success" href="@Url.Action("Invites", "Department", new {area = "User"})">@localizer["ManageInvites"]</a>
-                <a id="rolesButton" class="btn btn-primary top-button" title="@localizer["ManageRoles"]" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@localizer["ManageRoles"]</a>
             }
             else if (Model.CanGroupAdminsAdd && Model.CanAddNewUser)
             {
                 <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})">@localizer["AddAPerson"]</a>
             }
+            <a id="rolesButton" class="btn btn-primary top-button" title="@localizer["ManageRoles"]" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@localizer["ManageRoles"]</a>
         </div>
     </div>
 </div>

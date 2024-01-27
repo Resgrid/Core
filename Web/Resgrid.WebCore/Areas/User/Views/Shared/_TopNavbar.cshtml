@@ -42,11 +42,10 @@
             <li class="btn dropdown" id="menu-help">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@commonLocalizer["Help"]</span>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="https://resgrid.freshdesk.com/support/home" target="_blank">@commonLocalizer["HelpAndSupport"]</a></li>
-                    <li><a href="https://resgrid.freshdesk.com/support/home" target="_blank">@commonLocalizer["KnowledgeBase"]</a></li>
+                    <li><a href="@Resgrid.Config.SystemBehaviorConfig.HelpAndSupportUrl" target="_blank">@commonLocalizer["HelpAndSupport"]</a></li>
                     @*<li><a href="https://resgrid.wistia.com/projects/9irn4g1q8c" target="_blank">@commonLocalizer["Videos"]</a></li>*@
-                    <li><a href="https://blog.resgrid.com" target="_blank">@commonLocalizer["Blog"]</a></li>
-                    <li><a href="https://resgrid.com/Home/Contact" target="_blank">@commonLocalizer["ContactUs"]</a></li>
+                    <li><a href="@Resgrid.Config.SystemBehaviorConfig.BlogUrl" target="_blank">@commonLocalizer["Blog"]</a></li>
+                    <li><a href="@Resgrid.Config.SystemBehaviorConfig.ContactUsUrl" target="_blank">@commonLocalizer["ContactUs"]</a></li>
                 </ul>
             </li>
             <li>

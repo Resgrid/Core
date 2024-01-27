@@ -300,8 +300,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (coordinates.Count() == 2)
 				{
-					model.MapCenterGpsCoordinatesLatitude = coordinates[0];
-					model.MapCenterGpsCoordinatesLongitude = coordinates[1];
+					model.MapCenterGpsCoordinatesLatitude = StringHelpers.SanitizeCoordinatesString(coordinates[0]);
+					model.MapCenterGpsCoordinatesLongitude = StringHelpers.SanitizeCoordinatesString(coordinates[1]);
 				}
 			}
 
@@ -404,6 +404,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.Staffings = staffingLevels.GetActiveDetails();
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
+			}
+
+			model.SuppressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(DepartmentId, false);
+
+			if (model.SuppressStaffingInfo != null)
+			{
+				model.EnableStaffingSupress = model.SuppressStaffingInfo.EnableSupressStaffing;
 			}
 
 			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
@@ -519,7 +526,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.CallsSort.ToString(), DepartmentSettingTypes.CallsSortOrder, cancellationToken);
 
 				if (!String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLatitude) && !String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLongitude))
-					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapCenterGpsCoordinatesLatitude + "," + model.MapCenterGpsCoordinatesLongitude,
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, StringHelpers.SanitizeCoordinatesString(model.MapCenterGpsCoordinatesLatitude) + "," + StringHelpers.SanitizeCoordinatesString(model.MapCenterGpsCoordinatesLongitude),
 						DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates, cancellationToken);
 
 				model.SuppressStaffingInfo = new DepartmentSuppressStaffingInfo();
@@ -620,7 +627,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
 
-				_departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
+				await _departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
 
 				return RedirectToAction("Settings", "Department", new { Area = "User" });
 			}
@@ -877,7 +884,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (pruningSettings.EmailImportCallPruneInterval.HasValue)
 					model.MinutesTillPrune = pruningSettings.EmailImportCallPruneInterval.Value;
 
-				_departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
+				await _departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
 
 				model.Message = "Email settings were successfully saved.";
 			}

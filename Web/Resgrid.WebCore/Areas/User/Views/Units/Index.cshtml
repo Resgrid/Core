@@ -424,14 +424,20 @@
 @{
     void UnitTableButtonTemplate(Unit u, int customState, string stateTextColor, string stateColor, string stateText, UnitState unitStatus)
     {
+        var timestamp = DateTime.UtcNow.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
+        if (unitStatus != null)
+        {
+            timestamp = unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
+        }
+
         if (Model.IsUserAdminOrGroupAdmin)
         {
-            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
+            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + timestamp + "</td>")
             @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setUnitStatusModal' data-id='{u.UnitId}' data-customstateid='{customState}'>{@localizer["SetStatus"]}</button></td>")
         }
         else
         {
-            @Html.Raw("<tr><td></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
+            @Html.Raw("<tr><td></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + timestamp + "</td>")
             @Html.Raw("<td></td>")
         }
         

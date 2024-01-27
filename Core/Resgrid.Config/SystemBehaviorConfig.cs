@@ -160,6 +160,21 @@ namespace Resgrid.Config
 		/// </summary>
 		public static string LoginPageNotice = "";
 
+		/// <summary>
+		/// The Url to the help and support site
+		/// </summary>
+		public static string HelpAndSupportUrl = "";
+
+		/// <summary>
+		/// Contact Us Url
+		/// </summary>
+		public static string ContactUsUrl = "";
+
+		/// <summary>
+		/// Blog Url
+		/// </summary>
+		public static string BlogUrl = "";
+
 		public static string GetEnvPrefix()
 		{
 			switch (Environment)

@@ -68,7 +68,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.CanUserAddUnit = await _limitsService.CanDepartmentAddNewUnit(DepartmentId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			model.Units = await _unitsService.GetUnitsForDepartmentUnlimitedAsync(DepartmentId);
 			model.States = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
 			model.UnitCustomStates = new Dictionary<int, CustomState>();
@@ -152,7 +152,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new UnitStaffingView();
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
 
 			return View(model);
@@ -163,7 +163,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> UnitStaffing(UnitStaffingView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
 
 
@@ -1513,7 +1513,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<PersonGroupRolesJson> personsJson = new List<PersonGroupRolesJson>();
 
-			var users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			var users = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 			var activeRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
 
 			foreach (var user in users)
@@ -1540,7 +1540,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<PersonGroupRolesJson> personsJson = new List<PersonGroupRolesJson>();
 
-			var users = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			var users = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 			var activeRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
 
 			var role = activeRoles.FirstOrDefault(x => x.UnitId == int.Parse(unitId) && x.Role == activeRole);

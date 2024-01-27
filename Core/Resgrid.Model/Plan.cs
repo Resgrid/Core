@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -29,17 +30,54 @@ namespace Resgrid.Model
 		[ProtoMember(5)]
 		public string ExternalId { get; set; }
 
+		[ProtoMember(7)]
+		public string TestExternalId { get; set; }
+
 		[ProtoMember(6)]
 		public virtual ICollection<PlanLimit> PlanLimits { get; set; }
 
+		[NotMapped]
+		public bool IsCancelled { get; set; }
+
+		[NotMapped]
+		public DateTime? EndingOn { get; set; }
+
+		[NotMapped]
+		public long Quantity { get; set; }
+
 		public string GetLimitForType(PlanLimitTypes limitType)
 		{
-			var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
-
-			if (limt != null)
-				return limt.LimitValue.ToString();
-			else
+			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
 				return "Unlimited";
+
+			if (PlanLimits != null && PlanLimits.Any())
+			{
+				if (PlanLimits.Any(x => x.LimitType == (int)PlanLimitTypes.Entities))
+				{
+					var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
+
+					if (limt != null)
+					{
+						if (Quantity <= 0)
+							return limt.LimitValue.ToString();
+						else
+							return (limt.LimitValue * (int)Quantity).ToString();
+					}
+					else
+						return "Unlimited";
+				}
+				else
+				{
+					var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
+
+					if (limt != null)
+						return limt.LimitValue.ToString();
+					else
+						return "Unlimited";
+				}
+			}
+
+			return "Unlimited";
 		}
 
 		public int GetLimitForTypeAsInt(PlanLimitTypes limitType)
@@ -49,15 +87,40 @@ namespace Resgrid.Model
 
 			if (PlanLimits != null && PlanLimits.Any())
 			{
-				var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
+				if (PlanLimits.Any(x => x.LimitType == (int)PlanLimitTypes.Entities))
+				{
+					var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
 
-				if (limt != null)
-					return limt.LimitValue;
+					if (limt != null)
+					{
+						if (Quantity <= 0)
+							return limt.LimitValue;
+						else
+							return limt.LimitValue * (int)Quantity;
+					}
+					else
+						return int.MaxValue;
+				}
 				else
-					return int.MaxValue;
+				{
+					var limt = PlanLimits.FirstOrDefault(x => x.LimitType == (int)limitType);
+
+					if (limt != null)
+						return limt.LimitValue;
+					else
+						return int.MaxValue;
+				}
 			}
 
 			return int.MaxValue;
+		}
+
+		public string GetExternalKey()
+		{
+			if (Config.PaymentProviderConfig.IsTestMode)
+				return TestExternalId;
+			else
+				return ExternalId;
 		}
 
 		[NotMapped]

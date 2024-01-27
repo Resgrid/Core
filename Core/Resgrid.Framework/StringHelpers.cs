@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Vereyon.Web;
 
@@ -220,5 +222,28 @@ namespace Resgrid.Framework
 			var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
 			return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
 		}
+
+		public static string SanitizeCoordinatesString(string source)
+		{
+			HashSet<char> lstAllowedCharacters = new HashSet<char> { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '.'};
+
+			var resultStrBuilder = new StringBuilder(source.Length);
+
+			foreach (char c in source)
+			{
+				if (lstAllowedCharacters.Contains(c))
+				{
+					resultStrBuilder.Append(c);
+				}
+				else
+				{
+					resultStrBuilder.Append(" ");
+				}
+			}
+
+			return resultStrBuilder.ToString();
+		}
+
+
 	}
 }

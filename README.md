@@ -9,7 +9,7 @@
 <p align="center">
   Complete and open source computer aided dispatch, management and logistics for first responders, disaster response, emergency management and companies
   <br>
-  <a href="https://resgrid-core.readthedocs.io/en/latest/"><strong>View Resgrid docs</strong></a>
+  <a href="https://docs.resgrid.com/"><strong>View Resgrid docs</strong></a>
   <br>
   <br>
   <a href="https://github.com/Resgrid/Core/issues/new?template=bug.md">Report bug</a>

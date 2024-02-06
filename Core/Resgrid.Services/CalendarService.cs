@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Twilio.TwiML.Voice;
 
 namespace Resgrid.Services
 {
@@ -159,9 +160,6 @@ namespace Resgrid.Services
 			if (calendarItem == null)
 				return null;
 
-			//calendarItem.Start = item.Start;
-			//calendarItem.End = item.End;
-
 			calendarItem.Start = DateTimeHelpers.ConvertToUtc(item.Start, timeZone);
 			calendarItem.End = DateTimeHelpers.ConvertToUtc(item.End, timeZone);
 
@@ -180,6 +178,8 @@ namespace Resgrid.Services
 			calendarItem.ItemType = item.ItemType;
 			calendarItem.SignupType = item.SignupType;
 			calendarItem.Public = item.Public;
+			calendarItem.StartTimezone = timeZone;
+			calendarItem.EndTimezone = timeZone;
 
 			var saved = await SaveCalendarItemAsync(calendarItem, cancellationToken);
 
@@ -189,8 +189,29 @@ namespace Resgrid.Services
 			{
 				foreach (var calItem in calendarItems)
 				{
-					calItem.Start = saved.Start;
-					calItem.End = saved.End;
+					//calItem.Start = new DateTime(calItem.Start.Year, calItem.Start.Month, calItem.Start.Day, saved.Start.Hour, saved.Start.Minute, 0).ToUniversalTime();
+
+					/* DateTime is stored as UTC in the database. So we need to do the following:
+					 * 					 * 1. Convert the start time to the departments time zone
+					 * 					 * 2. Adjust the date time with a NEW local date time with the update times from the edited item
+					 * 					 * 3. Set the start time to the new UTC time
+					 */
+					var startDateLocal = DateTimeHelpers.GetLocalDateTime(calItem.Start, timeZone);
+					var startDate = DateTimeHelpers.GetLocalDateTime(
+										DateTimeHelpers.ConvertToUtc(
+											new DateTime(startDateLocal.Year, startDateLocal.Month, startDateLocal.Day, item.Start.Hour, item.Start.Minute, 0), timeZone), timeZone);
+
+					calItem.Start = DateTimeHelpers.ConvertToUtc(startDate, timeZone);
+
+					//calItem.End = new DateTime(calItem.End.Year, calItem.End.Month, calItem.End.Day, saved.End.Hour, saved.End.Minute, 0).ToUniversalTime();
+
+					var endDateLocal = DateTimeHelpers.GetLocalDateTime(calItem.End, timeZone);
+					var endDate = DateTimeHelpers.GetLocalDateTime(
+										DateTimeHelpers.ConvertToUtc(
+											new DateTime(endDateLocal.Year, endDateLocal.Month, endDateLocal.Day, item.End.Hour, item.End.Minute, 0), timeZone), timeZone);
+
+					calItem.End = DateTimeHelpers.ConvertToUtc(endDate, timeZone);
+
 					calItem.RecurrenceId = saved.CalendarItemId.ToString();
 					calItem.Title = saved.Title;
 					calItem.IsV2Schedule = true;
@@ -206,6 +227,8 @@ namespace Resgrid.Services
 					calItem.ItemType = saved.ItemType;
 					calItem.SignupType = saved.SignupType;
 					calItem.Public = saved.Public;
+					calendarItem.StartTimezone = timeZone;
+					calendarItem.EndTimezone = timeZone;
 
 					var saved2 = await SaveCalendarItemAsync(calItem, cancellationToken);
 				}
@@ -236,13 +259,14 @@ namespace Resgrid.Services
 			if (!item.RecurrenceEnd.HasValue || item.RecurrenceEnd > DateTime.UtcNow && item.Start >= start)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId, false);
-				//var currentTime = item.Start.TimeConverter(department);
+
+				/* We need to convert the start time to the departments time zone so we can properly calculate the recurrences */
 				DateTime startTimeConverted = item.Start.TimeConverter(department);
 
 				var length = item.GetDifferenceBetweenStartAndEnd();
 
 				if (item.RecurrenceType == (int)RecurrenceTypes.Weekly)
-				{ // Day of week (i.e. every tuesday and thursday)
+				{ // Day of week (i.e. every Tuesday and Thursday)
 					DateTime weekWorkingDate = startTimeConverted;
 					int weekProcssed = 1;
 
@@ -255,8 +279,11 @@ namespace Resgrid.Services
 							{
 								if (calendarItems.All(x => x.Start.Date != day.Value.Date))
 								{
-									var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(day.Value.Year, day.Value.Month, day.Value.Day,
-										startTimeConverted.Hour, startTimeConverted.Minute, startTimeConverted.Second), department.TimeZone);
+									/* Yea seems strange, but we need to try and retain the original time zone of the start time
+									 * so the time is correct when we convert it back to UTC */
+									var startDate = DateTimeHelpers.GetLocalDateTime(
+										DateTimeHelpers.ConvertToUtc(
+											new DateTime(day.Value.Year, day.Value.Month, day.Value.Day, startTimeConverted.Hour, startTimeConverted.Minute, 0), department.TimeZone), department.TimeZone);
 
 									var endDate = startDate.Add(length);
 
@@ -280,8 +307,9 @@ namespace Resgrid.Services
 					{
 						var monthDate = monthWorkingDate.AddMonths(monthProcessed);
 
-						var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(monthDate.Year, monthDate.Month, item.RepeatOnDay,
-								startTimeConverted.Hour, startTimeConverted.Minute, startTimeConverted.Second), department.TimeZone);
+						var startDate = DateTimeHelpers.GetLocalDateTime(
+							DateTimeHelpers.ConvertToUtc(new DateTime(monthDate.Year, monthDate.Month, item.RepeatOnDay,
+								startTimeConverted.Hour, startTimeConverted.Minute, 0), department.TimeZone), department.TimeZone);
 
 						var endDate = startDate.Add(length);
 
@@ -303,8 +331,8 @@ namespace Resgrid.Services
 						var startDateDay = DateTimeHelpers.FindDay(monthDate.Year, monthDate.Month, (DayOfWeek)item.RepeatOnDay,
 							item.RepeatOnWeek);
 
-						var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(monthDate.Year, monthDate.Month, startDateDay,
-							startTimeConverted.Hour, startTimeConverted.Minute, startTimeConverted.Second), department.TimeZone);
+						var startDate = DateTimeHelpers.GetLocalDateTime(DateTimeHelpers.ConvertToUtc(new DateTime(monthDate.Year, monthDate.Month, startDateDay,
+							startTimeConverted.Hour, startTimeConverted.Minute, 0), department.TimeZone), department.TimeZone);
 
 						var endDate = startDate.Add(length);
 
@@ -319,8 +347,8 @@ namespace Resgrid.Services
 					DateTime yearlyWorkingDate = startTimeConverted;
 					yearlyWorkingDate = yearlyWorkingDate.AddYears(1);
 
-					var startDate = DateTimeHelpers.GetLocalDateTime(new DateTime(yearlyWorkingDate.Year, startTimeConverted.Month, startTimeConverted.Day,
-						startTimeConverted.Hour, startTimeConverted.Minute, startTimeConverted.Second), department.TimeZone);
+					var startDate = DateTimeHelpers.GetLocalDateTime(DateTimeHelpers.ConvertToUtc(new DateTime(yearlyWorkingDate.Year, item.Start.Month, item.Start.Day,
+						startTimeConverted.Hour, startTimeConverted.Minute, 0), department.TimeZone), department.TimeZone);
 
 					var endDate = startDate.Add(length);
 

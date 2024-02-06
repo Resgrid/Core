@@ -2,78 +2,87 @@
 @using Resgrid.Model
 @using RestSharp.Extensions
 @model Resgrid.Web.Areas.User.Models.Workshifts.ViewWorkshiftDayView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-    ViewBag.Title = "Resgrid | View Static Shift Day";
+    ViewBag.Title = "Resgrid | " + @localizer["ViewStaticShiftDayHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
-    {
+{
 
 }
 
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["ViewStaticShiftDayHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["ShiftsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ViewStaticShiftDayHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 
-    <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-sm-4">
-            <h2>View Shift Day</h2>
-            <ol class="breadcrumb">
-                <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-                </li>
-                <li>
-                    <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
-                </li>
-                <li class="active">
-                    <strong>View Static Shift Day</strong>
-                </li>
-            </ol>
+            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+            {
+                <a id="editStaticShift" title="@localizer["EditStaticShiftHeader"]" class="btn btn-info" asp-controller="Workshifts" asp-action="Edit" asp-route-area="User" asp-route-shiftId="@Model.Shift.WorkshiftId">@localizer["EditStaticShiftHeader"]</a>
+                <a id="deleteStaticShift" title="@localizer["DeleteStaticShiftHeader"]" class="btn btn-danger" asp-controller="Workshifts" asp-action="DeleteShift" asp-route-area="User" asp-route-shiftId="@Model.Shift.WorkshiftId">@localizer["DeleteStaticShiftHeader"]</a>
+            }
         </div>
     </div>
+</div>
 
-    <div class="wrapper wrapper-content">
-        <div class="row animated fadeInRight">
-            <div class="col-md-4">
-                <div class="widget style1 navy-bg">
-                    <div class="row">
-                        <div class="col-xs-2">
-                            <i class="fa fa-calendar fa-5x"></i>
-                        </div>
-                        <div class="col-xs-10 text-right">
-                            <span> Shift Day </span>
-                            <h2 class="font-bold">
-                                <time datetime="@Model.Day.Day.ToShortDateString()">
-                                    <span class="day">@Model.Day.Day.Day</span>
-                                    <span class="month">@DateTimeHelpers.MonthToShortString(Model.Day.Day.Month)</span>
-                                    <span class="year">@Model.Day.Day.Year</span>
-                                    <span class="time">@String.Format("{0:00}:{1:00}", Model.Shift.Start.Hour, Model.Shift.Start.Minute, 0)</span>
-                                </time>
-                            </h2>
-                        </div>
+<div class="wrapper wrapper-content">
+    <div class="row animated fadeInRight">
+        <div class="col-md-4">
+            <div class="widget style1 navy-bg">
+                <div class="row">
+                    <div class="col-xs-2">
+                        <i class="fa fa-calendar fa-5x"></i>
+                    </div>
+                    <div class="col-xs-10 text-right">
+                        <span> Shift Day </span>
+                            <time datetime="@Model.Day.Day.ToShortDateString()">
+                                <span class="day">@Model.Day.Day.Day</span>
+                                <span class="month">@DateTimeHelpers.MonthToShortString(Model.Day.Day.Month)</span>
+                                <span class="year">@Model.Day.Day.Year</span>
+                                <span class="time">@String.Format("{0:00}:{1:00}", Model.Shift.Start.Hour, Model.Shift.Start.Minute, 0)</span>
+                            </time>
+                        </h2>
                     </div>
                 </div>
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>Shift Day Detail</h5>
-                    </div>
-                    <div>
-                        <div class="ibox-content profile-content">
-                            <h4><strong>@Model.Shift.Name</strong></h4>
-                            <div class="row">
-                                <div class="col-lg-10">
-                                    @Html.Raw(Model.Shift.Description)
-                                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Shift Day Detail</h5>
+                </div>
+                <div>
+                    <div class="ibox-content profile-content">
+                        <h4><strong>@Model.Shift.Name</strong></h4>
+                        <div class="row">
+                            <div class="col-lg-10">
+                                @Html.Raw(Model.Shift.Description)
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>Units</h5>
-                    </div>
-                    <div class="ibox-content">
-                        <div>
-                            <div class="feed-activity-list">
+        </div>
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@commonLocalizer["Units"]</h5>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        <div class="feed-activity-list">
                             @foreach (var enitity in Model.Shift.Entities)
                             {
                                 @if (Model.Units != null && Model.Units.Any())
@@ -128,9 +137,9 @@
                     </div>
 
                 </div>
-                <div class="ibox float-e-margins">
+@*                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Personnel</h5>
+                        <h5>@commonLocalizer["Personnel"]</h5>
                     </div>
                     <div class="ibox-content">
 
@@ -141,12 +150,12 @@
                         </div>
                     </div>
 
-                </div>
+                </div> *@
             </div>
         </div>
     </div>
 
     @section Scripts
-        {
+    {
 
     }

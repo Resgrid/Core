@@ -22,6 +22,8 @@
 		UserAccountDeleted,
 		AddonSubscriptionModified,
 		DeleteDepartmentRequested,
-		DeleteDepartmentRequestedCancelled
+		DeleteDepartmentRequestedCancelled,
+		DeleteStaticShift,
+		UpdateStaticShift
 	}
 }

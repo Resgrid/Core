@@ -117,136 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AllDay" xml:space="preserve">
-    <value>All Day</value>
+  <data name="DeleteStaticShiftHeader" xml:space="preserve">
+    <value>Delete Static Shift</value>
   </data>
-  <data name="CalendarHeader" xml:space="preserve">
-    <value>Calendar</value>
+  <data name="EditShiftWarning" xml:space="preserve">
+    <value>Editing a static shift will clear out all assignments or sign-ups for this shift and reassign them based on the new settings. If you have any assignments or sign-ups for this shift they will be removed and the new settings will be applied.</value>
   </data>
-  <data name="CalendarItemHeader" xml:space="preserve">
-    <value>Event Detail</value>
+  <data name="EditStaticShiftHeader" xml:space="preserve">
+    <value>Edit Static Shift</value>
   </data>
-  <data name="CalendarTypesDeleteWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this type. Are you sure you want to delete the type</value>
+  <data name="EndDateTime" xml:space="preserve">
+    <value>End Date/Time</value>
   </data>
-  <data name="CalendarTypesHeader" xml:space="preserve">
-    <value>Calendar Types</value>
+  <data name="ShiftColorNote" xml:space="preserve">
+    <value>Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</value>
   </data>
-  <data name="DaysOfTheWeek" xml:space="preserve">
-    <value>Days of the Week</value>
+  <data name="ShiftEndNote" xml:space="preserve">
+    <value>The date and time that the shift ends (i.e. back in quarters) where entities under it are considered available.</value>
   </data>
-  <data name="DeleteEvent" xml:space="preserve">
-    <value>Delete Event</value>
+  <data name="ShiftStartNote" xml:space="preserve">
+    <value>The date and time that the shift starts (i.e. start of travel) where entities under it are considered committed.</value>
   </data>
-  <data name="DeleteEventOccurrences" xml:space="preserve">
-    <value>Delete Event and Occurrences</value>
+  <data name="StartDateTime" xml:space="preserve">
+    <value>Start Date/Time</value>
   </data>
-  <data name="EditCalendarTypeHeader" xml:space="preserve">
-    <value>Edit Calendar Type</value>
-  </data>
-  <data name="EditEntryeHeader" xml:space="preserve">
-    <value>Edit Calendar Entry</value>
-  </data>
-  <data name="EditEntryWarning" xml:space="preserve">
-    <value>This is the recurrence parent item. If you check the "Apply to all" checkbox that will update all the recurrence items with the data from this item. If you delete this item all child recurrence items will also be deleted.</value>
-  </data>
-  <data name="EditEvent" xml:space="preserve">
-    <value>Edit Event</value>
-  </data>
-  <data name="EditRecurrenceParent" xml:space="preserve">
-    <value>Edit Parent</value>
-  </data>
-  <data name="EndOnHelp" xml:space="preserve">
-    <value>Leave blank (empty) to never Expire or End</value>
-  </data>
-  <data name="EndOnLabel" xml:space="preserve">
-    <value>End On</value>
-  </data>
-  <data name="EntitiesToNotify" xml:space="preserve">
-    <value>Entities to Notify</value>
-  </data>
-  <data name="First" xml:space="preserve">
-    <value>first</value>
-  </data>
-  <data name="Forth" xml:space="preserve">
-    <value>forth</value>
-  </data>
-  <data name="Last" xml:space="preserve">
-    <value>last</value>
-  </data>
-  <data name="ManageTypes" xml:space="preserve">
-    <value>Manage Types</value>
-  </data>
-  <data name="ManageTypesHelp" xml:space="preserve">
-    <value>Manage Calendar Types</value>
-  </data>
-  <data name="NewCalendarEntryHeader" xml:space="preserve">
-    <value>New Calendar Entry</value>
-  </data>
-  <data name="NewCalendarTypeHeader" xml:space="preserve">
-    <value>New Calendar Type</value>
-  </data>
-  <data name="NewEntry" xml:space="preserve">
-    <value>New Entry</value>
-  </data>
-  <data name="NewEntryHelp" xml:space="preserve">
-    <value>Add a new calendar entry</value>
-  </data>
-  <data name="NoCustomTypes" xml:space="preserve">
-    <value>No Custom Types</value>
-  </data>
-  <data name="None" xml:space="preserve">
-    <value>None</value>
-  </data>
-  <data name="NoNote" xml:space="preserve">
-    <value>No Note</value>
-  </data>
-  <data name="NoUpcomingItems" xml:space="preserve">
-    <value>No Upcoming Items</value>
-  </data>
-  <data name="RecurrenceChildWarning" xml:space="preserve">
-    <value>This is the recurrence child item. You cannot alter recurrence settings for this item. If you need to change a recurrence pattern for this entry you will need to remove it and re-add from the parent entry.</value>
-  </data>
-  <data name="RecurrenceParentWarning" xml:space="preserve">
-    <value>This is the recurrence parent item. You cannot alter recurrence settings for this item. If you need to change a recurrence pattern you need to first remove then create a new recurrence entry. You can change any of the other details in the entry.</value>
-  </data>
-  <data name="Reminder" xml:space="preserve">
-    <value>Reminder</value>
-  </data>
-  <data name="RemoveHelp" xml:space="preserve">
-    <value>Remove from this event</value>
-  </data>
-  <data name="RemoveMe" xml:space="preserve">
-    <value>Remove Me</value>
-  </data>
-  <data name="RepeatOn" xml:space="preserve">
-    <value>Repeat On</value>
-  </data>
-  <data name="RSVP" xml:space="preserve">
-    <value>RSVP</value>
-  </data>
-  <data name="Second" xml:space="preserve">
-    <value>second</value>
-  </data>
-  <data name="Signup" xml:space="preserve">
-    <value>Signup (RSVP)</value>
-  </data>
-  <data name="Third" xml:space="preserve">
-    <value>third</value>
-  </data>
-  <data name="TitleCalendarPlaceholder" xml:space="preserve">
-    <value>Title of the calendar entry</value>
-  </data>
-  <data name="TitlePlaceholder" xml:space="preserve">
-    <value>Title of the calendar entry</value>
-  </data>
-  <data name="TypeColor" xml:space="preserve">
-    <value>Type Color</value>
-  </data>
-  <data name="TypeName" xml:space="preserve">
-    <value>Type Name</value>
-  </data>
-  <data name="Upcoming" xml:space="preserve">
-    <value>Upcoming</value>
+  <data name="ViewStaticShiftDayHeader" xml:space="preserve">
+    <value>View Static Shift Day</value>
   </data>
 </root>

@@ -1,382 +1,396 @@
 ﻿@model Resgrid.WebCore.Areas.User.Models.Calendar.EditCalendarEntry
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Calendar.Calendar> localizer
 @{
-  ViewBag.Title = "Resgrid | " + @localizer["EditEntryeHeader"];
+    ViewBag.Title = "Resgrid | " + @localizer["EditEntryeHeader"];
 }
 
 @section Styles
-  {
+{
 
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>@localizer["EditEntryeHeader"]</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-      </li>
-      <li>
-        <a asp-controller="Calendar" asp-action="Index" asp-route-area="User">@commonLocalizer["CalendarModule"]</a>
-      </li>
-      <li class="active">
-        <strong>@localizer["EditEntryeHeader"]</strong>
-      </li>
-    </ol>
-  </div>
+    <div class="col-sm-4">
+        <h2>@localizer["EditEntryeHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Calendar" asp-action="Index" asp-route-area="User">@commonLocalizer["CalendarModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["EditEntryeHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <div class="buttons-actions">
+                @if (Model.IsRecurrenceParent == false)
+                {
+                    <a asp-controller="Calendar" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Item.RecurrenceId" id="editRecurrenceParent" class="btn btn-success">@localizer["EditRecurrenceParent"]</a>
+                }
+                else
+                {
+                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.Item.CalendarItemId" class="btn btn-danger">@localizer["DeleteEventOccurrences"]</a>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <form class="form-horizontal" id="newCalEntryForm" role="form" asp-controller="Calendar" asp-action="Edit" asp-route-area="User" method="post">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" id="newCalEntryForm" role="form" asp-controller="Calendar" asp-action="Edit" asp-route-area="User" method="post">
 
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(m => m.Item.CalendarItemId)
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Item.CalendarItemId)
 
-            <div class="row">
-              <div class="col-md-8 col-md-offset-1">
-                @if (!String.IsNullOrEmpty(Model.Message))
-				{
-                  <div class="alert alert-success">
-                    @Model.Message
-                  </div>
-				}
-                <span class="alert-error">
-                  @Html.AntiForgeryToken()
-                </span>
-                <div asp-validation-summary="All" class="text-danger"></div>
-              </div>
-            </div>
-            @if (Model.IsRecurrenceParent)
-			{
-              <div class="row">
-                <div class="col-md-10 col-md-offset-1">
-                  <div class="alert alert-warning alert-block">
-                    <h4 class="alert alert-heading">@commonLocalizer["Warning"]</h4>
-                    @localizer["EditEntryWarning"]
-                  </div>
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                <span class="alert-error">
+                                    @Html.AntiForgeryToken()
+                                </span>
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+                        @if (Model.IsRecurrenceParent)
+                        {
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="alert alert-warning alert-block">
+                                        <h4 class="alert alert-heading">@commonLocalizer["Warning"]</h4>
+                                        @localizer["EditEntryWarning"]
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Title"]</label>
+                            <div class="col-sm-6"><input type="text" class="form-control" placeholder="@localizer["TitlePlaceholder"]" asp-for="Item.Title"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Type"]</label>
+                            <div class="col-sm-2">
+                                <select asp-for="Item.ItemType" asp-items="ViewBag.Types"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["AllDay"]</label>
+                            <div class="col-sm-1">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.IsAllDay">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Start"]</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" asp-for="StartTime" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["End"]</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" asp-for="EndTime" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="isRepeatChildWarning" style="display: none;">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-6">
+                                <div class="alert alert-info alert-block">
+                                    <h4 class="alert alert-heading">@commonLocalizer["Info"]</h4>
+                                    @localizer["RecurrenceChildWarning"]
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="isRepeatParentWarning" style="display: none;">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-6">
+                                <div class="alert alert-info alert-block">
+                                    <h4 class="alert alert-heading">@commonLocalizer["Info"]</h4>
+                                    @localizer["RecurrenceParentWarning"]
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="repeatSelection">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Repeat"]</label>
+                            <div class="col-sm-2">
+                                <select asp-for="Item.RecurrenceType">
+                                    <option value="0">@commonLocalizer["None"]</option>
+                                    <option value="1">@commonLocalizer["Weekly"]</option>
+                                    <option value="2">@commonLocalizer["Monthly"]</option>
+                                    <option value="3">@commonLocalizer["Yearly"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="recurrenceEndBlock">
+                            <label class="col-sm-2 control-label">@localizer["EndOnLabel"]</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" asp-for="Item.RecurrenceEnd" />
+                                <span class="help-block m-b-none">@localizer["EndOnHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group" id="daysOfTheWeekBlock">
+                            <label class="col-sm-2 control-label">
+                                @localizer["DaysOfTheWeek"]
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Sunday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Sunday">
+                                                <label class="onoffswitch-label" for="Item_Sunday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Monday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Monday">
+                                                <label class="onoffswitch-label" for="Item_Monday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Tuesday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Tuesday">
+                                                <label class="onoffswitch-label" for="Item_Tuesday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Wednesday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Wednesday">
+                                                <label class="onoffswitch-label" for="Item_Wednesday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Thursday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Thursday">
+                                                <label class="onoffswitch-label" for="Item_Thursday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Friday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Friday">
+                                                <label class="onoffswitch-label" for="Item_Friday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">@commonLocalizer["Saturday"]</label>
+                                    <div class="col-sm-8">
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Saturday">
+                                                <label class="onoffswitch-label" for="Item_Saturday">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="monthlyBlock">
+                            <label class="col-sm-2 control-label">
+                                @localizer["RepeatOn"]
+                            </label>
+                            <div class="col-sm-4">
+                                <ul style="list-style-type:none">
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="month" value="monthday" title="Day ">@commonLocalizer["Day"]
+                                        </label>
+                                        <span>
+                                            <span>
+                                                <input type="text" title="Day ">
+                                            </span>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <input type="radio" name="month" value="weekday" title="Repeat on: ">
+                                        <span title="Repeat on: ">
+                                            <span>
+                                                <select>
+                                                    <option value="1">@localizer["First"]</option>
+                                                    <option value="2">@localizer["Second"]</option>
+                                                    <option value="3">@localizer["Third"]</option>
+                                                    <option value="4">@localizer["Forth"]</option>
+                                                    <option value="5">@localizer["Last"]</option>
+                                                </select>
+                                            </span>
+                                            <span>
+                                                <select>
+                                                    <option value="0">@commonLocalizer["Sunday"]</option>
+                                                    <option value="1">@commonLocalizer["Monday"]</option>
+                                                    <option value="2">@commonLocalizer["Tuesday"]</option>
+                                                    <option value="3">@commonLocalizer["Wednesday"]</option>
+                                                    <option value="4">@commonLocalizer["Thursday"]</option>
+                                                    <option value="5">@commonLocalizer["Friday"]</option>
+                                                    <option value="6">@commonLocalizer["Saturday"]</option>
+                                                </select>
+                                            </span>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Description"]</label>
+                            <div class="col-sm-6">
+                                <input type="hidden" asp-for="Item.Description">
+
+                                <div id="editor-container" style="width:100%; height: 200px;">
+                                    <p>@Model.Item.Description</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Location"]</label>
+                            <div class="col-sm-6"><input type="text" class="form-control" placeholder="Location of the Event" asp-for="Item.Location"></div>
+                        </div>
+                        @*<div class="form-group">
+                        <label class="col-sm-2 control-label">Restrict Editing</label>
+                        <div class="col-sm-1">
+                        <div class="checkbox checkbox-primary">
+                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.LockEditing">
+                        <label></label>
+                        </div>
+                        </div>
+                        </div>
+                        <div class="form-group">
+                        <label class="col-sm-2 control-label">Public</label>
+                        <div class="col-sm-1">
+                        <div class="checkbox checkbox-primary">
+                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.Public">
+                        <label></label>
+                        </div>
+                        </div>
+                        </div>*@
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Signup"]</label>
+                            <div class="col-sm-1">
+                                <select asp-for="Item.SignupType">
+                                    <option value="0">@localizer["None"]</option>
+                                    @*<option value="1">Assigned</option>*@
+                                    <option value="2">@localizer["RSVP"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["Reminder"]</label>
+                            <div class="col-sm-1">
+                                <select asp-for="Item.Reminder">
+                                    <option value="0">@commonLocalizer["None"]</option>
+                                    <option value="1">0 @commonLocalizer["Minutes"]</option>
+                                    <option value="2">5 @commonLocalizer["Minutes"]</option>
+                                    <option value="3">10 @commonLocalizer["Minutes"]</option>
+                                    <option value="4">15 @commonLocalizer["Minutes"]</option>
+                                    <option value="5">30 @commonLocalizer["Minutes"]</option>
+                                    <option value="6">1 @commonLocalizer["Hour"]</option>
+                                    <option value="7">2 @commonLocalizer["Hours"]</option>
+                                    <option value="8">3 @commonLocalizer["Hours"]</option>
+                                    <option value="9">4 @commonLocalizer["Hours"]</option>
+                                    <option value="10">5 @commonLocalizer["Hours"]</option>
+                                    <option value="11">6 @commonLocalizer["Hours"]</option>
+                                    <option value="12">7 @commonLocalizer["Hours"]</option>
+                                    <option value="13">8 @commonLocalizer["Hours"]</option>
+                                    <option value="14">9 @commonLocalizer["Hours"]</option>
+                                    <option value="15">10 @commonLocalizer["Hours"]</option>
+                                    <option value="16">11 @commonLocalizer["Hours"]</option>
+                                    <option value="17">12 @commonLocalizer["Hours"]</option>
+                                    <option value="18">18 @commonLocalizer["Hours"]</option>
+                                    <option value="19">1 @commonLocalizer["Day"]</option>
+                                    <option value="20">2 @commonLocalizer["Days"]</option>
+                                    <option value="21">3 @commonLocalizer["Days"]</option>
+                                    <option value="22">4 @commonLocalizer["Days"]</option>
+                                    <option value="23">1 @commonLocalizer["Week"]</option>
+                                    <option value="24">2 @commonLocalizer["Weeks"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["EntitiesToNotify"]</label>
+                            <div class="col-sm-4">
+                                <select asp-for="entities" name="entities"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Calendar" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Edit"]</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </div>
-			}
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@commonLocalizer["Title"]</label>
-              <div class="col-sm-6"><input type="text" class="form-control" placeholder="@localizer["TitlePlaceholder"]" asp-for="Item.Title"></div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">>@commonLocalizer["Type"]</label>
-              <div class="col-sm-2">
-                <select asp-for="Item.ItemType" asp-items="ViewBag.Types"></select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@localizer["AllDay"]"</label>
-              <div class="col-sm-1">
-                <div class="checkbox checkbox-primary">
-                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.IsAllDay">
-                  <label></label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@commonLocalizer["Start"]</label>
-              <div class="col-sm-3">
-                <input type="text" class="form-control" asp-for="StartTime" />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@commonLocalizer["End"]</label>
-              <div class="col-sm-3">
-                <input type="text" class="form-control" asp-for="EndTime" />
-              </div>
-            </div>
-            <div class="form-group" id="isRepeatChildWarning" style="display: none;">
-              <label class="col-sm-2 control-label"></label>
-              <div class="col-sm-6">
-				<div class="alert alert-info alert-block">
-				  <h4 class="alert alert-heading">@commonLocalizer["Info"]</h4>
-				  @localizer["RecurrenceChildWarning"]
-				</div>
-              </div>
-            </div>
-            <div class="form-group" id="isRepeatParentWarning" style="display: none;">
-              <label class="col-sm-2 control-label"></label>
-              <div class="col-sm-6">
-				<div class="alert alert-info alert-block">
-				  <h4 class="alert alert-heading">@commonLocalizer["Info"]</h4>
-				  @localizer["RecurrenceParentWarning"]
-				</div>
-              </div>
-            </div>
-            <div class="form-group"  id="repeatSelection">
-              <label class="col-sm-2 control-label">@commonLocalizer["Repeat"]</label>
-              <div class="col-sm-2">
-                <select asp-for="Item.RecurrenceType">
-                  <option value="0">@commonLocalizer["None"]</option>
-                  <option value="1">@commonLocalizer["Weekly"]</option>
-                  <option value="2">@commonLocalizer["Monthly"]</option>
-                  <option value="3">@commonLocalizer["Yearly"]</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group" id="recurrenceEndBlock">
-              <label class="col-sm-2 control-label">@localizer["EndOnLabel"]</label>
-              <div class="col-sm-3">
-                <input type="text" class="form-control" asp-for="Item.RecurrenceEnd" />
-                <span class="help-block m-b-none">@localizer["EndOnHelp"]</span>
-              </div>
-            </div>
-            <div class="form-group" id="daysOfTheWeekBlock">
-              <label class="col-sm-2 control-label">
-                @localizer["DaysOfTheWeek"]
-              </label>
-			  <div class="col-sm-10">
-			    <div class="form-group">
-			      <label class="col-sm-1 control-label">@commonLocalizer["Sunday"]</label>
-			      <div class="col-sm-8">
-			        <div class="switch">
-			          <div class="onoffswitch">
-			            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Sunday">
-			            <label class="onoffswitch-label" for="Item_Sunday">
-			              <span class="onoffswitch-inner"></span>
-			              <span class="onoffswitch-switch"></span>
-			            </label>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			    <div class="form-group">
-			      <label class="col-sm-1 control-label">@commonLocalizer["Monday"]</label>
-			      <div class="col-sm-8">
-			        <div class="switch">
-			          <div class="onoffswitch">
-			            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Monday">
-			            <label class="onoffswitch-label" for="Item_Monday">
-			              <span class="onoffswitch-inner"></span>
-			              <span class="onoffswitch-switch"></span>
-			            </label>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			    <div class="form-group">
-			      <label class="col-sm-1 control-label">@commonLocalizer["Tuesday"]</label>
-			      <div class="col-sm-8">
-			        <div class="switch">
-			          <div class="onoffswitch">
-			            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Tuesday">
-			            <label class="onoffswitch-label" for="Item_Tuesday">
-			              <span class="onoffswitch-inner"></span>
-			              <span class="onoffswitch-switch"></span>
-			            </label>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			    <div class="form-group">
-			      <label class="col-sm-1 control-label">@commonLocalizer["Wednesday"]</label>
-			      <div class="col-sm-8">
-			        <div class="switch">
-			          <div class="onoffswitch">
-			            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Wednesday">
-			            <label class="onoffswitch-label" for="Item_Wednesday">
-			              <span class="onoffswitch-inner"></span>
-			              <span class="onoffswitch-switch"></span>
-			            </label>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			    <div class="form-group">
-			      <label class="col-sm-1 control-label">@commonLocalizer["Thursday"]</label>
-			      <div class="col-sm-8">
-			        <div class="switch">
-			          <div class="onoffswitch">
-			            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Thursday">
-			            <label class="onoffswitch-label" for="Item_Thursday">
-			              <span class="onoffswitch-inner"></span>
-			              <span class="onoffswitch-switch"></span>
-			            </label>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			    <div class="form-group">
-			      <label class="col-sm-1 control-label">@commonLocalizer["Friday"]</label>
-			      <div class="col-sm-8">
-			        <div class="switch">
-			          <div class="onoffswitch">
-			            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Friday">
-			            <label class="onoffswitch-label" for="Item_Friday">
-			              <span class="onoffswitch-inner"></span>
-			              <span class="onoffswitch-switch"></span>
-			            </label>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			    <div class="form-group">
-			      <label class="col-sm-1 control-label">@commonLocalizer["Saturday"]</label>
-			      <div class="col-sm-8">
-			        <div class="switch">
-			          <div class="onoffswitch">
-			            <input type="checkbox" class="onoffswitch-checkbox" asp-for="Item.Saturday">
-			            <label class="onoffswitch-label" for="Item_Saturday">
-			              <span class="onoffswitch-inner"></span>
-			              <span class="onoffswitch-switch"></span>
-			            </label>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			  </div>
-            </div>
-            <div class="form-group" id="monthlyBlock">
-              <label class="col-sm-2 control-label">
-                @localizer["RepeatOn"]
-              </label>
-              <div class="col-sm-4">
-                <ul style="list-style-type:none">
-                  <li>
-                    <label>
-                      <input type="radio" name="month" value="monthday" title="Day ">@commonLocalizer["Day"]
-                    </label>
-                    <span>
-                      <span>
-                        <input type="text" title="Day ">
-                      </span>
-                    </span>
-                  </li>
-                  <li>
-                    <input type="radio" name="month" value="weekday" title="Repeat on: ">
-                    <span title="Repeat on: ">
-                      <span>
-                        <select>
-                          <option value="1">@localizer["First"]</option>
-                          <option value="2">@localizer["Second"]</option>
-                          <option value="3">@localizer["Third"]</option>
-                          <option value="4">@localizer["Forth"]</option>
-                          <option value="5">@localizer["Last"]</option>
-                        </select>
-                      </span>
-                      <span>
-                        <select>
-                          <option value="0">@commonLocalizer["Sunday"]</option>
-                          <option value="1">@commonLocalizer["Monday"]</option>
-                          <option value="2">@commonLocalizer["Tuesday"]</option>
-                          <option value="3">@commonLocalizer["Wednesday"]</option>
-                          <option value="4">@commonLocalizer["Thursday"]</option>
-                          <option value="5">@commonLocalizer["Friday"]</option>
-                          <option value="6">@commonLocalizer["Saturday"]</option>
-                        </select>
-                      </span>
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@commonLocalizer["Description"]</label>
-              <div class="col-sm-6">
-                <input type="hidden" asp-for="Item.Description">
-
-                <div id="editor-container" style="width:100%; height: 200px;">
-                  <p>@Model.Item.Description</p>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@commonLocalizer["Location"]</label>
-              <div class="col-sm-6"><input type="text" class="form-control" placeholder="Location of the Event" asp-for="Item.Location"></div>
-            </div>
-            @*<div class="form-group">
-				<label class="col-sm-2 control-label">Restrict Editing</label>
-				<div class="col-sm-1">
-				  <div class="checkbox checkbox-primary">
-					<input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.LockEditing">
-					<label></label>
-				  </div>
-				</div>
-			  </div>
-			  <div class="form-group">
-				  <label class="col-sm-2 control-label">Public</label>
-				  <div class="col-sm-1">
-					<div class="checkbox checkbox-primary">
-					  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Item.Public">
-					  <label></label>
-					</div>
-				  </div>
-				</div>*@
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@commonLocalizer["Signup"]</label>
-              <div class="col-sm-1">
-                <select asp-for="Item.SignupType">
-                  <option value="0">@localizer["None"]</option>
-                  @*<option value="1">Assigned</option>*@
-                  <option value="2">@localizer["RSVP"]</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@localizer["Reminder"]</label>
-              <div class="col-sm-1">
-                <select asp-for="Item.Reminder">
-                  <option value="0">@commonLocalizer["None"]</option>
-                  <option value="1">0 @commonLocalizer["Minutes"]</option>
-                  <option value="2">5 @commonLocalizer["Minutes"]</option>
-                  <option value="3">10 @commonLocalizer["Minutes"]</option>
-                  <option value="4">15 @commonLocalizer["Minutes"]</option>
-                  <option value="5">30 @commonLocalizer["Minutes"]</option>
-                  <option value="6">1 @commonLocalizer["Hour"]</option>
-                  <option value="7">2 @commonLocalizer["Hours"]</option>
-                  <option value="8">3 @commonLocalizer["Hours"]</option>
-                  <option value="9">4 @commonLocalizer["Hours"]</option>
-                  <option value="10">5 @commonLocalizer["Hours"]</option>
-                  <option value="11">6 @commonLocalizer["Hours"]</option>
-                  <option value="12">7 @commonLocalizer["Hours"]</option>
-                  <option value="13">8 @commonLocalizer["Hours"]</option>
-                  <option value="14">9 @commonLocalizer["Hours"]</option>
-                  <option value="15">10 @commonLocalizer["Hours"]</option>
-                  <option value="16">11 @commonLocalizer["Hours"]</option>
-                  <option value="17">12 @commonLocalizer["Hours"]</option>
-                  <option value="18">18 @commonLocalizer["Hours"]</option>
-                  <option value="19">1 @commonLocalizer["Day"]</option>
-                  <option value="20">2 @commonLocalizer["Days"]</option>
-                  <option value="21">3 @commonLocalizer["Days"]</option>
-                  <option value="22">4 @commonLocalizer["Days"]</option>
-                  <option value="23">1 @commonLocalizer["Week"]</option>
-                  <option value="24">2 @commonLocalizer["Weeks"]</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">@localizer["EntitiesToNotify"]</label>
-              <div class="col-sm-4">
-				<select asp-for="entities" name="entities"></select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Calendar" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
-                <button class="btn btn-primary" type="submit">@commonLocalizer["Edit"]</button>
-              </div>
-            </div>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 @section Scripts
 {
-	<script>
-	  var recurranceParentId = '@Model.Item.RecurrenceId';
-	  var isRepeatParent = '@Model.IsRecurrenceParent';
-	</script>
+    <script>
+        var recurranceParentId = '@Model.Item.RecurrenceId';
+        var isRepeatParent = '@Model.IsRecurrenceParent';
+    </script>
 
-	<script src="~/js/app/internal/calendar/resgrid.calendar.editEntry.js" type="text/javascript"></script>
+    <script src="~/js/app/internal/calendar/resgrid.calendar.editEntry.js" type="text/javascript"></script>
 }

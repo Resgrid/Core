@@ -166,7 +166,7 @@
 
 		function AddUser(chatHub, id, userId, name) {
 			var myId = $('#myConId').val();
-		  var code = $('<li id="' + id + '" class="online"><a href="#"><img src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=' + userId + '" onerror="this.src=&quot;https://app.resgrid.com/images/defaultProfile.png&quot;"> <span>' + name + '</span></a><span class="msg-count badge badge-info">0</span></li>');
+			var code = $('<li id="' + id + '" class="online"><a href="#"><img src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=' + userId + '" onerror="this.src=&quot;@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png&quot;"> <span>' + name + '</span></a><span class="msg-count badge badge-info">0</span></li>');
 
 			$(code).dblclick(function () {
 				var id = $(this).attr('id');

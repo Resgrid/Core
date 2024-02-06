@@ -6,7 +6,7 @@
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
-    {
+{
     <style type="text/css">
         .selectize-control.personnelDropdown .selectize-dropdown > div {
             border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -77,28 +77,30 @@
     </style>
 }
 
-    <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-sm-4">
-            <h2>@localizer["UnitStaffingHeader"]</h2>
-            <ol class="breadcrumb">
-                <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-                </li>
-                <li>
-                    <a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a>
-                </li>
-                <li class="active">
-                    <strong>@localizer["UnitStaffingHeader"]</strong>
-                </li>
-            </ol>
-        </div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["UnitStaffingHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["UnitStaffingHeader"]</strong>
+            </li>
+        </ol>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="wrapper wrapper-content">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @if (Model.Units != null && Model.Units.Any() && Model.GetTotalRoles() > 0)
+                    {
                         <form class="form-horizontal" role="form" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User" method="post">
 
                             <div class="row">
@@ -109,54 +111,61 @@
                             </div>
 
                             @foreach (var unit in Model.Units)
-                        {
-                            if (unit.Roles.Any())
                             {
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">@unit.Name</label>
-                                    <div class="col-sm-10" id="unitAssignments">
-                                        @foreach (var role in unit.Roles)
-                                        {
-                                            var activeRole = Model.ActiveRoles.FirstOrDefault(x => x.UnitId == role.UnitId && x.Role == role.Name);
+                                if (unit.Roles.Any())
+                                {
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">@unit.Name</label>
+                                        <div class="col-sm-10" id="unitAssignments">
+                                            @foreach (var role in unit.Roles)
+                                            {
+                                                var activeRole = Model.ActiveRoles.FirstOrDefault(x => x.UnitId == role.UnitId && x.Role == role.Name);
 
-                                            <div class="row">
-                                                <div class="col-md-5">@role.Name</div>
-                                                <div class="col-md-7">
-                                                    <select id="Role_@role.UnitRoleId" name="Role_@role.UnitRoleId" class="selectize personnelDropdown" style="width:100%;">
-                                                        @if (activeRole == null)
-                                                        {
-                                                            <option value="" selected>@localizer["NotOccupied"]</option>
-                                                        }
-                                                        else
-                                                        {
-                                                            <option value="">@localizer["NotOccupied"]</option>
-                                                        }
-                                                        @foreach (var user in Model.Users)
-                                                        {
-                                                            if (activeRole != null && activeRole.UserId == user.UserId)
+                                                <div class="row">
+                                                    <div class="col-md-5">@role.Name</div>
+                                                    <div class="col-md-7">
+                                                        <select id="Role_@role.UnitRoleId" name="Role_@role.UnitRoleId" class="selectize personnelDropdown" style="width:100%;">
+                                                            @if (activeRole == null)
                                                             {
-                                                                <option data-data='@Html.Raw("{")"UserId":"@user.UserId","Name":"@user.Name","GroupName":"@user.DepartmentGroupName","Roles":"@user.RoleNames"@Html.Raw("}")' value="@user.UserId" selected>@user.Name</option>
+                                                                <option value="" selected>@localizer["NotOccupied"]</option>
                                                             }
                                                             else
                                                             {
-                                                                <option data-data='@Html.Raw("{")"UserId":"@user.UserId","Name":"@user.Name","GroupName":"@user.DepartmentGroupName","Roles":"@user.RoleNames"@Html.Raw("}")' value="@user.UserId">@user.Name</option>
+                                                                <option value="">@localizer["NotOccupied"]</option>
                                                             }
-                                                        }
-                                                    </select>
+                                                            @foreach (var user in Model.Users)
+                                                            {
+                                                                if (activeRole != null && activeRole.UserId == user.UserId)
+                                                                {
+                                                                    <option data-data='@Html.Raw("{")"UserId":"@user.UserId","Name":"@user.Name","GroupName":"@user.DepartmentGroupName","Roles":"@user.RoleNames"@Html.Raw("}")' value="@user.UserId" selected>@user.Name</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option data-data='@Html.Raw("{")"UserId":"@user.UserId","Name":"@user.Name","GroupName":"@user.DepartmentGroupName","Roles":"@user.RoleNames"@Html.Raw("}")' value="@user.UserId">@user.Name</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        }
+                                            }
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             }
-                        }
-                        <div class="form-group">
-                            <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
-                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                                </div>
                             </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <p>@localizer["NoUnitsToStaff"]</p>
                         </div>
-                    </form>
+                    }
                 </div>
             </div>
         </div>
@@ -164,7 +173,7 @@
 </div>
 
 @section Scripts
-    {
+{
 
     @if (Model.IsDepartmentAdmin)
     {

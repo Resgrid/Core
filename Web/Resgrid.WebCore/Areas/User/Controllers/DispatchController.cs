@@ -1158,22 +1158,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Policy = ResgridResources.Call_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> AddCallNote([FromBody] AddCallNoteInput model, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
-				Unauthorized();
+			// Leaving this here for a mental note. Adding a note to call isn't updating the call, so we don't need to check for edit permissions.
+			// But some users might be expecting this behavior, so I'll leave this here commented out for now and if I get a lot of requests for it, I'll add it back in
+			// as a full permission.
+			//if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+			//	Unauthorized();
 
-			var note = new CallNote();
-			note.UserId = UserId;
-			note.CallId = model.CallId;
-			note.Note = model.Note;
-			note.Timestamp = DateTime.UtcNow;
-			note.Source = (int)CallNoteSources.Web;
+			if (ModelState.IsValid && model.CallId > 0)
+			{
+				var call = await _callsService.GetCallByIdAsync(model.CallId);
 
-			await _callsService.SaveCallNoteAsync(note, cancellationToken);
+				if (call == null)
+					return new StatusCodeResult((int)HttpStatusCode.NotFound);
 
-			return new StatusCodeResult((int)HttpStatusCode.OK);
+				if (!await _authorizationService.CanUserViewCallAsync(UserId, model.CallId))
+					Unauthorized();
+
+				var note = new CallNote();
+				note.UserId = UserId;
+				note.CallId = model.CallId;
+				note.Note = model.Note;
+				note.Timestamp = DateTime.UtcNow;
+				note.Source = (int)CallNoteSources.Web;
+
+				await _callsService.SaveCallNoteAsync(note, cancellationToken);
+
+				return new StatusCodeResult((int)HttpStatusCode.OK);
+			}
+
+			return new StatusCodeResult((int)HttpStatusCode.BadRequest);
 		}
 
 		[HttpGet]
@@ -1258,7 +1274,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query)).Trim();
-				decryptedQuery  = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+				decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 			}
 			catch (Exception ex)
 			{

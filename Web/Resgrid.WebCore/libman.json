@@ -1176,6 +1176,11 @@
         "lib/hacks/user-select.js",
         "lib/hacks/writing-mode.js"
       ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "jquery-ui-multidatespicker@1.6.6",
+      "destination": "wwwroot/lib/jquery-ui-multidatespicker/"
     }
   ]
 }

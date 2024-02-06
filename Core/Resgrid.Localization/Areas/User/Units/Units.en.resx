@@ -171,6 +171,9 @@
   <data name="NoUnitsInThisGroup" xml:space="preserve">
     <value>No Units in this Group</value>
   </data>
+  <data name="NoUnitsToStaff" xml:space="preserve">
+    <value>To set staffing on units you need to have Units created and Roles (i.e. Driver, Operator, etc) created within those units. </value>
+  </data>
   <data name="RemoveThisRole" xml:space="preserve">
     <value>Remove this role</value>
   </data>

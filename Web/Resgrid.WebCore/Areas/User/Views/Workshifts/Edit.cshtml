@@ -1,21 +1,22 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Workshifts.NewWorkshiftView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-    ViewBag.Title = "Resgrid | New Static Shift";
+    ViewBag.Title = "Resgrid | " + @localizer["EditStaticShiftHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>New Static Shift</h2>
+        <h2>@localizer["EditStaticShiftHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li>
-                <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+                <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["ShiftsModule"]</a>
             </li>
             <li class="active">
-                <strong>New Static Shift</strong>
+                <strong>@localizer["EditStaticShiftHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -26,7 +27,7 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <form class="form-horizontal" role="form" asp-controller="Workshifts" asp-action="New" asp-route-area="User" method="post" id="newWorkshiftForm">
+                    <form class="form-horizontal" role="form" asp-controller="Workshifts" asp-action="Edit" asp-route-area="User" method="post" id="newWorkshiftForm">
 
                         <div class="row">
                             <div class="col-md-8 col-md-offset-1">
@@ -37,13 +38,14 @@
                                     </div>
                                 }
                                 @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.Shift.WorkshiftId)
                                 <div asp-validation-summary="All" class="text-danger"></div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label required">
-                                Name
+                                @commonLocalizer["Name"]
                             </label>
                             <div class="col-sm-10">
                                 <div class="col-md-5">
@@ -52,17 +54,17 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label required">Color</label>
+                            <label class="col-sm-2 control-label required">@commonLocalizer["Color"]</label>
                             <div class="col-sm-10">
                                 <div class="col-md-5">
                                     <input type="text" class="form-control" asp-for="Shift.Color">
-                                    <span class="help-block m-b-none">Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</span>
+                                    <span class="help-block m-b-none">@localizer["ShiftColorNote"]</span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
 							<label class="col-sm-2 control-label">
-								Description
+                                @commonLocalizer["Description"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-6">
@@ -76,29 +78,29 @@
 						</div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label required">
-                                Start Date/Time
+                                @localizer["StartDateTime"]
                             </label>
                             <div class="col-sm-10">
                                 <div class="col-md-5">
                                     <input type="text" asp-for="Shift.Start">
-                                    <span class="help-block m-b-none">The date and time that the shift starts (i.e. start of travel) where entities under it are considered committed.</span>
+                                    <span class="help-block m-b-none">@localizer["ShiftStartNote"]</span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label required">
-                                End Date/Time
+                                @localizer["EndDateTime"]
                             </label>
                             <div class="col-sm-10">
                                 <div class="col-md-5">
                                     <input type="text" asp-for="Shift.End">
-                                    <span class="help-block m-b-none">The date and time that the shift ends (i.e. back in quarters) where entities under it are considered available.</span>
+                                    <span class="help-block m-b-none">@localizer["ShiftEndNote"]</span>
                                 </div>
                             </div>
                         </div>
                         <div id="unitSelection" class="form-group">
                             <label class="col-sm-2 control-label">
-                                Units
+                                @commonLocalizer["Units"]
                             </label>
                             <div class="col-sm-10">
                                 <div class="col-md-5">
@@ -107,10 +109,15 @@
                             </div>
                         </div>
 
+                        <div class="alert alert-warning">
+                            @localizer["EditShiftWarning"]
+                            <br />
+                        </div>
+
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Create Static Shift</button>
+                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
                             </div>
                         </div>
                     </form>

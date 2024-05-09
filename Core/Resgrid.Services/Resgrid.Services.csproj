@@ -1,22 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.3.0" />
-    <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
     <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Stripe.net" Version="39.88.0" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="110.2.0" />
+    <PackageReference Include="Stripe.net" Version="43.19.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
@@ -34,5 +31,4 @@
     <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\Resgrid.Model\Resgrid.Model.csproj" />
   </ItemGroup>
-
 </Project>

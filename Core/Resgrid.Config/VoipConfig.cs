@@ -5,8 +5,8 @@
 	/// </summary>
 	public static class VoipConfig
 	{
-		public static int BaseChannelExtensionNumber = 15;
-		public static int BaseChannelExtensionBump = 15;
+		public static int BaseChannelExtensionNumber = 10000;
+		public static int BaseChannelExtensionBump = 1000;
 
 		public static string VoipDomain = "";
 		public static string VoipServerAddress = "";

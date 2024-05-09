@@ -5000,7 +5000,7 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.Geolocation">
             <summary>
-            Geolocation data "lat,lon"
+            Geolocation data "lat,lon" in decimal format
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.Type">
@@ -5015,8 +5015,13 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DispatchList">
             <summary>
-            Comma seperated list of users,units,roles and groups to dipstach
+            Pipe separated string of users,units,roles and groups to dispatch. Users and Roles are prefixed with "P:" and "R:" respectively.
+            Groups are prefixed with "G:" and Units are prefixed with "U:".
             </summary>
+            <example>
+            Say you want to dispatch 2 users, 1 unit, 1 group and 1 role. The string would look like this:
+            P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
+            </example>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ContactName">
             <summary>
@@ -5025,7 +5030,7 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ContactInfo">
             <summary>
-            Contact Info
+            Contact Info (phone number, email, etc)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ExternalId">
@@ -5045,7 +5050,7 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DispatchOn">
             <summary>
-            Time in the future, in the departments local time, to dispatch the call
+            Time in the future, in the departments local time, to dispatch the call. Leave NULL to dispatch now.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.CallFormData">

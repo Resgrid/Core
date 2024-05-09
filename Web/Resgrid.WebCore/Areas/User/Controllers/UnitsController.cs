@@ -427,7 +427,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
 				Unauthorized();
 
-			await _unitsService.SetUnitStateAsync(unitId, stateType, DepartmentId, cancellationToken);
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+			if (unit != null)
+			{
+				await _unitsService.SetUnitStateAsync(unit.UnitId, stateType, DepartmentId, cancellationToken);
+			}
 
 			return RedirectToAction("Index");
 		}
@@ -440,26 +445,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
-			var state = new UnitState();
-			state.UnitId = unitId;
-			state.LocalTimestamp = DateTimeHelpers.GetLocalDateTime(DateTime.UtcNow, department.TimeZone);
-			state.State = stateType;
-			state.Timestamp = DateTime.UtcNow;
-
-			if (destination > 0)
-				state.DestinationId = destination;
-
-			if (!String.IsNullOrWhiteSpace(note))
-				state.Note = HttpUtility.UrlDecode(note);
-
-			try
+			if (unit != null)
 			{
-				var savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId, cancellationToken);
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
+				var state = new UnitState();
+				state.UnitId = unit.UnitId;
+				state.LocalTimestamp = DateTimeHelpers.GetLocalDateTime(DateTime.UtcNow, department.TimeZone);
+				state.State = stateType;
+				state.Timestamp = DateTime.UtcNow;
+
+				if (destination > 0)
+					state.DestinationId = destination;
+
+				if (!String.IsNullOrWhiteSpace(note))
+					state.Note = HttpUtility.UrlDecode(note);
+
+				try
+				{
+					var savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
 			}
 
 			return RedirectToAction("Index");

@@ -1,11 +1,11 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 ARG BUILD_VERSION=3.5.0
 
-FROM mcr.microsoft.com/dotnet/runtime:6.0.1-bullseye-slim-amd64 AS base
+FROM mcr.microsoft.com/dotnet/runtime:8.0.3-jammy-amd64 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0.101-bullseye-slim-amd64 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.203-jammy-amd64 AS build
 ARG BUILD_VERSION
 WORKDIR /src
 
@@ -45,14 +45,16 @@ RUN chmod +x wait
 WORKDIR /app
 
 ## START - INSTALL WKHTMLTOPDF
-ENV WKHTMLTOX wkhtmltox_0.12.6-1.buster_amd64.deb
+ENV WKHTMLTOX wkhtmltox_0.12.6.1-3.jammy_amd64.deb
 ENV BUILD_PACKAGES build-essential
-ENV MAIN_PACKAGES fontconfig libfreetype6 libjpeg62-turbo libxext6 libpng16-16 libx11-6 libxcb1 libxrender1 xfonts-75dpi xfonts-base libgdiplus libc6-dev wget
+ENV MAIN_PACKAGES libfontconfig1-dev libfreetype6-dev libjpeg-dev libpng-dev libssl-dev libx11-dev libxext-dev libxrender-dev xfonts-75dpi xfonts-base zlib1g-dev fontconfig
+
+RUN apt-get update && apt-get install -y apt-transport-https wget
 
 RUN set -xe \
     && apt-get update -qq \
     && apt-get install --no-install-recommends -yq $BUILD_PACKAGES $MAIN_PACKAGES \
-    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb \
+    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.jammy_amd64.deb \
     && dpkg -i ${WKHTMLTOX} \
     && apt-get remove -y $BUILD_PACKAGES \
     && apt-get autoremove -y \

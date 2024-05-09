@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static System.Net.WebRequestMethods;
 
 namespace Resgrid.Config
 {
@@ -27,14 +28,19 @@ namespace Resgrid.Config
 		/// <summary>
 		/// The base url to where the Resgrid signalr lives
 		/// </summary>
-		public static string ResgridEventingBaseUrl = "https://events.resgrid.com";
+		public static string ResgridEventingBaseUrl = "https://resgridevents.local";
 
 		/// <summary>
-		/// This will prevent the system from sending any outbound messages, for example 
+		/// Resgrid internal Billing API Url. Do not set for Open-Source install.
+		/// </summary>
+		public static string BillingApiBaseUrl = "";
+
+		/// <summary>
+		/// This will prevent the system from sending any outbound messages, for example
 		/// email, push, text or call. Allows for testing the system without risk of sending
 		/// out a broadcast to unknowing users.
 		/// </summary>
-		public static bool DoNotBroadcast = true;
+		public static bool DoNotBroadcast = false;
 
 		/// <summary>
 		/// These departments will bypass the DoNotBroadcast value
@@ -50,18 +56,21 @@ namespace Resgrid.Config
 		/// on-prem installs as there is no public part of the website that users need to access.
 		/// </summary>
 		public static bool RedirectHomeToLogin = true;
-		
+
 		/// <summary>
-		/// Tells the system if it's running on Microsoft's Azure environment
+		/// Tells the system if it's running on Microsoft's Azure environment. This would trigger
+		/// some back-end systems, like SQL Server queuing instead of a service bus. It's recommended
+		/// to leave this always set to true, and instead configure services, like the Service Bus, to
+		/// use non-Azure implementations as the pure "non-azure" implementations are no longer supported.
 		/// </summary>
-		public static bool IsAzure = false;
+		public static bool IsAzure = true;
 
 		/// <summary>
 		/// Should the system use the cache provider or not. If this is disabled no caching
 		/// will occur and calls will bypass getting items from cache.
 		/// </summary>
 		public static bool CacheEnabled = true;
-		
+
 		/// <summary>
 		/// Forces the use of the in memory cache provider instead of Redis
 		/// </summary>
@@ -70,37 +79,37 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Used to encrypt the publicly accessible url key values
 		/// </summary>
-		public static string ExternalLinkUrlParamPassphrase = "NvM28Q8EJejQSdxS";
-		
+		public static string ExternalLinkUrlParamPassphrase = "";
+
 		/// <summary>
 		/// Used to encrypt the url parameters for the external audio links
 		/// </summary>
-		public static string ExternalAudioUrlParamPasshprase = "5a4tALka7bz6h4CY";
-		
+		public static string ExternalAudioUrlParamPasshprase = "";
+
 		/// <summary>
 		/// Used to encrypt payloads for the API auth token
 		/// </summary>
-		public static string ApiTokenEncryptionPassphrase = "exjk3TB)&3ky`sWUH}y!r$x#6jsEX'H-UDQn6(v=w:#*#Pr";
-		
+		public static string ApiTokenEncryptionPassphrase = "";
+
 		/// <summary>
 		/// The length the API token will be valid for once a user logs into the app
 		/// </summary>
-		public static int APITokenMonthsTTL = 1;
-		
+		public static int APITokenMonthsTTL = 12;
+
 		/// <summary>
-		/// Sets the type of Service bus to use for the system, options are Azure or NATS
+		/// Sets the type of Service bus to use for the system, options are Azure or Rabbit
 		/// </summary>
 		public static ServiceBusTypes ServiceBusType = ServiceBusTypes.Rabbit;
 
 		/// <summary>
 		/// Sets the type of External error and logging provider for the system to use
 		/// </summary>
-		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Elk;
+		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Sentry;
 
 		/// <summary>
 		/// Sets the type of outbound email server or provider to use
 		/// </summary>
-		public static OutboundEmailTypes OutboundEmailType = OutboundEmailTypes.Smtp;
+		public static OutboundEmailTypes OutboundEmailType = OutboundEmailTypes.Postmark;
 
 		/// <summary>
 		/// Sets the type of url link shortner provider to use
@@ -110,29 +119,30 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Sets the type of voip provider to use
 		/// </summary>
-		public static VoipProviderTypes VoipProviderType = VoipProviderTypes.Kazoo;
+		public static VoipProviderTypes VoipProviderType = VoipProviderTypes.LiveKit;
 
 		/// <summary>
 		/// Sets the type of sms provider to use
 		/// </summary>
-		public static SmsProviderTypes SmsProviderType = SmsProviderTypes.Twilio;
+		public static SmsProviderTypes SmsProviderType = SmsProviderTypes.SignalWire;
 
 		/// <summary>
 		/// Sets the type of backup sms provider to use
 		/// </summary>
-		public static SmsProviderTypes BackupSmsProviderType = SmsProviderTypes.SignalWire;
+		public static SmsProviderTypes BackupSmsProviderType = SmsProviderTypes.Twilio;
 
 		/// <summary>
 		/// If you wish to always send sms messages via the email to sms gateway as well even if
-		/// the provider has a direct send option. 
+		/// the provider has a direct send option.
 		/// </summary>
-		public static bool SendCallsToSmsEmailGatewayAdditionally = true;
+		public static bool SendCallsToSmsEmailGatewayAdditionally = false;
 
 		/// <summary>
 		/// These are specific departments that will be forced to go through the om-prem SMS gateway no matter the send status, i.e. Direct or Gateway
 		/// </summary>
 		public static HashSet<int> DepartmentsToForceSmsGateway = new HashSet<int>()
 		{
+
 		};
 
 		/// <summary>
@@ -151,7 +161,7 @@ namespace Resgrid.Config
 		/// <summary>
 		/// To send push notifications with your on-prem Resgrid installation with our apps in the App Stores (Google and Apple)
 		/// you need to pay for a site key to send push notifications through our push infrastructure. To get a site key, which is
-		/// an annual payment, please contact team@resgrid.com. 
+		/// an annual payment, please contact team@resgrid.com.
 		/// </summary>
 		public static string SiteKey = "";
 
@@ -163,17 +173,17 @@ namespace Resgrid.Config
 		/// <summary>
 		/// The Url to the help and support site
 		/// </summary>
-		public static string HelpAndSupportUrl = "";
+		public static string HelpAndSupportUrl = "https://resgrid.zohodesk.com/portal/en/home";
 
 		/// <summary>
 		/// Contact Us Url
 		/// </summary>
-		public static string ContactUsUrl = "";
+		public static string ContactUsUrl = "https://resgrid.com/contact";
 
 		/// <summary>
 		/// Blog Url
 		/// </summary>
-		public static string BlogUrl = "";
+		public static string BlogUrl = "https://blog.resgrid.com";
 
 		public static string GetEnvPrefix()
 		{
@@ -198,6 +208,7 @@ namespace Resgrid.Config
 		Prod,
 		Staging,
 		QA,
-		Dev
+		Dev,
+		Backup
 	}
 }

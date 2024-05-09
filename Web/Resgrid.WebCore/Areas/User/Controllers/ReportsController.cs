@@ -818,65 +818,74 @@ namespace Resgrid.Web.Areas.User.Controllers
 						shiftRow.ShiftDate = nextShiftDay.Day.ToShortDateString();
 						shiftRow.Type = ((ShiftAssignmentTypes)shift.AssignmentType).ToString();
 
-						foreach (var group in shift.Groups)
+						if (shift.Groups != null && shift.Groups.Count > 0)
 						{
-							var shiftSubRow = new UpcomingShiftReadinessReportSubRow();
-							shiftSubRow.GroupName = group.DepartmentGroup.Name;
-
-							foreach (var role in group.Roles)
+							foreach (var group in shift.Groups)
 							{
-								var subRowRoles = new UpcomingShiftReadinessGroupRole();
-								subRowRoles.Name = role.Role.Name;
-								subRowRoles.Required = role.Required;
-								subRowRoles.Optional = role.Optional;
+								var shiftSubRow = new UpcomingShiftReadinessReportSubRow();
+								shiftSubRow.GroupName = group.DepartmentGroup.Name;
 
-								if (shiftRoleDeltas != null && shiftRoleDeltas.ContainsKey(group.DepartmentGroupId))
+								if (group.Roles != null && group.Roles.Count > 0)
 								{
-									var roleDelta = shiftRoleDeltas[group.DepartmentGroupId];
+									foreach (var role in group.Roles)
+									{
+										var subRowRoles = new UpcomingShiftReadinessGroupRole();
+										subRowRoles.Name = role.Role.Name;
+										subRowRoles.Required = role.Required;
+										subRowRoles.Optional = role.Optional;
 
-									if (roleDelta.ContainsKey(role.PersonnelRoleId))
-										subRowRoles.Delta = roleDelta[role.PersonnelRoleId];
+										if (shiftRoleDeltas != null && shiftRoleDeltas.ContainsKey(group.DepartmentGroupId))
+										{
+											var roleDelta = shiftRoleDeltas[group.DepartmentGroupId];
 
-									if (subRowRoles.Delta > 0)
-										readyShift = false;
+											if (roleDelta.ContainsKey(role.PersonnelRoleId))
+												subRowRoles.Delta = roleDelta[role.PersonnelRoleId];
+
+											if (subRowRoles.Delta > 0)
+												readyShift = false;
+										}
+										else
+										{
+											subRowRoles.Delta = 0;
+										}
+
+										shiftSubRow.Roles.Add(subRowRoles);
+									}
 								}
-								else
+
+								if (shift.Personnel != null && shift.Personnel.Count > 0)
 								{
-									subRowRoles.Delta = 0;
+									foreach (var person in shift.Personnel)
+									{
+										var subRowPerson = new UpcomingShiftReadinessPersonnel();
+										subRowPerson.Name = await UserHelper.GetFullNameForUser(person.UserId);
+										subRowPerson.Roles =
+											(await _personnelRolesService.GetRolesForUserAsync(person.UserId, DepartmentId))
+											.Select(x => x.Name).ToList();
+
+										shiftSubRow.Personnel.Add(subRowPerson);
+									}
 								}
 
-								shiftSubRow.Roles.Add(subRowRoles);
-							}
-
-							foreach (var person in shift.Personnel)
-							{
-								var subRowPerson = new UpcomingShiftReadinessPersonnel();
-								subRowPerson.Name = await UserHelper.GetFullNameForUser(person.UserId);
-								subRowPerson.Roles =
-									(await _personnelRolesService.GetRolesForUserAsync(person.UserId, DepartmentId))
-									.Select(x => x.Name).ToList();
-
-								shiftSubRow.Personnel.Add(subRowPerson);
-							}
-
-							var shiftSignupsForDay =
-								await _shiftsService.GetShiftSignpsForShiftDayAsync(nextShiftDay.ShiftDayId);
-							if (shiftSignupsForDay != null)
-							{
-								foreach (var signup in shiftSignupsForDay.Where(x =>
-											 x.DepartmentGroupId.Value == group.DepartmentGroupId))
+								var shiftSignupsForDay =
+									await _shiftsService.GetShiftSignpsForShiftDayAsync(nextShiftDay.ShiftDayId);
+								if (shiftSignupsForDay != null)
 								{
-									var subRowPerson = new UpcomingShiftReadinessPersonnel();
-									subRowPerson.Name = await UserHelper.GetFullNameForUser(signup.UserId);
-									subRowPerson.Roles =
-										(await _personnelRolesService.GetRolesForUserAsync(signup.UserId, DepartmentId))
-										.Select(x => x.Name).ToList();
+									foreach (var signup in shiftSignupsForDay.Where(x =>
+												 x.DepartmentGroupId.Value == group.DepartmentGroupId))
+									{
+										var subRowPerson = new UpcomingShiftReadinessPersonnel();
+										subRowPerson.Name = await UserHelper.GetFullNameForUser(signup.UserId);
+										subRowPerson.Roles =
+											(await _personnelRolesService.GetRolesForUserAsync(signup.UserId, DepartmentId))
+											.Select(x => x.Name).ToList();
 
-									shiftSubRow.Personnel.Add(subRowPerson);
+										shiftSubRow.Personnel.Add(subRowPerson);
+									}
 								}
-							}
 
-							shiftRow.SubRows.Add(shiftSubRow);
+								shiftRow.SubRows.Add(shiftSubRow);
+							}
 						}
 
 						if (shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)

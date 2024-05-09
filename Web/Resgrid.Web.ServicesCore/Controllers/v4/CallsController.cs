@@ -479,7 +479,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var callProtocol in call.Protocols)
 				{
-					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.CallProtocolId);
+					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 
 					if (protocol != null)
 						result.Data.Protocols.Add(CallProtocolsController.ConvertProtocolData(protocol));

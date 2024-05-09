@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Stripe.Checkout;
+using Resgrid.Model.Billing.Api;
 
 namespace Resgrid.Model.Services
 {
@@ -219,7 +221,7 @@ namespace Resgrid.Model.Services
 		Task<PlanAddon> AddAddonAddedToExistingSub(int departmentId, Plan plan, PlanAddon addon);
 		Task<bool> CancelPlanAddonByTypeFromStripeAsync(int departmentId, int addonType);
 
-		Task<Subscription> GetCanceledPlanFromStripeAsync(int departmentId);
+		Task<GetCanceledPlanFromStripeData> GetCanceledPlanFromStripeAsync(int departmentId);
 
 		Task<List<PlanAddon>> GetAllAddonPlansAsync();
 
@@ -228,5 +230,24 @@ namespace Resgrid.Model.Services
 		bool CanPlanSendMessageSms(int planId);
 
 		bool CanPlanSendCallSms(int planId);
+
+		Task<CreateStripeSessionForUpdateData> CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string email, string departmentName);
+
+		Task<GetCanceledPlanFromStripeData> GetActiveStripeSubscriptionAsync(string stripeCustomerId);
+
+		Task<GetCanceledPlanFromStripeData> GetActivePTTStripeSubscriptionAsync(string stripeCustomerId);
+
+		Task<bool> ModifyPTTAddonSubscriptionAsync(string stripeCustomerId, long quantity, PlanAddon planAddon);
+
+		Task<bool> CancelSubscriptionAsync(string stripeCustomerId);
+
+		Task<CreateStripeBillingPortalSessionData> CreateStripeSessionForCustomerPortal(int departmentId, string stripeCustomerId, string customerConfigId, string email,
+			string departmentName);
+
+		Task<PaymentProviderEvent> SavePaymentEventAsync(PaymentProviderEvent providerEvent, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CreateStripeSessionForUpdateData> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string email, string departmentName);
+
+		Task<ChangeActiveSubscriptionData> ChangeActiveSubscriptionAsync(string stripeCustomerId, string stripePlanId);
 	}
 }

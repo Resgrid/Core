@@ -18,7 +18,10 @@ namespace Resgrid.Providers.PdfProvider
 				converter.PdfToolPath = "/usr/local/bin/";
 			}
 			else
+			{
 				converter.WkHtmlToPdfExeName = "wkhtmltopdf.exe";
+				converter.PdfToolPath = "C:\\Program Files\\wkhtmltopdf\\bin\\";
+			}
 
 			if (!String.IsNullOrWhiteSpace(PrintConfig.NRecoPdfOwner) && !String.IsNullOrWhiteSpace(PrintConfig.NRecoPdfKey))
 				converter.License.SetLicenseKey(PrintConfig.NRecoPdfOwner, PrintConfig.NRecoPdfKey);

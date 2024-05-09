@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver.Linq;
+using Resgrid.Framework;
 
 namespace Resgrid.Workers.Console.Tasks
 {
@@ -60,9 +61,8 @@ namespace Resgrid.Workers.Console.Tasks
 
 						if (runTime != null)
 						{
-							// Filter only the past items and ones that are 5 minutes 30 seconds in the future
-							if (runTime.Value >= convertedUtcNow ||
-							    runTime.Value <= convertedUtcNow.AddMinutes(5).AddSeconds(30))
+							// Report delivery task runs every 14 minutes normally, so we'll pick up anything that's within 6 minutes 45 seconds of the current time
+							if (runTime.Value == convertedUtcNow.Within(new TimeSpan(0, 6, 45)))
 							{
 								items.Add((st, department, st.UserEmailAddress));
 							}

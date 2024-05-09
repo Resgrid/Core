@@ -201,5 +201,7 @@ namespace Resgrid.Model.Services
 		Task<bool> SendCalendarAsync(string userId, string message, int departmentId, UserProfile profile = null);
 
 		Task<bool> SendDeleteDepartmentEmail(string sendingToEmail, string sendingToName, QueueItem queueItem);
+
+		Task<bool> SendReportDeliveryAsync(EmailNotification email, int departmentId, string reportUrl, string reportName);
 	}
 }

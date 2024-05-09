@@ -207,6 +207,9 @@
   <data name="ContactUs" xml:space="preserve">
     <value>Contact Us</value>
   </data>
+  <data name="CreatedOn" xml:space="preserve">
+    <value>Created On</value>
+  </data>
   <data name="CustomStatuses" xml:space="preserve">
     <value>Custom Statuses</value>
   </data>

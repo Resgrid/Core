@@ -39,6 +39,8 @@ namespace Resgrid.Model.Providers
 		Task<bool> SendChargeFailed(string name, string email, string endDate, string departmentName, string planName);
 		Task<bool> SendNewDepartmentLinkMail(string name, string departmentName, string data, string email, int departmentId);
 		Task<bool> SendTroubleAlertMail(string email, string unitName, string gpsLocation, string personnel, string callAddress, string unitAddress, string dispatchedOn, string callName);
+		Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
+			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl);
 
 
 		// Internal Template Only Emails

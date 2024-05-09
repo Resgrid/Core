@@ -1,18 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Billing.Api;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Voip.LiveKit;
+using Resgrid.Providers.Voip.LiveKit.Model;
+using RestSharp;
+using RestSharp.Serializers.NewtonsoftJson;
+using Stripe;
+using Stripe.Checkout;
 
 namespace Resgrid.Services
 {
 	public class SubscriptionsService : ISubscriptionsService
 	{
 		private static string CacheKey = "CurrentPayment_{0}";
+		private static string PaymentAddonCacheKey = "CurrentAddonPayment_{0}_{1}";
 		private static string ExternalPlanCacheKey = "ExternalPlan_{0}";
 		private static string PlanCacheKey = "Plan_{0}";
 		private static TimeSpan CacheLength = TimeSpan.FromDays(1);
@@ -24,29 +36,96 @@ namespace Resgrid.Services
 		private readonly IPaymentRepository _paymentsRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IDepartmentsRepository _departmentsRepository;
+		private readonly IPlanAddonsRepository _planAddonsRepository;
+		private readonly IPaymentAddonsRepository _paymentAddonsRepository;
+		private readonly IDepartmentSettingsRepository _departmentSettingsRepository;
+		private readonly IPaymentProviderEventsRepository _paymentProviderEventsRepository;
 
-		public SubscriptionsService(IPlansRepository plansRepository, IPaymentRepository paymentsRepository, ICacheProvider cacheProvider, IDepartmentsRepository departmentsRepository)
+		public SubscriptionsService(IPlansRepository plansRepository, IPaymentRepository paymentsRepository, ICacheProvider cacheProvider,
+			IDepartmentsRepository departmentsRepository, IPlanAddonsRepository planAddonsRepository, IPaymentAddonsRepository paymentAddonsRepository,
+			IDepartmentSettingsRepository departmentSettingsRepository, IPaymentProviderEventsRepository paymentProviderEventsRepository)
 		{
 			_plansRepository = plansRepository;
 			_paymentsRepository = paymentsRepository;
 			_cacheProvider = cacheProvider;
 			_departmentsRepository = departmentsRepository;
+			_planAddonsRepository = planAddonsRepository;
+			_paymentAddonsRepository = paymentAddonsRepository;
+			_departmentSettingsRepository = departmentSettingsRepository;
+			_paymentProviderEventsRepository = paymentProviderEventsRepository;
 		}
 
-		public async Task<Plan> GetCurrentPlanForDepartmentAsync(int departmentId, bool byPassCache = true)
+		public async Task<Model.Plan> GetCurrentPlanForDepartmentAsync(int departmentId, bool byPassCache = true)
 		{
 			var freePlan = await _plansRepository.GetByIdAsync(FreePlanId);
+
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetCurrentPlanForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return freePlan;
+
+				if (response.Data == null)
+					return freePlan;
+
+				return response.Data.Data;
+			}
 
 			return freePlan;
 		}
 
 		public async Task<DepartmentPlanCount> GetPlanCountsForDepartmentAsync(int departmentId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPlanCountsForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetPlanCountsForDepartmentResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			return null;
 		}
 
 		public async Task<Payment> GetCurrentPaymentForDepartmentAsync(int departmentId, bool byPassCache = true)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetCurrentPaymentForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			async Task<Payment> getPayment()
 			{
 				var dateTime = DateTime.UtcNow;
@@ -73,7 +152,27 @@ namespace Resgrid.Services
 
 		public async Task<Payment> GetPreviousNonFreePaymentForDepartmentAsync(int departmentId, int paymentId)
 		{
-			// I went with amount here as there could be preview payments, demo payments, etc in the system, no just Plans.FreePaymentId. 
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPreviousNonFreePaymentForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("paymentId", paymentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			// I went with amount here as there could be preview payments, demo payments, etc in the system, no just Plans.FreePaymentId.
 			var payment = (from p in await _paymentsRepository.GetAllAsync()
 						   where p.DepartmentId == departmentId && p.PaymentId < paymentId && p.Amount != 0
 						   orderby p.PaymentId descending
@@ -84,6 +183,25 @@ namespace Resgrid.Services
 
 		public async Task<Payment> GetUpcomingPaymentForDepartmentAsync(int departmentId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetUpcomingPaymentForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			var payment = (from p in await _paymentsRepository.GetAllAsync()
 						   where p.DepartmentId == departmentId && p.EffectiveOn > DateTime.UtcNow
 						   orderby p.PaymentId descending
@@ -94,36 +212,93 @@ namespace Resgrid.Services
 
 		public async Task<Payment> GetPaymentByTransactionIdAsync(string transactionId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPaymentByTransactionId", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("transactionId", transactionId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			return await _paymentsRepository.GetPaymentByTransactionIdAsync(transactionId);
 		}
 
-		public async Task<Plan> GetPlanByIdAsync(int planId, bool byPassCache = false)
+		public async Task<Model.Plan> GetPlanByIdAsync(int planId, bool byPassCache = false)
 		{
-			async Task<Plan> getPlan()
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPlanById", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("planId", planId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			async Task<Model.Plan> getPlan()
 			{
 				return await _plansRepository.GetPlanByPlanIdAsync(planId);
 			}
 
 			if (!byPassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				return await _cacheProvider.RetrieveAsync<Plan>(string.Format(PlanCacheKey, planId), getPlan, SixMonthCacheLength);
+				return await _cacheProvider.RetrieveAsync<Model.Plan>(string.Format(PlanCacheKey, planId), getPlan, SixMonthCacheLength);
 			}
 
 			return await getPlan();
 		}
 
-		public async Task<Plan> GetPlanByExternalIdAsync(string externalId, bool byPassCache = false)
+		public async Task<Model.Plan> GetPlanByExternalIdAsync(string externalId, bool byPassCache = false)
 		{
-			async Task<Plan> getPlan()
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPlanByExternalId", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("externalId", externalId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			async Task<Model.Plan> getPlan()
 			{
 				return (from p in await _plansRepository.GetAllAsync()
-						where p.ExternalId == externalId
+						where p.ExternalId == externalId || p.TestExternalId == externalId
 						select p).FirstOrDefault();
 			}
 
 			if (!byPassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				return await _cacheProvider.RetrieveAsync<Plan>(string.Format(ExternalPlanCacheKey, externalId), getPlan, SixMonthCacheLength);
+				return await _cacheProvider.RetrieveAsync<Model.Plan>(string.Format(ExternalPlanCacheKey, externalId), getPlan, SixMonthCacheLength);
 			}
 
 			return await getPlan();
@@ -131,6 +306,25 @@ namespace Resgrid.Services
 
 		public async Task<Payment> GetPaymentByIdAsync(int paymentId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPaymentById", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paymentId", paymentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			var payment = await _paymentsRepository.GetPaymentByIdIdAsync(paymentId);
 			payment.Department = await _departmentsRepository.GetByIdAsync(payment.DepartmentId);
 
@@ -148,6 +342,53 @@ namespace Resgrid.Services
 				return true;
 
 			return false;
+		}
+
+		public bool CanPlanSendMessageSms(int planId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (planId == 4 // Professional
+				    || planId == 5 // Ultimate
+				    || planId == 9 // Unlimited
+				    || planId == 10 // Enterprise
+				    || planId == 14 // Professional Monthly
+				    || planId == 15 // Ultimate Monthly
+				    || planId == 16 // Enterprise Monthly
+				    || planId == 17 // Enterprise+
+				    || planId == 18 // Enterprise+ Monthly
+				    || planId == 20 // Univeral
+				    || planId == 21 // Univeral Monthly
+				    || planId == 26 // Professional
+				    || planId == 27 // Professional Monthly
+				    || planId == 28 // Ultimate
+				    || planId == 29 // Ultimate Monthly
+				    || planId == 30 // Enterprise
+				    || planId == 31 // Enterprise Monthly
+				    || planId == 32 // Enterprise+
+				    || planId == 32 // Enterprise+ Monthly
+				    || planId == 34 // Unified
+				    || planId == 35 // Unified Monthly
+				   )
+					return true;
+
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool CanPlanSendCallSms(int planId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (planId == 1)
+					return false;
+
+				return true;
+			}
+
+			return true;
 		}
 
 		public async Task<Payment> SavePaymentAsync(Payment payment, CancellationToken cancellationToken = default(CancellationToken))
@@ -174,6 +415,13 @@ namespace Resgrid.Services
 			return saved;
 		}
 
+		public async Task<PaymentAddon> InsertPaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var saved = await _paymentAddonsRepository.SaveOrUpdateAsync(paymentAddon, cancellationToken);
+
+			return saved;
+		}
+
 		public void ClearCacheForCurrentPayment(int departmentId)
 		{
 			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
@@ -181,6 +429,25 @@ namespace Resgrid.Services
 
 		public async Task<List<Payment>> GetAllPaymentsForDepartmentAsync(int departmentId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetAllPaymentsForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetAllPaymentsForDepartmentResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			var payments = await _paymentsRepository.GetAllPaymentsByDepartmentIdAsync(departmentId);
 
 			foreach (var payment in payments)
@@ -193,6 +460,25 @@ namespace Resgrid.Services
 
 		public async Task<List<Payment>> GetAllNonFreePaymentsForDepartmentAsync(int departmentId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetAllNonFreePaymentsForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetAllPaymentsForDepartmentResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			var payments = from p in await _paymentsRepository.GetAllPaymentsByDepartmentIdAsync(departmentId)
 						   where p.Amount > 0
 						   select p;
@@ -220,7 +506,7 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Gets the difference in cost between the current payment's plan and a new plan. 
+		/// Gets the difference in cost between the current payment's plan and a new plan.
 		/// Takes into account the cost difference and how many days in the plan is to upgrade
 		/// the remainder to the higher plan.
 		/// </summary>
@@ -298,30 +584,6 @@ namespace Resgrid.Services
 			return new Tuple<int, double>(cycles, remainder);
 		}
 
-		public async Task<Payment> CreateOpenPreviewPaymentAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			Payment payment = new Payment();
-			payment.DepartmentId = departmentId;
-			payment.PurchasingUserId = userId;
-			payment.PlanId = 7;
-			payment.Method = (int)PaymentMethods.System;
-			payment.IsTrial = false;
-			payment.IsUpgrade = false;
-			payment.PurchaseOn = DateTime.UtcNow;
-			payment.TransactionId = "SYSTEM";
-			payment.Successful = true;
-			payment.Data = String.Empty;
-			payment.Description = "System provided open preview plan -NO COST-";
-			payment.EffectiveOn = DateTime.UtcNow.AddDays(-1);
-			payment.Amount = 0.00;
-			payment.EndingOn = DateTime.UtcNow.AddYears(1);
-
-			var saved = await _paymentsRepository.SaveOrUpdateAsync(payment, cancellationToken);
-			ClearCacheForCurrentPayment(departmentId);
-
-			return saved;
-		}
-
 		public async Task<Payment> CreateFreePlanPaymentAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			Payment payment = new Payment();
@@ -348,6 +610,26 @@ namespace Resgrid.Services
 
 		public async Task<List<PaymentAddon>> GetCurrentPaymentAddonsForDepartmentAsync(int departmentId, List<string> planAddonIds)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetCurrentPaymentAddonsForDepartment", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("planAddonIds", planAddonIds.ToString(), ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetAllPaymentAddonsForDepartmentResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			List<PaymentAddon> paymentAddons = new List<PaymentAddon>();
 
 			if (planAddonIds != null && planAddonIds.Any())
@@ -373,6 +655,25 @@ namespace Resgrid.Services
 
 		public async Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetAllAddonPlansByType", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("planAddonType", planAddonType, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetAllPlanAddonsByTypeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			List<PlanAddon> addons = new List<PlanAddon>();
 
 			PlanAddon addon = new PlanAddon();
@@ -384,53 +685,119 @@ namespace Resgrid.Services
 			return addons;
 		}
 
-		public async Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentAsync(int departmentId)
+		public async Task<List<PlanAddon>> GetAllAddonPlansAsync()
 		{
-			List<PlanAddon> addons = new List<PlanAddon>();
+			var plans = (from p in await _planAddonsRepository.GetAllAsync()
+						 select p).ToList();
 
-			PlanAddon addon = new PlanAddon();
-			addon.AddonType = 1;
-			addon.Cost = 0;
-
-			addons.Add(addon);
-
-			return addons;
-		}
-
-
-		public async Task<PlanAddon> GetPTTAddonPlanForDepartmentAsync(int departmentId)
-		{
-			PlanAddon addon = new PlanAddon();
-			addon.AddonType = 1;
-			addon.Cost = 0;
-
-			return addon;
-		}
-
-		public async Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentFromStripeAsync(int departmentId)
-		{
-			List<PlanAddon> addons = new List<PlanAddon>();
-
-			PlanAddon addon = new PlanAddon();
-			addon.AddonType = 1;
-			addon.Cost = 0;
-
-			addons.Add(addon);
-
-			return addons;
-		}
-
-		public async Task<PlanAddon> GetPTTAddonPlanForDepartmentFromStripeAsync(int departmentId)
-		{
-			PlanAddon addon = new PlanAddon();
-			addon.AddonType = 1;
-			addon.Cost = 0;
-
-			return addon;
+			return plans;
 		}
 
 		public async Task<PlanAddon> GetPlanAddonByExternalIdAsync(string externalId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPlanAddonByExternalId", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("externalId", externalId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetPlanAddonByExternalResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			var plan = (from p in await _planAddonsRepository.GetAllAsync()
+						where p.ExternalId == externalId
+						select p).FirstOrDefault();
+
+			return plan;
+		}
+
+		public async Task<List<PlanAddon>> GetCurrentPlanAddonsForDepartmentFromStripeAsync(int departmentId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetCurrentPlanAddonsForDepartmentFromStripe", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetAllPlanAddonsByTypeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			List<PlanAddon> addons = new List<PlanAddon>();
+
+			PlanAddon addon = new PlanAddon();
+			addon.AddonType = 1;
+			addon.Cost = 0;
+
+			addons.Add(addon);
+
+			return addons;
+		}
+
+		public async Task<bool> HasActiveSubForDepartmentFromStripeAsync(int departmentId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetHasActiveSubForDepartmentFromStripe", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return false;
+
+				if (response.Data == null)
+					return false;
+
+				return response.Data.Data;
+			}
+
+			return true;
+		}
+
+		public async Task<PlanAddon> GetPTTAddonPlanForDepartmentFromStripeAsync(int departmentId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPTTAddonPlanForDepartmentFromStripe", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetPlanAddonByExternalResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			PlanAddon addon = new PlanAddon();
 			addon.AddonType = 1;
 			addon.Cost = 0;
@@ -438,18 +805,27 @@ namespace Resgrid.Services
 			return addon;
 		}
 
-		public async Task<PaymentAddon> InsertPaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default)
-		{
-			return null;
-		}
-
-		public async Task<bool> HasActiveSubForDepartmentFromStripeAsync(int departmentId)
-		{
-			return true;
-		}
-
 		public async Task<PlanAddon> GetPTTAddonForCurrentSubAsync(int departmentId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPTTAddonForCurrentSub", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetPlanAddonByExternalResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			PlanAddon addon = new PlanAddon();
 			addon.AddonType = 1;
 			addon.Cost = 0;
@@ -459,15 +835,79 @@ namespace Resgrid.Services
 
 		public async Task<PlanAddon> GetPlanAddonByIdAsync(string planAddonId)
 		{
-			PlanAddon addon = new PlanAddon();
-			addon.AddonType = 1;
-			addon.Cost = 0;
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetPlanAddonById", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("planAddonId", planAddonId, ParameterType.QueryString);
 
-			return addon;
+				var response = await client.ExecuteAsync<GetPlanAddonByExternalResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			PlanAddon addon1 = new PlanAddon();
+			addon1.AddonType = 1;
+			addon1.Cost = 0;
+
+			return addon1;
 		}
 
-		public async Task<PlanAddon> AddAddonAddedToExistingSub(int departmentId, Plan plan, PlanAddon addon)
+		public async Task<GetCanceledPlanFromStripeData> GetCanceledPlanFromStripeAsync(int departmentId)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetCanceledPlanFromStripe", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCanceledPlanFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
+		}
+
+		public async Task<PlanAddon> AddAddonAddedToExistingSub(int departmentId, Model.Plan plan, PlanAddon addon)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/AddAddonAddedToExistingSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("planId", plan.PlanId, ParameterType.QueryString);
+				request.AddParameter("planAddonId", addon.PlanAddonId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetPlanAddonByExternalResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			PlanAddon addon1 = new PlanAddon();
 			addon1.AddonType = 1;
 			addon1.Cost = 0;
@@ -477,40 +917,249 @@ namespace Resgrid.Services
 
 		public async Task<bool> CancelPlanAddonByTypeFromStripeAsync(int departmentId, int addonType)
 		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CancelPlanAddonByTypeFromStripe", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("addonType", addonType, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return false;
+
+				if (response.Data == null)
+					return false;
+
+				return response.Data.Data;
+			}
+
 			return true;
 		}
 
-		public async Task<Stripe.Subscription> GetCanceledPlanFromStripeAsync(int departmentId)
+		public async Task<PaymentAddon> SavePaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var saved = await _paymentAddonsRepository.SaveOrUpdateAsync(paymentAddon, cancellationToken);
+
+			return saved;
+		}
+
+		public async Task<CreateStripeSessionForUpdateData> CreateStripeSessionForUpdate(int departmentId, string stripeCustomerId, string email, string departmentName)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CreateStripeSessionForUpdate", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("email", email, ParameterType.QueryString, true);
+				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
+
+				var response = await client.ExecuteAsync<CreateStripeSessionForUpdateResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
 			return null;
 		}
 
-		public async Task<List<PlanAddon>> GetAllAddonPlansAsync()
+		public async Task<GetCanceledPlanFromStripeData> GetActiveStripeSubscriptionAsync(string stripeCustomerId)
 		{
-			List<PlanAddon> addons = new List<PlanAddon>();
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetActiveStripeSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
 
-			PlanAddon addon = new PlanAddon();
-			addon.AddonType = 1;
-			addon.Cost = 0;
+				var response = await client.ExecuteAsync<GetCanceledPlanFromStripeResult>(request);
 
-			addons.Add(addon);
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
 
-			return addons;
-		}
+				if (response.Data == null)
+					return null;
 
-		public async Task<PaymentAddon> SavePaymentAddonAsync(PaymentAddon paymentAddon, CancellationToken cancellationToken = default)
-		{
+				return response.Data.Data;
+			}
+
 			return null;
 		}
 
-		public bool CanPlanSendMessageSms(int planId)
+		public async Task<GetCanceledPlanFromStripeData> GetActivePTTStripeSubscriptionAsync(string stripeCustomerId)
 		{
-			return true;
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetActivePTTStripeSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetCanceledPlanFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
 		}
 
-		public bool CanPlanSendCallSms(int planId)
+		public async Task<bool> ModifyPTTAddonSubscriptionAsync(string stripeCustomerId, long quantity, PlanAddon planAddon)
 		{
-			return true;
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/ModifyPTTAddonSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("quantity", quantity, ParameterType.QueryString);
+				request.AddParameter("planAddonId", planAddon.PlanAddonId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return false;
+
+				if (response.Data == null)
+					return false;
+
+				return response.Data.Data;
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CancelSubscriptionAsync(string stripeCustomerId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CancelSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return false;
+
+				if (response.Data == null)
+					return false;
+
+				return response.Data.Data;
+			}
+
+			return false;
+		}
+
+		public async Task<CreateStripeBillingPortalSessionData> CreateStripeSessionForCustomerPortal(int departmentId, string stripeCustomerId, string customerConfigId, string email, string departmentName)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CreateStripeSessionForCustomerPortal", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+
+				if (!String.IsNullOrWhiteSpace(customerConfigId))
+					request.AddParameter("customerConfigId", customerConfigId, ParameterType.QueryString);
+
+				request.AddParameter("email", email, ParameterType.QueryString, true);
+				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
+
+				var response = await client.ExecuteAsync<CreateStripeBillingPortalSessionResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
+		}
+
+		public async Task<PaymentProviderEvent> SavePaymentEventAsync(PaymentProviderEvent providerEvent, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _paymentProviderEventsRepository.SaveOrUpdateAsync(providerEvent, cancellationToken);
+		}
+
+		public async Task<CreateStripeSessionForUpdateData> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string email, string departmentName)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CreateStripeSessionForSubscriptionCheckout", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("stripePlanId", stripePlanId, ParameterType.QueryString);
+				request.AddParameter("planId", planId, ParameterType.QueryString);
+				request.AddParameter("email", email, ParameterType.QueryString, true);
+				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
+
+				var response = await client.ExecuteAsync<CreateStripeSessionForUpdateResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
+		}
+
+		public async Task<ChangeActiveSubscriptionData> ChangeActiveSubscriptionAsync(string stripeCustomerId, string stripePlanId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/ChangeActiveSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripePlanId", stripePlanId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<ChangeActiveSubscriptionResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
 		}
 	}
 }

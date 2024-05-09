@@ -8,14 +8,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 {
 	public class SqlServerConnectionProvider : IConnectionProvider
 	{
-		public string connectionString =
-			ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
-				.FirstOrDefault(x => x.Name == "ResgridContext")
-				.ConnectionString;
+		//public string connectionString =
+		//	ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
+		//		.FirstOrDefault(x => x.Name == "ResgridContext")
+		//		.ConnectionString;
 
 		public DbConnection Create()
 		{
-			return new SqlConnection(connectionString);
+			return new SqlConnection(Config.DataConfig.ConnectionString);
 		}
 	}
 }

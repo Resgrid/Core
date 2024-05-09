@@ -10,6 +10,7 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
+using System.Transactions;
 
 namespace Resgrid.Services
 {
@@ -174,7 +175,7 @@ namespace Resgrid.Services
 					else
 						group1.Children = new List<DepartmentGroup>();
 				}
-				
+
 				return group1;
 			}
 
@@ -204,20 +205,60 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentGroup> UpdateAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			//var members =
-			//	await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(departmentGroup
-			//		.DepartmentGroupId);
+			var members =
+				await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(departmentGroup
+					.DepartmentGroupId);
 
-			//foreach (var departmentGroupMember in members)
-			//{
-			//	await _departmentGroupMembersRepository.DeleteAsync(members, cancellationToken);
-			//}
+			if (departmentGroup.Members != null && departmentGroup.Members.Any())
+			{
+				var membersNoLongerInGroup = members.Where(p => !departmentGroup.Members.Any(p2 => p2.DepartmentGroupMemberId == p.DepartmentGroupMemberId));
 
-			var saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken);
+				foreach (var departmentGroupMember in membersNoLongerInGroup)
+				{
+					await _departmentGroupMembersRepository.DeleteAsync(departmentGroupMember, cancellationToken);
+				}
+
+				foreach (var newMember in departmentGroup.Members)
+				{
+					if (!members.Any(x => x.UserId == newMember.UserId))
+					{
+						newMember.DepartmentGroupId = departmentGroup.DepartmentGroupId;
+						await _departmentGroupMembersRepository.SaveOrUpdateAsync(newMember, cancellationToken);
+					}
+				}
+			}
+			else
+			{
+				foreach (var departmentGroupMember in members)
+				{
+					await _departmentGroupMembersRepository.DeleteAsync(departmentGroupMember, cancellationToken);
+				}
+			}
+
+			if (departmentGroup.Address != null)
+				await _addressService.SaveAddressAsync(departmentGroup.Address, cancellationToken);
+
+			var saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken, true);
 
 			InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
 
 			return saved;
+		}
+
+		public async Task<bool> DeleteAllMembersFromGroupAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var members =
+				await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(departmentGroup
+					.DepartmentGroupId);
+
+			foreach (var departmentGroupMember in members)
+			{
+				await _departmentGroupMembersRepository.DeleteAsync(departmentGroupMember, cancellationToken);
+			}
+
+			InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
+
+			return true;
 		}
 
 		public async Task<bool> IsUserInAGroupAsync(string userId, int departmentId)

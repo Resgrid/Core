@@ -431,19 +431,17 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			var response = new VoiceResponse();
 			var call = await _callsService.GetCallByIdAsync(callId);
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, false);
+			call = await _callsService.PopulateCallData(call, true, true, false, false, false, false, false, false);
 
 			if (call == null)
 			{
 				response.Say("This call has been closed. Goodbye.").Hangup();
-				//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
 				return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
 			}
 
 			if (call.State == (int)CallStates.Cancelled || call.State == (int)CallStates.Closed || call.IsDeleted)
 			{
 				response.Say(string.Format("This call, Id {0} has been closed. Goodbye.", call.Number)).Hangup();
-				//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
 				return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
 			}
 
@@ -464,9 +462,9 @@ namespace Resgrid.Web.Services.Controllers
 
 					Gather gatherResponse1 = new Gather();
 					gatherResponse1.NumDigits = 1;
-					gatherResponse1.Timeout = 10;
+					//gatherResponse1.Timeout = 10;
 					gatherResponse1.Method = "GET";
-					gatherResponse1.Action = new Uri(string.Format("{0}/Twilio/VoiceCallAction/{1}/{2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
+					gatherResponse1.Action = new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
 
 					StringBuilder sb1 = new StringBuilder();
 					sb1.Append("Press 0 to repeat, Press 1 to respond to the scene");
@@ -479,7 +477,7 @@ namespace Resgrid.Web.Services.Controllers
 						sb1.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
 					}
 
-					response.Play(playResponse).Say(sb1.ToString()).Gather(gatherResponse1).Pause(10).Hangup();
+					response.Say(sb1.ToString()).Append(playResponse).Append(gatherResponse1).Hangup();
 
 					return new ContentResult
 					{
@@ -515,7 +513,6 @@ namespace Resgrid.Web.Services.Controllers
 			else
 				sb.Append(string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), call.NatureOfCall));
 
-
 			sb.Append(", Press 0 to repeat, Press 1 to respond to the scene");
 
 			for (int i = 0; i < stations.Count; i++)
@@ -528,11 +525,11 @@ namespace Resgrid.Web.Services.Controllers
 
 			Gather gatherResponse = new Gather();
 			gatherResponse.NumDigits = 1;
-			gatherResponse.Timeout = 10;
+			//gatherResponse.Timeout = 10;
 			gatherResponse.Method = "GET";
-			gatherResponse.Action = new Uri(string.Format("{0}/Twilio/VoiceCallAction/{1}/{2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
+			gatherResponse.Action = new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
 
-			response.Gather(gatherResponse).Say(sb.ToString()).Pause(10).Hangup();
+			response.Say(sb.ToString()).Append(gatherResponse).Hangup();
 
 			return new ContentResult
 			{
@@ -544,12 +541,14 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceCallAction")]
 		[Produces("application/xml")]
-		public async Task<ActionResult> VoiceCallAction(string userId, int callId, [FromQuery]TwilioGatherRequest twilioRequest)
+		public async Task<ActionResult> VoiceCallAction(string userId, int callId, [FromQuery]VoiceRequest twilioRequest)
 		{
 			var response = new VoiceResponse();
 
 			if (twilioRequest.Digits == "0")
-				response.Redirect(new Uri(string.Format("{0}/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), "GET");
+			{
+				response.Redirect(new Uri(string.Format("{0}/api/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), "GET");
+			}
 			else if (twilioRequest.Digits == "1")
 			{
 				var call = await _callsService.GetCallByIdAsync(callId);

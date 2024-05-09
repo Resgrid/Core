@@ -166,8 +166,11 @@ namespace Resgrid.Providers.NumberProvider
 		{
 			try
 			{
-				var client = new RestClient(Config.NumberProviderConfig.SignalWireApiUrl);
-				client.Authenticator = new HttpBasicAuthenticator(Config.NumberProviderConfig.SignalWireAccountSid, Config.NumberProviderConfig.SignalWireApiKey);
+				var options = new RestClientOptions(Config.NumberProviderConfig.SignalWireApiUrl)
+				{
+					Authenticator = new HttpBasicAuthenticator(Config.NumberProviderConfig.SignalWireAccountSid, Config.NumberProviderConfig.SignalWireApiKey)
+				};
+				var client = new RestClient(options);
 				var request = new RestRequest(GenerateSendTextMessageUrlForSignalWire(), Method.Post);
 
 				if (!number.StartsWith("+"))

@@ -14,7 +14,7 @@ namespace Resgrid.Providers.Voip.LiveKit
 		{
 			var dir = new Dictionary<string, object>();
 			dir.Add("identity", identity);
-			dir.Add("video", video);
+			dir.Add("video", video.ToDictionary());
 			dir.Add("metadata", metadata);
 			return dir;
 		}

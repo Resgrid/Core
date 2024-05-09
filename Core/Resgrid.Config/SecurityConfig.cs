@@ -13,7 +13,7 @@ namespace Resgrid.Config
 		/// </summary>
 		public static Dictionary<string, string> SystemLoginCredentials = new Dictionary<string, string>()
 		{
-
+			
 		};
 	}
 }

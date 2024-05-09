@@ -495,15 +495,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						if (groupAdmins.Contains(user))
 							dgm.IsAdmin = true;
+						else
+							dgm.IsAdmin = false;
 
 						group.Members.Add(dgm);
 					}
 				}
 
-				var usersToRemove = group.Members.Where(x => !allUsers.Contains(x.UserId)).ToList();
-				foreach (var user in usersToRemove)
+				if (allUsers.Count > 0)
 				{
-					group.Members.Remove(user);
+					var usersToRemove = group.Members.Where(x => !allUsers.Contains(x.UserId)).ToList();
+					foreach (var user in usersToRemove)
+					{
+						group.Members.Remove(user);
+					}
+				}
+				else
+				{
+					group.Members.Clear();
 				}
 
 				if (model.EditGroup.Type.HasValue && model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)

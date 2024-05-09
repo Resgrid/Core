@@ -62,15 +62,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICqrsProvider _cqrsProvider;
 		private readonly IPrinterProvider _printerProvider;
 		private readonly IQueueService _queueService;
-		private readonly IPaymentProviderService _paymentProviderService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
 			IInvitesService invitesService, Model.Services.IAuthorizationService authorizationService, IAddressService addressService, ISubscriptionsService subscriptionsService,
 			ILimitsService limitsService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService,
 			ICertificationService certificationService, INumbersService numbersService, IScheduledTasksService scheduledTasksService, IPersonnelRolesService personnelRolesService,
-			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService,
-			IPaymentProviderService paymentProviderService)
+			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -96,7 +94,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_cqrsProvider = cqrsProvider;
 			_printerProvider = printerProvider;
 			_queueService = queueService;
-			_paymentProviderService = paymentProviderService;
 		}
 
 		#endregion Private Members and Constructors
@@ -1837,18 +1834,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
 
 				var stripeCustomer = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
-				var currentSub = await _paymentProviderService.GetActiveStripeSubscriptionAsync(stripeCustomer, cancellationToken);
-				var pttSub = await _paymentProviderService.GetActivePTTStripeSubscriptionAsync(stripeCustomer, cancellationToken);
+				var currentSub = await _subscriptionsService.GetActiveStripeSubscriptionAsync(stripeCustomer);
+				var pttSub = await _subscriptionsService.GetActivePTTStripeSubscriptionAsync(stripeCustomer);
 
 				if (pttSub != null)
 				{
 					PlanAddon addon = new PlanAddon();
-					await _paymentProviderService.ModifyPTTAddonSubscription(stripeCustomer, 0, addon, cancellationToken);
+					await _subscriptionsService.ModifyPTTAddonSubscriptionAsync(stripeCustomer, 0, addon);
 				}
 
 				if (currentSub != null)
 				{
-					await _paymentProviderService.CancelSubscriptionAsync(stripeCustomer, cancellationToken);
+					await _subscriptionsService.CancelSubscriptionAsync(stripeCustomer);
 				}
 
 				return RedirectToAction("Settings", "Department", new { area = "User" });

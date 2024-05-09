@@ -82,7 +82,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 							channel.ConferenceNumber = chan.ConferenceNumber;
 
 							if (Config.SystemBehaviorConfig.VoipProviderType == Config.VoipProviderTypes.LiveKit)
-								channel.Token = liveKitProvder.GetTokenForRoom(userInfo.FullName.AsFirstNameLastName, chan.DepartmentVoiceChannelId);
+								channel.Token = liveKitProvder.GetTokenForRoom(userInfo.FullName.AsFirstNameLastName.Replace(" ", ""), chan.DepartmentVoiceChannelId);
 
 
 							result.Data.Channels.Add(channel);
@@ -163,7 +163,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrWhiteSpace(depId))
 				return result;
 
-			// Disabling for now, as there is some converstion between 
+			// Disabling for now, as there is some conversion between 
 			//if (Config.SystemBehaviorConfig.VoipProviderType == Config.VoipProviderTypes.LiveKit)
 			//{
 				var info = await _voiceService.GetCurrentUtilizationForLiveKit(int.Parse(depId));

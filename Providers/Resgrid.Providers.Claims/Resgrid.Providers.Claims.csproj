@@ -1,21 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.1" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.4.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
   </ItemGroup>
-
 </Project>

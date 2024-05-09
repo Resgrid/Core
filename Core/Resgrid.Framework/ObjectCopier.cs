@@ -2,7 +2,10 @@
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Newtonsoft.Json;
+using System.Collections;
 
 namespace Resgrid.Framework
 {
@@ -32,13 +35,16 @@ namespace Resgrid.Framework
 				return default(T);
 			}
 
-			IFormatter formatter = new BinaryFormatter();
+			//IFormatter formatter = new BinaryFormatter();
 			Stream stream = new MemoryStream();
 			using (stream)
 			{
-				formatter.Serialize(stream, source);
+				System.Text.Json.JsonSerializer.Serialize(stream, source, GetJsonSerializerOptions());
+				//formatter.Serialize(stream, source);
 				stream.Seek(0, SeekOrigin.Begin);
-				return (T) formatter.Deserialize(stream);
+				//return (T) formatter.Deserialize(stream);
+
+				return (T)System.Text.Json.JsonSerializer.Deserialize<T>(stream, GetJsonSerializerOptions());
 			}
 		}
 
@@ -76,6 +82,17 @@ namespace Resgrid.Framework
 
 			//return ObjectSerialization.Deserialize<T>(ObjectSerialization.Serialize(source));
 			return JsonConvert.SerializeObject(source);
+		}
+
+		private static JsonSerializerOptions GetJsonSerializerOptions()
+		{
+			return new JsonSerializerOptions()
+			{
+				PropertyNamingPolicy = null,
+				WriteIndented = true,
+				AllowTrailingCommas = true,
+				DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+			};
 		}
 	}
 }

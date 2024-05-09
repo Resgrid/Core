@@ -1,37 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Template\Call.html" />
     <None Remove="Template\Invitation.html" />
     <None Remove="Template\Message.html" />
     <None Remove="Template\PasswordReset.html" />
+    <None Remove="Template\ReportDelivery.html" />
     <None Remove="Template\TroubleAlert.html" />
     <None Remove="Template\Welcome.html" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Template\Call.html" />
     <EmbeddedResource Include="Template\DeleteDepartment.html" />
     <EmbeddedResource Include="Template\Invitation.html" />
+    <EmbeddedResource Include="Template\ReportDelivery.html" />
     <EmbeddedResource Include="Template\Message.html" />
     <EmbeddedResource Include="Template\PasswordReset.html" />
     <EmbeddedResource Include="Template\TroubleAlert.html" />
     <EmbeddedResource Include="Template\Welcome.html" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.3.0" />
-    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.0.117" />
-    <PackageReference Include="MimeKit" Version="3.1.0" />
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300.58" />
+    <PackageReference Include="MimeKit" Version="4.4.0" />
     <PackageReference Include="Mustachio" Version="2.1.0" />
-    <PackageReference Include="Postmark" Version="4.5.2" />
+    <PackageReference Include="Postmark" Version="5.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
@@ -39,5 +36,4 @@
     <ProjectReference Include="..\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
     <ProjectReference Include="..\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
   </ItemGroup>
-
 </Project>

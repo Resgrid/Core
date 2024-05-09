@@ -18,7 +18,7 @@ namespace Resgrid.WebCore.Middleware
 
 			try
 			{
-				var user = new User();
+				var user = new SentryUser();
 				user.Username = ClaimsAuthorizationHelper.GetUsername();
 				user.Id = ClaimsAuthorizationHelper.GetUserId();
 				user.Segment = ClaimsAuthorizationHelper.GetDepartmentId().ToString();

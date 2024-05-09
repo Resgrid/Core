@@ -500,7 +500,7 @@ namespace Resgrid.Services
 				else
 					call.RoleDispatches = new List<CallDispatchRole>();
 			}
-			if (getProtocols && call.Protocols == null)
+			if (getProtocols && (call.Protocols == null || !call.Protocols.Any()))
 			{
 				var items = await _callProtocolsRepository.GetCallProtocolsByCallIdAsync(call.CallId);
 

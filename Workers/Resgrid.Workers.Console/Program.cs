@@ -102,11 +102,6 @@ namespace Resgrid.Workers.Console
 
 			SerializerHelper.WarmUpProtobufSerializer();
 
-			if (Resgrid.Config.PaymentProviderConfig.IsTestMode)
-				StripeConfiguration.ApiKey = Resgrid.Config.PaymentProviderConfig.TestApiKey;
-			else
-				StripeConfiguration.ApiKey = Resgrid.Config.PaymentProviderConfig.ProductionApiKey;
-
 			System.Console.WriteLine("Finished Initializing Dependencies.");
 		}
 

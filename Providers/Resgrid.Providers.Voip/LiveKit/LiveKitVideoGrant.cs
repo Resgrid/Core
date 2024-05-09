@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Resgrid.Providers.Voip.Kazoo.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,5 +20,38 @@ namespace Resgrid.Providers.Voip.LiveKit
 		public bool? canPublishData { get; set; }
 
 		public bool? hidden { get; set; }
+
+		public IDictionary<string, object> ToDictionary()
+		{
+			var dir = new Dictionary<string, object>();
+			dir.Add("roomCreate", roomCreate);
+			dir.Add("roomList", roomList);
+			dir.Add("roomRecord", roomRecord);
+			dir.Add("roomAdmin", roomAdmin);
+			dir.Add("roomJoin", roomJoin);
+			dir.Add("room", room);
+
+			if (canPublish.HasValue)
+			{
+				dir.Add("canPublish", canPublish);
+			}
+
+			if (canSubscribe.HasValue)
+			{
+				dir.Add("canSubscribe", canSubscribe);
+			}
+
+			if (canPublishData.HasValue)
+			{
+				dir.Add("canPublishData", canPublishData);
+			}
+
+			if (hidden.HasValue)
+			{
+				dir.Add("hidden", hidden);
+			}
+
+			return dir;
+		}
 	}
 }

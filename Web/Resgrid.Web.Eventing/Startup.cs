@@ -48,6 +48,7 @@ using Microsoft.IdentityModel.Logging;
 using OpenIddict.Validation;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Asn1.Ess;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 namespace Resgrid.Web.Eventing
 {

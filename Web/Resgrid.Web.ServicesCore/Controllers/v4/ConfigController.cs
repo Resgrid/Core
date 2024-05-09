@@ -45,6 +45,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			else if (key == InfoConfig.DispatchAppKey)
 			{
 				result.Data.MapUrl = MappingConfig.GetDispatchAppOSMUrl();
+				result.Data.OpenWeatherApiKey = MappingConfig.DispatchOpenWeatherApiKey;
 			}
 			else if (key == InfoConfig.ResponderAppKey)
 			{

@@ -313,6 +313,54 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendReportDeliveryAsync(EmailNotification email, int departmentId, string reportUrl, string reportName)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			var body = string.Format("Your scheduled Resgrid report is attached. It will be as an email attachment. You can view the live report by clicking the link in the email and logging in.");
+
+			return await _emailProvider.SendReportDeliveryMail(email.To, email.Subject, body, DateTime.UtcNow.ToString("G") + " UTC", reportName, email.AttachmentName, email.AttachmentData, reportUrl);
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		public async Task<bool> SendDistributionListEmail(MimeMessage message, string emailAddress, string name, string listUsername, string listEmail)
 		{
 			// VERP https://www.limilabs.com/blog/verp-variable-envelope-return-path-net

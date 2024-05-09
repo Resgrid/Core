@@ -50,6 +50,7 @@ using Resgrid.WebCore.Middleware;
 using Sentry.Extensibility;
 using StackExchange.Redis;
 using Stripe;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 namespace Resgrid.Web
 {

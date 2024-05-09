@@ -79,11 +79,15 @@ namespace Resgrid.Providers.EmailProvider
 								to.Append("," + t);
 						}
 
-						var message = new PostmarkMessage("", to.ToString(), email.Subject, StringHelpers.StripHtmlTagsCharArray(email.HtmlBody), email.HtmlBody);
+						var message = new PostmarkMessage(email.From, to.ToString(), email.Subject, StringHelpers.StripHtmlTagsCharArray(email.HtmlBody), email.HtmlBody);
 						var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 
-						message.From = null;
-						var response = await newClient.SendMessageAsync(email.From, to.ToString(), email.Subject, StringHelpers.StripHtmlTagsCharArray(email.HtmlBody), email.HtmlBody);
+						if (!String.IsNullOrWhiteSpace(email.AttachmentName) && email.AttachmentData.Length > 0)
+						{
+							message.AddAttachment(email.AttachmentData, email.AttachmentName, email.AttachmentContentType);
+						}
+
+						var response = await newClient.SendMessageAsync(message);
 
 						if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
 						    !response.Message.Contains(

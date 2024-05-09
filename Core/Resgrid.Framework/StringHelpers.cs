@@ -225,6 +225,9 @@ namespace Resgrid.Framework
 
 		public static string SanitizeCoordinatesString(string source)
 		{
+			if (string.IsNullOrWhiteSpace(source))
+				return "";
+
 			HashSet<char> lstAllowedCharacters = new HashSet<char> { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '.'};
 
 			var resultStrBuilder = new StringBuilder(source.Length);
@@ -243,7 +246,6 @@ namespace Resgrid.Framework
 
 			return resultStrBuilder.ToString();
 		}
-
 
 	}
 }

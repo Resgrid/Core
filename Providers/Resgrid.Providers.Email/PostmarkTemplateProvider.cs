@@ -653,6 +653,52 @@ namespace Resgrid.Providers.EmailProvider
 			return false;
 		}
 
+		public async Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
+			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl)
+		{
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "title", subject },
+				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
+				{ "attachment_details", new []{
+				new Dictionary<string,object> {
+					{ "attachmnet_url",  reportUrl},
+					{ "url_name", "View Live Report" },
+					{ "attachment_name", attachmentFilename },
+					{ "attachment_size", StringHelpers.GetSizeInMemory(attachmentData.LongLength) },
+					{ "attachment_type", "PDF" },
+				}
+				}
+				},
+
+				{ "action_url", $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Profile/Reporting" },
+				{ "timestamp", sentOn }
+			};
+
+			try
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("ReportDelivery.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = DONOTREPLY_EMAIL;
+				newEmail.To.Add(email);
+				newEmail.AttachmentName = attachmentFilename;
+				newEmail.AttachmentData = attachmentData;
+				newEmail.AttachmentContentType = "application/pdf";
+				newEmail.From = DONOTREPLY_EMAIL;
+				newEmail.Subject = subject;
+
+				return await _emailSender.Send(newEmail);
+			}
+			catch (Exception)
+			{
+			}
+
+			return false;
+		}
+
 		private string GetTempate(string templateName)
 		{
 			var assembly = typeof(PostmarkTemplateProvider).Assembly;

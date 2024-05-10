@@ -21,6 +21,7 @@ install:
   - npm config get
   - node --version
   - npm --version
+  - npm install -g node-gyp
   - node-gyp -v
   - node -e "console.log(process.arch);"
   - node-gyp configure --msvs_version=2022

@@ -61,6 +61,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Sentry.Extensibility;
 using Resgrid.Web.ServicesCore.Middleware;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
+using OpenTelemetry.Metrics;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -472,65 +473,36 @@ namespace Resgrid.Web.ServicesCore
 					options.UseAspNetCore();
 				});
 
-			switch (TelemetryConfig.Exporter)
+
+			//builder.Logging.AddOpenTelemetry(options =>
+			//{
+			//	options
+			//		.SetResourceBuilder(
+			//			ResourceBuilder.CreateDefault()
+			//				.AddService("ResgridApi"))
+			//		.AddConsoleExporter();
+			//});
+			services.AddOpenTelemetry()
+				  .ConfigureResource(resource => resource.AddService("ResgridApi"))
+				  .WithTracing(tracing => tracing
+					  .AddAspNetCoreInstrumentation()
+					  .AddConsoleExporter())
+				  .WithMetrics(metrics => metrics
+					  .AddAspNetCoreInstrumentation()
+					  .AddConsoleExporter());
+
+			// For options which can be bound from IConfiguration.
+			services.Configure<AspNetCoreTraceInstrumentationOptions>(this.Configuration.GetSection("AspNetCoreInstrumentation"));
+
+			// For options which can be configured from code only.
+			services.Configure<AspNetCoreTraceInstrumentationOptions>(options =>
 			{
-				case "jaeger":
-					services.AddOpenTelemetry()
-						.WithTracing(builder => builder
-						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Jaeger:ServiceName")))
-							.AddAspNetCoreInstrumentation()
-							.AddHttpClientInstrumentation()
-							.AddJaegerExporter());
+				options.Filter = (req) =>
+				{
+					return req.Request.Host != null;
+				};
+			});
 
-					services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
-					break;
-				case "zipkin":
-					services.AddOpenTelemetry()
-						.WithTracing(builder => builder
-						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Zipkin:ServiceName")))
-							.AddAspNetCoreInstrumentation()
-							.AddHttpClientInstrumentation()
-							.AddZipkinExporter());
-
-					services.Configure<ZipkinExporterOptions>(this.Configuration.GetSection("Zipkin"));
-					break;
-				case "otlp":
-					// Adding the OtlpExporter creates a GrpcChannel.
-					// This switch must be set before creating a GrpcChannel/HttpClient when calling an insecure gRPC service.
-					// See: https://docs.microsoft.com/aspnet/core/grpc/troubleshoot#call-insecure-grpc-services-with-net-core-client
-					AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-
-					services.AddOpenTelemetry()
-						.WithTracing(builder => builder
-						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Otlp:ServiceName")))
-							.AddAspNetCoreInstrumentation()
-							.AddHttpClientInstrumentation()
-							.AddOtlpExporter(otlpOptions =>
-							{
-								otlpOptions.Endpoint = new Uri(this.Configuration.GetValue<string>("Otlp:Endpoint"));
-							}));
-					break;
-				default:
-					services.AddOpenTelemetry()
-						.WithTracing(builder => builder
-							.AddAspNetCoreInstrumentation()
-							.AddHttpClientInstrumentation()
-							.AddConsoleExporter());
-
-					// For options which can be bound from IConfiguration.
-					services.Configure<AspNetCoreTraceInstrumentationOptions>(this.Configuration.GetSection("AspNetCoreInstrumentation"));
-
-					// For options which can be configured from code only.
-					services.Configure<AspNetCoreTraceInstrumentationOptions>(options =>
-					{
-						options.Filter = (req) =>
-						{
-							return req.Request.Host != null;
-						};
-					});
-
-					break;
-			}
 
 			services.AddAuthentication("BasicAuthentication")
 				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);

@@ -4,7 +4,8 @@ pull_requests:
 
 skip_tags: true
 
-matrix:
+environment:
+  matrix:
     - PYTHON: "C:\\Python27"
     - nodejs_version: 18
 

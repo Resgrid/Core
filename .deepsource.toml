@@ -9,7 +9,3 @@ name = "javascript"
 
   [analyzers.meta]
   plugins = ["angular"]
-
-
-  [analyzers.meta]
-  runtime_version = "3.x.x"

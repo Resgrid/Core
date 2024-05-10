@@ -134,5 +134,9 @@ namespace Resgrid.Model.Repositories
 		Task<List<IdentityUser>> GetAllUsersForDepartmentWithinLimitsAsync(int departmentId, bool retrieveHidden);
 
 		Task<bool> CleanUpOIDCTokensAsync(DateTime timestamp);
+
+		Task<bool> ClearOutUserLoginAsync(string userId);
+
+		Task<bool> CleanUpOIDCTokensByUserAsync(string userId);
 	}
 }

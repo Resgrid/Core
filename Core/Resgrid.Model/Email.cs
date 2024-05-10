@@ -34,5 +34,11 @@ namespace Resgrid.Model
 		public string HtmlBody { get; set; }
 
 		public string TextBody { get; set; }
+
+		public string AttachmentName { get; set; }
+
+		public byte[] AttachmentData { get; set; }
+
+		public string AttachmentContentType { get; set; }
 	}
 }

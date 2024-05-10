@@ -5,57 +5,44 @@
 	/// </summary>
 	public static class ServiceBusConfig
 	{
-		public static string CallBroadcastQueueName = "resgridcalls";
-		public static string MessageBroadcastQueueName = "resgridmessages";
-		public static string NotificaitonBroadcastQueueName = "resgridnotifications";
-		public static string ShiftNotificationsQueueName = "resgridshiftsnots";
-		public static string EmailBroadcastQueueName = "resgridemails";
-		public static string SystemQueueName = "resgridsys";
+#if DEBUG
+		public static string CallBroadcastQueueName = "callbroadcasttest";
+		public static string MessageBroadcastQueueName = "messagebroadcasttest";
+		public static string NotificaitonBroadcastQueueName = "notificationbroadcasttest";
+		public static string ShiftNotificationsQueueName = "shiftsnotificationstest";
+		public static string EmailBroadcastQueueName = "emailbroadcasttest";
+		public static string SystemQueueName = "systemtest";
+		public static string PaymentQueueName = "paymenttest";
+		public static string AuditQueueName = "audittest";
+		public static string UnitLoactionQueueName = "unitlocationtest";
+		public static string PersonnelLoactionQueueName = "personnellocationtest";
+#else
+		public static string CallBroadcastQueueName = "callbroadcast";
+		public static string MessageBroadcastQueueName = "messagebroadcast";
+		public static string NotificaitonBroadcastQueueName = "notificationbroadcast";
+		public static string ShiftNotificationsQueueName = "shiftsnotifications";
+		public static string EmailBroadcastQueueName = "emailbroadcast";
+		public static string SystemQueueName = "system";
 		public static string PaymentQueueName = "payment";
 		public static string AuditQueueName = "audit";
 		public static string UnitLoactionQueueName = "unitlocation";
 		public static string PersonnelLoactionQueueName = "personnellocation";
+#endif
 
 		#region Azure Service Bus Values
-		public static string SignalRServiceBusConnectionString = "";
-		public static string SignalRTopicName = "";
-
-		public static string AzureQueueSystemConnectionString = "";
-
-		public static string AzureEventingTopicConnectionString = "";
-		public static string EventingTopicQueueName = "";
-
 		public static string AzureNotificationHub_FullConnectionString = "";
-		public static string AzureNotificationHub_PushUrl = "";
-
-		public static string AzureServiceBusConnectionString = "";
-		public static string AzureServiceBusOwnerName = "";
-		public static string AzureServiceBusOwnerSecret = "";
-		public static string AzureServiceBusRootName = "";
-		public static string AzureQueueOwnerSecret = "";
-
-		public static string AzureServiceBusWorkerConnectionString = "";
-
-		public static string AzureQueueConnectionString = "";
-
-		public static string AzureQueueMessageConnectionString = "";
-
-		public static string AzureQueueNotificationConnectionString = "";
-
-		public static string AzureQueueShiftsConnectionString = "";
-
-		public static string AzureQueueEmailConnectionString = "";
+		public static string AzureNotificationHub_PushUrl = "rgpush";
 
 		public static string AzureUnitNotificationHub_FullConnectionString = "";
-		public static string AzureUnitNotificationHub_PushUrl = "";
+		public static string AzureUnitNotificationHub_PushUrl = "unit";
 		#endregion Azure Service Bus Values
 
 		#region RabbitMQ Bus Values
-		public static string RabbitHostname = "localhost";
-		public static string RabbitHostname2 = ""; // For 3 host cluster, node 2
-		public static string RabbitHostname3 = ""; // For 3 host cluster, node 3
-		public static string RabbitUsername = "guest";
-		public static string RabbbitPassword = "guest";
+		public static string RabbitHostname = "rgdevinfaserver";
+		public static string RabbitHostname2 = "rgdevinfaserver2"; // For 3 host cluster, node 2
+		public static string RabbitHostname3 = "rgdevinfaserver3"; // For 3 host cluster, node 3
+		public static string RabbitUsername = "";
+		public static string RabbbitPassword = "";
 		public static string RabbbitExchange = "";
 		#endregion RabbitMQ Bus Values
 	}

@@ -154,5 +154,7 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		/// <returns>Task&lt;List&lt;ScheduledTask&gt;&gt;.</returns>
 		Task<List<ScheduledTask>> GetAllUpcomingStatusScheduledTasksAsync();
+
+		Task<List<ScheduledTask>> GetAllUpcomingOrRecurringReportDeliveryTasksAsync();
 	}
 }

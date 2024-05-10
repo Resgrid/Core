@@ -12,6 +12,7 @@ using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 using System;
 using Resgrid.Model.Helpers;
 using System.Linq;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -41,6 +42,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_Create)]
 		public async Task<IActionResult> New()
 		{
 			var model = new NewWorkshiftView();
@@ -54,7 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Policy = ResgridResources.Voice_Create)]
+		[Authorize(Policy = ResgridResources.Shift_Create)]
 		public async Task<IActionResult> New(NewWorkshiftView model, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
@@ -76,7 +78,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				var savedShift = _workShiftsService.AddWorkshiftAsync(model.Shift, cancellationToken);
+				var savedShift = await _workShiftsService.AddWorkshiftAsync(model.Shift, cancellationToken);
 
 				return RedirectToAction("Index", "Shifts");
 			}
@@ -85,6 +87,58 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_Update)]
+		public async Task<IActionResult> Edit(string shiftId)
+		{
+			var model = new NewWorkshiftView();
+			model.Shift = await _workShiftsService.GetWorkshiftByIdAsync(shiftId);
+
+			if (model.Shift == null)
+				Unauthorized();
+
+			if (model.Shift.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			var dep = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Shift.Start = model.Shift.Start.TimeConverter(dep);
+			model.Shift.End = model.Shift.End.TimeConverter(dep);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Shift_Create)]
+		public async Task<IActionResult> Edit(NewWorkshiftView model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				model.Shift.DepartmentId = DepartmentId;
+				model.Shift.AddedOn = DateTime.UtcNow;
+				model.Shift.AddedById = UserId;
+
+				if (model.UnitsAssigned != null && model.UnitsAssigned.Any())
+				{
+					model.Shift.Entities = new List<WorkshiftEntity>();
+					//List<string> unitIds = model.UnitsAssigned.Split(',').ToList();
+
+					foreach (var unitId in model.UnitsAssigned)
+					{
+						var unit = new WorkshiftEntity();
+						unit.BackingId = unitId;
+						model.Shift.Entities.Add(unit);
+					}
+				}
+
+				var savedShift = await _workShiftsService.EditWorkshiftAsync(model.Shift, UserId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+				return RedirectToAction("Index", "Shifts");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_View)]
 		public async Task<IActionResult> ViewDay(string dayId)
 		{
 			var model = new ViewWorkshiftDayView();
@@ -102,9 +156,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+			model.Personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 
 			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_Delete)]
+		public async Task<IActionResult> DeleteShift(string shiftId)
+		{
+			var model = new DeleteStaticShiftView();
+
+			model.Shift = await _workShiftsService.GetWorkshiftByIdAsync(shiftId);
+
+			if (model.Shift == null)
+				Unauthorized();
+
+			if (model.Shift.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Shift_Delete)]
+		public async Task<IActionResult> DeleteShift(DeleteStaticShiftView model, CancellationToken cancellationToken)
+		{
+			model.Shift = await _workShiftsService.GetWorkshiftByIdAsync(model.Shift.WorkshiftId);
+
+			if (model.Shift == null)
+				Unauthorized();
+
+			if (model.Shift.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			await _workShiftsService.DeleteWorkshiftByIdAsync(model.Shift.WorkshiftId, UserId, DepartmentId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+			return RedirectToAction("Index", "Shifts");
 		}
 	}
 }

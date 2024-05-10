@@ -411,6 +411,28 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectUnitStatesByUnitInDateRangeQuery { get; set; }
 		#endregion Unit States
 
+		#region Workshifts
+		public string WorkshiftsTable { get; set; }
+		public string WorkshiftDaysTable { get; set; }
+		public string WorkshiftEntitiesTable { get; set; }
+		public string WorkshiftFillsTable { get; set; }
+		public string SelectAllWorkshiftsAndDaysByDidQuery { get; set; }
+		public string SelectWorkshiftByIdQuery { get; set; }
+		public string SelectWorkshiftEntitiesByWorkshiftIdQuery { get; set; }
+		public string SelectWorkshiftFillsByWorkshiftIdQuery { get; set; }
+		#endregion Workshifts
+
+		#region CallReferences
+		public string CallReferencesTable { get; set; }
+		public string SelectAllCallReferencesBySourceCallIdQuery { get; set; }
+		public string SelectAllCallReferencesByTargetCallIdQuery { get; set; }
+		#endregion CallReferences
+
+		#region Scheduled Tasks
+		public string ScheduledTasksTable { get; set; }
+		public string SelectAllUpcomingOrRecurringReportTasksQuery { get; set; }
+		#endregion Scheduled Tasks
+
 		// Identity
 
 		#region Table Names
@@ -455,16 +477,5 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string RemoveLoginForUserQuery { get; set; }
 		public string UpdateClaimForUserQuery { get; set; }
 		#endregion
-
-		#region Workshifts
-		public string WorkshiftsTable { get; set; }
-		public string WorkshiftDaysTable { get; set; }
-		public string WorkshiftEntitiesTable { get; set; }
-		public string WorkshiftFillsTable { get; set; }
-		public string SelectAllWorkshiftsAndDaysByDidQuery { get; set; }
-		public string SelectWorkshiftByIdQuery { get; set; }
-		public string SelectWorkshiftEntitiesByWorkshiftIdQuery { get; set; }
-		public string SelectWorkshiftFillsByWorkshiftIdQuery { get; set; }
-		#endregion Workshifts
 	}
 }

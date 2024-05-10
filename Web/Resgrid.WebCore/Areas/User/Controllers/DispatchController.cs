@@ -225,6 +225,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				List<int> dispatchingRoleIds = new List<int>();
 				List<int> activeProtocols = new List<int>();
 				List<int> pendingProtocols = new List<int>();
+				List<int> linkedCalls = new List<int>();
 
 				foreach (var key in collection.Keys)
 				{
@@ -259,6 +260,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						if (collection[key] == "1")
 							pendingProtocols.Add(pendingProtocolId);
+					}
+					else if (key.ToString().StartsWith("linkedCall_"))
+					{
+						var linkedCallId = int.Parse(key.ToString().Replace("linkedCall_", ""));
+						linkedCalls.Add(linkedCallId);
 					}
 				}
 
@@ -344,6 +350,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 							protocol.Data = collection[$"protocolCode_{id}"];
 
 						model.Call.Protocols.Add(protocol);
+					}
+				}
+
+				model.Call.References = new List<CallReference>();
+				if (linkedCalls.Any())
+				{
+					foreach (var id in linkedCalls)
+					{
+						if (!model.Call.References.Any(x => x.TargetCallId == id))
+						{
+							CallReference reference = new CallReference();
+							reference.TargetCallId = id;
+							reference.AddedOn = DateTime.UtcNow;
+							reference.AddedByUserId = UserId;
+
+							if (collection.ContainsKey($"linkedCallNote_{id}"))
+								reference.Note = collection[$"linkedCallNote_{id}"];
+
+							model.Call.References.Add(reference);
+						}
 					}
 				}
 
@@ -455,6 +481,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			UpdateCallView model = new UpdateCallView();
 			model = await FillUpdateCallView(model);
 			model.Call = await _callsService.GetCallByIdAsync(callId);
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true);
 			model.CallPriority = model.Call.Priority;
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
@@ -480,7 +507,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				var call = await _callsService.GetCallByIdAsync(model.Call.CallId);
-				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 
 				call.NatureOfCall = System.Net.WebUtility.HtmlDecode(model.Call.NatureOfCall);
 				call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
@@ -513,6 +540,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				List<int> dispatchingGroupIds = new List<int>();
 				List<int> dispatchingUnitIds = new List<int>();
 				List<int> dispatchingRoleIds = new List<int>();
+				List<int> linkedCalls = new List<int>();
+
 				foreach (var key in collection.Keys)
 				{
 					if (key.ToString().StartsWith("dispatchUser_"))
@@ -534,6 +563,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var roleId = int.Parse(key.ToString().Replace("dispatchRole_", ""));
 						dispatchingRoleIds.Add(roleId);
+					}
+					else if (key.ToString().StartsWith("linkedCall_"))
+					{
+						var linkedCallId = int.Parse(key.ToString().Replace("linkedCall_", ""));
+						linkedCalls.Add(linkedCallId);
 					}
 				}
 
@@ -644,6 +678,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				if (linkedCalls.Any())
+				{
+					var callLinksToRemove = call.References.Select(x => x.TargetCallId).Where(y => !linkedCalls.Contains(y)).ToList();
+
+					foreach (var id in callLinksToRemove)
+					{
+						var callRef = call.References.First(x => x.TargetCallId == id);
+						call.References.Remove(callRef);
+
+						await _callsService.DeleteCallReferenceAsync(callRef, cancellationToken);
+					}
+
+					foreach (var id in linkedCalls)
+					{
+						if (id == call.CallId)
+							continue; // Can't link to current call.
+
+						if (!call.References.Any(x => x.TargetCallId == id))
+						{
+							CallReference reference = new CallReference();
+							reference.TargetCallId = id;
+							reference.AddedOn = DateTime.UtcNow;
+							reference.AddedByUserId = UserId;
+
+							if (collection.ContainsKey($"linkedCallNote_{id}"))
+								reference.Note = collection[$"linkedCallNote_{id}"];
+
+							call.References.Add(reference);
+						}
+					}
+				}
+
 				await _callsService.SaveCallAsync(call, cancellationToken);
 
 				if (model.RebroadcastCall)
@@ -721,8 +787,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallPriority = (CallPriority)model.Call.Priority;
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
-
-			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true);
+			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true);
 
 			if (model.Stations == null)
 				model.Stations = new List<DepartmentGroup>();
@@ -755,6 +821,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Call = new Call();
 			model = await FillNewCallView(model);
 			model.Call.LoggedOn = DateTime.UtcNow.TimeConverter(model.Department);
+			model.Call.ReportingUserId = UserId;
+			model.CallStates = model.CallState.ToSelectList();
 
 			return View(model);
 		}
@@ -791,6 +859,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				List<int> dispatchingGroupIds = new List<int>();
 				List<int> dispatchingUnitIds = new List<int>();
 				List<int> dispatchingRoleIds = new List<int>();
+				List<int> linkedCalls = new List<int>();
+
 				foreach (var key in collection.Keys)
 				{
 					if (key.ToString().StartsWith("dispatchUser_"))
@@ -812,6 +882,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var roleId = int.Parse(key.ToString().Replace("dispatchRole_", ""));
 						dispatchingRoleIds.Add(roleId);
+					}
+					else if (key.ToString().StartsWith("linkedCall_"))
+					{
+						var linkedCallId = int.Parse(key.ToString().Replace("linkedCall_", ""));
+						linkedCalls.Add(linkedCallId);
 					}
 				}
 
@@ -871,7 +946,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				model.Call.References = new List<CallReference>();
+				if (linkedCalls.Any())
+				{
+					foreach (var id in linkedCalls)
+					{
+						if (!model.Call.References.Any(x => x.TargetCallId == id))
+						{
+							CallReference reference = new CallReference();
+							reference.TargetCallId = id;
+							reference.AddedOn = DateTime.UtcNow;
+							reference.AddedByUserId = UserId;
+
+							if (collection.ContainsKey($"linkedCallNote_{id}"))
+								reference.Note = collection[$"linkedCallNote_{id}"];
+
+							model.Call.References.Add(reference);
+						}
+					}
+				}
+
 				model.Call.CallSource = (int)CallSources.User;
+				model.Call.ClosedByUserId = UserId;
+				model.Call.ClosedOn = DateTime.UtcNow;
+				model.Call.CompletedNotes = System.Net.WebUtility.HtmlDecode(model.ClosedCallNotes);
+				model.Call.State = (int)model.CallState;
 
 				if (!string.IsNullOrWhiteSpace(model.Call.GeoLocationData) && model.Call.GeoLocationData.Length > 1 && string.IsNullOrWhiteSpace(model.Call.Address))
 				{
@@ -935,6 +1034,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CloseCallView model = new CloseCallView();
 			model = await FillCloseCallView(model);
 			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+				Unauthorized();
+
 			model.CallId = call.CallId;
 
 			return View(model);
@@ -977,7 +1080,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (call == null)
 				Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
 			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
 
 			if (call.CallNotes == null || !call.CallNotes.Any())
@@ -1019,7 +1122,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (call == null)
 				Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
 			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
 
 			if (call.CallNotes == null || !call.CallNotes.Any())
@@ -1055,22 +1158,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Policy = ResgridResources.Call_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> AddCallNote([FromBody] AddCallNoteInput model, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
-				Unauthorized();
+			// Leaving this here for a mental note. Adding a note to call isn't updating the call, so we don't need to check for edit permissions.
+			// But some users might be expecting this behavior, so I'll leave this here commented out for now and if I get a lot of requests for it, I'll add it back in
+			// as a full permission.
+			//if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+			//	Unauthorized();
 
-			var note = new CallNote();
-			note.UserId = UserId;
-			note.CallId = model.CallId;
-			note.Note = model.Note;
-			note.Timestamp = DateTime.UtcNow;
-			note.Source = (int)CallNoteSources.Web;
+			if (ModelState.IsValid && model.CallId > 0)
+			{
+				var call = await _callsService.GetCallByIdAsync(model.CallId);
 
-			await _callsService.SaveCallNoteAsync(note, cancellationToken);
+				if (call == null)
+					return new StatusCodeResult((int)HttpStatusCode.NotFound);
 
-			return new StatusCodeResult((int)HttpStatusCode.OK);
+				if (!await _authorizationService.CanUserViewCallAsync(UserId, model.CallId))
+					Unauthorized();
+
+				var note = new CallNote();
+				note.UserId = UserId;
+				note.CallId = model.CallId;
+				note.Note = model.Note;
+				note.Timestamp = DateTime.UtcNow;
+				note.Source = (int)CallNoteSources.Web;
+
+				await _callsService.SaveCallNoteAsync(note, cancellationToken);
+
+				return new StatusCodeResult((int)HttpStatusCode.OK);
+			}
+
+			return new StatusCodeResult((int)HttpStatusCode.BadRequest);
 		}
 
 		[HttpGet]
@@ -1085,7 +1204,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			call.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			List<CallNoteJson> callNotes = new List<CallNoteJson>();
 
@@ -1136,8 +1255,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true);
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true);
 			model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 
 			return View(model);
 		}
@@ -1147,11 +1267,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> CallExportEx(string query)
 		{
 			if (String.IsNullOrWhiteSpace(query))
-				Unauthorized();
+				return NotFound();
 
-			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query)).Trim();
-
-			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			string decryptedQuery = "";
+			string decodedQuery = "";
+			try
+			{
+				decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query)).Trim();
+				decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			}
+			catch (Exception ex)
+			{
+				return NotFound();
+			}
 
 			if (!decryptedQuery.Contains("|"))
 			{
@@ -1170,7 +1298,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
@@ -1178,6 +1306,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
 
 				return View(model);
 			}
@@ -1197,7 +1326,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
@@ -1298,7 +1427,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			var call = await _callsService.GetCallByIdAsync(callId);
-			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false);
 
 			if (call.Attachments != null && call.Attachments.Count > 0)
 			{
@@ -1437,7 +1566,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			List<CallDispatchJson> dispatchJson = new List<CallDispatchJson>();
 			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(DepartmentId);
 			var call = await _callsService.GetCallByIdAsync(callId);
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 
 			foreach (var userDispatch in call.Dispatches)
 			{
@@ -1810,6 +1939,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(callPrioritiesJson);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCallsForSelectList(string term)
+		{
+			CallSelectListJson callSelectJson = new CallSelectListJson();
+			callSelectJson.results = new List<CallSelectListJsonResult>();
+
+			var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, DateTime.UtcNow.AddDays(-14), DateTime.UtcNow);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			calls = calls.OrderByDescending(x => x.LoggedOn).ToList();
+
+			if (calls != null && calls.Any())
+			{
+				foreach (var call in calls)
+				{
+					CallSelectListJsonResult json = new CallSelectListJsonResult();
+					json.id = call.CallId;
+					json.text = $"{call.Number} - {call.GetStateText()} - {call.LoggedOn.FormatForDepartment(department)} - {call.Name}";
+
+					if (String.IsNullOrWhiteSpace(term) || json.text.Contains(term))
+						callSelectJson.results.Add(json);
+				}
+			}
+
+			return Json(callSelectJson);
 		}
 
 		#region Private Helpers

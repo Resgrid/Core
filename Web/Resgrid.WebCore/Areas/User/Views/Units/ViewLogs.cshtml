@@ -1,69 +1,69 @@
-﻿
-@model Resgrid.Web.Areas.User.Models.Units.ViewLogsView
+﻿@model Resgrid.Web.Areas.User.Models.Units.ViewLogsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
 @{
-	ViewBag.Title = "Resgrid | View Unit Logs";
+    ViewBag.Title = "Resgrid | " + @localizer["ViewUnitLogsHeader"];
 }
 @section Styles
-{
+    {
 
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>View @Model.Unit.Name Logs</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Units" asp-action="Index" asp-route-area="User">Units</a>
-			</li>
-			<li class="active">
-				<strong>View @Model.Unit.Name Logs</strong>
-			</li>
-		</ol>
-	</div>
-	<div class="col-sm-8">
-		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-primary top-button" asp-controller="Units" asp-action="AddLog" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId">Add Log</a>
-		</div>
-	</div>
-</div>
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-4">
+            <h2>@commonLocalizer["View"] @Model.Unit.Name @commonLocalizer["View"]</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+                </li>
+                <li>
+                    <a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a>
+                </li>
+                <li class="active">
+                    <strong>@commonLocalizer["View"] @Model.Unit.Name @commonLocalizer["Logs"]</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a class="btn btn-primary top-button" asp-controller="Units" asp-action="AddLog" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId">@localizer["AddLog"]</a>
+            </div>
+        </div>
+    </div>
 
-<div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th class='span3'>
-										Timestamp
-									</th>
-									<th>Narrative</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var log in Model.Logs)
-								{
-									<tr>
-										<td>@log.Timestamp.TimeConverterToString(Model.Department)</td>
-										<td>@Html.Raw(log.Narrative)</td>
-									</tr>
-								}
-							</tbody>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class='span3'>
+                                            @commonLocalizer["Timestamp"]
+                                        </th>
+                                        <th>@commonLocalizer["Narrative"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var log in Model.Logs)
+                                {
+                                    <tr>
+                                        <td>@log.Timestamp.TimeConverterToString(Model.Department)</td>
+                                        <td>@Html.Raw(log.Narrative)</td>
+                                    </tr>
+                                }
+                            </tbody>
 
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
+    {
 
 }

@@ -1,0 +1,381 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountOwner" xml:space="preserve">
+    <value>Propietario de la cuenta</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>DIRECCIÓN</value>
+  </data>
+  <data name="AddressError" xml:space="preserve">
+    <value>No pudimos verificar la dirección suministrada. Verifique para asegurarse de que sea correcto antes de continuar.</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Esta es la dirección de su departamento; Podría ser la dirección de una sola estación o su oficina de distrito. Esta dirección se utiliza para ayudar a localizar su distrito y área, y se utiliza como alternativa para algunas operaciones (es decir, centrar la gran junta).</value>
+  </data>
+  <data name="ApiRssSettings" xml:space="preserve">
+    <value>Configuración de API y RSS</value>
+  </data>
+  <data name="ApiSettingsHeader" xml:space="preserve">
+    <value>Configuración de API</value>
+  </data>
+  <data name="CallSettingsHeader" xml:space="preserve">
+    <value>Configuración de importación de llamadas</value>
+  </data>
+  <data name="CallSorting" xml:space="preserve">
+    <value>Clasificación de llamadas</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Ciudad</value>
+  </data>
+  <data name="CityLabel" xml:space="preserve">
+    <value>Ciudad</value>
+  </data>
+  <data name="CompletedOn" xml:space="preserve">
+    <value>Completado en</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="DefaultMapCenterLabel" xml:space="preserve">
+    <value>Coordenadas GPS de Map Center predeterminadas</value>
+  </data>
+  <data name="DeleteInvite" xml:space="preserve">
+    <value>Eliminar invitación</value>
+  </data>
+  <data name="DeleteInviteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente esta invitación y el enlace que el usuario tiene en el correo electrónico dará como resultado un error. ¿Estás seguro de que quieres eliminar la invitación?</value>
+  </data>
+  <data name="DepartmentAddressHeader" xml:space="preserve">
+    <value>Dirección del departamento</value>
+  </data>
+  <data name="DepartmentName" xml:space="preserve">
+    <value>Nombre de Departamento</value>
+  </data>
+  <data name="DepartmentSettingsHeader" xml:space="preserve">
+    <value>Configuración del departamento</value>
+  </data>
+  <data name="DisableAutoAvailable" xml:space="preserve">
+    <value>Desactivar automáticamente disponible</value>
+  </data>
+  <data name="DisableAutoAvailableHelp" xml:space="preserve">
+    <value>Desactivar automáticamente establecer el estado del personal en el que esté disponible después de una hora</value>
+  </data>
+  <data name="DispatchImportEmail" xml:space="preserve">
+    <value>Enviar correo electrónico de importación</value>
+  </data>
+  <data name="DispatchImportEmailHelp" xml:space="preserve">
+    <value>Esta es su dirección de correo electrónico de atención, todos los usuarios de su departamento (que tienen notificaciones de llamadas habilitadas) recibirán la alerta de llamadas</value>
+  </data>
+  <data name="DispatchSettings" xml:space="preserve">
+    <value>Configuración de envío</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Configuración de envío</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Dirección de correo electrónico</value>
+  </data>
+  <data name="EmailAddresses" xml:space="preserve">
+    <value>Correos electrónicos</value>
+  </data>
+  <data name="EmailAddressesHelp" xml:space="preserve">
+    <value>Ingrese las direcciones de correo electrónico separadas por la coma (es decir, "test1@test.com, test2@test.com")</value>
+  </data>
+  <data name="EmailType" xml:space="preserve">
+    <value>Tipo de correo electrónico</value>
+  </data>
+  <data name="ForceDepartmentUpdate" xml:space="preserve">
+    <value>Actualización del departamento de fuerza</value>
+  </data>
+  <data name="ForceDepartmentUpdateInfo" xml:space="preserve">
+    <value>REgrid almacena en caché algunos datos del departamento para aumentar el rendimiento. Algunos ejemplos de datos almacenados en caché son los niveles de personal, la configuración del departamento, los roles de personal \ Groups \ Names. Si tiene problemas en los que algunos datos del departamento son incorrectos, es posible que desee borrar el caché de los departamentos.</value>
+  </data>
+  <data name="InvitesHeader" xml:space="preserve">
+    <value>Invitaciones</value>
+  </data>
+  <data name="LatitudePlaceholder" xml:space="preserve">
+    <value>Latitud del centro de mapeo</value>
+  </data>
+  <data name="LatitudePlaceholderHelp" xml:space="preserve">
+    <value>Latitud (notación decimal: es decir, 39.1517)</value>
+  </data>
+  <data name="LongitudePlaceholder" xml:space="preserve">
+    <value>Longitud del centro de mapeo</value>
+  </data>
+  <data name="LongitudePlaceholderHelp" xml:space="preserve">
+    <value>Longitud (notación decimal: es decir, -119.4571)</value>
+  </data>
+  <data name="MinutesToKeepOpen" xml:space="preserve">
+    <value>Minutos para mantener la llamada abierta</value>
+  </data>
+  <data name="MinutesToKeepOpenHelp" xml:space="preserve">
+    <value>El valor anterior mantendrá las llamadas importadas de correo electrónico abiertas por tanto tiempo, luego se cerrarán. La casilla de verificación de Prune también debe verificarse para que se produzca el cierre automático.</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="PersonCallDispatchStatusLabel" xml:space="preserve">
+    <value>Estado de envío de llamadas de persona</value>
+  </data>
+  <data name="PersonCallReleaseStatusLabel" xml:space="preserve">
+    <value>Estado de liberación de llamadas de la persona</value>
+  </data>
+  <data name="PersonnelSorting" xml:space="preserve">
+    <value>Clasificación de personal</value>
+  </data>
+  <data name="PersonnelStaffingResetHeader" xml:space="preserve">
+    <value>Restablecimiento de personal de personal</value>
+  </data>
+  <data name="PersonnelStaffingResetInfo" xml:space="preserve">
+    <value>Si necesita restablecer todo el nivel de personal de su personal todos los días, puede configurarlo aquí. Un ejemplo sería restablecer el personal para que no esté disponible todos los días, de modo que para los días de flag roja está seguro de que el personal está marcado disponible después del reinicio.</value>
+  </data>
+  <data name="PersonnelStatusResetHeader" xml:space="preserve">
+    <value>Restablecer el estado del personal</value>
+  </data>
+  <data name="PersonnelStatusResetInfo" xml:space="preserve">
+    <value>Si necesita restablecer todos los estados de su personal todos los días, puede configurarlo aquí. Un ejemplo sería restablecer el estado de "mantener" todos los días para que sepa que el estado del personal se restablece.</value>
+  </data>
+  <data name="PostalCodeLabel" xml:space="preserve">
+    <value>Código postal/postal</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Provisión RSS \ ATM URLS</value>
+  </data>
+  <data name="ProvisionFailureBody" xml:space="preserve">
+    <value>Resgrid no pudo provocar el número que solicitó, vuelva a intentar la operación con otro número. Si no puede aprovisionar un número, contáctenos y háganoslo saber.</value>
+  </data>
+  <data name="ProvisionFailureHeader" xml:space="preserve">
+    <value>Falla de la provisión</value>
+  </data>
+  <data name="PruneCalls" xml:space="preserve">
+    <value>Prune (cierre automático) llamadas</value>
+  </data>
+  <data name="PruneCallsHelp" xml:space="preserve">
+    <value>Esto cerrará automáticamente sus llamadas creadas automáticamente (es decir, a través de un proceso de importación de correo electrónico, texto o audio)</value>
+  </data>
+  <data name="Regenerate" xml:space="preserve">
+    <value>Regenerar URL RSS</value>
+  </data>
+  <data name="RegenerateWarning" xml:space="preserve">
+    <value>Advertencia: la regeneración de sus URL RSS \ Atom requerirá que todos los lectores \ consumidores actualicen a la nueva URL. ¿Estás seguro de que quieres regenerar?</value>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>Reenviar Invitación</value>
+  </data>
+  <data name="ResendInviteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto reenviará esta invitación a la dirección de correo electrónico de invitación y restablecerá la fecha enviada. ¿Estás seguro de que quieres reenviar esta invitación?</value>
+  </data>
+  <data name="ResetStaffingDaily" xml:space="preserve">
+    <value>Reiniciar personal diariamente?</value>
+  </data>
+  <data name="ResetStaffingLevelTo" xml:space="preserve">
+    <value>Restablecer el nivel de personal para</value>
+  </data>
+  <data name="ResetStatusDaily" xml:space="preserve">
+    <value>Restablecer el estado diariamente?</value>
+  </data>
+  <data name="ResetStatusDailyTime" xml:space="preserve">
+    <value>Tiempo para restablecer el estado</value>
+  </data>
+  <data name="ResetStatusDailyTo" xml:space="preserve">
+    <value>Restablecer el estado de</value>
+  </data>
+  <data name="RssActiveCallFeedHeader" xml:space="preserve">
+    <value>Feed de llamada activa RSS</value>
+  </data>
+  <data name="RssActiveCallFeedInfo" xml:space="preserve">
+    <value>Resgrid permite acceder a las llamadas activas de su departamento a través de una alimentación RSS. Esto permite que cualquier lector de feed (como un lector de blog, o incluso Microsoft Outlook) muestre y notifique activamente a nuevas llamadas. Para el regrid compatible máximo generará una URL única para los lectores RSS 2.0. Esta URL no tiene otra protección (nombre de usuario \ contraseña, etc.), por lo que es importante que no se comparta públicamente si no tiene públicos los datos de llamadas activas.</value>
+  </data>
+  <data name="RssActiveCallNoFeedInfo" xml:space="preserve">
+    <value>Su departamento no tiene URL de alimentación RSS aprovisionadas. Haga clic en el botón a continuación para provocar sus URL RSS. Solo elaborar URL RSS \ Atom cuando su departamento lo necesite.</value>
+  </data>
+  <data name="SavedDispatchSettings" xml:space="preserve">
+    <value>Configurado con éxito la configuración de envío.</value>
+  </data>
+  <data name="SendInvites" xml:space="preserve">
+    <value>Enviar invitaciones</value>
+  </data>
+  <data name="SentOn" xml:space="preserve">
+    <value>Enviado</value>
+  </data>
+  <data name="SetStatusforShiftPersonnelOnDispatchLabel" xml:space="preserve">
+    <value>Establecer el estado para el personal de turno en el envío</value>
+  </data>
+  <data name="ShiftSettings" xml:space="preserve">
+    <value>Configuración de cambio</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Provincia del estado</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Provincia del estado</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Calle</value>
+  </data>
+  <data name="StreetLabel" xml:space="preserve">
+    <value>Calle</value>
+  </data>
+  <data name="TimeResetStaffingDaily" xml:space="preserve">
+    <value>Tiempo para restablecer el personal</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Zona horaria</value>
+  </data>
+  <data name="UnitSorting" xml:space="preserve">
+    <value>Clasificación de unidades</value>
+  </data>
+  <data name="Use24HourTime" xml:space="preserve">
+    <value>Use tiempo las 24 horas</value>
+  </data>
+  <data name="UseShiftForGroupDispatchLabel" xml:space="preserve">
+    <value>Usar turno para el envío grupal</value>
+  </data>
+  <data name="Zip" xml:space="preserve">
+    <value>Código postal/postal</value>
+  </data>
+  <data name="DeleteDepartmentHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteDepartmentInfo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RequestDeletion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CancelDepartmentDeletion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteDepartmentSettingsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
+    <value />
+  </data>
+</root>

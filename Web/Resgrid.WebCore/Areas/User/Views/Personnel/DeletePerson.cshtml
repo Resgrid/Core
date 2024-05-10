@@ -1,20 +1,21 @@
 ﻿@model Resgrid.Web.Areas.User.Models.DeletePersonModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-		ViewBag.Title = "Resgrid | Delete Person";
+		ViewBag.Title = "Resgrid | " + @localizer["DeletePersonHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Delete User</h2>
+		<h2>@localizer["DeletePersonHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
 			</li>
 			<li class="active">
-				<strong>Delete User</strong>
+				<strong>@localizer["DeletePersonHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -33,34 +34,22 @@
 
 						<div class='page-header'>
 							<h3>
-								Delete @(await UserHelper.GetFullNameForUser(Model.User.UserId))
+								@commonLocalizer["Delete"] @(await UserHelper.GetFullNameForUser(Model.User.UserId))
 							</h3>
 						</div>
 						<div class="alert alert-error">
-							<strong>Are you sure you want to delete this user?</strong> If you choose to delete this user the information below will be permanently deleted. The recommended procedure is to disable the user if they leave the department or organization. Only delete the user after enough time has gone by, the account was a mistake or never used.
+							<strong>@localizer["DeleteAreYouSure"]</strong>@localizer["DeleteAreYouSure2"]
 							<br /><br />
-							<strong>Data that is Deleted</strong>
-							<ul>
-								<li>User Account</li>
-								<li>Action History</li>
-								<li>State History</li>
-								<li>Call and work logs</li>
-								<li>Unit logs</li>
-								<li>Messages Sent or Received</li>
-							</ul>
-
-							<strong>Data that is Altered</strong>
-							<ul>
-								<li>Calls where they are the reporting user or closing user is mapped to the Departments Managing User</li>
-							</ul>
+							<strong>@localizer["SpecialNote"]</strong>
+							<span>@localizer["SpecialNoteText"]</span>
 						</div>
 						<hr />
 						<div class='alert alert-warning'>
-							<i class='picons-16-basic1-104'></i>Click the checkbox below to delete this user.
+							<i class='picons-16-basic1-104'></i>@localizer["CheckToDelete"]
 						</div>
 
 						<div class="form-group">
-						  <label class="col-sm-2 control-label">Confirm Delete?</label>
+						  <label class="col-sm-2 control-label">@localizer["ConfirmDelete"]</label>
 						  <div class="col-sm-10">
 						    <div class="checkbox checkbox-primary">
 						      <input type="checkbox" class="checkbox checkbox-primary" asp-for="AreYouSure">
@@ -71,8 +60,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Delete Person</button>
+								<a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@commonLocalizer["Delete"]</button>
 							</div>
 						</div>
 					</form>

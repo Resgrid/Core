@@ -1,304 +1,309 @@
 ﻿@using Resgrid.Web.Areas.User.Models
 @using Resgrid.Model.Identity;
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.HomeDashboard> localizer
 
-@model  Tuple<string, DepartmentGroup, ActionLog, UserState, string, string, UserStatusTableModel>
+@model Tuple<string, DepartmentGroup, ActionLog, UserState, string, string, UserStatusTableModel>
 
 @{
-	var userId = Model.Item1;
-	var group = Model.Item2;
-	var al = Model.Item3;
-	var us = Model.Item4;
-	var name = Model.Item5;
-	var roles = Model.Item6;
+    var userId = Model.Item1;
+    var group = Model.Item2;
+    var al = Model.Item3;
+    var us = Model.Item4;
+    var name = Model.Item5;
+    var roles = Model.Item6;
 
-	var model = Model.Item7;
+    var model = Model.Item7;
 
-	var department = model.Department;
-	var stations = model.Stations;
-	var states = model.States;
-	var staffingLevels = model.StaffingLevels;
+    var department = model.Department;
+    var stations = model.Stations;
+    var states = model.States;
+    var staffingLevels = model.StaffingLevels;
 
-	int? groupId = null;
+    int? groupId = null;
 
-	if (group != null)
-	{
-		groupId = group.DepartmentGroupId;
-	}
+    if (group != null)
+    {
+        groupId = group.DepartmentGroupId;
+    }
 
-<td>
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || (groupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(groupId.Value)))
-	{
-		<a style="padding-left: 5px;" href="@Url.Action("EditUserProfile", "Home", new { area = "User", userId = userId })">@name</a>
-	}
-	else
-	{
-		<span style="padding-left: 5px;">@name</span>
-	}
-</td>
-<td>
-	@if (us.State <= 25)
-	{
-		if (us.State == 0)
-		{
-			<span class='label label-default'>Available</span>
-		}
-		else if (us.State == 1)
-		{
-			<span class='label label-warning'>Delayed</span>
-		}
-		else if (us.State == 2)
-		{
-			<span class='label label-danger'>Unavailable</span>
-		}
-		else if (us.State == 3)
-		{
-			<span class='label label-info'>Committed</span>
-		}
-		else if (us.State == 4)
-		{
-			<span class='label label-primary'>On Shift</span>
-		}
-	}
-	else
-	{
-		var customState = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), us.State);
+    <td>
+        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || (groupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(groupId.Value)))
+        {
+            <a style="padding-left: 5px;" href="@Url.Action("EditUserProfile", "Home", new { area = "User", userId = userId })">@name</a>
+        }
+        else
+        {
+            <span style="padding-left: 5px;">@name</span>
+        }
+    </td>
+    <td>
+        @if (us.State <= 25)
+        {
+            if (us.State == 0)
+            {
+                <span class='label label-default'>@commonLocalizer["Available"]</span>
+            }
+            else if (us.State == 1)
+            {
+                <span class='label label-warning'>@commonLocalizer["Delayed"]</span>
+            }
+            else if (us.State == 2)
+            {
+                <span class='label label-danger'>@commonLocalizer["Unavailable"]</span>
+            }
+            else if (us.State == 3)
+            {
+                <span class='label label-info'>@commonLocalizer["Committed"]</span>
+            }
+            else if (us.State == 4)
+            {
+                <span class='label label-primary'>@commonLocalizer["OnShift"]</span>
+            }
+        }
+        else
+        {
+            var customState = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), us.State);
 
-		if (customState != null)
-		{
-			<span class='label label-default' style="color:@customState.TextColor;background-color: @customState.ButtonColor;">@customState.ButtonText</span>
-		}
-		else
-		{
-			<span class='label label-default'>Unknown</span>
-		}
-	}
-</td>
-<td>
-	@if (al != null)
-	{
-		if (al.ActionTypeId <= 25)
-		{
-			if (al.ActionTypeId == 0)
-			{
-				<span class='label label-default'>Standing By</span>
-			}
-			else if (al.ActionTypeId == 1)
-			{
-				<span class='label label-danger'>Not Responding</span>
-			}
-			else if (al.ActionTypeId == 2)
-			{
-				<span class='label label-success'>Responding</span>
-			}
-			else if (al.ActionTypeId == 3)
-			{
-				<span class='label label-inverse'>On Scene</span>
-			}
-			else if (al.ActionTypeId == 4)
-			{
-				if (al.DestinationId.HasValue)
-				{
-					var station = stations.FirstOrDefault(x => x.DepartmentGroupId == al.DestinationId.Value);
+            if (customState != null)
+            {
+                <span class='label label-default' style="color:@customState.TextColor;background-color: @customState.ButtonColor;">@customState.ButtonText</span>
+            }
+            else
+            {
+                <span class='label label-default'>@commonLocalizer["Unknown"]</span>
+            }
+        }
+    </td>
+    <td>
+        @if (al != null)
+        {
+            if (al.ActionTypeId <= 25)
+            {
+                if (al.ActionTypeId == 0)
+                {
+                    <span class='label label-default'>@commonLocalizer["StandingBy"]</span>
+                }
+                else if (al.ActionTypeId == 1)
+                {
+                    <span class='label label-danger'>@commonLocalizer["NotResponding"]</span>
+                }
+                else if (al.ActionTypeId == 2)
+                {
+                    <span class='label label-success'>@commonLocalizer["Responding"]</span>
+                }
+                else if (al.ActionTypeId == 3)
+                {
+                    <span class='label label-inverse'>@commonLocalizer["OnScene"]</span>
+                }
+                else if (al.ActionTypeId == 4)
+                {
+                    if (al.DestinationId.HasValue)
+                    {
+                        var station = stations.FirstOrDefault(x => x.DepartmentGroupId == al.DestinationId.Value);
 
-					if (station != null)
-					{
-						<span class='label label-default'>Available at @station.Name</span>
-					}
-					else
-					{
-						<span class='label label-default'>Available Station</span>
-					}
-				}
-				else
-				{
-					<span class='label label-default'>Available Station</span>
-				}
-			}
-			else if (al.ActionTypeId == 5)
-			{
-				if (al.DestinationId.HasValue)
-				{
-					var station = stations.Where(x => x.DepartmentGroupId == al.DestinationId.Value).FirstOrDefault();
+                        if (station != null)
+                        {
+                            <span class='label label-default'>@commonLocalizer["AvailableAt"] @station.Name</span>
+                        }
+                        else
+                        {
+                            <span class='label label-default'>@commonLocalizer["AvailableStation"]</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class='label label-default'>@commonLocalizer["AvailableStation"]</span>
+                    }
+                }
+                else if (al.ActionTypeId == 5)
+                {
+                    if (al.DestinationId.HasValue)
+                    {
+                        var station = stations.Where(x => x.DepartmentGroupId == al.DestinationId.Value).FirstOrDefault();
 
-					if (station != null)
-					{
-						<span class='label label-success'>Responding to @station.Name</span>
-					}
-					else
-					{
-						<span class='label label-success'>Responding to Station</span>
-					}
-				}
-				else
-				{
-					<span class='label label-success'>Responding to Station</span>
-				}
-			}
-			else if (al.ActionTypeId == 6)
-			{
-				if (al.DestinationId.HasValue)
-				{
-					<span class='label label-success'>Responding to Call @al.DestinationId</span>
-				}
-				else
-				{
-					<span class='label label-success'>Responding to Call</span>
-				}
-			}
-		}
-		else
-		{
-			var customAction = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), al.ActionTypeId);
+                        if (station != null)
+                        {
+                            <span class='label label-success'>@commonLocalizer["RespondingTo"] @station.Name</span>
+                        }
+                        else
+                        {
+                            <span class='label label-success'>@commonLocalizer["RespondToStation"]</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class='label label-success'>@commonLocalizer["RespondToStation"]</span>
+                    }
+                }
+                else if (al.ActionTypeId == 6)
+                {
+                    if (al.DestinationId.HasValue)
+                    {
+                        <span class='label label-success'>@commonLocalizer["RespondToCall"] @al.DestinationId</span>
+                    }
+                    else
+                    {
+                        <span class='label label-success'>@commonLocalizer["RespondToCall"]</span>
+                    }
+                }
+            }
+            else
+            {
+                var customAction = await CustomStatesHelper.GetCustomState(ClaimsAuthorizationHelper.GetDepartmentId(), al.ActionTypeId);
 
-			if (customAction != null)
-			{
-				<span class='label label-default' style="color: @customAction.TextColor; background-color: @customAction.ButtonColor;">@customAction.ButtonText</span>
-			}
-			else
-			{
-				<span class='label label-default'>Unknown</span>
-			}
-		}
-	}
-	else
-	{
-		<span class='label label-default'>Standing By</span>
-	}
-</td>
-<td class="hidden-xs">
-	<div class="hidden-xs" style="font-size: 8pt;">
-		@if (al != null && al.Eta > 60)
-			{
-				var time = Math.Round(al.Eta / 60);
+                if (customAction != null)
+                {
+                    <span class='label label-default' style="color: @customAction.TextColor; background-color: @customAction.ButtonColor;">@customAction.ButtonText</span>
+                }
+                else
+                {
+                    <span class='label label-default'>@commonLocalizer["Unknown"]</span>
+                }
+            }
+        }
+        else
+        {
+            <span class='label label-default'>@commonLocalizer["StandingBy"]</span>
+        }
+    </td>
+    <td class="hidden-xs">
+        <div class="hidden-xs" style="font-size: 8pt;">
+            @if (al != null && al.Eta > 60)
+            {
+                var time = Math.Round(al.Eta / 60);
 
-			<span>@time</span><span class="small">m</span>
-			}
-			else if (al != null && al.Eta < 60 && al.Eta > 0)
-			{
-			<span>@al.Eta</span><span class="small">s</span>
-			}
-			else
-			{
-			<span></span>
-			}
-	</div>
-</td>
-<td class="hidden-xs">
-	<div class="hidden-xs" style="font-size: 8pt; max-width: 150px;">
-		@roles
-	</div>
-</td>
-<td class="hidden-xs">
-	<div class="hidden-xs">
-		@if (al != null)
-			{
-			@TimeConverterHelper.TimeConverterToString(al.Timestamp, department)
-			}
-			else
-			{
-			@TimeConverterHelper.TimeConverterToString(DateTime.UtcNow, department)
-			}
+                <span>@time</span>
 
-	</div>
-</td>
-<td class="hidden-xs">
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(groupId))
-	{
-		if (staffingLevels == null)
-		{
-			<div class='btn-group'>
-				<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
-				<ul class='dropdown-menu dropdown-primary'>
-					<li role="presentation" class="dropdown-header">Set Staffing Level</li>
-					<li>
-						<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 0 })">
-							<i class='icon-ok-sign'></i>&nbsp;Available
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 1 })" rel="nofollow">
-							<i class='icon-plus-sign'></i>&nbsp;Delayed
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 2 })" rel="nofollow">
-							<i class='fa fa-minus-sign'></i>&nbsp;Unavailable
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 3 })" rel="nofollow">
-							<i class='icon-info-sign'></i>&nbsp;Committed
-						</a>
-					</li>
-				</ul>
-			</div>
-		}
-		else
-		{
-			<div class='btn-group'>
-				<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
-				<ul class='dropdown-menu dropdown-primary'>
-					<li role="presentation" class="dropdown-header">Set Staffing Level</li>
+                <span class="small">m</span>
+            }
+            else if (al != null && al.Eta < 60 && al.Eta > 0)
+            {
+                <span>@al.Eta</span>
 
-					@foreach (var state in staffingLevels.GetActiveDetails())
-					{
-						<li>
-							<a href="#" onclick="resgrid.home.dashboard.customStaffing('@userId', @state.CustomStateDetailId);" style="color:@state.ButtonColor;">
-								@state.ButtonText
-							</a>
-						</li>
-					}
-				</ul>
-			</div>
-		}
+                <span class="small">s</span>
+            }
+            else
+            {
+                <span></span>
+            }
+        </div>
+    </td>
+    <td class="hidden-xs">
+        <div class="hidden-xs" style="font-size: 8pt; max-width: 150px;">
+            @roles
+        </div>
+    </td>
+    <td class="hidden-xs">
+        <div class="hidden-xs">
+            @if (al != null)
+            {
+                @TimeConverterHelper.TimeConverterToString(al.Timestamp, department)
+            }
+            else
+            {
+                @TimeConverterHelper.TimeConverterToString(DateTime.UtcNow, department)
+            }
 
-		if (states == null)
-		{
-			<div class='btn-group'>
-				<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-flag'></i> <span class='caret'></span></a>
-				<ul class='dropdown-menu dropdown-primary'>
-					<li role="presentation" class="dropdown-header">Set Current Action</li>
-					<li>
-						<a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 0 })">
-							<i class='glyphicon glyphicon-play-circle'></i>&nbsp;Standing By
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 2 })" rel="nofollow">
-							<i class='glyphicon glyphicon-ok-circle'></i>&nbsp;Responding
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 1 })" rel="nofollow">
-							<i class='glyphicon glyphicon-ban-circle'></i>&nbsp;Not Responding
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 3 })" rel="nofollow">
-							<i class='glyphicon glyphicon-upload'></i>&nbsp;On Scene
-						</a>
-					</li>
-				</ul>
-			</div>
-		}
-		else
-		{
-			<div class='btn-group'>
-				<a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
-				<ul class='dropdown-menu dropdown-primary'>
-					<li role="presentation" class="dropdown-header">Set Current Action</li>
+        </div>
+    </td>
+    <td class="hidden-xs">
+        @if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(groupId))
+        {
+            if (staffingLevels == null)
+            {
+                <div class='btn-group'>
+                    <a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
+                    <ul class='dropdown-menu dropdown-primary'>
+                        <li role="presentation" class="dropdown-header">@localizer["StaffingLevelSubmit"]</li>
+                        <li>
+                            <a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 0 })">
+                                <i class='icon-ok-sign'></i>&nbsp;@commonLocalizer["Available"]
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 1 })" rel="nofollow">
+                                <i class='icon-plus-sign'></i>&nbsp;@commonLocalizer["Delayed"]
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 2 })" rel="nofollow">
+                                <i class='fa fa-minus-sign'></i>&nbsp;@commonLocalizer["Unavailable"]
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetStateForUser", "Home", new { area = "User", userId = userId, stateType = 3 })" rel="nofollow">
+                                <i class='icon-info-sign'></i>&nbsp;@commonLocalizer["Committed"]
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class='btn-group'>
+                    <a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
+                    <ul class='dropdown-menu dropdown-primary'>
+                        <li role="presentation" class="dropdown-header">@localizer["StaffingLevelSubmit"]</li>
 
-					@foreach (var state in states.GetActiveDetails())
-					{
-						<li>
-							<a href="#" onclick="resgrid.home.dashboard.customUserAction('@userId', @state.CustomStateDetailId);" style="color:@state.ButtonColor;">
-								@state.ButtonText
-							</a>
-						</li>
-					}
-				</ul>
-			</div>
-		}
-	}
-</td>
+                        @foreach (var state in staffingLevels.GetActiveDetails())
+                        {
+                            <li>
+                                <a href="#" onclick="resgrid.home.dashboard.customStaffing('@userId', @state.CustomStateDetailId);" style="color:@state.ButtonColor;">
+                                    @state.ButtonText
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            if (states == null)
+            {
+                <div class='btn-group'>
+                    <a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-flag'></i> <span class='caret'></span></a>
+                    <ul class='dropdown-menu dropdown-primary'>
+                        <li role="presentation" class="dropdown-header">@localizer["SetCurrentAction"]</li>
+                        <li>
+                            <a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 0 })">
+                                <i class='glyphicon glyphicon-play-circle'></i>&nbsp;@commonLocalizer["StandingBy"]
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 2 })" rel="nofollow">
+                                <i class='glyphicon glyphicon-ok-circle'></i>&nbsp;@commonLocalizer["Responding"]
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 1 })" rel="nofollow">
+                                <i class='glyphicon glyphicon-ban-circle'></i>&nbsp;@commonLocalizer["NotResponding"]
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetActionForUser", "Home", new { area = "User", userId = userId, actionType = 3 })" rel="nofollow">
+                                <i class='glyphicon glyphicon-upload'></i>&nbsp;@commonLocalizer["OnScene"]
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class='btn-group'>
+                    <a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-tag'></i> <span class='caret'></span></a>
+                    <ul class='dropdown-menu dropdown-primary'>
+                        <li role="presentation" class="dropdown-header">@localizer["SetCurrentAction"]</li>
+
+                        @foreach (var state in states.GetActiveDetails())
+                        {
+                            <li>
+                                <a href="#" onclick="resgrid.home.dashboard.customUserAction('@userId', @state.CustomStateDetailId);" style="color:@state.ButtonColor;">
+                                    @state.ButtonText
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+    </td>
 }

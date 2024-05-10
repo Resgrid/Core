@@ -198,10 +198,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 						}
 						else if (afilter.Substring(0, 2) == "U:")
 						{
-							if (state != null && (state.State.ToString() == text || state.State.ToString() == text.Replace(" ", "")))
+							if (state != null && !String.IsNullOrWhiteSpace(text))
 							{
-								result.Data.Add(s);
-								break;
+								if (s.Staffing.ToString() == text || s.Staffing.ToString() == text.Replace(" ", ""))
+								{
+									result.Data.Add(s);
+									break;
+								}
+							}
+						}
+						else if (afilter.Substring(0, 2) == "S:")
+						{
+							if (state != null && !String.IsNullOrWhiteSpace(text))
+							{
+								if (s.Status.ToString() == text || s.Status.ToString() == text.Replace(" ", ""))
+								{
+									result.Data.Add(s);
+									break;
+								}
 							}
 						}
 
@@ -440,30 +454,86 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new List<FilterResult>();
 
-			var stations = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
 
-			foreach (var s in stations)
+			var customState = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
+			List<CustomStateDetail> statuses = new List<CustomStateDetail>();
+
+			if (customState == null || customState.GetActiveDetails() == null || customState.GetActiveDetails().Count() <= 0)
+				statuses = _customStateService.GetDefaultPersonStatuses();
+			else
+				statuses = customState.GetActiveDetails();
+
+			var customStateStaffing = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
+			List<CustomStateDetail> staffing = new List<CustomStateDetail>();
+
+			if (customStateStaffing == null || customStateStaffing.GetActiveDetails() == null || customStateStaffing.GetActiveDetails().Count() <= 0)
+				staffing = _customStateService.GetDefaultPersonStaffings();
+			else
+				staffing = customStateStaffing.GetActiveDetails();
+
+			var everyone = new FilterResult()
 			{
-				var respondingTo = new FilterResult();
-				respondingTo.Id = string.Format("G:{0}", s.DepartmentGroupId);
-				respondingTo.Type = "Group";
-				respondingTo.Name = s.Name;
+				Id = "0",
+				Type = "",
+				Name = "Everyone"
+			};
+			result.Add(everyone);
 
-				result.Add(respondingTo);
+			if (groups != null && groups.Any())
+			{
+				foreach(var group in groups)
+				{
+					result.Add(new FilterResult()
+					{
+						Id = $"G:{group.DepartmentGroupId}",
+						Type = "Groups",
+						Name = group.Name
+					});
+				}
 			}
 
-			foreach (var r in roles)
+			if (roles != null && roles.Any())
 			{
-				var respondingTo = new FilterResult();
-				respondingTo.Id = string.Format("R:{0}", r.PersonnelRoleId);
-				respondingTo.Type = "Role";
-				respondingTo.Name = r.Name;
-
-				result.Add(respondingTo);
+				foreach(var role in roles)
+				{
+					result.Add(new FilterResult()
+					{
+						Id = $"R:{role.PersonnelRoleId}",
+						Type = "Roles",
+						Name = role.Name
+					});
+				}
 			}
 
-			var status1 = new FilterResult();
+			if (staffing != null && staffing.Any())
+			{
+				foreach(var staff in staffing)
+				{
+					result.Add(new FilterResult()
+					{
+						Id = $"U:{staff.CustomStateDetailId}",
+						Type = "Staffing",
+						Name = staff.ButtonText
+					});
+				}
+			}
+
+			if (statuses != null && statuses.Any())
+			{
+				foreach (var stat in statuses)
+				{
+					result.Add(new FilterResult()
+					{
+						Id = $"S:{stat.CustomStateDetailId}",
+						Type = "Status",
+						Name = stat.ButtonText
+					});
+				}
+			}
+
+			/*var status1 = new FilterResult();
 			status1.Id = string.Format("U:{0}", (int)UserStateTypes.Available);
 			status1.Type = "Staffing";
 			status1.Name = UserStateTypes.Available.GetDisplayString();
@@ -491,7 +561,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			status5.Id = string.Format("U:{0}", (int)UserStateTypes.Unavailable);
 			status5.Type = "Staffing";
 			status5.Name = UserStateTypes.Unavailable.GetDisplayString();
-			result.Add(status5);
+			result.Add(status5);*/
 
 			return result;
 		}

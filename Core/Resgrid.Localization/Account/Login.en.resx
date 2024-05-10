@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CompletedInviteHeader" xml:space="preserve">
+    <value>Completed Invite</value>
+  </data>
+  <data name="CompleteInviteHeader" xml:space="preserve">
+    <value>Complete Invite</value>
+  </data>
+  <data name="CompleteInviteText1" xml:space="preserve">
+    <value>Supply the information to create your own Resgrid account and join</value>
+  </data>
+  <data name="CompleteInviteText2" xml:space="preserve">
+    <value>The information you are supplying is used to create your account in Resgrid. If you already have an account your existing account will be linked with the department as part of this invite.</value>
+  </data>
+  <data name="CompleteInviteText3" xml:space="preserve">
+    <value>If you are having trouble completing the invite or are running into issues, please reach out to the Administrator of the department for the invite you are trying to complete for assistance. They can manually add your account if necessary.</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="DepartmentName" xml:space="preserve">
+    <value>Department Name</value>
+  </data>
+  <data name="DontHaveAccount" xml:space="preserve">
+    <value>Do not have an account?</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Forgot your username or password?</value>
+  </data>
+  <data name="GoBack" xml:space="preserve">
+    <value>Go Back</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="InviteCompletedInfo" xml:space="preserve">
+    <value>It looks this invite has already been completed. If this is in error contact your department or origination to get another invite, else you can log in with your username or password.</value>
+  </data>
+  <data name="InviteCompletedNotice" xml:space="preserve">
+    <value>Resgrid Invite has already been completed</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="LockedOutHeader" xml:space="preserve">
+    <value>Locked out</value>
+  </data>
+  <data name="LockedOutText" xml:space="preserve">
+    <value>This account has been locked out, please try and log in again in 30 minutes. Please note support cannot unlock an account for you.</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Log In</value>
+  </data>
+  <data name="LoginMessage1" xml:space="preserve">
+    <value>Enter your username and password to login.</value>
+  </data>
+  <data name="LoginMessage2" xml:space="preserve">
+    <value>If your department has already signed up ask that departments admin for an invite.</value>
+  </data>
+  <data name="LoginMessage3" xml:space="preserve">
+    <value>If your department has not yet signed up for Resgrid you can create a new account which will create the department for you.</value>
+  </data>
+  <data name="LoginMessage4" xml:space="preserve">
+    <value>Maintenance is performed weekly on Saturday starting at 2000 hours Pacific.</value>
+  </data>
+  <data name="LogOnHeader" xml:space="preserve">
+    <value>Log On</value>
+  </data>
+  <data name="MissingInviteBody" xml:space="preserve">
+    <value>We're sorry but we were unable to locate your invite to Resgrid. Try having your department or organization send another one. If you already have a Resgrid account you can log in below.</value>
+  </data>
+  <data name="MissingInviteHeader" xml:space="preserve">
+    <value>Invite Missing</value>
+  </data>
+  <data name="MissingInviteTopText" xml:space="preserve">
+    <value>Unable to find your Resgrid Invite</value>
+  </data>
+  <data name="Notice" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PasswordHelp" xml:space="preserve">
+    <value>Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>privacy policy</value>
+  </data>
+  <data name="RecoverAccountSuccess" xml:space="preserve">
+    <value>If your email address is valid we have reset your password and sent your username and new password to the email address supplied. Email delivery can be delayed up to 15 minutes, &lt;b&gt;also check your spam or junk areas in your email client if you email doesn't arrive&lt;/b&gt; by then.</value>
+  </data>
+  <data name="RecoverAccountText" xml:space="preserve">
+    <value>Supply the email address you used with your Resgrid account. We will then send you an email to that address with your username and new password to log into the system.</value>
+  </data>
+  <data name="RecoveryAccountHeader" xml:space="preserve">
+    <value>Recover Account</value>
+  </data>
+  <data name="RegisterHeader" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="RegisterText1" xml:space="preserve">
+    <value>Registering for Resgrid is as easy as 1,2,3!</value>
+  </data>
+  <data name="RegisterText2" xml:space="preserve">
+    <value>Have one person from your org fill out this form</value>
+  </data>
+  <data name="RegisterText3" xml:space="preserve">
+    <value>Once Signed up, you can invite or add people from the Personnel page inside the app</value>
+  </data>
+  <data name="RegisterText4" xml:space="preserve">
+    <value>Thats it! Only a single person needs to Register the organization</value>
+  </data>
+  <data name="RegisterText5" xml:space="preserve">
+    <value>If someone in your organization &lt;b&gt;already has an account with Resgrid&lt;/b&gt; have them invite you to their department instead of creating a new one, if you want to use Resgrid with them.</value>
+  </data>
+  <data name="Resgister" xml:space="preserve">
+    <value>Resgister</value>
+  </data>
+  <data name="SignUpTerms1" xml:space="preserve">
+    <value>By signing up, you accept</value>
+  </data>
+  <data name="TermsOfUse" xml:space="preserve">
+    <value>terms of use</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+</root>

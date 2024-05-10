@@ -24,6 +24,8 @@ namespace Resgrid.Tests.Services
 			protected Mock<IOutboundVoiceProvider> _outboundVoiceProviderMock;
 			protected Mock<IUserProfileService> _userProfileServiceMock;
 			protected Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
+			protected Mock<ISubscriptionsService> _subscriptionsServiceMock;
+			protected Mock<IUserStateService> _userStateServiceMock;
 
 			protected ICommunicationService _communicationService;
 
@@ -36,9 +38,12 @@ namespace Resgrid.Tests.Services
 				_outboundVoiceProviderMock = new Mock<IOutboundVoiceProvider>();
 				_userProfileServiceMock = new Mock<IUserProfileService>();
 				_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
+				_subscriptionsServiceMock = new Mock<ISubscriptionsService>();
+				_userStateServiceMock = new Mock<IUserStateService>();
 
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
-					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object);
+					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
+					_subscriptionsServiceMock.Object, _userStateServiceMock.Object);
 			}
 		}
 
@@ -67,8 +72,11 @@ namespace Resgrid.Tests.Services
 				profile.SendMessagePush = true;
 				profile.SendMessageSms = true;
 
+				Payment payment = new Payment();
+				payment.PlanId = 2;
+
 				await _communicationService.SendMessageAsync(message, "Test Sender", "0000000", 1, profile);
-				_smsServiceMock.Verify(m => m.SendMessageAsync(message, "0000000", 1, profile));
+				_smsServiceMock.Verify(m => m.SendMessageAsync(message, "0000000", 1, profile, payment));
 				_emailServiceMock.Verify(m => m.SendMessageAsync(message, "Test Sender", 1, profile, message.ReceivingUser));
 				_pushServiceMock.Verify(m => m.PushMessage(It.IsAny<StandardPushMessage>(), TestData.Users.TestUser1Id, profile));
 			}
@@ -95,8 +103,11 @@ namespace Resgrid.Tests.Services
 				cd1.UserId = TestData.Users.TestUser2Id;
 				call.Dispatches.Add(cd1);
 
+				Payment payment = new Payment();
+				payment.PlanId = 2;
+
 				await _communicationService.SendCallAsync(call, cd, null, 1, null);
-				_smsServiceMock.Verify(m => m.SendCallAsync(call, cd, null, 1, null, null));
+				_smsServiceMock.Verify(m => m.SendCallAsync(call, cd, null, 1, null, null, payment));
 				_emailServiceMock.Verify(m => m.SendCallAsync(call, cd, null));
 				//_pushServiceMock.Verify(m => m.PushCall(It.IsAny<StandardPushCall>(), Users.TestUser1Id));
 			}

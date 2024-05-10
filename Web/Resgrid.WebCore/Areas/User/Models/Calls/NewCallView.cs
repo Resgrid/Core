@@ -31,6 +31,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public SelectList CallTemplates { get; set; }
 		public int CallTemplateId { get; set; }
 		public string NewCallFormData { get; set; }
+		public string ClosedCallNotes { get; set; }
+		public ClosedOnlyCallStates CallState { get; set; }
+		public SelectList CallStates { get; set; }
 
 		public NewCallView()
 		{

@@ -1,98 +1,99 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Personnel.PersonnelRanksModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-		ViewBag.Title = "Resgrid | Ranks";
+    ViewBag.Title = "Resgrid | " + @localizer["RanksHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Personnel Ranks</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
-			</li>
-			<li class="active">
-				<strong>Ranks</strong>
-			</li>
-		</ol>
-	</div>
+    <div class="col-sm-4">
+        <h2>@localizer["RanksHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["RanksHeader"]</strong>
+            </li>
+        </ol>
+    </div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins" id="personnelContainer">
-				<div class="ibox-title">
-					<h5>Personnel</h5>
-					@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-					{
-						<div class="ibox-tools">
-							<div class="buttons-actions">
-									<a title="Add a new rank" class="btn btn-success" asp-controller="Personnel" asp-action="AddRank" asp-route-area="User">Add Rank</a>
-							</div>
-						</div>
-					}
-				</div>
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>
-										Name
-									</th>
-									<th>
-										Description
-									</th>
-									<th>
-										Users in Rank
-									</th>
-									<th class='span1'>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var u in Model.Ranks)
-								{
-									<tr>
-										<td>
-											@u.Code
-										</td>
-										<td>
-											@u.Name
-										</td>
-										<td>
-											@u.SortWeight
-										</td>
-										<td>
-											@u.TradeWeight
-										</td>
-										<td>
-											@u.Members.Count
-										</td>
-										<td>
-											<a style="text-decoration:none;" class="btn btn-xs btn-info" asp-controller="Personnel" asp-action="ViewRank" asp-route-area="User" asp-route-rankId="@u.RankId">View</a>
-@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-{
-											<a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Personnel" asp-action="EditRank" asp-route-area="User" asp-route-rankId="@u.RankId">Edit</a>
-											<a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="Personnel" asp-action="DeleteRank" asp-route-area="User" asp-route-rankId="@u.RankId" data-confirm="WARNING: This will permanently delete this role. Are you sure you want to delete the @u.Name role?" rel="nofollow">Delete</a>
-}
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-						</div>
-					</div>
-				</div>
-		</div>
-	</div>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins" id="personnelContainer">
+                <div class="ibox-title">
+                    <h5>@localizer["RanksHeader"]</h5>
+                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                    {
+                        <div class="ibox-tools">
+                            <div class="buttons-actions">
+                                <a title="Add a new rank" class="btn btn-success" asp-controller="Personnel" asp-action="AddRank" asp-route-area="User">@localizer["AddRank"]</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @commonLocalizer["Name"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Description"]
+                                    </th>
+                                    <th>
+                                        @localizer["UsersInRank"]
+                                    </th>
+                                    <th class='span1'>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var u in Model.Ranks)
+                                {
+                                    <tr>
+                                        <td>
+                                            @u.Code
+                                        </td>
+                                        <td>
+                                            @u.Name
+                                        </td>
+                                        <td>
+                                            @u.SortWeight
+                                        </td>
+                                        <td>
+                                            @u.TradeWeight
+                                        </td>
+                                        <td>
+                                            @u.Members.Count
+                                        </td>
+                                        <td>
+                                            <a style="text-decoration:none;" class="btn btn-xs btn-info" asp-controller="Personnel" asp-action="ViewRank" asp-route-area="User" asp-route-rankId="@u.RankId">@commonLocalizer["View"]</a>
+                                            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                            {
+                                                <a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Personnel" asp-action="EditRank" asp-route-area="User" asp-route-rankId="@u.RankId">@commonLocalizer["Edit"]</a>
+                                                <a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="Personnel" asp-action="DeleteRank" asp-route-area="User" asp-route-rankId="@u.RankId" data-confirm="@localizer["RankDeleteWarning"] @u.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
+    {
 
 }

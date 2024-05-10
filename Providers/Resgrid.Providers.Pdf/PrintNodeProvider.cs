@@ -13,8 +13,11 @@ namespace Resgrid.Providers.PdfProvider
 	{
 		public async Task<Whoami> Whoami(string apiKey)
 		{
-			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
-			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
+			var options = new RestClientOptions(Config.PrintConfig.PrintNodeBaseUrl)
+			{
+				Authenticator = new HttpBasicAuthenticator(apiKey, "")
+			};
+			var client = new RestClient(options);
 
 			var request = new RestRequest("/whoami", Method.Get);
 
@@ -28,8 +31,11 @@ namespace Resgrid.Providers.PdfProvider
 
 		public async Task<List<Computer>> GetComputers(string apiKey)
 		{
-			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
-			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
+			var options = new RestClientOptions(Config.PrintConfig.PrintNodeBaseUrl)
+			{
+				Authenticator = new HttpBasicAuthenticator(apiKey, "")
+			};
+			var client = new RestClient(options);
 
 			var request = new RestRequest("/computers", Method.Get);
 
@@ -43,8 +49,11 @@ namespace Resgrid.Providers.PdfProvider
 
 		public async Task<List<Printer>> GetPrinters(string apiKey)
 		{
-			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
-			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
+			var options = new RestClientOptions(Config.PrintConfig.PrintNodeBaseUrl)
+			{
+				Authenticator = new HttpBasicAuthenticator(apiKey, "")
+			};
+			var client = new RestClient(options);
 
 			var request = new RestRequest("/printers", Method.Get);
 
@@ -58,8 +67,11 @@ namespace Resgrid.Providers.PdfProvider
 
 		public async Task<List<PrintJob>> GetPrintJobs(string apiKey)
 		{
-			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
-			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
+			var options = new RestClientOptions(Config.PrintConfig.PrintNodeBaseUrl)
+			{
+				Authenticator = new HttpBasicAuthenticator(apiKey, "")
+			};
+			var client = new RestClient(options);
 
 			var request = new RestRequest("/printjobs", Method.Get);
 
@@ -75,8 +87,11 @@ namespace Resgrid.Providers.PdfProvider
 
 		public async Task<bool> SubmitPrintJob(string apiKey, int printerId, string title, string url)
 		{
-			var client = new RestClient(Config.PrintConfig.PrintNodeBaseUrl);
-			client.Authenticator = new HttpBasicAuthenticator(apiKey, "");
+			var options = new RestClientOptions(Config.PrintConfig.PrintNodeBaseUrl)
+			{
+				Authenticator = new HttpBasicAuthenticator(apiKey, "")
+			};
+			var client = new RestClient(options);
 
 			var request = new RestRequest("/printjobs", Method.Post);
 			//request.AddHeader("Accept", "application/json");

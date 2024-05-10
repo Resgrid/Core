@@ -96,6 +96,54 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Edit(int id)
+		{
+			var model = new NewTemplateModel();
+			model.Template = new CallQuickTemplate();
+
+			model.Template = await _templatesService.GetCallQuickTemplateByIdAsync(id);
+
+			if (model.Template == null || model.Template.DepartmentId != DepartmentId)
+				Unauthorized();	
+
+			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
+			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
+
+
+			List<CallType> types = new List<CallType>();
+			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
+			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
+			model.CallTypes = new SelectList(types, "Type", "Type");
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Edit(NewTemplateModel model, CancellationToken cancellationToken)
+		{
+			if (String.IsNullOrWhiteSpace(model.Template.CallName) &&
+				String.IsNullOrWhiteSpace(model.Template.CallNature))
+			{
+				model.Message = "You must specify a call name and/or call nature to set to save the template";
+				return View(model);
+			}
+
+			if (ModelState.IsValid)
+			{
+				model.Template.DepartmentId = DepartmentId;
+				model.Template.CreatedOn = DateTime.UtcNow;
+				model.Template.CreatedByUserId = UserId;
+
+				await _templatesService.SaveCallQuickTemplateAsync(model.Template, cancellationToken);
+				return RedirectToAction("Index");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewCallNote()
 		{
 			var model = new NewCallNoteModel();
@@ -126,6 +174,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 				autofill.AddedOn = DateTime.UtcNow;
 
 				await _autofillsService.SaveAutofillAsync(autofill, cancellationToken);
+				return RedirectToAction("CallNotes");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> EditCallNote(string id)
+		{
+			var model = new EditCallNoteModel();
+			model.Autofill = await _autofillsService.GetAutofillByIdAsync(id);
+
+			if (model.Autofill == null || model.Autofill.DepartmentId != DepartmentId)
+				Unauthorized();	
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> EditCallNote(EditCallNoteModel model, CancellationToken cancellationToken)
+		{
+			if (String.IsNullOrWhiteSpace(model.Autofill.Name) &&
+				String.IsNullOrWhiteSpace(model.Autofill.Data))
+			{
+				model.Message = "You must specify a call name and/or call nature to set to save the template";
+				return View(model);
+			}
+
+			if (ModelState.IsValid)
+			{
+				model.Autofill.Type = (int)AutofillTypes.CallNote;
+				model.Autofill.DepartmentId = DepartmentId;
+				model.Autofill.AddedByUserId = UserId;
+				model.Autofill.AddedOn = DateTime.UtcNow;
+
+				await _autofillsService.SaveAutofillAsync(model.Autofill, cancellationToken);
 				return RedirectToAction("CallNotes");
 			}
 

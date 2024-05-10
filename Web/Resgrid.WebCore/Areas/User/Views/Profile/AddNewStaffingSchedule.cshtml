@@ -1,7 +1,7 @@
-﻿
-@model Resgrid.Web.Areas.User.Models.Profile.NewStaffingLevelView
+﻿@model Resgrid.Web.Areas.User.Models.Profile.NewStaffingLevelView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> localizer
 @{
-  ViewBag.Title = "Resgrid | New Staffing Schedule";
+  ViewBag.Title = "Resgrid | " + @localizer["NewStaffingScheduleHeader"];
 }
 
 @section Styles
@@ -15,19 +15,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>New Staffing Schedule</h2>
+    <h2>@localizer["NewStaffingScheduleHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li>
-        <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
+        <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["EditProfile"]</a>
       </li>
       <li>
-        <a asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Staffing Schedule</a>
+        <a asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["StaffingSchedule"]</a>
       </li>
       <li class="active">
-        <strong>New Schedule</strong>
+        <strong>@localizer["NewStaffingScheduleHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -51,12 +51,12 @@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="form-group">
-              <label class="col-sm-2 control-label">Priority</label>
+              <label class="col-sm-2 control-label">@commonLocalizer["Priority"]</label>
               <div class="col-sm-10">
                 @Html.DropDownListFor(m => m.SpecificDatetime, new SelectList(
 					new List<Object>{
-						new { value = true, text = "Specific Date"  },
-						new { value = false, text = "Days of the Week" }
+						new { value = true, text = @localizer["SpecificDate"]  },
+						new { value = false, text = @localizer["DaysOfWeek"] }
 					},
 					"value",
 					"text"
@@ -65,18 +65,18 @@
             </div>
 
             <div class="form-group" id="specificdatetimearea">
-              <label class="col-sm-2 control-label">Specific DateTime</label>
+              <label class="col-sm-2 control-label">@localizer["SpecificDateTime"]</label>
               <div class="col-sm-10"><input type="text" asp-for="SpecifcDate" id="SpecifcDateTime" onkeydown="javascript:return false;"></div>
             </div>
 
 
             <div class="form-group" id="daysoftheweekarea">
               <label class="col-sm-2 control-label">
-                Days of the Week
+                @localizer["DaysOfWeek"]
               </label>
               <div class="col-sm-10" style="float: left; text-align: left;">
                 <div class="form-group">
-                  <label class="col-sm-1 control-label">Sunday</label>
+                  <label class="col-sm-1 control-label">@commonLocalizer["Sunday"]</label>
                   <div class="col-sm-8">
                     <div class="switch">
                       <div class="onoffswitch">
@@ -90,7 +90,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-1 control-label">Monday</label>
+                  <label class="col-sm-1 control-label">@commonLocalizer["Monday"]</label>
                   <div class="col-sm-8">
                     <div class="switch">
                       <div class="onoffswitch">
@@ -104,7 +104,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-1 control-label">Tuesday</label>
+                  <label class="col-sm-1 control-label">@commonLocalizer["Tuesday"]</label>
                   <div class="col-sm-8">
                     <div class="switch">
                       <div class="onoffswitch">
@@ -118,7 +118,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-1 control-label">Wednesday</label>
+                  <label class="col-sm-1 control-label">@commonLocalizer["Wednesday"]</label>
                   <div class="col-sm-8">
                     <div class="switch">
                       <div class="onoffswitch">
@@ -132,7 +132,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-1 control-label">Thursday</label>
+                  <label class="col-sm-1 control-label">@commonLocalizer["Thursday"]</label>
                   <div class="col-sm-8">
                     <div class="switch">
                       <div class="onoffswitch">
@@ -146,7 +146,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-1 control-label">Friday</label>
+                  <label class="col-sm-1 control-label">@commonLocalizer["Friday"]</label>
                   <div class="col-sm-8">
                     <div class="switch">
                       <div class="onoffswitch">
@@ -160,7 +160,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-1 control-label">Saturday</label>
+                  <label class="col-sm-1 control-label">@commonLocalizer["Saturday"]</label>
                   <div class="col-sm-8">
                     <div class="switch">
                       <div class="onoffswitch">
@@ -176,12 +176,12 @@
               </div>
             </div>
             <div class="form-group" id="daysoftheweekarea_time">
-              <label class="col-sm-2 control-label">Time To Run</label>
+              <label class="col-sm-2 control-label">@localizer["TimeToRun"]</label>
               <div class="col-sm-10"><input type="text" asp-for="Time" id="DayOfWeekTime" onkeydown="javascript:return false;"></div>
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label">
-                Change Staffing To
+                @localizer["ChangeStaffingTo"]
               </label>
               <div class="col-sm-10">
                 @Html.DropDownListFor(m => m.StaffingLevel, Model.StaffingLevels, new { })
@@ -190,8 +190,8 @@
 
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save changes</button>
+                <a class="btn btn-white" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@commonLocalizer["Cancel"]</a>
+                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
               </div>
             </div>
           </form>

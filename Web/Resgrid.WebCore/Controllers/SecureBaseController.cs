@@ -21,5 +21,10 @@ namespace Resgrid.Web
 		{
 			Response.Redirect("/Public/Unauthorized");
 		}
+
+		//public new void NotFound()
+		//{
+		//	Response.Redirect("/Public/NotFound");
+		//}
 	}
 }

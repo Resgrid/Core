@@ -39,6 +39,7 @@ namespace Resgrid.Services
 		private readonly ICallProtocolsRepository _callProtocolsRepository;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly ICallReferencesRepository _callReferencesRepository;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
@@ -46,7 +47,8 @@ namespace Resgrid.Services
 			ICallAttachmentRepository callAttachmentRepository, ICallDispatchGroupRepository callDispatchGroupRepository,
 			ICallDispatchUnitRepository callDispatchUnitRepository, ICallDispatchRoleRepository callDispatchRoleRepository,
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
-			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService)
+			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
+			ICallReferencesRepository callReferencesRepository)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
@@ -64,12 +66,13 @@ namespace Resgrid.Services
 			_callProtocolsRepository = callProtocolsRepository;
 			_geoLocationProvider = geoLocationProvider;
 			_departmentsService = departmentsService;
+			_callReferencesRepository = callReferencesRepository;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (String.IsNullOrWhiteSpace(call.Number))
-				call.Number = await GetCurrentCallNumberAsync(call.DepartmentId);
+				call.Number = await GetCurrentCallNumberAsync(call.LoggedOn, call.DepartmentId);
 
 			if (String.IsNullOrWhiteSpace(call.Name))
 				call.Name = "New Call " + DateTime.UtcNow.ToShortDateString();
@@ -113,8 +116,29 @@ namespace Resgrid.Services
 							dispatch.DispatchedOn = DateTime.UtcNow;
 					}
 				}
-			
-			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
+
+			if (call.References != null && call.References.Any())
+			{
+				foreach (var reference in call.References)
+				{
+					if (String.IsNullOrWhiteSpace(reference.CallReferenceId))
+						reference.AddedOn = DateTime.UtcNow;
+				}
+			}
+
+			var savedCall = await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
+
+			if (call.References != null && call.References.Any())
+			{
+				foreach (var reference in call.References)
+				{
+					reference.SourceCallId = savedCall.CallId;
+
+					await _callReferencesRepository.SaveOrUpdateAsync(reference, cancellationToken);
+				}
+			}
+
+			return savedCall;
 		}
 
 		public async Task<bool> RegenerateCallNumbersAsync(int departmentId, int year, CancellationToken cancellationToken = default(CancellationToken))
@@ -138,11 +162,11 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<string> GetCurrentCallNumberAsync(int departmentId)
+		public async Task<string> GetCurrentCallNumberAsync(DateTime utcDate, int departmentId)
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
-			int year = DateTimeHelpers.GetLocalDateTime(DateTime.UtcNow, department.TimeZone).Year;
+			int year = DateTimeHelpers.GetLocalDateTime(utcDate, department.TimeZone).Year;
 			var start = (new DateTime(year, 1, 1, 1, 1, 1, DateTimeKind.Local)).SetToMidnight();
 			var end = (new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Local)).SetToEndOfDay();
 
@@ -341,7 +365,12 @@ namespace Resgrid.Services
 
 		public async Task<CallAttachment> GetCallAttachmentAsync(int callAttachmentId)
 		{
-			return await _callAttachmentRepository.GetByIdAsync(callAttachmentId);
+			var attachment = await _callAttachmentRepository.GetByIdAsync(callAttachmentId);
+
+			if (attachment != null && attachment.Call == null)
+				attachment.Call = await GetCallByIdAsync(attachment.CallId);
+
+			return attachment;
 		}
 
 		public async Task<CallAttachment> SaveCallAttachmentAsync(CallAttachment attachment, CancellationToken cancellationToken = default(CancellationToken))
@@ -414,7 +443,7 @@ namespace Resgrid.Services
 			return activePriorities;
 		}
 
-		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols)
+		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences)
 		{
 			if (getDispatches && call.Dispatches == null)
 			{
@@ -471,7 +500,7 @@ namespace Resgrid.Services
 				else
 					call.RoleDispatches = new List<CallDispatchRole>();
 			}
-			if (getProtocols && call.Protocols == null)
+			if (getProtocols && (call.Protocols == null || !call.Protocols.Any()))
 			{
 				var items = await _callProtocolsRepository.GetCallProtocolsByCallIdAsync(call.CallId);
 
@@ -479,6 +508,15 @@ namespace Resgrid.Services
 					call.Protocols = items.ToList();
 				else
 					call.Protocols = new List<CallProtocol>();
+			}
+			if (getReferences && call.References == null)
+			{
+				var items = await _callReferencesRepository.GetCallReferencesBySourceCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.References = items.ToList();
+				else
+					call.References = new List<CallReference>();
 			}
 
 			return call;
@@ -759,6 +797,21 @@ namespace Resgrid.Services
 			return new List<Call>();
 		}
 
+		public async Task<List<CallReference>> GetChildCallsForCallAsync(int callId)
+		{
+			var calls = await _callReferencesRepository.GetCallReferencesByTargetCallIdAsync(callId);
+
+			if (calls != null && calls.Any())
+				return calls.ToList();
+
+			return new List<CallReference>();
+		}
+
+		public async Task<bool> DeleteCallReferenceAsync(CallReference callReference, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _callReferencesRepository.DeleteAsync(callReference, cancellationToken);
+		}
+
 		public string CallStateToString(CallStates state)
 		{
 			switch (state)
@@ -771,6 +824,10 @@ namespace Resgrid.Services
 					return "Cancelled";
 				case CallStates.Unfounded:
 					return "Unfounded";
+				case CallStates.Founded:
+					return "Founded";
+				case CallStates.Minor:
+					return "Minor";
 				default:
 					return "Unknown";
 			}

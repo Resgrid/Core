@@ -4,7 +4,7 @@
 			<li class="nav-header">
 				<div class="dropdown profile-element">
 					<span>
-						<img class="img-circle" style="width: 48px; height: 48px; text-align: center;" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@ClaimsAuthorizationHelper.GetUserId()" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'" />
+						<img class="img-circle" style="width: 48px; height: 48px; text-align: center;" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@ClaimsAuthorizationHelper.GetUserId()" onerror="this.src = '@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png'" />
 					</span>
 					<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 						<span class="clear">
@@ -14,52 +14,52 @@
 						</span>
 					</a>
 					<ul class="dropdown-menu animated fadeInRight m-t-xs" style="z-index: 10000;">
-						<li><a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-UserId="@ClaimsAuthorizationHelper.GetUserId()">Profile</a></li>
-						<li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">Mailbox</a></li>
-						<li><a asp-controller="Profile" asp-action="YourDepartments" asp-route-area="User">Your Departments</a></li>
+						<li><a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-UserId="@ClaimsAuthorizationHelper.GetUserId()">@commonLocalizer["Profile"]</a></li>
+						<li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">@commonLocalizer["Mailbox"]</a></li>
+						<li><a asp-controller="Profile" asp-action="YourDepartments" asp-route-area="User">@commonLocalizer["YourDepartments"]</a></li>
 						<li class="divider"></li>
-						<li><a asp-controller="Account" asp-action="LogOff" asp-route-area="">Logout</a></li>
+						<li><a asp-controller="Account" asp-action="LogOff" asp-route-area="">@commonLocalizer["Logout"]</a></li>
 					</ul>
 				</div>
 			</li>
 			<li class="@Html.IsSelected(controller: "Home")">
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-home"></i> <span class="nav-label" data-i18n="nav.home">Home</span></a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-home"></i> <span class="nav-label" data-i18n="nav.home">@commonLocalizer["HomeModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Dispatch")">
-				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-bullhorn"></i> <span class="nav-label" data-i18n="nav.calls">Calls</span></a>
+				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-bullhorn"></i> <span class="nav-label" data-i18n="nav.calls">@commonLocalizer["CallsModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Personnel")">
-				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User"><i class="fa fa-user"></i> <span class="nav-label" data-i18n="nav.personnel">Personnel</span></a>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User"><i class="fa fa-user"></i> <span class="nav-label" data-i18n="nav.personnel">@commonLocalizer["PersonnelModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Units")">
-				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">Units</span></a>
+				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">@commonLocalizer["UnitsModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Mapping")">
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">Mapping</span></a>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["MappingModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Shifts")">
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">Shifts</span></a>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["ShiftsModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Logs")">
-				<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">Logs</span></a>
+				<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@commonLocalizer["LogsModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Reports")">
-				<a asp-controller="Reports" asp-action="Index" asp-route-area="User"><i class="fa fa-files-o"></i> <span class="nav-label" data-i18n="nav.reports">Reports</span></a>
+				<a asp-controller="Reports" asp-action="Index" asp-route-area="User"><i class="fa fa-files-o"></i> <span class="nav-label" data-i18n="nav.reports">@commonLocalizer["ReportsModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Documents")">
-				<a asp-controller="Documents" asp-action="Index" asp-route-area="User"><i class="fa fa-file-archive-o"></i> <span class="nav-label" data-i18n="nav.documents">Documents</span></a>
+				<a asp-controller="Documents" asp-action="Index" asp-route-area="User"><i class="fa fa-file-archive-o"></i> <span class="nav-label" data-i18n="nav.documents">@commonLocalizer["DocumentsModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Calendar")">
-				<a asp-controller="Calendar" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> <span class="nav-label" data-i18n="nav.calendar">Calendar</span></a>
+				<a asp-controller="Calendar" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> <span class="nav-label" data-i18n="nav.calendar">@commonLocalizer["CalendarModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Notes")">
-				<a asp-controller="Notes" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> <span class="nav-label" data-i18n="nav.notes">Notes</span></a>
+				<a asp-controller="Notes" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> <span class="nav-label" data-i18n="nav.notes">@commonLocalizer["NotesModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Trainings")">
-				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">Trainings</span></a>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">@commonLocalizer["TrainingsModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Inventory")">
-				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User"><i class="fa fa-barcode"></i> <span class="nav-label" data-i18n="nav.inventory">Inventory</span></a>
+				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User"><i class="fa fa-barcode"></i> <span class="nav-label" data-i18n="nav.inventory">@commonLocalizer["InventoryModule"]</span></a>
 			</li>
 		</ul>
 	</div>

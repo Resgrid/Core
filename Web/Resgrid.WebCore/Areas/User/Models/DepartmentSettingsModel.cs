@@ -32,8 +32,12 @@ namespace Resgrid.Web.Areas.User.Models
 		public bool EnableStaffingReset { get; set; }
 		public string TimeToResetStaffing { get; set; }
 		public SelectList StaffingLevels { get; set; }
+		public List<CustomStateDetail> Staffings { get; set; }
 		public int ResetStaffingTo { get; set; }
 		public UserStateTypes UserStateTypes { get; set; }
+
+		public bool EnableStaffingSupress { get; set; }
+		public DepartmentSuppressStaffingInfo SuppressStaffingInfo { get; set; }
 
 		public bool EnableStatusReset { get; set; }
 		public string TimeToResetStatus { get; set; }

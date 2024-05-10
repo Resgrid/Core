@@ -9,6 +9,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Autofac;
+using Resgrid.Config;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -53,7 +54,7 @@ namespace Resgrid.Workers.Framework.Logic
 							var content = rRemScript.Replace(response.Content, "");
 
 							var systemNotificaiton = new EmailNotification();
-							systemNotificaiton.Subject = string.Format("{0} Report for {1} ", ((ReportTypes)int.Parse(item.ScheduledTask.Data)), DateTime.UtcNow.TimeConverter(item.Department));
+							systemNotificaiton.Subject = string.Format("Resgrid {0} Report for {1} ", ((ReportTypes)int.Parse(item.ScheduledTask.Data)), DateTime.UtcNow.TimeConverter(item.Department));
 
 							string fileName = string.Format("{0}Report_{1}.pdf", ((ReportTypes)int.Parse(item.ScheduledTask.Data)),
 								DateTime.UtcNow.TimeConverter(item.Department));
@@ -66,7 +67,24 @@ namespace Resgrid.Workers.Framework.Logic
 							systemNotificaiton.AttachmentName = fileName;
 							systemNotificaiton.AttachmentData = _pdfProvider.ConvertHtmlToPdf(content);
 
-							await _emailService.SendReportDeliveryEmail(systemNotificaiton);
+							string reportUrl = "";
+							switch ((ReportTypes)int.Parse(item.ScheduledTask.Data))
+							{
+								case ReportTypes.Staffing:
+									reportUrl = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Reports/StaffingReport";
+									break;
+								case ReportTypes.Personnel:
+									reportUrl = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Reports/PersonnelReport";
+									break;
+								case ReportTypes.Certifications:
+									reportUrl = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Reports/CertificationsReport";
+									break;
+								case ReportTypes.ShiftReadiness:
+									reportUrl = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Reports/UpcomingShiftReadinessReport";
+									break;
+							}
+
+							await _emailService.SendReportDeliveryAsync(systemNotificaiton, item.Department.DepartmentId, reportUrl, ((ReportTypes)int.Parse(item.ScheduledTask.Data)).ToString());
 						}
 					}
 				}

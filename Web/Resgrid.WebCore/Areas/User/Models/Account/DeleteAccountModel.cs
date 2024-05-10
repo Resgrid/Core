@@ -6,5 +6,7 @@ namespace Resgrid.Web.Areas.User.Models.Account
 	{
 		[Required]
 		public bool AreYouSure { get; set; }
+
+		public bool IsDepartmentOwner { get; set; }
 	}
 }

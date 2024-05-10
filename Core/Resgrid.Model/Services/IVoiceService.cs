@@ -1,5 +1,6 @@
 ﻿
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,5 +30,15 @@ namespace Resgrid.Model.Services
 		Task<DepartmentVoiceChannel> GetVoiceChannelByIdAsync(string voiceChannelId);
 
 		Task<DepartmentVoiceChannel> SaveOrUpdateVoiceChannelAsync(DepartmentVoiceChannel voiceChannel, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<DepartmentVoiceUtilization> GetCurrentUtilizationForLiveKit(int departmentId);
+
+		Task<DepartmentAudio> SaveDepartmentAudioAsync(DepartmentAudio departmentAudio, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<DepartmentAudio>> GetDepartmentAudiosByDepartmentIdAsync(int departmentId);
+
+		Task<DepartmentAudio> GetDepartmentAudioByIdAsync(string id);
+
+		Task<bool> DeleteDepartmentAudioAsync(DepartmentAudio audio, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

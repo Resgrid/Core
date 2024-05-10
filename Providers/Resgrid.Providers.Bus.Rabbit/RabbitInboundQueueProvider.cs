@@ -526,13 +526,15 @@ namespace Resgrid.Providers.Bus.Rabbit
 					{
 						IBasicProperties props = channel.CreateBasicProperties();
 						props.DeliveryMode = 2;
-						props.Expiration = "36000000";
-						props.Headers = new Dictionary<string, object>();
-						props.Headers.Add("x-redelivered-count", currentDeliveryCount++);
-						props.Headers.Add("x-previous-error", mex.Message);
+
+						// I *THINK* these headers are appearing in the body when trying to deserialze and it's blowing up protobuf. -SJ
+						//props.Expiration = "36000000";
+						//props.Headers = new Dictionary<string, object>();
+						//props.Headers.Add("x-redelivered-count", currentDeliveryCount++);
+						//props.Headers.Add("x-previous-error", mex.Message);
 
 						// https://github.com/rabbitmq/rabbitmq-delayed-message-exchange
-						props.Headers.Add("x-delay", 5000);
+						//props.Headers.Add("x-delay", 5000);
 
 						channel.BasicPublish(exchange: ea.Exchange,
 									 routingKey: ea.RoutingKey,

@@ -220,6 +220,18 @@ namespace Resgrid.Services
 			return await GetUpcomingScheduledTasksAsync(DateTime.UtcNow, null);
 		}
 
+		public async Task<List<ScheduledTask>> GetAllUpcomingOrRecurringReportDeliveryTasksAsync()
+		{
+			var items = await _scheduledTaskRepository.GetAllUpcomingOrRecurringReportDeliveryTasksAsync();
+
+			if (items != null && items.Any())
+			{
+				return items.ToList();
+			}
+
+			return new List<ScheduledTask>();
+		}
+
 		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksAsync(DateTime currentTime, List<ScheduledTask> tasks)
 		{
 			//Logging.LogTrace("ScheduledTasksService: Entering GetUpcomingScheduledTaks");
@@ -254,10 +266,10 @@ namespace Resgrid.Services
 
 						///* We need to pull the Log for this schedule. There should only ever be 1 log per ScheduledTask
 					 //* per day, you can't run a scheduled task multiple times per day (at the current time)
-					 //* 
+					 //*
 					 //* SJ 6/8/2014: I think a problem here was that we are tracking the log in UTC, but all other work is occuring
-					 //* in a localized DateTime. We were seeing some very strange behavior when UTC ticked past midnight. I've modified 
-					 //* the selection below to run on a localized DateTime. Linq to Entities doesn't support time converion, so I broke 
+					 //* in a localized DateTime. We were seeing some very strange behavior when UTC ticked past midnight. I've modified
+					 //* the selection below to run on a localized DateTime. Linq to Entities doesn't support time converion, so I broke
 					 //* up the query.
 					 //*/
 						//var logs = _scheduledTaskLogRepository.GetAllLogsForTask(scheduledTask.ScheduledTaskId);

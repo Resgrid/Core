@@ -1,5 +1,6 @@
-﻿@{
-    ViewBag.Title = "Resgrid | Provision Failure";
+﻿@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["ProvisionFailureHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -7,8 +8,8 @@
     <h1>Provision Failure</h1>
 </div>
 <div id="breadcrumb">
-    <a href="@Url.Action("Dashboard", "Home", new { Area = "User" })" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
-    <a href="#" class="current">Provision Failure</a>
+    <a href="@Url.Action("Dashboard", "Home", new { Area = "User" })" title="Go to Home" class="tip-bottom">@commonLocalizer["HomeModule"]</a>
+    <a href="#" class="current">@localizer["ProvisionFailureHeader"]</a>
 </div>
 
 <div class="row">
@@ -18,18 +19,18 @@
                 <span class="icon">
                     <i class="icon-money"></i>
                 </span>
-                <h5>Provision Failure</h5>
+                <h5>@localizer["ProvisionFailureHeader"]</h5>
             </div>
             <div class="widget-content">
                 <div class="page-header">
                     <h3>
                         <i class="picons-24-basic2-056"></i>
-                        Provision Failure
+                        @localizer["ProvisionFailureHeader"]
                     </h3>
                 </div>
                 <div class="row-fluid">
                     <div class="span6">
-                        Resgrid was unable provision the number you requested, please retry the operation with another number. If you cannot provision a number, please contact us and let us know.
+                        @localizer["ProvisionFailureBody"]
                     </div>
                     <div class="row-fluid">
                     </div>
@@ -42,6 +43,6 @@
 </div>
 
 @section Scripts
-{
+    {
 
 }

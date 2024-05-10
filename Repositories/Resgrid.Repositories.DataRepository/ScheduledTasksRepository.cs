@@ -8,10 +8,14 @@ using Resgrid.Repositories.DataRepository.Transactions;
 using System.Configuration;
 using Dapper;
 using System;
+using System.Data.Common;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.ResourceOrders;
+using Resgrid.Repositories.DataRepository.Queries.ScheduledTasks;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -58,6 +62,48 @@ namespace Resgrid.Repositories.DataRepository
 
 				return knownDepartments.Concat(unknownDepartments);
 			}
+		}
+
+		public async Task<IEnumerable<ScheduledTask>> GetAllUpcomingOrRecurringReportDeliveryTasksAsync()
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ScheduledTask>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DateTime", DateTime.UtcNow.ToString());
+
+					var query = _queryFactory.GetQuery<SelectAllUpcomingOrRecurringReportTasksQuery>();
+
+					return await x.QueryAsync<ScheduledTask>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+
 		}
 
 		public List<Department> GetDepartmentsForSelectedTasks(List<int> scheduleTasksIds)

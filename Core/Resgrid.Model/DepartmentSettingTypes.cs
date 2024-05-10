@@ -27,6 +27,11 @@
 		AutoSetStatusForShiftDispatchPersonnel = 23,
 		ShiftCallDispatchPersonnelStatusToSet = 24,
 		ShiftCallReleasePersonnelStatusToSet = 25,
-		AllowSignupsForMultipleShiftGroups = 26
+		AllowSignupsForMultipleShiftGroups = 26,
+		StaffingSuppressStaffingLevels = 27,
+		MappingPersonnelLocationTTL = 28,
+		MappingUnitLocationTTL = 29,
+		MappingPersonnelAllowStatusWithNoLocationToOverwrite = 30,
+		MappingUnitAllowStatusWithNoLocationToOverwrite = 31
 	}
 }

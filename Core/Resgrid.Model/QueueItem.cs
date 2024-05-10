@@ -21,7 +21,7 @@ namespace Resgrid.Model
 		public int QueueType { get; set; }
 
 		[ProtoMember(3)]
-		public string SourceId { get; set; }
+		public string SourceId { get; set; }	// UserId or DepartmentId
 
 		[ProtoMember(4)]
 		public DateTime QueuedOn { get; set; }
@@ -32,8 +32,23 @@ namespace Resgrid.Model
 		[ProtoMember(6)]
 		public DateTime? CompletedOn { get; set; }
 
+		[ProtoMember(8)]
+		public DateTime? ToBeCompletedOn { get; set; }
+
 		[ProtoMember(7)]
 		public string Receipt { get; set; }
+
+		[ProtoMember(9)]
+		public string Reason { get; set; }
+
+		[ProtoMember(10)]
+		public string QueuedByUserId { get; set; }
+
+		[ProtoMember(11)]
+		public string Data { get; set; }
+
+		[ProtoMember(12)]
+		public int ReminderCount { get; set; }
 
 		[NotMapped]
 		public int DequeueCount { get; set; }
@@ -56,6 +71,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "DequeueCount" };
 	}
 }

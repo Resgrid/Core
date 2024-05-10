@@ -1,19 +1,20 @@
 ﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.WebCore.Areas.User.Models.Templates.TemplateIndexModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Templates.Templates> localizer
 @{
-    ViewBag.Title = "Resgrid | Templates";
+    ViewBag.Title = "Resgrid | " + @commonLocalizer["Templates"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Templates</h2>
+        <h2>@commonLocalizer["Templates"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
             </li>
             <li class="active">
-                <strong>Templates</strong>
+                <strong>@commonLocalizer["Templates"]</strong>
             </li>
         </ol>
     </div>
@@ -21,8 +22,8 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a title="Create Template" class="btn btn-info" asp-controller="Templates" asp-action="CallNotes" asp-route-area="User">Call Notes</a>
-                <a title="Create Template" class="btn btn-success" asp-controller="Templates" asp-action="New" asp-route-area="User">New Template</a>
+                <a title="Create Template" class="btn btn-info" asp-controller="Templates" asp-action="CallNotes" asp-route-area="User">@localizer["CallNotes"]</a>
+                <a title="Create Template" class="btn btn-success" asp-controller="Templates" asp-action="New" asp-route-area="User">@localizer["NewTemplateHeader"]</a>
             </div>
         </div>
     }
@@ -38,16 +39,16 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        Name
+                                        @commonLocalizer["Name"]
                                     </th>
                                     <th>
-                                        Type
+                                        @commonLocalizer["Type"]
                                     </th>
                                     <th>
-                                        Created On
+                                        @commonLocalizer["CreatedOn"]
                                     </th>
                                     <th>
-                                        Action
+                                        @commonLocalizer["Action"]
                                     </th>
                                 </tr>
                             </thead>
@@ -67,9 +68,11 @@
                                         <td>
                                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                             {
+                                                <a href="@Url.Action("Edit", "Templates", new { area = "User", id = t.CallQuickTemplateId })" class='btn btn-xs btn-info'>
+                                                    @commonLocalizer["Edit"]
+                                                </a>
                                                 <a href="@Url.Action("Delete", "Templates", new { area = "User", id = t.CallQuickTemplateId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this template. Are you sure you want to delete the template @t.Name ?" rel="nofollow">
-                                                    <i class="icon-trash">
-                                                    </i> Delete
+                                                    @commonLocalizer["Delete"]
                                                 </a>
                                             }
                                         </td>

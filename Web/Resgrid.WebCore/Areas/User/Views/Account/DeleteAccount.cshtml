@@ -1,94 +1,100 @@
-﻿
-@model Resgrid.Web.Areas.User.Models.Account.DeleteAccountModel
+﻿@model Resgrid.Web.Areas.User.Models.Account.DeleteAccountModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Account.DeleteAccount> localizer
 @{
-	ViewBag.Title = "Resgrid | Delete Person";
-	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    ViewBag.Title = "Resgrid | " + @localizer["DeleteAccountHeader"];
 }
 
-<div id="content" class="span9 section-body">
-	<div id="section-body" class="tabbable">
-		<!-- Only required for left/right tabs -->
-		<ul class="nav nav-tabs">
-			<li class="active"><a href="#tab1" data-toggle="tab">Delete Person</a></li>
-		</ul>
-		<div class="tab-content">
-			<div class="tab-pane active" id="tab1">
-				<div class="row-fluid">
-					<div class="span12">
-						<div id="accordion1" class="accordion">
-							<div class="accordion-group">
-								<div class="accordion-heading">
-									<a class="accordion-toggle" data-toggle="collapse" href="#control" data-original-title="">
-										<i class="icon-list-alt icon-white"></i><span class="divider-vertical"></span>Delete Account<i class="icon-chevron-down icon-white pull-right"></i>
-									</a>
-								</div>
-								<div id="control" class="accordion-body collapse in">
-									<div class="accordion-inner paddind">
-										@using (Html.BeginForm("DeletePerson", "Personnel", FormMethod.Post, new { area = "User", id = "delete_person", @class = "form-horizontal" }))
-					{
-					  if (!ViewData.ModelState.IsValid)
-					  {
-						  <div class="alert alert-error">
-							  @Html.ValidationSummary(false, "Account delete was unsuccessful. Please correct the errors and try again.")
-						  </div>
-					  }
-						<div style="margin: 0; padding: 0; display: inline">
-												@Html.AntiForgeryToken()
-											</div>
-											<div class='page-header'>
-												<h3>Delete User
-												</h3>
-											</div>
-											<div class="alert alert-error">
-												<strong>Are you sure you want to delete your account?</strong> If you choose to delete this account the information below will be permanently deleted. The recommended procedure is to disable the user if you leave the department or organization. The department manager or another department admin can disable the account. Only delete the user after enough time has gone by, the account was a mistake or never used.
-												<br/><br/>
-												<strong>Data that is Deleted</strong>
-												<ul>
-													<li>User Account</li>
-													<li>Action History</li>
-													<li>State History</li>
-												    <li>Call and work logs</li>
-                                                    <li>Unit logs</li>
-													<li>Messages Sent or Received</li>
-												</ul>
-												
-												<strong>Data that is Altered</strong>
-												<ul>
-													<li>Calls where they are the reporting user or closing user is mapped to the Departments Managing User</li>
-												</ul>
-											</div>
-											<hr />
-											<div class='alert alert-warning'>
-												<i class='picons-16-basic1-104'></i>Click the checkbox below to delete this user.
-											</div>
-											<fieldset class="inputs">
-												<div class="control-group" id="user_current_password_input">
-													<div class="controls">
-														<label class="checkbox">Confirm Delete	@Html.CheckBoxFor(m => m.AreYouSure)</label>
-													</div>
-												</div>
-											</fieldset>
-											<fieldset class="form-actions">
-												<input class="action input_action  btn btn-primary" id="user_submit_action" name="commit"
-													type="submit" value="Delete Person" />
-
-												<a class="btn btn-app" href="@Url.Action("Index", "Personnel", new { area = "User" })">Cancel</a>
-											</fieldset>
-					}
-									  &nbsp;
-									</div>
-								</div>
-							</div>
-
-						</div>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["DeleteAccountHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["DeleteAccountHeader"]</strong>
+            </li>
+        </ol>
+    </div>
 </div>
-@section Scripts
-{
 
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form id="account_delete_form" name="account_delete_form" class="form-horizontal" role="form" asp-controller="Account" asp-action="DeleteAccount" asp-route-area="User" method="post">
+
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class='page-header'>
+                            <h3>
+                                @localizer["DeleteAccountHeader"]
+                            </h3>
+                        </div>
+                        <div class="alert alert-error">
+                            @localizer["DeleteAreYouSure1"]
+                            <br /><br />
+                            @localizer["DeleteAreYouSure2"]
+                            <br /><br />
+                            @localizer["DeleteAreYouSure3"]
+                            <br /><br />
+                        </div>
+                        <hr />
+                        @if (!Model.IsDepartmentOwner)
+                        {
+                            <div class='alert alert-warning'>
+                                <i class='picons-16-basic1-104'></i>@localizer["CheckToDelete"]
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["ConfirmDelete"]</label>
+                                <div class="col-sm-10">
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="AreYouSure">
+                                        <label></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button class="btn btn-primary" id="submit-button" name="submit-button" type="submit">@commonLocalizer["Delete"]</button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger">
+                                @localizer["DepartmentOwnerError"]
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function() {
+            resgrid.common.analytics.track('Account - Delete Account');
+
+            $("#account_delete_form").submit(function(event) {
+                // disable the submit button to prevent repeated clicks
+                $('#submit-button').attr("disabled", "disabled");
+
+
+                return true;
+            });
+        });
+    </script>
 }

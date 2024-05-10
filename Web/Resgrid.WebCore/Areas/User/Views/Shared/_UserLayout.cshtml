@@ -21,12 +21,23 @@
     <link rel="stylesheet" href="/js/ng/styles.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
+    <link rel="shortcut icon" href="~/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
     <!-- Add local styles, mostly for plugins css file -->
     @if (IsSectionDefined("Styles"))
     {
         @RenderSection("Styles", required: false)
     }
     <script src="https://js.stripe.com/v3/"></script>
+
+    @if (Resgrid.Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+    {
+        //@Html.Raw(JavaScriptSnippet.FullScript)
+    }
 </head>
 <body>
     <!-- Wrapper-->
@@ -43,8 +54,6 @@
 
             <!-- Main view  -->
             @RenderBody()
-
-            <div id="setupWizard"></div>
 
             <!-- Footer -->
             @await Html.PartialAsync("_Footer")

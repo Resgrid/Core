@@ -21,7 +21,7 @@ namespace Resgrid.Model.Services
 		Task<Department> SaveDepartmentAsync(Department department,
 			CancellationToken cancellationToken = default(CancellationToken));
 
-		void InvalidateAllDepartmentsCache(int departmentId);
+		Task<bool> InvalidateAllDepartmentsCache(int departmentId);
 
 		void InvalidateDepartmentInCache(int departmentId);
 
@@ -75,8 +75,7 @@ namespace Resgrid.Model.Services
 
 		Task<bool> ValidateUserAndDepartmentByUserAsync(string userName, int departmentId, string departmentCode);
 
-		List<IdentityUser> GetAllUsersForDepartment(int departmentId, bool retrieveHidden = false,
-			bool bypassCache = false);
+		Task<List<IdentityUser>> GetAllUsersForDepartment(int departmentId, bool retrieveHidden = false, bool bypassCache = false);
 
 		Task<List<IdentityUser>> GetAllUsersForDepartmentAsync(int departmentId, bool retrieveHidden = false,
 			bool bypassCache = false);

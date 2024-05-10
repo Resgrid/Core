@@ -219,6 +219,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Active = true;
 				task.Data = ((int)model.ReportType).ToString();
 				task.TaskType = (int)TaskTypes.ReportDelivery;
+				task.DepartmentId = DepartmentId;
 
 				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
@@ -333,6 +334,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Active = true;
 				task.Data = ((int)model.ReportType).ToString();
 				task.TaskType = (int)TaskTypes.ReportDelivery;
+				task.DepartmentId = DepartmentId;
 
 				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
@@ -464,6 +466,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Active = true;
 				task.Data = model.StaffingLevel.ToString();
 				task.TaskType = (int)TaskTypes.UserStaffingLevel;
+				task.DepartmentId = DepartmentId;
 
 				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
@@ -666,6 +669,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				task.Active = true;
 				task.Data = model.StaffingLevel.ToString();
 				task.TaskType = (int)TaskTypes.UserStaffingLevel;
+				task.DepartmentId = DepartmentId;
 
 				await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 
@@ -1252,14 +1256,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				using (MemoryStream stream = new MemoryStream())
 				{
-					IImageFormat imageFormat = Configuration.Default.ImageFormatsManager.FindFormatByFileExtension("png");
-					image.Save(stream, imageFormat);
+					IImageFormat imageFormat;
 
-					width = image.Width;
-					height = image.Height;
+					if (Configuration.Default.ImageFormatsManager.TryFindFormatByFileExtension("png", out imageFormat))
+					{
+						image.Save(stream, imageFormat);
 
-					stream.Position = 0;
-					imgArray = stream.ToArray();
+						width = image.Width;
+						height = image.Height;
+
+						stream.Position = 0;
+						imgArray = stream.ToArray();
+					}
 				}
 			}
 
@@ -1303,17 +1311,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					using (MemoryStream stream = new MemoryStream())
 					{
-						IImageFormat imageFormat = Configuration.Default.ImageFormatsManager.FindFormatByFileExtension("png");
-						image.Mutate(x => x
-						 .Resize((int)model.imgW, (int)model.imgH));
+						IImageFormat imageFormat;
 
-						Rectangle rectangle = new Rectangle(model.imgX1, model.imgY1, model.cropW, model.cropH);
-						image.Mutate(ctx => ctx.Crop(rectangle));
+						if (Configuration.Default.ImageFormatsManager.TryFindFormatByFileExtension("png", out imageFormat))
+						{
+							image.Mutate(x => x
+							 .Resize((int)model.imgW, (int)model.imgH));
 
-						image.Save(stream, imageFormat);
+							Rectangle rectangle = new Rectangle(model.imgX1, model.imgY1, model.cropW, model.cropH);
+							image.Mutate(ctx => ctx.Crop(rectangle));
 
-						stream.Position = 0;
-						imgArray = stream.ToArray();
+							image.Save(stream, imageFormat);
+
+							stream.Position = 0;
+							imgArray = stream.ToArray();
+						}
 					}
 				}
 

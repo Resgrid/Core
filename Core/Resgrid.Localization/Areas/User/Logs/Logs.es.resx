@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddUnitsToLog" xml:space="preserve">
+    <value>Agregar unidad al registro</value>
+  </data>
+  <data name="Attachments" xml:space="preserve">
+    <value>Archivos adjuntos</value>
+  </data>
+  <data name="BodyLocation" xml:space="preserve">
+    <value>Ubicación del cuerpo</value>
+  </data>
+  <data name="BodyLocationReq" xml:space="preserve">
+    <value>Se requiere la ubicación del cuerpo.</value>
+  </data>
+  <data name="CallName" xml:space="preserve">
+    <value>Nombre de llamada</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Prioridad de llamadas</value>
+  </data>
+  <data name="CaseNumber" xml:space="preserve">
+    <value>Caso #</value>
+  </data>
+  <data name="Cause" xml:space="preserve">
+    <value>Causa</value>
+  </data>
+  <data name="Condition" xml:space="preserve">
+    <value>Condición</value>
+  </data>
+  <data name="Coroner" xml:space="preserve">
+    <value>Juez de instrucción</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="DeleteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este registro. ¿Estás seguro de que quieres eliminar el registro?</value>
+  </data>
+  <data name="DestinationLocation" xml:space="preserve">
+    <value>Ubicación de destino</value>
+  </data>
+  <data name="Dispatched" xml:space="preserve">
+    <value>Enviada</value>
+  </data>
+  <data name="Investigator" xml:space="preserve">
+    <value>Investigadora</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="LogInfo" xml:space="preserve">
+    <value>Información de registro</value>
+  </data>
+  <data name="LogsForYear" xml:space="preserve">
+    <value>Registros para el año</value>
+  </data>
+  <data name="LogsHeader" xml:space="preserve">
+    <value>Registro</value>
+  </data>
+  <data name="Meeting" xml:space="preserve">
+    <value>Reunión</value>
+  </data>
+  <data name="MeetingEndReq" xml:space="preserve">
+    <value>Se requiere tiempo de finalización de la reunión.</value>
+  </data>
+  <data name="MeetingLocationReq" xml:space="preserve">
+    <value>Se requiere la ubicación de la reunión.</value>
+  </data>
+  <data name="MeetingStartReq" xml:space="preserve">
+    <value>Se requiere la hora de inicio de la reunión.</value>
+  </data>
+  <data name="MeetingType" xml:space="preserve">
+    <value>Tipo de reunión</value>
+  </data>
+  <data name="MeetingTypeReq" xml:space="preserve">
+    <value>Se requiere el tipo de reunión.</value>
+  </data>
+  <data name="Narrative" xml:space="preserve">
+    <value>Narrativa</value>
+  </data>
+  <data name="NewCall" xml:space="preserve">
+    <value>Nueva llamada</value>
+  </data>
+  <data name="NewLog" xml:space="preserve">
+    <value>Nuevo registro</value>
+  </data>
+  <data name="NewLogHeader" xml:space="preserve">
+    <value>Nuevo registro</value>
+  </data>
+  <data name="NewLogInfo" xml:space="preserve">
+    <value>A continuación puede agregar un nuevo registro al sistema (es decir, el informe de ejecución, el trabajo de la estación, la capacitación, el evento, etc.). Los registros se utilizarán para detallar la información sobre las ejecuciones de llamadas, reuniones y entrenamientos. Se requieren campos en cursiva azul.</value>
+  </data>
+  <data name="OtherAttendees" xml:space="preserve">
+    <value>Otros asistentes</value>
+  </data>
+  <data name="OthersHavingContact" xml:space="preserve">
+    <value>Otros que tienen contacto con el cuerpo</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="PersonnelRequired" xml:space="preserve">
+    <value>requerido el personal</value>
+  </data>
+  <data name="PresidingPeople" xml:space="preserve">
+    <value>Personas presidiadas</value>
+  </data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve">
+    <value>Pronunciado fallecido por</value>
+  </data>
+  <data name="PronouncedDeceasedByReq" xml:space="preserve">
+    <value>Se requiere pronunciado fallecido por.</value>
+  </data>
+  <data name="PronouncedDeceasedDateReq" xml:space="preserve">
+    <value>Se requiere fecha.</value>
+  </data>
+  <data name="SelectCall" xml:space="preserve">
+    <value>Seleccionar llamada</value>
+  </data>
+  <data name="SeniorOIC" xml:space="preserve">
+    <value>Senior (OIC)</value>
+  </data>
+  <data name="TrainingEndError" xml:space="preserve">
+    <value>Se requiere tiempo de finalización de capacitación.</value>
+  </data>
+  <data name="TrainingStartError" xml:space="preserve">
+    <value>Se requiere la hora de inicio de la capacitación.</value>
+  </data>
+  <data name="UnitPersonnel" xml:space="preserve">
+    <value>Personal de la unidad</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="UnitsAndPersonnel" xml:space="preserve">
+    <value>Unidades y personal</value>
+  </data>
+  <data name="WorkLogEndRequired" xml:space="preserve">
+    <value>Se requiere tiempo de finalización del trabajo.</value>
+  </data>
+  <data name="WorkLogStartRequired" xml:space="preserve">
+    <value>Se requiere la hora de inicio del trabajo.</value>
+  </data>
+</root>

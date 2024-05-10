@@ -36,7 +36,7 @@ namespace Resgrid.Tests.Helpers
 			admins.Add(UsersHelpers.CreateUser(Guid.NewGuid().ToString()));
 			admins.Add(UsersHelpers.CreateUser(Guid.NewGuid().ToString()));
 
-			mock.Setup(m => m.GetAllUsersForDepartment(1,true,false)).Returns(users);
+			mock.Setup(m => m.GetAllUsersForDepartment(1,true,false)).ReturnsAsync(users);
 			mock.Setup(m => m.GetAllAdminsForDepartmentAsync(1)).ReturnsAsync(admins);
 		}
 

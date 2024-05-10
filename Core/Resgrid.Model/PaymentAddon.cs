@@ -67,6 +67,9 @@ namespace Resgrid.Model
 		[ProtoMember(23)]
 		public string SubscriptionId { get; set; }
 
+		[ProtoMember(24)]
+		public long Quantity { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

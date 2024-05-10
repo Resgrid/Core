@@ -1,8 +1,7 @@
 ﻿using Autofac;
-using Resgrid.Model.Facades.Stripe;
+//using Resgrid.Model.Facades.Stripe;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
-using Resgrid.Services.Facades.Stripe;
 
 namespace Resgrid.Services
 {
@@ -40,7 +39,7 @@ namespace Resgrid.Services
 			builder.RegisterType<ScheduledTasksService>().As<IScheduledTasksService>().InstancePerLifetimeScope();
 			builder.RegisterType<DistributionListsService>().As<IDistributionListsService>().InstancePerLifetimeScope();
 			builder.RegisterType<DocumentsService>().As<IDocumentsService>().InstancePerLifetimeScope();
-			builder.RegisterType<PaymentProviderService>().As<IPaymentProviderService>().InstancePerLifetimeScope();
+			//builder.RegisterType<PaymentProviderService>().As<IPaymentProviderService>().InstancePerLifetimeScope();
 			builder.RegisterType<CalendarService>().As<ICalendarService>().InstancePerLifetimeScope();
 			builder.RegisterType<NotesService>().As<INotesService>().InstancePerLifetimeScope();
 			builder.RegisterType<CertificationService>().As<ICertificationService>().InstancePerLifetimeScope();
@@ -79,9 +78,9 @@ namespace Resgrid.Services
 
 
 			// Stripe Services
-			builder.RegisterType<StripeSubscriptionServiceFacade>().As<IStripeSubscriptionServiceFacade>().InstancePerLifetimeScope();
-			builder.RegisterType<StripeInvoiceServiceFacade>().As<IStripeInvoiceServiceFacade>().InstancePerLifetimeScope();
-			builder.RegisterType<StripeChargeServiceFacade>().As<IStripeChargeServiceFacade>().InstancePerLifetimeScope();
+			//builder.RegisterType<StripeSubscriptionServiceFacade>().As<IStripeSubscriptionServiceFacade>().InstancePerLifetimeScope();
+			//builder.RegisterType<StripeInvoiceServiceFacade>().As<IStripeInvoiceServiceFacade>().InstancePerLifetimeScope();
+			//builder.RegisterType<StripeChargeServiceFacade>().As<IStripeChargeServiceFacade>().InstancePerLifetimeScope();
 		}
 	}
 }

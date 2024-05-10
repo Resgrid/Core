@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountInfoHeader" xml:space="preserve">
+    <value>Información de la cuenta</value>
+  </data>
+  <data name="AddressLabel" xml:space="preserve">
+    <value>DIRECCIÓN</value>
+  </data>
+  <data name="AddressPlaceholder" xml:space="preserve">
+    <value>Dirección de la calle física</value>
+  </data>
+  <data name="CallEmailLabel" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="CallOptionsHeader" xml:space="preserve">
+    <value>Opciones de llamada</value>
+  </data>
+  <data name="CallPushlLabel" xml:space="preserve">
+    <value>Empujar</value>
+  </data>
+  <data name="CallTextlLabel" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="Certifications" xml:space="preserve">
+    <value>Certificaciones</value>
+  </data>
+  <data name="ChangeUserPassword" xml:space="preserve">
+    <value>Cambiar la contraseña de los usuarios</value>
+  </data>
+  <data name="CityLabel" xml:space="preserve">
+    <value>Ciudad</value>
+  </data>
+  <data name="CityPlaceholder" xml:space="preserve">
+    <value>Ciudad física</value>
+  </data>
+  <data name="ConfirmPasswordHelp" xml:space="preserve">
+    <value>Si está cambiando su contraseña, necesita volver a ingresar su nueva contraseña aquí</value>
+  </data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve">
+    <value>confirmar Contraseña</value>
+  </data>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="CurrentPasswordHelp" xml:space="preserve">
+    <value>Si está cambiando su contraseña, necesita ingresar su contraseña actual (no la nueva) aquí</value>
+  </data>
+  <data name="CurrentPasswordLabel" xml:space="preserve">
+    <value>Contraseña actual</value>
+  </data>
+  <data name="DepartmentAdminLabel" xml:space="preserve">
+    <value>Administrador del departamento</value>
+  </data>
+  <data name="DepartmentSettingsHeader" xml:space="preserve">
+    <value>Configuración del departamento</value>
+  </data>
+  <data name="DisableUserLabel" xml:space="preserve">
+    <value>Desactivar el usuario</value>
+  </data>
+  <data name="EditTitle" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EmailAddressHelper" xml:space="preserve">
+    <value>Las direcciones de correo electrónico deben ser únicas</value>
+  </data>
+  <data name="EmailAddressLabel" xml:space="preserve">
+    <value>Dirección de correo electrónico</value>
+  </data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve">
+    <value>Dirección de correo electrónico</value>
+  </data>
+  <data name="ErrorSpan" xml:space="preserve">
+    <value>Hubo errores en el perfil a continuación y no se pudo guardar. Corrija los errores a continuación e intente guardar nuevamente.</value>
+  </data>
+  <data name="FirstNameLabel" xml:space="preserve">
+    <value>Nombre de pila</value>
+  </data>
+  <data name="FirstNamePlaceholder" xml:space="preserve">
+    <value>Nombre de pila</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupo</value>
+  </data>
+  <data name="HideUserLabel" xml:space="preserve">
+    <value>Ocultar el usuario</value>
+  </data>
+  <data name="HomeNumberLabel" xml:space="preserve">
+    <value>Número de casa</value>
+  </data>
+  <data name="HomeNumberPlaceholder" xml:space="preserve">
+    <value>Número de teléfono de casa</value>
+  </data>
+  <data name="IDNumberLabel" xml:space="preserve">
+    <value>Número de identificación</value>
+  </data>
+  <data name="IDNumberPlaceholder" xml:space="preserve">
+    <value>Número de identificación personalizado</value>
+  </data>
+  <data name="IsGroupAdminLabel" xml:space="preserve">
+    <value>¿Es el administrador del grupo?</value>
+  </data>
+  <data name="LanguagesHelp" xml:space="preserve">
+    <value>Nota: El soporte multilingüe en REGRID no es totalmente compatible. Algunas partes del sitio web seguirán en inglés y estamos trabajando para traducir todo. Nuestros servicios de soporte (HelpDesk, GitHub, Discord, etc.) y la documentación solo están disponibles en inglés.</value>
+  </data>
+  <data name="LastNameLabel" xml:space="preserve">
+    <value>Apellido</value>
+  </data>
+  <data name="LastNamePlaceholder" xml:space="preserve">
+    <value>Apellido</value>
+  </data>
+  <data name="MailingAddressLabel" xml:space="preserve">
+    <value>DIRECCIÓN</value>
+  </data>
+  <data name="MailingAddressPlaceholder" xml:space="preserve">
+    <value>Dirección de la calle del correo</value>
+  </data>
+  <data name="MailingCityLabel" xml:space="preserve">
+    <value>Ciudad</value>
+  </data>
+  <data name="MailingCityPlaceholder" xml:space="preserve">
+    <value>Ciudad de correo</value>
+  </data>
+  <data name="MailingCountryLabel" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="MailingPostalCodeLabel" xml:space="preserve">
+    <value>Código Postal</value>
+  </data>
+  <data name="MailingPostalCodePlaceholder" xml:space="preserve">
+    <value>Correo postal \ código postal</value>
+  </data>
+  <data name="MailingStateLabel" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="MailingStatePlaceholder" xml:space="preserve">
+    <value>Estado de correo \ Provincia</value>
+  </data>
+  <data name="MessageEmailLabel" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="MessageOptionsHeader" xml:space="preserve">
+    <value>Opciones de mensajes</value>
+  </data>
+  <data name="MessagePushLabel" xml:space="preserve">
+    <value>Empujar</value>
+  </data>
+  <data name="MessageTextLabel" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="MobileCarrierLabel" xml:space="preserve">
+    <value>Operador de telefonía móvil</value>
+  </data>
+  <data name="MobileCarrierPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MobileNumberLabel" xml:space="preserve">
+    <value>Número de teléfono móvil</value>
+  </data>
+  <data name="MobileNumberPlaceholder" xml:space="preserve">
+    <value>Número de teléfono móvil</value>
+  </data>
+  <data name="NewPasswordHelp" xml:space="preserve">
+    <value>Deje en blanco si no desea cambiar su contraseña</value>
+  </data>
+  <data name="NewPasswordLabel" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
+  <data name="NewsletterLabel" xml:space="preserve">
+    <value>No Recibir Boletines</value>
+  </data>
+  <data name="NewUsernameHelp" xml:space="preserve">
+    <value>Deje en blanco si no desea cambiar su nombre de usuario (es decir, mantenga su nombre de usuario actual con el que inicie sesión)</value>
+  </data>
+  <data name="NewUsernameLabel" xml:space="preserve">
+    <value>Nuevo nombre de usuario</value>
+  </data>
+  <data name="NormalUserLabel" xml:space="preserve">
+    <value>Usuario normal</value>
+  </data>
+  <data name="NotificationEmailLabel" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="NotificationHeader" xml:space="preserve">
+    <value>Opciones de notificación</value>
+  </data>
+  <data name="NotificationOtherHeader" xml:space="preserve">
+    <value>Otras opciones de notificación</value>
+  </data>
+  <data name="NotificationPushLabel" xml:space="preserve">
+    <value>Empujar</value>
+  </data>
+  <data name="PhysicalAddressHeader" xml:space="preserve">
+    <value>Dirección física</value>
+  </data>
+  <data name="PostalCodeLabel" xml:space="preserve">
+    <value>Código Postal</value>
+  </data>
+  <data name="PostalCodePlaceholder" xml:space="preserve">
+    <value>Zip físico \ Código postal</value>
+  </data>
+  <data name="ProfileTitle" xml:space="preserve">
+    <value>Perfil</value>
+  </data>
+  <data name="ReportDelivery" xml:space="preserve">
+    <value>Entrega de informes</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="SameAsPhysical" xml:space="preserve">
+    <value>¿Igual que el físico?</value>
+  </data>
+  <data name="SetPictureHelpText" xml:space="preserve">
+    <value>Los cambios en las imágenes pueden tomar hasta 24 horas</value>
+  </data>
+  <data name="SetPictureLabel" xml:space="preserve">
+    <value>Haga clic aquí para configurar una imagen</value>
+  </data>
+  <data name="StaffingSchedule" xml:space="preserve">
+    <value>Horarios de personal</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="StatePlaceholder" xml:space="preserve">
+    <value>Estado físico \ Provincia</value>
+  </data>
+  <data name="TelephoneCallHome" xml:space="preserve">
+    <value>Llama a casa</value>
+  </data>
+  <data name="TelephoneCallMobile" xml:space="preserve">
+    <value>Llamar móvil</value>
+  </data>
+  <data name="TelephoneEnable" xml:space="preserve">
+    <value>Activada</value>
+  </data>
+  <data name="TelephoneHeader" xml:space="preserve">
+    <value>Opciones de teléfono (voz)</value>
+  </data>
+  <data name="TelephoneWrongPlanHeader" xml:space="preserve">
+    <value>Plan incorrecto</value>
+  </data>
+  <data name="TelephoneWrongPlanText" xml:space="preserve">
+    <value>El plan actual de su departamento no es compatible con la alertas de teléfono de voz. Actualice su plan a Ultimate o superior para obtener esta función.</value>
+  </data>
+  <data name="TimeZoneLabel" xml:space="preserve">
+    <value>Zona horaria</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Editar perfil</value>
+  </data>
+  <data name="UserTypeLabel" xml:space="preserve">
+    <value>Tipo de usuario</value>
+  </data>
+</root>

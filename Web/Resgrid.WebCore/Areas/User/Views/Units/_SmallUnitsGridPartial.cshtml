@@ -1,7 +1,9 @@
-﻿<div id="smallUnitsGrid"></div>
+﻿@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+
+<div id="smallUnitsGrid"></div>
 
 <script id="smallUnitRowActionColumnTemplate" type="text/x-kendo-tmpl">
-	<a class="btn btn-success selectUnitButton" onclick="resgrid.units.smallunitsgrid.selectUnit(#=UnitId#,'#=Name#');">Select Unit</a>
+	<a class="btn btn-success selectUnitButton" onclick="resgrid.units.smallunitsgrid.selectUnit(#=UnitId#,'#=Name#');">@localizer["SelectUnit"]</a>
 </script>
 
 <script src="~/js/app/internal/units/resgrid.units.smallunitsgrid.js" type="text/javascript"></script>

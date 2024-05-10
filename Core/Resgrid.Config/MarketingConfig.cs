@@ -6,7 +6,6 @@
 		public static string MailingApiKey = "";
 		public static string AdminListId = "";
 		public static string UserListId = "";
-		
-		public static string UserVoiceApiKey = "";
+		public static string PublicListId = "";
 	}
 }

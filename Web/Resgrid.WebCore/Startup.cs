@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -9,6 +11,8 @@ using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
 using FluentMigrator.Runner;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -16,12 +20,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
 using Resgrid.Framework;
+using Resgrid.Localization;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.AddressVerification;
@@ -41,14 +47,17 @@ using Resgrid.Repositories.DataRepository.Stores;
 using Resgrid.Services;
 using Resgrid.Web.Options;
 using Resgrid.WebCore.Middleware;
+using Sentry.Extensibility;
 using StackExchange.Redis;
 using Stripe;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 namespace Resgrid.Web
 {
 	public class Startup
 	{
-		public IConfigurationRoot Configuration { get; private set; }
+        //public IConfiguration Configuration { get; }
+        public IConfigurationRoot Configuration { get; private set; }
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
@@ -307,7 +316,7 @@ namespace Resgrid.Web
 				pipeline.MinifyCssFiles("/css/**/*.css");
 
 				// Public (external website) public style bundles
-				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "lib/font-awesome/css/font-awesome.min.css");
+				pipeline.AddCssBundle("/css/pub-bundle.css", "css/style.css", "css/animate.css", "css/pricing/pricing-tables.css", "lib/font-awesome/css/font-awesome.min.css");
 
 				// Angular App code
 				pipeline.AddJavaScriptBundle("/js/ng/app.js", "js/ng/vendor.js", "js/ng/runtime.js", "js/ng/polyfills.js", "js/ng/main.js");
@@ -318,7 +327,8 @@ namespace Resgrid.Web
 					"lib/toastr/toastr.min.css", "lib/jqueryui/themes/cupertino/jquery-ui.css", "lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
 					"clib/picEdit/css/picedit.min.css", "clib/bootstrap-wizard/bootstrap-wizard.css", "lib/quill/dist/quill.snow.css", "lib/leaflet/dist/leaflet.css",
 					"lib/fullcalendar/dist/fullcalendar.min.css", "lib/bstreeview/dist/css/bstreeview.min.css",
-					"lib/selectize/selectize/dist/css/selectize.default.css", "lib/claviska/jquery-minicolors/jquery.minicolors.css", "css/style.css");
+					"lib/selectize/selectize/dist/css/selectize.default.css", "lib/claviska/jquery-minicolors/jquery.minicolors.css", "lib/algolia/autocomplete-theme-classic/dist/theme.css",
+					"lib/bootstrap-select/dist/css/bootstrap-select.css", "clib/data-tables/datatables.css", "css/style.css");
 
 				// Internal app js bundle
 				pipeline.AddJavaScriptBundle("/js/int-bundle.js", "lib/metisMenu/dist/metisMenu.min.js", "lib/slimScroll/jquery.slimscroll.js", "lib/pace/pace.js",
@@ -327,7 +337,8 @@ namespace Resgrid.Web
 					"lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js", "lib/signalr/dist/browser/signalr.js", "clib/picEdit/js/picedit.min.js",
 					"lib/sweetalert/dist/sweetalert.min.js", "clib/bootstrap-wizard/bootstrap-wizard.min.js", "lib/quill/dist/quill.min.js", "lib/moment/min/moment.min.js",
 					"lib/fullcalendar/dist/fullcalendar.min.js", "lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js",
-					"lib/selectize/selectize/dist/js/standalone/selectize.min.js", "lib/claviska/jquery-minicolors/jquery.minicolors.min.js", "js/site.min.js");
+					"lib/selectize/selectize/dist/js/standalone/selectize.min.js", "lib/claviska/jquery-minicolors/jquery.minicolors.min.js", "lib/algolia/autocomplete-js/dist/umd/index.production.js",
+					"lib/bootstrap-select/dist/js/bootstrap-select.js", "clib/data-tables/datatables.js", "js/site.min.js");
 			});
 
 
@@ -343,14 +354,13 @@ namespace Resgrid.Web
 			builder.AddRazorRuntimeCompilation();
 #endif
 
-//#if (!DEBUG)
+			//#if (!DEBUG)
 			var redis = ConnectionMultiplexer.Connect(CacheConfig.RedisConnectionString);
 			services.AddDataProtection().SetApplicationName($"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-web").PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
 			services.AddStackExchangeRedisCache(option =>
 			{
-				option.Configuration = Environment
-					.GetEnvironmentVariable("Redis-Session");
+				option.Configuration = CacheConfig.RedisConnectionString;//Environment.GetEnvironmentVariable("Redis-Session");
 				option.InstanceName = "RedisInstance";
 			});
 
@@ -359,10 +369,21 @@ namespace Resgrid.Web
 				options.IdleTimeout = TimeSpan.FromMinutes(240);
 				options.Cookie.Name = "ResgridSessionCookie";
 			});
-//#endif
+			//#endif
 
-			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
+			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.GetStripeApiKey();
 
+			services.AddLocalization();
+
+			services.Configure<RequestLocalizationOptions>(
+				opts =>
+				{
+					opts.DefaultRequestCulture = new RequestCulture("en", "en");
+					// Formatting numbers, dates, etc.
+					opts.SupportedCultures = SupportedLocales.DefaultENCultureInfos();
+					// UI strings that we have localized.
+					opts.SupportedUICultures = SupportedLocales.GetSupportedCultureInfos();
+				});
 
 			Audit.Core.Configuration.Setup()
 				.UseMongoDB(config => config
@@ -370,7 +391,26 @@ namespace Resgrid.Web
 					.Database("Audit")
 					.Collection("Event"));
 
+			// Sentry logging
+			if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
+			{
+				//services.AddSingleton<ISentryEventExceptionProcessor, SentryExceptionProcessor>();
+				services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
+
+				services.AddSentryTunneling();
+			}
+
 			this.Services = services;
+
+			if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+			{
+				services.AddSingleton<ITelemetryInitializer, WebTelemetryInitializer>();
+
+				var aiOptions = new ApplicationInsightsServiceOptions();
+				aiOptions.InstrumentationKey = ExternalErrorConfig.ApplicationInsightsInstrumentationKey;
+				aiOptions.ConnectionString = ExternalErrorConfig.ApplicationInsightsConnectionString;
+				services.AddApplicationInsightsTelemetry(aiOptions);
+			}
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)
@@ -424,7 +464,7 @@ namespace Resgrid.Web
 			}
 			else
 			{
-				app.UseExceptionHandler("/Home/Error");
+				app.UseExceptionHandler("/Public/Error");
 
 #if (DOCKER)
 				app.Use(async (context, next) => {
@@ -477,6 +517,14 @@ namespace Resgrid.Web
 			app.UseAuthorization();
 
 			app.UseSession();
+
+			app.UseRequestLocalization();
+
+			// Sentry logging
+			if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
+			{
+				app.UseSentryTunneling();
+			}
 
 			app.UseMvc(routes =>
 			{

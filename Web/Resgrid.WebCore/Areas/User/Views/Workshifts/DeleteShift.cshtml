@@ -1,0 +1,62 @@
+﻿@model Resgrid.Web.Areas.User.Models.Workshifts.DeleteStaticShiftView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["DeleteStaticShiftHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["DeleteStaticShiftHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["ShiftsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["DeleteStaticShiftHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form id="edit_user" class="form-horizontal" role="form" asp-controller="Workshifts" asp-action="DeleteShift" asp-route-area="User" method="post">
+
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Shift.WorkshiftId)
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class='page-header'>
+                            <h3>
+                                Delete @Model.Shift.Name
+                            </h3>
+                        </div>
+                        <div class="alert alert-error">
+                            <strong>Are you sure you want to delete this static shift?</strong> If you choose to delete this shift it will no longer show up on the calendar and all assignments for this shift will be removed and it will not show up in any reports.
+                            <br />
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-Sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Delete Shift</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+}

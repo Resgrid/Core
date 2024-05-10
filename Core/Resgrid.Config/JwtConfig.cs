@@ -13,8 +13,10 @@
 
 		public static int Duration = 30;
 
-		public static string EventsClientId = "Events";
+		public static string EventsClientId = "RGEvents";
 
-		public static string EventsClientSecret = "EventsClientSecret";
+		public static string EventsClientSecret = "";
+
+
 	}
 }

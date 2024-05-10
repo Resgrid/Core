@@ -10,6 +10,7 @@ using Resgrid.Model.Services;
 using MongoDB.Bson;
 using System.Collections.ObjectModel;
 using Resgrid.Model.Events;
+using Resgrid.Framework;
 
 namespace Resgrid.Services
 {
@@ -39,10 +40,12 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IMongoRepository<PersonnelLocation> _personnelLocationRepository;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ILimitsService _limitsService;
 
 		public UsersService(IDepartmentMembersRepository departmentMembersRepository, ICacheProvider cacheProvider,
 			IIdentityRepository identityRepository, IDepartmentSettingsService departmentSettingsService,
-			IMongoRepository<PersonnelLocation> personnelLocationRepository, IEventAggregator eventAggregator)
+			IMongoRepository<PersonnelLocation> personnelLocationRepository, IEventAggregator eventAggregator,
+			ILimitsService limitsService)
 		{
 			_departmentMembersRepository = departmentMembersRepository;
 			_cacheProvider = cacheProvider;
@@ -50,6 +53,7 @@ namespace Resgrid.Services
 			_departmentSettingsService = departmentSettingsService;
 			_personnelLocationRepository = personnelLocationRepository;
 			_eventAggregator = eventAggregator;
+			_limitsService = limitsService;
 		}
 
 		public List<IdentityUser> GetAll()
@@ -111,7 +115,31 @@ namespace Resgrid.Services
 			return _identityRepository.GetUserById(userId.ToString());
 		}
 
-		public async Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
+		public async Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
+		{
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(departmentId);
+			var users = await _identityRepository.GetAllUsersGroupsAndRolesAsync(departmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+
+			if (users != null && users.Any())
+			{
+				switch (personnelSortOrder)
+				{
+					case PersonnelSortOrders.FirstName:
+						users = users.OrderBy(x => x.FirstName).ToList();
+						break;
+					case PersonnelSortOrders.LastName:
+						users = users.OrderBy(x => x.LastName).ToList();
+						break;
+					case PersonnelSortOrders.Group:
+						users = users.OrderBy(x => x.DepartmentGroupId).ToList();
+						break;
+				}
+			}
+
+			return users;
+		}
+
+		public async Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdInLimitAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
 		{
 			////Func<List<UserGroupRole>> getUserGroupRole = delegate ()
 			//{
@@ -123,11 +151,16 @@ namespace Resgrid.Services
 			//else
 			//	return getUserGroupRole();
 
-			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(deparmentId);
-			var users = await _identityRepository.GetAllUsersGroupsAndRolesAsync(deparmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(departmentId);
+			var users = await _identityRepository.GetAllUsersGroupsAndRolesAsync(departmentId, retrieveHidden, retrieveDisabled, retrieveDeleted);
+
+			var limit = await _limitsService.GetLimitsForEntityPlanWithFallbackAsync(departmentId);
 
 			if (users != null && users.Any())
 			{
+				if (users.Count > limit.PersonnelLimit)
+					users = users.Take(limit.PersonnelLimit).ToList();
+
 				switch (personnelSortOrder)
 				{
 					case PersonnelSortOrders.FirstName:
@@ -222,13 +255,13 @@ namespace Resgrid.Services
 
 		public async Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation)
 		{
-			if (personnelLocation.Id.Timestamp == 0)
-				await _personnelLocationRepository.InsertOneAsync(personnelLocation);
-			else
-				await _personnelLocationRepository.ReplaceOneAsync(personnelLocation);
-
 			try
 			{
+				if (personnelLocation.Id.Timestamp == 0)
+					await _personnelLocationRepository.InsertOneAsync(personnelLocation);
+				else
+					await _personnelLocationRepository.ReplaceOneAsync(personnelLocation);
+
 				_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
 					DepartmentId = personnelLocation.DepartmentId,
 					UserId = personnelLocation.UserId,
@@ -286,22 +319,68 @@ namespace Resgrid.Services
 			var result = await _personnelLocationRepository.Aggregate<BsonDocument>(pipeline);
 			*/
 
-			var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
-				.GroupBy(x => x.UserId).FirstOrDefault();
+			try
+			{
+				//var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+				//	.GroupBy(x => x.UserId).FirstOrDefault();
 
-			//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
-			if (locations != null)
-				return locations.ToList();
+
+				//var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).ToList();//.OrderByDescending(y => y.Timestamp);//.GroupBy(x => x.UnitId).ToList();//.FirstOrDefault();
+
+				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+
+				//if (locations != null)
+				//	return locations.OrderBy(y => y.Timestamp)
+				//					.GroupBy(x => x.UserId)
+				//					.Select(y => y.First()).ToList();
+
+
+				var locations = _personnelLocationRepository
+									.AsQueryable()
+									.Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
+									.GroupBy(pv => pv.UserId, (key, group) => new
+									{
+										key,
+										LatestLocation = group.First()
+									});
+
+				if (locations != null)
+					return locations.Select(x => x.LatestLocation).ToList();
+
+				return null;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 
 			return new List<PersonnelLocation>();
 		}
 
 		public async Task<PersonnelLocation> GetPersonnelLocationByIdAsync(string id)
 		{
-			var layers = await _personnelLocationRepository.FindByIdAsync(id);
+			try
+			{
+				var layers = await _personnelLocationRepository.FindByIdAsync(id);
 
-			return layers;
+				return layers;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return null;
+		}
+
+		public async Task<bool> ClearOutUserLoginAsync(string userId)
+		{
+			await _identityRepository.ClearOutUserLoginAsync(userId);
+			await _identityRepository.CleanUpOIDCTokensByUserAsync(userId);
+
+			return true;
 		}
 	}
 }

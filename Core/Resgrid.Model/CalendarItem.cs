@@ -142,8 +142,6 @@ namespace Resgrid.Model
 			 * and time of year. NodaTime doesn't have the issue or handles it correctly so made
 			 * this change. Will need to start utilizing NodaTime in the system for all Tz converisons. -SJ
 			 */
-			//item.Start = start.ToUniversalTime();
-			//item.End = end.ToUniversalTime();
 			item.Start = DateTimeHelpers.ConvertToUtc(start, timeZone);
 			item.End = DateTimeHelpers.ConvertToUtc(end, timeZone);
 
@@ -160,6 +158,8 @@ namespace Resgrid.Model
 			item.ItemType = ItemType;
 			item.SignupType = SignupType;
 			item.Public = Public;
+			item.StartTimezone = timeZone;
+			item.EndTimezone = timeZone;
 
 			return item;
 		}

@@ -16,24 +16,37 @@ namespace Resgrid.Services
 		private readonly ITextMessageProvider _textMessageProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEmailSender _emailSender;
+		private readonly ISubscriptionsService _subscriptionsService;
 
 		public SmsService(IUserProfileService userProfileService, IGeoLocationProvider geoLocationProvider,
 			ITextMessageProvider textMessageProvider, IDepartmentSettingsService departmentSettingsService,
-			IEmailSender emailSender)
+			IEmailSender emailSender, ISubscriptionsService subscriptionsService)
 		{
 			_userProfileService = userProfileService;
 			_geoLocationProvider = geoLocationProvider;
 			_textMessageProvider = textMessageProvider;
 			_departmentSettingsService = departmentSettingsService;
 			_emailSender = emailSender;
+			_subscriptionsService = subscriptionsService;
 		}
 
-		public async Task<bool> SendMessageAsync(Message message, string departmentNumber, int departmentId, UserProfile profile = null)
+		public async Task<bool> SendMessageAsync(Message message, string departmentNumber, int departmentId, UserProfile profile = null, Payment payment = null)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
 			MailMessage email = new MailMessage();
+
+			/* Costs for sending SMS are getting a bit insane and due to the 'spammy' nature of these
+			 * i.e. sending the same message to n recipients, it's a pain in the ass to explain that
+			 * to the sms providers out there. Beacuse of that I have to turn off SMS functionality
+			 * for the free departments and limit message functionality for some paid departments. -SJ 6-20-2023
+			 */
+			if (payment != null && !_subscriptionsService.CanPlanSendMessageSms(payment.PlanId))
+				return true;
 
 			if (profile != null && profile.SendMessageSms)
 			{
@@ -72,13 +85,21 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
+		public async Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null, Payment payment = null)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
 
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
+
+			/* Costs for sending SMS are getting a bit insane and due to the 'spammy' nature of these
+			 * i.e. sending the same message to n recipients, it's a pain in the ass to explain that
+			 * to the sms providers out there. Beacuse of that I have to turn off SMS functionality
+			 * for the free departments and limit message functionality for some paid departments. -SJ 6-20-2023
+			 */
+			if (payment != null && !_subscriptionsService.CanPlanSendCallSms(payment.PlanId))
+				return true;
 
 			if (profile != null && profile.SendSms)
 			{
@@ -105,45 +126,46 @@ namespace Resgrid.Services
 					}
 				}
 
-				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
-				{
-					string text = HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
-					text = StringHelpers.StripHtmlTagsCharArray(text);
-					text = text + " " + address;
+				//if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
+				//{
+				//	string text = HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
+				//	text = StringHelpers.StripHtmlTagsCharArray(text);
+				//	text = text + " " + address;
 
-					if (call.Protocols != null && call.Protocols.Any())
-					{
-						string protocols = String.Empty;
-						foreach (var protocol in call.Protocols)
-						{
-							if (!String.IsNullOrWhiteSpace(protocol.Data))
-							{
-								if (String.IsNullOrWhiteSpace(protocols))
-									protocols = protocol.Data;
-								else
-									protocols = protocol + "," + protocol.Data;
-							}
-						}
+				//	if (call.Protocols != null && call.Protocols.Any())
+				//	{
+				//		string protocols = String.Empty;
+				//		foreach (var protocol in call.Protocols)
+				//		{
+				//			if (!String.IsNullOrWhiteSpace(protocol.Data))
+				//			{
+				//				if (String.IsNullOrWhiteSpace(protocols))
+				//					protocols = protocol.Data;
+				//				else
+				//					protocols = protocol + "," + protocol.Data;
+				//			}
+				//		}
 
-						if (!String.IsNullOrWhiteSpace(protocols))
-							text = text + " (" + protocols + ")";
-					}
+				//		if (!String.IsNullOrWhiteSpace(protocols))
+				//			text = text + " (" + protocols + ")";
+				//	}
 
-					if (!String.IsNullOrWhiteSpace(call.ShortenedAudioUrl))
-					{
-						text = text + " " + call.ShortenedAudioUrl;
-					}
-					//else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
-					//{
-					//	text = text + " " + call.ShortenedCallUrl;
-					//}
+				//	if (!String.IsNullOrWhiteSpace(call.ShortenedAudioUrl))
+				//	{
+				//		text = text + " " + call.ShortenedAudioUrl;
+				//	}
+				//	//else if (!String.IsNullOrWhiteSpace(call.ShortenedCallUrl))
+				//	//{
+				//	//	text = text + " " + call.ShortenedCallUrl;
+				//	//}
 
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
+				//	await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
 
-					if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
-						SendCallViaEmailSmsGateway(call, address, profile);
-				}
-				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
+				//	if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
+				//		SendCallViaEmailSmsGateway(call, address, profile);
+				//}
+
+				if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					string text = HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
 					text = StringHelpers.StripHtmlTagsCharArray(text);
@@ -177,9 +199,6 @@ namespace Resgrid.Services
 					//}
 
 					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
-
-					if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
-						SendCallViaEmailSmsGateway(call, address, profile);
 				}
 				else
 				{

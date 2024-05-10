@@ -4,6 +4,10 @@ pull_requests:
 
 skip_tags: true
 
+matrix:
+    - PYTHON: "C:\\Python27"
+    - nodejs_version: 18
+
 image:
   - Visual Studio 2022
 
@@ -21,7 +25,6 @@ install:
   - npm config get
   - node --version
   - npm --version
-  - SET PATH=C:\python27-x64;%PATH%
   - npm install -g node-gyp
   - node-gyp -v
   - node -e "console.log(process.arch);"

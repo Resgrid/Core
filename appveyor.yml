@@ -24,6 +24,7 @@ build:
 
 install:
   - ps: Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+  - set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
   - npm config get
   - node --version
   - npm --version

@@ -14,4 +14,4 @@ before_build:
   - nuget restore
 
 build:
-  project: ResgridCore.sln
+  project: Resgrid.sln

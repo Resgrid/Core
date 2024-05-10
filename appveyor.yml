@@ -4,13 +4,6 @@ pull_requests:
 
 skip_tags: true
 
-environment:
-  matrix:
-    - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: 2.7
-      PYTHON_ARCH: 32
-      nodejs_version: 18
-
 image:
   - Visual Studio 2022
 
@@ -18,18 +11,16 @@ configuration:
   - Debug
 
 before_build:
-  - nuget restore
+  - dotnet restore
 
 build:
   project: Resgrid.sln
 
 install:
   - ps: Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
-  - set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
   - npm config get
   - node --version
   - npm --version
   - npm install -g node-gyp
   - node-gyp -v
   - node -e "console.log(process.arch);"
-  - node-gyp configure --msvs_version=2022

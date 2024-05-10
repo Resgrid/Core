@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Resgrid.Framework</AssemblyName>
@@ -9,11 +8,9 @@
     <Description>Resgrid cad and personnel resource logistics system</Description>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.40" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -27,9 +24,13 @@
     <PackageReference Include="TimeZoneConverter" Version="5.0.0" />
     <PackageReference Include="Vereyon.Web.HtmlSanitizer" Version="1.6.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

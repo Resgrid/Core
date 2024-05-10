@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
@@ -16,7 +13,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Stripe.net" Version="39.88.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
@@ -33,5 +29,14 @@
     <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\Resgrid.Model\Resgrid.Model.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

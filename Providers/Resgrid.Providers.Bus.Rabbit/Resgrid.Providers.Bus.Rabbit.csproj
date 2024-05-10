@@ -1,20 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
     <ProjectReference Include="..\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

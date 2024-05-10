@@ -1,17 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.1" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
     <PackageReference Include="CompareNETObjects" Version="4.74.0" />
     <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
@@ -33,5 +30,18 @@
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.12.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75">
+      <HintPath>..\packages\RestSharp.106.12.0\lib\netstandard2.0\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

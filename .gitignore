@@ -144,7 +144,6 @@ Build/*
 .idea/*
 Tests/Resgrid.TestHarness/*
 Tests/Resgrid.TestHarnessCore/*
-Tests/Resgrid.SmokeTests/*
 Web/Resgrid.WebCore/appsettings.Azure.json
 Web/Resgrid.WebCore/appsettings.Development.json
 Web/Resgrid.WebCore/appsettings.Production.json

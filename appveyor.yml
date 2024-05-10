@@ -15,3 +15,12 @@ before_build:
 
 build:
   project: Resgrid.sln
+
+install:
+  - ps: Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+  - npm config get
+  - node --version
+  - npm --version
+  - node-gyp -v
+  - node -e "console.log(process.arch);"
+  - node-gyp configure --msvs_version=2022

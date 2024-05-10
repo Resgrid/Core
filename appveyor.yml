@@ -4,6 +4,10 @@ pull_requests:
 
 skip_tags: true
 
+platform:
+  - x64
+  - x86
+
 image:
   - Visual Studio 2022
 
@@ -21,6 +25,8 @@ install:
   - npm config get
   - node --version
   - npm --version
+  - IF /I "%PLATFORM%" == "x64" set PATH=C:\Python27-x64;%PATH%
+  - IF /I "%PLATFORM%" == "x86" SET PATH=C:\python27;%PATH%
   - npm install -g node-gyp
   - node-gyp -v
   - node -e "console.log(process.arch);"

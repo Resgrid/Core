@@ -104,12 +104,12 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Sets the type of External error and logging provider for the system to use
 		/// </summary>
-		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Sentry;
+		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Elk;
 
 		/// <summary>
 		/// Sets the type of outbound email server or provider to use
 		/// </summary>
-		public static OutboundEmailTypes OutboundEmailType = OutboundEmailTypes.Postmark;
+		public static OutboundEmailTypes OutboundEmailType = OutboundEmailTypes.Smtp;
 
 		/// <summary>
 		/// Sets the type of url link shortner provider to use

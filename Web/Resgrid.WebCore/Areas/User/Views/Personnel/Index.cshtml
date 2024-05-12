@@ -1,120 +1,524 @@
-﻿
+﻿@using Resgrid.Web.Areas.User.Models.Personnel
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.PersonnelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-  ViewBag.Title = "Resgrid | Personnel";
+    ViewBag.Title = "Resgrid | " + @localizer["PersonnelHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-	<h2>Personnel List</h2>
-	<ol class="breadcrumb">
-	  <li>
-		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-	  </li>
-	  <li class="active">
-		<strong>Personnel</strong>
-	  </li>
-	</ol>
-  </div>
-  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-  {
-	<div class="col-sm-8">
-	  <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-		<a id="rolesButton" class="btn btn-primary top-button" title="Personnel Roles" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">Manage Roles</a>
-	  </div>
-	</div>
-  }
+    <div class="col-sm-4">
+        <h2>@localizer["PersonnelHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["PersonnelHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+
+            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanAddNewUser)
+            {
+                <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})">@localizer["AddAPerson"]</a>
+                <a id="manageInvitesButton" title="@localizer["ManageInvitesHelp"]" class="btn btn-success" href="@Url.Action("Invites", "Department", new {area = "User"})">@localizer["ManageInvites"]</a>
+            }
+            else if (Model.CanGroupAdminsAdd && Model.CanAddNewUser)
+            {
+                <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})">@localizer["AddAPerson"]</a>
+            }
+            <a id="rolesButton" class="btn btn-primary top-button" title="@localizer["ManageRoles"]" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@localizer["ManageRoles"]</a>
+        </div>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-	<div class="wrapper wrapper-content">
-	  <div class="ibox float-e-margins" id="personnelContainer">
-		<div class="ibox-title">
-		  <h5>Personnel</h5>
-		  <div class="ibox-tools">
-			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanAddNewUser)
-			{
-			  <div class="buttons-actions">
-				<a id="addPersonButton" title="Add a single person" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})"><i class="icon-user"></i> Add a Person</a>
-				<a id="manageInvitesButton" title="Invite multiple people" class="btn btn-success" href="@Url.Action("Invites", "Department", new {area = "User"})"><i class="icon-plus"></i> Manage Invites</a>
-			  </div>
-			}
-			else if (Model.CanGroupAdminsAdd && Model.CanAddNewUser)
-			{
-			  <div class="buttons-actions">
-				<a id="addPersonButton" title="Add a single person" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})"><i class="icon-user"></i> Add a Person</a>
-			  </div>
-			}
-		  </div>
-		</div>
-		<div class="ibox-content">
-		  @*<div id="personnel-list"></div>*@
-		  <div id="personnelIndexList"></div>
-		</div>
-	  </div>
-	</div>
-  </div>
+    <div class="col-lg-3">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content mailbox-content">
+                    <div>
+                        <div id="tree"></div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins" id="personnelContainer">
+                <div class="ibox-content">
+                    @{
+                        if (Model.Persons != null && Model.Persons.Any())
+                        {
+                            @Html.Raw("<div id='personnelTab-1' class='personnelTabPannel'>")
+                            @Html.Raw("<div class='table-responsive'><table class='table table-striped' id='personnelTable1' data-page-length='100' width='100%'>")
+                            @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='-1'/></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Roles"]}</th><th>{@commonLocalizer["Staffing"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@localizer["State"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStaffing"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                            @Html.Raw("<tbody id='personnelGroups_-1'>")
+
+                            foreach (var person in Model.Persons)
+                            {
+                                var personStatus = Model.PersonnelStates.FirstOrDefault(x => x.CustomStateDetailId == person.StatusId);
+                                var personStaffing = Model.PersonnelStaffings.FirstOrDefault(x => x.CustomStateDetailId == person.StaffingId);
+
+                                var stateText = "Unknown";
+                                var stateColor = "#000000";
+                                var stateTextColor = "#FFFFFF";
+
+                                var staffingText = "Unknown";
+                                var staffingColor = "#000000";
+                                var staffingTextColor = "#FFFFFF";
+
+                                if (personStatus != null)
+                                {
+                                    stateText = personStatus.ButtonText;
+                                    stateColor = personStatus.ButtonColor;
+                                    stateTextColor = personStatus.TextColor;
+                                }
+
+                                if (personStaffing != null)
+                                {
+                                    staffingText = personStaffing.ButtonText;
+                                    staffingColor = personStaffing.ButtonColor;
+                                    staffingTextColor = personStaffing.TextColor;
+                                }
+
+                                PersonnelTableRowTemplate(person, stateTextColor, stateColor, stateText, staffingTextColor, staffingColor, staffingText, -1);
+
+                                @Html.Raw("</td>")
+                                @Html.Raw("</tr>")
+
+                            }
+                            @Html.Raw("</tbody></table></div></div>")
+                        }
+                        else
+                        {
+                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoPersonnelInDepartment"]}</h3></div>")
+                        }
+                    }
+
+                    @{
+                        var count2 = 0;
+
+                        var ungroupedPersonnel2 = Model.Persons.Where(x => x.GroupId == 0);
+                        if (ungroupedPersonnel2 != null && ungroupedPersonnel2.Any())
+                        {
+                            @Html.Raw("<div id='personnelTab0' class='personnelTabPannel' style='display: none;'>")
+
+                            @Html.Raw("<div class='table-responsive'><table class='table table-striped' id='personnelTable0' data-page-length='100' width='100%'>")
+                            @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='0'/></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Roles"]}</th><th>{@commonLocalizer["Staffing"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@localizer["State"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStaffing"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                            @Html.Raw("<tbody id='personnelGroups_0'>")
+
+                            if (ungroupedPersonnel2 != null && ungroupedPersonnel2.Any())
+                            {
+                                foreach (var person in ungroupedPersonnel2)
+                                {
+                                    var personStatus = Model.PersonnelStates.FirstOrDefault(x => x.CustomStateDetailId == person.StatusId);
+                                    var personStaffing = Model.PersonnelStaffings.FirstOrDefault(x => x.CustomStateDetailId == person.StaffingId);
+
+                                    var stateText = "Unknown";
+                                    var stateColor = "#000000";
+                                    var stateTextColor = "#FFFFFF";
+
+                                    var staffingText = "Unknown";
+                                    var staffingColor = "#000000";
+                                    var staffingTextColor = "#FFFFFF";
+
+                                    if (personStatus != null)
+                                    {
+                                        stateText = personStatus.ButtonText;
+                                        stateColor = personStatus.ButtonColor;
+                                        stateTextColor = personStatus.TextColor;
+                                    }
+
+                                    if (personStaffing != null)
+                                    {
+                                        staffingText = personStaffing.ButtonText;
+                                        staffingColor = personStaffing.ButtonColor;
+                                        staffingTextColor = personStaffing.TextColor;
+                                    }
+
+                                    PersonnelTableRowTemplate(person, stateTextColor, stateColor, stateText, staffingTextColor, staffingColor, staffingText, 0);
+
+                                    @Html.Raw("</td>")
+                                    @Html.Raw("</tr>")
+
+                                }
+                            }
+                            @Html.Raw("</tbody></table></div></div>")
+
+                            count2++;
+                        }
+                        else
+                        {
+                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnGroupedPersonnel"]}</h3></div>")
+                        }
+                    }
+
+                    @{
+                        for (var i = 0; i < Model.Groups.Count(); i++)
+                        {
+                            var groupPersons = Model.Persons.Where(x => x.GroupId == Model.Groups[i].DepartmentGroupId).ToList();
+
+                            if (Model.Groups[i].Children != null && Model.Groups[i].Children.Any())
+                            {
+                                foreach (var childGroup in Model.Groups[i].Children)
+                                {
+                                    groupPersons.AddRange(Model.Persons.Where(x => x.GroupId == childGroup.DepartmentGroupId).ToList());
+                                }
+                            }
+
+                            if (groupPersons != null && groupPersons.Any())
+                            {
+                                @Html.Raw($"<div id='personnelTab{Model.Groups[i].DepartmentGroupId}' class='personnelTabPannel' style='display: none;width: 100%;'>")
+
+                                @Html.Raw("<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'>")
+                                @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='{Model.Groups[i].DepartmentGroupId}'/></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Roles"]}</th><th>{@commonLocalizer["Staffing"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@localizer["State"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStaffing"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                                @Html.Raw($"<tbody id='personnelGroups_{Model.Groups[i].DepartmentGroupId}'>")
+
+                                if (groupPersons != null && groupPersons.Any())
+                                {
+                                    foreach (var person in groupPersons)
+                                    {
+                                        var personStatus = Model.PersonnelStates.FirstOrDefault(x => x.CustomStateDetailId == person.StatusId);
+                                        var personStaffing = Model.PersonnelStaffings.FirstOrDefault(x => x.CustomStateDetailId == person.StaffingId);
+
+                                        var stateText = "Unknown";
+                                        var stateColor = "#000000";
+                                        var stateTextColor = "#FFFFFF";
+
+                                        var staffingText = "Unknown";
+                                        var staffingColor = "#000000";
+                                        var staffingTextColor = "#FFFFFF";
+
+                                        if (personStatus != null)
+                                        {
+                                            stateText = personStatus.ButtonText;
+                                            stateColor = personStatus.ButtonColor;
+                                            stateTextColor = personStatus.TextColor;
+                                        }
+
+                                        if (personStaffing != null)
+                                        {
+                                            staffingText = personStaffing.ButtonText;
+                                            staffingColor = personStaffing.ButtonColor;
+                                            staffingTextColor = personStaffing.TextColor;
+                                        }
+
+                                        PersonnelTableRowTemplate(person, stateTextColor, stateColor, stateText, staffingTextColor, staffingColor, staffingText, Model.Groups[i].DepartmentGroupId);
+
+                                        @Html.Raw("</td>")
+                                        @Html.Raw("</tr>")
+                                    }
+                                }
+                                @Html.Raw("</tbody></table></div></div>")
+
+                                count2++;
+                            }
+                            else
+                            {
+                                @Html.Raw("<div id='personnelTab" + Model.Groups[i].DepartmentGroupId + "' class='personnelTabPannel' style='display: none;'>")
+                                @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoPersonnelInThisGroup"]}</h3></div>")
+                                @Html.Raw("</div>")
+                            }
+                        }
+                    }
+
+
+                    <div id="multiSelectPersons" style="display: none;">
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setSelectedPersonnelStaffingModal'>@localizer["SetStaffingForSelectedPersonnel"]</button>
+                                <button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setSelectedPersonnelStatusModal'>@localizer["SetStatusForSelectedPersonnel"]</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setPersonStatusModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">@localizer["SetPersonStatusHeader"]</h4>
+            </div>
+            <input type="hidden" id="setPersonStatusUserId" />
+            <input type="hidden" id="setPersonStatusCustomStateId" />
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class=" control-label">
+                        @commonLocalizer["Status"]
+                    </label>
+                    <div class="controls">
+                        <select name="PersonnelStatusDropdown" id="PersonnelStatusDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Destination"]
+                    </label>
+                    <div class="controls">
+                        <select name="PersonnelStatusDestinationDropdown" id="PersonnelStatusDestinationDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Note"]
+                    </label>
+                    <div class="controls">
+                        <input type="text" style="width: 90%;" name="PersonnelStatusNote" id="PersonnelStatusNote" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
+                    @commonLocalizer["Close"]
+                </button>
+                <button id="savingPersonnelStatusButton" type="button" class="btn btn-primary" name="savingPersonnelStatusButton">
+                    @commonLocalizer["Save"]
+                </button>
+                <button id="savingPersonnelStatusButtonLoader" name="savingPersonnelStatusButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                    <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
+                        <div class="sk-rect1"></div>
+                        <div class="sk-rect2"></div>
+                        <div class="sk-rect3"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setPersonStaffingModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">@localizer["SetPersonStaffingHeader"]</h4>
+            </div>
+            <input type="hidden" id="setPersonStaffingUserId" />
+            <input type="hidden" id="setPersonStaffingCustomStateId" />
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class=" control-label">
+                        @commonLocalizer["Staffing"]
+                    </label>
+                    <div class="controls">
+                        <select name="PersonnelStaffingDropdown" id="PersonnelStaffingDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Note"]
+                    </label>
+                    <div class="controls">
+                        <input type="text" style="width: 90%;" name="PersonnelStaffingNote" id="PersonnelStaffingNote" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
+                    @commonLocalizer["Close"]
+                </button>
+                <button id="savingPersonnelStaffingButton" type="button" class="btn btn-primary" name="savingPersonnelStaffingButton">
+                    @commonLocalizer["Save"]
+                </button>
+                <button id="savingPersonnelStaffingButtonLoader" name="savingPersonnelStaffingButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                    <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
+                        <div class="sk-rect1"></div>
+                        <div class="sk-rect2"></div>
+                        <div class="sk-rect3"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setSelectedPersonnelStatusModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">@localizer["SetStatusForSelectedPersonnel"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class=" control-label">
+                        @commonLocalizer["Status"]
+                    </label>
+                    <div class="controls">
+                        <select name="SelectedPersonnelStatusDropdown" id="SelectedPersonnelStatusDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Destination"]
+                    </label>
+                    <div class="controls">
+                        <select name="SelectedPersonnelStatusDestinationDropdown" id="SelectedPersonnelStatusDestinationDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Note"]
+                    </label>
+                    <div class="controls">
+                        <input type="text" style="width: 90%;" name="SelectedPersonnelStatusNote" id="SelectedPersonnelStatusNote" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
+                    @commonLocalizer["Close"]
+                </button>
+                <button id="savingSelectedPersonnelStatusButton" type="button" class="btn btn-primary" name="savingSelectedPersonnelStatusButton">
+                    @commonLocalizer["Save"]
+                </button>
+                <button id="savingSelectedPersonnelStatusButtonLoader" name="savingSelectedPersonnelStatusButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                    <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
+                        <div class="sk-rect1"></div>
+                        <div class="sk-rect2"></div>
+                        <div class="sk-rect3"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setSelectedPersonnelStaffingModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">@localizer["SetStaffingForSelectedPersonnel"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class=" control-label">
+                        @commonLocalizer["Staffing"]
+                    </label>
+                    <div class="controls">
+                        <select name="SelectedPersonnelStaffingDropdown" id="SelectedPersonnelStaffingDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Note"]
+                    </label>
+                    <div class="controls">
+                        <input type="text" style="width: 90%;" name="SelectedPersonnelStaffingNote" id="SelectedPersonnelStaffingNote" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
+                    @commonLocalizer["Close"]
+                </button>
+                <button id="savingSelectedPersonnelStaffingButton" type="button" class="btn btn-primary" name="savingSelectedPersonnelStaffingButton">
+                    @commonLocalizer["Save"]
+                </button>
+                <button id="savingSelectedPersonnelStaffingButtonLoader" name="savingSelectedPersonnelStaffingButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                    <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
+                        <div class="sk-rect1"></div>
+                        <div class="sk-rect2"></div>
+                        <div class="sk-rect3"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    void PersonnelTableRowTemplate(PersonnelForListJson p, string stateTextColor, string stateColor, string stateText, string staffingTextColor, string staffingColor, string staffingText, int groupType)
+    {
+        @if (p.CanEditUser)
+        {
+             @Html.Raw($"<tr><td><input type='checkbox' id='selectPerson_{p.UserId}' class='selectPersonCheckbox' data-grouptype='{groupType}' data-staffingid='{Model.PersonnelCustomStaffingId}' data-statusid='{Model.PersonnelCustomStatusesId}' value='{p.UserId}'/></td><td>{p.Name}</td><td>{p.Roles}</td><td><span class='label' style='color:{staffingTextColor};background-color:{staffingColor};'>{staffingText}</span></td><td><span class='label' style='color:{stateTextColor};background-color:{stateColor};'>{stateText}</span></td><td>{p.State}</td>")
+            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStaffingModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStaffingId}'>{@localizer["SetStaffing"]}</button></td>")
+            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStatusModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStatusesId}'>{@localizer["SetStatus"]}</button></td>")
+        }
+        else
+        {
+            @Html.Raw($"<tr><td></td><td>{p.Name}</td><td>{p.Roles}</td><td><span class='label' style='color:{staffingTextColor};background-color:{staffingColor};'>{staffingText}</span></td><td><span class='label' style='color:{stateTextColor};background-color:{stateColor};'>{stateText}</span></td><td>{p.State}</td>")
+            @Html.Raw("<td></td><td></td>")
+        }
+
+        @Html.Raw("<td>")
+
+        @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-info' href='{@Url.Action("ViewPerson", "Personnel", new {area = "User"})}?userId={p.UserId}'>{@commonLocalizer["View"]}</a>&nbsp;")
+
+        @if (p.CanEditUser)
+        {
+            @Html.Raw("<div class='btn-group'>")
+            @Html.Raw($"<a href='{@Url.Action("EditUserProfile", "Home", new {area = "User"})}?userId={p.UserId}' class='btn btn-xs btn-primary'>{@commonLocalizer["Edit"]}</a>")
+            @Html.Raw("<button type='button' class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>")
+            @Html.Raw("<span class='caret'></span>")
+            @Html.Raw("<span class='sr-only'>Toggle Dropdown</span>")
+            @Html.Raw("</button>")
+            @Html.Raw("<ul class='dropdown-menu'>")
+            @Html.Raw($"<li><a href='{@Url.Action("ResetPasswordForUser", "Profile", new {area = "User"})}?userId={p.UserId}'>{@localizer["ChangePassword"]}</a></li>")
+            @Html.Raw("</ul>")
+            @Html.Raw("</div>&nbsp;")
+        }
+
+        @if (p.CanRemoveUser)
+        {
+            @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-danger' href='{@Url.Action("DeletePerson", "Personnel", new {area = "User"})}?userId={p.UserId}'>{@commonLocalizer["Delete"]}</a>")
+        }
+    }
+}
+
+
+
+
+
 @section Scripts
-  {
-  <script id="command-template" type="text/x-kendo-template">
-	<a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewPerson", "Personnel", new {area = "User"})?userId=#=UserId#"><i class="icon-eye-open"></i> View</a>
-	#if (CanEditUser){#
-	<div class="btn-group">
-	  <a href="@Url.Action("EditUserProfile", "Home", new {area = "User"})?userId=#=UserId#" class="btn btn-xs btn-primary"><i class="icon-pencil"></i> Edit</a>
-	  <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		<span class="caret"></span>
-		<span class="sr-only">Toggle Dropdown</span>
-	  </button>
-	  <ul class="dropdown-menu">
-		<li><a href="@Url.Action("ResetPasswordForUser", "Profile", new {area = "User"})?userId=#=UserId#"><i class="icon-cog"></i> Change Password</a></li>
-	  </ul>
-	</div>
+    {
+    <script>
+        var treeData = @Html.Raw(@Model.TreeData);
+    </script>
 
-	#}#
-	#if (CanRemoveUser){#
-	<a style="text-decoration:none;" class="btn btn-xs btn-danger" href="@Url.Action("DeletePerson", "Personnel", new {area = "User"})?userId=#=UserId#"><i class="icon-trash"></i> Delete</a>
-	#}#
-  </script>
+    <script src="~/js/app/internal/personnel/resgrid.personnel.index.js" type="text/javascript"></script>
 
-  <script src="@Url.Content("~/js/app/internal/personnel/resgrid.personnel.index.js")" type="text/javascript"></script>
+    <script>
+        (function() {
+            $('.table').DataTable();
 
-
-  @Html.Partial("~/Areas/User/Views/Help/PersonnelTutorial.cshtml")
-
-  <script>
-	(function () {
-	  // hold onto the drop down menu
-	  var dropdownMenu;
-
-	  // and when you show it, move it to the body
-	  $(window).on('show.bs.dropdown', function (e) {
-
-		// grab the menu
-		dropdownMenu = $(e.target).find('.dropdown-menu');
-
-		// detach it and append it to the body
-		$('body').append(dropdownMenu.detach());
-
-		// grab the new offset position
-		var eOffset = $(e.target).offset();
-
-		// make sure to place it where it would normally go (this could be improved)
-		dropdownMenu.css({
-		  'display': 'block',
-		  'top': eOffset.top + $(e.target).outerHeight(),
-		  'left': eOffset.left
-		});
-	  });
-
-	  // and when you hide it, reattach the drop down, and hide it normally
-	  $(window).on('hide.bs.dropdown', function (e) {
-		$(e.target).append(dropdownMenu.detach());
-		dropdownMenu.hide();
-	  });
-	})();
-  </script>
+            // hold onto the drop down menu
+            var dropdownMenu;
+            // and when you show it, move it to the body
+            $(window).on('show.bs.dropdown', function(e) {
+                // grab the menu
+                dropdownMenu = $(e.target).find('.dropdown-menu');
+                // detach it and append it to the body
+                $('body').append(dropdownMenu.detach());
+                // grab the new offset position
+                var eOffset = $(e.target).offset();
+                // make sure to place it where it would normally go (this could be improved)
+                dropdownMenu.css({
+                    'display': 'block',
+                    'top': eOffset.top + $(e.target).outerHeight(),
+                    'left': eOffset.left
+                });
+            });
+            // and when you hide it, reattach the drop down, and hide it normally
+            $(window).on('hide.bs.dropdown', function(e) {
+                $(e.target).append(dropdownMenu.detach());
+                dropdownMenu.hide();
+            });
+        })();
+    </script>
 }

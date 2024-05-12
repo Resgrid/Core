@@ -1,14 +1,24 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 ARG BUILD_VERSION=3.5.0
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0.1-bullseye-slim-amd64 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.3-jammy-amd64 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 EXPOSE 80
 
-FROM node:16.10-bullseye-slim AS node_base
-FROM mcr.microsoft.com/dotnet/sdk:6.0.101-bullseye-slim-amd64 AS build
-COPY --from=node_base . .
+#FROM node:18.19-alpine3.19 AS node_base
+FROM mcr.microsoft.com/dotnet/sdk:8.0.203-jammy-amd64 AS build
+#RUN apt-get update && apt-get install nodejs
+#COPY --from=node_base . .
+#COPY --from=node_base /usr/lib /usr/lib
+#COPY --from=node_base /usr/local/share /usr/local/share
+#COPY --from=node_base /usr/local/lib /usr/local/lib
+#COPY --from=node_base /usr/local/include /usr/local/include
+#COPY --from=node_base /usr/local/bin /usr/local/bin
+RUN apt-get update
+RUN apt-get install -y ca-certificates curl gnupg
+RUN curl -sL https://deb.nodesource.com/setup_18.x  | bash -
+RUN apt-get -y install nodejs
 ARG BUILD_VERSION
 WORKDIR /src
 COPY ["Web/Resgrid.WebCore/Resgrid.WebCore.csproj", "Web/Resgrid.WebCore/"]

@@ -4,12 +4,16 @@ using System.Linq.Expressions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Resgrid.Model.Repositories
 {
 	public interface IMongoRepository<TDocument> where TDocument : INoSqlDocument
 	{
-		IQueryable<TDocument> AsQueryable();
+		IMongoCollection<TDocument> GetCollection();
+
+		IMongoQueryable<TDocument> AsQueryable();
 
 		IEnumerable<TDocument> FilterBy(
 			Expression<Func<TDocument, bool>> filterExpression);

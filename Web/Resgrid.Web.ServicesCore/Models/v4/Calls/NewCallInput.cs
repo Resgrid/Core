@@ -37,7 +37,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string Address { get; set; }
 
 		/// <summary>
-		/// Geolocation data "lat,lon"
+		/// Geolocation data "lat,lon" in decimal format
 		/// </summary>
 		public string Geolocation { get; set; }
 
@@ -52,8 +52,13 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string What3Words { get; set; }
 
 		/// <summary>
-		/// Comma seperated list of users,units,roles and groups to dipstach
+		/// Pipe separated string of users,units,roles and groups to dispatch. Users and Roles are prefixed with "P:" and "R:" respectively.
+		/// Groups are prefixed with "G:" and Units are prefixed with "U:".
 		/// </summary>
+		/// <example>
+		/// Say you want to dispatch 2 users, 1 unit, 1 group and 1 role. The string would look like this:
+		/// P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
+		/// </example>
 		public string DispatchList { get; set; }
 
 		/// <summary>
@@ -62,7 +67,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ContactName { get; set; }
 
 		/// <summary>
-		/// Contact Info
+		/// Contact Info (phone number, email, etc)
 		/// </summary>
 		public string ContactInfo { get; set; }
 
@@ -82,7 +87,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ReferenceId { get; set; }
 
 		/// <summary>
-		/// Time in the future, in the departments local time, to dispatch the call
+		/// Time in the future, in the departments local time, to dispatch the call. Leave NULL to dispatch now.
 		/// </summary>
 		public DateTime? DispatchOn { get; set; }
 

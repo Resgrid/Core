@@ -40,6 +40,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Voice.Channels = new List<DepartmentVoiceChannel>();
 			}
 
+			model.Audios = await _voiceService.GetDepartmentAudiosByDepartmentIdAsync(DepartmentId);
+
+			if (model.Audios == null)
+				model.Audios = new List<DepartmentAudio>();
+
 			return View(model);
 		}
 
@@ -163,6 +168,102 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (channel != null && channel.DepartmentId == DepartmentId)
 			{
 				var result = await _voiceService.DeleteDepartmentVoiceChannelAsync(channel, cancellationToken);
+			}
+
+			return RedirectToAction("Index");
+		}
+
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Voice_Create)]
+		public async Task<IActionResult> NewAudio()
+		{
+			var model = new NewAudioStreamModel();
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Voice_Create)]
+		public async Task<IActionResult> NewAudio(NewAudioStreamModel model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+				DepartmentAudio audio = new DepartmentAudio();
+				audio.DepartmentId = DepartmentId;
+				audio.AddedOn = DateTime.UtcNow;
+				audio.AddedByUserId = UserId;
+				audio.Name = model.Name;
+				audio.Data = model.Url;
+				audio.DepartmentAudioType = 1;
+
+				var savedAudio = await _voiceService.SaveDepartmentAudioAsync(audio, cancellationToken);
+
+				return RedirectToAction("Index");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Voice_Create)]
+		public async Task<IActionResult> EditAudio(string id)
+		{
+			var model = new NewAudioStreamModel();
+
+			if (String.IsNullOrWhiteSpace(id))
+				Unauthorized();
+
+			var audio = await _voiceService.GetDepartmentAudioByIdAsync(id);
+
+			if (audio == null)
+				Unauthorized();
+
+			if (audio.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			model.Id = audio.DepartmentAudioId;
+			model.Name = audio.Name;
+			model.Url = audio.Data;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Voice_Create)]
+		public async Task<IActionResult> EditAudio(NewAudioStreamModel model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				var audio = await _voiceService.GetDepartmentAudioByIdAsync(model.Id);
+
+				if (audio == null)
+					Unauthorized();
+
+				if (audio.DepartmentId != DepartmentId)
+					Unauthorized();
+
+				audio.Name = model.Name;
+				audio.Data = model.Url;
+
+				await _voiceService.SaveDepartmentAudioAsync(audio, cancellationToken);
+
+				return RedirectToAction("Index");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Voice_Delete)]
+		public async Task<IActionResult> DeleteAudio(string id, CancellationToken cancellationToken)
+		{
+			var audio = await _voiceService.GetDepartmentAudioByIdAsync(id);
+			if (audio != null && audio.DepartmentId == DepartmentId)
+			{
+				var result = await _voiceService.DeleteDepartmentAudioAsync(audio, cancellationToken);
 			}
 
 			return RedirectToAction("Index");

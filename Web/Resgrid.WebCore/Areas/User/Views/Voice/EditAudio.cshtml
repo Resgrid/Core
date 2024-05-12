@@ -1,0 +1,79 @@
+﻿@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Voice.NewAudioStreamModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Voice.Voice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["EditAudio"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["EditAudio"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
+            </li>
+            <li>
+                <a asp-controller="Voice" asp-action="Index" asp-route-area="User">@localizer["VoiceHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["EditAudio"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form id="newFormForm" class="form-horizontal" role="form" asp-controller="Voice" asp-action="EditAudio" asp-route-area="User" method="post">
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.Id)
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                @localizer["AudioStreamNameLabel"]
+                            </label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", autofocus = "autofocus" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                @localizer["AudioStreamUrlLabel"]
+                            </label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.Url, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Voice" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@localizer["SaveEditAudioButton"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+
+}

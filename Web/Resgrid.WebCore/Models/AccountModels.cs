@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 
@@ -87,7 +86,7 @@ namespace Resgrid.Web.Models
 		[Display(Name = "Department Type")]
 		public string DepartmentType { get; set; }
 
-		public SelectList DepartmentTypes = new SelectList(new List<string>() { "Volunteer Fire", "Career Fire", "Search and Rescue", "HAZMAT", "EMS", "CERT", "Public Safety", "Disaster Response", "Relief Org", "Private", "Security", "Other" });
+		public SelectList DepartmentTypes = new SelectList(new List<string>() { "Emergency Management", "Volunteer Fire", "Career Fire", "Search and Rescue", "HAZMAT", "EMS", "CERT", "Public Safety", "Disaster Response", "Relief Org", "Private", "Security", "Other" });
 
 		public List<string> ExistingDepartments { get; set; }
 	}

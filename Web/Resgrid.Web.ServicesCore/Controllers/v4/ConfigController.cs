@@ -45,10 +45,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 			else if (key == InfoConfig.DispatchAppKey)
 			{
 				result.Data.MapUrl = MappingConfig.GetDispatchAppOSMUrl();
+				result.Data.OpenWeatherApiKey = MappingConfig.DispatchOpenWeatherApiKey;
 			}
 			else if (key == InfoConfig.ResponderAppKey)
 			{
-				result.Data.MapUrl = MappingConfig.GetDispatchAppOSMUrl();
+				result.Data.MapUrl = MappingConfig.GetResponderAppOSMUrl();
+				result.Data.GoogleMapsKey = MappingConfig.ResponderAppGoogleMapsKey;
+				result.Data.W3WKey = MappingConfig.ResponderAppWhat3WordsKey;
+			}
+			else if (key == InfoConfig.UnitAppKey)
+			{
+				result.Data.MapUrl = MappingConfig.GetUnitAppOSMUrl();
+				result.Data.NavigationMapKey = MappingConfig.UnitAppMapBoxKey;
+				result.Data.GoogleMapsKey = MappingConfig.UnitAppGoogleMapsKey;
+				result.Data.W3WKey = MappingConfig.UnitAppWhat3WordsKey;
+			}
+			else if (key == InfoConfig.BigBoardKey)
+			{
+				result.Data.MapUrl = MappingConfig.GetBigBoardAppOSMUrl();
+				result.Data.OpenWeatherApiKey = MappingConfig.BigBoardOpenWeatherApiKey;
 			}
 
 			result.Data.MapAttribution = MappingConfig.LeafletAttribution;

@@ -1,102 +1,101 @@
-﻿
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Personnel.ViewPersonView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-	ViewBag.Title = "Resgrid | Reactivate Profile";
+    ViewBag.Title = "Resgrid | " + @localizer["ReactivatePersonHeader"];
 }
 
-
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>View Person</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
-      </li>
-      <li class="active">
-        <strong>Reactivate Person</strong>
-      </li>
-    </ol>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-lg-12">
-    <br />
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-lg-12">
-    <div class="ibox ">
-      <div class="ibox-title">
-        <h5>User Reactivated</h5>
-      </div>
-      <div class="ibox-content">
-        <div class="row">
-          <div class="col-md-4 col-lg-4" align="center">
-            <p>
-              This user (@Model.Profile.FullName.AsFirstNameLastName), based on email address, already had an account in the @Model.Department.Name department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear <b>with their previous profile settings (name, phone numbers, preferences, etc)</b> in the department.
-            </p>
-          </div>
-          <div class=" col-md-8 col-lg-8">
-            <table class="table table-user-information">
-              <tbody>
-                <tr>
-                  <td>User:</td>
-                  <td>@Model.Profile.FullName.AsFirstNameLastName</td>
-                </tr>
-                <tr>
-                  <td>Group:</td>
-
-                  @if (Model.Group != null)
-										{
-                    <td>@Model.Group.Name</td>
-										}
-										else
-										{
-                    <td>None</td>
-										}
-                </tr>
-                <tr>
-                  <td>Roles:</td>
-                  <td>@Model.Roles</td>
-                </tr>
-                @if (ClaimsAuthorizationHelper.CanViewPII())
-									{
-                  <tr>
-                    <td>Email</td>
-                    <td><a href="mailto:@Model.User.Email">@Model.User.Email</a></td>
-                  </tr>
-                  <tr>
-                    <td>Phone Number(s)</td>
-                    <td>
-                      @if (!String.IsNullOrWhiteSpace(Model.Profile.HomeNumber))
-												{
-                        <span>@Model.Profile.HomeNumber (Home)</span>
-                        <br />
-												}
-                      @if (!String.IsNullOrWhiteSpace(Model.Profile.MobileNumber))
-												{
-                        <span>@Model.Profile.MobileNumber (Mobile)</span>
-												}
-                    </td>
-                  </tr>
-									}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class="col-sm-4">
+        <h2>@localizer["ReactivatePersonHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ReactivatePersonHeader"]</strong>
+            </li>
+        </ol>
     </div>
-  </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <br />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>@localizer["ReactivatePersonHeader"]</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-4 col-lg-4" align="center">
+                        <p>
+                            @localizer["ReactivatePersonText1"] (@Model.Profile.FullName.AsFirstNameLastName), @localizer["ReactivatePersonText2"] @Model.Department.Name @localizer["ReactivatePersonText3"]
+                        </p>
+                    </div>
+                    <div class=" col-md-8 col-lg-8">
+                        <table class="table table-user-information">
+                            <tbody>
+                                <tr>
+                                    <td>@commonLocalizer["User"]:</td>
+                                    <td>@Model.Profile.FullName.AsFirstNameLastName</td>
+                                </tr>
+                                <tr>
+                                    <td>@commonLocalizer["Group"]:</td>
+
+                                    @if (Model.Group != null)
+                                    {
+                                        <td>@Model.Group.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@commonLocalizer["None"]</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td>@commonLocalizer["Roles"]:</td>
+                                    <td>@Model.Roles</td>
+                                </tr>
+                                @if (ClaimsAuthorizationHelper.CanViewPII())
+                                {
+                                    <tr>
+                                        <td>@commonLocalizer["Email"]</td>
+                                        <td><a href="mailto:@Model.User.Email">@Model.User.Email</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PhoneNumbers"]</td>
+                                        <td>
+                                            @if (!String.IsNullOrWhiteSpace(Model.Profile.HomeNumber))
+                                            {
+                                                <span>@Model.Profile.HomeNumber (Home)</span>
+                                                <br />
+                                            }
+                                            @if (!String.IsNullOrWhiteSpace(Model.Profile.MobileNumber))
+                                            {
+                                                <span>@Model.Profile.MobileNumber (Mobile)</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
+    {
 
 }

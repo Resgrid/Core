@@ -224,7 +224,7 @@ namespace Resgrid.Services
 								if (setting.Everyone) // Add Everyone
 								{
 									notification.Users =
-										_departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true).Select(x => x.UserId).ToList();
+										(await _departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true)).Select(x => x.UserId).ToList();
 								}
 								else if (setting.DepartmentAdmins) // Add Only Department Admins
 								{
@@ -356,7 +356,7 @@ namespace Resgrid.Services
 							if (items.Any(x => x.StartsWith("D:")))
 							{
 								notification.Users =
-									_departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true).Select(x => x.UserId).ToList();
+									(await _departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true)).Select(x => x.UserId).ToList();
 							}
 							else
 							{
@@ -386,7 +386,7 @@ namespace Resgrid.Services
 						else if (calEvent.ItemType == 1) // RSVP: Notify entire department
 						{
 							notification.Users =
-								_departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true).Select(x => x.UserId).ToList();
+								(await _departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true)).Select(x => x.UserId).ToList();
 						}
 					}
 				}
@@ -403,7 +403,7 @@ namespace Resgrid.Services
 							if (items.Any(x => x.StartsWith("D:")))
 							{
 								notification.Users =
-									_departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true).Select(x => x.UserId).ToList();
+									(await _departmentsService.GetAllUsersForDepartment(notification.DepartmentId, true)).Select(x => x.UserId).ToList();
 							}
 							else
 							{

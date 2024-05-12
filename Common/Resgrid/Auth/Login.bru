@@ -1,0 +1,26 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_API_URL}}/connect/token
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+}
+
+body:form-urlencoded {
+  grant_type: password
+  scope: openid profile offline_access
+  username: {{USERNAME}}
+  password: {{PASSWORD}}
+}
+
+vars:post-response {
+  access_token: res.body.access_token
+}

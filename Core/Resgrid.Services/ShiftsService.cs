@@ -66,13 +66,19 @@ namespace Resgrid.Services
 		public async Task<Shift> GetShiftByIdAsync(int shiftId)
 		{
 			var shift = await _shiftsRepository.GetShiftAndDaysByShiftIdAsync(shiftId);
-			shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shiftId)).ToList();
-			//shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
-			shift.Groups = await GetShiftGroupsForShift(shiftId);
-			//shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shiftId)).ToList();
-			//shift.Admins = (await _shift
 
-			return shift;
+			if (shift != null)
+			{
+				shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shiftId)).ToList();
+				//shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
+				shift.Groups = await GetShiftGroupsForShift(shiftId);
+				//shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shiftId)).ToList();
+				//shift.Admins = (await _shift
+
+				return shift;
+			}
+
+			return null;
 		}
 
 		public async Task<Shift> PopulateShiftData(Shift shift, bool getDepartment, bool getPersonnel, bool getGroups,

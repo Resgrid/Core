@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
@@ -125,6 +126,18 @@ namespace Resgrid.Repositories.DataRepository
 
 					var query = _queryFactory.GetQuery<SelectUnitsByDIdQuery>();
 
+					var unitsDictionary = new Dictionary<int, Unit>();
+					var result = await x.QueryAsync<Unit, UnitRole, Unit>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: UnitRolesMapping(unitsDictionary),
+						splitOn: "UnitRoleId");
+
+					if (unitsDictionary.Count > 0)
+						return unitsDictionary.Select(y => y.Value);
+
+					return result;
+
 					return await x.QueryAsync<Unit, DepartmentGroup, Unit>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
@@ -197,6 +210,41 @@ namespace Resgrid.Repositories.DataRepository
 
 				throw;
 			}
+		}
+
+		private static Func<Unit, UnitRole, Unit> UnitRolesMapping(Dictionary<int, Unit> dictionary)
+		{
+			return new Func<Unit, UnitRole, Unit>((unit, unitRole) =>
+			{
+				var dictionaryUnit = default(Unit);
+
+				if (unitRole != null)
+				{
+					if (dictionary.TryGetValue(unit.UnitId, out dictionaryUnit))
+					{
+						if (dictionaryUnit.Roles.All(x => x.UnitRoleId != unitRole.UnitRoleId))
+							dictionaryUnit.Roles.Add(unitRole);
+					}
+					else
+					{
+						if (unit.Roles == null)
+							unit.Roles = new List<UnitRole>();
+
+						unit.Roles.Add(unitRole);
+						dictionary.Add(unit.UnitId, unit);
+
+						dictionaryUnit = unit;
+					}
+				}
+				else
+				{
+					unit.Roles = new List<UnitRole>();
+					dictionaryUnit = unit;
+					dictionary.Add(unit.UnitId, unit);
+				}
+
+				return dictionaryUnit;
+			});
 		}
 	}
 }

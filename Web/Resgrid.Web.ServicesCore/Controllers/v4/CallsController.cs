@@ -105,7 +105,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var c in calls)
 				{
-					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true);
+					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true);
 
 					string address = "";
 					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
@@ -161,7 +161,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await _authorizationService.CanUserViewCallAsync(UserId, int.Parse(callId)))
 				return Unauthorized();
 
-			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true);
+			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true);
 
 			string address = "";
 			if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
@@ -220,7 +220,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				return Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 
 			result.Data.CallFormData = call.CallFormData;
 
@@ -479,7 +479,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var callProtocol in call.Protocols)
 				{
-					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.CallProtocolId);
+					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 
 					if (protocol != null)
 						result.Data.Protocols.Add(CallProtocolsController.ConvertProtocolData(protocol));
@@ -568,7 +568,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(newCallInput.Geolocation))
 				call.GeoLocationData = newCallInput.Geolocation;
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address) && call.GeoLocationData.Length > 1)
+			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
 				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
 			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
@@ -829,7 +829,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var call = await _callsService.GetCallByIdAsync(int.Parse(editCallInput.Id));
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (call == null)
@@ -892,7 +892,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(editCallInput.Geolocation))
 				call.GeoLocationData = editCallInput.Geolocation;
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address) && call.GeoLocationData.Length > 1)
+			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
 				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
 			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
@@ -1310,7 +1310,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			result.Data.Add(new CallHistoryResultData()
@@ -1496,6 +1496,59 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			ResponseHelper.PopulateV4ResponseData(result);
 
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Returns all the calls for the department inclusive in the date range
+		/// </summary>
+		/// <param name="startDate">Start date as UTC to get calls for</param>
+		/// <param name="endDate">End date as UTC to get calls for</param>
+		/// <returns>Array of CallResult objects for each call in the department within the range</returns>
+		[HttpGet("GetCalls")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<ActiveCallsResult>> GetCalls(DateTime startDate, DateTime endDate)
+		{
+			var result = new ActiveCallsResult();
+
+			var calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)).OrderByDescending(x => x.LoggedOn);
+
+			if (calls != null && calls.Any())
+			{
+				foreach (var c in calls)
+				{
+					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true);
+
+					string address = "";
+					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
+					{
+						var geo = c.GeoLocationData.Split(char.Parse(","));
+
+						if (geo.Length == 2)
+						{
+							double lat, lng;
+							if (double.TryParse(geo[0], out lat) && double.TryParse(geo[1], out lng))
+							{
+								address = await _geoLocationProvider.GetAddressFromLatLong(lat, lng);
+							}
+						}
+					}
+					else
+						address = c.Address;
+
+					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone));
+				}
+				result.PageSize = result.Data.Count();
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 

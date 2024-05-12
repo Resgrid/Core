@@ -133,6 +133,9 @@ namespace Resgrid.Model
 		[ProtoMember(30)]
 		public virtual ICollection<CallProtocol> Protocols { get; set; }
 
+		[ProtoMember(31)]
+		public virtual ICollection<CallReference> References { get; set; }
+
 		public string ContactName { get; set; }
 
 		public string ContactNumber { get; set; }
@@ -187,7 +190,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount", "References" };
 
 		public string GetIdentifier()
 		{
@@ -264,6 +267,23 @@ namespace Resgrid.Model
 							throw new ArgumentOutOfRangeException();
 					}
 				}
+			}
+
+			return "Unknown";
+		}
+
+		public string GetStateText()
+		{
+			switch (State)
+			{
+				case (int)CallStates.Active:
+					return "Active";
+				case (int)CallStates.Cancelled:
+					return "Cancelled";
+				case (int)CallStates.Closed:
+					return "Closed";
+				case (int)CallStates.Unfounded:
+					return "Unfounded";
 			}
 
 			return "Unknown";

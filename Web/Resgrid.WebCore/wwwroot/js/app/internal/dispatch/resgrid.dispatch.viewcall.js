@@ -4,29 +4,43 @@ var resgrid;
 	var dispatch;
 	(function (dispatch) {
 		var viewcall;
-		(function (viewcall) {
+        (function (viewcall) {
+            var noteQuillDescription;
 			$(document).ready(function () {
-				marker = null;
+                callMarker = null;
+                map = null;
+
+                noteQuillDescription = new Quill('#note-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                $(document).on('submit', '#newCallForm', function () {
+                    $('#Call_Notes').val(noteQuillDescription.root.innerHTML);
+
+                    return true;
+                });
+
 				$.ajax({
 					url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetMapDataForCall?callId=' + callId,
 					contentType: 'application/json; charset=utf-8',
 					type: 'GET'
 				}).done(function (result) {
-					var data = result;
-					var mapCenter = new google.maps.LatLng(data.centerLat, data.centerLon);
-					var mapOptions = {
-						zoom: 10,
-						center: mapCenter
-					};
-					map = new google.maps.Map(document.getElementById('callMap'), mapOptions);
-					marker = new google.maps.Marker({
-						position: mapCenter,
-						map: map,
-						title: 'Call Location',
-						animation: google.maps.Animation.DROP,
-						draggable: true,
-						bounds: false
-					});
+                    var data = result;
+
+                    const tiles1 = L.tileLayer(
+                        osmTileUrl,
+                        {
+                            maxZoom: 19,
+                            attribution: osmTileAttribution
+                        }
+                    );
+
+                    map = L.map('callMap', {
+                        scrollWheelZoom: false
+                    }).setView([data.centerLat, data.centerLon], 11).addLayer(tiles1);
+
+                    callMarker = new L.marker(new L.LatLng(data.centerLat, data.centerLon), { draggable: false }).addTo(map);
 				});
 
 				$('.callImages').slick({
@@ -96,12 +110,14 @@ var resgrid;
 					url: resgrid.absoluteBaseUrl + '/User/Dispatch/AddCallNote',
 					data: JSON.stringify({
 						CallId: callId,
-						Note: $('#note-box1').val()
+						//Note: $('#note-box1').val()
+                        Note: noteQuillDescription.root.innerHTML
 					}),
 					contentType: 'application/json',
 					type: 'POST'
 				}).done(function (data) {
-					$('#note-box1').val('');
+					//$('#note-box1').val('');
+                    noteQuillDescription.root.innerHTML = '';
 					getCallNotes(true);
 				});
 			}
@@ -126,8 +142,8 @@ var resgrid;
                                 flagHtml = "<a href='" + resgrid.absoluteBaseUrl + '/User/Dispatch/FlagCallNote?callId=' + callId + "&callNoteId=" + result[i].CallNoteId + "'> <i class='fa fa-flag'></i> </a>";
                             }
 
-							notesHtml.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='" + resgrid.absoluteBaseUrl + "/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='https://resgrid.com/images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well'>" + result[i].Note + "</div></div></div>");
-                            notesHtml1.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='" + resgrid.absoluteBaseUrl + "/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='https://resgrid.com/images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well pull-left' style='width:95%'>" + result[i].Note + "</div><div class='pull-right' style='width=4%'>" + flagHtml + "</div></div></div>");
+                            notesHtml.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='" + resgrid.absoluteApiBaseUrl + "/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='" + resgrid.absoluteBaseUrl + "/images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well'>" + result[i].Note + "</div></div></div>");
+                            notesHtml1.append("<div class='feed-element'><a href='#' class='pull-left'><img alt='image' class='img-circle' src='" + resgrid.absoluteApiBaseUrl + "/api/v3/Avatars/Get?id=" + result[i].UserId + "' onerror=\"this.src='" + resgrid.absoluteBaseUrl + "/images/defaultProfile.png\'\"></a><div class='media-body'><small class='pull-right'>" + result[i].Location + "</small><strong>" + result[i].Name + "</strong><br><small class='text-muted'>" + result[i].Timestamp + "</small><div class='well pull-left' style='width:95%'>" + result[i].Note + "</div><div class='pull-right' style='width=4%'>" + flagHtml + "</div></div></div>");
 						}
 
 						if (fromSubmitButton) {

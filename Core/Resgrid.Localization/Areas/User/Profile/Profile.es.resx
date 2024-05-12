@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddCertification" xml:space="preserve">
+    <value>Agregar certificación</value>
+  </data>
+  <data name="AddCertificationHeader" xml:space="preserve">
+    <value>Agregar certificación</value>
+  </data>
+  <data name="AddCertificationHelp" xml:space="preserve">
+    <value>Ingrese la información a continuación para editar una certificación en su perfil. Las certificaciones de ejemplo son CERTS EMT, CPR/BLS, HAZMAT, etc. Las certificaciones de seguimiento pueden ser útiles para garantizar que se actualicen/renovan antes de que expiren y el departamento sabe quién está certificado para qué. Se requieren campos en &lt;span class = "requerido"&gt; Cursos de azul &lt;/span&gt;.</value>
+  </data>
+  <data name="AddScheduledReport" xml:space="preserve">
+    <value>Agregar informe programado</value>
+  </data>
+  <data name="AddStaffingSchedule" xml:space="preserve">
+    <value>Agregar horario de personal</value>
+  </data>
+  <data name="CertificationDeleteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente esta certificación. ¿Estás seguro de que quieres eliminar la certificación?</value>
+  </data>
+  <data name="CertificationId" xml:space="preserve">
+    <value>ID # \ cert #</value>
+  </data>
+  <data name="CertificationIdPlaceholder" xml:space="preserve">
+    <value>ID # \ cert #</value>
+  </data>
+  <data name="CertificationNamePlaceholder" xml:space="preserve">
+    <value>Nombre de certificacion</value>
+  </data>
+  <data name="CertificationsHeader" xml:space="preserve">
+    <value>Certificaciones</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambiar la contraseña</value>
+  </data>
+  <data name="ChangePasswordHeader" xml:space="preserve">
+    <value>Cambiar contraseña para el usuario</value>
+  </data>
+  <data name="ChangePasswordInfo" xml:space="preserve">
+    <value>Aquí puede cambiar manualmente la contraseña para un usuario en el sistema. Ingrese en la nueva contraseña y confirme para cambiarla. Las contraseñas deben tener al menos 6 caracteres de longitud. Tenga en cuenta que Resgrid no notificará al usuario sobre este cambio de contraseña. Se requieren campos en &lt;span class = "requerido"&gt; Cursos de azul &lt;/span&gt;.</value>
+  </data>
+  <data name="ChangeStaffingTo" xml:space="preserve">
+    <value>Cambiar el personal a</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>confirmar Contraseña</value>
+  </data>
+  <data name="ConfirmPasswordPlaceholder" xml:space="preserve">
+    <value>Confirme la contraseña de este usuario</value>
+  </data>
+  <data name="DaysOfWeek" xml:space="preserve">
+    <value>Días de la semana</value>
+  </data>
+  <data name="DepartmentCode" xml:space="preserve">
+    <value>código del departamento</value>
+  </data>
+  <data name="DepartmentId" xml:space="preserve">
+    <value>ID de departamento</value>
+  </data>
+  <data name="EditCertificationInfo" xml:space="preserve">
+    <value>Ingrese la información a continuación para editar una certificación en su perfil. Las certificaciones de ejemplo son CERTS EMT, CPR/BLS, HAZMAT, etc. Las certificaciones de seguimiento pueden ser útiles para garantizar que se actualicen/renovan antes de que expiren y el departamento sabe quién está certificado para qué. Se requieren campos en &lt;span class = "requerido"&gt; Cursos de azul &lt;/span&gt;.</value>
+  </data>
+  <data name="EditCertificationsHeader" xml:space="preserve">
+    <value>Editar certificación</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Editar perfil</value>
+  </data>
+  <data name="EditScheduledReportHeader" xml:space="preserve">
+    <value>Editar informe programado</value>
+  </data>
+  <data name="EditStaffingScheduleHeader" xml:space="preserve">
+    <value>Editar calendario de personal</value>
+  </data>
+  <data name="EmailUser" xml:space="preserve">
+    <value>¿Usuario de correo electrónico?</value>
+  </data>
+  <data name="EmailUserInfo" xml:space="preserve">
+    <value>Marque esta casilla si desea que el usuario envíe un correo electrónico con su nombre de usuario y su nueva contraseña.</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Expira el</value>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>Expira el</value>
+  </data>
+  <data name="IssuedByLabel" xml:space="preserve">
+    <value>Expedido por</value>
+  </data>
+  <data name="IssuedByPlaceholder" xml:space="preserve">
+    <value>Nombre de la autoridad emisora</value>
+  </data>
+  <data name="IssuedOnLabel" xml:space="preserve">
+    <value>Emitido por</value>
+  </data>
+  <data name="JoinDepartment" xml:space="preserve">
+    <value>Se une al departamento</value>
+  </data>
+  <data name="JoinDepartmentHeader" xml:space="preserve">
+    <value>Se une al departamento</value>
+  </data>
+  <data name="JoinDepartmentInfo" xml:space="preserve">
+    <value>Debe proporcionar la identificación y código del departamento actual para el departamento de regrid que desea unirse.</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>Nueva contraseña para este usuario</value>
+  </data>
+  <data name="NewPasswordReq" xml:space="preserve">
+    <value>Las contraseñas deben ser de 8 caracteres o más e incluir un dígito (número), una letra mayúscula y minúscula</value>
+  </data>
+  <data name="NewScheduledReportHeader" xml:space="preserve">
+    <value>Nuevo informe programado</value>
+  </data>
+  <data name="NewStaffingScheduleHeader" xml:space="preserve">
+    <value>Nuevo horario de personal</value>
+  </data>
+  <data name="RemoveFromDepartmentWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto lo eliminará de este departamento. ¿Estás seguro de que estás seguro?</value>
+  </data>
+  <data name="RemoveYourself" xml:space="preserve">
+    <value>Quítate del departamento</value>
+  </data>
+  <data name="ReportDeliveryHeader" xml:space="preserve">
+    <value>Entrega de informes</value>
+  </data>
+  <data name="ReportDeliverySchedulesHeader" xml:space="preserve">
+    <value>Horario de entrega de informes</value>
+  </data>
+  <data name="ReportToRun" xml:space="preserve">
+    <value>Informe para ejecutar</value>
+  </data>
+  <data name="Schedules" xml:space="preserve">
+    <value>Horario</value>
+  </data>
+  <data name="SetAsActive" xml:space="preserve">
+    <value>Establecido como activo</value>
+  </data>
+  <data name="SetAsActiveWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto cambiará su departamento activo actual, solo puede iniciar sesión en un departamento a la vez, ¿está seguro?</value>
+  </data>
+  <data name="SetAsDefault" xml:space="preserve">
+    <value>Establecer por defecto</value>
+  </data>
+  <data name="SetAsDefaultWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto cambiará su departamento predeterminado, si desea ver este departamento, deberá activarlo después.</value>
+  </data>
+  <data name="SpecificDate" xml:space="preserve">
+    <value>Fecha específica</value>
+  </data>
+  <data name="SpecificDateTime" xml:space="preserve">
+    <value>DateTime específico</value>
+  </data>
+  <data name="StaffingSchedule" xml:space="preserve">
+    <value>Horario de personal</value>
+  </data>
+  <data name="StaffingSchedulesHeader" xml:space="preserve">
+    <value>Horario de personal</value>
+  </data>
+  <data name="TimeToRun" xml:space="preserve">
+    <value>Hora de correr</value>
+  </data>
+  <data name="ValidAreaLabel" xml:space="preserve">
+    <value>Área válida</value>
+  </data>
+  <data name="ValidAreaPlaceholder" xml:space="preserve">
+    <value>Certificación de área en válido en</value>
+  </data>
+  <data name="YourDepartmentsHeader" xml:space="preserve">
+    <value>Tus departamentos</value>
+  </data>
+</root>

@@ -29,12 +29,33 @@ namespace Resgrid.Services
 		{
 			var links = await _departmentLinksRepository.GetAllLinksForDepartmentAsync(departmentId);
 
-			return links.ToList();
+			if (links != null && links.Any())
+			{
+				foreach (var link in links)
+				{
+					link.Department = await _departmentsRepository.GetByIdAsync(link.DepartmentId);
+					link.LinkedDepartment = await _departmentsRepository.GetByIdAsync(link.DepartmentLinkId);
+				}
+
+				return links.ToList();
+			}
+
+			return new List<DepartmentLink>();
 		}
 
 		public async Task<DepartmentLink> GetLinkByIdAsync(int linkId)
 		{
-			return await _departmentLinksRepository.GetByIdAsync(linkId);
+			var link = await _departmentLinksRepository.GetByIdAsync(linkId);
+
+			if (link != null)
+			{
+				link.Department = await _departmentsRepository.GetByIdAsync(link.DepartmentId);
+				link.LinkedDepartment = await _departmentsRepository.GetByIdAsync(link.DepartmentLinkId);
+
+				return link;
+			}
+
+			return null;
 		}
 
 		public async Task<DepartmentLink> SaveAsync(DepartmentLink link, CancellationToken cancellationToken = default(CancellationToken))

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Configurations>Debug;Release;Docker</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Resgrid.Tests\Bootstrapper.cs" Link="Bootstrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="NUnit" Version="4.1.0" />
+    <PackageReference Include="SimpleBrowser" Version="0.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+    <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
+  </ItemGroup>
+</Project>

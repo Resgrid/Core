@@ -14,22 +14,22 @@
 
 		public static string AwsAccessKey = "";
 		public static string AwsSecretKey = "";
-		
-		public static long PostmarkCallEmailTemplateId = 0;
-		public static long PostmarkTroubleAlertTemplateId = 0;
-		public static long PostmarkCancelRecieptTemplateId = 0;
-		public static long PostmarkChargeFailedTemplateId = 0;
-		public static long PostmarkInviteTemplateId = 0;
-		public static long PostmarkMessageTemplateId = 0;
-		public static long PostmarkResetPasswordTemplateId = 0;
-		public static long PostmarkRecieptTemplateId = 0;
-		public static long PostmarkWelcomeTemplateId = 0;
-		public static long PostmarkNewDepLinkTemplateId = 0;
+
+		public static long PostmarkCallEmailTemplateId = 1162802;
+		public static long PostmarkTroubleAlertTemplateId = 4991122;
+		public static long PostmarkCancelRecieptTemplateId = 1161121;
+		public static long PostmarkChargeFailedTemplateId = 1161061;
+		public static long PostmarkInviteTemplateId = 1160522;
+		public static long PostmarkMessageTemplateId = 1162921;
+		public static long PostmarkResetPasswordTemplateId = 1158941;
+		public static long PostmarkRecieptTemplateId = 1160541;
+		public static long PostmarkWelcomeTemplateId = 1158741;
+		public static long PostmarkNewDepLinkTemplateId = 1456661;
 	}
 
 	public enum OutboundEmailTypes
 	{
-		Postmark = 0,
-		Smtp = 1
+		Postmark	= 0,
+		Smtp		= 1
 	}
 }

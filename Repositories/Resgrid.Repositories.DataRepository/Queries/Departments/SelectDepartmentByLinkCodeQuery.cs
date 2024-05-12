@@ -16,11 +16,24 @@ namespace Resgrid.Repositories.DataRepository.Queries.Departments
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectDepartmentByLinkCodeQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.DepartmentsTable,
-					_sqlConfiguration.ParameterNotation,
-					new string[] { "%CODE%" },
-					new string[] { "Code" });
+										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+																 string.Empty,
+																 _sqlConfiguration.ParameterNotation,
+																new string[] {
+																				"%CODE%"
+																			  },
+																 new string[] {
+																				"Code",
+																			  },
+																 new string[] {
+																				"%DEPARTMENTSTABLE%",
+																				"%DEPARTMENTMEMBERSTABLE%"
+																 },
+																 new string[] {
+																				_sqlConfiguration.DepartmentsTable,
+																				_sqlConfiguration.DepartmentMembersTable
+																 }
+																 );
 
 			return query;
 		}

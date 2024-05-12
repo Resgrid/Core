@@ -26,6 +26,12 @@ namespace Resgrid.Providers.AddressVerification
 				if (response.StatusCode != HttpStatusCode.OK)
 					result.ServiceSuccess = false;
 
+				if (response.Data == null)
+				{
+					result.ServiceSuccess = false;
+					return result;
+				}
+
 				if (response.Data.status != "OK")
 					result.ServiceSuccess = false;
 

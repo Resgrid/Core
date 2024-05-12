@@ -13,32 +13,41 @@ namespace Resgrid.Config
 		public static string TwilioAccountSid = "";
 		public static string TwilioAuthToken = "";
 		public static string TwilioResgridNumber = "";
-		public static string TwilioApiUrl = "https://resgridapi.local/Twilio/IncomingMessage";
-		public static string TwilioVoiceCallApiTurl = "https://resgridapi.local/Twilio/VoiceCall?userId={0}&callId={1}";
-		public static string TwilioVoiceApiUrl = "https://resgridapi.local/Twilio/InboundVoice";
+		public static string TwilioApiUrl = SystemBehaviorConfig.ResgridApiBaseUrl + "/api/Twilio/IncomingMessage";
+		public static string TwilioVoiceCallApiUrl = SystemBehaviorConfig.ResgridApiBaseUrl + "/api/Twilio/VoiceCall?userId={0}&callId={1}";
+		public static string TwilioVoiceApiUrl = SystemBehaviorConfig.ResgridApiBaseUrl + "/api/Twilio/InboundVoice";
 
 		// Diafaan (https://www.diafaan.com)
-		public static string DiafaanSmsGatewayUrl = "http://diafaan.yourcompany.local/";
+		public static string DiafaanSmsGatewayUrl = "";
 		public static string DiafaanSmsGatewayUserName = "";
 		public static string DiafaanSmsGatewayPassword = "";
 
 		// SignalWire (https://signalwire.com)
 		public static string SignalWireApiUrl = "";
-		public static string SignalWireResgridNumber = "";
+		public static string SignalWireResgridNumber = "";    // Main prod
 		public static string SignalWireAccountSid = "";
 		public static string SignalWireApiKey = "";
+
 
 		/// <summary>
 		/// Nexemo supports some countries that Twilio doesn't, if you need routing for specific numbers that may be Nexmo only put them in here.
 		/// </summary>
 		public static HashSet<string> NexemoNumbers = new HashSet<string>()
 		{
+
 		};
 
-		/// <summary>
-		/// SignalWire zones allow you to segment outbound numbers based on a zone id. For example this can allow you have outbound numbers per country, per state\province, etc.
-		/// </summary>
 		public static Dictionary<int, HashSet<string>> SignalWireZones = new Dictionary<int, HashSet<string>>()
+		{
+
+		};
+
+		public static HashSet<int> TwilioPlans = new HashSet<int>()
+		{
+
+		};
+
+		public static HashSet<int> TwilioDepartments = new HashSet<int>()
 		{
 
 		};

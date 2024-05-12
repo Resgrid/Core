@@ -68,27 +68,30 @@ namespace Resgrid.Web.Services.Controllers.Version3
 
 					if (!String.IsNullOrWhiteSpace(locationInput.Lat) && locationInput.Lat != "NaN" && !String.IsNullOrWhiteSpace(locationInput.Lon) && locationInput.Lon != "NaN")
 					{
-						location.Latitude = decimal.Parse(locationInput.Lat);
-						location.Longitude = decimal.Parse(locationInput.Lon);
+						if (decimal.TryParse(locationInput.Lat, out var lat) && decimal.TryParse(locationInput.Lon, out var lon))
+						{
+							location.Latitude = lat;
+							location.Longitude = lon;
 
-						if (!String.IsNullOrWhiteSpace(locationInput.Acc) && locationInput.Acc != "NaN")
-							location.Accuracy = decimal.Parse(locationInput.Acc);
+							if (!String.IsNullOrWhiteSpace(locationInput.Acc) && locationInput.Acc != "NaN" && decimal.TryParse(locationInput.Acc, out var acc))
+								location.Accuracy = acc;
 
-						if (!String.IsNullOrWhiteSpace(locationInput.Alt) && locationInput.Alt != "NaN")
-							location.Altitude = decimal.Parse(locationInput.Alt);
+							if (!String.IsNullOrWhiteSpace(locationInput.Alt) && locationInput.Alt != "NaN" && decimal.TryParse(locationInput.Alt, out var alt))
+								location.Altitude = alt;
 
-						if (!String.IsNullOrWhiteSpace(locationInput.Alc) && locationInput.Alc != "NaN")
-							location.AltitudeAccuracy = decimal.Parse(locationInput.Alc);
+							if (!String.IsNullOrWhiteSpace(locationInput.Alc) && locationInput.Alc != "NaN" && decimal.TryParse(locationInput.Alc, out var alc))
+								location.AltitudeAccuracy = alc;
 
-						if (!String.IsNullOrWhiteSpace(locationInput.Spd) && locationInput.Spd != "NaN")
-							location.Speed = decimal.Parse(locationInput.Spd);
+							if (!String.IsNullOrWhiteSpace(locationInput.Spd) && locationInput.Spd != "NaN" && decimal.TryParse(locationInput.Spd, out var spd))
+								location.Speed = spd;
 
-						if (!String.IsNullOrWhiteSpace(locationInput.Hdn) && locationInput.Hdn != "NaN")
-							location.Heading = decimal.Parse(locationInput.Hdn);
+							if (!String.IsNullOrWhiteSpace(locationInput.Hdn) && locationInput.Hdn != "NaN" && decimal.TryParse(locationInput.Hdn, out var hdn))
+								location.Heading = hdn;
 
-						await _unitLocationEventProvider.EnqueueUnitLocationEventAsync(location);
+							await _unitLocationEventProvider.EnqueueUnitLocationEventAsync(location);
 
-						return CreatedAtAction(nameof(SetUnitLocation), new { id = locationInput.Uid }, location);
+							return CreatedAtAction(nameof(SetUnitLocation), new { id = locationInput.Uid }, location);
+						}
 					}
 					else
 					{

@@ -1,21 +1,22 @@
 ﻿@using Resgrid.Model
 @model Resgrid.WebCore.Areas.User.Models.Dispatch.FlagCallNoteView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
-    ViewBag.Title = "Resgrid | Flag Call Note";
+    ViewBag.Title = "Resgrid | " + @localizer["FlagCallNoteHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Flag Call Note</h2>
+        <h2>@localizer["FlagCallNoteHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li>
-                <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+                <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
             </li>
             <li class="active">
-                <strong>Flag Call Note</strong>
+                <strong>@localizer["FlagCallNoteHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -44,34 +45,34 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Call Note Text</label>
+                            <label class="col-sm-2 control-label">@localizer["CallNoteTextLabel"]</label>
                             <div class="col-sm-10">@Html.Raw(Model.CallNote)</div>
                         </div>
 
-                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Call Note Added On</label>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CallNoteAddedOnLabel"]</label>
                             <div class="col-sm-10">@Html.Raw(Model.AddedOn)</div>
                         </div>
 
-                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Call Note Added By</label>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CallNoteAddedByLabel"]</label>
                             <div class="col-sm-10">@Html.Raw(Model.AddedBy)</div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Is Flagged</label>
+                            <label class="col-sm-2 control-label">@localizer["IsFlaggedLabel"]</label>
                             <div class="col-sm-10"><input type="checkbox" asp-for="IsFlagged"></div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Flagged Reason</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="Reason for flagging" asp-for="FlagNote"></div>
+                            <label class="col-sm-2 control-label">@localizer["FlaggedReasonLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FlaggedReasonPlaceholder"]" asp-for="FlagNote"></div>
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.CallId">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Save Flag</button>
+                                <a class="btn btn-white" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.CallId">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
                             </div>
                         </div>
                     </form>
@@ -82,23 +83,23 @@
 </div>
 
 @section Scripts
-{
-<script>
-    $(document).ready(function () {
-        resgrid.common.analytics.track('Department - Edit Unit Types');
+    {
+    <script>
+        $(document).ready(function() {
+            resgrid.common.analytics.track('Department - Flag Call Note');
 
-         $('#newUnitTypePreview').hide();
-        $('#UnitCustomStatesId').select2();
+            $('#newUnitTypePreview').hide();
+            $('#UnitCustomStatesId').select2();
 
-        $('#UnitTypeIcon').on('change', function() {
-          if (this.value >= 0) {
-            $('#newUnitTypePreview').show();
-            let text = $( "#UnitTypeIcon option:selected" ).text().replace(/\s/g, '').toLowerCase();
-            $("#newUnitTypePreview").attr("src", "/images/Mapping/" + text + ".png");
-          } else {
-              $('#newUnitTypePreview').hide();
-          }
-      });
-    });
-</script>
+            $('#UnitTypeIcon').on('change', function() {
+                if (this.value >= 0) {
+                    $('#newUnitTypePreview').show();
+                    let text = $("#UnitTypeIcon option:selected").text().replace(/\s/g, '').toLowerCase();
+                    $("#newUnitTypePreview").attr("src", "/images/Mapping/" + text + ".png");
+                } else {
+                    $('#newUnitTypePreview').hide();
+                }
+            });
+        });
+    </script>
 }

@@ -1,75 +1,62 @@
 ﻿@model Resgrid.Web.Models.CompleteInviteModel
-
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Account.Login> localizer
 @{
-	Layout = null;
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Resgrid - Invite Missing</title>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resgrid | @localizer["MissingInviteHeader"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<environment names="Development">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-					crossorigin="anonymous"
-					asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css"
-					asp-fallback-test-class="hidden"
-					asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute" />
 
-		<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
-		<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.css" />
-		<link rel="stylesheet" href="~/css/animate.css" />
-		<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
-	</environment>
-	<environment names="Staging,Production">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-					crossorigin="anonymous"
-					asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-					asp-fallback-test-class="hidden"
-					asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
-		<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
-		<link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
-		<link rel="stylesheet" href="~/css/animate.css" />
-		<link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true" />
-	</environment>
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <link rel="stylesheet" href="~/css/pub-bundle.css" asp-append-version="true" />
 </head>
 <body class="gray-bg">
 
 
-	<div class="middle-box text-center animated fadeInDown">
-		<h1>404</h1>
-		<h2>Missing Invite</h2>
-		<h3 class="font-bold">Unable to find your Resgrid Invite</h3>
+    <div class="middle-box text-center animated fadeInDown">
+        <h2>@localizer["MissingInviteHeader"]</h2>
+        <h3 class="font-bold">@localizer["MissingInviteTopText"]</h3>
 
-		<div class="error-desc">
-			We're sorry but we were unable to locate your invite to Resgrid. Try having your department or organization send another one. If you already have a Resgrid account you can log in below. 
-			<ul class="list-inline">
-				<li>
-					<a class="btn btn-primary m-t" href="javascript:history.back();">Go Back</a>
-				</li>
-				<li>
+        <div class="error-desc">
+            @localizer["MissingInviteBody"]
+            <ul class="list-inline">
+                <li>
+                    <a class="btn btn-primary m-t" href="javascript:history.back();">@localizer["GoBack"]</a>
+                </li>
+                <li>
 
-				</li>
-				<li>
-					<a class="btn btn-primary m-t" asp-controller="Account" asp-action="LogOn" asp-route-area="">Log in</a>
-				</li>
-				<li>
+                </li>
+                <li>
+                    <a class="btn btn-primary m-t" asp-controller="Account" asp-action="LogOn" asp-route-area="">@localizer["LogIn"]</a>
+                </li>
+                <li>
 
-				</li>
-				<li>
-					<a class="btn btn-primary m-t" href="https://resgrid.com">Home</a>
-				</li>
-			</ul>
-		</div>
-	</div>
+                </li>
+                <li>
+                    <a class="btn btn-primary m-t" href="@Resgrid.Config.UrlsConfig.HomeUrl">@localizer["Home"]</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
 
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
 </body>
 </html>

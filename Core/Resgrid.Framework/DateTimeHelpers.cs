@@ -107,22 +107,37 @@ namespace Resgrid.Framework
 			//LocalDateTime localDateTime = new LocalDateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second);
 			//ZonedDateTime zonedDateTime = new ZonedDateTime(localDateTime, DateTimeZoneProviders.Tzdb[timeZone]);
 
-			var ianaTz = TZConvert.WindowsToIana(timeZone);
+			if (!String.IsNullOrWhiteSpace(timeZone))
+			{
+				var ianaTz = TZConvert.WindowsToIana(timeZone);
 
-			var localTime = LocalDateTime.FromDateTime(dateTime);
-			var zonedDateTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[ianaTz]);
+				var localTime = LocalDateTime.FromDateTime(dateTime);
+				var zonedDateTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[ianaTz]);
 
-			return zonedDateTime.ToDateTimeUtc();
+				return zonedDateTime.ToDateTimeUtc();
+			}
+
+			return dateTime.ToUniversalTime();
 		}
 
 		public static DateTime GetLocalDateTime(DateTime dateTime, string timeZone)
 		{
-			var ianaTz = TZConvert.WindowsToIana(timeZone);
+			if (!String.IsNullOrWhiteSpace(timeZone))
+			{
+				var ianaTz = TZConvert.WindowsToIana(timeZone);
 
-			var localTime = LocalDateTime.FromDateTime(dateTime);
-			var zonedDateTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[ianaTz]);
+				//var localTime = LocalDateTime.FromDateTime(dateTime);
+				var TzdbTZ = DateTimeZoneProviders.Tzdb[ianaTz];
+				//var zonedDateTime = localTime.InZoneStrictly(TzdbTZ);
 
-			return zonedDateTime.LocalDateTime.ToDateTimeUnspecified();
+				var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc));
+				var result = instant.InZone(TzdbTZ).ToDateTimeUnspecified();
+				return result;
+
+				//return zonedDateTime.LocalDateTime.ToDateTimeUnspecified();
+			}
+
+			return dateTime;
 		}
 
 		public static TimeZoneInfo CreateTimeZoneInfo(string timeZone)

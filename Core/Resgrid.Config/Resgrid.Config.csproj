@@ -1,27 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Resgrid.Config</AssemblyName>
-    <RootNamespace>Resgrid.Config</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="_ReadMe.txt" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="_ReadMe.txt" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="ResgridConfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

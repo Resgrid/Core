@@ -18,6 +18,12 @@
 		SubscriptionCancelled,
 		SubscriptionBillingInfoUpdated,
 		// New
-		CallReactivated
+		CallReactivated,
+		UserAccountDeleted,
+		AddonSubscriptionModified,
+		DeleteDepartmentRequested,
+		DeleteDepartmentRequestedCancelled,
+		DeleteStaticShift,
+		UpdateStaticShift
 	}
 }

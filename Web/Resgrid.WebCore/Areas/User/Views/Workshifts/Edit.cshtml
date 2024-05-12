@@ -1,0 +1,134 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Workshifts.NewWorkshiftView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["EditStaticShiftHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["EditStaticShiftHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["ShiftsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["EditStaticShiftHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Workshifts" asp-action="Edit" asp-route-area="User" method="post" id="newWorkshiftForm">
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.Shift.WorkshiftId)
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                @commonLocalizer["Name"]
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" placeholder="Title of the shift (person name, work name, etc)" asp-for="Shift.Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">@commonLocalizer["Color"]</label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" asp-for="Shift.Color">
+                                    <span class="help-block m-b-none">@localizer["ShiftColorNote"]</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+							<label class="col-sm-2 control-label">
+                                @commonLocalizer["Description"]
+							</label>
+							<div class="col-sm-10">
+								<div class="col-md-6">
+									<input type="hidden" asp-for="Shift.Description">
+			
+									<div id="editor-container" style="width:100%; height: 300px;">
+										@Html.Raw(Model.Shift.Description)
+									</div>
+								</div>
+							</div>
+						</div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                @localizer["StartDateTime"]
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" asp-for="Shift.Start">
+                                    <span class="help-block m-b-none">@localizer["ShiftStartNote"]</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">
+                                @localizer["EndDateTime"]
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <input type="text" asp-for="Shift.End">
+                                    <span class="help-block m-b-none">@localizer["ShiftEndNote"]</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="unitSelection" class="form-group">
+                            <label class="col-sm-2 control-label">
+                                @commonLocalizer["Units"]
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-5">
+                                    <select asp-for="UnitsAssigned"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            @localizer["EditShiftWarning"]
+                            <br />
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script src="~/js/app/internal/workshifts/resgrid.workshifts.new.js"></script>
+}

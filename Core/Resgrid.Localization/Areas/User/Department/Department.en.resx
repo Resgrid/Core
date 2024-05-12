@@ -1,0 +1,432 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountOwner" xml:space="preserve">
+    <value>Account Owner</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="AddressError" xml:space="preserve">
+    <value>We were unable verify the address supplied. Check to ensure it's correct before you continue.</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>This is the address of your department; it could be the address of a single station or your district office. This address is used to help locate your district and area, and is used as a fallback for some operations (i.e. centering the big board).</value>
+  </data>
+  <data name="ApiRssSettings" xml:space="preserve">
+    <value>Api &amp; Rss Settings</value>
+  </data>
+  <data name="ApiSettingsHeader" xml:space="preserve">
+    <value>API Settings</value>
+  </data>
+  <data name="CallSettingsHeader" xml:space="preserve">
+    <value>Call Import Settings</value>
+  </data>
+  <data name="CallSorting" xml:space="preserve">
+    <value>Call Sorting</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="CityLabel" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="CompletedOn" xml:space="preserve">
+    <value>Completed On</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="DefaultMapCenterLabel" xml:space="preserve">
+    <value>Default Map Center GPS Coordinates</value>
+  </data>
+  <data name="DeleteInvite" xml:space="preserve">
+    <value>Delete Invite</value>
+  </data>
+  <data name="DeleteInviteWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this invite and the link the user has in the email will result in an error. Are you sure you want to delete the invite?</value>
+  </data>
+  <data name="DepartmentAddressHeader" xml:space="preserve">
+    <value>Department Address</value>
+  </data>
+  <data name="DepartmentName" xml:space="preserve">
+    <value>Department Name</value>
+  </data>
+  <data name="DepartmentSettingsHeader" xml:space="preserve">
+    <value>Department Settings</value>
+  </data>
+  <data name="DisableAutoAvailable" xml:space="preserve">
+    <value>Disable Auto-Available</value>
+  </data>
+  <data name="DisableAutoAvailableHelp" xml:space="preserve">
+    <value>Disable automatically setting personnel's status to Available after an hour</value>
+  </data>
+  <data name="DispatchImportEmail" xml:space="preserve">
+    <value>Dispatch Import Email</value>
+  </data>
+  <data name="DispatchImportEmailHelp" xml:space="preserve">
+    <value>This is your ALL-CALL email address, all users in your department (who have call notifications enabled) will receive the call alert</value>
+  </data>
+  <data name="DispatchSettings" xml:space="preserve">
+    <value>Dispatch Settings</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Dispatch Settings</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="EmailAddresses" xml:space="preserve">
+    <value>Email Addresses</value>
+  </data>
+  <data name="EmailAddressesHelp" xml:space="preserve">
+    <value>Enter the email addresses separated by comma's (i.e. "test1@test.com, test2@test.com")</value>
+  </data>
+  <data name="EmailType" xml:space="preserve">
+    <value>Email Type</value>
+  </data>
+  <data name="ForceDepartmentUpdate" xml:space="preserve">
+    <value>Force Department Update</value>
+  </data>
+  <data name="ForceDepartmentUpdateInfo" xml:space="preserve">
+    <value>Resgrid caches some department data to increase performance. Some examples of data that is cached is staffing levels, department settings, personnel roles\groups\names. If you have issues where some department data is incorrect you might want to clear your departments cache.</value>
+  </data>
+  <data name="InvitesHeader" xml:space="preserve">
+    <value>Invites</value>
+  </data>
+  <data name="LatitudePlaceholder" xml:space="preserve">
+    <value>Mapping Center Latitude</value>
+  </data>
+  <data name="LatitudePlaceholderHelp" xml:space="preserve">
+    <value>Latitude (Decimal Notation: i.e. 39.1517)</value>
+  </data>
+  <data name="LongitudePlaceholder" xml:space="preserve">
+    <value>Mapping Center Longitude</value>
+  </data>
+  <data name="LongitudePlaceholderHelp" xml:space="preserve">
+    <value>Longitude (Decimal Notation: i.e. -119.4571)</value>
+  </data>
+  <data name="MinutesToKeepOpen" xml:space="preserve">
+    <value>Minutes to keep call open</value>
+  </data>
+  <data name="MinutesToKeepOpenHelp" xml:space="preserve">
+    <value>The value above will keep email imported calls open for that long, then they will be closed. The Prune checkbox also needs to be checked for auto closing to occur.</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="PersonCallDispatchStatusLabel" xml:space="preserve">
+    <value>Person Call Dispatch Status</value>
+  </data>
+  <data name="PersonCallReleaseStatusLabel" xml:space="preserve">
+    <value>Person Call Release Status</value>
+  </data>
+  <data name="PersonnelSorting" xml:space="preserve">
+    <value>Personnel Sorting</value>
+  </data>
+  <data name="PersonnelStaffingResetHeader" xml:space="preserve">
+    <value>Personnel Staffing Reset</value>
+  </data>
+  <data name="PersonnelStaffingResetInfo" xml:space="preserve">
+    <value>If you need to reset all your personnel's staffing level every day, you can configure it here. An example would be resetting staffing to unavailable every day so that for red-flag days you are sure personnel that are marked available happened after the reset.</value>
+  </data>
+  <data name="PersonnelStatusResetHeader" xml:space="preserve">
+    <value>Personnel Status Reset</value>
+  </data>
+  <data name="PersonnelStatusResetInfo" xml:space="preserve">
+    <value>If you need to reset all your personnel's statuses every day, you can configure it here. An example would be resetting status to "Standing By" every day so that you know personnel status is reset.</value>
+  </data>
+  <data name="PostalCodeLabel" xml:space="preserve">
+    <value>Zip/Postal Code</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Provision Rss\Atm Urls</value>
+  </data>
+  <data name="ProvisionFailureBody" xml:space="preserve">
+    <value>Resgrid was unable provision the number you requested, please retry the operation with another number. If you cannot provision a number, please contact us and let us know.</value>
+  </data>
+  <data name="ProvisionFailureHeader" xml:space="preserve">
+    <value>Provision Failure</value>
+  </data>
+  <data name="PruneCalls" xml:space="preserve">
+    <value>Prune (Auto Close) Calls</value>
+  </data>
+  <data name="PruneCallsHelp" xml:space="preserve">
+    <value>This will auto-close your automatically created calls (i.e. via an email, text or audio import process)</value>
+  </data>
+  <data name="Regenerate" xml:space="preserve">
+    <value>Regenerate RSS Urls</value>
+  </data>
+  <data name="RegenerateWarning" xml:space="preserve">
+    <value>WARNING: Regenerating your Rss\Atom Urls will require all readers\consumers to update to the a new Url. Are you sure you want to regenerate?</value>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>Resend Invite</value>
+  </data>
+  <data name="ResendInviteWarning" xml:space="preserve">
+    <value>WARNING: This will resend this invite to the invite email address and reset the sent on date. Are you sure you want to resend this invite?</value>
+  </data>
+  <data name="ResetStaffingDaily" xml:space="preserve">
+    <value>Reset Staffing Daily?</value>
+  </data>
+  <data name="ResetStaffingLevelTo" xml:space="preserve">
+    <value>Reset Staffing Level To</value>
+  </data>
+  <data name="ResetStatusDaily" xml:space="preserve">
+    <value>Reset Status Daily?</value>
+  </data>
+  <data name="ResetStatusDailyTime" xml:space="preserve">
+    <value>Time to Reset Status</value>
+  </data>
+  <data name="ResetStatusDailyTo" xml:space="preserve">
+    <value>Reset Status To</value>
+  </data>
+  <data name="RssActiveCallFeedHeader" xml:space="preserve">
+    <value>RSS Active Call Feed</value>
+  </data>
+  <data name="RssActiveCallFeedInfo" xml:space="preserve">
+    <value>Resgrid allows your department’s active calls to be accessed via a RSS feed. This allows any feed reader (like a blog reader, or even Microsoft Outlook) to actively display and notify of new calls. For maximum compatible Resgrid will generate a unique URL for RSS 2.0 readers. This URL has no other protection (username\password, etc) so it’s important that it’s not publicly shared if you which not to have active calls data public.</value>
+  </data>
+  <data name="RssActiveCallNoFeedInfo" xml:space="preserve">
+    <value>Your department does not have RSS feed Urls provisioned. Click the button below to provision your RSS Urls. Only provision RSS\Atom Urls when your department needs it.</value>
+  </data>
+  <data name="SavedDispatchSettings" xml:space="preserve">
+    <value>Successfully saved Dispatch Settings.</value>
+  </data>
+  <data name="SendInvites" xml:space="preserve">
+    <value>Send Invites</value>
+  </data>
+  <data name="SentOn" xml:space="preserve">
+    <value>Sent On</value>
+  </data>
+  <data name="SetStatusforShiftPersonnelOnDispatchLabel" xml:space="preserve">
+    <value>Set Status for Shift Personnel On Dispatch</value>
+  </data>
+  <data name="ShiftSettings" xml:space="preserve">
+    <value>Shift Settings</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>State/Province</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>State/Province</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Street</value>
+  </data>
+  <data name="StreetLabel" xml:space="preserve">
+    <value>Street</value>
+  </data>
+  <data name="TimeResetStaffingDaily" xml:space="preserve">
+    <value>Time to Reset Staffing</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Time Zone</value>
+  </data>
+  <data name="UnitSorting" xml:space="preserve">
+    <value>Unit Sorting</value>
+  </data>
+  <data name="Use24HourTime" xml:space="preserve">
+    <value>Use 24-Hour Time</value>
+  </data>
+  <data name="UseShiftForGroupDispatchLabel" xml:space="preserve">
+    <value>Use Shift for Group Dispatch</value>
+  </data>
+  <data name="Zip" xml:space="preserve">
+    <value>Zip/Postal Code</value>
+  </data>
+  <data name="DeleteDepartmentHeader" xml:space="preserve">
+    <value>Delete Department</value>
+  </data>
+  <data name="DeleteDepartmentInfo" xml:space="preserve">
+    <value>Here you can request deletion of your department. Only the Account Owner can request the deletion of the department. All users and data associated with your department will be removed from the Resgrid system after the process is complete. This process is not reversable! At any time before the process is complete you can cancel the request and keep your data retained. Your department will be deleted 25 days after it’s been requested.</value>
+  </data>
+  <data name="RequestDeletion" xml:space="preserve">
+    <value>Request Deletion</value>
+  </data>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value>Check the box below to confim your deletion request</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>I Understand and agree to the deletion process</value>
+  </data>
+  <data name="CancelDepartmentDeletion" xml:space="preserve">
+    <value>Cancel Department Deletion</value>
+  </data>
+  <data name="DeleteDepartmentSettingsHeader" xml:space="preserve">
+    <value>Delete Your Department</value>
+  </data>
+  <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
+    <value>Request deletion of your department. This is a permanent and non-reversable operation that takes 25 days to complete and needs to run after hours. During the wait period you can cancel the request if you choose.</value>
+  </data>
+  <data name="RequestDepartmentDeletion" xml:space="preserve">
+    <value>Request Department Deletion</value>
+  </data>
+  <data name="DeleteDepartmentCurrentlyPendingInfo" xml:space="preserve">
+    <value>Your department has a currently pending deletion request. If you want this request to proceed there is nothing you need to do after the timestamp below (during our nightly process) your department and all of it’s data will be removed. If you wish to cancel the request and not delete the department press the “Cancel Department Deletion” button below. Please note, any changes to admins and owners will cause the process to not complete, it’s recommended that you only use the system in a read only mode to download data you wish to save.</value>
+  </data>
+  <data name="EnableSupressStaffings" xml:space="preserve">
+    <value>Enable Staffing Supress</value>
+  </data>
+  <data name="SupressStaffingsHeader" xml:space="preserve">
+    <value>Supress (Mute) For These Staffing Levels</value>
+  </data>
+  <data name="SupressStaffingsInfo" xml:space="preserve">
+    <value>Select the Personnel Staffing Levels below that will be prevented from receiving any notifications, dispatches, alerts, messages, or any other communication. Most commonly these are your "Off Duty" or "On Leave" staffing levels.</value>
+  </data>
+  <data name="MappingSettingsHeader" xml:space="preserve">
+    <value>Mapping Settings</value>
+  </data>
+  <data name="SavedMappingSettings" xml:space="preserve">
+    <value>Successfully saved Mapping Settings.</value>
+  </data>
+  <data name="MappingSettingsPersonnelHeader" xml:space="preserve">
+    <value>Personnel Mapping Settings</value>
+  </data>
+  <data name="MappingSettingsUnitsHeader" xml:space="preserve">
+    <value>Units Mapping Settings</value>
+  </data>
+  <data name="MappingSettingsPersonnelAllowOverwriteLabel" xml:space="preserve">
+    <value>Allow Status with No Location Data to hide previous location</value>
+  </data>
+  <data name="MappingSettingsPersonnelTTLLabel" xml:space="preserve">
+    <value>TTL In Minutes for Personnel Locations</value>
+  </data>
+  <data name="MappingSettingsUnitAllowOverwriteLabel" xml:space="preserve">
+    <value>Allow Unit Status with No Location Data to hide previous location</value>
+  </data>
+  <data name="MappingSettingsUnitTTLLabel" xml:space="preserve">
+    <value>TTL In Minutes for Unit Locations</value>
+  </data>
+  <data name="PersonnelAllowOverwriteHelp" xml:space="preserve">
+    <value>If enabled and a status comes in for that user (i.e. Standing By) without a geolocation it'll hide the users location on the map. Otherwise the last location of the user will be shown even if it's older.</value>
+  </data>
+  <data name="UnitAllowOverwriteHelp" xml:space="preserve">
+    <value>If enabled and a status comes in for that unit (i.e. In Quarters) without a geolocation it'll hide the units location on the map. Otherwise the last location of the user will be shown even if it's older.</value>
+  </data>
+  <data name="PersonnelTTLHelp" xml:space="preserve">
+    <value>In Minutes, how long locations are valid for to be shown in the map. I.e. a value of 60 would mean a marker for a person would show on the maps for up to 60 minutes, afterwards would not be shown. Setting 0 disables TTL and a location, no matter how old, will be shown on the map.</value>
+  </data>
+  <data name="UnitTTLHelp" xml:space="preserve">
+    <value>In Minutes, how long locations are valid for to be shown in the map. I.e. a value of 60 would mean a marker for a unit would show on the maps for up to 60 minutes, afterwards would not be shown. Setting 0 disables TTL and a location, no matter how old, will be shown on the map.</value>
+  </data>
+</root>

@@ -1,5 +1,5 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Messages.TopUnreadMessagesView
-
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> localizer
 @if (Model.UnreadMessages != null && Model.UnreadMessages.Count() > 0)
 {
   foreach (var message in Model.UnreadMessages.Take(4))
@@ -7,7 +7,7 @@
     <li>
       <div class="dropdown-messages-box">
         <a class="pull-left" asp-controller="Personnel" asp-action="ViewPerson" asp-route-area="User" asp-route-userId="@message.SendingUserId" style="padding: 4px;">
-          <img alt="image" class="img-circle" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@message.SendingUserId" onerror="this.src = 'https://resgrid.com/images/defaultProfile.png'">
+                    <img alt="image" class="img-circle" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@message.SendingUserId" onerror="this.src = '@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png'">
         </a>
         <div class="media-body">
           <a asp-controller="Messages" asp-action="ViewMessage" asp-route-area="User" asp-route-messageId="@message.MessageId">
@@ -18,7 +18,7 @@
 			}
 			else
 			{
-              <strong>System</strong><br>
+              <strong>@commonLocalizer["System"]</strong><br>
 			}
             <small class="text-muted">@message.SentOn.TimeConverterToString(Model.Department)</small>
           </a>

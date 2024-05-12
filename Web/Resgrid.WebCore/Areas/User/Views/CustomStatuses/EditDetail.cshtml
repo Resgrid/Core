@@ -1,24 +1,25 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.CustomStatuses.EditDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> localizer
 @{
-	ViewBag.Title = "Resgrid | Edit Custom State Detail";
+	ViewBag.Title = "Resgrid | " + @localizer["EditCustomStateDetailHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Edit Custom State Detail</h2>
+		<h2>@localizer["EditCustomStateDetailHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">Custom Statuses</a>
+				<a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@commonLocalizer["CustomStatusesHeader"]</a>
 			</li>
 			<li>
-				<a asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Detail.CustomStateId.ToString()">Edit @Model.Detail.CustomState.Name</a>
+				<a asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Detail.CustomStateId.ToString()">@commonLocalizer["Edit"] @Model.Detail.CustomState.Name</a>
 			</li>
 			<li class="active">
-				<strong>Edit @Model.Detail.ButtonText Button</strong>
+				<strong>@commonLocalizer["Edit"] @Model.Detail.ButtonText Button</strong>
 			</li>
 		</ol>
 	</div>
@@ -40,25 +41,25 @@
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Button Text</label>
+							<label class="col-sm-2 control-label">@localizer["ButtonText"]</label>
 							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Text Inside the Button" asp-for="Detail.ButtonText"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Button Background Color</label>
+							<label class="col-sm-2 control-label">@localizer["ButtonBackgroundColorLabel"]</label>
 							<div class="col-sm-10"><input type="text" class="form-control" asp-for="Detail.ButtonColor"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Button Text Color</label>
+							<label class="col-sm-2 control-label">@localizer["ButtonTextColorLabel"]</label>
 							<div class="col-sm-10"><input type="text" class="form-control" asp-for="Detail.TextColor"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Order</label>
+							<label class="col-sm-2 control-label">@commonLocalizer["Order"]</label>
 							<div class="col-sm-10"><input type="number" asp-for="Detail.Order"></div>
 						</div>
 						@if (Model.Detail.CustomState.Type != (int)CustomStateTypes.Staffing)
 						{
 							<div class="form-group">
-								<label class="col-sm-2 control-label">Require GPS:</label>
+								<label class="col-sm-2 control-label">@localizer["RequireGPSLabel"]:</label>
 								<div class="col-sm-10">
 									<div class="col-md-5">
 										@Html.CheckBoxFor(m => m.Detail.GpsRequired)
@@ -66,7 +67,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">Detail Type:</label>
+								<label class="col-sm-2 control-label">@localizer["DetailTypeLabel"]:</label>
 								<div class="col-sm-10">
 									<div class="col-md-5">
 										@Html.DropDownListFor(m => m.DetailType, Model.DetailTypes)
@@ -75,7 +76,7 @@
 							</div>
 						}
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Note Types:</label>
+							<label class="col-sm-2 control-label">@localizer["NoteTypeLabel"]:</label>
 							<div class="col-sm-10">
 								<div class="col-md-5">
 									@Html.DropDownListFor(m => m.NoteType, Model.NoteTypes)
@@ -83,7 +84,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Preview:</label>
+							<label class="col-sm-2 control-label">@commonLocalizer["Preview"]:</label>
 							<div style="text-align: center;">
 								<a id="previewButton" class="btn btn-default" role="button" style="color: @Model.Detail.TextColor; background: @Model.Detail.ButtonColor;">@Model.Detail.ButtonText</a>
 							</div>
@@ -91,8 +92,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Detail.CustomStateId">Cancel</a>
-								<button class="btn btn-primary" type="submit">Update Button</button>
+								<a class="btn btn-white" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Detail.CustomStateId">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
 							</div>
 						</div>
 					</form>

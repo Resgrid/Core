@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Config;
 using System.Runtime.CompilerServices;
+using MongoDB.Driver.Linq;
 
 namespace Resgrid.Repositories.NoSqlRepository
 {
@@ -28,9 +29,14 @@ namespace Resgrid.Repositories.NoSqlRepository
 			return ((BsonCollectionAttribute)documentType.GetCustomAttributes(typeof(BsonCollectionAttribute), true).FirstOrDefault())?.CollectionName;
 		}
 
-		public virtual IQueryable<TDocument> AsQueryable()
+		public virtual IMongoQueryable<TDocument> AsQueryable()
 		{
 			return _collection.AsQueryable();
+		}
+
+		public virtual IMongoCollection<TDocument> GetCollection()
+		{
+			return _collection;
 		}
 
 		public virtual IEnumerable<TDocument> FilterBy(

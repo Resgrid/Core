@@ -35,7 +35,7 @@ namespace Resgrid.Providers.Bus
 					tagsWithHashedDeviceId.Add(string.Format("departmentId:{0}", pushUri.DepartmentId));
 				}
 
-				CollectionQueryResult<RegistrationDescription> registrations = null;
+				ICollectionQueryResult<RegistrationDescription> registrations = null;
 				try
 				{
 					registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("deviceId:{0}", pushUri.DeviceId.GetHashCode()), 50);

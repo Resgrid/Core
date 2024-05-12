@@ -469,7 +469,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Types = model.LogType.ToSelectList();
 			model.CallPriorities = model.CallPriority.ToSelectList();
 			model.Users.Add(String.Empty, "Not Applicable");
-			await model.SetUsers(_departmentsService.GetAllUsersForDepartment(DepartmentId));
+			await model.SetUsers(await _departmentsService.GetAllUsersForDepartment(DepartmentId));
 			var groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup
 			{

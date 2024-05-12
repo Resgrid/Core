@@ -165,20 +165,25 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
-				return db.Query<IdentityUser>(@"DECLARE @limit INT
-												IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) > 1)
-													BEGIN
-														SET @limit = (SELECT TOP 1 pl.LimitValue FROM Payments p
-														INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
-														WHERE DepartmentId = @departmentId AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
-														ORDER BY PaymentId DESC)
-													END
-												ELSE
-													BEGIN
-														SET @limit = 10
-													END
+				//return db.Query<IdentityUser>(@"DECLARE @limit INT
+				//								IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) >= 1)
+				//									BEGIN
+				//										SET @limit = (SELECT TOP 1 (pl.LimitValue * p.Quantity) FROM Payments p
+				//										INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
+				//										WHERE DepartmentId = @departmentId AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
+				//										ORDER BY PaymentId DESC)
+				//									END
+				//								ELSE
+				//									BEGIN
+				//										SET @limit = 10
+				//									END
 
-												SELECT TOP (@limit) u.* FROM AspNetUsers u
+				//								SELECT TOP (@limit) u.* FROM AspNetUsers u
+				//								INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
+				//								WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
+				//			new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
+
+				return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
 												WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
 							new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
@@ -191,20 +196,25 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
 			{
-				var result = await db.QueryAsync<IdentityUser>(@"DECLARE @limit INT
-												IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) > 1)
-													BEGIN
-														SET @limit = (SELECT TOP 1 pl.LimitValue FROM Payments p
-														INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
-														WHERE DepartmentId = @departmentId AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
-														ORDER BY PaymentId DESC)
-													END
-												ELSE
-													BEGIN
-														SET @limit = 10
-													END
+				//var result = await db.QueryAsync<IdentityUser>(@"DECLARE @limit INT
+				//								IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) >= 1)
+				//									BEGIN
+				//										SET @limit = (SELECT TOP 1 (pl.LimitValue * p.Quantity) FROM Payments p
+				//										INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
+				//										WHERE DepartmentId = @departmentId AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
+				//										ORDER BY PaymentId DESC)
+				//									END
+				//								ELSE
+				//									BEGIN
+				//										SET @limit = 10
+				//									END
 
-												SELECT TOP (@limit) u.* FROM AspNetUsers u
+				//								SELECT TOP (@limit) u.* FROM AspNetUsers u
+				//								INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
+				//								WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
+				//	new { departmentId = departmentId, retrieveHidden = retrieveHidden });
+
+				var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
 												WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
 					new { departmentId = departmentId, retrieveHidden = retrieveHidden });
@@ -266,6 +276,32 @@ namespace Resgrid.Repositories.DataRepository
 				var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
 													 WHERE ExpirationDate < @timestamp",
 								new { timestamp = timestamp });
+			}
+
+			return false;
+		}
+
+		public async Task<bool> ClearOutUserLoginAsync(string userId)
+		{
+			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			{
+				var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
+													 SET UserName = @deleteid,
+													 Email = @deleteid + '@resgrid.del' 
+													 WHERE Id = @userId",
+								new { userId = userId, deleteid = Guid.NewGuid().ToString() });
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CleanUpOIDCTokensByUserAsync(string userId)
+		{
+			using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+			{
+				var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+													 WHERE Subject = @userId",
+								new { userId = userId });
 			}
 
 			return false;

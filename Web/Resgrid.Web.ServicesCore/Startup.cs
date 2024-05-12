@@ -56,12 +56,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Security.Cryptography.X509Certificates;
 using Resgrid.Web.Services;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
+using Sentry.Extensibility;
+using Resgrid.Web.ServicesCore.Middleware;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
+using OpenTelemetry.Metrics;
 
 namespace Resgrid.Web.ServicesCore
 {
 	public class Startup
 	{
-		public IConfigurationRoot Configuration { get; private set; }
+        //public IConfiguration Configuration { get; }
+        public IConfigurationRoot Configuration { get; private set; }
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
@@ -91,7 +98,7 @@ namespace Resgrid.Web.ServicesCore
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrl);
+			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForApi);
 
 			//var manager = new ApplicationPartManager();
 			//manager.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
@@ -144,7 +151,7 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddApiVersioning(x =>
 			{
-				x.DefaultApiVersion = new ApiVersion(3, 0);
+				x.DefaultApiVersion = new ApiVersion(4, 0);
 				x.AssumeDefaultVersionWhenUnspecified = true;
 				x.ReportApiVersions = true;
 			});
@@ -184,17 +191,17 @@ namespace Resgrid.Web.ServicesCore
 					{securityScheme, new string[] { }}
 				});
 
-				options.SwaggerDoc("v3",
+				//options.SwaggerDoc("v3",
 
-					new OpenApiInfo
-					{
-						Title = "Resgrid API",
-						Version = "v3",
-						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
-						Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
-						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
-					}
-				);
+				//	new OpenApiInfo
+				//	{
+				//		Title = "Resgrid API",
+				//		Version = "v3",
+				//		Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
+				//		Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
+				//		TermsOfService = new Uri("https://resgrid.com/Public/Terms")
+				//	}
+				//);
 
 				options.SwaggerDoc("v4",
 
@@ -466,61 +473,36 @@ namespace Resgrid.Web.ServicesCore
 					options.UseAspNetCore();
 				});
 
-			switch (TelemetryConfig.Exporter)
+
+			//builder.Logging.AddOpenTelemetry(options =>
+			//{
+			//	options
+			//		.SetResourceBuilder(
+			//			ResourceBuilder.CreateDefault()
+			//				.AddService("ResgridApi"))
+			//		.AddConsoleExporter();
+			//});
+			services.AddOpenTelemetry()
+				  .ConfigureResource(resource => resource.AddService("ResgridApi"))
+				  .WithTracing(tracing => tracing
+					  .AddAspNetCoreInstrumentation()
+					  .AddConsoleExporter())
+				  .WithMetrics(metrics => metrics
+					  .AddAspNetCoreInstrumentation()
+					  .AddConsoleExporter());
+
+			// For options which can be bound from IConfiguration.
+			services.Configure<AspNetCoreTraceInstrumentationOptions>(this.Configuration.GetSection("AspNetCoreInstrumentation"));
+
+			// For options which can be configured from code only.
+			services.Configure<AspNetCoreTraceInstrumentationOptions>(options =>
 			{
-				case "jaeger":
-					services.AddOpenTelemetryTracing((builder) => builder
-						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Jaeger:ServiceName")))
-						.AddAspNetCoreInstrumentation()
-						.AddHttpClientInstrumentation()
-						.AddJaegerExporter());
+				options.Filter = (req) =>
+				{
+					return req.Request.Host != null;
+				};
+			});
 
-					services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
-					break;
-				case "zipkin":
-					services.AddOpenTelemetryTracing((builder) => builder
-						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Zipkin:ServiceName")))
-						.AddAspNetCoreInstrumentation()
-						.AddHttpClientInstrumentation()
-						.AddZipkinExporter());
-
-					services.Configure<ZipkinExporterOptions>(this.Configuration.GetSection("Zipkin"));
-					break;
-				case "otlp":
-					// Adding the OtlpExporter creates a GrpcChannel.
-					// This switch must be set before creating a GrpcChannel/HttpClient when calling an insecure gRPC service.
-					// See: https://docs.microsoft.com/aspnet/core/grpc/troubleshoot#call-insecure-grpc-services-with-net-core-client
-					AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-
-					services.AddOpenTelemetryTracing((builder) => builder
-						.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(this.Configuration.GetValue<string>("Otlp:ServiceName")))
-						.AddAspNetCoreInstrumentation()
-						.AddHttpClientInstrumentation()
-						.AddOtlpExporter(otlpOptions =>
-						{
-							otlpOptions.Endpoint = new Uri(this.Configuration.GetValue<string>("Otlp:Endpoint"));
-						}));
-					break;
-				default:
-					services.AddOpenTelemetryTracing((builder) => builder
-						.AddAspNetCoreInstrumentation()
-						.AddHttpClientInstrumentation()
-						.AddConsoleExporter());
-
-					// For options which can be bound from IConfiguration.
-					services.Configure<AspNetCoreInstrumentationOptions>(this.Configuration.GetSection("AspNetCoreInstrumentation"));
-
-					// For options which can be configured from code only.
-					services.Configure<AspNetCoreInstrumentationOptions>(options =>
-					{
-						options.Filter = (req) =>
-						{
-							return req.Request.Host != null;
-						};
-					});
-
-					break;
-			}
 
 			services.AddAuthentication("BasicAuthentication")
 				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);
@@ -535,8 +517,21 @@ namespace Resgrid.Web.ServicesCore
 
 			//this.meterProvider = providerBuilder.Build();
 
-			services.AddHostedService<Worker>();
+			services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
+
+			//services.AddHostedService<Worker>();
 			this.Services = services;
+
+			if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+			{
+				services.AddSingleton<ITelemetryInitializer, ApiTelemetryInitializer>();
+
+				var aiOptions = new ApplicationInsightsServiceOptions();
+				aiOptions.InstrumentationKey = ExternalErrorConfig.ApplicationInsightsInstrumentationKey;
+				aiOptions.ConnectionString = ExternalErrorConfig.ApplicationInsightsConnectionString;
+
+				services.AddApplicationInsightsTelemetry(aiOptions);
+			}
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)
@@ -614,7 +609,7 @@ namespace Resgrid.Web.ServicesCore
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
 			{
-				c.SwaggerEndpoint($"/swagger/v3/swagger.json", "Resgrid API V3");
+				//c.SwaggerEndpoint($"/swagger/v3/swagger.json", "Resgrid API V3");
 				c.SwaggerEndpoint($"/swagger/v4/swagger.json", "Resgrid API V4");
 
 				c.RoutePrefix = string.Empty;

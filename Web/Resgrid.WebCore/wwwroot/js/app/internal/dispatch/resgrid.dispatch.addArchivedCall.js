@@ -6,7 +6,8 @@ var resgrid;
         var addArchivedCall;
         (function (addArchivedCall) {
             $(document).ready(function () {
-                marker = null;
+                callMarker = null;
+                map = null;
                 $("#NatureOfCall").kendoEditor();
                 $("#CallNotes").kendoEditor();
                 $('#Call_LoggedOn').kendoDateTimePicker({
@@ -24,69 +25,72 @@ var resgrid;
                         return false;
                     }
                 });
-                var mapCenter = new google.maps.LatLng(centerLat, centerLng);
-                var mapOptions = {
-                    zoom: 11,
-                    center: mapCenter,
-                    scrollwheel: false
-                };
-                map = new google.maps.Map(document.getElementById('callMap'), mapOptions);
-                google.maps.event.addListener(map, 'click', function (clickEvent) {
-                    if (marker)
-                        marker.setMap(null);
-                    marker = new google.maps.Marker({
-                        position: clickEvent.latLng,
-                        map: map,
-                        title: 'Call Location',
-                        animation: google.maps.Animation.DROP,
-                        draggable: true,
-                        bounds: false
-                    });
-                    $("#Latitude").val(clickEvent.latLng.lat().toString());
-                    $("#Longitude").val(clickEvent.latLng.lng().toString());
-                    refreshPersonnelGrid();
-                    google.maps.event.addListener(marker, 'dragend', function () {
-                        findLocation(marker.getPosition());
-                    });
-                    var geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({
-                        latLng: clickEvent.latLng
-                    }, function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            $("#Call_Address").val(results[0].formatted_address);
-                        }
-                        else {
-                            alert("Geocode was not successful for the following reason: " + status);
-                        }
-                    });
+
+                const tiles1 = L.tileLayer(
+                    osmTileUrl,
+                    {
+                        maxZoom: 19,
+                        attribution: osmTileAttribution
+                    }
+                );
+
+                map = L.map('callMap', {
+                    scrollWheelZoom: false
+                }).setView([centerLat, centerLng], 11).addLayer(tiles1);
+
+                map.on('click', function (e) {
+                    resgrid.dispatch.addArchivedCall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
+
+                    $("#Latitude").val(e.latlng.lat.toString());
+                    $("#Longitude").val(e.latlng.lng.toString());
+                    //$("#What3Word").val('');
+
+                    map.panTo(e.latlng);
+
+                    resgrid.dispatch.addArchivedCall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
                 });
+
+                $("#selectLinkedCall").select2({
+                    dropdownParent: $("#selectCallToLinkModal"),
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCallsForSelectList',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                term: params.term
+                            };
+                        },
+                    }
+                });
+
                 navigator.geolocation.getCurrentPosition(foundLocation, noLocation, { timeout: 10000 });
                 $("#searchButton").click(function (evt) {
                     var where = jQuery.trim($("#Call_Address").val());
                     if (where.length < 1)
                         return;
-                    var geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ 'address': where }, function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            map.setCenter(results[0].geometry.location);
-                            $("#Latitude").val(results[0].geometry.location.lat().toString());
-                            $("#Longitude").val(results[0].geometry.location.lng().toString());
-                            refreshPersonnelGrid();
-                            if (marker)
-                                marker.setMap(null);
-                            marker = new google.maps.Marker({
-                                position: results[0].geometry.location,
-                                map: map,
-                                title: 'Call Location',
-                                animation: google.maps.Animation.DROP,
-                                draggable: true,
-                                bounds: false
+
+                    if (google && google.maps) {
+                        var geocoder = new google.maps.Geocoder();
+
+                        if (geocoder) {
+                            geocoder.geocode({ 'address': where }, function (results, status) {
+                                if (status == google.maps.GeocoderStatus.OK && results && results.length >= 0) {
+
+                                    map.panTo(new L.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()));
+
+                                    $("#Latitude").val(results[0].geometry.location.lat().toString());
+                                    $("#Longitude").val(results[0].geometry.location.lng().toString());
+
+                                    resgrid.dispatch.addArchivedCall.setMarkerLocation(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+                                }
+                                else {
+                                    console.log("Geocode was not successful for the following reason: " + status);
+                                }
                             });
                         }
-                        else {
-                            alert("Geocode was not successful for the following reason: " + status);
-                        }
-                    });
+                    }
+
                     evt.preventDefault();
                 });
                 $("#findw3wButton").click(function (evt) {
@@ -99,26 +103,27 @@ var resgrid;
                         type: 'GET'
                     }).done(function (data) {
                         if (data && data.Latitude && data.Longitude) {
-                            map.setCenter({ lat: data.Latitude, lng: data.Longitude });
+                            map.panTo(new L.LatLng(data.Latitude, data.Longitude));
+
                             $("#Latitude").val(data.Latitude);
                             $("#Longitude").val(data.Longitude);
-                            refreshPersonnelGrid();
-                            if (marker)
-                                marker.setMap(null);
-                            marker = new google.maps.Marker({
-                                position: { lat: data.Latitude, lng: data.Longitude },
-                                map: map,
-                                title: 'W3W Area Center',
-                                animation: google.maps.Animation.DROP,
-                                draggable: true,
-                                bounds: false
-                            });
+
+                            resgrid.dispatch.addArchivedCall.geocodeCoordinates(data.Latitude, data.Longitude);
+
+                            resgrid.dispatch.addArchivedCall.setMarkerLocation(data.Latitude, data.Longitude);
                         }
                         else {
-                            alert("What3Words was unable to find a location for those workds. Ensure its 3 words seperated by periods.");
+                            alert("What3Words was unable to find a location for those words. Ensure its 3 words separated by periods.");
                         }
                     });
                     evt.preventDefault();
+                });
+                $('#addNewLinkedCall').click(function () {
+                    var data = $('#selectLinkedCall').select2('data');
+
+                    $('#linkedCalls tbody').first().append(`<tr><td style='max-width: 215px;'>${data[0].text}<input type='hidden' id='linkedCall_${data[0].id}' name='linkedCall_${data[0].id}' value='${data[0].id}' /></td><td>${$('#selectCallNote').val()}<input type='hidden' id='linkedCallNote_${data[0].id}' name='linkedCallNote_${data[0].id}' value='${$('#selectCallNote').val()}' /></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='Remove this call link'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>`);
+                    $('#selectCallNote').val('');
+                    $('#selectLinkedCall').empty();
                 });
                 $("#personnelGrid").kendoGrid({
                     dataSource: {
@@ -377,21 +382,57 @@ var resgrid;
             });
             function centerMap() {
                 if (centerLat && centerLng) {
-                    var center = new google.maps.LatLng(centerLat, centerLng);
-                    // using global variable:
-                    map.panTo(center);
+                    map.panTo(new L.LatLng(centerLat, centerLng));
                 }
             }
             addArchivedCall.centerMap = centerMap;
             function foundLocation(position) {
-                var center = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                map.setCenter(center);
+                map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
             }
             addArchivedCall.foundLocation = foundLocation;
             function noLocation() {
-                map.setCenter(new google.maps.LatLng(-34.397, 150.644));
+                map.panTo(new L.LatLng(-34.397, 150.644));
             }
             addArchivedCall.noLocation = noLocation;
+            function setMarkerLocation(lat, lng) {
+                if (callMarker) {
+                    callMarker.setLatLng(new L.LatLng(lat, lng));
+                } else {
+                    callMarker = new L.marker(new L.LatLng(lat, lng), { draggable: 'true' }).addTo(map);
+                    callMarker.on('dragend', function (event) {
+                        var marker = event.target;
+                        var position = marker.getLatLng();
+                        marker.setLatLng(new L.LatLng(position.lat, position.lng), { draggable: 'true' });
+                        map.panTo(new L.LatLng(position.lat, position.lng));
+
+                        $("#Latitude").val(position.lat);
+                        $("#Longitude").val(position.lng);
+                        //$("#What3Word").val('');
+
+                        resgrid.dispatch.addArchivedCall.geocodeCoordinates(position.lat, position.lng);
+                    });
+                }
+            }
+            addArchivedCall.setMarkerLocation = setMarkerLocation;
+            function geocodeCoordinates(lat, lng) {
+                if (google && google.maps) {
+                    let geocoder = new google.maps.Geocoder();
+
+                    if (geocoder) {
+                        geocoder.geocode({
+                            latLng: new google.maps.LatLng(lat, lng)
+                        }, function (results, status) {
+                            if (status == google.maps.GeocoderStatus.OK && results && results.length >= 0) {
+                               $("#Call_Address").val(results[0].formatted_address);
+                            }
+                            else {
+                                console.log("Geocode was not successful for the following reason: " + status);
+                            }
+                        });
+                    }
+                }
+            }
+            addArchivedCall.geocodeCoordinates = geocodeCoordinates;
             function findLocation(pos) {
                 var geocoder = new google.maps.Geocoder();
                 geocoder.geocode({

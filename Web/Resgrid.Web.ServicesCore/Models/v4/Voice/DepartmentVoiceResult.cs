@@ -22,6 +22,8 @@ namespace Resgrid.Web.Services.Models.v4.Voice
 
 		public string CallerIdName { get; set; }
 
+		public string CanConnectApiToken { get; set; }
+
 		public List<DepartmentVoiceChannelResultData> Channels { get; set; }
 
 		public DepartmentVoiceUserInfoResultData UserInfo { get; set; }
@@ -36,6 +38,8 @@ namespace Resgrid.Web.Services.Models.v4.Voice
 		public int ConferenceNumber { get; set; }
 
 		public bool IsDefault { get; set; }
+
+		public string Token { get; set; }
 	}
 
 	public class DepartmentVoiceUserInfoResultData

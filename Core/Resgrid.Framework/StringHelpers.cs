@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Vereyon.Web;
 
@@ -105,9 +107,11 @@ namespace Resgrid.Framework
 			sanitizer.Tag("ul");
 			sanitizer.Tag("ol");
 			sanitizer.Tag("li");
-			//sanitizer.Tag("a"); //.SetAttribute("rel", "nofollow")
-								//				.CheckAttribute("href", HtmlSanitizerCheckType.Url)
-								//				.RemoveEmpty();
+			sanitizer.Tag("img").CheckAttribute("src", HtmlSanitizerCheckType.Url)
+				.RemoveEmpty();
+			sanitizer.Tag("a").SetAttribute("rel", "nofollow")
+							  .CheckAttribute("href", HtmlSanitizerCheckType.Url)
+							  .RemoveEmpty();
 
 			string cleanHtml = sanitizer.Sanitize(source);
 
@@ -206,5 +210,42 @@ namespace Resgrid.Framework
 				return str.TrimEnd(str[str.Length - 1]);
 			}
 		}
+
+		public static string Base64Encode(string plainText)
+		{
+			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+			return System.Convert.ToBase64String(plainTextBytes);
+		}
+
+		public static string Base64Decode(string base64EncodedData)
+		{
+			var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+			return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+		}
+
+		public static string SanitizeCoordinatesString(string source)
+		{
+			if (string.IsNullOrWhiteSpace(source))
+				return "";
+
+			HashSet<char> lstAllowedCharacters = new HashSet<char> { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '.'};
+
+			var resultStrBuilder = new StringBuilder(source.Length);
+
+			foreach (char c in source)
+			{
+				if (lstAllowedCharacters.Contains(c))
+				{
+					resultStrBuilder.Append(c);
+				}
+				else
+				{
+					resultStrBuilder.Append(" ");
+				}
+			}
+
+			return resultStrBuilder.ToString();
+		}
+
 	}
 }

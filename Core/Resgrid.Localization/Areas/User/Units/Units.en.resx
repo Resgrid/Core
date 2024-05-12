@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddLog" xml:space="preserve">
+    <value>Add Log</value>
+  </data>
+  <data name="AddRole" xml:space="preserve">
+    <value>Add Role</value>
+  </data>
+  <data name="AddUnitLogHeader" xml:space="preserve">
+    <value>Add Unit Log</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>Are you sure you want to permanently delete all statuses for this unit?</value>
+  </data>
+  <data name="ClearAllStatuses" xml:space="preserve">
+    <value>Clear out all Statuses For Unit</value>
+  </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Delete All</value>
+  </data>
+  <data name="DeleteUnitWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this unit. Are you sure you want to delete the unit</value>
+  </data>
+  <data name="EditUnitHeader" xml:space="preserve">
+    <value>Edit Unit</value>
+  </data>
+  <data name="EventsFor" xml:space="preserve">
+    <value>Events for</value>
+  </data>
+  <data name="GenerateReport" xml:space="preserve">
+    <value>Generate Report</value>
+  </data>
+  <data name="LogBodyLabel" xml:space="preserve">
+    <value>Log Body (Narrative)</value>
+  </data>
+  <data name="LogBodyPlaceholder" xml:space="preserve">
+    <value>A Narrative for the unit log</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="NewUnitHeader" xml:space="preserve">
+    <value>New Unit</value>
+  </data>
+  <data name="NotOccupied" xml:space="preserve">
+    <value>Not Occupied</value>
+  </data>
+  <data name="NoUnGroupedUnits" xml:space="preserve">
+    <value>No Un-Grouped Units</value>
+  </data>
+  <data name="NoUnitsInDepartment" xml:space="preserve">
+    <value>No Units in Department</value>
+  </data>
+  <data name="NoUnitsInThisGroup" xml:space="preserve">
+    <value>No Units in this Group</value>
+  </data>
+  <data name="NoUnitsToStaff" xml:space="preserve">
+    <value>To set staffing on units you need to have Units created and Roles (i.e. Driver, Operator, etc) created within those units. </value>
+  </data>
+  <data name="RemoveThisRole" xml:space="preserve">
+    <value>Remove this role</value>
+  </data>
+  <data name="RoleName" xml:space="preserve">
+    <value>Role Name</value>
+  </data>
+  <data name="RoleNameHeader" xml:space="preserve">
+    <value>Role Name</value>
+  </data>
+  <data name="SelectUnit" xml:space="preserve">
+    <value>Select Unit</value>
+  </data>
+  <data name="SetMultipleUnitStatusHeader" xml:space="preserve">
+    <value>Set Status for Units</value>
+  </data>
+  <data name="SetStatus" xml:space="preserve">
+    <value>Set Status</value>
+  </data>
+  <data name="SetStatusForSelectedUnits" xml:space="preserve">
+    <value>Set Status for Selected Units</value>
+  </data>
+  <data name="SetUnitStatusHeader" xml:space="preserve">
+    <value>Set Unit Status</value>
+  </data>
+  <data name="UnitsListStateWarning" xml:space="preserve">
+    <value>You have selected a unit, only other units with the same custom (or default) states can be selected.</value>
+  </data>
+  <data name="UnitStaffing" xml:space="preserve">
+    <value>Unit Staffing</value>
+  </data>
+  <data name="UnitStaffingHeader" xml:space="preserve">
+    <value>Unit Staffing</value>
+  </data>
+  <data name="ViewEvents" xml:space="preserve">
+    <value>View Events</value>
+  </data>
+  <data name="ViewUnitEventsHeader" xml:space="preserve">
+    <value>View Unit Events</value>
+  </data>
+  <data name="ViewUnitLogsHeader" xml:space="preserve">
+    <value>View Unit Logs</value>
+  </data>
+  <data name="YesImSure" xml:space="preserve">
+    <value>Yes I'm sure</value>
+  </data>
+  <data name="YouCanAddType1" xml:space="preserve">
+    <value>You can add a new Type</value>
+  </data>
+  <data name="YouCanAddType2" xml:space="preserve">
+    <value>here</value>
+  </data>
+</root>

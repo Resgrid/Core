@@ -149,5 +149,13 @@ namespace Resgrid.Model
 
 			return "";
 		}
+
+		public bool HasLocation()
+		{
+			if (Latitude.HasValue && Latitude.Value != 0 && Longitude.HasValue && Longitude.Value != 0)
+				return true;
+
+			return false;
+		}
 	}
 }

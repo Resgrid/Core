@@ -31,7 +31,7 @@ namespace Resgrid.Workers.Console.Tasks
 		public async Task ProcessAsync(QueuesProcessorCommand command, IQuidjiboProgress progress, CancellationToken cancellationToken)
 		{
 			_cancellationToken = cancellationToken;
-			
+
 			if (progress != null)
 				progress.Report(1, $"Starting the {Name} Task");
 
@@ -42,11 +42,11 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.NotificationQueueReceived += OnNotificationQueueReceived;
 			queue.ShiftNotificationQueueReceived += OnShiftNotificationQueueReceived;
 			queue.CqrsEventQueueReceived += OnCqrsEventQueueReceived;
-			queue.PaymentEventQueueReceived += OnPaymentEventQueueReceived;
+			queue.PaymentEventQueueReceived = null;//queue.PaymentEventQueueReceived += OnPaymentEventQueueReceived;
 			queue.AuditEventQueueReceived += OnAuditEventQueueReceived;
 			queue.UnitLocationEventQueueReceived += OnUnitLocationEventQueueReceived;
 			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
-			
+
 			await queue.Start();
 
 			while (!_cancellationToken.IsCancellationRequested)
@@ -100,12 +100,12 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger.LogInformation($"{Name}: Finished processing of system cqrs queue item with type of {cqrs.Type}.");
 		}
 
-		private async Task OnPaymentEventQueueReceived(CqrsEvent cqrs)
-		{
-			_logger.LogInformation($"{Name}: Payment Queue Received with a type of {cqrs.Type}, starting processing...");
-			await PaymentQueueLogic.ProcessPaymentQueueItem(cqrs);
-			_logger.LogInformation($"{Name}: Finished processing of Payment queue item with type of {cqrs.Type}.");
-		}
+		//private async Task OnPaymentEventQueueReceived(CqrsEvent cqrs)
+		//{
+		//	_logger.LogInformation($"{Name}: Payment Queue Received with a type of {cqrs.Type}, starting processing...");
+		//	await PaymentQueueLogic.ProcessPaymentQueueItem(cqrs);
+		//	_logger.LogInformation($"{Name}: Finished processing of Payment queue item with type of {cqrs.Type}.");
+		//}
 
 		private async Task OnAuditEventQueueReceived(AuditEvent auditEvent)
 		{
@@ -113,7 +113,7 @@ namespace Resgrid.Workers.Console.Tasks
 			await AuditQueueLogic.ProcessAuditQueueItem(auditEvent, _cancellationToken);
 			_logger.LogInformation($"{Name}: Finished processing of Audit queue item with an id of {auditEvent.EventId}.");
 		}
-		
+
 		private async Task OnUnitLocationEventQueueReceived(UnitLocationEvent unitLocationEvent)
 		{
 			_logger.LogInformation($"{Name}: Unit Location Queue Received with an id of {unitLocationEvent.EventId}, starting processing...");

@@ -30,7 +30,6 @@ namespace Resgrid.Providers.EmailProvider
 
 		public void Configure(object sender, string fromAddress)
 		{
-
 		}
 
 		public void SendAffiliateRegister(string email, string affiliateCode)
@@ -48,29 +47,68 @@ namespace Resgrid.Providers.EmailProvider
 			throw new NotImplementedException();
 		}
 
+
+		public async Task<bool> SendDeleteDepartmentEmail(string requesterName, string departmentName, DateTime localCompletedOn, string sendingToPersonName, string email)
+		{
+
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "requester_name", requesterName },
+				{ "department_name", departmentName },
+				{ "local_deletion_date", localCompletedOn.ToString("F") },
+				{ "name", sendingToPersonName },
+				{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
+				{ "support_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Home/Contact" },
+			};
+
+			try
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("DeleteDepartment.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = FROM_EMAIL;
+				newEmail.From = FROM_EMAIL;
+				newEmail.Subject = "Resgrid Department Deletion Request";
+				newEmail.To.Add(email);
+
+				return await _emailSender.Send(newEmail);
+			}
+			catch (Exception)
+			{
+			}
+
+
+			return false;
+		}
+
+
 		public async Task<bool> SendCallMail(string email, string subject, string title, string priority, string natureOfCall, string mapPage, string address,
 			string dispatchedOn, int callId, string userId, string coordinates, string shortenedAudioUrl)
 		{
-
 			string callQuery = String.Empty;
 
 			try
 			{
-				callQuery = Convert.ToBase64String(Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
+				callQuery = Convert.ToBase64String(
+					Encoding.UTF8.GetBytes(SymmetricEncryption.Encrypt(callId.ToString(), Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase)));
 			}
-			catch { }
+			catch
+			{
+			}
 
 			var templateModel = new Dictionary<string, object>
 			{
-				{"subject", title},
-				{"date", dispatchedOn},
-				{"nature", HtmlToTextHelper.ConvertHtml(natureOfCall)},
-				{"priority", priority},
-				{"address", address},
-				{"map_page", mapPage},
-				{"action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/CallExportEx?query={callQuery}"},
-				{"userId", userId},
-				{"coordinates", coordinates}
+				{ "subject", title },
+				{ "date", dispatchedOn },
+				{ "nature", HtmlToTextHelper.ConvertHtml(natureOfCall) },
+				{ "priority", priority },
+				{ "address", address },
+				{ "map_page", mapPage },
+				{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/CallExportEx?query={callQuery}" },
+				{ "userId", userId },
+				{ "coordinates", coordinates }
 			};
 
 			if (!String.IsNullOrWhiteSpace(shortenedAudioUrl))
@@ -102,7 +140,9 @@ namespace Resgrid.Providers.EmailProvider
 
 					return true;
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 			else
 			{
@@ -118,13 +158,16 @@ namespace Resgrid.Providers.EmailProvider
 
 					return await _emailSender.Send(newEmail);
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 
 			return false;
 		}
 
-		public async Task<bool> SendTroubleAlertMail(string email, string unitName, string gpsLocation, string personnel, string callAddress, string unitAddress, string dispatchedOn, string callName)
+		public async Task<bool> SendTroubleAlertMail(string email, string unitName, string gpsLocation, string personnel, string callAddress, string unitAddress,
+			string dispatchedOn, string callName)
 		{
 			// Example request
 			var message = new TemplatedPostmarkMessage
@@ -132,7 +175,8 @@ namespace Resgrid.Providers.EmailProvider
 				From = DONOTREPLY_EMAIL,
 				To = email,
 				TemplateId = Config.OutboundEmailServerConfig.PostmarkTroubleAlertTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+				TemplateModel = new Dictionary<string, object>
+				{
 					{ "unit_name", unitName },
 					{ "date", dispatchedOn },
 					{ "active_call", callName },
@@ -158,11 +202,12 @@ namespace Resgrid.Providers.EmailProvider
 
 					return true;
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 			else
 			{
-
 			}
 
 			return false;
@@ -175,16 +220,17 @@ namespace Resgrid.Providers.EmailProvider
 				From = FROM_EMAIL,
 				To = email,
 				TemplateId = Config.OutboundEmailServerConfig.PostmarkCancelRecieptTemplateId,
-				TemplateModel = new Dictionary<string, object> {
-						{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
-						{ "subscriptions_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
-						{ "feedback_url", LIVECHAT_URL },
-						{ "help_url", HELP_URL },
-						{ "trial_extension_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
-						{ "export_url", "" },
-						{ "plans_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Home/Pricing" },
-						{ "close_account_url", HELP_URL},
-					},
+				TemplateModel = new Dictionary<string, object>
+				{
+					{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
+					{ "subscriptions_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
+					{ "feedback_url", LIVECHAT_URL },
+					{ "help_url", HELP_URL },
+					{ "trial_extension_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
+					{ "export_url", "" },
+					{ "plans_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Home/Pricing" },
+					{ "close_account_url", HELP_URL },
+				},
 			};
 
 			var client = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
@@ -199,7 +245,9 @@ namespace Resgrid.Providers.EmailProvider
 
 				return true;
 			}
-			catch (Exception) { }
+			catch (Exception)
+			{
+			}
 
 			return false;
 		}
@@ -212,7 +260,8 @@ namespace Resgrid.Providers.EmailProvider
 				From = FROM_EMAIL,
 				To = email,
 				TemplateId = Config.OutboundEmailServerConfig.PostmarkChargeFailedTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+				TemplateModel = new Dictionary<string, object>
+				{
 					{ "plan_name", planName },
 					{ "action_url", UPDATEBILLINGINFO_URL },
 					{ "subscriptions_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
@@ -236,7 +285,9 @@ namespace Resgrid.Providers.EmailProvider
 
 				return true;
 			}
-			catch (Exception) { }
+			catch (Exception)
+			{
+			}
 
 			return false;
 		}
@@ -249,7 +300,8 @@ namespace Resgrid.Providers.EmailProvider
 				From = FROM_EMAIL,
 				To = email,
 				TemplateId = Config.OutboundEmailServerConfig.PostmarkInviteTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+				TemplateModel = new Dictionary<string, object>
+				{
 					{ "invite_sender_name", senderName },
 					{ "department_name", departmentName },
 					{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/CompleteInvite?inviteCode={code}" },
@@ -273,31 +325,35 @@ namespace Resgrid.Providers.EmailProvider
 
 				return true;
 			}
-			catch (Exception) { }
+			catch (Exception)
+			{
+			}
 
 			return false;
 		}
 
-		public async Task<bool> SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn, int messageId)
+		public async Task<bool> SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn,
+			int messageId)
 		{
-			var templateModel = new Dictionary<string, object> {
-					{ "sender_name", senderName },
-					{ "title", subject },
-					{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
-					//{ "attachment_details", new []{
-							//new Dictionary<string,object> {
-							//	{ "attachmnet_url", "attachmnet_url_Value" },
-							//	{ "attachment_name", "attachment_name_Value" },
-							//	{ "attachment_size", "attachment_size_Value" },
-							//	{ "attachment_type", "attachment_type_Value" },
-							//}
-						//}
-					//},
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "sender_name", senderName },
+				{ "title", subject },
+				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
+				//{ "attachment_details", new []{
+				//new Dictionary<string,object> {
+				//	{ "attachmnet_url", "attachmnet_url_Value" },
+				//	{ "attachment_name", "attachment_name_Value" },
+				//	{ "attachment_size", "attachment_size_Value" },
+				//	{ "attachment_type", "attachment_type_Value" },
+				//}
+				//}
+				//},
 
-					{ "action_url", $"https://resgrid.com/User/Messages/ViewMessage?messageId={messageId}" },
-					{ "timestamp", sentOn },
-					{ "commenter_name", senderName }
-				};
+				{ "action_url", $"https://resgrid.com/User/Messages/ViewMessage?messageId={messageId}" },
+				{ "timestamp", sentOn },
+				{ "commenter_name", senderName }
+			};
 
 			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
@@ -321,7 +377,9 @@ namespace Resgrid.Providers.EmailProvider
 
 					return true;
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 			else
 			{
@@ -337,7 +395,9 @@ namespace Resgrid.Providers.EmailProvider
 
 					return await _emailSender.Send(newEmail);
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 
 			return false;
@@ -345,17 +405,18 @@ namespace Resgrid.Providers.EmailProvider
 
 		public async Task<bool> SendPasswordResetMail(string name, string password, string userName, string email, string departmentName)
 		{
-			var templateModel = new Dictionary<string, object> {
-					{ "name", name },
-					{ "department_Name", departmentName },
-					{ "login_url", LOGIN_URL },
-					{ "username", userName },
-					{ "password", password },
-					{ "support_url", LIVECHAT_URL },
-					{ "action_url", LOGIN_URL },
-					{ "operating_system", "" },
-					{ "browser_name", "" },
-				};
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "name", name },
+				{ "department_Name", departmentName },
+				{ "login_url", LOGIN_URL },
+				{ "username", userName },
+				{ "password", password },
+				{ "support_url", LIVECHAT_URL },
+				{ "action_url", LOGIN_URL },
+				{ "operating_system", "" },
+				{ "browser_name", "" },
+			};
 
 			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
@@ -379,7 +440,9 @@ namespace Resgrid.Providers.EmailProvider
 
 					return true;
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 			else
 			{
@@ -395,7 +458,9 @@ namespace Resgrid.Providers.EmailProvider
 
 					return await _emailSender.Send(newEmail);
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 
 			return false;
@@ -409,15 +474,19 @@ namespace Resgrid.Providers.EmailProvider
 				From = FROM_EMAIL,
 				To = email,
 				TemplateId = Config.OutboundEmailServerConfig.PostmarkRecieptTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+				TemplateModel = new Dictionary<string, object>
+				{
 					{ "purchase_date", processDate },
 					{ "name", name },
 					{ "billing_url", UPDATEBILLINGINFO_URL },
 					{ "uservoice_url", LIVECHAT_URL },
 					{ "receipt_id", transactionId },
 					{ "date", effectiveDates },
-					{ "receipt_details", new []{
-							new Dictionary<string,object> {
+					{
+						"receipt_details", new[]
+						{
+							new Dictionary<string, object>
+							{
 								{ "description", planName },
 								{ "amount", amount }
 							}
@@ -444,12 +513,15 @@ namespace Resgrid.Providers.EmailProvider
 
 				return true;
 			}
-			catch (Exception) { }
+			catch (Exception)
+			{
+			}
 
 			return false;
 		}
 
-		public async Task<bool> SendRefundReciept(string name, string email, string departmentName, string processDate, string amount, string processor, string transactionId, string originalPaymentId)
+		public async Task<bool> SendRefundReciept(string name, string email, string departmentName, string processDate, string amount, string processor, string transactionId,
+			string originalPaymentId)
 		{
 			throw new NotImplementedException();
 		}
@@ -459,25 +531,27 @@ namespace Resgrid.Providers.EmailProvider
 			throw new NotImplementedException();
 		}
 
-		public async Task<bool> SendUpgradePaymentReciept(string departmentName, string processDate, string amount, string email, string processor, string transactionId, string planName, string newPlanName, string effectiveDates, string nextBillingDate)
+		public async Task<bool> SendUpgradePaymentReciept(string departmentName, string processDate, string amount, string email, string processor, string transactionId,
+			string planName, string newPlanName, string effectiveDates, string nextBillingDate)
 		{
 			throw new NotImplementedException();
 		}
 
 		public async Task<bool> SendWelcomeMail(string name, string departmentName, string userName, string password, string email, int departmentId)
 		{
-			var templateModel = new Dictionary<string, object> {
-					{ "name", name },
-					{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}" },
-					{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
-					{ "department_id", departmentId },
-					{ "department_name", departmentName },
-					{ "username", userName },
-					{ "password", password },
-					{ "support_email", FROM_EMAIL },
-					{ "live_chat_url", LIVECHAT_URL },
-					{ "help_url", HELP_URL },
-				};
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "name", name },
+				{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}" },
+				{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
+				{ "department_id", departmentId },
+				{ "department_name", departmentName },
+				{ "username", userName },
+				{ "password", password },
+				{ "support_email", FROM_EMAIL },
+				{ "live_chat_url", LIVECHAT_URL },
+				{ "help_url", HELP_URL },
+			};
 
 			if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 			{
@@ -501,7 +575,9 @@ namespace Resgrid.Providers.EmailProvider
 
 					return true;
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 			else
 			{
@@ -517,18 +593,22 @@ namespace Resgrid.Providers.EmailProvider
 
 					return await _emailSender.Send(newEmail);
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+				}
 			}
 
 			return false;
 		}
 
-		public async Task<bool> TEAM_SendNofifySubCancelled(string name, string email, string departmentName, string departmentId, string reason, string processedOn, string planName, string refundIssued)
+		public async Task<bool> TEAM_SendNofifySubCancelled(string name, string email, string departmentName, string departmentId, string reason, string processedOn,
+			string planName, string refundIssued)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<bool> TEAM_SendNotifyRefundIssued(string departmentId, string departmentName, string processDate, string amount, string processor, string transactionId, string originalPaymentId)
+		public async Task<bool> TEAM_SendNotifyRefundIssued(string departmentId, string departmentName, string processDate, string amount, string processor, string transactionId,
+			string originalPaymentId)
 		{
 			throw new NotImplementedException();
 		}
@@ -541,7 +621,8 @@ namespace Resgrid.Providers.EmailProvider
 				From = FROM_EMAIL,
 				To = email,
 				TemplateId = Config.OutboundEmailServerConfig.PostmarkNewDepLinkTemplateId,
-				TemplateModel = new Dictionary<string, object> {
+				TemplateModel = new Dictionary<string, object>
+				{
 					{ "name", name },
 					{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}" },
 					{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
@@ -565,14 +646,63 @@ namespace Resgrid.Providers.EmailProvider
 
 				return true;
 			}
-			catch (Exception) { }
+			catch (Exception)
+			{
+			}
+
+			return false;
+		}
+
+		public async Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
+			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl)
+		{
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "title", subject },
+				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
+				{ "attachment_details", new []{
+				new Dictionary<string,object> {
+					{ "attachmnet_url",  reportUrl},
+					{ "url_name", "View Live Report" },
+					{ "attachment_name", attachmentFilename },
+					{ "attachment_size", StringHelpers.GetSizeInMemory(attachmentData.LongLength) },
+					{ "attachment_type", "PDF" },
+				}
+				}
+				},
+
+				{ "action_url", $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Profile/Reporting" },
+				{ "timestamp", sentOn }
+			};
+
+			try
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("ReportDelivery.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = DONOTREPLY_EMAIL;
+				newEmail.To.Add(email);
+				newEmail.AttachmentName = attachmentFilename;
+				newEmail.AttachmentData = attachmentData;
+				newEmail.AttachmentContentType = "application/pdf";
+				newEmail.From = DONOTREPLY_EMAIL;
+				newEmail.Subject = subject;
+
+				return await _emailSender.Send(newEmail);
+			}
+			catch (Exception)
+			{
+			}
 
 			return false;
 		}
 
 		private string GetTempate(string templateName)
 		{
-			using (var resource = typeof(PostmarkTemplateProvider).Assembly.GetManifestResourceStream(templateName))
+			var assembly = typeof(PostmarkTemplateProvider).Assembly;
+			using (var resource = assembly.GetManifestResourceStream(assembly.GetName().Name + ".Template." + templateName))
 			{
 				using (var reader = new StreamReader(resource))
 				{

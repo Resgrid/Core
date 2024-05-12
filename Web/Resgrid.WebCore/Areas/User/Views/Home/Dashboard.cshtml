@@ -1,9 +1,11 @@
 ﻿@using Resgrid.Web.Helpers
+@using Resgrid.Localization.Areas.User.Home
 @model Resgrid.Web.Areas.User.Models.DashboardModel
 @{
   ViewBag.Title = "Resgrid | Dashboard";
   Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
+@inject IStringLocalizer<HomeDashboard> localizer
 
 @section Styles
 {
@@ -49,14 +51,14 @@
 			  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 			  {
 				<li>
-				  <a data-toggle="modal" data-target="#confirmSetAllToStandbyModal" class="btn btn-xs btn-default">Reset all to Available</a>
+				  <a data-toggle="modal" data-target="#confirmSetAllToStandbyModal" class="btn btn-xs btn-default">@localizer["ResetAll"]</a>
 				</li>
 			  }
 			  <li>
-				<a href="javascript:collapseAll();">Collapse Groups (Once)</a>
+				<a href="javascript:collapseAll();">@localizer["CollapseGroups"]</a>
 			  </li>
 			  <li>
-				<a href="#">Toggle Collapse Groups (Saves)</a>
+				<a href="#">@localizer["ToggleCollapseGroupsOnce"]</a>
 			  </li>
 			</ul>
 		  </div>
@@ -93,7 +95,7 @@
 	<div class="col-xs-12 col-sm-3">
 	  <div id="actionsContainer" class="ibox float-e-margins">
 		<div class="ibox-title">
-		  <h5>Actions</h5>
+		  <h5>@localizer["Actions"]</h5>
 		</div>
 
 		@if (Model.States == null)
@@ -102,31 +104,31 @@
 			<div class="ibox-content" style="text-align: center;">
 			  <div style="padding-bottom: 35px; text-align: center;">
 				<div class="btn-group" style="display: inherit;">
-				  <a class="btn btn-large btn-block btn-success" onclick=" resgrid.home.dashboard.actionResponding(); " href="#" style="width: 75%; color: #fff;">Responding</a>
+				  <a class="btn btn-large btn-block btn-success" onclick=" resgrid.home.dashboard.actionResponding(); " href="#" style="width: 75%; color: #fff;">@commonLocalizer["Responding"]</a>
 				  <button class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 				  <ul class="dropdown-menu">
-					<li><a onclick="resgrid.home.dashboard.showStations(); " href="#"><i class='icon-home'></i>&nbsp;Respond to a Station </a></li>
-					<li><a onclick="resgrid.home.dashboard.showCalls(); " href="#"><i class='icon-bullhorn'></i>&nbsp;Respond to a Call </a></li>
+					<li><a onclick="resgrid.home.dashboard.showStations(); " href="#"><i class='icon-home'></i>&nbsp;@commonLocalizer["RespondToStation"]</a></li>
+					<li><a onclick="resgrid.home.dashboard.showCalls(); " href="#"><i class='icon-bullhorn'></i>&nbsp;@commonLocalizer["RespondToCall"]</a></li>
 				  </ul>
 				</div>
 			  </div>
 
 			  <div style="padding-top: 4px; text-align: center;">
-				<a class="btn btn-large btn-block btn-danger" onclick=" resgrid.home.dashboard.actionNotResponding(); " href="#" style="width: 85%; color: #fff;">Not Responding</a>
+				<a class="btn btn-large btn-block btn-danger" onclick=" resgrid.home.dashboard.actionNotResponding(); " href="#" style="width: 85%; color: #fff;">@commonLocalizer["NotResponding"]</a>
 			  </div>
 
 			  <div style="padding-top: 4px; padding-bottom: 35px; text-align: center;">
 				<div class="btn-group" style="display: inherit;">
-				  <a class="btn btn-large btn-block btn-info" onclick=" resgrid.home.dashboard.actionAvailable(); " href="#" style="width: 75%; color: #fff;">Standing By</a>
+				  <a class="btn btn-large btn-block btn-info" onclick=" resgrid.home.dashboard.actionAvailable(); " href="#" style="width: 75%; color: #fff;">@commonLocalizer["StandingBy"]</a>
 				  <button class="btn btn-large btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 				  <ul class="dropdown-menu">
-					<li><a onclick="resgrid.home.dashboard.actionAvailableStation(); " href="#"><i class='fa fa-minus-circle'></i>&nbsp;Standing By at Station</a></li>
+					<li><a onclick="resgrid.home.dashboard.actionAvailableStation(); " href="#"><i class='fa fa-minus-circle'></i>&nbsp;@commonLocalizer["StandingByStation"]</a></li>
 				  </ul>
 				</div>
 			  </div>
 
 			  <div style="padding-top: 4px; padding-bottom: 10px; text-align: center;">
-				<a class="btn btn-large btn-block btn-inverse" onclick=" resgrid.home.dashboard.actionOnScene();" href="#" style="width: 85%; color: #fff;">On Scene</a>
+				<a class="btn btn-large btn-block btn-inverse" onclick=" resgrid.home.dashboard.actionOnScene();" href="#" style="width: 85%; color: #fff;">@commonLocalizer["OnScene"]</a>
 			  </div>
 			</div>
 		  </div>
@@ -139,7 +141,7 @@
 		  <div>
 			<div class="ibox-content" style="text-align: center;">
 			  <div style="padding-bottom: 4px; padding-top: 4px;">
-				<textarea id="actionNote" style="width: 80%;" placeholder="Action Note (Optional)"></textarea>
+				<textarea id="actionNote" style="width: 80%;" placeholder="@localizer["ActionNote"]"></textarea>
 			  </div>
 			  <div style="text-align: center;">
 				@foreach (var state in Model.States.GetActiveDetails())
@@ -155,7 +157,7 @@
 	  </div>
 	  <div id="staffingContainer" class="ibox float-e-margins">
 		<div class="ibox-title">
-		  <h5>Staffing Level</h5>
+		  <h5>@localizer["StaffingLevel"]</h5>
 		</div>
 		<div class="ibox-content" style="text-align: center;">
 		  @using (Html.BeginForm("SetUserState", "Home", FormMethod.Post, new { Area = "User", style = "padding-bottom:0px;" }))
@@ -177,30 +179,23 @@
 			  </div>
 			}
 			<div style="text-align: center;">
-			  <input class="btn btn-primary" id="submit_status_action" name="commit" type="submit" value="Set Staffing Level" />
+			  <input class="btn btn-primary" id="submit_status_action" name="commit" type="submit" value="@localizer["StaffingLevelSubmit"]" />
 			</div>
 		  }
 		</div>
 	  </div>
 	  <div id="departmentInfoContainer" class="ibox float-e-margins">
 		<div class="ibox-title">
-		  <h5>Department Info</h5>
+		  <h5>@localizer["DepartmentInfo"]</h5>
 		</div>
 		<div class="ibox-content">
 		  <ul style="list-style-type: none;">
 			<li>
-			  Department Id: @ClaimsAuthorizationHelper.GetDepartmentId().ToString()
+			  @localizer["DepartmentId"] @ClaimsAuthorizationHelper.GetDepartmentId().ToString()
 			</li>
 			<li>
-			  Department Code: @Model.Department.Code
+			  @localizer["DepartmentCode"] @Model.Department.Code
 			</li>
-
-			@if (!String.IsNullOrWhiteSpace(Model.Number))
-			{
-			  <li>
-				Text Number: @Model.Number
-			  </li>
-			}
 		  </ul>
 		</div>
 	  </div>
@@ -213,34 +208,15 @@
 	<div class="modal-content">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Confirm Status Reset</h4>
+		<h4 class="modal-title">@localizer["ConfirmStatusReset"]</h4>
 	  </div>
 	  <div class="modal-body">
 		<p>
-		  Are you sure you want to reset all personnel status to Available?
+		  @localizer["AreYouSureResetAll"]
 		</p>
 	  </div>
 	  <div class="modal-footer">
-		<a href="#" class="btn btn-default" data-dismiss="modal">Close</a> <a href="@Url.Action("ResetAllToStandingBy", "Home", new { area = "User" })" class="btn btn-primary">Reset Status</a>
-	  </div>
-	</div>
-  </div>
-</div>
-
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="confirmSetAllToStandbyModal">
-  <div class="modal-dialog">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Confirm Status Reset</h4>
-	  </div>
-	  <div class="modal-body">
-		<p>
-		  Are you sure you want to reset all personnel status to Available?
-		</p>
-	  </div>
-	  <div class="modal-footer">
-		<a href="#" class="btn btn-default" data-dismiss="modal">Close</a> <a href="@Url.Action("ResetAllToStandingBy", "Home", new { area = "User" })" class="btn btn-primary">Reset Status</a>
+		<a href="#" class="btn btn-default" data-dismiss="modal">Close</a> <a href="@Url.Action("ResetAllToStandingBy", "Home", new { area = "User" })" class="btn btn-primary">@localizer["ResetStatusButton"]</a>
 	  </div>
 	</div>
   </div>

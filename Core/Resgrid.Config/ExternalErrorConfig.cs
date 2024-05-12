@@ -11,14 +11,24 @@
 		public static string Environment = "dev";
 
 		#region Elk Settings
-		public static string ElkServiceUrl = "http://localhost:9200";
+		public static string ElkServiceUrl = "http://rgdevserver:9200";
 		#endregion Elk Settings
 
 		#region Sentry Settings
-		public static string ExternalErrorServiceUrl = "";
+		public static string ExternalErrorServiceUrlForApi = "";
 		public static string ExternalErrorServiceUrlForWebsite = "";
 		public static string ExternalErrorServiceUrlForWebjobs = "";
+		public static string ExternalErrorServiceUrlForEventing = "";
+		public static string ExternalErrorServiceUrlForInternalApi = "";
+		public static string ExternalErrorServiceUrlForInternalWorker = "";
+		public static double SentryPerfSampleRate = 0.4;
 		#endregion Sentry Settings
+
+		#region Application Insights Settings
+		public static bool ApplicationInsightsEnabled = false;
+		public static string ApplicationInsightsInstrumentationKey = "";
+		public static string ApplicationInsightsConnectionString = "";
+		#endregion Application Insights Settings
 	}
 
 	public enum ErrorLoggerTypes

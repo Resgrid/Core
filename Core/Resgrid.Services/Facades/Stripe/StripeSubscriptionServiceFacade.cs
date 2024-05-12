@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Facades.Stripe;
@@ -110,6 +111,21 @@ namespace Resgrid.Services.Facades.Stripe
 		}
 
 		public async Task<Subscription> GetCurrentCanceledSubWithAddonAsync(string customerId, PlanAddon addon)
+		{
+			return null;
+		}
+
+		public Task<Subscription> CancelAsync(string customerId, string subscriptionId, bool cancelAtPeriodEnd = false, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Subscription> AdjustPTTAddonQuantityToSubscription(Subscription sub, long quantity, PlanAddon addon, CancellationToken cancellationToken = default)
+		{
+			return null;
+		}
+
+		public Task<Subscription> CreatePTTAddonSubscription(string customerId, long quantity, PlanAddon addon, CancellationToken cancellationToken = default)
 		{
 			return null;
 		}

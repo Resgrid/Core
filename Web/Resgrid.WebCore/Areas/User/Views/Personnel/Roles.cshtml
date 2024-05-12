@@ -1,92 +1,93 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Personnel.PersonnelRolesModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-		ViewBag.Title = "Resgrid | Roles";
+    ViewBag.Title = "Resgrid | " + @localizer["RolesHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Personnel Roles</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User">Personnel</a>
-			</li>
-			<li class="active">
-				<strong>Roles</strong>
-			</li>
-		</ol>
-	</div>
+    <div class="col-sm-4">
+        <h2>@localizer["RolesHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["RolesHeader"]</strong>
+            </li>
+        </ol>
+    </div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins" id="personnelContainer">
-				<div class="ibox-title">
-					<h5>Personnel Roles</h5>
-					<div class="ibox-tools">
-						@if (Model.CanAddNewRole)
-						{
-							<div class="buttons-actions">
-								<a title="Add a new role" class="btn btn-success" asp-controller="Personnel" asp-action="AddRole" asp-route-area="User"><i class="icon-plus"></i> Add Role</a>
-							</div>
-						}
-					</div>
-				</div>
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>
-										Name
-									</th>
-									<th>
-										Description
-									</th>
-									<th>
-										Users in Role
-									</th>
-									<th class='span1'>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var u in Model.Roles)
-								{
-									<tr>
-										<td>
-											@u.Name
-										</td>
-										<td>
-											@u.Description
-										</td>
-										<td>
-											@u.Users.Count
-										</td>
-										<td>
-											<a style="text-decoration:none;" class="btn btn-xs btn-info" asp-controller="Personnel" asp-action="ViewRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId">View</a>
-@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-{
-											<a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Personnel" asp-action="EditRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId">Edit</a>
-											<a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="Personnel" asp-action="DeleteRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId" data-confirm="WARNING: This will permanently delete this role. Are you sure you want to delete the @u.Name role?" rel="nofollow">Delete</a>
-}
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-						</div>
-					</div>
-				</div>
-		</div>
-	</div>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins" id="personnelContainer">
+                <div class="ibox-title">
+                    <h5>@localizer["RolesHeader"]</h5>
+                    <div class="ibox-tools">
+                        @if (Model.CanAddNewRole)
+                        {
+                            <div class="buttons-actions">
+                                <a title="@localizer["AddRoleHeader"]" class="btn btn-success" asp-controller="Personnel" asp-action="AddRole" asp-route-area="User">@localizer["AddRoleHeader"]</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @commonLocalizer["Name"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Description"]
+                                    </th>
+                                    <th>
+                                        @localizer["UsersInRole"]
+                                    </th>
+                                    <th class='span1'>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var u in Model.Roles)
+                                {
+                                    <tr>
+                                        <td>
+                                            @u.Name
+                                        </td>
+                                        <td>
+                                            @u.Description
+                                        </td>
+                                        <td>
+                                            @u.Users.Count
+                                        </td>
+                                        <td>
+                                            <a style="text-decoration:none;" class="btn btn-xs btn-info" asp-controller="Personnel" asp-action="ViewRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId">@commonLocalizer["View"]</a>
+                                            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                            {
+                                                <a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Personnel" asp-action="EditRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId">@commonLocalizer["Edit"]</a>
+                                                <a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="Personnel" asp-action="DeleteRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId" data-confirm="@localizer["RoleDeleteWarning"] @u.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
+    {
 
 }

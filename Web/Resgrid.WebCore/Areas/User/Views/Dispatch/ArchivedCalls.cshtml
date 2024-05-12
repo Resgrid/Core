@@ -2,30 +2,31 @@
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.CallsDashboardModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
-	ViewBag.Title = "Resgrid | Archived Calls";
+	ViewBag.Title = "Resgrid | " + @localizer["ArchivedCallsHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Archived Calls</h2>
+		<h2>@localizer["ArchivedCallsHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Calls</a>
+				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
 			</li>
 			<li class="active">
-				<strong>Archived Calls</strong>
+				<strong>@localizer["ArchivedCallsHeader"]</strong>
 			</li>
 		</ol>
 	</div>
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a new unit" class="btn btn-info" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">Active Calls</a>
+				<a title="@localizer["ActiveCallsHelp"]" class="btn btn-info" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@localizer["ActiveCalls"]</a>
 			</div>
 		</div>
 </div>
@@ -40,7 +41,7 @@
 		        @if (ClaimsAuthorizationHelper.CanCreateCall())
 				{
 		          <div class="buttons-actions">
-		            <a id="addOldCall" title="Add an archived call" class="btn btn-primary" asp-controller="Dispatch" asp-action="AddArchivedCall" asp-route-area="User">Add Archived Call</a>
+		            <a id="addOldCall" title="@localizer["AddArchivedCallHelp"]" class="btn btn-primary" asp-controller="Dispatch" asp-action="AddArchivedCall" asp-route-area="User">@localizer["AddArchivedCallHeader"]</a>
 		          </div>
 				}
 		      </div>
@@ -69,11 +70,11 @@
 </script>
 
 	<script id="archiveCallCommand-template" type="text/x-kendo-template">
-	<a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewCall", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-eye-open"></i><span class="hidden-sm hidden-xs"> View</span></a>
-	<a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("CallExport", "Dispatch", new {area = "User"})?callId=#=CallId#"><i class="icon-share"></i><span class="hidden-sm hidden-xs"> Export</span></a>
+	<a style="text-decoration:none;" class="btn btn-xs btn-info" href="@Url.Action("ViewCall", "Dispatch", new {area = "User"})?callId=#=CallId#">@commonLocalizer["View"]</a>
+	<a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("CallExport", "Dispatch", new {area = "User"})?callId=#=CallId#">@commonLocalizer["Export"]</a>
 
 	#if(CanDeleteCall){#
-	<a href="@Url.Action("DeleteCall", "Dispatch", new {area = "User"})?callId=#=CallId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this call. Are you sure you want to delete the call #=Name#?" rel="nofollow"><i class="icon-trash"></i><span class="hidden-xs"> Delete</span></a>
+	<a href="@Url.Action("DeleteCall", "Dispatch", new {area = "User"})?callId=#=CallId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this call. Are you sure you want to delete the call #=Name#?" rel="nofollow">@commonLocalizer["Delete"]</a>
 	#}#
 
 </script>

@@ -1,7 +1,7 @@
-﻿
-@model Resgrid.Web.Areas.User.Models.Profile.AddCertificationView
+﻿@model Resgrid.Web.Areas.User.Models.Profile.AddCertificationView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> localizer
 @{
-	ViewBag.Title = "Resgrid | Add Certification";
+	ViewBag.Title = "Resgrid | " + @localizer["AddCertificationHeader"];
 }
 
 @section Styles
@@ -15,19 +15,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Add Certification</h2>
+		<h2>@localizer["AddCertificationHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Edit Profile</a>
+				<a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@localizer["EditProfile"]</a>
 			</li>
 			<li>
-				<a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Certifications</a>
+				<a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@commonLocalizer["Certifications"]</a>
 			</li>
 			<li class="active">
-				<strong>Add Certification</strong>
+				<strong>@localizer["AddCertificationHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -52,39 +52,39 @@
 						<div class="form-group">
 							<label class="col-sm-1 control-label"></label>
 							<div class="col-sm-10">
-								<p>Enter the information below to edit a certification in your profile. Example certifications are EMT certs, CPR/BLS, Hazmat, etc. Tracking certifications can be useful to ensure they are updated/renewed before they expire and the department knows who's certified for what. Fields in <span class="required">blue italics</span> are required.</p>
+								<p>@localizer["AddCertificationHelp"]</p>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label required">Name</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Certification Name" asp-for="Name"></div>
+							<label class="col-sm-2 control-label required">@commonLocalizer["Name"]</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CertificationNamePlaceholder"]" asp-for="Name"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Type</label>
+							<label class="col-sm-2 control-label">@commonLocalizer["Type"]</label>
 							<div class="col-sm-10"><select asp-for="Type" asp-items="Model.CertificationTypes" style="padding-left: 0; width: 70%;"></select></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">ID # \ Cert #</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="ID # \ Cert #" asp-for="Number"></div>
+							<label class="col-sm-2 control-label">@localizer["CertificationId"]</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CertificationIdPlaceholder"]" asp-for="Number"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Valid Area</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Area certification in valid in" asp-for="Area"></div>
+							<label class="col-sm-2 control-label">@localizer["ValidAreaLabel"]</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ValidAreaPlaceholder"]" asp-for="Area"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Issued By</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Issuing Authority name" asp-for="IssuedBy"></div>
+							<label class="col-sm-2 control-label">@localizer["IssuedByLabel"]</label>
+							<div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IssuedByPlaceholder"]" asp-for="IssuedBy"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Issued On</label>
+							<label class="col-sm-2 control-label">@localizer["IssuedOnLabel"]</label>
 							<div class="col-sm-10"><input type="text"  asp-for="RecievedOn"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Expires On</label>
+							<label class="col-sm-2 control-label">@localizer["ExpiresOnLabel"]</label>
 							<div class="col-sm-10"><input type="text" asp-for="ExpiresOn"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Attachment</label>
+							<label class="col-sm-2 control-label">@commonLocalizer["Attachment"]</label>
 							<div class="col-sm-10">
 								<input name="fileToUpload" id="fileToUpload" type="file" />
 							</div>
@@ -92,8 +92,8 @@
 						
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">Cancel</a>
-								<button class="btn btn-primary" type="submit">Save Certification</button>
+								<a class="btn btn-white" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
 							</div>
 						</div>
 					</form>

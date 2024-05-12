@@ -6,6 +6,7 @@
 		Groups = 2,
 		Units = 3,
 		Roles = 4,
-		InvoicesPerMonth = 5
+		InvoicesPerMonth = 5,
+		Entities = 6
 	}
 }

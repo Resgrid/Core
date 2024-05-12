@@ -2,8 +2,9 @@
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Messages.ViewMessageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> localizer
 @{
-  ViewBag.Title = "Resgrid | View Message";
+  ViewBag.Title = "Resgrid | " + @localizer["ViewMessageHeader"];
   Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -13,13 +14,13 @@
       <div class="ibox float-e-margins">
         <div class="ibox-content mailbox-content">
           <div class="file-manager">
-            <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">Compose Message</a>
+            <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">@localizer["ComposeMessageHeader"]</a>
 
             <div class="space-25"></div>
-            <h5>Folders</h5>
+            <h5>@localizer["FoldersHeader"]</h5>
             <ul class="folder-list m-b-md" style="padding: 0">
-              <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> Inbox <span class="label label-warning pull-right">@Model.UnreadMessages</span> </a></li>
-              <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> Sent Messages</a></li>
+              <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> @localizer["Inbox"] <span class="label label-warning pull-right">@Model.UnreadMessages</span> </a></li>
+              <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> @localizer["SentMessages"]</a></li>
             </ul>
             <div class="clearfix"></div>
           </div>
@@ -29,15 +30,15 @@
     <div id="mailMessage" class="col-lg-9 animated fadeInRight">
       <div class="mail-box-header">
         <div class="pull-right tooltip-demo">
-          <button href="#" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Print email" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> </button>
-          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash-o"></i> </a>
+          <button href="#" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="@commonLocalizer["Print"]" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> </button>
+          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="@commonLocalizer["Delete"]"><i class="fa fa-trash-o"></i> </a>
         </div>
         <h2>
-          View Message
+          @localizer["ViewMessageHeader"]
         </h2>
         <div class="mail-tools tooltip-demo m-t-md">
           <h3>
-            <span class="font-noraml">Subject: </span>@Model.Message.Subject
+            <span class="font-noraml">@localizer["SubjectLabel"]: </span>@Model.Message.Subject
           </h3>
           <h5>
             <span class="pull-right font-noraml">@Model.Message.SentOn.TimeConverterToString(Model.Department)</span>
@@ -48,31 +49,31 @@
 			}
 			else
 			{
-              <span class="font-noraml">From: System</span>
+              <span class="font-noraml">@localizer["FromLabel"]: @commonLocalizer["System"]</span>
 			}
             <br />
             @if (Model.Message.Type == (int)MessageTypes.Poll)
 			{
-              <span class="font-noraml">Type: Poll</span>
+              <span class="font-noraml">@commonLocalizer["Type"]: @localizer["Poll"]</span>
 			}
 			else if (Model.Message.Type == (int)MessageTypes.Callback)
 			{
-              <span class="font-noraml">Type: Callback</span>
+              <span class="font-noraml">@commonLocalizer["Type"]: @localizer["Callback"]</span>
 			}
 			else
 			{
-              <span class="font-noraml">Type: Message</span>
+              <span class="font-noraml">@commonLocalizer["Type"]: @localizer["Message"]</span>
 			}
             <br />
             @if (Model.Message.Type == (int)MessageTypes.Poll || Model.Message.Type == (int)MessageTypes.Callback)
 			{
 			  if (Model.Message.ExpireOn.HasValue)
 			  {
-                <span class="font-bold danger">Expires: @Model.Message.ExpireOn.Value.TimeConverterToString(Model.Department)</span>
+                <span class="font-bold danger">@localizer["Expires"]: @Model.Message.ExpireOn.Value.TimeConverterToString(Model.Department)</span>
 			  }
 			  else
 			  {
-                <span class="font-noraml">Expires: Never</span>
+                <span class="font-noraml">@localizer["Expires"]: @localizer["Never"]</span>
 			  }
 			}
           </h5>
@@ -92,12 +93,12 @@
               <div class="row">
                 <div class="form-group">
                   <label class="control-label">
-                    Note
+                    @commonLocalizer["Note"]
                   </label>
                   <div class="controls">
                     <div class="col-md-6">
 	                    <input class="form-control" type="text" id="note" name="note">
-					  <span class="help-block m-b-none">Supply a note in the text box above before pressing a response button below if you want to send a note with your reponse.</span>
+					  <span class="help-block m-b-none">@localizer["NoteInfo"]</span>
                     </div>
                   </div>
                 </div>
@@ -105,14 +106,14 @@
               <div class="row">
                 <div class="form-group">
                   <label class="control-label">
-                    Response
+                    @localizer["ResponseLabel"]
                   </label>
                   <div class="controls">
                     <div class="col-md-6">
                       <div class="btn-group">
-                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 1)" class="btn btn-success">Yes</a>
-                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 2)" class="btn btn-warning">Maybe</a>
-                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 3)" class="btn btn-danger">No</a>
+                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 1)" class="btn btn-success">@commonLocalizer["Yes"]</a>
+                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 2)" class="btn btn-warning">@commonLocalizer["Maybe"]</a>
+                        <a href="#" onclick="resgrid.message.viewMessage.respond(@recipient.MessageRecipientId, 3)" class="btn btn-danger">@commonLocalizer["No"]</a>
                       </div>
                     </div>
                   </div>
@@ -126,21 +127,21 @@
               <div class="row">
                 <div class="form-group">
                   <label class="control-label">
-                    Response
+                    @localizer["ResponseLabel"]
                   </label>
                   <div class="controls">
                     <div class="col-md-6">
                       @if (recipient.Response == "1")
 					  {
-                        <span class="label label-success">Yes</span>
+                        <span class="label label-success">@commonLocalizer["Yes"]</span>
 					  }
 					  else if (recipient.Response == "2")
 					  {
-                        <span class="label label-warning">Maybe</span>
+                        <span class="label label-warning">@commonLocalizer["Maybe"]</span>
 					  }
 					  else if (recipient.Response == "3")
 					  {
-                        <span class="label label-danger">No</span>
+                        <span class="label label-danger">@commonLocalizer["No"]</span>
 					  }
                     </div>
                   </div>
@@ -149,7 +150,7 @@
               <div class="row">
                 <div class="form-group">
                   <label class="control-label">
-                    Note
+                    @commonLocalizer["Note"]
                   </label>
                   <div class="controls">
                     <div class="col-md-6">
@@ -173,18 +174,18 @@
           <div class="mail-attachment">
             <div class="form-group">
               <label class="control-label">
-                Recipients
+                @localizer["RecipientsLabel"]
               </label>
               <div class="controls">
                 <table class="table table-condensed">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Group</th>
-                      <th>Roles</th>
-                      <th>Response</th>
-                      <th>Read On</th>
-                      <th>Note</th>
+                      <th>@commonLocalizer["Name"]</th>
+                      <th>@commonLocalizer["Group"]</th>
+                      <th>@commonLocalizer["Roles"]</th>
+                      <th>@commonLocalizer["Response"]</th>
+                      <th>@localizer["ReadOn"]</th>
+                      <th>@commonLocalizer["Note"]</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -197,7 +198,7 @@
                         <td>
                           @if (groupAndRole == null || !groupAndRole.DepartmentGroupId.HasValue)
 						  {
-                            <span>No Group</span>
+                            <span>@localizer["NoGroup"]</span>
 						  }
 						  else
 						  {
@@ -217,15 +218,15 @@
                         <td>
                           @if (recipient.Response == "1")
 						  {
-                            <span class="label label-success">Yes</span>
+                            <span class="label label-success">@commonLocalizer["Yes"]</span>
 						  }
 						  else if (recipient.Response == "2")
 						  {
-                            <span class="label label-warning">Maybe</span>
+                            <span class="label label-warning">@commonLocalizer["Maybe"]</span>
 						  }
 						  else if (recipient.Response == "3")
 						  {
-                            <span class="label label-danger">No</span>
+                            <span class="label label-danger">@commonLocalizer["No"]</span>
 						  }
                         </td>
                         <td>
@@ -235,7 +236,7 @@
 						  }
 						  else
 						  {
-                            <span>Never</span>
+                            <span>@commonLocalizer["Never"]</span>
 						  }
                         </td>
                         <td>
@@ -256,14 +257,14 @@
           <div class="mail-attachment">
             <div class="form-group">
               <label class="control-label">
-                Recipients
+                @localizer["Recipients"]
               </label>
               <div class="controls">
                 <table class="table table-condensed">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Read On</th>
+                      <th>@commonLocalizer["Name"]</th>
+                      <th>@localizer["ReadOn"]</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -278,7 +279,7 @@
 						  }
 						  else
 						  {
-                            <span>Unread</span>
+                            <span>@localizer["Unread"]</span>
 						  }
                         </td>
                       </tr>
@@ -293,7 +294,7 @@
 		}
         <div class="mail-attachment">
           <p>
-            <span><i class="fa fa-paperclip"></i> Attachments</span>
+            <span><i class="fa fa-paperclip"></i> @localizer["Attachments"]</span>
           </p>
 
           <div class="attachment">
@@ -302,8 +303,8 @@
           </div>
         </div>
         <div class="mail-body text-right tooltip-demo">
-          <button title="" data-placement="top" data-toggle="tooltip" type="button" data-original-title="Print" class="btn btn-sm btn-white" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> Print</button>
-          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" data-placement="top" data-toggle="tooltip" data-original-title="Trash" class="btn btn-sm btn-white"><i class="fa fa-trash-o"></i> Delete</a>
+          <button title="" data-placement="top" data-toggle="tooltip" type="button" data-original-title="Print" class="btn btn-sm btn-white" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> @commonLocalizer["Print"]</button>
+          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" data-placement="top" data-toggle="tooltip" data-original-title="Trash" class="btn btn-sm btn-white"><i class="fa fa-trash-o"></i> @commonLocalizer["Delete"]</a>
         </div>
         <div class="clearfix"></div>
 

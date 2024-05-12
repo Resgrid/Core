@@ -197,8 +197,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					else
 					{
 						model.NewGroup.Address = null;
-						model.NewGroup.Latitude = model.Latitude;
-						model.NewGroup.Longitude = model.Longitude;
+						model.NewGroup.Latitude = StringHelpers.SanitizeCoordinatesString(model.Latitude);
+						model.NewGroup.Longitude = StringHelpers.SanitizeCoordinatesString(model.Longitude);
 					}
 
 					if (!String.IsNullOrWhiteSpace(model.What3Word))
@@ -228,10 +228,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.NewGroup.MessageEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
 
 				if (!String.IsNullOrWhiteSpace(model.NewGroup.Latitude))
-					model.NewGroup.Latitude = model.NewGroup.Latitude.Replace(" ", "");
+					model.NewGroup.Latitude = StringHelpers.SanitizeCoordinatesString(model.NewGroup.Latitude.Replace(" ", ""));
 
 				if (!String.IsNullOrWhiteSpace(model.NewGroup.Longitude))
-					model.NewGroup.Longitude = model.NewGroup.Longitude.Replace(" ", "");
+					model.NewGroup.Longitude = StringHelpers.SanitizeCoordinatesString(model.NewGroup.Longitude.Replace(" ", ""));
 
 				await _departmentGroupsService.SaveAsync(model.NewGroup, cancellationToken);
 
@@ -366,8 +366,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.EditGroup = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
 			model.InternalDispatchEmail = $"{model.EditGroup.DispatchEmail}@{Config.InboundEmailConfig.GroupsDomain}";
-			model.Latitude = model.EditGroup.Latitude;
-			model.Longitude = model.EditGroup.Longitude;
+			model.Latitude = StringHelpers.SanitizeCoordinatesString(model.EditGroup.Latitude);
+			model.Longitude = StringHelpers.SanitizeCoordinatesString(model.EditGroup.Longitude);
 			model.What3Word = model.EditGroup.What3Words;
 
 			List<DepartmentGroup> groups = new List<DepartmentGroup>();
@@ -495,15 +495,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						if (groupAdmins.Contains(user))
 							dgm.IsAdmin = true;
+						else
+							dgm.IsAdmin = false;
 
 						group.Members.Add(dgm);
 					}
 				}
 
-				var usersToRemove = group.Members.Where(x => !allUsers.Contains(x.UserId)).ToList();
-				foreach (var user in usersToRemove)
+				if (allUsers.Count > 0)
 				{
-					group.Members.Remove(user);
+					var usersToRemove = group.Members.Where(x => !allUsers.Contains(x.UserId)).ToList();
+					foreach (var user in usersToRemove)
+					{
+						group.Members.Remove(user);
+					}
+				}
+				else
+				{
+					group.Members.Clear();
 				}
 
 				if (model.EditGroup.Type.HasValue && model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
@@ -522,8 +531,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					else
 					{
 						group.Address = null;
-						group.Latitude = model.Latitude;
-						group.Longitude = model.Longitude;
+						group.Latitude = StringHelpers.SanitizeCoordinatesString(model.Latitude);
+						group.Longitude = StringHelpers.SanitizeCoordinatesString(model.Longitude);
 					}
 
 					if (!String.IsNullOrWhiteSpace(model.What3Word))
@@ -554,10 +563,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				group.DispatchToPrinter = model.EditGroup.DispatchToPrinter;
 
 				if (!String.IsNullOrWhiteSpace(group.Latitude))
-					group.Latitude = group.Latitude.Replace(" ", "");
+					group.Latitude = StringHelpers.SanitizeCoordinatesString(group.Latitude.Replace(" ", ""));
 
 				if (!String.IsNullOrWhiteSpace(group.Longitude))
-					group.Longitude = group.Longitude.Replace(" ", "");
+					group.Longitude = StringHelpers.SanitizeCoordinatesString(group.Longitude.Replace(" ", ""));
 
 				await _departmentGroupsService.UpdateAsync(group, cancellationToken);
 

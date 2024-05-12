@@ -117,26 +117,23 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private static void VerifyAndCreateClients()
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			try
 			{
-				try
-				{
-					//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					//using (var connection = factory.CreateConnection())
-					var connection = RabbitConnection.CreateConnection();
+				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+				//using (var connection = factory.CreateConnection())
+				var connection = RabbitConnection.CreateConnection();
 
-					if (connection != null)
+				if (connection != null)
+				{
+					using (var channel = connection.CreateModel())
 					{
-						using (var channel = connection.CreateModel())
-						{
-							channel.ExchangeDeclare(SetQueueNameForEnv(Topics.EventingTopic), "fanout");
-						}
+						channel.ExchangeDeclare(SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 					}
 				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex);
-				}
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
 			}
 		}
 

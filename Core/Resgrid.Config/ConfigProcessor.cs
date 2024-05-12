@@ -78,9 +78,9 @@ namespace Resgrid.Config
 
 			bool hasSetAtLeastOneVariable = false;
 
-			try
+			foreach (var configValue in values)
 			{
-				foreach (var configValue in values)
+				try
 				{
 					if (!String.IsNullOrWhiteSpace(configValue.Value) && configValue.Key.StartsWith("RESGRID"))
 					{
@@ -120,14 +120,14 @@ namespace Resgrid.Config
 						}
 					}
 				}
-
-				return hasSetAtLeastOneVariable;
-
+				catch (Exception ex)
+				{
+					Console.WriteLine($"Resgrid.Config: Error processing Environment Variable: {configValue.Key}");
+					Console.WriteLine(ex.ToString());
+				}
 			}
-			catch (Exception ex)
-			{
-				return false;
-			}
+
+			return hasSetAtLeastOneVariable;
 		}
 	}
 }

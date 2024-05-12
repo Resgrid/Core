@@ -2,7 +2,7 @@
 {
 	public static class ChatConfig
 	{
-		public static string DepartmentChatPrefix = "";
-		public static string DepartmentGroupChatPrefix = "";
+		public static string DepartmentChatPrefix = "D1_";
+		public static string DepartmentGroupChatPrefix = "DG1_";
 	}
 }

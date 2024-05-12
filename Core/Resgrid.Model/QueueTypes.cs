@@ -2,8 +2,10 @@
 {
 	public enum QueueTypes
 	{
-		MessageBroadcast,
-		CallBroadcast,
-		DistributionListBroadcast
+		MessageBroadcast,			// OLD
+		CallBroadcast,              // OLD
+		DistributionListBroadcast,  // OLD
+		DeleteAccount,              // System Queue Item
+		DeleteDepartment            // System Queue Item
 	}
 }

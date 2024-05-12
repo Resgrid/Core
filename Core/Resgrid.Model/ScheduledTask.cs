@@ -85,6 +85,10 @@ namespace Resgrid.Model
 		public string DepartmentTimeZone { get; set; }
 
 		[NotMapped]
+		[ProtoMember(20)]
+		public string UserEmailAddress { get; set; }
+
+		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
 		{
@@ -102,7 +106,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "DepartmentTimeZone" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "DepartmentTimeZone", "UserEmailAddress" };
 
 		public List<DayOfWeek> GetDaysOfWeek()
 		{
@@ -193,7 +197,7 @@ namespace Resgrid.Model
 
 					int dayAdjust = 0;
 
-					/* If the current time is at least 11:00 PM and the time we're evaluating is for 
+					/* If the current time is at least 11:00 PM and the time we're evaluating is for
 					 * midnight we have to add a day so that when we do the time math it will work out
 					 */
 					if (currentLocalTime.Hour == 23 && am && hour == 12)

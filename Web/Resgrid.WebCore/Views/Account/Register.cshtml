@@ -1,6 +1,8 @@
 ﻿@model Resgrid.Web.Models.AccountViewModels.RegisterViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Account.Login> localizer
 @{
-    ViewData["Title"] = "Resgrid | Register";
+    ViewData["Title"] = "Resgrid | " + @localizer["RegisterHeader"];
     Layout = null;
 }
 
@@ -40,41 +42,37 @@
                 </div>
                 <div style="font-size: 16px !important; padding-top:4px;padding-bottom: 18px;">
                     <p>
-                        Registering for Resgrid is as easy as 1,2,3!
+                       @localizer["RegisterText1"]
                     </p>
                     <div class="row" style="padding-bottom:12px;">
                         <div class="col-sm-12">
-                            <span class="dropcap">1</span>Have <b>one</b> person from your org fill out this form, we <a href="https://youtu.be/J0ry0Ki1dx0">have a video to watch</a>
+                            <span class="dropcap">1</span>@localizer["RegisterText2"]
                         </div>
                     </div>
                     <div class="row" style="padding-bottom:12px;">
                         <div class="col-sm-12">
-                            <span class="dropcap">2</span>Once Signed up, you can invite or add people from the Personnel page inside the app
+                            <span class="dropcap">2</span>@localizer["RegisterText3"]
                         </div>
                     </div>
                     <div class="row" style="padding-bottom:12px;">
                         <div class="col-sm-12">
-                            <span class="dropcap">3</span>Thats it! Only a single person needs to Register the organization
+                            <span class="dropcap">3</span>@localizer["RegisterText4"]
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12" style="font-size: 14px !important;">
-                            If someone in your organization <b>already has an account with Resgrid</b> have them invite you to their department instead of creating a new one, if you want to use Resgrid with them.
+                            @localizer["RegisterText5"]
                         </div>
                     </div>
                 </div>
 
                 <div class='alert alert-info'>
-                    By signing up, you accept Resgrid's <a asp-controller="Public" asp-action="Terms" target="_blank">
-                        terms of use
-                    </a> and <a asp-controller="Public" asp-action="Privacy" target="_blank">
-                        privacy
-                        policy
-                    </a>
+                    @localizer["SignUpTerms1"] Resgrid's <a href="@Resgrid.Config.UrlsConfig.TermsOfUseUrl" target="_blank">@localizer["TermsOfUse"]</a> &
+                    <a href="@Resgrid.Config.UrlsConfig.PrivacyPolicyUrl" target="_blank">@localizer["PrivacyPolicy"]</a>
                 </div>
 
                 <p>
-                    <small><a asp-controller="Home" asp-action="Index">Go Back</a></small>
+                    <small><a href="@Resgrid.Config.UrlsConfig.HomeUrl">@localizer["GoBack"]</a></small>
                 </p>
             </div>
             <div class="col-md-6">
@@ -82,16 +80,16 @@
                     <form id="registrationForm" class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post">
                         @Html.AntiForgeryToken()
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="First Name" asp-for="FirstName" required="">
+                            <input type="text" class="form-control" placeholder="@localizer["FirstName"]" asp-for="FirstName" required="">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Last Name" asp-for="LastName" required="">
+                            <input type="text" class="form-control" placeholder="@localizer["LastName"]" asp-for="LastName" required="">
                         </div>
                         <div class="form-group">
-                            <input type="email" class="form-control" placeholder="Email Address" asp-for="Email" required="">
+                            <input type="email" class="form-control" placeholder="@localizer["EmailAddress"]" asp-for="Email" required="">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Department Name" asp-for="DepartmentName" required="">
+                            <input type="text" class="form-control" placeholder="@localizer["DepartmentName"]" asp-for="DepartmentName" required="">
                         </div>
                         <div class="form-group" style="vertical-align: central;">
                             <label asp-for="DepartmentType" class="col-md-6 control-label" style="padding-top: 10px; padding-left: 2px;"></label>
@@ -101,16 +99,16 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
+                            <input type="text" class="form-control" placeholder="@localizer["Username"]" asp-for="Username" required="">
                         </div>
                         <div class="form-group">
-                            <span>Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</span>
+                            <span>@localizer["PasswordHelp"]</span>
                         </div>
                         <div class="form-group">
-                            <input asp-for="Password" class="pr-password form-control" placeholder="Password" required="" />
+                            <input asp-for="Password" class="pr-password form-control" placeholder="@localizer["Password"]" required="" />
                         </div>
                         <div class="form-group">
-                            <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="Confirm Password" required="" />
+                            <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="@localizer["ConfirmPassword"]" required="" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
                         <div class="form-group">
@@ -119,7 +117,7 @@
                         </div>
 
 
-                        <button id="registerButton" type="submit" class="btn btn-primary block full-width m-b">Register</button>
+                        <button id="registerButton" type="submit" class="btn btn-primary block full-width m-b">@localizer["Resgister"]</button>
 
                         <div asp-validation-summary="All" class="text-danger"></div>
                     </form>

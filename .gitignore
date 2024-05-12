@@ -141,12 +141,9 @@ deploy.cmd
 Packages.dgml
 OffRuleSet.ruleset
 Build/*
-Resgrid.sln
-Resgrid.xml
-Resgrid-NoCore.sln
+.idea/*
 Tests/Resgrid.TestHarness/*
 Tests/Resgrid.TestHarnessCore/*
-Tests/Resgrid.SmokeTests/*
 Web/Resgrid.WebCore/appsettings.Azure.json
 Web/Resgrid.WebCore/appsettings.Development.json
 Web/Resgrid.WebCore/appsettings.Production.json
@@ -194,13 +191,9 @@ Common/resgrid.local.pfx
 Web/Resgrid.Web.ServicesCore/Properties/serviceDependencies.json
 Web/Resgrid.Web.ServicesCore/Properties/serviceDependencies.local.json
 Web/Resgrid.Web.ServicesCore/Properties/ServiceDependencies/local/appInsights1.arm.json
-
 Docker/docker-data/dms/mail-state/lib-clamav/bytecode.cvd
-
 Docker/docker-data/dms/mail-state/lib-clamav/daily.cvd
-
 Docker/docker-data/dms/mail-state/lib-clamav/freshclam.dat
-
 Docker/docker-data/dms/mail-state/lib-clamav/main.cvd
 Docker/docker-data/dms/config/dovecot-quotas.cf
 Docker/docker-data/dms/config/mailconfig
@@ -308,3 +301,4 @@ Web/Resgrid.WebCore/wwwroot/js/ng/main.js
 Web/Resgrid.WebCore/wwwroot/js/ng/polyfills.js
 Web/Resgrid.WebCore/wwwroot/js/ng/runtime.js
 Web/Resgrid.WebCore/wwwroot/js/ng/styles.css
+Web/Resgrid.WebCore/wwwroot/js/ng/*

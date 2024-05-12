@@ -1,28 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Sql\EF0001_PopulateOIDCDb.sql" />
     <None Remove="Sql\EF0002_PopulateAuditDb.sql" />
+    <None Remove="Sql\EF0003_MigrateOIDCDbToV5.sql" />
     <None Remove="Sql\M0001_InitialMigration.sql" />
   </ItemGroup>
-
   <ItemGroup>
+    <EmbeddedResource Include="Sql\EF0003_MigrateOIDCDbToV5.sql" />
     <EmbeddedResource Include="Sql\EF0002_PopulateAuditDb.sql" />
     <EmbeddedResource Include="Sql\EF0001_PopulateOIDCDb.sql" />
     <EmbeddedResource Include="Sql\M0001_InitialMigration.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="FluentMigrator" Version="3.3.2" />
-    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
-    <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.3.2" />
+    <PackageReference Include="FluentMigrator" Version="5.1.0" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="5.1.0" />
+    <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="5.1.0" />
   </ItemGroup>
-
 </Project>

@@ -21,9 +21,12 @@ namespace Resgrid.Services
 		private readonly IOutboundVoiceProvider _outboundVoiceProvider;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly ISubscriptionsService _subscriptionsService;
+		private readonly IUserStateService _userStateService;
 
 		public CommunicationService(ISmsService smsService, IEmailService emailService, IPushService pushService, IGeoLocationProvider geoLocationProvider,
-			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService)
+			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,
+			ISubscriptionsService subscriptionsService, IUserStateService userStateService)
 		{
 			_smsService = smsService;
 			_emailService = emailService;
@@ -32,13 +35,18 @@ namespace Resgrid.Services
 			_outboundVoiceProvider = outboundVoiceProvider;
 			_userProfileService = userProfileService;
 			_departmentSettingsService = departmentSettingsService;
+			_subscriptionsService = subscriptionsService;
+			_userStateService = userStateService;
 		}
 
 		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
-			
+
+			if (!await CanSendToUser(message.ReceivingUserId, departmentId))
+				return false;
+
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
@@ -46,7 +54,8 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					await _smsService.SendMessageAsync(message, departmentNumber, departmentId, profile);
+					var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
+					await _smsService.SendMessageAsync(message, departmentNumber, departmentId, profile, payment);
 				}
 				catch (Exception ex)
 				{
@@ -95,6 +104,12 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
 		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			if (!await CanSendToUser(dispatch.UserId, departmentId))
+				return false;
+
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
 
@@ -176,7 +191,8 @@ namespace Resgrid.Services
 			// Send an SMS Message
 			if (profile == null || profile.SendSms)
 			{
-				await _smsService.SendCallAsync(call, dispatch, departmentNumber, departmentId, profile);
+				var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
+				await _smsService.SendCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
 			}
 
 			// Send an Email
@@ -277,7 +293,10 @@ namespace Resgrid.Services
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
-			
+
+			if (!await CanSendToUser(userId, departmentId))
+				return false;
+
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
@@ -319,6 +338,9 @@ namespace Resgrid.Services
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
 
+			if (!await CanSendToUser(userId, departmentId))
+				return false;
+
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
@@ -355,10 +377,9 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendChat(string chatId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients)
+		public async Task<bool> SendChat(string chatId, int departmentId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients)
 		{
 			var spm = new StandardPushMessage();
-
 
 			if (recipients.Count == 1)
 			{
@@ -378,6 +399,10 @@ namespace Resgrid.Services
 					var sendingTo = recipients.FirstOrDefault();
 					spm.Id = $"T{sendingTo}";
 
+
+					if (!await CanSendToUser(sendingTo.UserId, departmentId))
+						return false;
+
 					if (sendingTo != null)
 					{
 						await _pushService.PushChat(spm, sendingTo.UserId, sendingTo);
@@ -388,16 +413,19 @@ namespace Resgrid.Services
 					spm.Id = $"G{chatId}";
 					//await recipients.ParallelForEachAsync(async person =>
 					foreach (var person in recipients)
+					{
+						try
 						{
-							try
+							if (await CanSendToUser(person.UserId, departmentId))
 							{
 								await _pushService.PushChat(spm, person.UserId, person);
 							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex);
-							}
 						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+						}
+					}
 				}
 			}
 			catch (Exception ex)
@@ -490,6 +518,23 @@ namespace Resgrid.Services
 		public async Task<bool> SendTextMessageAsync(string userId, string title, string message, int departmentId, string departmentNumber, UserProfile profile = null)
 		{
 			return await _smsService.SendTextAsync(userId, title, message, departmentId, departmentNumber, profile);
+		}
+
+		private async Task<bool> CanSendToUser(string userId, int departmentId)
+		{
+			var supressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(departmentId);
+			var lastUserStaffing = await _userStateService.GetLastUserStateByUserIdAsync(userId);
+
+			if (lastUserStaffing == null && supressStaffingInfo != null)
+			{
+				if (supressStaffingInfo.EnableSupressStaffing)
+				{
+					if (supressStaffingInfo.StaffingLevelsToSupress.Contains(lastUserStaffing.State))
+						return false;
+				}
+			}
+
+			return true;
 		}
 	}
 }

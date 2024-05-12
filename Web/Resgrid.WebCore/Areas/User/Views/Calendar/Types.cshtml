@@ -1,85 +1,86 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Calendar.TypesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Calendar.Calendar> localizer
 @{
-		ViewBag.Title = "Resgrid | Calendar Item Types";
+    ViewBag.Title = "Resgrid | Calendar Item Types" + @localizer["CalendarTypesHeader"];
 }
 
 @section Styles
-{
+    {
 
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>Calendar Item Types</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-			</li>
-			<li>
-				<a asp-controller="Calendar" asp-action="Index" asp-route-area="User">Calendar</a>
-			</li>
-			<li class="active">
-				<strong>Calendar Item Types</strong>
-			</li>
-		</ol>
-	</div>
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-	{
-		<div class="col-sm-8">
-			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a new type" class="btn btn-success" href="@Url.Action("NewType", "Calendar", new { area = "User" })"><i class="icon-plus"></i> New Calendar Type</a>
-			</div>
-		</div>
-	}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-4">
+            <h2>@localizer["CalendarTypesHeader"]</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+                </li>
+                <li>
+                    <a asp-controller="Calendar" asp-action="Index" asp-route-area="User">@commonLocalizer["CalendarModule"]</a>
+                </li>
+                <li class="active">
+                    <strong>@localizer["CalendarTypesHeader"]</strong>
+                </li>
+            </ol>
+        </div>
+        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+    {
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a title="Add a new type" class="btn btn-success" href="@Url.Action("NewType", "Calendar", new { area = "User" })">@localizer["NewCalendarTypeHeader"]</a>
+            </div>
+        </div>
+    }
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>Name</th>
-									<th>Color</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@commonLocalizer["Name"]</th>
+                                    <th>@commonLocalizer["Color"]</th>
+                                    <th>@commonLocalizer["Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-								@foreach (var type in Model.Types)
-								{
+                                @foreach (var type in Model.Types)
+                                {
 
-									<tr>
-										<td>
-											@type.Name
-										</td>
-										<td>
-											<span style="color:@type.Color;">@type.Color</span>
-										</td>
-										<td>
-											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-											{
-												<a href="@Url.Action("EditType", "Calendar", new { area = "User" })?id=@type.CalendarItemTypeId" class="btn btn-xs btn-info">Edit</a>
-												<a href="@Url.Action("DeleteType", "Calendar", new { area = "User" })?typeId=@type.CalendarItemTypeId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this type. Are you sure you want to delete the type @type.Name?" rel="nofollow">Delete</a>
-											}
-										</td>
-									</tr>
-								}
+                                    <tr>
+                                        <td>
+                                            @type.Name
+                                        </td>
+                                        <td>
+                                            <span style="color:@type.Color;">@type.Color</span>
+                                        </td>
+                                        <td>
+                                            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                            {
+                                                <a href="@Url.Action("EditType", "Calendar", new { area = "User" })?id=@type.CalendarItemTypeId" class="btn btn-xs btn-info">@commonLocalizer["Edit"]</a>
+                                                <a href="@Url.Action("DeleteType", "Calendar", new { area = "User" })?typeId=@type.CalendarItemTypeId" class="btn btn-xs btn-danger" data-confirm="@localizer["CalendarTypesDeleteWarning"] @type.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
 
-							</tbody>
+                            </tbody>
 
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-{
+    {
 
 }

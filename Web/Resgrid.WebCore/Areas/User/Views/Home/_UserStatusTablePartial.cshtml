@@ -2,6 +2,7 @@
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.UserStatusTableModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.HomeDashboard> localizer
 
 <div class="table-responsive" style="overflow: visible;">
 	<table class='table table-striped'>
@@ -21,16 +22,16 @@
 					<td colspan="3" style="text-align: right;">
 						@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g.Group.DepartmentGroupId) && Model.States == null)
 						{
-							<a class="btn btn-xs btn-default" data-confirm="CONFIRM: Are you sure you want to reset all the users in the @g.Group.Name group to the Standing By state?" href="@Url.Action("ResetGroupToStandingBy", "Home", new {area = "User", groupId = g.Group.DepartmentGroupId})">Reset group to Standing By</a>
+							<a class="btn btn-xs btn-default" data-confirm="@localizer["ConfirmSetStandByGroup"]@g.Group.Name" href="@Url.Action("ResetGroupToStandingBy", "Home", new {area = "User", groupId = g.Group.DepartmentGroupId})">@localizer["ResetGroupStandingBy"]</a>
 						}
 					</td>
 				</tr>
 
 				<tr>
-					<td><span class="user-info">Name</span></td>
-					<td><span class="user-info">Staffing</span></td>
-					<td><span class="user-info">Status</span></td>
-					<td class="user-info">Eta</td>
+					<td><span class="user-info">@commonLocalizer["NameColumn"]</span></td>
+					<td><span class="user-info">@commonLocalizer["StaffingColumn"]</span></td>
+					<td><span class="user-info">@commonLocalizer["StatusColumn"]</span></td>
+					<td class="user-info">@commonLocalizer["EtaColumn"]</td>
 					<td class="hidden-xs"></td>
 					<td class="hidden-xs"></td>
 					<td class="hidden-xs"></td>
@@ -56,14 +57,14 @@
 						<td class="hidden-xs" colspan="3" style="text-align: right;">
 							@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g1.Group.DepartmentGroupId) && Model.States == null)
 							{
-								<a class="btn btn-xs btn-default" data-confirm="CONFIRM: Are you sure you want to reset all the users in the @g1.Group.Name group to the Standing By state?" href="@Url.Action("ResetGroupToStandingBy", "Home", new { area = "User", groupId = g1.Group.DepartmentGroupId })">Reset group to Standing By</a>
+								<a class="btn btn-xs btn-default" data-confirm="@localizer["ConfirmSetStandByGroup"]@g.Group.Name" href="@Url.Action("ResetGroupToStandingBy", "Home", new { area = "User", groupId = g1.Group.DepartmentGroupId })">@localizer["ResetGroupStandingBy"]</a>
 							}
 						</td>
 					</tr>
 					<tr>
-						<td><span class="user-info">Name</span></td>
-						<td><span class="user-info">Staffing</span></td>
-						<td><span class="user-info">Status</span></td>
+						<td><span class="user-info">@commonLocalizer["NameColumn"]</span></td>
+						<td><span class="user-info">@commonLocalizer["StaffingColumn"]</span></td>
+						<td><span class="user-info">@commonLocalizer["StatusColumn"]</span></td>
 						<td class="hidden-xs"></td>
 						<td class="hidden-xs"></td>
 						<td class="hidden-xs"></td>
@@ -90,13 +91,13 @@
 			{
 				<tr class="info">
 					<td colspan="5">
-						<b>Users</b>
+						<b>@commonLocalizer["UsersHeader"]</b>
 					</td>
 				</tr>
 				<tr>
-					<td><span class="user-info">Name</span></td>
-					<td><span class="user-info">Staffing</span></td>
-					<td><span class="user-info">Status</span></td>
+					<td><span class="user-info">@commonLocalizer["NameColumn"]</span></td>
+					<td><span class="user-info">@commonLocalizer["StaffingColumn"]</span></td>
+					<td><span class="user-info">@commonLocalizer["StatusColumn"]</span></td>
 					<td class="hidden-xs"></td>
 					<td class="hidden-xs"></td>
 					<td class="hidden-xs"></td>

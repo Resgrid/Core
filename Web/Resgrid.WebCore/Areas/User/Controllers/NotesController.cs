@@ -150,7 +150,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetDepartmentNotesCategories()
 		{
-			return Json(_notesService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId));
+			return Json(await _notesService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId));
 		}
 	}
 }

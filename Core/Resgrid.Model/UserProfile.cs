@@ -111,6 +111,9 @@ namespace Resgrid.Model
 		[ProtoMember(31)]
 		public DateTime? EndDate { get; set; }
 
+		[ProtoMember(32)]
+		public string Language { get; set; }
+
 		public string GetPhoneNumber()
 		{
 			if (!String.IsNullOrEmpty(MobileNumber))

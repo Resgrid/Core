@@ -34,7 +34,7 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.String&gt;.</returns>
-		Task<string> GetCurrentCallNumberAsync(int departmentId);
+		Task<string> GetCurrentCallNumberAsync(DateTime utcDate, int departmentId);
 
 		/// <summary>
 		/// Gets all calls by department asynchronous.
@@ -396,12 +396,17 @@ namespace Resgrid.Model.Services
 		/// <param name="getUnitDispatches">if set to <c>true</c> [get unit dispatches].</param>
 		/// <param name="getRoleDispatches">if set to <c>true</c> [get role dispatches].</param>
 		/// <param name="getProtocols">if set to <c>true</c> [get protocols].</param>
+		/// <param name="getReferences">if set to <c>true</c> [get references].</param>
 		/// <returns>Task&lt;Call&gt;.</returns>
-		Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols);
+		Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences);
 
 		Task<List<Call>> GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime startDate, DateTime endDate);
 
 
 		Task<List<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId);
+
+		Task<List<CallReference>> GetChildCallsForCallAsync(int callId);
+
+		Task<bool> DeleteCallReferenceAsync(CallReference callReference, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

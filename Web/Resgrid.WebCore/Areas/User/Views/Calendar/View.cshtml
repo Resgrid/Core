@@ -3,548 +3,543 @@
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Calendar.CalendarItemView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Calendar.Calendar> localizer
 @{
-  ViewBag.Title = "Resgrid | Event Detail";
+    ViewBag.Title = "Resgrid | " + @localizer["CalendarItemHeader"];
 }
 @section Styles
-  {
+{
 
 }
 <style>
-  .user-row {
-  margin-bottom: 14px;
-  }
+    .user-row {
+        margin-bottom: 14px;
+    }
 
-  .user-row:last-child {
-  margin-bottom: 0;
-  }
+        .user-row:last-child {
+            margin-bottom: 0;
+        }
 
-  .dropdown-user {
-  margin: 13px 0;
-  padding: 5px;
-  height: 100%;
-  }
+    .dropdown-user {
+        margin: 13px 0;
+        padding: 5px;
+        height: 100%;
+    }
 
-  .dropdown-user:hover {
-  cursor: pointer;
-  }
+        .dropdown-user:hover {
+            cursor: pointer;
+        }
 
-  .table-user-information > tbody > tr {
-  border-top: 1px solid rgb(221, 221, 221);
-  }
+    .table-user-information > tbody > tr {
+        border-top: 1px solid rgb(221, 221, 221);
+    }
 
-  .table-user-information > tbody > tr:first-child {
-  border-top: 0;
-  }
+        .table-user-information > tbody > tr:first-child {
+            border-top: 0;
+        }
 
-  .table-user-information > tbody > tr > td {
-  border-top: 0;
-  }
+        .table-user-information > tbody > tr > td {
+            border-top: 0;
+        }
 
-  .phone {
-  padding: 0;
-  }
+    .phone {
+        padding: 0;
+    }
 
-  .phone li {
-  display: block;
-  }
+        .phone li {
+            display: block;
+        }
 
-  .toppad {
-  margin-top: 20px;
-  }
+    .toppad {
+        margin-top: 20px;
+    }
 
 
-  div.list-group-item {
-  height: auto;
-  min-height: 220px;
-  }
+    div.list-group-item {
+        height: auto;
+        min-height: 220px;
+    }
 
-  div.list-group-item.active small {
-  color: #fff;
-  }
+        div.list-group-item.active small {
+            color: #fff;
+        }
 
-  .stars {
-  margin: 20px auto 1px;
-  }
+    .stars {
+        margin: 20px auto 1px;
+    }
 
-  .event-list {
-  list-style: none;
-  font-family: 'Lato', sans-serif;
-  margin: 0px;
-  padding: 0px;
-  }
+    .event-list {
+        list-style: none;
+        font-family: 'Lato', sans-serif;
+        margin: 0px;
+        padding: 0px;
+    }
 
-  .event-list > li {
-  background-color: rgb(255, 255, 255);
-  box-shadow: 0px 0px 5px rgb(51, 51, 51);
-  box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.7);
-  padding: 0px;
-  margin: 0px 0px 20px;
-  }
+        .event-list > li {
+            background-color: rgb(255, 255, 255);
+            box-shadow: 0px 0px 5px rgb(51, 51, 51);
+            box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.7);
+            padding: 0px;
+            margin: 0px 0px 20px;
+        }
 
-  .event-list > li > time {
-  display: inline-block;
-  width: 100%;
-  color: rgb(255, 255, 255);
-  background-color: rgb(197, 44, 102);
-  padding: 5px;
-  text-align: center;
-  text-transform: uppercase;
-  }
+            .event-list > li > time {
+                display: inline-block;
+                width: 100%;
+                color: rgb(255, 255, 255);
+                background-color: rgb(197, 44, 102);
+                padding: 5px;
+                text-align: center;
+                text-transform: uppercase;
+            }
 
-  .event-list > li:nth-child(even) > time {
-  background-color: rgb(165, 82, 167);
-  }
+            .event-list > li:nth-child(even) > time {
+                background-color: rgb(165, 82, 167);
+            }
 
-  .event-list > li > time > span {
-  display: none;
-  }
+            .event-list > li > time > span {
+                display: none;
+            }
 
-  .event-list > li > time > .day {
-  display: block;
-  font-size: 56pt;
-  font-weight: 100;
-  line-height: 1;
-  }
+            .event-list > li > time > .day {
+                display: block;
+                font-size: 56pt;
+                font-weight: 100;
+                line-height: 1;
+            }
 
-  .event-list > li time > .month {
-  display: block;
-  font-size: 24pt;
-  font-weight: 900;
-  line-height: 1;
-  }
+            .event-list > li time > .month {
+                display: block;
+                font-size: 24pt;
+                font-weight: 900;
+                line-height: 1;
+            }
 
-  .event-list > li > img {
-  width: 100%;
-  }
+            .event-list > li > img {
+                width: 100%;
+            }
 
-  .event-list > li > .info {
-  padding-top: 5px;
-  text-align: center;
-  }
+            .event-list > li > .info {
+                padding-top: 5px;
+                text-align: center;
+            }
 
-  .event-list > li > .info > .title {
-  font-size: 17pt;
-  font-weight: 700;
-  margin: 0px;
-  }
+                .event-list > li > .info > .title {
+                    font-size: 17pt;
+                    font-weight: 700;
+                    margin: 0px;
+                }
 
-  .event-list > li > .info > .desc {
-  font-size: 13pt;
-  font-weight: 300;
-  margin: 0px;
-  }
+                .event-list > li > .info > .desc {
+                    font-size: 13pt;
+                    font-weight: 300;
+                    margin: 0px;
+                }
 
-  .event-list > li > .info > ul,
-  .event-list > li > .social > ul {
-  display: table;
-  list-style: none;
-  margin: 10px 0px 0px;
-  padding: 0px;
-  width: 100%;
-  text-align: center;
-  }
+                .event-list > li > .info > ul,
+                .event-list > li > .social > ul {
+                    display: table;
+                    list-style: none;
+                    margin: 10px 0px 0px;
+                    padding: 0px;
+                    width: 100%;
+                    text-align: center;
+                }
 
-  .event-list > li > .social > ul {
-  margin: 0px;
-  }
+            .event-list > li > .social > ul {
+                margin: 0px;
+            }
 
-  .event-list > li > .info > ul > li,
-  .event-list > li > .social > ul > li {
-  display: table-cell;
-  cursor: pointer;
-  color: rgb(30, 30, 30);
-  font-size: 11pt;
-  font-weight: 300;
-  padding: 3px 0px;
-  }
+                .event-list > li > .info > ul > li,
+                .event-list > li > .social > ul > li {
+                    display: table-cell;
+                    cursor: pointer;
+                    color: rgb(30, 30, 30);
+                    font-size: 11pt;
+                    font-weight: 300;
+                    padding: 3px 0px;
+                }
 
-  .event-list > li > .info > ul > li > a {
-  display: block;
-  width: 100%;
-  color: rgb(30, 30, 30);
-  text-decoration: none;
-  }
+                    .event-list > li > .info > ul > li > a {
+                        display: block;
+                        width: 100%;
+                        color: rgb(30, 30, 30);
+                        text-decoration: none;
+                    }
 
-  .event-list > li > .social > ul > li {
-  padding: 0px;
-  }
+                .event-list > li > .social > ul > li {
+                    padding: 0px;
+                }
 
-  .event-list > li > .social > ul > li > a {
-  padding: 3px 0px;
-  }
+                    .event-list > li > .social > ul > li > a {
+                        padding: 3px 0px;
+                    }
 
-  .event-list > li > .info > ul > li:hover,
-  .event-list > li > .social > ul > li:hover {
-  color: rgb(30, 30, 30);
-  background-color: rgb(200, 200, 200);
-  }
+                    .event-list > li > .info > ul > li:hover,
+                    .event-list > li > .social > ul > li:hover {
+                        color: rgb(30, 30, 30);
+                        background-color: rgb(200, 200, 200);
+                    }
 
-  .facebook a,
-  .twitter a,
-  .google-plus a {
-  display: block;
-  width: 100%;
-  color: rgb(75, 110, 168) !important;
-  }
+    .facebook a,
+    .twitter a,
+    .google-plus a {
+        display: block;
+        width: 100%;
+        color: rgb(75, 110, 168) !important;
+    }
 
-  .twitter a {
-  color: rgb(79, 213, 248) !important;
-  }
+    .twitter a {
+        color: rgb(79, 213, 248) !important;
+    }
 
-  .google-plus a {
-  color: rgb(221, 75, 57) !important;
-  }
+    .google-plus a {
+        color: rgb(221, 75, 57) !important;
+    }
 
-  .facebook:hover a {
-  color: rgb(255, 255, 255) !important;
-  background-color: rgb(75, 110, 168) !important;
-  }
+    .facebook:hover a {
+        color: rgb(255, 255, 255) !important;
+        background-color: rgb(75, 110, 168) !important;
+    }
 
-  .twitter:hover a {
-  color: rgb(255, 255, 255) !important;
-  background-color: rgb(79, 213, 248) !important;
-  }
+    .twitter:hover a {
+        color: rgb(255, 255, 255) !important;
+        background-color: rgb(79, 213, 248) !important;
+    }
 
-  .google-plus:hover a {
-  color: rgb(255, 255, 255) !important;
-  background-color: rgb(221, 75, 57) !important;
-  }
+    .google-plus:hover a {
+        color: rgb(255, 255, 255) !important;
+        background-color: rgb(221, 75, 57) !important;
+    }
 
-  @@media (min-width: 768px) {
-  .event-list > li {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 120px;
-  padding: 0px;
-  }
+    @@media (min-width: 768px) {
+        .event-list > li {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 120px;
+            padding: 0px;
+        }
 
-  .event-list > li > time,
-  .event-list > li > img {
-  display: inline-block;
-  }
+            .event-list > li > time,
+            .event-list > li > img {
+                display: inline-block;
+            }
 
-  .event-list > li > time,
-  .event-list > li > img {
-  width: 120px;
-  float: left;
-  }
+            .event-list > li > time,
+            .event-list > li > img {
+                width: 120px;
+                float: left;
+            }
 
-  .event-list > li > .info {
-  background-color: rgb(245, 245, 245);
-  overflow: hidden;
-  }
+            .event-list > li > .info {
+                background-color: rgb(245, 245, 245);
+                overflow: hidden;
+            }
 
-  .event-list > li > time,
-  .event-list > li > img {
-  width: 120px;
-  height: 120px;
-  padding: 0px;
-  margin: 0px;
-  }
+            .event-list > li > time,
+            .event-list > li > img {
+                width: 120px;
+                height: 120px;
+                padding: 0px;
+                margin: 0px;
+            }
 
-  .event-list > li > .info {
-  position: relative;
-  height: 120px;
-  text-align: left;
-  padding-right: 40px;
-  }
+            .event-list > li > .info {
+                position: relative;
+                height: 120px;
+                text-align: left;
+                padding-right: 40px;
+            }
 
-  .event-list > li > .info > .title,
-  .event-list > li > .info > .desc {
-  padding: 0px 10px;
-  }
+                .event-list > li > .info > .title,
+                .event-list > li > .info > .desc {
+                    padding: 0px 10px;
+                }
 
-  .event-list > li > .info > ul {
-  position: absolute;
-  left: 0px;
-  bottom: 0px;
-  }
+                .event-list > li > .info > ul {
+                    position: absolute;
+                    left: 0px;
+                    bottom: 0px;
+                }
 
-  .event-list > li > .social {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  display: block;
-  width: 40px;
-  }
+            .event-list > li > .social {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                display: block;
+                width: 40px;
+            }
 
-  .event-list > li > .social > ul {
-  border-left: 1px solid rgb(230, 230, 230);
-  }
+                .event-list > li > .social > ul {
+                    border-left: 1px solid rgb(230, 230, 230);
+                }
 
-  .event-list > li > .social > ul > li {
-  display: block;
-  padding: 0px;
-  }
+                    .event-list > li > .social > ul > li {
+                        display: block;
+                        padding: 0px;
+                    }
 
-  .event-list > li > .social > ul > li > a {
-  display: block;
-  width: 40px;
-  padding: 10px 0px 9px;
-  }
-  }
+                        .event-list > li > .social > ul > li > a {
+                            display: block;
+                            width: 40px;
+                            padding: 10px 0px 9px;
+                        }
+    }
 </style>
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>Event</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Calendar" asp-action="Index" asp-route-area="User">Calendar</a>
-      </li>
-      <li class="active">
-        <strong>Event</strong>
-      </li>
-    </ol>
-  </div>
-
-  <div class="col-sm-8">
-    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-      <div class="buttons-actions">
-        @if (Model.CanEdit && Model.IsRecurrenceParent == false)
-		{
-          <a asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger">Delete Event</a>
-		}
-        else if (Model.CanEdit)
-        {
-		  <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger">Delete Event and Occurrences</a>
-        }
-
-        @if (Model.CanEdit)
-		{
-          <a asp-controller="Calendar" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.CalendarItem.CalendarItemId" id="addPersonButton" title="Edit calendar event" class="btn btn-success">Edit Event</a>
-		}
-      </div>
+    <div class="col-sm-4">
+        <h2>@localizer["CalendarItemHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Calendar" asp-action="Index" asp-route-area="User">@commonLocalizer["CalendarModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["CalendarItemHeader"]</strong>
+            </li>
+        </ol>
     </div>
-  </div>
+
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <div class="buttons-actions">
+                @if (Model.CanEdit && Model.IsRecurrenceParent == false)
+                {
+                    <a asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger">@localizer["DeleteEvent"]</a>
+                }
+                else if (Model.CanEdit)
+                {
+                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger">@localizer["DeleteEventOccurrences"]</a>
+                }
+
+                @if (Model.CanEdit)
+                {
+                    <a asp-controller="Calendar" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.CalendarItem.CalendarItemId" id="addPersonButton" class="btn btn-success">@localizer["EditEvent"]</a>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <div class="row" style="padding-top: 10px;">
-            <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-              <ul class="event-list">
-                <li>
-                  <time datetime="@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortDateString()">
-                    <span class="day">@Model.CalendarItem.Start.TimeConverter(Model.Department).Day</span>
-                    <span class="month">@DateTimeHelpers.MonthToShortString(Model.CalendarItem.Start.TimeConverter(Model.Department).Month)</span>
-                    <span class="year">@Model.CalendarItem.Start.TimeConverter(Model.Department).Year</span>
-                    <span class="time">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString()</span>
-                  </time>
-                  <div class="info">
-                    <h2 class="title">@Model.CalendarItem.Title</h2>
-					<p class="desc">@Html.Raw(Model.CalendarItem.Description)</p>
-                    <p class="desc">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString() - @Model.CalendarItem.End.TimeConverter(Model.Department).ToShortTimeString()</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="list-group">
-                <h3 class="list-group-item-heading">Details</h3>
-                <div class="list-group-item">
-                  <div class="row">
-                    <div class="col-md-6 col-sm-offset-1">
-
-                      <div class="panel panel-info">
-                        <div class="panel-body">
-                          <div class="row text-center">
-                            <table class="table table-bordered table-striped table-hover">
-                              <tbody>
-                                <tr>
-                                  <td>Event</td>
-                                  <td>@Model.CalendarItem.Title</td>
-                                </tr>
-                                <tr>
-                                  <td>Description</td>
-								  <td>@Html.Raw(Model.CalendarItem.Description)</td>
-                                </tr>
-                                <tr>
-                                  <td>Start</td>
-                                  <td>@Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")</td>
-                                </tr>
-                                <tr>
-                                  <td>End</td>
-                                  <td>@Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")</td>
-                                </tr>
-                                <tr>
-                                  <td>Location</td>
-                                  <td>@Model.CalendarItem.Location</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding-top: 10px;">
+                        <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+                            <ul class="event-list">
+                                <li>
+                                    <time datetime="@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortDateString()">
+                                        <span class="day">@Model.CalendarItem.Start.TimeConverter(Model.Department).Day</span>
+                                        <span class="month">@DateTimeHelpers.MonthToShortString(Model.CalendarItem.Start.TimeConverter(Model.Department).Month)</span>
+                                        <span class="year">@Model.CalendarItem.Start.TimeConverter(Model.Department).Year</span>
+                                        <span class="time">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString()</span>
+                                    </time>
+                                    <div class="info">
+                                        <h2 class="title">@Model.CalendarItem.Title</h2>
+                                        <p class="desc">@Html.Raw(Model.CalendarItem.Description)</p>
+                                        <p class="desc">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString() - @Model.CalendarItem.End.TimeConverter(Model.Department).ToShortTimeString()</p>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
-                      </div>
                     </div>
-                    <div class="col-md-3">
-                      <div id="map" name="map" style="position: relative; width: 100%; height: 100%;"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-12">
-              <div class="list-group">
-                <h3 class="list-group-item-heading">Attendees</h3>
-                <div class="list-group-item">
-                  <div class="row">
-                    <div class="col-md-11 col-sm-offset-1">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>
-                              Name
-                            </th>
-                            <th>
-                              Timestamp
-                            </th>
-                            <th>
-                              Type
-                            </th>
-                            <th>
-                              Note
-                            </th>
-                            <th>
-                              Action
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach (var attendee in Model.CalendarItem.Attendees)
-						  {
-                            <tr>
-                              <td>
-                                @(await UserHelper.GetFullNameForUser(attendee.UserId))
-                              </td>
-                              <td>
-                                @attendee.Timestamp.TimeConverterToString(Model.Department)
-                              </td>
-                              <td>
-                                @if (attendee.AttendeeType == 1)
-								{
-                                  <span>RSVP</span> }
-								else if (attendee.AttendeeType == 1)
-								{
-                                  <span>Required</span> }
-								else
-								{
-                                  <span>Optional</span>}
-                              </td>
-                              <td>
-                                @if (!String.IsNullOrWhiteSpace(attendee.Note))
-								{
-                                  <span>@attendee.Note</span> }
-								else
-								{
-                                  <span>No Note</span>}
-                              </td>
-                              <td>
-                                @if (attendee.UserId == ClaimsAuthorizationHelper.GetUserId() && Model.CalendarItem.Start >= DateTime.UtcNow)
-								{
-                                  <a title="Remove me from this event" class="btn btn-xs btn-danger" href="@Url.Action("RemoveFromEvent", "Calendar", new {area = "User", id=attendee.CalendarItemAttendeeId})"><i class="icon-minus"></i> Remove Me</a> }
-								else if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-								{
-                                  <a title="Remove me from this event" class="btn btn-xs btn-danger" href="@Url.Action("RemoveFromEvent", "Calendar", new {area = "User", id=attendee.CalendarItemAttendeeId})"><i class="icon-minus"></i> Remove</a>}
-                              </td>
-
-
-
-                            </tr>  }
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          @if (Model.CalendarItem.SignupType != 0 && !Model.CalendarItem.IsUserAttending(Model.UserId) && Model.CalendarItem.Start >= DateTime.UtcNow)
-		  {
-            <div class="row">
-              <div class="col-md-12">
-                <div class="list-group">
-                  <div class="list-group-item">
                     <div class="row">
-                      <div class="col-md-11 col-sm-offset-1">
-                        @using (Html.BeginForm("Signup", "Calendar", FormMethod.Post, new { area = "User", @class = "form-horizontal" }))
-						{
-                          @Html.HiddenFor(m => m.CalendarItem.CalendarItemId)
+                        <div class="col-md-12">
+                            <div class="list-group">
+                                <h3 class="list-group-item-heading">Details</h3>
+                                <div class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-offset-1">
 
-                          <div class="form-group">
-                            <label class="control-label">
-                              Note
-                            </label>
-                            <div class="controls">
-                              <div class="row">
-                                <div class="col-md-8">
-                                  @Html.TextAreaFor(m => m.Note, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
+                                            <div class="panel panel-info">
+                                                <div class="panel-body">
+                                                    <div class="row text-center">
+                                                        <table class="table table-bordered table-striped table-hover">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>@commonLocalizer["Name"]</td>
+                                                                    <td>@Model.CalendarItem.Title</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>@commonLocalizer["Description"]</td>
+                                                                    <td>@Html.Raw(Model.CalendarItem.Description)</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>@commonLocalizer["Start"]</td>
+                                                                    <td>@Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>@commonLocalizer["End"]</td>
+                                                                    <td>@Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>@commonLocalizer["Location"]</td>
+                                                                    <td>@Model.CalendarItem.Location</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div id="map" name="map" style="position: relative; width: 100%; height: 100%;"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                              </div>
                             </div>
-                          </div>
-                          <div class="form-actions">
-                            <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="Signup (RSVP)" />
-                          </div>
-						}
-                      </div>
+                        </div>
                     </div>
-                  </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="list-group">
+                                <h3 class="list-group-item-heading">Attendees</h3>
+                                <div class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md-11 col-sm-offset-1">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @commonLocalizer["Name"]
+                                                        </th>
+                                                        <th>
+                                                            @commonLocalizer["Timestamp"]
+                                                        </th>
+                                                        <th>
+                                                            @commonLocalizer["Type"]
+                                                        </th>
+                                                        <th>
+                                                            @commonLocalizer["Note"]
+                                                        </th>
+                                                        <th>
+                                                            @commonLocalizer["Action"]
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var attendee in Model.CalendarItem.Attendees)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @(await UserHelper.GetFullNameForUser(attendee.UserId))
+                                                            </td>
+                                                            <td>
+                                                                @attendee.Timestamp.TimeConverterToString(Model.Department)
+                                                            </td>
+                                                            <td>
+                                                                @if (attendee.AttendeeType == 1)
+                                                                {
+                                                                    <span>@localizer["RSVP"]</span>
+                                                                }
+                                                                else if (attendee.AttendeeType == 1)
+                                                                {
+                                                                    <span>@commonLocalizer["Required"]</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>@commonLocalizer["Optional"]</span>
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @if (!String.IsNullOrWhiteSpace(attendee.Note))
+                                                                {
+                                                                    <span>@attendee.Note</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>@localizer["NoNote"]</span>
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @if (attendee.UserId == ClaimsAuthorizationHelper.GetUserId() && Model.CalendarItem.Start >= DateTime.UtcNow)
+                                                                {
+                                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger" href="@Url.Action("RemoveFromEvent", "Calendar", new {area = "User", id=attendee.CalendarItemAttendeeId})">@localizer["RemoveMe"]</a>
+                                                                }
+                                                                else if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                                                {
+                                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger" href="@Url.Action("RemoveFromEvent", "Calendar", new {area = "User", id=attendee.CalendarItemAttendeeId})">@commonLocalizer["Remove"]</a>
+                                                                }
+                                                            </td>
+
+
+
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.CalendarItem.SignupType != 0 && !Model.CalendarItem.IsUserAttending(Model.UserId) && Model.CalendarItem.Start >= DateTime.UtcNow)
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="list-group">
+                                    <div class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-md-11 col-sm-offset-1">
+                                                @using (Html.BeginForm("Signup", "Calendar", FormMethod.Post, new { area = "User", @class = "form-horizontal" }))
+                                                {
+                                                    @Html.HiddenFor(m => m.CalendarItem.CalendarItemId)
+
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            @commonLocalizer["Note"]
+                                                        </label>
+                                                        <div class="controls">
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    @Html.TextAreaFor(m => m.Note, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-actions">
+                                                        <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="@localizer["Signup"]" />
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
-              </div>
             </div>
-		  }
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 @section Scripts
-  {
-  <script type="text/javascript">
-		$(document).ready(function () {
-			var marker = null;
-			var map = null;
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var marker = null;
+            var map = null;
 
-			$.ajax({
-				url: resgrid.absoluteBaseUrl + '/User/Calendar/GetMapDataForItem?calendarItemId=@Model.CalendarItem.CalendarItemId',
-				contentType: 'application/json; charset=utf-8',
-				type: 'GET'
-			}).done(function (result) {
-				var data = result;
-				if (data.wasSuccess === true) {
-					var mapCenter = new google.maps.LatLng(data.centerLat, data.centerLon);
-					var mapOptions = {
-						zoom: 10,
-						center: mapCenter
-					};
-					map = new google.maps.Map(document.getElementById('mapap'), mapOptions);
+            $.ajax({
+                url: resgrid.absoluteBaseUrl + '/User/Calendar/GetMapDataForItem?calendarItemId=@Model.CalendarItem.CalendarItemId',
+                contentType: 'application/json; charset=utf-8',
+                type: 'GET'
+            }).done(function (result) {
+                var data = result;
+                if (data.wasSuccess === true) {
 
-					marker = new google.maps.Marker({
-						position: mapCenter,
-						map: map,
-						title: 'Event Location',
-						animation: google.maps.Animation.DROP,
-						draggable: true,
-						bounds: false
-					});
-				}
-			});
-		});
-  </script>
+                }
+            });
+        });
+    </script>
 }

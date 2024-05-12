@@ -23,5 +23,8 @@ namespace Resgrid.Model.Events
 
 		[ProtoMember(6)]
 		public int Type { get; set; }
+
+		[ProtoMember(7)]
+		public int DepartmentId { get; set; }
 	}
 }

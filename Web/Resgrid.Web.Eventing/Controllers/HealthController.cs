@@ -33,9 +33,8 @@ namespace Resgrid.Web.Eventing.Controllers
 		public async Task<IActionResult> GetCurrent()
 		{
 			var result = new HealthResult();
-			var path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\Resgrid.Web.Eventing.dll";
 
-			result.WebsiteVersion = AssemblyName.GetAssemblyName(path).Version.ToString();
+			result.WebsiteVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
 			result.SiteId = "0";
 			result.CacheOnline = false;//_healthService.IsCacheProviderConnected();
 			result.ServiceBusOnline = false;//_healthService.IsCacheProviderConnected();

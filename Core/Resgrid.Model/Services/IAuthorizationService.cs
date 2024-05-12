@@ -272,5 +272,7 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserCloseCallAsync(string userId, int callId, int departmentId);
 
 		Task<bool> CanUserAddCallDataAsync(string userId, int callId, int departmentId);
+
+		Task<bool> CanUserDeleteDepartmentAsync(string userId, int departmentId);
 	}
 }

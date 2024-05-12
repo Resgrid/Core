@@ -39,9 +39,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				var path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\Resgrid.Web.Services.dll";
-
-				result.Data.ServicesVersion = AssemblyName.GetAssemblyName(path).Version.ToString();
+				result.Data.ServicesVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
 				result.Data.ApiVersion = "v4";
 				result.Data.SiteId = "0";
 				result.Data.CacheOnline = _healthService.IsCacheProviderConnected();

@@ -75,7 +75,6 @@ export class MapComponent implements OnInit {
 
     this.mapProvider.getMapDataAndMarkers().pipe(take(1)).subscribe((data) => {
       this.processMapData(data.Data);
-      this.startSignalR();
     });
 
     if (typeof this.showbuttons === 'undefined') {
@@ -100,6 +99,8 @@ export class MapComponent implements OnInit {
           });
         });
     }
+
+    this.startSignalR();
   }
 
   ngOnChanges(): void {
@@ -298,7 +299,8 @@ export class MapComponent implements OnInit {
               if (
                 (markerInfo.Type == 0 && this.showCalls) ||
                 (markerInfo.Type == 1 && this.showUnits) ||
-                (markerInfo.Type == 2 && this.showStations)
+                (markerInfo.Type == 2 && this.showStations) ||
+                (markerInfo.Type == 3 && this.showPersonnel)
               ) {
                 if (!this.hideLabels) {
                   marker = L.marker(

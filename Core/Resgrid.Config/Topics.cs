@@ -2,12 +2,12 @@
 {
 	public static class Topics
 	{
-		public static string GenericTopic = "resgrid_system";
-		public static string WorkerHeartbeatTopic = "resgrid_workerheartbeat";
-		public static string EventingTopic = "resgrid_events";
+		public static string GenericTopic = "rgsystopic";
+		public static string WorkerHeartbeatTopic = "workerheartbeat";
+		public static string EventingTopic = "eventing";
 
-		public static string StaffingJobBus = "resgrid_workers_staffing";
-		public static string UnitsStatusTopic = "resgrid_units_status";
-		public static string PersonnelStaffingTopic = "resgrid_personnel_staffing";
+		public static string StaffingJobBus = "workers/jobs/staffing";
+		public static string UnitsStatusTopic = "units/status";
+		public static string PersonnelStaffingTopic = "personnel/staffing";
 	}
 }

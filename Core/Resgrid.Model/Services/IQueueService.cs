@@ -69,5 +69,15 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;QueueItem&gt;.</returns>
 		Task<QueueItem> SetQueueItemCompletedAsync(int queueItemId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId);
+
+		Task<QueueItem> EnqueuePendingDeleteDepartmentAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<QueueItem>> GetAllPendingDeleteDepartmentQueueItemsAsync();
+
+		Task<QueueItem> UpdateQueueItem(QueueItem item, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<QueueItem> CancelPendingDepartmentDeletionRequest(int departmentId, string name, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

@@ -5,15 +5,15 @@ namespace Resgrid.Model
 	public static class TimeZones
 	{
 		public static Dictionary<string, string> Zones = new Dictionary<string, string>()
-		                                                 	{
-		                                                 		{"Hawaiian Standard Time", "(GMT-10:00) Hawaii"},
-		                                                 		{"Alaskan Standard Time", "(GMT-09:00) Alaska"},
-		                                                 		{"Pacific Standard Time", "(GMT-08:00) Pacific Time (US, Canada & Tijuana)"},
-		                                                 		{"US Mountain Standard Time", "(GMT-07:00) Arizona"},
-		                                                 		{"Mountain Standard Time", "(GMT-07:00) Mountain Time (US &	Canada)"},
-		                                                 		{"Central Standard Time", "(GMT-06:00) Central Time (US &	Canada)"},
-		                                                 		{"Eastern Standard Time", "(GMT-05:00) Eastern	Time (US & Canada)"},
-		                                                 		{"US Eastern Standard Time", "(GMT-05:00) Indiana (East)"},
+															 {
+																 {"Hawaiian Standard Time", "(GMT-10:00) Hawaii"},
+																 {"Alaskan Standard Time", "(GMT-09:00) Alaska"},
+																 {"Pacific Standard Time", "(GMT-08:00) Pacific Time (US, Canada & Tijuana)"},
+																 {"US Mountain Standard Time", "(GMT-07:00) Arizona"},
+																 {"Mountain Standard Time", "(GMT-07:00) Mountain Time (US &	Canada)"},
+																 {"Central Standard Time", "(GMT-06:00) Central Time (US &	Canada)"},
+																 {"Eastern Standard Time", "(GMT-05:00) Eastern	Time (US & Canada)"},
+																 {"US Eastern Standard Time", "(GMT-05:00) Indiana (East)"},
 																												{"Dateline Standard Time", "(GMT-12:00) International Date Line West"},
 																												{"Samoa Standard Time", "(GMT-11:00) Midway Island & Samoa"},
 																												{"Mountain Standard Time (Mexico)", "(GMT-07:00) Chihuahua, La Paz, Mazatlan"},
@@ -45,8 +45,8 @@ namespace Resgrid.Model
 																												{"Egypt Standard Time", "(GMT+02:00) Cairo"},
 																												{"South Africa Standard Time", "(UTC+02:00) Harare, Pretoria"},
 																												{"FLE Standard Time", "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"},
-																												{"Turkey Standard Time", "(GMT+02:00) Istanbul"},
 																												{"Israel Standard Time", "(GMT+02:00) Jerusalem"},
+																												{"Turkey Standard Time", "(GMT+03:00) Istanbul"},
 																												{"Arabic Standard Time", "(GMT+03:00) Baghdad"},
 																												{"Arab Standard Time", "(UTC+03:00) Kuwait, Riyadh"},
 																												{"E. Europe Standard Time", "(GMT+03:00) Minsk"},
@@ -91,6 +91,6 @@ namespace Resgrid.Model
 																												{"Fiji Standard Time", "(GMT+12:00) Fiji"},
 																												{"Magadan Standard Time", "(GMT+12:00) Magadan"},
 																												{"Tonga Standard Time", "(GMT+13:00) Nuku'alofa"}
-		                                                 	};
+															 };
 	}
 }

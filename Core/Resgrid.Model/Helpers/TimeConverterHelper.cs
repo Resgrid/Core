@@ -15,6 +15,10 @@ namespace Resgrid.Model.Helpers
 			DateTime newTime = timestamp;
 			TimeZoneInfo timeZoneInfo = null;
 
+			// If department is null we gotta just bail
+			if (department == null)
+				return timestamp;
+
 			try
 			{
 				if (!String.IsNullOrEmpty(department.TimeZone))

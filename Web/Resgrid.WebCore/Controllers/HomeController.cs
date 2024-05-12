@@ -20,18 +20,12 @@ namespace Resgrid.Web.Controllers
 
 		public IActionResult Index()
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				return RedirectToAction("LogOn", "Account");
-
-			return View();
+			return RedirectToAction("LogOn", "Account");
 		}
 
 		public IActionResult About()
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				return RedirectToAction("LogOn", "Account");
-
-			return View();
+			return RedirectToAction("LogOn", "Account");
 		}
 
 		public IActionResult Contact()
@@ -51,26 +45,17 @@ namespace Resgrid.Web.Controllers
 
 		public IActionResult Apps()
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				return RedirectToAction("LogOn", "Account");
-
-			return View();
+			return RedirectToAction("LogOn", "Account");
 		}
 
 		public IActionResult Features()
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				return RedirectToAction("LogOn", "Account");
-
-			return View();
+			return RedirectToAction("LogOn", "Account");
 		}
 
 		public IActionResult OpenSource()
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				return RedirectToAction("LogOn", "Account");
-
-			return View();
+			return RedirectToAction("LogOn", "Account");
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]
@@ -116,18 +101,12 @@ namespace Resgrid.Web.Controllers
 
 		public IActionResult Pricing()
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				return RedirectToAction("LogOn", "Account");
-
-			return View();
+			return RedirectToAction("LogOn", "Account");
 		}
 
 		public IActionResult Why()
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-				return RedirectToAction("LogOn", "Account");
-
-			return View();
+			return RedirectToAction("LogOn", "Account");
 		}
 
 	}

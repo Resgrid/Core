@@ -5,8 +5,8 @@
 	/// </summary>
 	public static class VoipConfig
 	{
-		public static int BaseChannelExtensionNumber = 15;
-		public static int BaseChannelExtensionBump = 15;
+		public static int BaseChannelExtensionNumber = 10000;
+		public static int BaseChannelExtensionBump = 1000;
 
 		public static string VoipDomain = "";
 		public static string VoipServerAddress = "";
@@ -21,6 +21,11 @@
 
 		public static string OpenViduUrl = "";
 		public static string OpenViduSecret = "";
+
+		public static string LiveKitServerApiUrl = "";
+		public static string LiveKitServerUrl = "";
+		public static string LiveKitServerApiKey = "";
+		public static string LiveKitServerApiSecret = "";
 	}
 
 	/// <summary>
@@ -29,6 +34,7 @@
 	public enum VoipProviderTypes
 	{
 		Kazoo = 0,
-		OpenVidu = 1
+		OpenVidu = 1,
+		LiveKit = 2
 	}
 }

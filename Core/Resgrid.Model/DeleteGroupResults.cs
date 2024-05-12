@@ -3,6 +3,13 @@
 	public enum DeleteGroupResults
 	{
 		NoFailure,
-		UnAuthroized
+		UnAuthorized
+	}
+
+	public enum DeleteDepartmentResults
+	{
+		NoFailure,
+		UnAuthorized,
+		Failure
 	}
 }

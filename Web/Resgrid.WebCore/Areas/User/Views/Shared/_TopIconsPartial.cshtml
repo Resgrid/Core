@@ -11,7 +11,7 @@
 			<li>
 				<div class="text-center link-block">
 					<a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">
-						<i class="fa fa-envelope"></i> <strong>View Your Message Inbox</strong>
+						<i class="fa fa-envelope"></i> <strong>@commonLocalizer["ViewInbox"]</strong>
 					</a>
 				</div>
 			</li>
@@ -27,7 +27,7 @@
 			<li>
 				<div class="text-center link-block">
 					<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">
-						<strong>See All Calls</strong>
+						<strong>@commonLocalizer["ViewCalls"]</strong>
 						<i class="fa fa-angle-right"></i>
 					</a>
 				</div>

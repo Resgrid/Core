@@ -8,5 +8,12 @@
 @using SelectList = Microsoft.AspNetCore.Mvc.Rendering.SelectList
 @using FormMethod = Microsoft.AspNetCore.Mvc.Rendering.FormMethod
 @using SelectListItem = Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+@using Microsoft.Extensions.Localization
 @addTagHelper *, WebOptimizer.Core
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
+
+@if (Resgrid.Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+{
+    //@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+}

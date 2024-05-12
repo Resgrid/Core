@@ -1,0 +1,468 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BillingUpdateSuccessHeader" xml:space="preserve">
+    <value>Éxito de actualización de facturación</value>
+  </data>
+  <data name="BillingUpdateSuccessInfo" xml:space="preserve">
+    <value>Gracias por actualizar su información de facturación. Su nueva tarjeta no se ha cobrado en este momento, pero se usará cuando la suscripción se renueve en su momento normal.</value>
+  </data>
+  <data name="BuyAddonHeader" xml:space="preserve">
+    <value>Comprar complemento</value>
+  </data>
+  <data name="BuyAddonInfo1" xml:space="preserve">
+    <value>Estás comprando el siguiente complemento</value>
+  </data>
+  <data name="BuyAddonInfo2" xml:space="preserve">
+    <value>Su compra de complementos anteriores se agregará a su suscripción existente y se prorbe por el tiempo restante en su frecuencia de facturación actual. Se cobrará su tarjeta actual en el archivo, asegúrese de que esté actualizado para evitar una interrupción del servicio.</value>
+  </data>
+  <data name="BuyAddonWarning" xml:space="preserve">
+    <value>Advertencia</value>
+  </data>
+  <data name="BuyAddonWarningText" xml:space="preserve">
+    <value>Ya tiene un complemento cancelado de este tipo con el tiempo que aún queda. Para evitar la doble facturación, espere hasta esta vez para agregar este complemento nuevamente. Si no desea esperar, puede agregar ahora y se puede prorratear alguna porción del tiempo restante. Tu tiempo restante termina en</value>
+  </data>
+  <data name="BuyNow" xml:space="preserve">
+    <value>Comprar ahora</value>
+  </data>
+  <data name="BuyNowHeader" xml:space="preserve">
+    <value>Comprar ahora</value>
+  </data>
+  <data name="BuyFollowingHeader" xml:space="preserve">
+    <value>Estás comprando el siguiente plan</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>para</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>año</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>mes</value>
+  </data>
+  <data name="NextPaymentWIllBeOn" xml:space="preserve">
+    <value>Su próximo pago estará en</value>
+  </data>
+  <data name="SwitchingFromYearly" xml:space="preserve">
+    <value>Está cambiando de un plan anual a un plan mensual y retiene el crédito de su plan anual. Una vez que se use ese crédito, se le facturará en un horario mensual normal.</value>
+  </data>
+  <data name="EstimatedTotal" xml:space="preserve">
+    <value>Su total de actualización estimada es</value>
+  </data>
+  <data name="EstimatedTotalWarning" xml:space="preserve">
+    <value>Costo estimado, el costo real puede ser ligeramente diferente.</value>
+  </data>
+  <data name="CreditCardBillingHeader" xml:space="preserve">
+    <value>Dirección de facturación de tarjeta de crédito</value>
+  </data>
+  <data name="BillingStreet" xml:space="preserve">
+    <value>Billing Street Dirección de la tarjeta de crédito</value>
+  </data>
+  <data name="BillingStreetWarning" xml:space="preserve">
+    <value>Debe igualar la dirección de la calle donde se envían los estados de facturación de la tarjeta de crédito</value>
+  </data>
+  <data name="BillingPostalCode" xml:space="preserve">
+    <value>Billing Zip/Código postal</value>
+  </data>
+  <data name="BillingCountry" xml:space="preserve">
+    <value>País de facturación</value>
+  </data>
+  <data name="SSLInfo" xml:space="preserve">
+    <value>La información de pago se asegura con el cifrado SSL. &lt;b&gt; regrid no almacena ninguna información de pago. &lt;/b&gt;</value>
+  </data>
+  <data name="FirstNameCard" xml:space="preserve">
+    <value>Nombre en la tarjeta</value>
+  </data>
+  <data name="LastNameCard" xml:space="preserve">
+    <value>Apellido en la tarjeta</value>
+  </data>
+  <data name="CCNumber" xml:space="preserve">
+    <value>Número de tarjeta de crédito completo</value>
+  </data>
+  <data name="CCVCode" xml:space="preserve">
+    <value>Número CVV/CVC</value>
+  </data>
+  <data name="CCVCodeInfo" xml:space="preserve">
+    <value>Número de 3 o 4 dígitos en la tarjeta</value>
+  </data>
+  <data name="CCVCodeMoreInfo" xml:space="preserve">
+    <value>más información</value>
+  </data>
+  <data name="CCExpiration" xml:space="preserve">
+    <value>Vencimiento de la tarjeta de crédito</value>
+  </data>
+  <data name="CancelSubscriptionHeader" xml:space="preserve">
+    <value>Cancelar suscripción</value>
+  </data>
+  <data name="CancelSubscriptionInfo1" xml:space="preserve">
+    <value>Nos entristece ver que cancele su suscripción. Complete el siguiente formulario para completar su solicitud de cancelación de suscripción. El campo de la razón es opcional, asegúrese de verificar la casilla de confirmación y presione Aceptar en el mensaje de confirmación del navegador cuando aparezca.</value>
+  </data>
+  <data name="CancelSubscriptionInfoData" xml:space="preserve">
+    <value>Su departamento y todos sus datos no serán eliminados, solo se cancelará su renovación de suscripción. Para el tiempo restante en su suscripción, aún tendrá acceso a las características existentes parte de ese plan.</value>
+  </data>
+  <data name="Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="CurrentPlan" xml:space="preserve">
+    <value>Plan actual</value>
+  </data>
+  <data name="BoughtOn" xml:space="preserve">
+    <value>Comprado</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Razón</value>
+  </data>
+  <data name="BackToSubs" xml:space="preserve">
+    <value>Volver a suscripciones</value>
+  </data>
+  <data name="CancelSub" xml:space="preserve">
+    <value>Cancelar suscripción</value>
+  </data>
+  <data name="CancelSubWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto cancelará su suscripción activa. ¿Está seguro?</value>
+  </data>
+  <data name="CancelFailureHeader" xml:space="preserve">
+    <value>Cancelar falla</value>
+  </data>
+  <data name="CancelFailureInfo" xml:space="preserve">
+    <value>No pudimos cancelar su suscripción. Esto puede deberse a que no tiene una suscripción activa (es decir, está en el plan gratuito) o debido a un problema temporal con el procesador de pago. Vuelva a intentarlo en unos minutos. Si sigue obteniendo este problema, contáctenos para ayudarlo a resolverlo.</value>
+  </data>
+  <data name="CancelSuccessHeader" xml:space="preserve">
+    <value>Suscripción cancelada</value>
+  </data>
+  <data name="CancelSuccessInfo" xml:space="preserve">
+    <value>Su suscripción ha sido cancelada. El sistema puede tardar unos minutos en reflejar esto, pero su tarjeta ahora se cargará más. Mantendremos sus datos seguros en caso de que desee regresar o usar el plan de regrid gratuito.</value>
+  </data>
+  <data name="SubscriptionHeader" xml:space="preserve">
+    <value>Plan de suscripción y facturación</value>
+  </data>
+  <data name="ViewPaymentHistory" xml:space="preserve">
+    <value>Ver historial de pago</value>
+  </data>
+  <data name="ChangeBillingInfo" xml:space="preserve">
+    <value>Cambiar información de facturación</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Cancelada</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Activa</value>
+  </data>
+  <data name="PlanExpires" xml:space="preserve">
+    <value>El plan expira</value>
+  </data>
+  <data name="PlanRenews" xml:space="preserve">
+    <value>Renovaciones de plan</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Grupos</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Advertencia</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>Estándar</value>
+  </data>
+  <data name="Premium" xml:space="preserve">
+    <value>De primera calidad</value>
+  </data>
+  <data name="Professional" xml:space="preserve">
+    <value>Profesional</value>
+  </data>
+  <data name="Ultimate" xml:space="preserve">
+    <value>Última</value>
+  </data>
+  <data name="Enterprise" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+  <data name="Unified" xml:space="preserve">
+    <value>Unificada</value>
+  </data>
+  <data name="InboundTexting" xml:space="preserve">
+    <value>Mensajes de texto entrantes</value>
+  </data>
+  <data name="TelephoneAlerting" xml:space="preserve">
+    <value>Alerta telefónica</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Precio</value>
+  </data>
+  <data name="PerYear" xml:space="preserve">
+    <value>por año</value>
+  </data>
+  <data name="PerMonth" xml:space="preserve">
+    <value>por mes</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Cantidad</value>
+  </data>
+  <data name="BuyingFollowingPlan" xml:space="preserve">
+    <value>Estás comprando el siguiente plan</value>
+  </data>
+  <data name="BuyMonthly" xml:space="preserve">
+    <value>Comprar mensualmente</value>
+  </data>
+  <data name="BuyNowContact1" xml:space="preserve">
+    <value>También están disponibles planes más grandes, alojamiento privado, soporte prioritario, soporte de código abierto y servicios de implementación.</value>
+  </data>
+  <data name="BuyNowContact2" xml:space="preserve">
+    <value>para más información.</value>
+  </data>
+  <data name="BuyYearly" xml:space="preserve">
+    <value>Comprar anualmente</value>
+  </data>
+  <data name="ChangePlanBody" xml:space="preserve">
+    <value>Si desea hacer el cambio en su suscripción, presione el botón "Cambiar Plan" a continuación. Nuestro proveedor de pagos calculará la proración del tiempo de su plan actual y determinará el saldo adeudado y cargará su tarjeta en el archivo (si es necesario). Recibirá un correo electrónico con los detalles una vez que se haya procesado el cambio.</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>Contáctenos</value>
+  </data>
+  <data name="Cost" xml:space="preserve">
+    <value>Costo</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Cliente</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Fecha final</value>
+  </data>
+  <data name="Invoice" xml:space="preserve">
+    <value>Factura</value>
+  </data>
+  <data name="InvoiceDate" xml:space="preserve">
+    <value>Fecha de la factura</value>
+  </data>
+  <data name="Method" xml:space="preserve">
+    <value>Método</value>
+  </data>
+  <data name="PaymentCompleteBody" xml:space="preserve">
+    <value>Gracias por su compra. Su pago ahora completa su complemento o actualización del plan debe estar disponible pronto. Es posible que deba iniciar sesión y volver a iniciar sesión para ver los cambios.</value>
+  </data>
+  <data name="PaymentCompleteHeader" xml:space="preserve">
+    <value>Pago completo</value>
+  </data>
+  <data name="PaymentFailedBody" xml:space="preserve">
+    <value>Lo sentimos, pero hubo un problema tratando de procesar su pago. Presione el botón Atrás en su navegador y verifique su información de pago (es decir, código postal/postal, número CCV, vencimiento).</value>
+  </data>
+  <data name="PaymentFailedHeader" xml:space="preserve">
+    <value>Pago fallido</value>
+  </data>
+  <data name="PaymentHistoryHeader" xml:space="preserve">
+    <value>historial de pagos</value>
+  </data>
+  <data name="PaymentPendingBody" xml:space="preserve">
+    <value>Debido al volumen más alto del esperado, su pago se encuentra actualmente en una cola. Puede dejar esta página y utilizar regrid como de costumbre. Una vez que hayamos procesado el pago, su cuenta se actualizará y recibirá un correo electrónico de nosotros. Si no recibe un correo electrónico de nosotros dentro de los 30 minutos, contáctenos en team@resgrid.com con su problema.</value>
+  </data>
+  <data name="PaymentPendingHeader" xml:space="preserve">
+    <value>Pago pendiente</value>
+  </data>
+  <data name="PaymentProcessingBody" xml:space="preserve">
+    <value>Gracias por su compra. Su pago se está procesando actualmente. Espere hasta que termine nuestro procesador de pago y su departamento se actualice.</value>
+  </data>
+  <data name="PaymentProcessingHeader" xml:space="preserve">
+    <value>Procesando pago</value>
+  </data>
+  <data name="PayPal" xml:space="preserve">
+    <value>Paypal</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>Período</value>
+  </data>
+  <data name="Processor" xml:space="preserve">
+    <value>Procesador</value>
+  </data>
+  <data name="PurchaseDate" xml:space="preserve">
+    <value>Fecha de compra</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Fecha de inicio</value>
+  </data>
+  <data name="Stripe" xml:space="preserve">
+    <value>Raya</value>
+  </data>
+  <data name="StripeBillingInfoUpdateSuccessBody" xml:space="preserve">
+    <value>Gracias por actualizar su información de facturación. Su nueva tarjeta no se ha cobrado en este momento, pero se usará cuando la suscripción se renueve en su momento normal.</value>
+  </data>
+  <data name="StripeBillingInfoUpdateSuccessHeader" xml:space="preserve">
+    <value>Éxito de actualización de facturación</value>
+  </data>
+  <data name="StripePaymentProcessingBody" xml:space="preserve">
+    <value>Gracias por su compra. Su pago se está procesando actualmente. Espere hasta que Stripe, nuestro procesador de pagos, los acabados y su departamento se actualizarán.</value>
+  </data>
+  <data name="StripePaymentProcessingHeader" xml:space="preserve">
+    <value>Procesando pago</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="Thanks" xml:space="preserve">
+    <value>¡Gracias!</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Transaction" xml:space="preserve">
+    <value>Transacción</value>
+  </data>
+  <data name="TransactionId" xml:space="preserve">
+    <value>ID de transacción</value>
+  </data>
+  <data name="UnableToPurchaseBody" xml:space="preserve">
+    <value>Gracias por su interés en comprar un plan para el servicio de regrid. Ya tenemos un plan próximo para su departamento y solo permitimos 1 plan futuro por cliente. Si desea comprar varios años, siéntase libre de contactarnos y nos alegraría ayudarlo.</value>
+  </data>
+  <data name="UnableToPurchaseHeader" xml:space="preserve">
+    <value>Incapaz de comprar</value>
+  </data>
+  <data name="UpcomingPlan" xml:space="preserve">
+    <value>Próximo plan</value>
+  </data>
+  <data name="UpdateBillingInfoHeader" xml:space="preserve">
+    <value>Actualizar información de facturación</value>
+  </data>
+  <data name="UpgradePlanHeader" xml:space="preserve">
+    <value>Cambio de plan</value>
+  </data>
+  <data name="ViewInvoice" xml:space="preserve">
+    <value>Mirar la factura</value>
+  </data>
+  <data name="YourCurrentPlan" xml:space="preserve">
+    <value>Actualmente estás en el siguiente plan</value>
+  </data>
+  <data name="BuyPTTAddonInfo1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageYourSubscription" xml:space="preserve">
+    <value>Administre su suscripción</value>
+  </data>
+</root>

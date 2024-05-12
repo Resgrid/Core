@@ -145,6 +145,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<WorkshiftEntitysRepository>().As<IWorkshiftEntitysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkshiftFillsRepository>().As<IWorkshiftFillsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkshiftDaysRepository>().As<IWorkshiftDaysRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallReferencesRepository>().As<ICallReferencesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeleteRepository>().As<IDeleteRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentAudioRepository>().As<IDepartmentAudioRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

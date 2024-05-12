@@ -9,49 +9,49 @@ namespace Resgrid.Providers.Marketing
 	{
 		public async Task<bool> Unsubscribe(string emailAddress)
 		{
-			try
-			{
-				var client = new RestClient(Config.MarketingConfig.MailerlteUrl);
-				var request = new RestRequest("/api/v1/subscribers/unsubscribe/", Method.Post);
-				request.AddObject(new
-				{
-					apiKey = Config.MarketingConfig.MailingApiKey,
-					email = emailAddress
-				});
-				var response = await client.ExecuteAsync(request);
+			//try
+			//{
+			//	var client = new RestClient(Config.MarketingConfig.MailerlteUrl);
+			//	var request = new RestRequest("/api/v1/subscribers/unsubscribe/", Method.Post);
+			//	request.AddObject(new
+			//	{
+			//		apiKey = Config.MarketingConfig.MailingApiKey,
+			//		email = emailAddress
+			//	});
+			//	var response = await client.ExecuteAsync(request);
 
-				return true;
-			}
-			catch { }
+			//	return true;
+			//}
+			//catch { }
 
 			return false;
 		}
 
 		public async Task<bool> SubscribeUserToAdminList(string firstName, string lastName, string emailAddress)
 		{
-			try
-			{
-				var client = new RestClient(Config.MarketingConfig.MailerlteUrl);
-				var request = new RestRequest(string.Format("api/v1/subscribers/{0}/", Config.MarketingConfig.AdminListId), Method.Post);
-				request.AddObject(new
-				{
-					apiKey = Config.MarketingConfig.MailingApiKey,
-					email = emailAddress,
-					name = firstName,
-					fields = new List<dynamic>
-					{
-						new
-						{
-							name = "last_name",
-							value = lastName
-						}
-					}
-				});
-				var response = await client.ExecuteAsync(request);
+			//try
+			//{
+			//	var client = new RestClient(Config.MarketingConfig.MailerlteUrl);
+			//	var request = new RestRequest(string.Format("api/v1/subscribers/{0}/", Config.MarketingConfig.AdminListId), Method.Post);
+			//	request.AddObject(new
+			//	{
+			//		apiKey = Config.MarketingConfig.MailingApiKey,
+			//		email = emailAddress,
+			//		name = firstName,
+			//		fields = new List<dynamic>
+			//		{
+			//			new
+			//			{
+			//				name = "last_name",
+			//				value = lastName
+			//			}
+			//		}
+			//	});
+			//	var response = await client.ExecuteAsync(request);
 
-				return true;
-			}
-			catch { }
+			//	return true;
+			//}
+			//catch { }
 
 			return false;
 		}

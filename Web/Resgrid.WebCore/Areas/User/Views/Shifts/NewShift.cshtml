@@ -41,7 +41,7 @@
     <div class="wrapper wrapper-content">
       <div class="ibox float-e-margins">
         <div class="ibox-content">
-          <form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="NewShift" asp-route-area="User" method="post" id="new_shift">
+          <form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="NewShift" asp-route-area="User" method="post" id="new_shift" name="new_shift">
             <div id="rootwizard">
               <div class="navbar">
                 <div class="navbar-inner">
@@ -184,7 +184,7 @@
                   <li class="previous first" style="display:none;"><a href="#">First</a></li>
                   <li class="previous"><a href="#">Previous</a></li>
                   <li class="next"><a href="#">Next</a></li>
-                  <li class="next finish" style="display:none;"><a href="javascript:;">Finish</a></li>
+                    <li class="next finish" style="display:none;"><a href="#">Finish</a></li>
                 </ul>
               </div>
             </div>
@@ -198,11 +198,11 @@
 
 @section Scripts
 {
-  <script src="~/lib/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-  <script src="~/lib/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-  <script src="~/lib/jquery-ui.multidatespicker/jquery-ui.multidatespicker.js"></script>
+    <script src="~/lib/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="~/lib/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="~/lib/jquery-ui-multidatespicker/jquery-ui.multidatespicker.js"></script>
 
-  <script>
+    <script>
 	$(document).ready(function () {
 	  $('.sl2').select2();
 
@@ -278,6 +278,12 @@
 		  if (!$valid) {
 			return false;
 		  }
+          
+          //var $total = navigation.find('li').length;
+          //var $current = index + 1;
+          //if ($current >= $total) {
+          //    $("form#new_shift").submit();
+          //}
 		}
 	  });
 
@@ -302,7 +308,8 @@
 	  $('#rootwizard .finish').click(function () {
 		var dates = $('#manualScheduleCalendar').multiDatesPicker('getDates');
 		$('#Dates').val(dates);
-		$("form")[0].submit();
+        $("form#new_shift")[0].submit();
+		//$("form")[0].submit();
 	  });
 
 	  $('#manualScheduleCalendar').children().first().css('width', '100%');
@@ -315,5 +322,5 @@
 	  $('#new_shift').bootstrapValidator('addField', newField);
 	}
   </script>
-  <script src="~/js/app/internal/shifts/resgrid.shifts.newshift.js"></script>
+    <script src="~/js/app/internal/shifts/resgrid.shifts.newshift.js"></script>
 }

@@ -1,8 +1,9 @@
 ﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
 @{
-    ViewBag.Title = "Resgrid | Units";
+    ViewBag.Title = "Resgrid | " + @commonLocalizer["UnitsModule"];
 }
 
 <style>
@@ -75,13 +76,13 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Units List</h2>
+        <h2>@commonLocalizer["UnitsModule"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>Units</strong>
+                <strong>@commonLocalizer["UnitsModule"]</strong>
             </li>
         </ol>
     </div>
@@ -90,7 +91,7 @@
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
                 <a title="Add a new unit" class="btn btn-success" asp-controller="Units" asp-action="NewUnit" asp-route-area="User">New Unit</a>
-                <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
+                <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="@localizer["UnitStaffing"]" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">@localizer["UnitStaffing"]</a>
             </div>
         </div>
     }
@@ -98,7 +99,7 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="Unit Staffing" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">Unit Staffing</a>
+                <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="@localizer["UnitStaffing"]" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">@localizer["UnitStaffing"]</a>
             </div>
         </div>
     }
@@ -126,7 +127,7 @@
                         if (Model.Units != null && Model.Units.Any())
                         {
                             @Html.Raw("<div id='unitsTab-1' class='unitTabPannel'>")
-                            @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_0'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@commonLocalizer["Timestamp"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_0'>")
 
                             foreach (var u in Model.Units)
                             {
@@ -155,18 +156,7 @@
                                 }
 
 
-                                @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
-
-                                @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>")
-
-                                @Html.Raw("<td>")
-
-                                @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;")
-
-                                @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-                                {
-                                    @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>")
-                                }
+                                UnitTableButtonTemplate(u, customState, stateTextColor, stateColor, stateText, unitStatus);
 
                                 @Html.Raw("</td>")
                                 @Html.Raw("</tr>")
@@ -176,7 +166,7 @@
                         }
                         else
                         {
-                            @Html.Raw("<div style='text-align:center;'><h3>No Units in Department</h3></div>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnitsInDepartment"]}</h3></div>")
                         }
                     }
 
@@ -187,9 +177,9 @@
                         if (ungroupedUnits2 != null && ungroupedUnits2.Any())
                         {
                             @Html.Raw("<div id='unitsTab0' class='unitTabPannel' style='display: none;'>")
-                            
-                            @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_0'>")
-                            
+
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@commonLocalizer["Timestamp"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_0'>")
+
 
                             if (ungroupedUnits2 != null && ungroupedUnits2.Any())
                             {
@@ -220,33 +210,20 @@
                                     }
 
 
-                                    @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
-                                    
-                                    @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>")
-                                    
-                                    @Html.Raw("<td>")
-                                    
-                                    @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;")
-                                    
-
-                                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-                                    {
-                                        @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>")
-                                        ;
-                                    }
+                                    UnitTableButtonTemplate(u, customState, stateTextColor, stateColor, stateText, unitStatus);
 
                                     @Html.Raw("</td>")
                                     @Html.Raw("</tr>")
-                                    
+
                                 }
                             }
                             @Html.Raw("</tbody></table></div></div>")
-                            
+
                             count2++;
                         }
                         else
                         {
-                            @Html.Raw("<div style='text-align:center;'><h3>No Un-Grouped Units</h3></div>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnGroupedUnits"]}</h3></div>")
                         }
                     }
 
@@ -267,7 +244,7 @@
                             {
                                 @Html.Raw("<div id='unitsTab" + Model.Groups[i].DepartmentGroupId + "' class='unitTabPannel' style='display: none;'>")
 
-                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'></th><th>Name</th><th>Type</th><th>Status</th><th>Timestamp</th><th>Set Status</th><th></th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
+                                @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@commonLocalizer["Timestamp"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
                                 ;
 
                                 if (groupUnits != null && groupUnits.Any())
@@ -299,20 +276,7 @@
                                         }
 
 
-                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department) + "</td>")
-                                        ;
-                                        @Html.Raw($"<td><div class='btn-group' style='position: absolute;' data-id='{u.UnitId}'><a class='btn btn-xs btn-primary dropdown-toggle stateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State <span class='caret'></span></a></div></td>")
-                                        ;
-                                        @Html.Raw("<td>")
-                                        ;
-                                        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>View Events</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>Logs</a>&nbsp;")
-                                        ;
-
-                                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-                                        {
-                                            @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>Edit</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='WARNING: This will permanently delete this unit. Are you sure you want to delete the unit {u.Name}?' rel='nofollow'>Delete</a>")
-                                            ;
-                                        }
+                                        UnitTableButtonTemplate(u, customState, stateTextColor, stateColor, stateText, unitStatus);
 
                                         @Html.Raw("</td>")
                                         @Html.Raw("</tr>")
@@ -325,25 +289,22 @@
                             else
                             {
                                 @Html.Raw("<div id='unitsTab" + Model.Groups[i].DepartmentGroupId + "' class='unitTabPannel' style='display: none;'>")
-                                @Html.Raw("<div style='text-align:center;'><h3>No Units in this Group</h3></div>")
+                                @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnitsInThisGroup"]}</h3></div>")
                                 @Html.Raw("</div>")
                             }
                         }
                     }
 
 
-
-
-
                     <div id="multiSelectUnits" style="display: none;">
 
                         <div class="row">
                             <div class="col-xs-6">
-                                <div class='btn-group' style='position: absolute;'><a class='btn btn-xs btn-primary dropdown-toggle multiStateDropdown' data-toggle='dropdown' data-id='{u.UnitId}' href=''>Set State for Selected Units&nbsp;<span class='caret'></span></a></div>
+                                <button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setSelectedUnitStatusModal' data-id='{u.UnitId}' data-customStateId='{customState}'>@localizer["SetStatusForSelectedUnits"]</button>
                             </div>
                             <div class="col-xs-6">
                                 <div class="alert alert-warning">
-                                    You have selected a unit, only other units with the same custom (or default) states can be selected.
+                                    @localizer["UnitsListStateWarning"]
                                 </div>
                             </div>
                         </div>
@@ -354,36 +315,145 @@
     </div>
 </div>
 
-
-@section Scripts
-    {
-    <script id="state-template" type="text/x-kendo-template">
-        #if(StateId <= 25){#
-        <span class='label #=StateColor#'>#=State#</span>
-        #}else{#
-        <span class='label label-default' style="color:#=TextColor#;background-color:#=StateColor#;">#=State#</span>
-        #}#
-    </script>
-
-    <script id="unitstatus-template" type="text/x-kendo-template">
-        <div class="btn-group" style="position: absolute;" data-id="#=UnitId#">
-          <a class="btn btn-xs btn-primary dropdown-toggle stateDropdown" data-toggle="dropdown" data-id="#=UnitId#" href="" style="top: -14px;">
-            Set State <span class="caret"></span>
-          </a>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setUnitStatusModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">@localizer["SetUnitStatusHeader"]</h4>
+            </div>
+            <input type="hidden" id="setUnitStateUnitId" />
+            <input type="hidden" id="setUnitStateCustomStateId" />
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class=" control-label">
+                        @commonLocalizer["Status"]
+                    </label>
+                    <div class="controls">
+                        <select name="UnitStatusDropdown" id="UnitStatusDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Destination"]
+                    </label>
+                    <div class="controls">
+                        <select name="UnitStatusDestinationDropdown" id="UnitStatusDestinationDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Note"]
+                    </label>
+                    <div class="controls">
+                        <input type="text" style="width: 90%;" name="UnitStatusNote" id="UnitStatusNote" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
+                    @commonLocalizer["Close"]
+                </button>
+                <button id="savingUnitStatusButton" type="button" class="btn btn-primary" name="savingUnitStatusButton">
+                    @commonLocalizer["Save"]
+                </button>
+                <button id="savingUnitStatusButtonLoader" name="savingUnitStatusButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                    <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
+                        <div class="sk-rect1"></div>
+                        <div class="sk-rect2"></div>
+                        <div class="sk-rect3"></div>
+                    </div>
+                </button>
+            </div>
         </div>
-    </script>
+    </div>
+</div>
 
-    <script id="unitcommand-template" type="text/x-kendo-template">
-        <a type="button" href="@Url.Action("ViewEvents", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-primary">View Events</a>
-        <a type="button" href="@Url.Action("ViewLogs", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-info">Logs</a>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setSelectedUnitStatusModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">@localizer["SetStatusForSelectedUnits"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class=" control-label">
+                        @commonLocalizer["Status"]
+                    </label>
+                    <div class="controls">
+                        <select name="SelectedUnitStatusDropdown" id="SelectedUnitStatusDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Destination"]
+                    </label>
+                    <div class="controls">
+                        <select name="SelectedUnitStatusDestinationDropdown" id="SelectedUnitStatusDestinationDropdown"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">
+                        @commonLocalizer["Note"]
+                    </label>
+                    <div class="controls">
+                        <input type="text" style="width: 90%;" name="SelectedUnitStatusNote" id="SelectedUnitStatusNote" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
+                    @commonLocalizer["Close"]
+                </button>
+                <button id="savingSelectedUnitStatusButton" type="button" class="btn btn-primary" name="savingSelectedUnitStatusButton">
+                    @commonLocalizer["Save"]
+                </button>
+                <button id="savingSelectedUnitStatusButtonLoader" name="savingSelectedUnitStatusButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                    <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
+                        <div class="sk-rect1"></div>
+                        <div class="sk-rect2"></div>
+                        <div class="sk-rect3"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    void UnitTableButtonTemplate(Unit u, int customState, string stateTextColor, string stateColor, string stateText, UnitState unitStatus)
+    {
+        var timestamp = DateTime.UtcNow.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
+        if (unitStatus != null)
+        {
+            timestamp = unitStatus.Timestamp.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
+        }
+
+        if (Model.IsUserAdminOrGroupAdmin)
+        {
+            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + timestamp + "</td>")
+            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setUnitStatusModal' data-id='{u.UnitId}' data-customstateid='{customState}'>{@localizer["SetStatus"]}</button></td>")
+        }
+        else
+        {
+            @Html.Raw("<tr><td></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + timestamp + "</td>")
+            @Html.Raw("<td></td>")
+        }
+        
+        @Html.Raw("<td>")
+
+        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>{@localizer["ViewEvents"]}</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>{@localizer["Logs"]}</a>&nbsp;")
 
         @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
         {
-                              <a type="button" href="@Url.Action("EditUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-warning">Edit</a>
-                              <a type="button" href="@Url.Action("DeleteUnit", "Units", new {area = "User"})?unitId=#=UnitId#" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this unit. Are you sure you want to delete the unit #=Name#?" rel="nofollow">Delete</a>
+            @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>{@commonLocalizer["Edit"]}</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='{@localizer["DeleteUnitWarning"]} {u.Name}?' rel='nofollow'>{@commonLocalizer["Delete"]}</a>")
         }
-    </script>
+    }
+}
 
+@section Scripts
+    {
     <script>
         var treeData = @Html.Raw(@Model.TreeData);
     </script>

@@ -15,7 +15,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitInboundEventProvider : IRabbitInboundEventProvider
 	{
-		private ConnectionFactory _factory;
+		//private ConnectionFactory _factory;
 		private IConnection _connection;
 		private IModel _channel;
 
@@ -36,46 +36,24 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private void VerifyAndCreateClients()
 		{
-			// I know....I know.....
 			try
 			{
-				_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				_connection = _factory.CreateConnection();
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
+				_connection = RabbitConnection.CreateConnection();
 
-				if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
+				if (_connection != null)
 				{
-					try
-					{
-						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						_connection = _factory.CreateConnection();
-					}
-					catch (Exception ex2)
-					{
-						Logging.LogException(ex2);
+					_channel = _connection.CreateModel();
 
-
-						if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
-						{
-							try
-							{
-								_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-								_connection = _factory.CreateConnection();
-							}
-							catch (Exception ex3)
-							{
-								Logging.LogException(ex3);
-								throw;
-							}
-						}
+					if (_channel != null)
+					{
+						_channel.ExchangeDeclare(SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 					}
 				}
 			}
-
-			_channel = _connection.CreateModel();
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
 		}
 
 		private async Task StartMonitoring()

@@ -34,7 +34,7 @@ namespace Resgrid.Providers.NumberProvider
 				if (!String.IsNullOrWhiteSpace(profile.GetPhoneNumber()))
 				{
 					var options = new CreateCallOptions(new PhoneNumber(profile.GetPhoneNumber()), new PhoneNumber(number));
-					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiTurl, profile.UserId, call.CallId));
+					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
 					//options.IfMachine = "Continue";
 
@@ -47,7 +47,7 @@ namespace Resgrid.Providers.NumberProvider
 				if (!String.IsNullOrWhiteSpace(profile.GetHomePhoneNumber()))
 				{
 					var options = new CreateCallOptions(new PhoneNumber(profile.GetHomePhoneNumber()), new PhoneNumber(number));
-					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiTurl, profile.UserId, call.CallId));
+					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
 					//options.IfMachine = "Continue";
 

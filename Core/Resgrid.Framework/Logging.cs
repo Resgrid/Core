@@ -25,7 +25,7 @@ namespace Resgrid.Framework
 			{
 				if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Sentry)
 				{
-					string dsn = ExternalErrorConfig.ExternalErrorServiceUrl;
+					string dsn = ExternalErrorConfig.ExternalErrorServiceUrlForApi;
 					if (!String.IsNullOrWhiteSpace(key))
 						dsn = key;
 
@@ -39,6 +39,7 @@ namespace Resgrid.Framework
 												o.Dsn = dsn;
 												o.AttachStacktrace = true;
 												o.SendDefaultPii = true;
+												o.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 												o.Environment = ExternalErrorConfig.Environment;
 												o.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
 											}).CreateLogger();

@@ -37,6 +37,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new EditUnitTypeView();
 			model.UnitType = await _unitsService.GetUnitTypeByIdAsync(unitTypeId);
 
+			if (model.UnitType == null || model.UnitType.DepartmentId != DepartmentId)
+				Unauthorized();
+
 			var states = new List<CustomState>();
 			states.Add(new CustomState
 			{
@@ -101,6 +104,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new EditCallTypeView();
 			model.CallType = await _callsService.GetCallTypeByIdAsync(callTypeId);
+
+			if (model.CallType == null || model.CallType.DepartmentId != DepartmentId)
+				Unauthorized();
 
 			if (model.CallType.MapIconType.HasValue)
 				model.CallTypeIcon = model.CallType.MapIconType.Value;

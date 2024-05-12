@@ -68,8 +68,7 @@ namespace Resgrid.Model.Services
 		/// <param name="sendingUser">The sending user.</param>
 		/// <param name="recipients">The recipients.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SendChat(string chatId, string sendingUserId, string group, string message, UserProfile sendingUser,
-			List<UserProfile> recipients);
+		Task<bool> SendChat(string chatId, int departmentId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients);
 
 		/// <summary>
 		/// Sends the trouble alert asynchronous.

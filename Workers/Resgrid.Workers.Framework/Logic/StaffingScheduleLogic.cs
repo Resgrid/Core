@@ -37,7 +37,7 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 					else if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStaffingReset)
 					{
-						var users = _departmentsService.GetAllUsersForDepartment(item.ScheduledTask.DepartmentId, true);
+						var users = await _departmentsService.GetAllUsersForDepartment(item.ScheduledTask.DepartmentId, true);
 
 						foreach (var user in users)
 						{

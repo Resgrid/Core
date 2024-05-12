@@ -1,166 +1,149 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
-	<PropertyGroup>
-		<Description>Cloud system for First Responders</Description>
-		<VersionPrefix>3.0.0</VersionPrefix>
-		<Authors>Resgrid, LLC.</Authors>
-		<TargetFramework>net6.0</TargetFramework>
-		<AssemblyName>Resgrid.Web.Services</AssemblyName>
-		<RootNamespace>Resgrid.Web.Services</RootNamespace>
-		<UserSecretsId>e5e5edd9-c59d-4c0f-b765-477c9c5350f8</UserSecretsId>
-		<StartupObject>Resgrid.Web.ServicesCore.Program</StartupObject>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileContext>..\..</DockerfileContext>
-		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
-		<Configurations>Debug;Release;Docker</Configurations>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Docker|AnyCPU'">
-		<DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
-		<DefineConstants>DOCKER</DefineConstants>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Content Remove="appsettings.json" />
-		<Content Remove="package-lock.json" />
-		<Content Remove="wwwroot\robots.txt" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Remove="Properties\Resources\defaultProfile.png" />
-		<None Remove="Resources\defaultProfile.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Include="appsettings.json" />
-		<EmbeddedResource Include="Properties\Resources\defaultProfile.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="AspNetCoreRateLimit" Version="4.0.1" />
-		<PackageReference Include="GeoJSON.Net" Version="1.2.19" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
-		<PackageReference Include="Autofac" Version="6.3.0" />
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
-		<PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.1" />
-		<PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
-		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.13" />
-		<PackageReference Include="OpenIddict" Version="3.1.1" />
-		<PackageReference Include="OpenIddict.Core" Version="3.1.1" />
-		<PackageReference Include="OpenIddict.EntityFrameworkCore" Version="3.1.1" />
-		<PackageReference Include="OpenIddict.Server.AspNetCore" Version="3.1.1" />
-		<PackageReference Include="OpenIddict.Validation" Version="3.1.1" />
-		<PackageReference Include="OpenIddict.Validation.AspNetCore" Version="3.1.1" />
-		<PackageReference Include="OpenIddict.Validation.ServerIntegration" Version="3.1.1" />
-		<PackageReference Include="OpenTelemetry" Version="1.2.0-rc1" />
-		<PackageReference Include="OpenTelemetry.Api" Version="1.2.0-rc1" />
-		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.2.0-rc1" />
-		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.2.0-rc1" />
-		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.2.0-rc1" />
-		<PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.2.0-rc1" />
-		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc8" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc8" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc8" />
-		<PackageReference Include="protobuf-net" Version="3.0.101" />
-		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.2.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.2.3" />
-		<PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
-		<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="6.0.0" />
-		<PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
-		<PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.4.3" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1">
-			<PrivateAssets>All</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="RestSharp" Version="107.1.1" />
-		<PackageReference Include="Stripe.net" Version="39.88.0" />
-		<PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
-		<PackageReference Include="Twilio" Version="5.70.0" />
-		<PackageReference Include="Twilio.AspNet.Common" Version="5.68.3" />
-		<PackageReference Include="JWT" Version="8.9.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
-	  <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
-	  <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
-	  <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
-	  <ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
-	  <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
-	  <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="Resources\defaultProfile.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Update="Properties\Resources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Update="Properties\Resources.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-	</ItemGroup>
-
+  <PropertyGroup>
+    <Description>Cloud system for First Responders</Description>
+    <VersionPrefix>3.0.0</VersionPrefix>
+    <Authors>Resgrid, LLC.</Authors>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Resgrid.Web.Services</AssemblyName>
+    <RootNamespace>Resgrid.Web.Services</RootNamespace>
+    <UserSecretsId>e5e5edd9-c59d-4c0f-b765-477c9c5350f8</UserSecretsId>
+    <StartupObject>Resgrid.Web.ServicesCore.Program</StartupObject>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    <Configurations>Debug;Release;Docker</Configurations>
+    <ApplicationInsightsResourceId>/subscriptions/bc1ffca7-bf1a-49f9-88f7-b99be887fe9d/resourceGroups/ResgridUSWest/providers/microsoft.insights/components/resgridinsights</ApplicationInsightsResourceId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Docker|AnyCPU'">
+    <DocumentationFile>Resgrid.Web.Services.xml</DocumentationFile>
+    <DefineConstants>DOCKER</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="appsettings.json" />
+    <Content Remove="package-lock.json" />
+    <Content Remove="wwwroot\robots.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Properties\Resources\defaultProfile.png" />
+    <None Remove="Resources\defaultProfile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="appsettings.json" />
+    <EmbeddedResource Include="Properties\Resources\defaultProfile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
+    <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.1.0" />
+    <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+    <PackageReference Include="OpenIddict" Version="5.3.0" />
+    <PackageReference Include="OpenIddict.Core" Version="5.3.0" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.3.0" />
+    <PackageReference Include="OpenIddict.Server.AspNetCore" Version="5.3.0" />
+    <PackageReference Include="OpenIddict.Validation" Version="5.3.0" />
+    <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="5.3.0" />
+    <PackageReference Include="OpenIddict.Validation.ServerIntegration" Version="5.3.0" />
+    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.7.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
+    <PackageReference Include="protobuf-net" Version="3.2.30" />
+    <PackageReference Include="Sentry" Version="4.2.1" />
+    <PackageReference Include="Sentry.AspNetCore" Version="4.2.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.4.3" />
+    <PackageReference Include="RestSharp" Version="110.2.0" />
+    <PackageReference Include="Stripe.net" Version="43.19.0" />
+    <PackageReference Include="Twilio" Version="7.0.2" />
+    <PackageReference Include="Twilio.AspNet.Common" Version="8.0.2" />
+    <PackageReference Include="JWT" Version="10.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\defaultProfile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

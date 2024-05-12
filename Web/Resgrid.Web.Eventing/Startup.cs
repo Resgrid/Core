@@ -48,6 +48,7 @@ using Microsoft.IdentityModel.Logging;
 using OpenIddict.Validation;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Asn1.Ess;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 namespace Resgrid.Web.Eventing
 {
@@ -78,7 +79,7 @@ namespace Resgrid.Web.Eventing
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrl);
+			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForEventing);
 
 			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
 			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);

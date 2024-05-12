@@ -59,7 +59,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var user = _usersService.GetUserById(locationInput.UserId);
-			
+
 			if (user == null)
 				return BadRequest();
 
@@ -84,33 +84,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (!String.IsNullOrWhiteSpace(locationInput.Latitude) && locationInput.Latitude != "NaN" && !String.IsNullOrWhiteSpace(locationInput.Longitude) && locationInput.Longitude != "NaN")
 				{
-					location.Latitude = decimal.Parse(locationInput.Latitude);
-					location.Longitude = decimal.Parse(locationInput.Longitude);
+					if (decimal.TryParse(locationInput.Latitude, out var lat) && decimal.TryParse(locationInput.Longitude, out var lon))
+					{
+						location.Latitude = lat;
+						location.Longitude = lon;
 
-					if (!String.IsNullOrWhiteSpace(locationInput.Accuracy) && locationInput.Accuracy != "NaN")
-						location.Accuracy = decimal.Parse(locationInput.Accuracy);
+						if (!String.IsNullOrWhiteSpace(locationInput.Accuracy) && locationInput.Accuracy != "NaN" && decimal.TryParse(locationInput.Accuracy, out var acc))
+							location.Accuracy = acc;
 
-					if (!String.IsNullOrWhiteSpace(locationInput.Altitude) && locationInput.Altitude != "NaN")
-						location.Altitude = decimal.Parse(locationInput.Altitude);
+						if (!String.IsNullOrWhiteSpace(locationInput.Altitude) && locationInput.Altitude != "NaN" && decimal.TryParse(locationInput.Altitude, out var alt))
+							location.Altitude = alt;
 
-					if (!String.IsNullOrWhiteSpace(locationInput.AltitudeAccuracy) && locationInput.AltitudeAccuracy != "NaN")
-						location.AltitudeAccuracy = decimal.Parse(locationInput.AltitudeAccuracy);
+						if (!String.IsNullOrWhiteSpace(locationInput.AltitudeAccuracy) && locationInput.AltitudeAccuracy != "NaN" &&
+						    decimal.TryParse(locationInput.AltitudeAccuracy, out var alc))
+							location.AltitudeAccuracy = alc;
 
-					if (!String.IsNullOrWhiteSpace(locationInput.Speed) && locationInput.Speed != "NaN")
-						location.Speed = decimal.Parse(locationInput.Speed);
+						if (!String.IsNullOrWhiteSpace(locationInput.Speed) && locationInput.Speed != "NaN" && decimal.TryParse(locationInput.Speed, out var spd))
+							location.Speed = spd;
 
-					if (!String.IsNullOrWhiteSpace(locationInput.Heading) && locationInput.Heading != "NaN")
-						location.Heading = decimal.Parse(locationInput.Heading);
+						if (!String.IsNullOrWhiteSpace(locationInput.Heading) && locationInput.Heading != "NaN" && decimal.TryParse(locationInput.Heading, out var hdn))
+							location.Heading = hdn;
 
-					await _personnelLocationEventProvider.EnqueuePersonnelLocationEventAsync(location);
+						await _personnelLocationEventProvider.EnqueuePersonnelLocationEventAsync(location);
 
-					result.Id = "";
-					result.PageSize = 0;
-					result.Status = ResponseHelper.Queued;
+						result.Id = "";
+						result.PageSize = 0;
+						result.Status = ResponseHelper.Queued;
 
-					ResponseHelper.PopulateV4ResponseData(result);
+						ResponseHelper.PopulateV4ResponseData(result);
 
-					return CreatedAtAction("GetLatestPersonLocation", new { userId = locationInput.UserId }, result);
+						return CreatedAtAction("GetLatestPersonLocation", new { userId = locationInput.UserId }, result);
+					}
 				}
 			}
 			catch (Exception ex)

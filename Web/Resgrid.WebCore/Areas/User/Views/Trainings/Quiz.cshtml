@@ -31,7 +31,7 @@
 	var questionCount = 0;
 }
 
-<form class="form-horizontal" role="form" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" method="post">
+<form class="form-horizontal" role="form" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" method="post" id="quiz_form" name="quiz_form">
 	@Html.HiddenFor(m => m.Training.TrainingId)
 	<div class="row">
 		<div class="col-xs-12">
@@ -160,7 +160,8 @@
 			});
 
 			$('#rootwizard .finish').click(function () {
-				$("form")[0].submit();
+				//$("form")[0].submit();
+				$("form#quiz_form")[0].submit();
 			});
 		});
 	</script>

@@ -530,6 +530,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.CalendarItem == null)
 				Unauthorized();
 
+			if (model.CalendarItem.DepartmentId != DepartmentId)
+				Unauthorized();
+
 			model.CalendarItem.Description = StringHelpers.SanitizeHtmlInString(model.CalendarItem.Description);
 
 			model.UserId = UserId;

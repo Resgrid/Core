@@ -64,7 +64,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false);
 
 			if (call.Attachments != null && call.Attachments.Any())
 			{

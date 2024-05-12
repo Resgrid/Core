@@ -1,0 +1,36 @@
+meta {
+  name: CreateCall
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_API_URL}}/Calls/SaveCall
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+      "Priority": "1",
+      "Name": "Jane Smith",
+      "Nature": "This is the nature of my call",
+      "Note": "These are the notes of the call",
+      "Address": "123 Main St., Wilmington, OH",
+      "Geolocation": "",
+      "Type": "",
+      "What3Words": "",
+      "DispatchList": "U:5733",
+      "ContactName": "null",
+      "ContactInfo": "null",
+      "ExternalId": "null",
+      "IncidentId": "null",
+      "ReferenceId": "null",
+      "DispatchOn": "2024-03-07T02:32:53.842Z",
+      "CallFormData": "null" 
+  }
+}

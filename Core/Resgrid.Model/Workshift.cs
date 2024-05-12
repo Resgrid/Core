@@ -48,6 +48,10 @@ namespace Resgrid.Model
 
 		public string AddedById { get; set; }
 
+		public DateTime? DeletedOn { get; set; }
+
+		public string DeletedById { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]public object IdValue
 		{

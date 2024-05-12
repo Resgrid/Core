@@ -28,6 +28,23 @@ namespace Resgrid.Providers.NumberProvider
 
 		public async Task<bool> SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false)
 		{
+			var wasTwillioSuccessful = await SendTextMessageViaTwillio(number, message, departmentNumber);
+
+			if (!wasTwillioSuccessful && isCall)
+			{
+				return await SendTextMessageViaSignalWire(number, message, departmentNumber);
+			}
+
+			return wasTwillioSuccessful;
+
+			/* I'm leaving the abomination below as a comment just in case I need to quickly reference the code block for any missing
+			 * edge cases at 1AM Dealing with a production issue. The below is the result of trying to give as much functionality
+			 * to the free and low paying tiers as possible by lowering Resgrid's costs. But the Greedflation of the 2020's has
+			 * killed my ability to stem the tide anymore. Signalwire will still be used but now only as a backup for calls only.
+			 * Free tiers don't do SMS anymore at all and Standard and Permium tiers no longer can use Message based SMS. -SJ 6-20-2023.
+			 */
+
+			/*
 			if (carrier == MobileCarriers.Telstra)
 			{
 				return await SendTextMessageViaNexmo(number, message, departmentNumber);
@@ -99,6 +116,7 @@ namespace Resgrid.Providers.NumberProvider
 					return await SendTextMessageViaSignalWire(number, message, departmentNumber);
 				}
 			}
+			*/
 		}
 
 		private async Task<bool> SendTextMessageViaNexmo(string number, string message, string departmentNumber)
@@ -126,41 +144,19 @@ namespace Resgrid.Providers.NumberProvider
 			MessageResource messageResource;
 			try
 			{
-				if (String.IsNullOrWhiteSpace(departmentNumber) || NumberHelper.IsNexmoNumber(departmentNumber))
-				{
-					//textMessage = twilio.SendMessage(Settings.Default.TwilioResgridNumber, number, message);
+				messageResource = await MessageResource.CreateAsync(
+					from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
+					to: new PhoneNumber(number),
+					body: message);
 
-					messageResource = await MessageResource.CreateAsync(
-						from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
-						to: new PhoneNumber(number),
-						body: message);
-
-					if (messageResource != null)
-						return true;
-					else
-						return false;
-				}
+				if (messageResource != null)
+					return true;
 				else
-				{
-					//textMessage = twilio.SendMessage(departmentNumber, number, message);
-
-					//messageResource = MessageResource.Create(
-					//	from: new PhoneNumber(departmentNumber),
-					//	to: new PhoneNumber(number),
-					//	body: message);
-					messageResource = await MessageResource.CreateAsync(
-						from: new PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber),
-						to: new PhoneNumber(number),
-						body: message);
-
-					if (messageResource != null)
-						return true;
-					else
-						return false;
-				}
+					return false;
 			}
 			catch (Exception ex)
 			{
+				Framework.Logging.LogException(ex);
 				return false;
 			}
 
@@ -170,8 +166,11 @@ namespace Resgrid.Providers.NumberProvider
 		{
 			try
 			{
-				var client = new RestClient(Config.NumberProviderConfig.SignalWireApiUrl);
-				client.Authenticator = new HttpBasicAuthenticator(Config.NumberProviderConfig.SignalWireAccountSid, Config.NumberProviderConfig.SignalWireApiKey);
+				var options = new RestClientOptions(Config.NumberProviderConfig.SignalWireApiUrl)
+				{
+					Authenticator = new HttpBasicAuthenticator(Config.NumberProviderConfig.SignalWireAccountSid, Config.NumberProviderConfig.SignalWireApiKey)
+				};
+				var client = new RestClient(options);
 				var request = new RestRequest(GenerateSendTextMessageUrlForSignalWire(), Method.Post);
 
 				if (!number.StartsWith("+"))
@@ -241,19 +240,27 @@ namespace Resgrid.Providers.NumberProvider
 		{
 			var sendingPhoneNumber = Config.NumberProviderConfig.SignalWireResgridNumber;
 
-			try
-			{
-				var zone = GetZoneForAreaCode(number);
-				var possibleNumbers = Config.NumberProviderConfig.SignalWireZones[zone];
-				var sendingNumber = possibleNumbers.Random();
+			/* 
+			 * Logic below was to work around some issues sending messages to numbers via
+			 * Signalwire, it looks like they would 'spam' block or rate limit if all sent
+			 * from one number. So added regions and message would be sent to users from a
+			 * Region their number is located in, also helped them get stuff from a local'ish
+			 * number. But it makes sense to just migrate this to toll-free numbers now. -SJ
+			 * 
+			 */
+			//try
+			//{
+			//	var zone = GetZoneForAreaCode(number);
+			//	var possibleNumbers = Config.NumberProviderConfig.SignalWireZones[zone];
+			//	var sendingNumber = possibleNumbers.Random();
 
-				if (!String.IsNullOrWhiteSpace(sendingNumber))
-					sendingPhoneNumber = sendingNumber;
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-			}
+			//	if (!String.IsNullOrWhiteSpace(sendingNumber))
+			//		sendingPhoneNumber = sendingNumber;
+			//}
+			//catch (Exception ex)
+			//{
+			//	Logging.LogException(ex);
+			//}
 
 			return sendingPhoneNumber;
 		}

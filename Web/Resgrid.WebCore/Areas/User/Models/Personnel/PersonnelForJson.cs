@@ -28,6 +28,8 @@ namespace Resgrid.Web.Areas.User.Models.Personnel
 		public string Roles { get; set; }
 		public string LastActivityDate { get; set; }
 		public string State { get; set; }
+		public int StatusId { get; set; }
+		public int StaffingId { get; set; }
 		public string UserId { get; set; }
 		public bool CanRemoveUser { get; set; }
 		public bool CanEditUser { get; set; }

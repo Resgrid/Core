@@ -1,51 +1,52 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Messages.MessagesOutboxModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> localizer
 @{
-  ViewBag.Title = "Resgrid | Messages Inbox";
-  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    ViewBag.Title = "Resgrid | " + @localizer["MessageOutboxHeader"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
 
 <div class="wrapper wrapper-content">
-  <div class="row">
-    <div class="col-lg-3">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content mailbox-content">
-          <div class="file-manager">
-            <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">Compose Message</a>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content mailbox-content">
+                    <div class="file-manager">
+                        <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">@localizer["ComposeMessageHeader"]</a>
 
-            <div class="space-25"></div>
-            <h5>Folders</h5>
-            <ul class="folder-list m-b-md" style="padding: 0">
-              <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> Inbox</a></li>
-              <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> Sent Messages</a></li>
-            </ul>
-            <div class="clearfix"></div>
-          </div>
+                        <div class="space-25"></div>
+                        <h5>@localizer["FoldersHeader"]</h5>
+                        <ul class="folder-list m-b-md" style="padding: 0">
+                            <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> @localizer["Inbox"]</a></li>
+                            <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> @localizer["SentMessages"]</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-lg-9 animated fadeInRight">
-      <div class="mail-box-header">
-        <div class="pull-right tooltip-demo">
-          <a title="Delete selected messages" class="btn btn-danger  btn-sm" onclick="resgrid.message.outbox.deleteMessages()">Delete Selected</a>
+        <div class="col-lg-9 animated fadeInRight">
+            <div class="mail-box-header">
+                <div class="pull-right tooltip-demo">
+                    <a title="Delete selected messages" class="btn btn-danger  btn-sm" onclick="resgrid.message.outbox.deleteMessages()">@localizer["DeleteSelected"]</a>
+                </div>
+                <h2>
+                    @localizer["OutboxHeader"]
+                </h2>
+            </div>
+            <div class="mail-box">
+                <div id="outboxMailList"></div>
+            </div>
         </div>
-        <h2>
-          Outbox
-        </h2>
-      </div>
-      <div class="mail-box">
-        <div id="outboxMailList"></div>
-      </div>
     </div>
-  </div>
 </div>
 
 @section Scripts
-  {
-  <script id="outboxCommand-template" type="text/x-kendo-template">
-    <a href="@Url.Action("ViewMessage", "Messages", new { area = "User"})?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> View</a>
-    <a href="@Url.Action("DeleteOutboxMessage", "Messages", new {area = "User"})?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="WARNING: This will permanently delete this message. Are you sure you want to delete the message #=Subject#?" rel="nofollow">Delete</a>
-  </script>
+    {
+    <script id="outboxCommand-template" type="text/x-kendo-template">
+        <a href="@Url.Action("ViewMessage", "Messages", new { area = "User"})?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> @commonLocalizer["View"]</a>
+        <a href="@Url.Action("DeleteOutboxMessage", "Messages", new {area = "User"})?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="@localizer["DeleteMessageWarning"] #=Subject#?" rel="nofollow">@commonLocalizer["Delete"]</a>
+    </script>
 
-  <script src="~/js/app/internal/messages/resgrid.messages.outbox.js" type="text/javascript"></script>
+    <script src="~/js/app/internal/messages/resgrid.messages.outbox.js" type="text/javascript"></script>
 }

@@ -42,9 +42,8 @@ namespace Resgrid.Web.Services.Controllers.v3
 		public async Task<HealthResult> GetCurrent()
 		{
 			var result = new HealthResult();
-			var path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\Resgrid.Web.Services.dll";
 
-			result.ServicesVersion = AssemblyName.GetAssemblyName(path).Version.ToString();
+			result.ServicesVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
 			result.ApiVersion = "v3";
 			result.SiteId = "0";
 			result.CacheOnline = _healthService.IsCacheProviderConnected();

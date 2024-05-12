@@ -782,7 +782,7 @@ namespace Resgrid.Services
 			if (call == null || call.DepartmentId != departmentId)
 				return false;
 
-			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false, false);
 
 			if (group != null)
 			{
@@ -821,7 +821,7 @@ namespace Resgrid.Services
 			if (call == null || call.DepartmentId != departmentId)
 				return false;
 
-			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false, false);
 
 			if (group != null)
 			{
@@ -860,7 +860,7 @@ namespace Resgrid.Services
 			if (call == null || call.DepartmentId != departmentId)
 				return false;
 
-			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, false, true, false, false, false, false);
 
 			if (group != null)
 			{
@@ -871,6 +871,19 @@ namespace Resgrid.Services
 			}
 
 			return _permissionsService.IsUserAllowed(permission, departmentId, callGroupId, userGroupId, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserDeleteDepartmentAsync(string userId, int departmentId)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return false;
+
+			if (department.ManagingUserId != userId)
+				return false;
+
+			return true;
 		}
 	}
 }

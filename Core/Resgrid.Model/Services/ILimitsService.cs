@@ -100,5 +100,9 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> CanDepartmentCreateOrdersAsync(int departmentId);
+
+		Task<DepartmentLimits> GetLimitsForEntityPlanWithFallbackAsync(int departmentId, bool bypassCache = false);
+
+		Task<bool> InvalidateDepartmentsEntityLimitsCache(int departmentId);
 	}
 }

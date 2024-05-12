@@ -9,7 +9,7 @@
 <p align="center">
   Complete and open source computer aided dispatch, management and logistics for first responders, disaster response, emergency management and companies
   <br>
-  <a href="https://resgrid-core.readthedocs.io/en/latest/"><strong>View Resgrid docs</strong></a>
+  <a href="https://docs.resgrid.com/"><strong>View Resgrid docs</strong></a>
   <br>
   <br>
   <a href="https://github.com/Resgrid/Core/issues/new?template=bug.md">Report bug</a>
@@ -79,7 +79,6 @@ The Resgrid is web application that allows Dispatchers a single UI to create cal
 
 ## Status
 
-[![Build status](https://ci.appveyor.com/api/projects/status/github/resgrid/core?svg=true)](https://ci.appveyor.com/project/ShawnJackson/core)
 [![CodeFactor](https://www.codefactor.io/repository/github/resgrid/core/badge)](https://www.codefactor.io/repository/github/resgrid/core)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 <a href="https://discord.gg/YDs7tHB"><img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" /></a>

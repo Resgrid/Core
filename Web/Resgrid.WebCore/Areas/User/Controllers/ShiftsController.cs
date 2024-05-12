@@ -1055,21 +1055,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var workshift in workshifts)
 				{
-					if (workshift.Days != null && workshift.Days.Any())
+					if (workshift.DeletedOn == null)
 					{
-						foreach (var day in workshift.Days)
+						if (workshift.Days != null && workshift.Days.Any())
 						{
-							var item = new ShiftCalendarItemJson();
-							item.Color = workshift.Color;
-							item.Title = workshift.Name;
-							item.Description = workshift.Name;
-							item.SignupType = 2;
-							item.WorkshiftId = workshift.WorkshiftId;
-							item.WorkshiftDayId = day.WorkshiftDayId;
-							item.Start = day.Day.TimeConverter(department).SetToMidnight();
-							item.End = day.Day.TimeConverter(department).SetToEndOfDay();
+							foreach (var day in workshift.Days)
+							{
+								var item = new ShiftCalendarItemJson();
+								item.Color = workshift.Color;
+								item.Title = workshift.Name;
+								item.Description = workshift.Name;
+								item.SignupType = 2;
+								item.WorkshiftId = workshift.WorkshiftId;
+								item.WorkshiftDayId = day.WorkshiftDayId;
+								item.Start = day.Day.TimeConverter(department).SetToMidnight();
+								item.End = day.Day.TimeConverter(department).SetToEndOfDay();
 
-							calendarItems.Add(item);
+								calendarItems.Add(item);
+							}
 						}
 					}
 				}

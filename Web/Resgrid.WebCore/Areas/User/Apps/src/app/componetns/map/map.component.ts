@@ -308,7 +308,7 @@ export class MapComponent implements OnInit {
                     {
                       icon: L.icon({
                         iconUrl:
-                          '/images/mapping/' + markerInfo.ImagePath + '.png',
+                          '/images/Mapping/' + markerInfo.ImagePath + '.png',
                         iconSize: [32, 37],
                         iconAnchor: [16, 37],
                       }),
@@ -327,7 +327,7 @@ export class MapComponent implements OnInit {
                     {
                       icon: L.icon({
                         iconUrl:
-                          '/images/mapping/' + markerInfo.ImagePath + '.png',
+                          '/images/Mapping/' + markerInfo.ImagePath + '.png',
                         iconSize: [32, 37],
                         iconAnchor: [16, 37],
                       }),

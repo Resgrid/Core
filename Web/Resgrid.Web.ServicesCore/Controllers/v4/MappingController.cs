@@ -258,9 +258,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 						{
 							var type = callTypes.FirstOrDefault(x => x.Type == call.Type);
 
-							if (type != null && type.MapIconType.HasValue)
-								info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
-						}
+						if (type != null && type.MapIconType.HasValue)
+							info.ImagePath = MapIcons.ConvertTypeToName((MapIconTypes)type.MapIconType.Value);
+					}
+						//	if (type != null && type.MapIconType.HasValue)
+						//		info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
+						//}
 
 						if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 						{

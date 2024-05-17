@@ -190,7 +190,7 @@ namespace Resgrid.Web.Controllers
 		[AllowAnonymous]
 		public IActionResult Register(string returnUrl = null)
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
+			if (String.IsNullOrWhiteSpace(SystemBehaviorConfig.BillingApiBaseUrl) || String.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey))
 				return RedirectToAction("LogOn", "Account");
 
 			RegisterViewModel model = new RegisterViewModel();
@@ -208,7 +208,7 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Register(RegisterViewModel model, CancellationToken cancellationToken, string returnUrl = null)
 		{
-			if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
+			if (String.IsNullOrWhiteSpace(SystemBehaviorConfig.BillingApiBaseUrl) || String.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey))
 				return RedirectToAction("LogOn", "Account");
 
 

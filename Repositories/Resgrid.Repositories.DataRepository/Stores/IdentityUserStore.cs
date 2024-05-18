@@ -12,6 +12,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using IdentityRole = Resgrid.Model.Identity.IdentityRole;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Repositories.DataRepository.Stores
 {

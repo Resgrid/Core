@@ -1,5 +1,7 @@
-﻿using Resgrid.Config;
+﻿using Microsoft.Extensions.Options;
+using Resgrid.Config;
 using Sentry;
+using Sentry.Profiling;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -10,6 +12,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using static NodaTime.TimeZones.ZoneEqualityComparer;
 
 namespace Resgrid.Framework
 {
@@ -39,9 +42,18 @@ namespace Resgrid.Framework
 												o.Dsn = dsn;
 												o.AttachStacktrace = true;
 												o.SendDefaultPii = true;
+												o.AutoSessionTracking = true;
 												o.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 												o.Environment = ExternalErrorConfig.Environment;
 												o.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+												o.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+
+												// Requires NuGet package: Sentry.Profiling
+												// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.
+												o.AddIntegration(new ProfilingIntegration(
+													// During startup, wait up to 500ms to profile the app startup code. This could make launching the app a bit slower so comment it out if your prefer profiling to start asynchronously
+													//TimeSpan.FromMilliseconds(500)
+												));
 											}).CreateLogger();
 				}
 				else if (SystemBehaviorConfig.ErrorLoggerType == ErrorLoggerTypes.Elk)

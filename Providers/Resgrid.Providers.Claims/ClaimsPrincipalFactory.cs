@@ -8,6 +8,8 @@ using Microsoft.Extensions.Options;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using IdentityRole = Resgrid.Model.Identity.IdentityRole;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Providers.Claims
 {

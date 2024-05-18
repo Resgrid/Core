@@ -22,6 +22,7 @@
 		public static string ExternalErrorServiceUrlForInternalApi = "";
 		public static string ExternalErrorServiceUrlForInternalWorker = "";
 		public static double SentryPerfSampleRate = 0.4;
+		public static double SentryProfilingSampleRate = 0;
 		#endregion Sentry Settings
 
 		#region Application Insights Settings

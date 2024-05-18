@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Sentry.Profiling;
 
 namespace Resgrid.Web
 {
@@ -41,7 +42,16 @@ namespace Resgrid.Web
 							options.SendDefaultPii = true;
 							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 							options.Environment = ExternalErrorConfig.Environment;
+							options.AutoSessionTracking = true;
 							options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+
+							// Requires NuGet package: Sentry.Profiling
+							// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.
+							options.AddIntegration(new ProfilingIntegration(
+							// During startup, wait up to 500ms to profile the app startup code. This could make launching the app a bit slower so comment it out if your prefer profiling to start asynchronously
+							//TimeSpan.FromMilliseconds(500)
+							));
 
 							options.TracesSampler = samplingContext =>
 							{

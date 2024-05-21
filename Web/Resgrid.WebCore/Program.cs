@@ -29,8 +29,6 @@ namespace Resgrid.Web
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
-					webBuilder.UseStartup<Startup>();
-
 					if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
 					{
 						webBuilder.UseSentry(options =>
@@ -40,6 +38,10 @@ namespace Resgrid.Web
 							options.Dsn = Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite;
 							options.AttachStacktrace = true;
 							options.SendDefaultPii = true;
+
+							if (ExternalErrorConfig.SentryPerfSampleRate > 0)
+								options.EnableTracing = true;
+
 							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 							options.Environment = ExternalErrorConfig.Environment;
 							options.AutoSessionTracking = true;
@@ -69,6 +71,8 @@ namespace Resgrid.Web
 							};
 						});
 					}
+
+					webBuilder.UseStartup<Startup>();
 				});
 	}
 }

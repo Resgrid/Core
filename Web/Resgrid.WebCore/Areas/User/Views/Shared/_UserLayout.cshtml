@@ -34,9 +34,16 @@
     }
     <script src="https://js.stripe.com/v3/"></script>
 
-    @if (Resgrid.Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+    @if (Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate > 0 && !String.IsNullOrWhiteSpace(Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
     {
-        //@Html.Raw(JavaScriptSnippet.FullScript)
+        <script src="https://browser.sentry-cdn.com/7.116.0/bundle.min.js"></script>
+        <script>
+            Sentry.init({
+                dsn: '@Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite',
+                integrations: [new Sentry.Integrations.Breadcrumbs({ console: false })],
+                tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate
+            });
+        </script>
     }
 </head>
 <body>

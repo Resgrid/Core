@@ -482,26 +482,26 @@ namespace Resgrid.Web.ServicesCore
 			//				.AddService("ResgridApi"))
 			//		.AddConsoleExporter();
 			//});
-			services.AddOpenTelemetry()
-				  .ConfigureResource(resource => resource.AddService("ResgridApi"))
-				  .WithTracing(tracing => tracing
-					  .AddAspNetCoreInstrumentation()
-					  .AddConsoleExporter())
-				  .WithMetrics(metrics => metrics
-					  .AddAspNetCoreInstrumentation()
-					  .AddConsoleExporter());
+			//services.AddOpenTelemetry()
+			//	  .ConfigureResource(resource => resource.AddService("ResgridApi"))
+			//	  .WithTracing(tracing => tracing
+			//		  .AddAspNetCoreInstrumentation()
+			//		  .AddConsoleExporter())
+			//	  .WithMetrics(metrics => metrics
+			//		  .AddAspNetCoreInstrumentation()
+			//		  .AddConsoleExporter());
 
-			// For options which can be bound from IConfiguration.
-			services.Configure<AspNetCoreTraceInstrumentationOptions>(this.Configuration.GetSection("AspNetCoreInstrumentation"));
+			//// For options which can be bound from IConfiguration.
+			//services.Configure<AspNetCoreTraceInstrumentationOptions>(this.Configuration.GetSection("AspNetCoreInstrumentation"));
 
-			// For options which can be configured from code only.
-			services.Configure<AspNetCoreTraceInstrumentationOptions>(options =>
-			{
-				options.Filter = (req) =>
-				{
-					return req.Request.Host != null;
-				};
-			});
+			//// For options which can be configured from code only.
+			//services.Configure<AspNetCoreTraceInstrumentationOptions>(options =>
+			//{
+			//	options.Filter = (req) =>
+			//	{
+			//		return req.Request.Host != null;
+			//	};
+			//});
 
 
 			services.AddAuthentication("BasicAuthentication")
@@ -522,16 +522,16 @@ namespace Resgrid.Web.ServicesCore
 			//services.AddHostedService<Worker>();
 			this.Services = services;
 
-			if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
-			{
-				services.AddSingleton<ITelemetryInitializer, ApiTelemetryInitializer>();
+			//if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+			//{
+			//	services.AddSingleton<ITelemetryInitializer, ApiTelemetryInitializer>();
 
-				var aiOptions = new ApplicationInsightsServiceOptions();
-				aiOptions.InstrumentationKey = ExternalErrorConfig.ApplicationInsightsInstrumentationKey;
-				aiOptions.ConnectionString = ExternalErrorConfig.ApplicationInsightsConnectionString;
+			//	var aiOptions = new ApplicationInsightsServiceOptions();
+			//	aiOptions.InstrumentationKey = ExternalErrorConfig.ApplicationInsightsInstrumentationKey;
+			//	aiOptions.ConnectionString = ExternalErrorConfig.ApplicationInsightsConnectionString;
 
-				services.AddApplicationInsightsTelemetry(aiOptions);
-			}
+			//	services.AddApplicationInsightsTelemetry(aiOptions);
+			//}
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)

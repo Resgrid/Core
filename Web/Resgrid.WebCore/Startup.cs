@@ -402,15 +402,15 @@ namespace Resgrid.Web
 
 			this.Services = services;
 
-			if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
-			{
-				services.AddSingleton<ITelemetryInitializer, WebTelemetryInitializer>();
+			//if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)
+			//{
+			//	services.AddSingleton<ITelemetryInitializer, WebTelemetryInitializer>();
 
-				var aiOptions = new ApplicationInsightsServiceOptions();
-				aiOptions.InstrumentationKey = ExternalErrorConfig.ApplicationInsightsInstrumentationKey;
-				aiOptions.ConnectionString = ExternalErrorConfig.ApplicationInsightsConnectionString;
-				services.AddApplicationInsightsTelemetry(aiOptions);
-			}
+			//	var aiOptions = new ApplicationInsightsServiceOptions();
+			//	aiOptions.InstrumentationKey = ExternalErrorConfig.ApplicationInsightsInstrumentationKey;
+			//	aiOptions.ConnectionString = ExternalErrorConfig.ApplicationInsightsConnectionString;
+			//	services.AddApplicationInsightsTelemetry(aiOptions);
+			//}
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)

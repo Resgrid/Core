@@ -5,17 +5,25 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Template\Call.html" />
+    <None Remove="Template\Cancelled.html" />
+    <None Remove="Template\ChargeFailed.html" />
+    <None Remove="Template\DepartmentLinkCreated.html" />
     <None Remove="Template\Invitation.html" />
     <None Remove="Template\Message.html" />
     <None Remove="Template\PasswordReset.html" />
+    <None Remove="Template\Receipt.html" />
     <None Remove="Template\ReportDelivery.html" />
     <None Remove="Template\TroubleAlert.html" />
     <None Remove="Template\Welcome.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Template\Call.html" />
+    <EmbeddedResource Include="Template\Cancelled.html" />
+    <EmbeddedResource Include="Template\ChargeFailed.html" />
     <EmbeddedResource Include="Template\DeleteDepartment.html" />
+    <EmbeddedResource Include="Template\DepartmentLinkCreated.html" />
     <EmbeddedResource Include="Template\Invitation.html" />
+    <EmbeddedResource Include="Template\Receipt.html" />
     <EmbeddedResource Include="Template\ReportDelivery.html" />
     <EmbeddedResource Include="Template\Message.html" />
     <EmbeddedResource Include="Template\PasswordReset.html" />

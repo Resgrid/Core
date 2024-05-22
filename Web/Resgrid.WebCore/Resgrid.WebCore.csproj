@@ -110,6 +110,25 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Areas\User\Views\Subscription\BillingInfoUpdateSuccess.cshtml" />
+    <None Include="Areas\User\Views\Subscription\BuyAddon.cshtml" />
+    <None Include="Areas\User\Views\Subscription\BuyNow.cshtml" />
+    <None Include="Areas\User\Views\Subscription\Cancel.cshtml" />
+    <None Include="Areas\User\Views\Subscription\CancelFailure.cshtml" />
+    <None Include="Areas\User\Views\Subscription\CancelSuccess.cshtml" />
+    <None Include="Areas\User\Views\Subscription\Index.cshtml" />
+    <None Include="Areas\User\Views\Subscription\ManagePTTAddon.cshtml" />
+    <None Include="Areas\User\Views\Subscription\PaymentComplete.cshtml" />
+    <None Include="Areas\User\Views\Subscription\PaymentFailed.cshtml" />
+    <None Include="Areas\User\Views\Subscription\PaymentHistory.cshtml" />
+    <None Include="Areas\User\Views\Subscription\PaymentPending.cshtml" />
+    <None Include="Areas\User\Views\Subscription\Processing.cshtml" />
+    <None Include="Areas\User\Views\Subscription\StripeBillingInfoUpdateSuccess.cshtml" />
+    <None Include="Areas\User\Views\Subscription\StripeProcessing.cshtml" />
+    <None Include="Areas\User\Views\Subscription\UnableToPurchase.cshtml" />
+    <None Include="Areas\User\Views\Subscription\UpdateBillingInfo.cshtml" />
+    <None Include="Areas\User\Views\Subscription\Upgrade.cshtml" />
+    <None Include="Areas\User\Views\Subscription\ViewInvoice.cshtml" />
     <None Include="wwwroot\lib\jquery-idletimer\jquery-idletimer.sln" />
   </ItemGroup>
   <ItemGroup>

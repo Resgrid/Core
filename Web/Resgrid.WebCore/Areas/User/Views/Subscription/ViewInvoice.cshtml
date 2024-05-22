@@ -1,0 +1,201 @@
+﻿@using Resgrid.Framework
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Subscription.ViewInvoiceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Resgrid Invoice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Resgrid Invoice">
+    <meta name="author" content="Resgrid">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          crossorigin="anonymous"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="hidden"
+          asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+    <style>
+        .invoice-head td {
+            padding: 0 8px;
+        }
+
+        .container {
+            padding-top: 30px;
+        }
+
+        .invoice-body {
+            background-color: transparent;
+        }
+
+        .invoice-thank {
+            margin-top: 60px;
+            padding: 5px;
+        }
+
+        address {
+            margin-top: 15px;
+        }
+
+        .invoicewell {
+            min-height: 20px;
+            padding: 19px;
+            margin-bottom: 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+        }
+
+        @@media print {
+            a {
+                font-weight: bolder;
+                text-decoration: none;
+            }
+
+                a[href^=http]:after {
+                    content: "";
+                }
+
+                a[href^=tel]:after {
+                    content: "";
+                }
+
+                a[href^=mailto]:after {
+                    content: "";
+                }
+
+                a[href^="#"]:after {
+                    content: "";
+                }
+        }
+    </style>
+
+    <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-4">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="logo">
+                <address>
+                    <strong>Resgrid, LLC.</strong><br>
+                    1802 North Carson Street<br>
+                    Suite 157<br>
+                    Carson City, NV 89701<br>
+                </address>
+            </div>
+            <div class="col-xs-3">
+                &nbsp;
+            </div>
+            <div class="col-xs-5 invoicewell">
+                <table class="invoice-head">
+                    <tbody>
+                        <tr>
+                            <td class="pull-right"><strong>@localizer["Invoice"] #</strong></td>
+                            <td>@Model.Payment.PaymentId</td>
+                        </tr>
+                        <tr>
+                            <td class="pull-right"><strong>@localizer["Processor"]</strong></td>
+                            <td>@(((PaymentMethods)Model.Payment.Method).ToString())</td>
+                        </tr>
+
+                        @if (Model.Charge != null)
+                        {
+                            <tr>
+                                <td class="pull-right"><strong>@localizer["Customer"] #</strong></td>
+                                <td>@Model.Charge.CustomerId</td>
+                            </tr>
+                            <tr>
+                                <td class="pull-right"><strong>@localizer["Transaction"] #</strong></td>
+                                <td>@Model.Charge.Id</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td class="pull-right"><strong>@localizer["Department"] #</strong></td>
+                            <td>@Model.Payment.DepartmentId</td>
+                        </tr>
+                        <tr>
+                            <td class="pull-right"><strong>@localizer["InvoiceDate"]</strong></td>
+                            <td>@Model.Payment.PurchaseOn.ToString("d")</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>@localizer["Invoice"]</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>@localizer["Customer"]: @Model.Payment.Department.Name</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 well invoice-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@localizer["Description"]</th>
+                            <th>@localizer["Period"]</th>
+                            <th>@localizer["Amount"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model.Payment.Description</td>
+                            <td>@Model.Payment.EffectiveOn.ToString("d") to @Model.Payment.EndingOn.ToString("d")</td>
+                            <td>@Model.Payment.Amount.ToString("C", Cultures.UnitedStates)</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td><strong>@localizer["Total"]</strong></td>
+                            <td><strong>@Model.Payment.Amount.ToString("C", Cultures.UnitedStates)</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+                &nbsp;
+            </div>
+            <div class="col-xs-6 well invoice-thank">
+                <h5 style="text-align: center;">@localizer["Thanks"]</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-2">
+                &nbsp;
+            </div>
+            <div class="col-xs-3">
+                <strong>Phone:</strong> <a href="tel:1-888-570-4953">1.888.570.4953</a>
+            </div>
+            <div class="col-xs-3">
+                <strong>Email:</strong> <a href="mailto:team@resgrid.com">team@resgrid.com</a>
+            </div>
+            <div class="col-xs-3">
+                <strong>Website:</strong> <a href="https://resgrid.com">https://resgrid.com</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+</body>
+</html>

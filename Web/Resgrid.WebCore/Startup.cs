@@ -333,7 +333,7 @@ namespace Resgrid.Web
 				// Internal app js bundle
 				pipeline.AddJavaScriptBundle("/js/int-bundle.js", "lib/metisMenu/dist/metisMenu.min.js", "lib/slimScroll/jquery.slimscroll.js", "lib/pace/pace.js",
 					"lib/select2/dist/js/select2.full.js", "clib/kendo/js/kendo.web.min.js", "lib/bootstrap-tour/build/js/bootstrap-tour.min.js", "lib/toastr/toastr.min.js",
-					"clib/markerwithlabel/markerwithlabel.js", "clib/ujs/jquery-ujs.js", "lib/jquery-validate/dist/jquery.validate.min.js", "lib/jqueryui/jquery-ui.min.js",
+					/*"clib/markerwithlabel/markerwithlabel.js",*/ "clib/ujs/jquery-ujs.js", "lib/jquery-validate/dist/jquery.validate.min.js", "lib/jqueryui/jquery-ui.min.js",
 					"lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js", "lib/signalr/dist/browser/signalr.js", "clib/picEdit/js/picedit.min.js",
 					"lib/sweetalert/dist/sweetalert.min.js", "clib/bootstrap-wizard/bootstrap-wizard.min.js", "lib/quill/dist/quill.min.js", "lib/moment/min/moment.min.js",
 					"lib/fullcalendar/dist/fullcalendar.min.js", "lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js",

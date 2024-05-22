@@ -1,0 +1,96 @@
+﻿@using Resgrid.Framework
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Subscription.BuyAddonView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@{
+    ViewBag.Title = "Resgrid | "+ @localizer["BuyAddonHeader"];
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["BuyAddonHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@commonLocalizer["SubAndBilling"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["BuyAddonHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Subscription" asp-action="BuyAddon" asp-route-area="User" method="post" id="payment-form" name="payment-form">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <strong>@localizer["BuyAddonInfo1"]</strong>
+                                <p class="text-info">
+                                    @{
+                                        var addonCost = (Model.PlanAddon.Cost / 2).ToString("C0", Cultures.UnitedStates);
+                                    }
+                                    <strong>@Model.PlanAddon.GetAddonName() for @addonCost<small>/@Model.Frequency</small></strong>
+                                </p>
+
+                                <h4>
+                                    @localizer["BuyAddonInfo2"]
+                                </h4>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.PlanAddonId)
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (Model.CurrentPaymentAddon != null && Model.CurrentPaymentAddon.IsCancelled)
+                                {
+                                    <div class="alert alert-danger alert-block">
+                                        <h4 class="alert alert-heading">@localizer["BuyAddonWarning"]</h4>
+                                        @localizer["BuyAddonWarningText"] @Model.CurrentPaymentAddon.EndingOn.FormatForDepartment(Model.Department, true)
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Subscription" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit" id="submit-button" name="submit-button">@localizer["BuyNow"]</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+<script type="text/javascript">
+
+</script>
+}

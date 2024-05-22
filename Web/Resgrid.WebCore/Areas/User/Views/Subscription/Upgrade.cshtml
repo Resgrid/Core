@@ -1,0 +1,109 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Subscription.BuyNowView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["UpgradePlanHeader"];
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["UpgradePlanHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["SubscriptionHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["UpgradePlanHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Subscription" asp-action="Upgrade" asp-route-area="User" method="post" id="payment-form" name="payment-form">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3>
+                                    <strong>@localizer["BuyingFollowingPlan"]</strong>
+                                </h3>
+                                @if (Model.Plan.Frequency == (int)PlanFrequency.Yearly)
+                                {
+                                    <p class="text-info">
+                                        <strong>@Model.Plan.Name for $@Model.Plan.Cost<small>/@localizer["Year"]</small></strong>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-info">
+                                        <strong>@Model.Plan.Name for $@Model.Plan.Cost<small>/@localizer["Month"]</small></strong>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3>
+                                    <strong>@localizer["YourCurrentPlan"]</strong>
+                                </h3>
+                                @if (Model.Payment.Plan.Frequency == (int)PlanFrequency.Yearly)
+                                {
+                                    <p class="text-info">
+                                        <strong>@Model.Payment.Plan.Name for $@Model.Payment.Plan.Cost<small>/@localizer["Year"]</small></strong>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-info">
+                                        <strong>@Model.Payment.Plan.Name for $@Model.Payment.Plan.Cost<small>/@localizer["Month"]</small></strong>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span>@localizer["ChangePlanBody"]</span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.PlanId)
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Subscription" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit" id="submit-button" name="submit-button">@localizer["UpgradePlanHeader"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+
+}

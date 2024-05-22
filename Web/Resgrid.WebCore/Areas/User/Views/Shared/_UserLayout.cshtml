@@ -32,17 +32,18 @@
     {
         @RenderSection("Styles", required: false)
     }
-    <script src="https://js.stripe.com/v3/"></script>
 
     @if (Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate > 0 && !String.IsNullOrWhiteSpace(Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
     {
         <script src="https://browser.sentry-cdn.com/7.116.0/bundle.min.js"></script>
         <script>
-            Sentry.init({
-                dsn: '@Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite',
-                integrations: [new Sentry.Integrations.Breadcrumbs({ console: false })],
-                tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate
-            });
+            if (Sentry && window["Sentry"]) {
+                Sentry.init({
+                    dsn: '@Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite',
+                    integrations: [new Sentry.Integrations.Breadcrumbs({ console: false })],
+                    tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate
+                        });
+            }
         </script>
     }
 </head>
@@ -82,8 +83,6 @@
             crossorigin="anonymous"
             integrity="sha384-vhJnz1OVIdLktyixHY4Uk3OHEwdQqPppqYR8+5mjsauETgLOcEynD9oPHhhz18Nw">
     </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
 
     <script src="/js/int-bundle.js"></script>
     <script src="~/js/app/resgrid.js" asp-append-version="true"></script>

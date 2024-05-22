@@ -1,0 +1,103 @@
+﻿@model Resgrid.Web.Areas.User.Models.Subscription.CancelView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@{
+		ViewBag.Title = "Resgrid | " + @localizer["CancelSubscriptionHeader"];
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["CancelSubscriptionHeader"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@commonLocalizer["SubAndBilling"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["CancelSubscriptionHeader"]</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Subscription" asp-action="Cancel" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								<p>
+									@localizer["CancelSubscriptionInfo1"]
+								</p>
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						<div class="row" style="padding: 20px;">
+							<div class="col-md-10 col-md-offset-1">
+								<div class="alert alert-info">@localizer["CancelSubscriptionInfoData"]</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+						  <label class="col-sm-2 control-label">@localizer["Plan"]</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-sm-10">
+										<dl>
+										<dt>@localizer["CurrentPlan"]</dt>
+										<dd>@Model.Plan.Name</dd>
+										<dt>@localizer["BoughtOn"]</dt>
+										<dd>@Model.Payment.PurchaseOn</dd>
+										</dl>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@localizer["Confirm"]</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-sm-10">
+										<input type="checkbox" asp-for="Confirm">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+						  <label class="col-sm-2 control-label">@localizer["Reason"]</label>
+							<div class="col-sm-10">
+								<div class="row">
+								  <div class="col-sm-10">
+								    @Html.TextAreaFor(m => m.Reason, new { id = "editor", rows = "10", cols = "30", style = "width:300px;height:150px" })
+								  </div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-primary" asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["BackToSubs"]</a>
+								<input class="btn btn-danger" id="submit_action" name="commit" type="submit" data-confirm="@localizer["CancelSubWarning"]" rel="nofollow" value="@localizer["CancelSub"]" />
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+		
+}

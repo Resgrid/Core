@@ -240,7 +240,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				try
 				{
 					var client = new RestClient("https://api.what3words.com");
-					var request = new RestRequest($"/v3/convert-to-coordinates?key={Config.MappingConfig.What3WordsApiKey}&addr={words}", Method.Get);
+					var request = new RestRequest($"/v3/convert-to-coordinates?key={Config.MappingConfig.What3WordsApiKey}&words={words}", Method.Get);
 
 					var response = await client.ExecuteAsync<W3WResponse>(request);
 
@@ -268,7 +268,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				try
 				{
 					var client = new RestClient("https://api.what3words.com");
-					var request = new RestRequest($"/v3/convert-to-coordinates?key={Config.MappingConfig.What3WordsApiKey}&addr={words}", Method.Get);
+					var request = new RestRequest($"/v3/convert-to-coordinates?key={Config.MappingConfig.What3WordsApiKey}&words={words}", Method.Get);
 
 					var response = await client.ExecuteAsync<W3WResponse>(request);
 
@@ -296,7 +296,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				try
 				{
 					var client = new RestClient("https://api.what3words.com");
-					var request = new RestRequest($"/v3/convert-to-3wa?key={Config.MappingConfig.What3WordsApiKey}&coords={$"{coordinates.Latitude},{coordinates.Longitude}"}", Method.Get);
+					var request = new RestRequest($"/v3/convert-to-3wa?key={Config.MappingConfig.What3WordsApiKey}&coordinates={$"{coordinates.Latitude},{coordinates.Longitude}"}", Method.Get);
 
 					var response = await client.ExecuteAsync<ReverseW3WResponse>(request);
 

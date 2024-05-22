@@ -1,0 +1,52 @@
+﻿@model Resgrid.Web.Areas.User.Models.Subscription.UnableToPurchaseView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["UnableToPurchaseHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["UnableToPurchaseHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["SubscriptionHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["UnableToPurchaseHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+        <div class="wrapper wrapper-content">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    @localizer["UnableToPurchaseHeader"]
+                </div>
+                <div class="panel-body">
+                    <p><strong>@localizer["UnableToPurchaseBody"]</strong></p>
+                    <div class="text-center">
+                        <div class="center" style="vertical-align: top;">
+                            <label><strong>@localizer["CurrentPlan"]: </strong>@Model.CurrentPayment.Plan.Name (@Model.CurrentPayment.EffectiveOn.ToString("d") to @Model.CurrentPayment.EndingOn.ToString("d"))</label>
+
+                            @if (Model.NextPayment != null && Model.NextPayment.Plan != null)
+                            {
+                                <label><strong>@localizer["UpcomingPlan"]: </strong>@Model.NextPayment.Plan.Name (@Model.NextPayment.EffectiveOn.ToString("d") to @Model.NextPayment.EndingOn.ToString("d"))</label>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+
+}

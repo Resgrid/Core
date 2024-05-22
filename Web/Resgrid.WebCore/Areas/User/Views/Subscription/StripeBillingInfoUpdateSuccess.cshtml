@@ -1,0 +1,42 @@
+﻿@model Resgrid.Web.Areas.User.Models.Subscription.PaymentCompleteView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["StripeBillingInfoUpdateSuccessHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["StripeBillingInfoUpdateSuccessHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["SubscriptionHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["StripeBillingInfoUpdateSuccessHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+        <div class="wrapper wrapper-content">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    @localizer["StripeBillingInfoUpdateSuccessHeader"]
+                </div>
+                <div class="panel-body">
+                    <p>@localizer["StripeBillingInfoUpdateSuccessBody"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+
+}

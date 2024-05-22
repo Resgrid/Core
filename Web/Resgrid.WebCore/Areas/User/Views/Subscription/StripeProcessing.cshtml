@@ -1,0 +1,73 @@
+﻿@model Resgrid.Web.Areas.User.Models.Subscription.ProcessingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["StripePaymentProcessingHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["StripePaymentProcessingHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["SubscriptionHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["StripePaymentProcessingHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+        <div class="wrapper wrapper-content">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    @localizer["StripePaymentProcessingHeader"]
+                </div>
+                <div class="panel-body">
+                    <p><strong>@localizer["StripePaymentProcessingBody"]</strong></p>
+                    <div class="text-center">
+                        <div class="sk-spinner sk-spinner-wave">
+                            <div class="sk-rect1"></div>
+                            <div class="sk-rect2"></div>
+                            <div class="sk-rect3"></div>
+                            <div class="sk-rect4"></div>
+                            <div class="sk-rect5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script>
+        var tryCount = 0;
+        setInterval(function () { checkPayment(); }, 5000);
+
+        function checkPayment() {
+
+            if (tryCount <= 10) {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("CheckProcessingStatus", "Subscription", new { Area = "User", planId = Model.PlanId })',
+                    async: false
+                }).success(function (data) {
+                    tryCount++;
+                    if (data === "1") {
+                        window.location.href = '@Url.Action("PaymentComplete", "Subscription", new {Area = "User"})';
+                    }
+                });
+            } else {
+                window.location.href = '@Url.Action("PaymentPending", "Subscription", new { Area = "User" })';
+            }
+
+        }
+    </script>
+}

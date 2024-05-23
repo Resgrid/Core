@@ -98,7 +98,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var allPayments = await _subscriptionsService.GetAllPaymentsForDepartmentAsync(DepartmentId);
-			model.HadStripePaymentIn30Days = allPayments.Any(x => x.EndingOn >= DateTime.UtcNow.AddYears(-2) && x.Method == (int)PaymentMethods.Stripe);
+			if (allPayments != null)
+				model.HadStripePaymentIn30Days = allPayments.Any(x => x.EndingOn >= DateTime.UtcNow.AddYears(-2) && x.Method == (int)PaymentMethods.Stripe);
+			else
+				model.HadStripePaymentIn30Days = false;
 
 			if (model.Payment != null)
 			{

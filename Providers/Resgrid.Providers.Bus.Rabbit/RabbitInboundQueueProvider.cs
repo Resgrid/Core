@@ -287,45 +287,53 @@ namespace Resgrid.Providers.Bus.Rabbit
 					}
 				};
 
-				var paymentEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				paymentEventQueueReceivedConsumer.Received += async (model, ea) =>
+				if (PaymentEventQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var paymentEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					paymentEventQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						CqrsEvent cqrs = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (cqrs != null)
+							CqrsEvent cqrs = null;
+							try
 							{
-								if (PaymentEventQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (cqrs != null)
 								{
-									await PaymentEventQueueReceived.Invoke(cqrs);
-									_channel.BasicAck(ea.DeliveryTag, false);
+									if (PaymentEventQueueReceived != null)
+									{
+										await PaymentEventQueueReceived.Invoke(cqrs);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
 								}
 							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
+									_channel.BasicAck(ea.DeliveryTag, false);
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
+							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
+
+					String paymentEventQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
+							autoAck: false,
+							consumer: paymentEventQueueReceivedConsumer);
+				}
 
 				var auditEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
 				auditEventQueueReceivedConsumer.Received += async (model, ea) =>
@@ -472,11 +480,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 					autoAck: false,
 					consumer: cqrsEventQueueReceivedConsumer);
-
-				String paymentEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
-					autoAck: false,
-					consumer: paymentEventQueueReceivedConsumer);
 
 				String auditEventQueueReceivedConsumerTag = _channel.BasicConsume(
 					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),

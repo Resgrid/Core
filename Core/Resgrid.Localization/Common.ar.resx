@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -256,399 +256,399 @@
     <value>وثائق</value>
   </data>
   <data name="DocumentsModule" xml:space="preserve">
-    <value>Documents</value>
+    <value>وثائق</value>
   </data>
   <data name="Download" xml:space="preserve">
-    <value>Download</value>
+    <value>تنزيل</value>
   </data>
   <data name="End" xml:space="preserve">
-    <value>End</value>
+    <value>نهاية</value>
   </data>
   <data name="EtaColumn" xml:space="preserve">
     <value>Eta</value>
   </data>
   <data name="Event" xml:space="preserve">
-    <value>Event</value>
+    <value>حدث</value>
   </data>
   <data name="Expired" xml:space="preserve">
-    <value>Expired</value>
+    <value>منتهي</value>
   </data>
   <data name="Export" xml:space="preserve">
-    <value>Export</value>
+    <value>تصدير</value>
   </data>
   <data name="Files" xml:space="preserve">
-    <value>Files</value>
+    <value>ملفات</value>
   </data>
   <data name="Forms" xml:space="preserve">
-    <value>Forms</value>
+    <value>نماذج</value>
   </data>
   <data name="Friday" xml:space="preserve">
-    <value>Friday</value>
+    <value>جمعة</value>
   </data>
   <data name="General" xml:space="preserve">
-    <value>General</value>
+    <value>عام</value>
   </data>
   <data name="Groups" xml:space="preserve">
-    <value>Groups</value>
+    <value>مجموعات</value>
   </data>
   <data name="Help" xml:space="preserve">
-    <value>Help</value>
+    <value>مساعدة</value>
   </data>
   <data name="HelpAndSupport" xml:space="preserve">
-    <value>Help &amp; Support</value>
+    <value>دعم ومساعدة</value>
   </data>
   <data name="HomeModule" xml:space="preserve">
     <value>Home</value>
   </data>
   <data name="Hour" xml:space="preserve">
-    <value>Hour</value>
+    <value>ساعة</value>
   </data>
   <data name="Hours" xml:space="preserve">
-    <value>Hours</value>
+    <value>ساعات</value>
   </data>
   <data name="Id" xml:space="preserve">
-    <value>Id</value>
+    <value>رقم هوية</value>
   </data>
   <data name="Images" xml:space="preserve">
-    <value>Images</value>
+    <value>صور</value>
   </data>
   <data name="Info" xml:space="preserve">
-    <value>Info</value>
+    <value>معلومة</value>
   </data>
   <data name="InQuarters" xml:space="preserve">
-    <value>In Quarters</value>
+    <value>في أرباع</value>
   </data>
   <data name="Instructors" xml:space="preserve">
-    <value>Instructors</value>
+    <value>مدربين</value>
   </data>
   <data name="InventoryModule" xml:space="preserve">
-    <value>Inventory</value>
+    <value>مخزون</value>
   </data>
   <data name="KnowledgeBase" xml:space="preserve">
-    <value>Knowledge Base</value>
+    <value>قاعدة معرفة</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>لغة</value>
   </data>
   <data name="Links" xml:space="preserve">
-    <value>Links</value>
+    <value>روابط</value>
   </data>
   <data name="Location" xml:space="preserve">
-    <value>Location</value>
+    <value>موقع</value>
   </data>
   <data name="Logout" xml:space="preserve">
-    <value>Logout</value>
+    <value>تسجيل خروج</value>
   </data>
   <data name="LogsModule" xml:space="preserve">
-    <value>Logs</value>
+    <value>سجلات</value>
   </data>
   <data name="Mailbox" xml:space="preserve">
-    <value>Mailbox</value>
+    <value>صندوق بريد</value>
   </data>
   <data name="Map" xml:space="preserve">
-    <value>Map</value>
+    <value>خريطة</value>
   </data>
   <data name="MappingModule" xml:space="preserve">
-    <value>Mapping</value>
+    <value>تحديد على الخريطة</value>
   </data>
   <data name="Maybe" xml:space="preserve">
-    <value>Maybe</value>
+    <value>ربما</value>
   </data>
   <data name="Minutes" xml:space="preserve">
-    <value>Minutes</value>
+    <value>دقائق</value>
   </data>
   <data name="Monday" xml:space="preserve">
-    <value>Monday</value>
+    <value>اثنين</value>
   </data>
   <data name="Monthly" xml:space="preserve">
-    <value>Monthly</value>
+    <value>شهري</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Name</value>
+    <value>اسم</value>
   </data>
   <data name="NameColumn" xml:space="preserve">
-    <value>Name</value>
+    <value>اسم</value>
   </data>
   <data name="NatureOfCall" xml:space="preserve">
-    <value>Nature of Call</value>
+    <value>طبيعة المكالمة</value>
   </data>
   <data name="Never" xml:space="preserve">
-    <value>Never</value>
+    <value>ابداً</value>
   </data>
   <data name="No" xml:space="preserve">
-    <value>No</value>
+    <value>لا</value>
   </data>
   <data name="None" xml:space="preserve">
-    <value>None</value>
+    <value>لا شيئ</value>
   </data>
   <data name="Note" xml:space="preserve">
-    <value>Note</value>
+    <value>ملاحظة</value>
   </data>
   <data name="Notes" xml:space="preserve">
-    <value>Notes</value>
+    <value>ملاحظات</value>
   </data>
   <data name="NotesModule" xml:space="preserve">
-    <value>Notes</value>
+    <value>ملاحظات</value>
   </data>
   <data name="Notifications" xml:space="preserve">
-    <value>Notifications</value>
+    <value>تنبيهات</value>
   </data>
   <data name="NotResponding" xml:space="preserve">
-    <value>Not Responding</value>
+    <value>لا يستجيب</value>
   </data>
   <data name="Number" xml:space="preserve">
-    <value>Number</value>
+    <value>رقم</value>
   </data>
   <data name="OnScene" xml:space="preserve">
-    <value>On Scene</value>
+    <value>في الموقع</value>
   </data>
   <data name="OnShift" xml:space="preserve">
-    <value>On Shift</value>
+    <value>في الدوام</value>
   </data>
   <data name="Optional" xml:space="preserve">
-    <value>Optional</value>
+    <value>اضافي</value>
   </data>
   <data name="Options" xml:space="preserve">
-    <value>Options</value>
+    <value>اضافات</value>
   </data>
   <data name="Order" xml:space="preserve">
-    <value>Order</value>
+    <value>أمر</value>
   </data>
   <data name="Orders" xml:space="preserve">
-    <value>Orders</value>
+    <value>أوامر</value>
   </data>
   <data name="Personnel" xml:space="preserve">
-    <value>Personnel</value>
+    <value>شخصي</value>
   </data>
   <data name="PersonnelModule" xml:space="preserve">
-    <value>Personnel</value>
+    <value>شخصي</value>
   </data>
   <data name="Preview" xml:space="preserve">
-    <value>Preview</value>
+    <value>معاينة</value>
   </data>
   <data name="Print" xml:space="preserve">
-    <value>Print</value>
+    <value>طباعة</value>
   </data>
   <data name="Priority" xml:space="preserve">
-    <value>Priority</value>
+    <value>أولوية</value>
   </data>
   <data name="Process" xml:space="preserve">
-    <value>Process</value>
+    <value>تقدم</value>
   </data>
   <data name="Profile" xml:space="preserve">
-    <value>Profile</value>
+    <value>بروفايل</value>
   </data>
   <data name="Protocols" xml:space="preserve">
-    <value>Protocols</value>
+    <value>برتوكول</value>
   </data>
   <data name="PushToTalk" xml:space="preserve">
-    <value>Push-To-Talk</value>
+    <value>اضغط-لتتكلم</value>
   </data>
   <data name="Released" xml:space="preserve">
-    <value>Released</value>
+    <value>محرر</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>ازالة</value>
   </data>
   <data name="Repeat" xml:space="preserve">
-    <value>Repeat</value>
+    <value>تكرار</value>
   </data>
   <data name="ReportsModule" xml:space="preserve">
-    <value>Reports</value>
+    <value>تقارير</value>
   </data>
   <data name="Required" xml:space="preserve">
-    <value>Required</value>
+    <value>مطلوب</value>
   </data>
   <data name="Responding" xml:space="preserve">
-    <value>Responding</value>
+    <value>يستجيب</value>
   </data>
   <data name="RespondingTo" xml:space="preserve">
-    <value>Responding to</value>
+    <value>يستجيب الى</value>
   </data>
   <data name="RespondToCall" xml:space="preserve">
-    <value>Respond to a Call</value>
+    <value>يستجيب للمكالمة</value>
   </data>
   <data name="RespondToStation" xml:space="preserve">
-    <value>Respond to a Station</value>
+    <value>يستجيب للمحطة</value>
   </data>
   <data name="Roles" xml:space="preserve">
-    <value>Roles</value>
+    <value>أدوار</value>
   </data>
   <data name="Route" xml:space="preserve">
-    <value>Route</value>
+    <value>اتجاه</value>
   </data>
   <data name="Saturday" xml:space="preserve">
-    <value>Saturday</value>
+    <value>سبت</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Save</value>
+    <value>حفظ</value>
   </data>
   <data name="Saving" xml:space="preserve">
-    <value>Saving</value>
+    <value>جاري الحفظ</value>
   </data>
   <data name="SecurityAndPermissions" xml:space="preserve">
-    <value>Security &amp; Permissions</value>
+    <value>الامن والصلاحيات</value>
   </data>
   <data name="Send" xml:space="preserve">
-    <value>Send</value>
+    <value>ارسال</value>
   </data>
   <data name="ShiftsModule" xml:space="preserve">
-    <value>Shifts</value>
+    <value>ورديات</value>
   </data>
   <data name="Signup" xml:space="preserve">
-    <value>Signup</value>
+    <value>تسجيل جديد</value>
   </data>
   <data name="Size" xml:space="preserve">
-    <value>Size</value>
+    <value>حجم</value>
   </data>
   <data name="StaffingColumn" xml:space="preserve">
-    <value>Staffing</value>
+    <value>توظيف</value>
   </data>
   <data name="StandingBy" xml:space="preserve">
-    <value>Standing By</value>
+    <value>متوقف على</value>
   </data>
   <data name="StandingByStation" xml:space="preserve">
-    <value>Standing By at Station</value>
+    <value>متوقف على المحطة</value>
   </data>
   <data name="Start" xml:space="preserve">
-    <value>Start</value>
+    <value>بداية</value>
   </data>
   <data name="Station" xml:space="preserve">
-    <value>Station</value>
+    <value>محطة</value>
   </data>
   <data name="StationAndGroups" xml:space="preserve">
-    <value>Stations &amp; Groups</value>
+    <value>محطات و مجموعات</value>
   </data>
   <data name="Status" xml:space="preserve">
-    <value>Status</value>
+    <value>حالة</value>
   </data>
   <data name="StatusColumn" xml:space="preserve">
-    <value>Status</value>
+    <value>الحالة</value>
   </data>
   <data name="String1" xml:space="preserve">
-    <value>New Call Form</value>
+    <value>مكالمة من </value>
   </data>
   <data name="SubAndBilling" xml:space="preserve">
-    <value>Subscription &amp; Billing</value>
+    <value>اشتراك و فوترة</value>
   </data>
   <data name="Sunday" xml:space="preserve">
-    <value>Sunday</value>
+    <value>احد</value>
   </data>
   <data name="System" xml:space="preserve">
-    <value>System</value>
+    <value>نظام</value>
   </data>
   <data name="Templates" xml:space="preserve">
-    <value>Templates</value>
+    <value>قوالب</value>
   </data>
   <data name="Text" xml:space="preserve">
-    <value>Text</value>
+    <value>نص</value>
   </data>
   <data name="TextMessaging" xml:space="preserve">
-    <value>Text Messaging</value>
+    <value>مراسلة نصية</value>
   </data>
   <data name="Thursday" xml:space="preserve">
-    <value>Thursday</value>
+    <value>خميس</value>
   </data>
   <data name="Timestamp" xml:space="preserve">
-    <value>Timestamp</value>
+    <value>تاريخ و وقت</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Title</value>
+    <value>الصفة</value>
   </data>
   <data name="Training" xml:space="preserve">
-    <value>Training</value>
+    <value>تدريب</value>
   </data>
   <data name="TrainingCode" xml:space="preserve">
-    <value>Course\Training Code</value>
+    <value>كود الدورة/التدريب</value>
   </data>
   <data name="TrainingOrCourse" xml:space="preserve">
-    <value>Course\Training</value>
+    <value>دورة/تدريب</value>
   </data>
   <data name="TrainingsModule" xml:space="preserve">
-    <value>Trainings</value>
+    <value>تدريبات</value>
   </data>
   <data name="Tuesday" xml:space="preserve">
-    <value>Tuesday</value>
+    <value>ثلاثاء</value>
   </data>
   <data name="Type" xml:space="preserve">
-    <value>Type</value>
+    <value>نوع</value>
   </data>
   <data name="Types" xml:space="preserve">
-    <value>Types</value>
+    <value>انواع</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
-    <value>Unavailable</value>
+    <value>غير متاح</value>
   </data>
   <data name="Unfounded" xml:space="preserve">
-    <value>Unfounded</value>
+    <value>غير موجود</value>
   </data>
   <data name="Units" xml:space="preserve">
-    <value>Units</value>
+    <value>وحدات</value>
   </data>
   <data name="UnitsModule" xml:space="preserve">
-    <value>Units</value>
+    <value>الوحدات</value>
   </data>
   <data name="Unknown" xml:space="preserve">
-    <value>Unknown</value>
+    <value>غير معرف</value>
   </data>
   <data name="Update" xml:space="preserve">
-    <value>Update</value>
+    <value>تحديث</value>
   </data>
   <data name="UpgradePlan" xml:space="preserve">
-    <value>Upgrade Your Plan</value>
+    <value>ترقية خططك</value>
   </data>
   <data name="UploadedBy" xml:space="preserve">
-    <value>Uploaded By</value>
+    <value>حمل بواسطة</value>
   </data>
   <data name="UploadedOn" xml:space="preserve">
-    <value>Uploaded On</value>
+    <value>حمل بتاريخ</value>
   </data>
   <data name="UsersHeader" xml:space="preserve">
-    <value>Users</value>
+    <value>مستخدمون</value>
   </data>
   <data name="Valid" xml:space="preserve">
-    <value>Valid</value>
+    <value>صالح</value>
   </data>
   <data name="Video" xml:space="preserve">
-    <value>Video</value>
+    <value>فيديو</value>
   </data>
   <data name="Videos" xml:space="preserve">
-    <value>Videos</value>
+    <value>فيديوات</value>
   </data>
   <data name="View" xml:space="preserve">
-    <value>View</value>
+    <value>عرض</value>
   </data>
   <data name="ViewCalls" xml:space="preserve">
-    <value>See All Calls</value>
+    <value>تصفح جميع المكالمات</value>
   </data>
   <data name="ViewInbox" xml:space="preserve">
-    <value>View Your Message Inbox</value>
+    <value>عرض بريدك</value>
   </data>
   <data name="Warning" xml:space="preserve">
-    <value>Warning</value>
+    <value>تحذر</value>
   </data>
   <data name="Wednesday" xml:space="preserve">
-    <value>Wednesday</value>
+    <value>اربعاء</value>
   </data>
   <data name="Week" xml:space="preserve">
-    <value>Week</value>
+    <value>اسبوع</value>
   </data>
   <data name="Weekly" xml:space="preserve">
-    <value>Weekly</value>
+    <value>اسبوعي</value>
   </data>
   <data name="Weeks" xml:space="preserve">
-    <value>Weeks</value>
+    <value>اسابيع</value>
   </data>
   <data name="WorkLog" xml:space="preserve">
-    <value>Work Log</value>
+    <value>سجل عمل</value>
   </data>
   <data name="Yearly" xml:space="preserve">
-    <value>Yearly</value>
+    <value>سنوي</value>
   </data>
   <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>نعم</value>
   </data>
   <data name="YourDepartments" xml:space="preserve">
-    <value>Your Departments</value>
+    <value>قسمك التابع له</value>
   </data>
 </root>

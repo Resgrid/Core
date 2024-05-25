@@ -46,452 +46,482 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 			{
-				var callQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				callQueueReceivedConsumer.Received += async (model, ea) =>
+				if (CallQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var callQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					callQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						CallQueueItem cqi = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							cqi = ObjectSerialization.Deserialize<CallQueueItem>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (cqi != null)
+							CallQueueItem cqi = null;
+							try
 							{
-								if (CallQueueReceived != null)
-								{
-									await CallQueueReceived.Invoke(cqi);
-									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								cqi = ObjectSerialization.Deserialize<CallQueueItem>(message);
 							}
-						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
+							catch (Exception ex)
+							{
 								_channel.BasicNack(ea.DeliveryTag, false, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
 
-				var messageQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				messageQueueReceivedConsumer.Received += async (model, ea) =>
-				{
-					if (ea != null && ea.Body.Length > 0)
-					{
-						MessageQueueItem mqi = null;
-						try
-						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							mqi = ObjectSerialization.Deserialize<MessageQueueItem>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (mqi != null)
+							try
 							{
-								if (MessageQueueReceived != null)
+								if (cqi != null)
 								{
-									await MessageQueueReceived.Invoke(mqi);
+									if (CallQueueReceived != null)
+									{
+										await CallQueueReceived.Invoke(cqi);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
+									_channel.BasicNack(ea.DeliveryTag, false, false);
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
+							}
+						}
+					};
+
+					String callQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
+							autoAck: false,
+							consumer: callQueueReceivedConsumer);
+				}
+
+				if (MessageQueueReceived != null)
+				{
+					var messageQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					messageQueueReceivedConsumer.Received += async (model, ea) =>
+					{
+						if (ea != null && ea.Body.Length > 0)
+						{
+							MessageQueueItem mqi = null;
+							try
+							{
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								mqi = ObjectSerialization.Deserialize<MessageQueueItem>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (mqi != null)
+								{
+									if (MessageQueueReceived != null)
+									{
+										await MessageQueueReceived.Invoke(mqi);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
 									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var distributionListQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				distributionListQueueReceivedConsumer.Received += async (model, ea) =>
+					String messageQueueReceivedConsumerTag = _channel.BasicConsume(
+						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
+						autoAck: false,
+						consumer: messageQueueReceivedConsumer);
+				}
+
+				if (DistributionListQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var distributionListQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					distributionListQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						DistributionListQueueItem dlqi = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							dlqi = ObjectSerialization.Deserialize<DistributionListQueueItem>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (dlqi != null)
+							DistributionListQueueItem dlqi = null;
+							try
 							{
-								if (DistributionListQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								dlqi = ObjectSerialization.Deserialize<DistributionListQueueItem>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (dlqi != null)
 								{
-									await DistributionListQueueReceived.Invoke(dlqi);
+									if (DistributionListQueueReceived != null)
+									{
+										await DistributionListQueueReceived.Invoke(dlqi);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
 									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var notificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				notificationQueueReceivedConsumer.Received += async (model, ea) =>
+					String distributionListQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
+							autoAck: false,
+							consumer: distributionListQueueReceivedConsumer);
+				}
+
+				if (NotificationQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var notificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					notificationQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						NotificationItem ni = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							ni = ObjectSerialization.Deserialize<NotificationItem>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (ni != null)
+							NotificationItem ni = null;
+							try
 							{
-								if (NotificationQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								ni = ObjectSerialization.Deserialize<NotificationItem>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (ni != null)
 								{
-									await NotificationQueueReceived.Invoke(ni);
+									if (NotificationQueueReceived != null)
+									{
+										await NotificationQueueReceived.Invoke(ni);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
 									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var shiftNotificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				shiftNotificationQueueReceivedConsumer.Received += async (model, ea) =>
+					String notificationQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
+							autoAck: false,
+							consumer: notificationQueueReceivedConsumer);
+				}
+
+				if (ShiftNotificationQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var shiftNotificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					shiftNotificationQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						ShiftQueueItem sqi = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							sqi = ObjectSerialization.Deserialize<ShiftQueueItem>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-
-							if (sqi != null)
+							ShiftQueueItem sqi = null;
+							try
 							{
-								if (ShiftNotificationQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								sqi = ObjectSerialization.Deserialize<ShiftQueueItem>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+
+								if (sqi != null)
 								{
-									await ShiftNotificationQueueReceived.Invoke(sqi);
+									if (ShiftNotificationQueueReceived != null)
+									{
+										await ShiftNotificationQueueReceived.Invoke(sqi);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
 									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var cqrsEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				cqrsEventQueueReceivedConsumer.Received += async (model, ea) =>
+					String shiftNotificationQueueReceivedConsumerTag = _channel.BasicConsume(
+						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
+						autoAck: false,
+						consumer: shiftNotificationQueueReceivedConsumer);
+				}
+
+				if (CqrsEventQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var cqrsEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					cqrsEventQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						CqrsEvent cqrs = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (cqrs != null)
+							CqrsEvent cqrs = null;
+							try
 							{
-								if (CqrsEventQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (cqrs != null)
 								{
-									await CqrsEventQueueReceived.Invoke(cqrs);
+									if (CqrsEventQueueReceived != null)
+									{
+										await CqrsEventQueueReceived.Invoke(cqrs);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
 									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var paymentEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				paymentEventQueueReceivedConsumer.Received += async (model, ea) =>
+					String cqrsEventQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
+							autoAck: false,
+							consumer: cqrsEventQueueReceivedConsumer);
+				}
+
+				if (PaymentEventQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var paymentEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					paymentEventQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						CqrsEvent cqrs = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (cqrs != null)
+							CqrsEvent cqrs = null;
+							try
 							{
-								if (PaymentEventQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								cqrs = ObjectSerialization.Deserialize<CqrsEvent>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (cqrs != null)
 								{
-									await PaymentEventQueueReceived.Invoke(cqrs);
+									if (PaymentEventQueueReceived != null)
+									{
+										await PaymentEventQueueReceived.Invoke(cqrs);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
 									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var auditEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				auditEventQueueReceivedConsumer.Received += async (model, ea) =>
+					String paymentEventQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
+							autoAck: false,
+							consumer: paymentEventQueueReceivedConsumer);
+				}
+
+				if (AuditEventQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var auditEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					auditEventQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						AuditEvent audit = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							audit = ObjectSerialization.Deserialize<AuditEvent>(message);
-						}
-						catch (Exception ex)
-						{
-							_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (audit != null)
+							AuditEvent audit = null;
+							try
 							{
-								if (AuditEventQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								audit = ObjectSerialization.Deserialize<AuditEvent>(message);
+							}
+							catch (Exception ex)
+							{
+								_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (audit != null)
 								{
-									await AuditEventQueueReceived.Invoke(audit);
+									if (AuditEventQueueReceived != null)
+									{
+										await AuditEventQueueReceived.Invoke(audit);
+										_channel.BasicAck(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (RetryQueueItem(ea, ex))
 									_channel.BasicAck(ea.DeliveryTag, false);
-								}
+								else
+									_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-							if (RetryQueueItem(ea, ex))
-								_channel.BasicAck(ea.DeliveryTag, false);
-							else
-								_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var unitLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				unitLocationQueueReceivedConsumer.Received += async (model, ea) =>
+					String auditEventQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
+							autoAck: false,
+							consumer: auditEventQueueReceivedConsumer);
+				}
+
+				if (UnitLocationEventQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var unitLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					unitLocationQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						UnitLocationEvent unitLocation = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							unitLocation = ObjectSerialization.Deserialize<UnitLocationEvent>(message);
-						}
-						catch (Exception ex)
-						{
-							//_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (unitLocation != null)
+							UnitLocationEvent unitLocation = null;
+							try
 							{
-								if (UnitLocationEventQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								unitLocation = ObjectSerialization.Deserialize<UnitLocationEvent>(message);
+							}
+							catch (Exception ex)
+							{
+								//_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (unitLocation != null)
 								{
-									await UnitLocationEventQueueReceived.Invoke(unitLocation);
-									//_channel.BasicAck(ea.DeliveryTag, false);
+									if (UnitLocationEventQueueReceived != null)
+									{
+										await UnitLocationEventQueueReceived.Invoke(unitLocation);
+										//_channel.BasicAck(ea.DeliveryTag, false);
+									}
 								}
 							}
+							catch (Exception ex)
+							{
+								// Discard unit location events.
+								Logging.LogException(ex);
+								//_channel.BasicNack(ea.DeliveryTag, false, true);
+							}
 						}
-						catch (Exception ex)
-						{
-							// Discard unit location events.
-							Logging.LogException(ex);
-							//_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				var personnelLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-				personnelLocationQueueReceivedConsumer.Received += async (model, ea) =>
+					String unitLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
+							autoAck: true,
+							consumer: unitLocationQueueReceivedConsumer);
+				}
+
+				if (UnitLocationEventQueueReceived != null)
 				{
-					if (ea != null && ea.Body.Length > 0)
+					var personnelLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					personnelLocationQueueReceivedConsumer.Received += async (model, ea) =>
 					{
-						PersonnelLocationEvent personnelLocation = null;
-						try
+						if (ea != null && ea.Body.Length > 0)
 						{
-							var body = ea.Body;
-							var message = Encoding.UTF8.GetString(body.ToArray());
-							personnelLocation = ObjectSerialization.Deserialize<PersonnelLocationEvent>(message);
-						}
-						catch (Exception ex)
-						{
-							//_channel.BasicNack(ea.DeliveryTag, false, false);
-							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-						}
-
-						try
-						{
-							if (personnelLocation != null)
+							PersonnelLocationEvent personnelLocation = null;
+							try
 							{
-								if (UnitLocationEventQueueReceived != null)
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								personnelLocation = ObjectSerialization.Deserialize<PersonnelLocationEvent>(message);
+							}
+							catch (Exception ex)
+							{
+								//_channel.BasicNack(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (personnelLocation != null)
 								{
-									await PersonnelLocationEventQueueReceived.Invoke(personnelLocation);
-									//_channel.BasicAck(ea.DeliveryTag, false);
+									if (UnitLocationEventQueueReceived != null)
+									{
+										await PersonnelLocationEventQueueReceived.Invoke(personnelLocation);
+										//_channel.BasicAck(ea.DeliveryTag, false);
+									}
 								}
 							}
+							catch (Exception ex)
+							{
+								// Discard unit location events.
+								Logging.LogException(ex);
+								//_channel.BasicNack(ea.DeliveryTag, false, true);
+							}
 						}
-						catch (Exception ex)
-						{
-							// Discard unit location events.
-							Logging.LogException(ex);
-							//_channel.BasicNack(ea.DeliveryTag, false, true);
-						}
-					}
-				};
+					};
 
-				String callQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
-					autoAck: false,
-					consumer: callQueueReceivedConsumer);
-
-				String messageQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
-					autoAck: false,
-					consumer: messageQueueReceivedConsumer);
-
-				String distributionListQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
-					autoAck: false,
-					consumer: distributionListQueueReceivedConsumer);
-
-				String notificationQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
-					autoAck: false,
-					consumer: notificationQueueReceivedConsumer);
-
-				String shiftNotificationQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
-					autoAck: false,
-					consumer: shiftNotificationQueueReceivedConsumer);
-
-				String cqrsEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
-					autoAck: false,
-					consumer: cqrsEventQueueReceivedConsumer);
-
-				String paymentEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
-					autoAck: false,
-					consumer: paymentEventQueueReceivedConsumer);
-
-				String auditEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
-					autoAck: false,
-					consumer: auditEventQueueReceivedConsumer);
-
-				String unitLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
-					autoAck: true,
-					consumer: unitLocationQueueReceivedConsumer);
-
-				String personnelLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
-					queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
-					autoAck: true,
-					consumer: personnelLocationQueueReceivedConsumer);
+					String personnelLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
+						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
+						autoAck: true,
+						consumer: personnelLocationQueueReceivedConsumer);
+				}
 			}
 		}
 

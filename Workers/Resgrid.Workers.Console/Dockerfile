@@ -47,13 +47,13 @@ WORKDIR /app
 ## START - INSTALL WKHTMLTOPDF
 ENV WKHTMLTOX wkhtmltox_0.12.6.1-3.jammy_amd64.deb
 ENV BUILD_PACKAGES build-essential
-ENV MAIN_PACKAGES libfontconfig1-dev libfreetype6-dev libjpeg-dev libpng-dev libssl-dev libx11-dev libxext-dev libxrender-dev xfonts-75dpi xfonts-base zlib1g-dev fontconfig
+ENV MAIN_PACKAGES apt-transport-https wget libfontconfig1-dev libfreetype6-dev libjpeg-dev libpng-dev libssl-dev libx11-dev libxext-dev libxrender-dev xfonts-75dpi xfonts-base zlib1g-dev fontconfig
 
-RUN apt-get update && apt-get install -y apt-transport-https wget
+RUN apt-get update && apt-get install -y $MAIN_PACKAGES
 
 RUN set -xe \
     && apt-get update -qq \
-    && apt-get install --no-install-recommends -yq $BUILD_PACKAGES $MAIN_PACKAGES \
+    && apt-get install --no-install-recommends -yq $BUILD_PACKAGES \
     && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.jammy_amd64.deb \
     && dpkg -i ${WKHTMLTOX} \
     && apt-get remove -y $BUILD_PACKAGES \

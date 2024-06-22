@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Audit.Core;
@@ -56,8 +57,8 @@ namespace Resgrid.Web
 {
 	public class Startup
 	{
-        //public IConfiguration Configuration { get; }
-        public IConfigurationRoot Configuration { get; private set; }
+		//public IConfiguration Configuration { get; }
+		public IConfigurationRoot Configuration { get; private set; }
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
@@ -101,6 +102,24 @@ namespace Resgrid.Web
 			element.SetValue(settings, true);
 
 			Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebsite);
+
+
+			if (Config.ApiConfig.BypassSslChecks)
+			{
+				services.AddHttpClient("Name")
+					 .ConfigurePrimaryHttpMessageHandler(() =>
+					 {
+						 var handler = new HttpClientHandler
+						 {
+							 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+							 ServerCertificateCustomValidationCallback = (sender, certificate, chain, errors) =>
+							 {
+								 return true;
+							 }
+						 };
+						 return handler;
+					 });
+			}
 
 			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
 			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();

@@ -62,6 +62,7 @@ using Sentry.Extensibility;
 using Resgrid.Web.ServicesCore.Middleware;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 using OpenTelemetry.Metrics;
+using System.Net.Http;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -120,6 +121,23 @@ namespace Resgrid.Web.ServicesCore
 
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
+
+			if (Config.ApiConfig.BypassSslChecks)
+			{
+				services.AddHttpClient("Name")
+					 .ConfigurePrimaryHttpMessageHandler(() =>
+					 {
+						 var handler = new HttpClientHandler
+						 {
+							 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+							 ServerCertificateCustomValidationCallback = (sender, certificate, chain, errors) =>
+							 {
+								 return true;
+							 }
+						 };
+						 return handler;
+					 });
+			}
 
 			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
 			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();

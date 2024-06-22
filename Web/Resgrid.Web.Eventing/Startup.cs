@@ -49,6 +49,7 @@ using OpenIddict.Validation;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Asn1.Ess;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
+using System.Net.Http;
 
 namespace Resgrid.Web.Eventing
 {
@@ -79,8 +80,6 @@ namespace Resgrid.Web.Eventing
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForEventing);
-
 			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
 			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
 			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -97,6 +96,25 @@ namespace Resgrid.Web.Eventing
 
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
+
+			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForEventing);
+
+			if (Config.ApiConfig.BypassSslChecks)
+			{
+				services.AddHttpClient("Name")
+					 .ConfigurePrimaryHttpMessageHandler(() =>
+					 {
+						 var handler = new HttpClientHandler
+						 {
+							 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+							 ServerCertificateCustomValidationCallback = (sender, certificate, chain, errors) =>
+							 {
+								 return true;
+							 }
+						 };
+						 return handler;
+					 });
+			}
 
 			services.AddCors();
 

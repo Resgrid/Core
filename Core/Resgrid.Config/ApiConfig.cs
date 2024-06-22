@@ -19,5 +19,10 @@
 		/// Key used for authing with the backend internal apis
 		/// </summary>
 		public static string BackendInternalApikey = "";
+
+		/// <summary>
+		/// Used to bypass SSL checks, which is needed for self-signed certs
+		/// </summary>
+		public static bool BypassSslChecks = false;
 	}
 }

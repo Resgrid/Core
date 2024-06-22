@@ -1,4 +1,6 @@
-﻿using IdentityModel.Client;
+﻿using CommonServiceLocator;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Dynamic;
@@ -10,9 +12,14 @@ namespace Resgrid.WebCore.Helpers
 {
 	public class ApiAuthHelper
 	{
+		private static IHttpClientFactory _httpClientFactory;
+
 		public static async Task<string> GetBearerApiTokenAsync(string username, string password)
 		{
-			HttpClient client = new HttpClient();
+			if (_httpClientFactory == null)
+				_httpClientFactory = ServiceLocator.Current.GetInstance<IHttpClientFactory>();
+
+			HttpClient client = _httpClientFactory.CreateClient("ByPassSSLHttpClient");
 			// Retrieve the OpenIddict server configuration document containing the endpoint URLs.
 			var configuration = await client.GetDiscoveryDocumentAsync(Config.SystemBehaviorConfig.ResgridApiBaseUrl);
 			if (configuration.IsError)

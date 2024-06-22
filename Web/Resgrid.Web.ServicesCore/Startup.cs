@@ -124,7 +124,7 @@ namespace Resgrid.Web.ServicesCore
 
 			if (Config.ApiConfig.BypassSslChecks)
 			{
-				services.AddHttpClient("Name")
+				services.AddHttpClient("ByPassSSLHttpClient")
 					 .ConfigurePrimaryHttpMessageHandler(() =>
 					 {
 						 var handler = new HttpClientHandler
@@ -137,6 +137,10 @@ namespace Resgrid.Web.ServicesCore
 						 };
 						 return handler;
 					 });
+			}
+			else
+			{
+				services.AddHttpClient("ByPassSSLHttpClient");
 			}
 
 			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();

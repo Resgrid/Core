@@ -102,7 +102,7 @@ namespace Resgrid.Services
 				return response.Data.Data;
 			}
 
-			return null;
+			return new DepartmentPlanCount();
 		}
 
 		public async Task<Payment> GetCurrentPaymentForDepartmentAsync(int departmentId, bool byPassCache = true)

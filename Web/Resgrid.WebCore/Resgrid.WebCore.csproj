@@ -70,7 +70,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
     <PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.4.3" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
-    <PackageReference Include="Stripe.net" Version="43.19.0" />
+    <PackageReference Include="Stripe.net" Version="45.1.0" />
     <PackageReference Include="Twilio" Version="7.0.2" />
     <PackageReference Include="Twilio.AspNet.Common" Version="8.0.2" />
     <PackageReference Include="JWT" Version="10.1.1" />

@@ -630,7 +630,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return Json(new
 			{
-				SessionId = session,
+				SessionId = session.SessionId,
 				HasActiveSub = hasActiveSub
 			});
 		}

@@ -474,7 +474,7 @@
                         const packs = amount / 10;
 
                         $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + amount,
+                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs,
                             contentType: 'application/json',
                             type: 'GET'
                         }).done(function (data) {
@@ -486,9 +486,25 @@
                                         // If `redirectToCheckout` fails due to a browser or network
                                         // error, display the localized error message to your customer
                                         // using `result.error.message`.
+
+                                        swal({
+                                            title: "Purchase Error",
+                                            text: "Error redirecting to Stripe for checkout. Stripe error: " + result.error.message,
+                                            icon: "error",
+                                            buttons: true,
+                                            dangerMode: false
+                                        });
                                     });
                                 }
                             }
+                        });
+                    } else {
+                        swal({
+                            title: "Cannot Purchase",
+                            text: "Resgrid includes 10 entities for free for all departments. Please select a entity count greater then 10 to purchase.",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: false
                         });
                     }
                 }

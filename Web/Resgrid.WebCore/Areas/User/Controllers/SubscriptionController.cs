@@ -67,13 +67,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[HttpGet]
-
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> Index()
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
@@ -231,12 +225,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-#if (DEBUG || DOCKER)
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> UpdateBillingInfo()
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
@@ -253,13 +243,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> UpdateBillingInfo(IFormCollection form, CancellationToken cancellationToken)
 		{
@@ -331,12 +315,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> ValidateCoupon(string couponCode)
 		{
 			var service = new CouponService();
@@ -358,12 +337,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> Cancel()
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
@@ -393,12 +367,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> Cancel(CancelView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
@@ -475,12 +444,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-#if (DEBUG || DOCKER)
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> BuyAddon(string planAddonId)
 		{
 			var model = new BuyAddonView();
@@ -504,12 +469,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-#if (DEBUG || DOCKER)
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> ManagePTTAddon()
 		{
 			var model = new BuyAddonView();
@@ -529,70 +490,60 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Quantity = addon.TotalQuantity;
 			}
 
-/*
-			if (addons != null && addons.Count > 0)
-				model.CurrentPaymentAddon = addons.FirstOrDefault();
+			/*
+						if (addons != null && addons.Count > 0)
+							model.CurrentPaymentAddon = addons.FirstOrDefault();
 
-			var planAddons = await _subscriptionsService.GetCurrentPlanAddonsForDepartmentFromStripeAsync(DepartmentId);
+						var planAddons = await _subscriptionsService.GetCurrentPlanAddonsForDepartmentFromStripeAsync(DepartmentId);
 
-			if (planAddons != null && planAddons.Any())
-			{
-				foreach (var addon in planAddons)
-				{
-					if (!addon.IsCancelled)
-						model.Quantity += addon.Quantity;
-				}
-			}
+						if (planAddons != null && planAddons.Any())
+						{
+							foreach (var addon in planAddons)
+							{
+								if (!addon.IsCancelled)
+									model.Quantity += addon.Quantity;
+							}
+						}
 
-			if (model.PlanAddon.PlanId.HasValue)
-			{
-				var plan = await _subscriptionsService.GetPlanByIdAsync(model.PlanAddon.PlanId.Value);
-				model.Frequency = ((PlanFrequency)plan.Frequency).ToString();
-			}
+						if (model.PlanAddon.PlanId.HasValue)
+						{
+							var plan = await _subscriptionsService.GetPlanByIdAsync(model.PlanAddon.PlanId.Value);
+							model.Frequency = ((PlanFrequency)plan.Frequency).ToString();
+						}
 
-			*/
+						*/
 
 			return View(model);
 		}
 
 		[HttpPost]
-        #if (DEBUG || DOCKER)
-        		[Authorize(Policy = ResgridResources.Department_Update)]
-        #else
-        	//[RequireHttps]
-        	[Authorize(Policy = ResgridResources.Department_Update)]
-        #endif
-        		public async Task<IActionResult> ManagePTTAddon(BuyAddonView model)
-        		{
-        			try
-        			{
-        				var user = _usersService.GetUserById(UserId);
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ManagePTTAddon(BuyAddonView model)
+		{
+			try
+			{
+				var user = _usersService.GetUserById(UserId);
 
-        				var addonPlan = await _subscriptionsService.GetPlanAddonByIdAsync(model.PlanAddonId);
-                        var plan = await _subscriptionsService.GetPlanByIdAsync(addonPlan.PlanId.Value);
+				var addonPlan = await _subscriptionsService.GetPlanAddonByIdAsync(model.PlanAddonId);
+				var plan = await _subscriptionsService.GetPlanByIdAsync(addonPlan.PlanId.Value);
 
 
 
-        				var result = await _subscriptionsService.AddAddonAddedToExistingSub(DepartmentId, plan, addonPlan);
+				var result = await _subscriptionsService.AddAddonAddedToExistingSub(DepartmentId, plan, addonPlan);
 
-        				return RedirectToAction("PaymentComplete", "Subscription", new { Area = "User", planId = plan.PlanId });
-        			}
-        			catch (Exception ex)
-        			{
-        				Logging.SendExceptionEmail(ex, "BuyNow", DepartmentId, UserName);
+				return RedirectToAction("PaymentComplete", "Subscription", new { Area = "User", planId = plan.PlanId });
+			}
+			catch (Exception ex)
+			{
+				Logging.SendExceptionEmail(ex, "BuyNow", DepartmentId, UserName);
 
-        				return RedirectToAction("PaymentFailed", "Subscription",
-        						new { Area = "User", chargeId = "", errorMessage = ex.Message });
-        			}
-        		}
+				return RedirectToAction("PaymentFailed", "Subscription",
+						new { Area = "User", chargeId = "", errorMessage = ex.Message });
+			}
+		}
 
 		[HttpPost]
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> BuyAddon(BuyAddonView model, CancellationToken cancellationToken)
 		{
 			try
@@ -639,12 +590,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
-#if (DEBUG || DOCKER)
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> CancelAddon(int addonTypeId)
 		{
 
@@ -666,132 +613,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 
-#if (DEBUG || DOCKER)
-		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
-		public async Task<IActionResult> Upgrade(int planId, int count)
-		{
-			if (!_subscriptionsService.ValidateUserSelectableBuyNowPlan(planId))
-				Unauthorized();
-
-			var model = new BuyNowView();
-			model.Plan = await _subscriptionsService.GetPlanByIdAsync(planId);
-			model.PlanId = model.Plan.PlanId;
-			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			model.StripeKey = Config.PaymentProviderConfig.GetStripeClientKey();
-			model.Payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(DepartmentId);
-			model.Price = model.Plan.Cost;
-			model.Frequency = ((PlanFrequency)model.Plan.Frequency).ToString();
-
-			if (model.Payment != null)
-			{
-				if (model.Payment.Plan.PlanId != 1 && model.Payment.Plan.PlanId != 7 && model.Payment.Plan.PlanId != 8 &&
-						model.Payment.Plan.PlanId != 6 && model.Plan.PlanId != model.Payment.PlanId &&
-						_subscriptionsService.GetPossibleUpgradesForPlan(model.Payment.PlanId).Any(x => x == model.Plan.PlanId))
-				{
-					model.UpgradePrice = await _subscriptionsService.GetAdjustedUpgradePriceAsync(model.Payment.PaymentId, model.Plan.PlanId);
-					model.Price = await _subscriptionsService.GetAdjustedUpgradePriceAsync(model.Payment.PaymentId, model.Plan.PlanId);
-
-					if (model.Plan.Frequency != model.Payment.Plan.Frequency)
-						model.FrequencyChange = true;
-					else
-						model.FrequencyChange = false;
-
-					model.Upgrade = true;
-					model.Price = model.UpgradePrice;
-
-					if (model.FrequencyChange)
-					{
-						var billingUpdate = _subscriptionsService.CalculateCyclesTillFirstBill(model.UpgradePrice, model.Plan.Cost);
-						model.BillingCycles = billingUpdate.Item1;
-						model.UpgradePrice = billingUpdate.Item2;
-						model.NextBillingCycle =
-							TimeConverterHelper.TimeConverter(DateTime.UtcNow, model.Department).AddMonths(model.BillingCycles);
-					}
-
-				}
-				else if (model.Payment.Plan.PlanId != 1 && model.Payment.Plan.PlanId != 7 && model.Payment.Plan.PlanId != 8 &&
-					  model.Payment.Plan.PlanId != 6 && model.Plan.PlanId != model.Payment.PlanId &&
-					  _subscriptionsService.GetPossibleDowngradesForPlan(model.Payment.PlanId).Any(x => x == model.Plan.PlanId))
-				{
-					model.UpgradePrice = await _subscriptionsService.GetAdjustedUpgradePriceAsync(model.Payment.PaymentId, model.Plan.PlanId);
-					model.Price = await _subscriptionsService.GetAdjustedUpgradePriceAsync(model.Payment.PaymentId, model.Plan.PlanId);
-
-					if (model.Plan.Frequency != model.Payment.Plan.Frequency)
-						model.FrequencyChange = true;
-					else
-						model.FrequencyChange = false;
-
-					model.Upgrade = true;
-					model.Price = model.UpgradePrice;
-
-					if (model.FrequencyChange)
-					{
-						var billingUpdate = _subscriptionsService.CalculateCyclesTillFirstBill(model.UpgradePrice, model.Plan.Cost);
-						model.BillingCycles = billingUpdate.Item1;
-						model.UpgradePrice = billingUpdate.Item2;
-						model.NextBillingCycle =
-							TimeConverterHelper.TimeConverter(DateTime.UtcNow, model.Department).AddMonths(model.BillingCycles);
-					}
-				}
-
-			}
-
-			return View(model);
-		}
-
-		[HttpPost]
-
-#if (DEBUG || DOCKER)
-		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Upgrade(BuyNowView model, CancellationToken cancellationToken)
-		{
-			try
-			{
-				var user = _usersService.GetUserById(UserId);
-
-				// Sneaky sneaky, did you change the plan id in the form?
-				if (!_subscriptionsService.ValidateUserSelectableBuyNowPlan(model.PlanId))
-					Unauthorized();
-
-				var stripeCustomerId = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
-				var plan = await _subscriptionsService.GetPlanByIdAsync(model.PlanId);
-				var invoice = await _subscriptionsService.ChangeActiveSubscriptionAsync(stripeCustomerId, plan.ExternalId);
-
-				return RedirectToAction("Processing", "Subscription", new { Area = "User", planId = plan.PlanId });
-
-			}
-			catch (Exception ex)
-			{
-				Logging.SendExceptionEmail(ex, "BuyNow", DepartmentId, UserName);
-
-				return RedirectToAction("PaymentFailed", "Subscription",
-						new { Area = "User", chargeId = "", errorMessage = ex.Message });
-			}
-		}
-
 		[HttpGet]
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
-		public async Task<IActionResult> GetStripeSession(int id, CancellationToken cancellationToken)
+		public async Task<IActionResult> GetStripeSession(int id, int count, CancellationToken cancellationToken)
 		{
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
 			var stripeCustomerId = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var user = _usersService.GetUserById(UserId);
-			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name);
+			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count);
 			var subscription = await _subscriptionsService.GetActiveStripeSubscriptionAsync(session.CustomerId);
 
 			bool hasActiveSub = false;
@@ -802,16 +632,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				SessionId = session,
 				HasActiveSub = hasActiveSub
-			}); ;
+			});
 		}
 
 		[HttpGet]
-#if (DEBUG || DOCKER)
 		[Authorize(Policy = ResgridResources.Department_Update)]
-#else
-	//[RequireHttps]
-	[Authorize(Policy = ResgridResources.Department_Update)]
-#endif
 		public async Task<IActionResult> GetStripeUpdate()
 		{
 			//var plan = await _subscriptionsService.GetPlanById(id);

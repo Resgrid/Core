@@ -1108,7 +1108,7 @@ namespace Resgrid.Services
 			return await _paymentProviderEventsRepository.SaveOrUpdateAsync(providerEvent, cancellationToken);
 		}
 
-		public async Task<CreateStripeSessionForUpdateData> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string email, string departmentName)
+		public async Task<CreateStripeSessionForUpdateData> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string email, string departmentName, int count)
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
@@ -1120,6 +1120,7 @@ namespace Resgrid.Services
 				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
 				request.AddParameter("stripePlanId", stripePlanId, ParameterType.QueryString);
 				request.AddParameter("planId", planId, ParameterType.QueryString);
+				request.AddParameter("count", count, ParameterType.QueryString);
 				request.AddParameter("email", email, ParameterType.QueryString, true);
 				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
 

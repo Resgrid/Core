@@ -99,7 +99,7 @@
         .total {
             border-bottom: 1px solid #7f8c8d;
             /*display: inline;
-                                                                                                    padding: 10px 5px;*/
+                                                                                                            padding: 10px 5px;*/
             position: relative;
             padding-bottom: 20px;
         }
@@ -140,8 +140,8 @@
             border: 1px solid #eeeeee;
             border-radius: 4px;
             /*-moz-box-shadow:    0 5px 5px 0 #ccc;
-                                                                                                    -webkit-box-shadow: 0 5px 5px 0 #ccc;
-                                                                                                    box-shadow:         0 5px 5px 0 #ccc;*/
+                                                                                                            -webkit-box-shadow: 0 5px 5px 0 #ccc;
+                                                                                                            box-shadow:         0 5px 5px 0 #ccc;*/
         }
 
         .form-group {
@@ -462,7 +462,7 @@
 
         @section Scripts
         {
-             <script src="https://js.stripe.com/v3/"></script>
+            <script src="https://js.stripe.com/v3/"></script>
 
             <script>
                 var stripe = Stripe('@Model.StripeKey');
@@ -474,14 +474,12 @@
                         const packs = amount / 10;
 
                         $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id,
+                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + amount,
                             contentType: 'application/json',
                             type: 'GET'
                         }).done(function (data) {
                             if (data) {
-                                if (data.HasActiveSub) {
-                                    window.location.href = $`/User/Subscription/Upgrade?planId=${id}&count=${packs}`;
-                                } else if (data.SessionId) {
+                                if (data.SessionId) {
                                     stripe.redirectToCheckout({
                                         sessionId: data.SessionId
                                     }).then(function (result) {

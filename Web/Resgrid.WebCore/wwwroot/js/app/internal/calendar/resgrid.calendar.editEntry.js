@@ -34,7 +34,7 @@ var resgrid;
                     step: 1
                 });
 
-                var quill = new Quill('#editor-container', {
+                let quill = new Quill('#editor-container', {
                     placeholder: '',
                     theme: 'snow'
                 });

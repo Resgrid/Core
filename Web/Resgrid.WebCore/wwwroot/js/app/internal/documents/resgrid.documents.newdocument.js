@@ -6,23 +6,23 @@ var resgrid;
         var newdocument;
         (function (newdocument) {
             $(document).ready(function () {
-                $("#Document_Description").kendoEditor();
+                let quill = new Quill('#editor-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                $(document).on('submit', '#newDocumentForm', function () {
+                    $('#Document_Description').val(quill.root.innerHTML);
+
+                    return true;
+                });
+
+
                 $("#fileToUpload").kendoUpload({
                     multiple: false,
                     localization: {
                         select: "Select File"
                     }
-                });
-                $("#Category").kendoComboBox({
-                    minLength: 3,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Documents/GetDepartmentDocumentCategories'
-                        }
-                    },
-                    filter: "contains",
-                    suggest: true
                 });
             });
         })(newdocument = documents.newdocument || (documents.newdocument = {}));

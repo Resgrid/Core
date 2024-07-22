@@ -165,7 +165,7 @@ namespace Resgrid.Services
 		{
 			var saved = await _customStateRepository.SaveOrUpdateAsync(customState, cancellationToken);
 
-			_cacheProvider.Remove(string.Format(CacheKey, customState.DepartmentId));
+			await _cacheProvider.RemoveAsync(string.Format(CacheKey, customState.DepartmentId));
 
 			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customState.DepartmentId });
 
@@ -206,15 +206,33 @@ namespace Resgrid.Services
 
 		public async Task<CustomState> UpdateAsync(CustomState state, List<CustomStateDetail> details, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			foreach (var existingDetails in state.Details)
+			var missingDetails = state.Details.Where(p => !details.Any(p2 => p2.CustomStateDetailId == p.CustomStateDetailId)).ToList();
+
+			if (missingDetails != null && missingDetails.Any())
 			{
-				await DeleteDetailAsync(existingDetails, cancellationToken);
+				foreach (var missingDetail in missingDetails)
+				{
+					await DeleteDetailAsync(missingDetail, cancellationToken);
+					state.Details.Remove(missingDetail);
+				}
 			}
 
 			foreach (var detail in details)
 			{
 				detail.CustomStateId = state.CustomStateId;
-				state.Details.Add(detail);
+				if (detail.CustomStateDetailId == 0)
+				{
+					state.Details.Add(detail);
+				}
+				else
+				{
+					var existingDetail = state.Details.FirstOrDefault(x => x.CustomStateDetailId == detail.CustomStateDetailId);
+
+					if (existingDetail != null)
+					{
+						existingDetail.Order = detail.Order;
+					}
+				}
 			}
 
 			return await SaveAsync(state, cancellationToken);

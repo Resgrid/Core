@@ -120,6 +120,12 @@
   <data name="AddOption" xml:space="preserve">
     <value>Add Option (Button)</value>
   </data>
+  <data name="Available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="BaseType" xml:space="preserve">
+    <value>Base Type</value>
+  </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Button Background Color</value>
   </data>
@@ -149,6 +155,9 @@
   </data>
   <data name="ChangesWarning" xml:space="preserve">
     <value>Changes to custom statues can take up to 30 minutes to fully propagate though the Resgrid network. Mobile app users are encouraged to manually resync (Settings-&gt;Advanced Settings-&gt;ReSync).</value>
+  </data>
+  <data name="Cleared" xml:space="preserve">
+    <value>Cleared</value>
   </data>
   <data name="CurrentPersonnelStatusesHeader" xml:space="preserve">
     <value>Custom Personnel Statuses (Actions)</value>
@@ -180,6 +189,9 @@
   <data name="DetailTypeLabel" xml:space="preserve">
     <value>Detail Type</value>
   </data>
+  <data name="Dispatched" xml:space="preserve">
+    <value>Dispatched</value>
+  </data>
   <data name="EditCustomStateDetailHeader" xml:space="preserve">
     <value>Edit Custom State Detail</value>
   </data>
@@ -195,6 +207,12 @@
   <data name="EditStaffingLevels" xml:space="preserve">
     <value>Edit Staffing Levels</value>
   </data>
+  <data name="Investigating" xml:space="preserve">
+    <value>Investigating</value>
+  </data>
+  <data name="MadeContact" xml:space="preserve">
+    <value>Made Contact</value>
+  </data>
   <data name="NewCustomStatusesHeader" xml:space="preserve">
     <value>New Custom Statuses</value>
   </data>
@@ -204,11 +222,20 @@
   <data name="NoDetail" xml:space="preserve">
     <value>No Detail</value>
   </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="NoNote" xml:space="preserve">
     <value>No Note</value>
   </data>
   <data name="NoteTypeLabel" xml:space="preserve">
     <value>Note Type</value>
+  </data>
+  <data name="NotResponding" xml:space="preserve">
+    <value>Not Responding</value>
+  </data>
+  <data name="OnScene" xml:space="preserve">
+    <value>On Scene</value>
   </data>
   <data name="PersonnelActions" xml:space="preserve">
     <value>Personnel Actions</value>
@@ -225,6 +252,12 @@
   <data name="RequireGPSLabel" xml:space="preserve">
     <value>Require GPS</value>
   </data>
+  <data name="Responding" xml:space="preserve">
+    <value>Responding</value>
+  </data>
+  <data name="Returning" xml:space="preserve">
+    <value>Returning</value>
+  </data>
   <data name="SetCustomStaffingLevels" xml:space="preserve">
     <value>Set Custom Staffing Levels</value>
   </data>
@@ -234,11 +267,17 @@
   <data name="StaffingLevelsLabel" xml:space="preserve">
     <value>Staffing Levels</value>
   </data>
+  <data name="Staging" xml:space="preserve">
+    <value>Staging</value>
+  </data>
   <data name="Stations" xml:space="preserve">
     <value>Stations</value>
   </data>
   <data name="TextColorLabel" xml:space="preserve">
     <value>Text Color</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Unavailable</value>
   </data>
   <data name="UnitStatus" xml:space="preserve">
     <value>Unit Status</value>

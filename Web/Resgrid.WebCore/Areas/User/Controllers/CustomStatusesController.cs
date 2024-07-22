@@ -7,10 +7,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.CustomStatuses;
+using Resgrid.Web.Helpers;
+using SharpKml.Dom;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -20,11 +26,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Private Members and Constructors
 		private readonly ICustomStateService _customStateService;
 		private readonly IUnitsService _unitsService;
+		private readonly IAuthorizationService _authorizationService;
+		private readonly IEventAggregator _eventAggregator;
 
-		public CustomStatusesController(ICustomStateService customStateService, IUnitsService unitsService)
+		public CustomStatusesController(ICustomStateService customStateService, IUnitsService unitsService, IAuthorizationService authorizationService, IEventAggregator eventAggregator)
 		{
 			_customStateService = customStateService;
 			_unitsService = unitsService;
+			_authorizationService = authorizationService;
+			_eventAggregator = eventAggregator;
 		}
 		#endregion Private Members and Constructors
 
@@ -84,6 +94,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var color = form["buttonColor_" + i];
 						var textColor = form["textColor_" + i];
 						var order = form["order_" + i];
+						var baseType = form["baseType_" + i];
 
 						bool gps = false;
 						var gpsValue = form["requireGps_" + i];
@@ -102,10 +113,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 						detail.DetailType = detailType;
 						detail.TextColor = textColor;
 						detail.Order = int.Parse(order);
+						detail.BaseType = int.Parse(baseType);
 
 						model.State.Details.Add(detail);
 					}
 				}
+
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CustomStatusAdded;
+				auditEvent.After = model.State.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				await _customStateService.SaveAsync(model.State, cancellationToken);
 
@@ -121,8 +144,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var state = await _customStateService.GetCustomSateByIdAsync(id);
 
-			if (state.DepartmentId != DepartmentId)
+			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, state.CustomStateId))
 				Unauthorized();
+
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.CustomStatusRemoved;
+			auditEvent.Before = state.CloneJsonToString();
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			await _customStateService.DeleteAsync(state, cancellationToken);
 
@@ -133,6 +167,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> Edit(int id)
 		{
+			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, id))
+				Unauthorized();
+
 			var model = new EditStatusView();
 			model.State = await _customStateService.GetCustomSateByIdAsync(id);
 
@@ -143,14 +180,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> EditDetail(int stateDetailId)
 		{
+			if (!await _authorizationService.CanUserModifyCustomStateDetailAsync(UserId, stateDetailId))
+				Unauthorized();
+
 			var model = new EditDetailView();
 			model.Detail = await _customStateService.GetCustomDetailByIdAsync(stateDetailId);
 			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
+			model.BaseTypes = model.BaseType.ToSelectList();
 
 			model.DetailType = (CustomStateDetailTypes)model.Detail.DetailType;
 			model.NoteType = (CustomStateNoteTypes)model.Detail.NoteType;
+			model.BaseType = (ActionBaseTypes)model.Detail.BaseType;
 
 			if (String.IsNullOrWhiteSpace(model.Detail.TextColor))
 				model.Detail.TextColor = "#000000";
@@ -162,23 +204,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> EditDetail(EditDetailView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyCustomStateDetailAsync(UserId, model.Detail.CustomStateDetailId))
+				Unauthorized();
+
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
 
 			if (ModelState.IsValid)
 			{
+				var auditEvent = new AuditEvent();
 				var detail = await _customStateService.GetCustomDetailByIdAsync(model.Detail.CustomStateDetailId);
+				auditEvent.Before = detail.CloneJsonToString();
+
 				detail.ButtonColor = model.Detail.ButtonColor;
 				detail.ButtonText = model.Detail.ButtonText;
 				detail.TextColor = model.Detail.TextColor;
 				detail.NoteType = (int)model.NoteType;
 				detail.Order = model.Detail.Order;
 				detail.GpsRequired = model.Detail.GpsRequired;
+				detail.DetailType = (int)model.DetailType;
+				detail.BaseType = (int)model.BaseType;
 
-				//if (detail.CustomState.Type != (int)CustomStateTypes.Staffing)
-				//{
-					detail.DetailType = (int)model.DetailType;
-				//}
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CustomStatusDetailUpdated;
+				auditEvent.After = detail.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				await _customStateService.SaveDetailAsync(detail, DepartmentId, cancellationToken);
 
@@ -194,14 +249,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> Edit(EditStatusView model, IFormCollection form, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, model.State.CustomStateId))
+				Unauthorized();
+
 			if (ModelState.IsValid)
 			{
 				List<int> options = (from object key in form.Keys
 														 where key.ToString().StartsWith("buttonText_")
 														 select int.Parse(key.ToString().Replace("buttonText_", ""))).ToList();
 
+				var auditEvent = new AuditEvent();
 				var details = new List<CustomStateDetail>();
 				var state = await _customStateService.GetCustomSateByIdAsync(model.State.CustomStateId);
+
+				auditEvent.Before = state.CloneJsonToString();
 
 				state.Name = model.State.Name;
 				state.Description = model.State.Description;
@@ -214,6 +275,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var color = form["buttonColor_" + i];
 						var textColor = form["textColor_" + i];
 						var order = form["order_" + i];
+						var baseType = form["baseType_" + i];
+						var customStateDetailId = form["customStateDetailId_" + i];
 
 						bool gps = false;
 						var gpsValue = form["requireGps_" + i];
@@ -232,10 +295,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 						detail.DetailType = detailType;
 						detail.TextColor = textColor;
 						detail.Order = int.Parse(order);
+						detail.BaseType = int.Parse(baseType);
+
+						if (!string.IsNullOrWhiteSpace(customStateDetailId))
+							detail.CustomStateDetailId = int.Parse(customStateDetailId);
+						else
+							detail.CustomStateDetailId = 0;
 
 						details.Add(detail);
 					}
 				}
+
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CustomStatusUpdated;
+				auditEvent.After = details.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				await _customStateService.UpdateAsync(state, details, cancellationToken);
 

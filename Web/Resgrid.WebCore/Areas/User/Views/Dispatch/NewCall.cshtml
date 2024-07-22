@@ -5,7 +5,7 @@
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
-    {
+{
     <style>
         .select2-close-mask {
             z-index: 2099;
@@ -17,26 +17,26 @@
     </style>
 }
 
-    <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-sm-4">
-            <h2>@localizer["NewCallHeader"]</h2>
-            <ol class="breadcrumb">
-                <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-                </li>
-                <li>
-                    <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
-                </li>
-                <li class="active">
-                    <strong>@localizer["NewCallHeader"]</strong>
-                </li>
-            </ol>
-        </div>
-        <div class="col-sm-8">
-            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <div class="buttons-actions">
-                    <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">@localizer["Template"]</a>
-                    @if (!String.IsNullOrWhiteSpace(Model.NewCallFormData))
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["NewCallHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["NewCallHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <div class="buttons-actions">
+                <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">@localizer["Template"]</a>
+                @if (!String.IsNullOrWhiteSpace(Model.NewCallFormData))
                 {
                     <a title="Call Form" class="btn btn-info" data-target="#newCallFormWindow" data-toggle="modal">@localizer["CallForm"]</a>
                 }
@@ -104,7 +104,13 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNatureLabel"]</label>
-                            <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="@localizer["CallNaturePlaceholder"]" asp-for="Call.NatureOfCall"></textarea></div>
+                            <div class="col-sm-10">
+                                <input type="hidden" asp-for="Call.NatureOfCall">
+
+                                <div id="nature-container" style="width:100%; height: 300px;">
+                                    @Html.Raw(Model.Call.NatureOfCall)
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["NotesLabel"]</label>
@@ -449,15 +455,15 @@
 </div>
 
 @section Scripts
-    {
+{
     <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
     <script src="@Url.Content("~/lib/formBuilder/dist/form-render.min.js")" type="text/javascript"></script>
 
     <script type="text/javascript">
-            var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
-            var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-            var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
-        </script>
+        var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+    </script>
 
     @if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
     {

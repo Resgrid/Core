@@ -7,8 +7,8 @@ var resgrid;
         (function (addcertification) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Add Certification');
-                $('#RecievedOn').kendoDatePicker();
-                $('#ExpiresOn').kendoDatePicker();
+                $('#RecievedOn').datetimepicker({ step: 60 });
+                $('#ExpiresOn').datetimepicker({ step: 60 });
                 $("#fileToUpload").kendoUpload({
                     multiple: false,
                     localization: {

@@ -68,7 +68,7 @@
                     }
                   </td>
                   <td>
-                    @g.Description
+                    @Html.Raw(g.Description)
                   </td>
                   <td>
                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())

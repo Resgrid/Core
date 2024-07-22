@@ -15,17 +15,9 @@ var resgrid;
                 $('#isRepeatParentWarning').hide();
                 $('#repeatSelection').show();
 
-                $('#StartTime').kendoDateTimePicker({
-                    interval: 15
-                });
-
-                $('#EndTime').kendoDateTimePicker({
-                    interval: 15
-                });
-
-                $('#Item_RecurrenceEnd').kendoDateTimePicker({
-                    interval: 15
-                });
+                $('#StartTime').datetimepicker({ step: 15 });
+                $('#EndTime').datetimepicker({ step: 15 });
+                $('#Item_RecurrenceEnd').datetimepicker({ step: 15 });
 
                 $("#Item_RepeatOnDay").kendoNumericTextBox({
                     format: "#",

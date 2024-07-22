@@ -18,5 +18,7 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public int CallTypeIcon { get; set; }
 		public List<CustomState> States { get; set; }
 		public List<DepartmentCallPriority> CallPriorites { get; set; }
+		public List<DocumentCategory> DocumentCategories { get; set; }
+		public List<NoteCategory> NoteCategories { get; set; }
 	}
 }

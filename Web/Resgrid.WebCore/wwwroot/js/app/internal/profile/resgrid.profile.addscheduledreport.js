@@ -6,9 +6,7 @@ var resgrid;
         var addscheduledreport;
         (function (addscheduledreport) {
             $(document).ready(function () {
-                $('#SpecifcDateTime').kendoDateTimePicker({
-                    interval: 15
-                });
+                $('#SpecifcDateTime').datetimepicker({ step: 15 });
                 $('#DayOfWeekTime').kendoTimePicker({
                     interval: 15
                 });

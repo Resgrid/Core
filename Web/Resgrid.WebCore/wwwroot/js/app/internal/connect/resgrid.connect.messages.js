@@ -6,13 +6,9 @@ var resgrid;
         (function (messages) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Connect - Messages');
-                $('#editor').kendoEditor();
-                $('#Article_StartOn').kendoDateTimePicker({
-                    interval: 1
-                });
-                $('#Article_ExpiresOn').kendoDateTimePicker({
-                    interval: 1
-                });
+                //$('#editor').kendoEditor();
+                $('#Article_StartOn').datetimepicker({ step: 15 });
+                $('#Article_ExpiresOn').datetimepicker({ step: 15 });
             });
         })(messages = connect.messages || (connect.messages = {}));
     })(connect = resgrid.connect || (resgrid.connect = {}));

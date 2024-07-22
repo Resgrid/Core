@@ -129,11 +129,17 @@
   <data name="BodyLocationReq" xml:space="preserve">
     <value>Body Location is required.</value>
   </data>
+  <data name="CallAddress" xml:space="preserve">
+    <value>Call Address (Location)</value>
+  </data>
   <data name="CallName" xml:space="preserve">
     <value>Call Name</value>
   </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Call Priority</value>
+  </data>
+  <data name="CallTimestamp" xml:space="preserve">
+    <value>Call Timestamp</value>
   </data>
   <data name="CaseNumber" xml:space="preserve">
     <value>Case #</value>
@@ -194,6 +200,9 @@
   </data>
   <data name="Narrative" xml:space="preserve">
     <value>Narrative</value>
+  </data>
+  <data name="NatureOfCall" xml:space="preserve">
+    <value>Nature of Call</value>
   </data>
   <data name="NewCall" xml:space="preserve">
     <value>New Call</value>

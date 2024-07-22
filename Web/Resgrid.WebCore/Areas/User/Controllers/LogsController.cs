@@ -87,6 +87,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await PopulateLogViewModel(model);
 			model.Log = new Log();
 
+			if (model.Call == null)
+				model.Call = new Call();
+
 			return View(model);
 		}
 

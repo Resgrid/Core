@@ -5,7 +5,7 @@ var resgrid;
         var profile;
         (function (profile) {
             $(document).ready(function () {
-                $("#Profile_Founded").kendoDatePicker({});
+                $("#Profile_Founded").datetimepicker({ step: 60 });
             });
         })(profile = connect.profile || (connect.profile = {}));
     })(connect = resgrid.connect || (resgrid.connect = {}));

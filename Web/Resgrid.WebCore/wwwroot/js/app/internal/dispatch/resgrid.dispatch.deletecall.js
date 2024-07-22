@@ -6,7 +6,16 @@ var resgrid;
         var deletecall;
         (function (deletecall) {
             $(document).ready(function () {
-                $("#DeleteCallNotes").kendoEditor();
+                let quill = new Quill('#editor-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                $(document).on('submit', '#deleteCallForm', function () {
+                    $('#DeleteCallNotes').val(quill.root.innerHTML);
+
+                    return true;
+                });
             });
         })(deletecall = dispatch.deletecall || (dispatch.deletecall = {}));
     })(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));

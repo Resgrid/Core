@@ -6,17 +6,15 @@ var resgrid;
         var newnote;
         (function (newnote) {
             $(document).ready(function () {
-                $("#Body").kendoEditor();
-                $("#Category").kendoComboBox({
-                    minLength: 3,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Notes/GetDepartmentNotesCategories'
-                        }
-                    },
-                    filter: "contains",
-                    suggest: true
+                let quill = new Quill('#editor-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                $(document).on('submit', '#newNoteForm', function () {
+                    $('#Body').val(quill.root.innerHTML);
+
+                    return true;
                 });
             });
         })(newnote = notes.newnote || (notes.newnote = {}));

@@ -6,12 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Services;
-using Resgrid.Providers.Bus;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Documents;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Model.Providers;
+using Resgrid.Framework;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Resgrid.Services;
+using System.Collections.Generic;
+using NuGet.Packaging;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -37,7 +41,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new IndexView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			model.Documents = await _documentsService.GetFilteredDocumentsByDepartmentIdAsync(DepartmentId, type, category);
-			model.Categories = await _documentsService.GetDistinctCategoriesByDepartmentIdAsync(DepartmentId);
+			model.Categories = await _documentsService.GetAllCategoriesByDepartmentIdAsync(DepartmentId);
 
 			model.SelectedCategory = category;
 			model.SelectedType = type;
@@ -51,7 +55,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Documents_Create)]
 		public async Task<IActionResult> NewDocument()
 		{
+			if (!ClaimsAuthorizationHelper.CanCreateDocument())
+				Unauthorized();
+
 			NewDocumentView model = new NewDocumentView();
+			model.Categories = new SelectList(await _documentsService.GetAllCategoriesByDepartmentIdAsync(DepartmentId), "Name", "Name");
 
 			return View(model);
 		}
@@ -92,6 +100,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || document.UserId != UserId)
 				Unauthorized();
 
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Before = $"{document.DocumentId} - {document.Name} - {document.Description} - {document.Category} - {document.AdminsOnly}";
+			auditEvent.Type = AuditLogTypes.DocumentRemoved;
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
 			await _documentsService.DeleteDocumentAsync(document, cancellationToken);
 
 			return RedirectToAction("Index", "Documents", new { Area = "User" });
@@ -102,7 +121,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Documents_Create)]
 		public async Task<IActionResult> NewDocument(NewDocumentView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
-			//file = Request.Files["fileToUpload"];
+			if (!ClaimsAuthorizationHelper.CanCreateDocument())
+				Unauthorized();
 
 			if (fileToUpload == null || fileToUpload.Length <= 0)
 				ModelState.AddModelError("fileToUpload", "You must select a document to add.");
@@ -133,17 +153,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 				doc.Name = model.Name;
 				doc.Description = model.Description;
 
+				if (!String.IsNullOrWhiteSpace(model.Category) && model.Category != "None")
+					doc.Category = model.Category;
+				else
+					doc.Category = null;
+
 				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					doc.AdminsOnly = bool.Parse(model.AdminOnly);
 				else
 					doc.AdminsOnly = false;
 
 				doc.Type = fileToUpload.ContentType;
-				doc.Category = model.Category;
 				doc.Filename = fileToUpload.FileName;
 
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.After = doc.CloneJsonToString();
+				auditEvent.Type = AuditLogTypes.DocumentAdded;
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
 				byte[] uploadedFile = new byte[fileToUpload.OpenReadStream().Length];
-				fileToUpload.OpenReadStream().Read(uploadedFile, 0, uploadedFile.Length);
+				await fileToUpload.OpenReadStream().ReadAsync(uploadedFile, 0, uploadedFile.Length);
 
 				doc.Data = uploadedFile;
 
@@ -171,6 +206,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				Unauthorized();
 
+			if (!ClaimsAuthorizationHelper.CanCreateDocument())
+				Unauthorized();
+
+			List<DocumentCategory> noteCategories = new List<DocumentCategory>();
+			noteCategories.Add(new DocumentCategory { Name = "None" });
+			noteCategories.AddRange(await _documentsService.GetAllCategoriesByDepartmentIdAsync(DepartmentId));
+			model.Categories = new SelectList(noteCategories, "Name", "Name");
+
 			model.Name = document.Name;
 			model.Description = document.Description;
 			model.Category = document.Category;
@@ -194,6 +237,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				Unauthorized();
 
+			if (!ClaimsAuthorizationHelper.CanCreateDocument())
+				Unauthorized();
+
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
 				var extenion = fileToUpload.FileName.Substring(fileToUpload.FileName.IndexOf(char.Parse(".")) + 1,
@@ -214,6 +260,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				var auditEvent = new AuditEvent();
+				auditEvent.Before = $"{document.DocumentId} - {document.Name} - {document.Description} - {document.Category} - {document.AdminsOnly}";
+
 				document.Name = model.Name;
 				document.Description = model.Description;
 
@@ -222,7 +271,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					document.AdminsOnly = false;
 
-				document.Category = model.Category;
+				if (!String.IsNullOrWhiteSpace(model.Category) && model.Category != "None")
+					document.Category = model.Category;
+				else
+					document.Category = null;
 
 				if (fileToUpload != null && fileToUpload.Length > 0)
 				{
@@ -230,15 +282,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 					document.Filename = fileToUpload.FileName;
 
 					byte[] uploadedFile = new byte[fileToUpload.OpenReadStream().Length];
-					fileToUpload.OpenReadStream().Read(uploadedFile, 0, uploadedFile.Length);
+					await fileToUpload.OpenReadStream().ReadAsync(uploadedFile, 0, uploadedFile.Length);
 
 					document.Data = uploadedFile;
 				}
+
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.After = $"{document.DocumentId} - {document.Name} - {document.Description} - {document.Category} - {document.AdminsOnly}";
+				auditEvent.Type = AuditLogTypes.DocumentEdited;
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				await _documentsService.SaveDocumentAsync(document, cancellationToken);
 
 				return RedirectToAction("Index", "Documents", new { Area = "User" });
 			}
+
+			List<DocumentCategory> noteCategories = new List<DocumentCategory>();
+			noteCategories.Add(new DocumentCategory { Name = "None" });
+			noteCategories.AddRange(await _documentsService.GetAllCategoriesByDepartmentIdAsync(DepartmentId));
+			model.Categories = new SelectList(noteCategories, "Name", "Name");
 
 			return View(model);
 		}

@@ -240,6 +240,9 @@
   <data name="DepartmentSettings" xml:space="preserve">
     <value>Department Settings</value>
   </data>
+  <data name="DepartmentTypes" xml:space="preserve">
+    <value>Department Types</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>

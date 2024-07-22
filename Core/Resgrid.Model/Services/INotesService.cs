@@ -50,5 +50,15 @@ namespace Resgrid.Model.Services
 		/// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
 		/// <returns>Task&lt;List&lt;Note&gt;&gt;.</returns>
 		Task<List<Note>> GetNotesForDepartmentFilteredAsync(int departmentId, bool isAdmin);
+
+		Task<NoteCategory> SaveNoteCategoryAsync(NoteCategory category, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<NoteCategory> GetNoteCategoryByIdAsync(string categoryId);
+
+		Task<bool> DeleteNoteCategoryAsync(NoteCategory category, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<NoteCategory>> GetAllCategoriesByDepartmentIdAsync(int departmentId);
+
+		Task<bool> DoesNoteTypeAlreadyExistAsync(int departmentId, string noteTypeText);
 	}
 }

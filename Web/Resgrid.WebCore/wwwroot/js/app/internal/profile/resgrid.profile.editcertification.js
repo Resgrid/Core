@@ -6,8 +6,8 @@ var resgrid;
         var editcertification;
         (function (editcertification) {
             $(document).ready(function () {
-                $('#RecievedOn').kendoDatePicker();
-                $('#ExpiresOn').kendoDatePicker();
+                $('#RecievedOn').datetimepicker({ step: 60 });
+                $('#ExpiresOn').datetimepicker({ step: 60 });
                 $("#fileToUpload").kendoUpload({
                     multiple: false,
                     localization: {

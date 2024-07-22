@@ -8,23 +8,18 @@ var resgrid;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Protocols - New');
 
-                var quillDescription = new Quill('#editor-container', {
+                let quillDescription = new Quill('#editor-container', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
-                var quillProtocolText = new Quill('#editor-container2', {
+                let quillProtocolText = new Quill('#editor-container2', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
-                $('#newTriggerStartsOn').kendoDateTimePicker({
-                    interval: 15
-                });
-
-                $('#newTriggerEndsOn').kendoDateTimePicker({
-                    interval: 15
-                });
+                $('#newTriggerStartsOn').datetimepicker({ step: 15 });
+                $('#newTriggerEndsOn').datetimepicker({ step: 15 });
 
                 $("#attachments").kendoUpload();
 

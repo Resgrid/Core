@@ -1,0 +1,113 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Types.EditUnitTypeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["NewUnitTypeHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["NewUnitTypeHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["DepartmentTypes"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["NewUnitTypeHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="NewUnitType" asp-route-area="User" method="post">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                @Html.AntiForgeryToken()
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["UnitTypeNameLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["UnitTypeNameText"]" asp-for="UnitType.Type"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["UnitTypeActionsLabel"]</label>
+                            <div class="col-sm-2">@Html.DropDownListFor(m => m.UnitCustomStatesId, new SelectList(Model.States, "CustomStateId", "Name"), new { style = "width: 100%" })</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["UnitTypeMapIconLabel"]</label>
+                            <div class="col-sm-2">
+                                <select name="UnitTypeIcon" id="UnitTypeIcon">
+                                    <option value="-1">Default</option>
+                                    <option value="20">Aircraft</option>
+                                    <option value="21">Ambulance</option>
+                                    <option value="22">Bulldozer</option>
+                                    <option value="23">Bus</option>
+                                    <option value="24">Car</option>
+                                    <option value="25">Car Two</option>
+                                    <option value="26">Check</option>
+                                    <option value="27">Flag</option>
+                                    <option value="28">FourByFour</option>
+                                    <option value="29">Group</option>
+                                    <option value="30">Helicopter</option>
+                                    <option value="31">Motorcycle</option>
+                                    <option value="32">Pickup</option>
+                                    <option value="33">Camper</option>
+                                    <option value="34">Plowtruck</option>
+                                    <option value="35">Tires</option>
+                                    <option value="36">Truck</option>
+                                    <option value="37">Van</option>
+                                    <option value="38">Velocimeter</option>
+                                    <option value="39">Watercraft</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2"><img id="newUnitTypePreview" style="height: 37px; width: 32px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - New Unit Type');
+
+            $('#newUnitTypePreview').hide();
+
+            $('#UnitTypeIcon').on('change', function () {
+                if (this.value >= 0) {
+                    $('#newUnitTypePreview').show();
+                    let text = $("#UnitTypeIcon option:selected").text().replace(/\s/g, '').toLowerCase();
+                    $("#newUnitTypePreview").attr("src", "/images/Mapping/" + text + ".png");
+                } else {
+                    $('#newUnitTypePreview').hide();
+                }
+            });
+        });
+    </script>
+}

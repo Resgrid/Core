@@ -10,5 +10,7 @@ namespace Resgrid.Web.Areas.User.Models.CustomStatuses
 		public SelectList DetailTypes { get; set; }
 		public CustomStateNoteTypes NoteType { get; set; }
 		public SelectList NoteTypes { get; set; }
+		public ActionBaseTypes BaseType { get; set; }
+		public SelectList BaseTypes { get; set; }
 	}
 }

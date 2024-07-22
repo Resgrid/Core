@@ -4,34 +4,34 @@
     ViewData["Title"] = "Resgrid | Edit User Profile";
 }
 @section Styles
-    {
+{
     <link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
 }
 
-    <form id="edit_user" class="form-horizontal" role="form" asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" method="post">
+<form id="edit_user" class="form-horizontal" role="form" asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" method="post">
 
-        @Html.AntiForgeryToken()
-        @Html.HiddenFor(m => m.UserId)
-        @Html.HiddenFor(m => m.Profile.UserProfileId)
-        @Html.HiddenFor(m => m.Profile.UserId)
-        @Html.HiddenFor(m => m.IsOwnProfile)
-        @Html.HiddenFor(m => m.IsFreePlan)
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.Profile.UserProfileId)
+    @Html.HiddenFor(m => m.Profile.UserId)
+    @Html.HiddenFor(m => m.IsOwnProfile)
+    @Html.HiddenFor(m => m.IsFreePlan)
 
-        <div class="row wrapper border-bottom white-bg page-heading">
-            <div class="col-sm-4">
-                <h2>@localizer["EditTitle"] @Model.FirstName @Model.LastName @localizer["ProfileTitle"]</h2>
-                <ol class="breadcrumb">
-                    <li>
-                        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-                    </li>
-                    <li class="active">
-                        <strong>@localizer["Title"]</strong>
-                    </li>
-                </ol>
-            </div>
-            <div class="col-sm-8">
-                <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                    @if (Model.IsOwnProfile)
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-4">
+            <h2>@localizer["EditTitle"] @Model.FirstName @Model.LastName @localizer["ProfileTitle"]</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+                </li>
+                <li class="active">
+                    <strong>@localizer["Title"]</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                @if (Model.IsOwnProfile)
                 {
                     <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">@localizer["ReportDelivery"]</a>
                 }
@@ -567,7 +567,7 @@
 
 
 @section Scripts
-    {
+{
     <script>
         var sameAddress = '@Model.MailingAddressSameAsPhysical';
     </script>

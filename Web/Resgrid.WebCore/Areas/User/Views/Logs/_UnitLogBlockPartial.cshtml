@@ -34,21 +34,11 @@
 	
 	<script>
 		$(document).ready(function () {
-			$("#unit_dispatchtime_@Model.UnitId").kendoDateTimePicker({
-				interval: 1
-			});
-			$("#unit_enroutetime_@Model.UnitId").kendoDateTimePicker({
-				interval: 1
-			});
-			$("#unit_onscenetime_@Model.UnitId").kendoDateTimePicker({
-				interval: 1
-			});
-			$("#unit_releasedtime_@Model.UnitId").kendoDateTimePicker({
-				interval: 1
-			});
-			$("#unit_inquarterstime_@Model.UnitId").kendoDateTimePicker({
-				interval: 1
-			});
+			$('#unit_dispatchtime_@Model.UnitId').datetimepicker({ step: 5 });
+			$('#unit_enroutetime_@Model.UnitId').datetimepicker({ step: 5 });
+			$('#unit_onscenetime_@Model.UnitId').datetimepicker({ step: 5 });
+			$('#unit_releasedtime_@Model.UnitId').datetimepicker({ step: 5 });
+			$('#unit_inquarterstime_@Model.UnitId').datetimepicker({ step: 5 });
 
 			$('#unit_personnel_@Model.UnitId').kendoMultiSelect({
 				placeholder: "Select Personnel for @Model.UnitName ...",

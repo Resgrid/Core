@@ -8,11 +8,26 @@ var resgrid;
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
-                $("#NatureOfCall").kendoEditor();
-                $("#CallNotes").kendoEditor();
-                $('#Call_LoggedOn').kendoDateTimePicker({
-                    interval: 1
+
+                let quill = new Quill('#editor-container', {
+                    placeholder: '',
+                    theme: 'snow'
                 });
+
+                let quill2 = new Quill('#editor-container2', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                $(document).on('submit', '#addArchivedCallForm', function () {
+                    $('#NatureOfCall').val(quill.root.innerHTML);
+                    $('#CallNotes').val(quill2.root.innerHTML);
+
+                    return true;
+                });
+
+
+                $('#Call_LoggedOn').datetimepicker({ step: 5 });
                 $("#Call_Address").bind("keypress", function (event) {
                     if (event.keyCode == 13) {
                         $("#searchButton").click();

@@ -82,5 +82,7 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> DeleteAllCertificationsForUser(string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<bool> DoesCertificationTypeAlreadyExistAsync(int departmentId, string certificationTypeText);
 	}
 }

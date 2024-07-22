@@ -6,13 +6,9 @@ var resgrid;
         (function (addPost) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Connect - Add Post');
-                $('#editor').kendoEditor();
-                $('#Article_StartOn').kendoDateTimePicker({
-                    interval: 1
-                });
-                $('#Article_ExpiresOn').kendoDateTimePicker({
-                    interval: 1
-                });
+                //$('#editor').kendoEditor();
+                $('#Article_StartOn').datetimepicker({ step: 15 });
+                $('#Article_ExpiresOn').datetimepicker({ step: 15 });
             });
         })(addPost = connect.addPost || (connect.addPost = {}));
     })(connect = resgrid.connect || (resgrid.connect = {}));

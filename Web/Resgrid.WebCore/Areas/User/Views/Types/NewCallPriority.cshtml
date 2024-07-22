@@ -1,141 +1,151 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Types.NewCallPriorityView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
 @{
-  ViewBag.Title = "Resgrid | New Call Priority";
+    ViewBag.Title = "Resgrid | " + @localizer["NewCallPriorityHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>New Call Priority</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Department" asp-action="Types" asp-route-area="User">Department Types</a>
-      </li>
-      <li class="active">
-        <strong>New Call Priority</strong>
-      </li>
-    </ol>
-  </div>
+    <div class="col-sm-4">
+        <h2>@localizer["NewCallPriorityHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["DepartmentTypes"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["NewCallPriorityHeader"]</strong>
+            </li>
+        </ol>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <form class="form-horizontal" role="form" asp-controller="Types" asp-action="NewCallPriority" asp-route-area="User" method="post" enctype="multipart/form-data">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="NewCallPriority" asp-route-area="User" method="post" enctype="multipart/form-data">
 
-            <div class="row">
-              <div class="col-md-8 col-md-offset-1 col-md-pull-1">
-                @if (!String.IsNullOrEmpty(Model.Message))
-				{
-                  <div class="alert alert-success">
-                    @Model.Message
-                  </div>
-				}
-                <div asp-validation-summary="All" class="text-danger"></div>
-                @Html.AntiForgeryToken()
-              </div>
-            </div>
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                @Html.AntiForgeryToken()
+                            </div>
+                        </div>
 
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Priority Name</label>
-              <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Priority" asp-for="CallPriority.Name"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Priority Color</label>
-              <div class="col-sm-10"><input class="form-control" asp-for="CallPriority.Color"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Sort Order</label>
-              <div class="col-sm-1"><input class="form-control" asp-for="CallPriority.Sort" type="number" min="0" max="999" step="1"></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Is Default</label>
-              <div class="col-sm-10">
-                <div class="checkbox checkbox-primary">
-                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="CallPriority.IsDefault">
-                  <label></label>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PriorityNameLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["PriorityNameText"]" asp-for="CallPriority.Name"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PriorityColorLabel"]</label>
+                            <div class="col-sm-2"><input class="form-control" asp-for="CallPriority.Color"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PrioritySortLabel"]</label>
+                            <div class="col-sm-1"><input class="form-control" asp-for="CallPriority.Sort" type="number" min="0" max="999" step="1"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PriorityIsDefaultLabel"]</label>
+                            <div class="col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="CallPriority.IsDefault">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PriorityPersonnelLabel"]</label>
+                            <div class="col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="CallPriority.DispatchPersonnel">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PriorityUnitsLabel"]</label>
+                            <div class="col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="CallPriority.DispatchUnits">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PrioritySoundLabel"]</label>
+                            <div class="col-sm-3">
+                                <select asp-for="CallPriority.Tone" asp-items="Model.AlertSounds" style="padding-left: 0; width: 100%;"></select>
+                            </div>
+                            <div class="col-sm-2">
+                                <audio id="player" controls>
+                                    <source id="mp3_src" src="horse.mp3" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Dispatch Personnel</label>
-              <div class="col-sm-10">
-                <div class="checkbox checkbox-primary">
-                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="CallPriority.DispatchPersonnel">
-                  <label></label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Dispatch Units</label>
-              <div class="col-sm-10">
-                <div class="checkbox checkbox-primary">
-                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="CallPriority.DispatchUnits">
-                  <label></label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Alert Sound</label>
-              <div class="col-sm-3">
-                <select asp-for="CallPriority.Tone" asp-items="Model.AlertSounds" style="padding-left: 0; width: 100%;"></select>
-              </div>
-              <div class="col-sm-2">
-                <audio id="player" controls>
-                  <source id="mp3_src" src="horse.mp3" type="audio/mpeg">
-                  Your browser does not support the audio element.
-                </audio>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save</button>
-              </div>
-            </div>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 @section Scripts
-  {
-  <script>
+{
+    <script>
 
-	function switchInputs(v) {
-	  var value = $('#CallPriority_Tone').val();
-	  var audio = $("#player");
+        function switchInputs(v) {
+            var value = $('#CallPriority_Tone').val();
+            var audio = $("#player");
 
-	  if (value) {
-		if (value === "0") {
-		  $("#player").hide();
-		} else {
-		  $("#player").show();
-		  $("#mp3_src").attr("src", resgrid.absoluteBaseUrl + '/audio/custom/c' + value + ".mp3");
-		}
-	  }
+            if (value) {
+                if (value === "0") {
+                    $("#player").hide();
+                } else {
+                    $("#player").show();
+                    $("#mp3_src").attr("src", resgrid.absoluteBaseUrl + '/audio/custom/c' + value + ".mp3");
+                }
+            }
 
-	  audio[0].pause();
-	  audio[0].load();
-	}
+            audio[0].pause();
+            audio[0].load();
+        }
 
-	$(document).ready(function () {
-	  resgrid.common.analytics.track('Department - New Call Priority');
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - New Call Priority');
 
-	  $('#CallPriority_Tone').on("change", function (e) { switchInputs(e); });
+            $('#CallPriority_Tone').on("change", function (e) { switchInputs(e); });
 
-	  $("#CallPriority_Color").kendoColorPicker({
-		value: "#000000"
-	  });
+            $("#CallPriority_Color").minicolors({
+                animationSpeed: 50,
+                animationEasing: 'swing',
+                changeDelay: 0,
+                control: 'hue',
+                defaultValue: '#0080ff',
+                format: 'hex',
+                showSpeed: 100,
+                hideSpeed: 100,
+                inline: false,
+                theme: 'bootstrap'
+            });
 
-	  switchInputs();
-	});
-  </script>
+            switchInputs();
+        });
+    </script>
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 
@@ -22,12 +23,16 @@ namespace Resgrid.Services
 		private readonly ICalendarService _calendarService;
 		private readonly IProtocolsService _protocolsService;
 		private readonly IShiftsService _shiftsService;
+		private readonly ICustomStateService _customStateService;
+		private readonly ICertificationService _certificationService;
+		private readonly IDocumentsService _documentsService;
+		private readonly INotesService _notesService;
 
 		public AuthorizationService(IDepartmentsService departmentsService, IInvitesService invitesService,
 			ICallsService callsService, IMessageService messageService, IWorkLogsService workLogsService, ISubscriptionsService subscriptionsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
-			IShiftsService shiftsService)
+			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService, IDocumentsService documentsService, INotesService notesService)
 		{
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
@@ -42,6 +47,10 @@ namespace Resgrid.Services
 			_calendarService = calendarService;
 			_protocolsService = protocolsService;
 			_shiftsService = shiftsService;
+			_customStateService = customStateService;
+			_certificationService = certificationService;
+			_documentsService = documentsService;
+			_notesService = notesService;
 		}
 		#endregion Private Members and Constructors
 
@@ -884,6 +893,300 @@ namespace Resgrid.Services
 				return false;
 
 			return true;
+		}
+
+		public async Task<bool> CanUserModifyCustomStatusAsync(string userId, int customStatusId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var customState = await _customStateService.GetCustomSateByIdAsync(customStatusId);
+
+			if (department == null || customState == null)
+				return false;
+
+			if (customState.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserModifyCustomStateDetailAsync(string userId, int customStateDetailId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var customStateDetail = await _customStateService.GetCustomDetailByIdAsync(customStateDetailId);
+
+			if (department == null || customStateDetail == null)
+				return false;
+
+			var customState = await _customStateService.GetCustomSateByIdAsync(customStateDetail.CustomStateId);
+
+			if (customState == null)
+				return false;
+
+			if (customState.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserModifyCallTypeAsync(string userId, int callTypeId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var callType = await _callsService.GetCallTypeByIdAsync(callTypeId);
+
+			if (department == null || callType == null)
+				return false;
+
+			if (callType.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAddCallTypeAsync(string userId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAddCallPriorityAsync(string userId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserDeleteCallPriorityAsync(string userId, int priorityId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var priority = await _callsService.GetCallPrioritiesByIdAsync(department.DepartmentId, priorityId, true);
+
+			if (priority == null)
+				return false;
+
+			if (priority.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserEditCallPriorityAsync(string userId, int priorityId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var priority = await _callsService.GetCallPrioritiesByIdAsync(department.DepartmentId, priorityId, true);
+
+			if (priority == null)
+				return false;
+
+			if (priority.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAddUnitTypeAsync(string userId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserEditUnitTypeAsync(string userId, int unitTypeId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var unitType = await _unitsService.GetUnitTypeByIdAsync(unitTypeId);
+
+			if (unitType == null)
+				return false;
+
+			if (unitType.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAddCertificationTypeAsync(string userId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserDeleteCertificationTypeAsync(string userId, int certificationTypeId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var type = await _certificationService.GetCertificationTypeByIdAsync(certificationTypeId);
+
+			if (type == null)
+				return false;
+
+			if (type.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAddDocumentTypeAsync(string userId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserDeleteDocumentTypeAsync(string userId, string documentTypeId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var type = await _documentsService.GetDocumentCategoryByIdAsync(documentTypeId);
+
+			if (type == null)
+				return false;
+
+			if (type.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAddNoteTypeAsync(string userId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserDeleteNoteTypeAsync(string userId, string noteTypeId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var type = await _notesService.GetNoteCategoryByIdAsync(noteTypeId);
+
+			if (type == null)
+				return false;
+
+			if (type.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAddNoteAsync(string userId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserEditNoteAsync(string userId, int noteId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var type = await _notesService.GetNoteByIdAsync(noteId);
+
+			if (type == null)
+				return false;
+
+			if (type.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
 		}
 	}
 }

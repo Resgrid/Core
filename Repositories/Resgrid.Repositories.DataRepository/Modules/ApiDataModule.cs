@@ -148,6 +148,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CallReferencesRepository>().As<ICallReferencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeleteRepository>().As<IDeleteRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentAudioRepository>().As<IDepartmentAudioRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DocumentCategoriesRepository>().As<IDocumentCategoriesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<NoteCategoriesRepository>().As<INoteCategoriesRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

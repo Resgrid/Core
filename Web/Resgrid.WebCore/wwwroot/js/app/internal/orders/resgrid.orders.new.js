@@ -10,16 +10,12 @@
 				$("#Order_NeededBy").keypress(function (e) {
 					e.preventDefault();
 				});
-				$('#Order_NeededBy').kendoDateTimePicker({
-					interval: 60
-				});
+                $('#Order_NeededBy').datetimepicker({ step: 60 });
 
 				$("#Order_MeetupDate").keypress(function (e) {
 					e.preventDefault();
 				});
-				$('#Order_MeetupDate').kendoDateTimePicker({
-					interval: 15
-				});
+                $('#Order_MeetupDate').datetimepicker({ step: 15 });
 
 				$("#newOrderForm").submit(function (event) {
 					for (var i = 1; i <= resgrid.orders.newOrder.orderCount; i++) {

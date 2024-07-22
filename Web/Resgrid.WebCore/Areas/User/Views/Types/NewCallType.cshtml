@@ -1,0 +1,110 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Types.EditCallTypeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["NewCallTypeButton"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["NewCallTypeButton"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["DepartmentTypes"]</a>
+            </li>
+            <li class="active">
+                <strong>@commonLocalizer["NewCallTypeButton"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="NewCallType" asp-route-area="User" method="post">
+
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                @Html.AntiForgeryToken()
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CallTypeNameLabel"]</label>
+                            <div class="col-sm-4"><input type="text" class="form-control" placeholder="@localizer["CallTypeNamePlaceholder"]" asp-for="CallType.Type"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CallTypeMapIconLabel"]</label>
+                            <div class="col-sm-2">
+                                <select asp-for="CallTypeIcon">
+                                    <option value="-1">Default</option>
+                                    <option value="0">Search</option>
+                                    <option value="1">Blast</option>
+                                    <option value="2">Car Accident</option>
+                                    <option value="3">Crime Scene</option>
+                                    <option value="4">Earthquake</option>
+                                    <option value="5">Emergency Phone</option>
+                                    <option value="6">Fire</option>
+                                    <option value="7">First Aid</option>
+                                    <option value="8">Flood</option>
+                                    <option value="9">Tools</option>
+                                    <option value="10">Line Down</option>
+                                    <option value="11">Industry</option>
+                                    <option value="12">Power Outage</option>
+                                    <option value="13">Radiation</option>
+                                    <option value="14">Shooting</option>
+                                    <option value="15">Poison</option>
+                                    <option value="16">Gathering</option>
+                                    <option value="17">Tree Down</option>
+                                    <option value="18">Worksite</option>
+                                    <option value="19">Workshop</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2"><img id="newCallTypePreview" style="height: 37px; width: 32px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - Add Call Type');
+
+            $('#newCallTypePreview').hide();
+
+            $('#CallTypeIcon').on('change', function () {
+                if (this.value >= 0) {
+                    $('#newCallTypePreview').show();
+                    let text = $("#CallTypeIcon option:selected").text().replace(/\s/g, '').toLowerCase();
+                    $("#newCallTypePreview").attr("src", "/images/Mapping/" + text + ".png");
+                } else {
+                    $('#newCallTypePreview').hide();
+                }
+            });
+        });
+    </script>
+}

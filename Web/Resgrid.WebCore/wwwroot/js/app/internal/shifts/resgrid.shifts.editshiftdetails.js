@@ -8,10 +8,20 @@ var resgrid;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Shifts - Edit');
                 $('.sl2').select2();
-                $("#colorPicker").kendoColorPicker({
-                    value: "#ffffff",
-                    buttons: false
+
+                $("#colorPicker").minicolors({
+                    animationSpeed: 50,
+                    animationEasing: 'swing',
+                    changeDelay: 0,
+                    control: 'hue',
+                    defaultValue: '#0080ff',
+                    format: 'hex',
+                    showSpeed: 100,
+                    hideSpeed: 100,
+                    inline: false,
+                    theme: 'bootstrap'
                 });
+
                 $("#Shift_StartTime").kendoTimePicker({
                     interval: 15
                 });

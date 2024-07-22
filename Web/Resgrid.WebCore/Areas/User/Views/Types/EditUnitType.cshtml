@@ -1,21 +1,22 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Types.EditUnitTypeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
 @{
-    ViewBag.Title = "Resgrid | Edit Unit Type";
+    ViewBag.Title = "Resgrid | " + @localizer["EditUnitTypeHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Edit Unit Type</h2>
+        <h2>@localizer["EditUnitTypeHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li>
-                <a asp-controller="Department" asp-action="Types" asp-route-area="User">Department Types</a>
+                <a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["DepartmentTypes"]</a>
             </li>
             <li class="active">
-                <strong>Edit Unit Type</strong>
+                <strong>@localizer["EditUnitTypeHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -43,15 +44,15 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Unit Type Name</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Role" asp-for="UnitType.Type"></div>
+                            <label class="col-sm-2 control-label">@localizer["UnitTypeNameLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["UnitTypeNameText"]" asp-for="UnitType.Type"></div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Actions</label>
+                            <label class="col-sm-2 control-label">@localizer["UnitTypeActionsLabel"]</label>
                             <div class="col-sm-2">@Html.DropDownListFor(m => m.UnitCustomStatesId, new SelectList(Model.States, "CustomStateId", "Name"), new { style = "width: 100%" })</div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Map Icon</label>
+                            <label class="col-sm-2 control-label">@localizer["UnitTypeMapIconLabel"]</label>
                             <div class="col-sm-2">
                                 <select name="UnitTypeIcon" id="UnitTypeIcon">
                                     <option value="-1">Default</option>
@@ -81,8 +82,8 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Update</button>
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
                             </div>
                         </div>
                     </form>
@@ -98,8 +99,7 @@
     $(document).ready(function () {
         resgrid.common.analytics.track('Department - Edit Unit Types');
 
-         $('#newUnitTypePreview').hide();
-        $('#UnitCustomStatesId').select2();
+        $('#newUnitTypePreview').hide();
 
         $('#UnitTypeIcon').on('change', function() {
           if (this.value >= 0) {

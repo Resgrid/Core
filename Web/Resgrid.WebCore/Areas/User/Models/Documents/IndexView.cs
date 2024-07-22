@@ -9,7 +9,7 @@ namespace Resgrid.Web.Areas.User.Models.Documents
 		public string UserId { get; set; }
 		public Department Department { get; set; }
 		public List<Document> Documents { get; set; }
-		public List<string> Categories { get; set; }
+		public List<DocumentCategory> Categories { get; set; }
 		public string SelectedType { get; set; }
 		public string SelectedCategory { get; set; }
 	}

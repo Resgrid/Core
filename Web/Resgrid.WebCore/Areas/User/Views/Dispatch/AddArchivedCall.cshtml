@@ -5,7 +5,7 @@
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
-    {
+{
     <style>
         .select2-close-mask {
             z-index: 2099;
@@ -17,42 +17,42 @@
     </style>
 }
 
-    <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-sm-4">
-            <h2>@localizer["AddArchivedCallHeader"]</h2>
-            <ol class="breadcrumb">
-                <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-                </li>
-                <li>
-                    <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
-                </li>
-                <li>
-                    <a asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@commonLocalizer["ArchivedCallsPage"]</a>
-                </li>
-                <li class="active">
-                    <strong>@localizer["AddArchivedCallHeader"]</strong>
-                </li>
-            </ol>
-        </div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["AddArchivedCallHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@commonLocalizer["ArchivedCallsPage"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["AddArchivedCallHeader"]</strong>
+            </li>
+        </ol>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="wrapper wrapper-content">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content">
-                        <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="AddArchivedCall" asp-route-area="User" method="post">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" id="addArchivedCallForm" asp-controller="Dispatch" asp-action="AddArchivedCall" asp-route-area="User" method="post">
 
-                            <div class="row">
-                                <div class="col-md-8 col-md-offset-1">
-                                    @Html.AntiForgeryToken()
-                                    @Html.HiddenFor(m => m.Latitude)
-                                    @Html.HiddenFor(m => m.Longitude)
-                                    @Html.HiddenFor(m => m.Call.ReportingUserId)
-                                    <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1">
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.Latitude)
+                                @Html.HiddenFor(m => m.Longitude)
+                                @Html.HiddenFor(m => m.Call.ReportingUserId)
+                                <div asp-validation-summary="All" class="text-danger"></div>
 
-                                    @if (!String.IsNullOrEmpty(Model.Message))
+                                @if (!String.IsNullOrEmpty(Model.Message))
                                 {
                                     <div class="alert alert-success">
                                         @Model.Message
@@ -99,11 +99,23 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNatureLabel"]</label>
-                            <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="@localizer["CallNaturePlaceholder"]" asp-for="Call.NatureOfCall"></textarea></div>
+                            <div class="col-sm-10">
+                                <input type="hidden" asp-for="Call.NatureOfCall">
+
+                                <div id="editor-container" style="width:100%; height: 200px;">
+                                    @Html.Raw(Model.Call.NatureOfCall)
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["NotesLabel"]</label>
-                            <div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="@localizer["NotesPlaceholder"]" asp-for="Call.Notes"></textarea></div>
+                            <div class="col-sm-10">
+                                <input type="hidden" asp-for="Call.Notes">
+
+                                <div id="editor-container2" style="width:100%; height: 200px;">
+                                    @Html.Raw(Model.Call.Notes)
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MapPageLabel"]</label>
@@ -243,7 +255,7 @@
 </div>
 
 @section Scripts
-    {
+{
     <script type="text/javascript">
         var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
         var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';

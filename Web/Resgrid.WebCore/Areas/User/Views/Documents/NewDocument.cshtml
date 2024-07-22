@@ -1,7 +1,8 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Documents.NewDocumentView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Documents.Documents> localizer
 @{
-    ViewBag.Title = "Resgrid | New Document";
+    ViewBag.Title = "Resgrid | " + @localizer["NewDocumentHeader"];
 }
 
 @section Styles
@@ -11,16 +12,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>New Document</h2>
+        <h2>@localizer["NewDocumentHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li>
-                <a asp-controller="Documents" asp-action="Index" asp-route-area="User">Documents</a>
+                <a asp-controller="Documents" asp-action="Index" asp-route-area="User">@commonLocalizer["DocumentsModule"]</a>
             </li>
             <li class="active">
-                <strong>New Document</strong>
+                <strong>@localizer["NewDocumentHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -48,16 +49,20 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Name</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Document" asp-for="Name"></div>
+                            <label class="col-sm-2 control-label">@commonLocalizer["Name"]</label>
+                            <div class="col-sm-6"><input type="text" class="form-control" placeholder="@localizer["NewDocumentNamePlaceholder"]" asp-for="Name"></div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Description</label>
+                            <label class="col-sm-2 control-label">@localizer["Category"]</label>
+                            <div class="col-sm-2"><select asp-for="Category" asp-items="Model.Categories" style="padding-left: 0; width: 100%;"></select></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Description"]</label>
                             <div class="col-sm-10">
                                 <input type="hidden" asp-for="Description">
 
                                 <div id="editor-container" style="width:100%; height: 200px;">
-                                    <p>@Model.Description</p>
+                                    @Html.Raw(Model.Description)
                                 </div>
                             </div>
                         </div>
@@ -65,31 +70,31 @@
                         {
                             <div class="form-group">
                                 <label class="col-sm-2 control-label required">
-                                    Viewable By
+                                    @localizer["ViewableByLabel"]
                                 </label>
                                 <div class="col-sm-10">
                                     @Html.DropDownListFor(x => x.AdminOnly, new[]
                                              {
-                                new SelectListItem {Selected = true, Text = "Everyone", Value = Boolean.FalseString},
-                                new SelectListItem {Selected = false, Text = "Admins Only", Value = Boolean.TrueString}
+                                new SelectListItem {Selected = true, Text = @localizer["EveryoneLabel"], Value = Boolean.FalseString},
+                                new SelectListItem {Selected = false, Text = @localizer["AdminsOnlyLabel"], Value = Boolean.TrueString}
                                 })
                                 </div>
                             </div>
                         }
                         <div class="form-group">
                             <label class="col-sm-2 control-label required">
-                                Upload
+                                @localizer["UploadLabel"]
                             </label>
                             <div class="col-sm-10">
                                 <input name="fileToUpload" id="fileToUpload" type="file" />
-                                <div class="alert alert-info" role="alert">Not all files types are allowed! File must be less then 10MB in size and must have one of these extensions (.png, .jpg, .jpeg, .gif, .pdf, .doc, .docx, .txt, .ppt, .pptx, .pps, .ppsx, .odt, .xls, .xlsx, .mp4, .mp3)</div>
+                                <div class="alert alert-info" role="alert">@localizer["UploadWarning"]</div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Documents" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Add Document</button>
+                                <a class="btn btn-white" asp-controller="Documents" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Add"]</button>
                             </div>
                         </div>
                     </form>

@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddNewCallTypeButtonAltText" xml:space="preserve">
+    <value>Add a new call type</value>
+  </data>
+  <data name="CallPrioritiesHeader" xml:space="preserve">
+    <value>Call Priorities</value>
+  </data>
+  <data name="CallPriorityAlertSound" xml:space="preserve">
+    <value>Alert Sound</value>
+  </data>
+  <data name="CallPriorityIsDefault" xml:space="preserve">
+    <value>Is Default</value>
+  </data>
+  <data name="CallPriorityUsingCustomText" xml:space="preserve">
+    <value>You have custom Call Priorities enabled. To revert back to the default ones you will need to delete all the custom ones. Editing an existing call priority will update it for all calls that used that priority.</value>
+  </data>
+  <data name="CallPriorityUsingDefaultText" xml:space="preserve">
+    <value>You’re currently using the Default call priorities. If you add any custom call priorities you will no longer be able to utilize the default call priorities (including their sounds). If you don’t specify a custom sound for your new call priorities, they will default to the High call push sound and alert sound. Users on the v5 or lower version of the Responder app and v2 or lower of the Unit app don't support custom call priorities. If you have any users on those versions of the apps we recommend not creating custom call priories.</value>
+  </data>
+  <data name="CallTypeMapIconHeader" xml:space="preserve">
+    <value>Call Type Map Icon</value>
+  </data>
+  <data name="CallTypeMapIconLabel" xml:space="preserve">
+    <value>Map Icon</value>
+  </data>
+  <data name="CallTypeNameHeader" xml:space="preserve">
+    <value>Call Type Name</value>
+  </data>
+  <data name="CallTypeNameLabel" xml:space="preserve">
+    <value>Call Type Name</value>
+  </data>
+  <data name="CallTypeNamePlaceholder" xml:space="preserve">
+    <value>Name of the Type</value>
+  </data>
+  <data name="CallTypesHeader" xml:space="preserve">
+    <value>Call Types</value>
+  </data>
+  <data name="CertificationTypeNameLabel" xml:space="preserve">
+    <value>Certification Name</value>
+  </data>
+  <data name="CertificationTypeNamePlaceholder" xml:space="preserve">
+    <value>Name of the Certification</value>
+  </data>
+  <data name="CertificationTypesDeleteWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this Certification Type. Are you sure you want to delete the call type</value>
+  </data>
+  <data name="CertificationTypesHeader" xml:space="preserve">
+    <value>Certification Types</value>
+  </data>
+  <data name="CertificationTypesName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="DefaultUnitActionsLabel" xml:space="preserve">
+    <value>Default Unit Actions</value>
+  </data>
+  <data name="DeleteCallTypeWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this call type. Are you sure you want to delete the call type</value>
+  </data>
+  <data name="DeleteDocumentTypesWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this Document Category. Are you sure you want to delete the call category</value>
+  </data>
+  <data name="DeleteNoteTypesWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this note type. Are you sure you want to delete the note type</value>
+  </data>
+  <data name="DeleteUnitTypeWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this unit type. Are you sure you want to delete the unit type</value>
+  </data>
+  <data name="DepartmentTypesHeader" xml:space="preserve">
+    <value>Department Types</value>
+  </data>
+  <data name="DocumentTypeNameLabel" xml:space="preserve">
+    <value>Category Name</value>
+  </data>
+  <data name="DocumentTypeNamePlaceholder" xml:space="preserve">
+    <value>Name of the new Document Category (Type)</value>
+  </data>
+  <data name="DocumentTypesHeader" xml:space="preserve">
+    <value>Document Categories</value>
+  </data>
+  <data name="EditCallPriorityHeader" xml:space="preserve">
+    <value>Edit Call Priority</value>
+  </data>
+  <data name="EditCallTypeHeader" xml:space="preserve">
+    <value>Edit Call Type</value>
+  </data>
+  <data name="EditUnitTypeHeader" xml:space="preserve">
+    <value>Edit Unit Type</value>
+  </data>
+  <data name="ManagedListOrderingHeader" xml:space="preserve">
+    <value>Manage List Ordering</value>
+  </data>
+  <data name="NewCallPriorityButtonAlt" xml:space="preserve">
+    <value>Add a new call priority</value>
+  </data>
+  <data name="NewCallPriorityHeader" xml:space="preserve">
+    <value>New Call Priority</value>
+  </data>
+  <data name="NewCallTypeButton" xml:space="preserve">
+    <value>New Call Type</value>
+  </data>
+  <data name="NewCertificationTypeHeader" xml:space="preserve">
+    <value>New Certification Type</value>
+  </data>
+  <data name="NewDocumentTypeHeader" xml:space="preserve">
+    <value>New Document Category</value>
+  </data>
+  <data name="NewDocumentTypesHeader" xml:space="preserve">
+    <value>New Document Category</value>
+  </data>
+  <data name="NewNoteTypesHeader" xml:space="preserve">
+    <value>New Note Type</value>
+  </data>
+  <data name="NewUnitTypeHeader" xml:space="preserve">
+    <value>New Unit Type</value>
+  </data>
+  <data name="NoteTypeNamePlaceholder" xml:space="preserve">
+    <value>Name of the Note Type (Category)</value>
+  </data>
+  <data name="NoteTypesHeader" xml:space="preserve">
+    <value>Note Types</value>
+  </data>
+  <data name="NoteTypesName" xml:space="preserve">
+    <value>Note Type</value>
+  </data>
+  <data name="PriorityColorLabel" xml:space="preserve">
+    <value>Priority Color</value>
+  </data>
+  <data name="PriorityIsDefaultLabel" xml:space="preserve">
+    <value>Is Default</value>
+  </data>
+  <data name="PriorityNameLabel" xml:space="preserve">
+    <value>Priority Name</value>
+  </data>
+  <data name="PriorityNameText" xml:space="preserve">
+    <value>Name of the Priority</value>
+  </data>
+  <data name="PriorityPersonnelLabel" xml:space="preserve">
+    <value>Dispatch Personnel</value>
+  </data>
+  <data name="PrioritySortLabel" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
+  <data name="PrioritySoundLabel" xml:space="preserve">
+    <value>Alert Sound</value>
+  </data>
+  <data name="PriorityUnitsLabel" xml:space="preserve">
+    <value>Dispatch Units</value>
+  </data>
+  <data name="UnitTypeActionsLabel" xml:space="preserve">
+    <value>Actions (Custom Unit Statuses)</value>
+  </data>
+  <data name="UnitTypeMapIconLabel" xml:space="preserve">
+    <value>Map Icon</value>
+  </data>
+  <data name="UnitTypeNameLabel" xml:space="preserve">
+    <value>Unit Type Name</value>
+  </data>
+  <data name="UnitTypeNameText" xml:space="preserve">
+    <value>Name of the Unit Type</value>
+  </data>
+  <data name="UnitTypesHeader" xml:space="preserve">
+    <value>Unit Types</value>
+  </data>
+</root>

@@ -6,7 +6,7 @@ var resgrid;
         (function (newcommand) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Command - New Definition');
-                $("#editor").kendoEditor();
+                //$("#editor").kendoEditor();
                 $('#SelectedType').select2();
                 $("#unitTypes").kendoMultiSelect({
                     placeholder: "Select Unit Types...",

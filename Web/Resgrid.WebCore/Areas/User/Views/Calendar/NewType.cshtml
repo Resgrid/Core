@@ -53,11 +53,11 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@localizer["TypeName"]</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Name of the Type" asp-for="Type.Name"></div>
+							<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name of the Type" asp-for="Type.Name"></div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@localizer["TypeColor"]</label>
-							<div class="col-sm-10"><input type="text" class="form-control" asp-for="Type.Color"/></div>
+							<div class="col-sm-2"><input type="text" class="form-control" asp-for="Type.Color"/></div>
 						</div>
 
 						<div class="form-group">
@@ -77,9 +77,17 @@
 {
 		<script>
 		$(document).ready(function () {
-			$("#Type_Color").kendoColorPicker({
-				value: "#ffffff",
-				buttons: false
+			$("#Type_Color").minicolors({
+				animationSpeed: 50,
+				animationEasing: 'swing',
+				changeDelay: 0,
+				control: 'hue',
+				defaultValue: '#0080ff',
+				format: 'hex',
+				showSpeed: 100,
+				hideSpeed: 100,
+				inline: false,
+				theme: 'bootstrap'
 			});
 		});
 	</script>

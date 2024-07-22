@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Repositories.DataRepository;
 
 namespace Resgrid.Services
 {
@@ -51,6 +52,16 @@ namespace Resgrid.Services
 			newCertType.Type = certificationType;
 
 			return await _departmentCertificationTypeRepository.SaveOrUpdateAsync(newCertType, cancellationToken);
+		}
+
+		public async Task<bool> DoesCertificationTypeAlreadyExistAsync(int departmentId, string certificationTypeText)
+		{
+			var categories = await _departmentCertificationTypeRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			if (categories == null)
+				return false;
+
+			return categories.Any(x => x.Type == certificationTypeText.Trim());
 		}
 
 		public async Task<List<PersonnelCertification>> GetCertificationsByUserIdAsync(string userId)

@@ -12,7 +12,7 @@ namespace Resgrid.Web.Areas.User.Models.Documents
 
 		public string Category { get; set; }
 
-		public SelectList Categories { get; set; }  
+		public SelectList Categories { get; set; }
 
 		public string AdminOnly { get; set; }
 

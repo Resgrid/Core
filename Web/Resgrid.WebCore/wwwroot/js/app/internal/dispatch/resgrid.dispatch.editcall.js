@@ -8,8 +8,12 @@ var resgrid;
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
-                $("#NatureOfCall").kendoEditor();
-                $("#CallNotes").kendoEditor();
+
+                let quillNote2 = new Quill('#nature-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
                 $("#Call_Address").bind("keypress", function (event) {
                     if (event.keyCode == 13) {
                         $("#searchButton").click();
@@ -22,15 +26,19 @@ var resgrid;
                         return false;
                     }
                 });
-                var quillNote = new Quill('#note-container', {
+
+                let quillNote = new Quill('#note-container', {
                     placeholder: '',
                     theme: 'snow'
                 });
+
                 $(document).on('submit', '#updateCallForm', function () {
                     $('#Call_Notes').val(quillNote.root.innerHTML);
+                    $('#Call_NatureOfCall').val(quillNote2.root.innerHTML);
 
                     return true;
                 });
+
                 $("#selectLinkedCall").select2({
                     dropdownParent: $("#selectCallToLinkModal"),
                     ajax: {

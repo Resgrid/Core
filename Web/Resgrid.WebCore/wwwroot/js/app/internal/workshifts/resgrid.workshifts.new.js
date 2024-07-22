@@ -8,17 +8,21 @@ var resgrid;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Department - New Workshift');
 
-                $('#Shift_Start').kendoDateTimePicker({
-                    interval: 60
-                });
+                $('#Shift_Start').datetimepicker({ step: 60 });
 
-                $('#Shift_End').kendoDateTimePicker({
-                    interval: 60
-                });
+                $('#Shift_End').datetimepicker({ step: 60 });
 
-                $("#Shift_Color").kendoColorPicker({
-                    value: "#72bcd4",
-                    buttons: false
+                $("#Shift_Color").minicolors({
+                    animationSpeed: 50,
+                    animationEasing: 'swing',
+                    changeDelay: 0,
+                    control: 'hue',
+                    defaultValue: '#0080ff',
+                    format: 'hex',
+                    showSpeed: 100,
+                    hideSpeed: 100,
+                    inline: false,
+                    theme: 'bootstrap'
                 });
 
                 $("#UnitsAssigned").kendoMultiSelect({

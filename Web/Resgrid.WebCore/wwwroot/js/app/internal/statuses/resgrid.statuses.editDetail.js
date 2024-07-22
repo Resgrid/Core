@@ -7,19 +7,29 @@ var resgrid;
         (function (editdetail) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Custom Statuses - Edit Detail');
-                $("#Detail_Order").kendoNumericTextBox({
-                    format: "0",
-                    min: 0,
-                    max: 999,
-                    step: 1
+                $("#Detail_ButtonColor").minicolors({
+                    animationSpeed: 50,
+                    animationEasing: 'swing',
+                    changeDelay: 0,
+                    control: 'hue',
+                    defaultValue: '#0080ff',
+                    format: 'hex',
+                    showSpeed: 100,
+                    hideSpeed: 100,
+                    inline: false,
+                    theme: 'bootstrap'
                 });
-                $("#Detail_ButtonColor").kendoColorPicker({
-                    value: "#000000",
-                    buttons: true
-                });
-                $("#Detail_TextColor").kendoColorPicker({
-                    value: "#ffffff",
-                    buttons: true
+                $("#Detail_TextColor").minicolors({
+                    animationSpeed: 50,
+                    animationEasing: 'swing',
+                    changeDelay: 0,
+                    control: 'hue',
+                    defaultValue: '#0080ff',
+                    format: 'hex',
+                    showSpeed: 100,
+                    hideSpeed: 100,
+                    inline: false,
+                    theme: 'bootstrap'
                 });
                 $("#Detail_ButtonText").change(function () {
                     $("#previewButton").text($("#Detail_ButtonText").val());

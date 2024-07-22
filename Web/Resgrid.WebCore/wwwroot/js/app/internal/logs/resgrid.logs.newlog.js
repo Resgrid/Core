@@ -55,10 +55,36 @@ var resgrid;
                     e.preventDefault();
                     return false;
                 });
-                $("#Log_Narrative").kendoEditor();
-                $("#NatureOfCall").kendoEditor();
-                $("#Log_Cause").kendoEditor();
-                $("#Log_InitialReport").kendoEditor();
+
+                let quill1 = new Quill('#editor-container', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                let quill2 = new Quill('#editor-container2', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                let quill3 = new Quill('#editor-container3', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                let quill4 = new Quill('#editor-container4', {
+                    placeholder: '',
+                    theme: 'snow'
+                });
+
+                $(document).on('submit', '#newLogForm', function () {
+                    $('#Log_Narrative').val(quill1.root.innerHTML);
+                    $('#Call_NatureOfCall').val(quill2.root.innerHTML);
+                    $('#Log_Cause').val(quill3.root.innerHTML);
+                    $('#Log_InitialReport').val(quill4.root.innerHTML);
+
+                    return true;
+                });
+
                 $("#files").kendoUpload({
                     multiple: true,
                     batch: true,
@@ -102,8 +128,8 @@ var resgrid;
                             if (data) {
                                 $("#Call_Name").val(data.Name);
                                 $("#CallbackCallName").val(data.Name);
-                                var editor = $("#NatureOfCall").data("kendoEditor");
-                                editor.value(data.Nature);
+                                $("#Call_NatureOfCall").val(data.Nature);
+                                quill2.root.innerHTML = data.Nature;
                                 $("#Call_Address").val(data.Address);
                                 $("#CallPriority").val(data.Priority);
 

@@ -1181,6 +1181,35 @@
       "provider": "unpkg",
       "library": "jquery-ui-multidatespicker@1.6.6",
       "destination": "wwwroot/lib/jquery-ui-multidatespicker/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "jquery-datetimepicker@2.5.21",
+      "destination": "wwwroot/lib/jquery-datetimepicker/",
+      "files": [
+        "screen/1.png",
+        "screen/2.png",
+        "screen/3.1.png",
+        "screen/3.png",
+        "screen/4.png",
+        "screen/5.png",
+        "screen/6.png",
+        "build/jquery.datetimepicker.full.js",
+        "build/jquery.datetimepicker.full.min.js",
+        "build/jquery.datetimepicker.min.css",
+        "build/jquery.datetimepicker.min.js",
+        "bower.json",
+        "datetimepicker.jquery.json",
+        "doc.tpl",
+        "index.html",
+        "jquery.datetimepicker.css",
+        "jquery.datetimepicker.js",
+        "jquery.js",
+        "karma.conf.js",
+        "MIT-LICENSE.txt",
+        "package.json",
+        "README.md"
+      ]
     }
   ]
 }

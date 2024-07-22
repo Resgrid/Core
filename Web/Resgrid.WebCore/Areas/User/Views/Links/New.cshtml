@@ -1,128 +1,138 @@
 ﻿@model Resgrid.WebCore.Areas.User.Models.Links.NewLinksView
 @{
-  ViewBag.Title = "Resgrid | New Department Link";
+    ViewBag.Title = "Resgrid | New Department Link";
 }
 
 @section Styles
 {
-  <style>
-	.k-select {
-	  line-height: 1.5em !important;
-	}
-  </style>
+    <style>
+        .k-select {
+            line-height: 1.5em !important;
+        }
+    </style>
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>New Department Link</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-      </li>
-      <li>
-        <a asp-controller="Links" asp-action="Index" asp-route-area="User">Department Links</a>
-      </li>
-      <li class="active">
-        <strong>New Department Link</strong>
-      </li>
-    </ol>
-  </div>
+    <div class="col-sm-4">
+        <h2>New Department Link</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li>
+                <a asp-controller="Links" asp-action="Index" asp-route-area="User">Department Links</a>
+            </li>
+            <li class="active">
+                <strong>New Department Link</strong>
+            </li>
+        </ol>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <form class="form-horizontal" role="form" asp-controller="Links" asp-action="New" asp-route-area="User" method="post">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Links" asp-action="New" asp-route-area="User" method="post">
 
-            <div class="row">
-              <div class="col-md-8 col-md-offset-1">
-                <div class="alert alert-warning">
-                  Department Links are sharing data in one direction. Below you can setup and share with another department and once they enable the link they can view the information you shared. For your department to see that departments data they need to create a link to your department and you need to enable it.
-                </div>
-                @if (!String.IsNullOrEmpty(Model.Message))
-				{
-                  <div class="alert alert-danger">
-                    @Model.Message
-                  </div>
-				}
-                @Html.AntiForgeryToken()
-                <div asp-validation-summary="All" class="text-danger"></div>
-              </div>
-            </div>
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1">
+                                <div class="alert alert-warning">
+                                    Department Links are sharing data in one direction. Below you can setup and share with another department and once they enable the link they can view the information you shared. For your department to see that departments data they need to create a link to your department and you need to enable it.
+                                </div>
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-danger">
+                                        @Model.Message
+                                    </div>
+                                }
+                                @Html.AntiForgeryToken()
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Link Code</label>
-              <div class="col-sm-2"><input type="text" class="form-control" asp-for="LinkCode" class="form-control" /></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Type Color</label>
-	            <div class="col-sm-10"><input type="text" class="form-control" asp-for="Link.DepartmentColor" />
-				  <span class="help-block m-b-none">This is the color that will be applied to identifiy Calls\Units\Personnel for this department link</span></div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Share Calls</label>
-              <div class="col-sm-10">
-                <div class="checkbox checkbox-primary">
-                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareCalls">
-                  <label></label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Share Unts</label>
-              <div class="col-sm-10">
-                <div class="checkbox checkbox-primary">
-                  <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareUnits">
-                  <label></label>
-                </div>
-              </div>
-            </div>
-	          <div class="form-group">
-		          <label class="col-sm-2 control-label">
-			          Share Personnel
-		          </label>
-		          <div class="col-sm-10">
-			          <div class="checkbox checkbox-primary">
-				          <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentSharePersonnel">
-				          <label></label>
-			          </div>
-		          </div>
-	          </div>
-		    <div class="form-group">
-		      <label class="col-sm-2 control-label">
-		        Share Orders
-		      </label>
-		      <div class="col-sm-10">
-		        <div class="checkbox checkbox-primary">
-		          <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareOrders">
-		          <label></label>
-		        </div>
-		      </div>
-		    </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Link Code</label>
+                            <div class="col-sm-2"><input type="text" class="form-control" asp-for="LinkCode" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Type Color</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" asp-for="Link.DepartmentColor" />
+                                <span class="help-block m-b-none">This is the color that will be applied to identifiy Calls\Units\Personnel for this department link</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Share Calls</label>
+                            <div class="col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareCalls">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Share Unts</label>
+                            <div class="col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareUnits">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Share Personnel
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentSharePersonnel">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Share Orders
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareOrders">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-              <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Links" asp-action="Index" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save Link</button>
-              </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Links" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Save Link</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 @section Scripts
 {
-  <script>
-	$(document).ready(function () {
-	  $("#Link_DepartmentColor").kendoColorPicker({
-		value: "#ffffff",
-		buttons: false
-	  });
-	});
-  </script>
+    <script>
+        $(document).ready(function () {
+            $("#Link_DepartmentColor").minicolors({
+                animationSpeed: 50,
+                animationEasing: 'swing',
+                changeDelay: 0,
+                control: 'hue',
+                defaultValue: '#0080ff',
+                format: 'hex',
+                showSpeed: 100,
+                hideSpeed: 100,
+                inline: false,
+                theme: 'bootstrap'
+            });
+        });
+    </script>
 }

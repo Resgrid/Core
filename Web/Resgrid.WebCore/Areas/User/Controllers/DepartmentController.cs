@@ -62,13 +62,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICqrsProvider _cqrsProvider;
 		private readonly IPrinterProvider _printerProvider;
 		private readonly IQueueService _queueService;
+		private readonly IDocumentsService _documentsService;
+		private readonly INotesService _notesService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
 			IInvitesService invitesService, Model.Services.IAuthorizationService authorizationService, IAddressService addressService, ISubscriptionsService subscriptionsService,
 			ILimitsService limitsService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService,
 			ICertificationService certificationService, INumbersService numbersService, IScheduledTasksService scheduledTasksService, IPersonnelRolesService personnelRolesService,
-			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService)
+			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService,
+			IDocumentsService documentsService, INotesService notesService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -94,6 +97,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_cqrsProvider = cqrsProvider;
 			_printerProvider = printerProvider;
 			_queueService = queueService;
+			_documentsService = documentsService;
+			_notesService = notesService;
 		}
 
 		#endregion Private Members and Constructors
@@ -1095,31 +1100,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return View(model);
 		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> DeleteUnitType(int unitTypeId, CancellationToken cancellationToken)
-		{
-			await _unitsService.DeleteUnitTypeAsync(unitTypeId, cancellationToken);
-
-			return RedirectToAction("Types");
-		}
-
-		[HttpPost]
-		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> NewUnitType(UnitSettingsView model, CancellationToken cancellationToken)
-		{
-			if (String.IsNullOrWhiteSpace(model.NewUnitType))
-				ModelState.AddModelError("NewUnitType", "You Must specify the new unit type.");
-
-			if (ModelState.IsValid)
-			{
-				await _unitsService.AddUnitTypeAsync(DepartmentId, model.NewUnitType, model.UnitCustomStatesId, cancellationToken);
-			}
-
-			return RedirectToAction("Types");
-		}
-
 		#endregion Unit Settings
 
 		#region Types
@@ -1132,6 +1112,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CertificationTypes = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
 			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+			model.DocumentCategories = await _documentsService.GetAllCategoriesByDepartmentIdAsync(DepartmentId);
+			model.NoteCategories = await _notesService.GetAllCategoriesByDepartmentIdAsync(DepartmentId);
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
@@ -1156,61 +1138,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View(model);
-		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> DeleteCertificationType(int certificationTypeId, CancellationToken cancellationToken)
-		{
-			await _certificationService.DeleteCertificationTypeByIdAsync(certificationTypeId, cancellationToken);
-
-			return RedirectToAction("Types");
-		}
-
-		[HttpPost]
-		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> NewCertificationType(DepartmentTypesView model, CancellationToken cancellationToken)
-		{
-			if (String.IsNullOrEmpty(model.NewCertificationType))
-				ModelState.AddModelError("NewCertificationType", "You Must specify the new certification type.");
-
-			if (ModelState.IsValid)
-			{
-				await _certificationService.SaveNewCertificationTypeAsync(model.NewCertificationType, DepartmentId, cancellationToken);
-			}
-
-			return RedirectToAction("Types");
-		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> DeleteCallType(int callTypeId, CancellationToken cancellationToken)
-		{
-			await _callsService.DeleteCallTypeAsync(callTypeId, cancellationToken);
-
-			return RedirectToAction("Types");
-		}
-
-		[HttpPost]
-		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> NewCallType(DepartmentTypesView model, CancellationToken cancellationToken)
-		{
-			if (String.IsNullOrEmpty(model.NewCallType))
-				ModelState.AddModelError("NewCallType", "You Must specify the new call type.");
-
-			if (ModelState.IsValid)
-			{
-				CallType newCallType = new CallType();
-				newCallType.DepartmentId = DepartmentId;
-				newCallType.Type = model.NewCallType;
-
-				if (model.CallTypeIcon >= 0)
-					newCallType.MapIconType = model.CallTypeIcon;
-
-				await _callsService.SaveCallTypeAsync(newCallType, cancellationToken);
-			}
-
-			return RedirectToAction("Types");
 		}
 
 		#endregion Types

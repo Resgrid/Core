@@ -7,17 +7,20 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
+using Resgrid.Repositories.DataRepository;
 
 namespace Resgrid.Services
 {
 	public class DocumentsService : IDocumentsService
 	{
 		private readonly IDocumentRepository _documentRepository;
+		private readonly IDocumentCategoriesRepository _documentCategoriesRepository;
 		private readonly IEventAggregator _eventAggregator;
 
-		public DocumentsService(IDocumentRepository documentRepository, IEventAggregator eventAggregator)
+		public DocumentsService(IDocumentRepository documentRepository, IDocumentCategoriesRepository documentCategoriesRepository, IEventAggregator eventAggregator)
 		{
 			_documentRepository = documentRepository;
+			_documentCategoriesRepository = documentCategoriesRepository;
 			_eventAggregator = eventAggregator;
 		}
 
@@ -81,6 +84,41 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteDocumentAsync(Document document, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await _documentRepository.DeleteAsync(document, cancellationToken);
+		}
+
+		public async Task<DocumentCategory> SaveDocumentCategoryAsync(DocumentCategory category, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _documentCategoriesRepository.SaveOrUpdateAsync(category, cancellationToken);
+		}
+
+		public async Task<DocumentCategory> GetDocumentCategoryByIdAsync(string categoryId)
+		{
+			return await _documentCategoriesRepository.GetByIdAsync(categoryId);
+		}
+
+		public async Task<bool> DeleteDocumentCategoryAsync(DocumentCategory category, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _documentCategoriesRepository.DeleteAsync(category, cancellationToken);
+		}
+
+		public async Task<List<DocumentCategory>> GetAllCategoriesByDepartmentIdAsync(int departmentId)
+		{
+			var categories = await _documentCategoriesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			if (categories != null)
+				return categories.ToList();
+
+			return new List<DocumentCategory>();
+		}
+
+		public async Task<bool> DoesDocumentCategoryAlreadyExistAsync(int departmentId, string documentCategoryText)
+		{
+			var categories = await _documentCategoriesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			if (categories == null)
+				return false;
+
+			return categories.Any(x => x.Name == documentCategoryText.Trim());
 		}
 	}
 }

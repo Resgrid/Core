@@ -254,7 +254,7 @@
                 <input type="hidden" asp-for="Item.Description">
 
                 <div id="editor-container" style="width:100%; height: 200px;">
-                  <p>@Model.Item.Description</p>
+                  @Html.Raw(Model.Item.Description)
                 </div>
               </div>
             </div>

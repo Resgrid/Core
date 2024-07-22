@@ -192,9 +192,382 @@ namespace Resgrid.Workers.Framework.Logic
 							auditLog.Data = "No Data";
 							break;
 						case AuditLogTypes.DeleteDepartmentRequestedCancelled:
-							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} cancelled the pending department deletion request";
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} canceled the pending department deletion request";
 
 							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.CallReactivated:
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} reactivated call";
+
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.AddonSubscriptionModified:
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the addon subscription for department id {auditEvent.DepartmentId}";
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.DeleteStaticShift:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var deleteStaticShiftBefore = JsonConvert.DeserializeObject<Workshift>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted the static shift {deleteStaticShiftBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a static shift.";
+							}
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.UpdateStaticShift:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var updateStaticShiftBefore = JsonConvert.DeserializeObject<Workshift>(auditEvent.Before);
+								var updateStaticShiftAfter = JsonConvert.DeserializeObject<Workshift>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the static shift {updateStaticShiftBefore.Name}";
+
+								var compareLogicProfile = new CompareLogic();
+								ComparisonResult resultProfile = compareLogicProfile.Compare(updateStaticShiftBefore, updateStaticShiftAfter);
+								auditLog.Data = resultProfile.DifferencesString;
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the static shift";
+							}
+							break;
+						case AuditLogTypes.CustomStatusAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var customStateAddedAfter = JsonConvert.DeserializeObject<CustomState>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a new Custom Status {customStateAddedAfter.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a new Custom Status.";
+							}
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.CustomStatusRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var customStateRemovedBefore = JsonConvert.DeserializeObject<CustomState>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Custom Status {customStateRemovedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Custom Status.";
+							}
+							auditLog.Data = "No Data";
+							break;
+						case AuditLogTypes.CustomStatusUpdated:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before) && !String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var updateCustomStatusBefore = JsonConvert.DeserializeObject<CustomState>(auditEvent.Before);
+								var updateCustomStatusAfter = JsonConvert.DeserializeObject<CustomState>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the Custom Status {updateCustomStatusBefore.Name}";
+
+								var compareLogicProfile = new CompareLogic();
+								ComparisonResult resultProfile = compareLogicProfile.Compare(updateCustomStatusBefore, updateCustomStatusAfter);
+								auditLog.Data = resultProfile.DifferencesString;
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} a Custom Status";
+							}
+							break;
+						case AuditLogTypes.CustomStatusDetailUpdated:
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the a Custom Status Detail";
+							break;
+						case AuditLogTypes.CallTypeAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var callTypeAddedAfter = JsonConvert.DeserializeObject<CallType>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Call Type {callTypeAddedAfter.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Call Type.";
+							}
+							break;
+						case AuditLogTypes.CallTypeEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var callTypeAddedBefore = JsonConvert.DeserializeObject<CallType>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Call Type {callTypeAddedBefore.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Call Type.";
+							}
+							break;
+						case AuditLogTypes.CallTypeRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var callTypeAddedBefore = JsonConvert.DeserializeObject<CallType>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Call Type {callTypeAddedBefore.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Call Type.";
+							}
+							break;
+						case AuditLogTypes.CallPriorityAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var callPriorityAddedAfter = JsonConvert.DeserializeObject<DepartmentCallPriority>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Call Priority {callPriorityAddedAfter.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Call Priority.";
+							}
+							break;
+						case AuditLogTypes.CallPriorityEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var callPriorityAddedAfter = JsonConvert.DeserializeObject<DepartmentCallPriority>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Call Priority {callPriorityAddedAfter.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Call Priority.";
+							}
+							break;
+						case AuditLogTypes.CallPriorityRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var callPriorityDeletedBefore = JsonConvert.DeserializeObject<DepartmentCallPriority>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Call Priority {callPriorityDeletedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Call Priority.";
+							}
+							break;
+						case AuditLogTypes.UnitTypeAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var unitTypeAddedAfter = JsonConvert.DeserializeObject<UnitType>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Unit Type {unitTypeAddedAfter.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Unit Type.";
+							}
+							break;
+						case AuditLogTypes.UnitTypeEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var unitTypeEditedBerfore = JsonConvert.DeserializeObject<UnitType>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Unit Type {unitTypeEditedBerfore.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Unit Type.";
+							}
+							break;
+						case AuditLogTypes.UnitTypeRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var unitTypeRemovedBerfore = JsonConvert.DeserializeObject<UnitType>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Unit Type {unitTypeRemovedBerfore.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Unit Type.";
+							}
+							break;
+						case AuditLogTypes.CertificationTypeAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var certificationAddedAfter = JsonConvert.DeserializeObject<DepartmentCertificationType>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Certification Type {certificationAddedAfter.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Certification Type.";
+							}
+							break;
+						case AuditLogTypes.CertificationTypeEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var certificationEditedBefore = JsonConvert.DeserializeObject<DepartmentCertificationType>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Certification Type {certificationEditedBefore.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Certification Type.";
+							}
+							break;
+						case AuditLogTypes.CertificationTypeRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var certificationRemovedBefore = JsonConvert.DeserializeObject<DepartmentCertificationType>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Certification Type {certificationRemovedBefore.Type}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Certification Type.";
+							}
+							break;
+						case AuditLogTypes.DocumentCategoryAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var documentCategoryAddedAfter = JsonConvert.DeserializeObject<DocumentCategory>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Document Category {documentCategoryAddedAfter.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Document Category.";
+							}
+							break;
+						case AuditLogTypes.DocumentCategoryEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var documentCategoryEditedBefore = JsonConvert.DeserializeObject<DocumentCategory>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Document Category {documentCategoryEditedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Document Category.";
+							}
+							break;
+						case AuditLogTypes.DocumentCategoryRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var documentCategoryRemovedBefore = JsonConvert.DeserializeObject<DocumentCategory>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Document Category {documentCategoryRemovedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Document Category.";
+							}
+							break;
+						case AuditLogTypes.DocumentAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var documentAddedAfter = JsonConvert.DeserializeObject<Document>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Document {documentAddedAfter.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Document.";
+							}
+							break;
+						case AuditLogTypes.DocumentEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var documentEditedBefore= JsonConvert.DeserializeObject<Document>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Document {documentEditedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Document.";
+							}
+							break;
+						case AuditLogTypes.DocumentRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var documentRemovedBefore = JsonConvert.DeserializeObject<Document>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Document {documentRemovedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Document.";
+							}
+							break;
+						case AuditLogTypes.NoteCategoryAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var noteCategoryAddedAfter = JsonConvert.DeserializeObject<NoteCategory>(auditEvent.After);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Note Category {noteCategoryAddedAfter.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Note Category.";
+							}
+							break;
+						case AuditLogTypes.NoteCategoryEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var noteCategoryEditedBefore = JsonConvert.DeserializeObject<NoteCategory>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Note Category {noteCategoryEditedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Note Category.";
+							}
+							break;
+						case AuditLogTypes.NoteCategoryRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var noteCategoryRemovedBefore = JsonConvert.DeserializeObject<NoteCategory>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Note Category {noteCategoryRemovedBefore.Name}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Note Category.";
+							}
+							break;
+						case AuditLogTypes.NoteAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var noteAddedBefore = JsonConvert.DeserializeObject<Note>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Note {noteAddedBefore.Title}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Note.";
+							}
+							break;
+						case AuditLogTypes.NoteEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var noteEditedBefore = JsonConvert.DeserializeObject<Note>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Note {noteEditedBefore.Title}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Note.";
+							}
+							break;
+						case AuditLogTypes.NoteRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var noteRemovedBefore = JsonConvert.DeserializeObject<Note>(auditEvent.Before);
+
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Note {noteRemovedBefore.Title}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Note.";
+							}
 							break;
 					}
 

@@ -50,6 +50,12 @@ namespace Resgrid.Model
 		[ProtoMember(10)]
 		public bool IsDeleted { get; set; }
 
+		[ProtoMember(11)]
+		public int BaseType { get; set; }
+
+		[ProtoMember(12)]
+		public int TTL { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

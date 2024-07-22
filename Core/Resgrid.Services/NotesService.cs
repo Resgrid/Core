@@ -9,6 +9,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
+using Resgrid.Repositories.DataRepository;
 
 namespace Resgrid.Services
 {
@@ -16,11 +17,13 @@ namespace Resgrid.Services
 	{
 		private readonly INotesRepository _notesRepository;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly INoteCategoriesRepository _noteCategoriesRepository;
 
-		public NotesService(INotesRepository notesRepository, IEventAggregator eventAggregator)
+		public NotesService(INotesRepository notesRepository, IEventAggregator eventAggregator, INoteCategoriesRepository noteCategoriesRepository)
 		{
 			_notesRepository = notesRepository;
 			_eventAggregator = eventAggregator;
+			_noteCategoriesRepository = noteCategoriesRepository;
 		}
 
 		public async Task<List<Note>> GetAllNotesForDepartmentAsync(int departmentId)
@@ -77,6 +80,41 @@ namespace Resgrid.Services
 			return (from note in notes
 					where note.IsAdminOnly == false
 					select note).ToList();
+		}
+
+		public async Task<NoteCategory> SaveNoteCategoryAsync(NoteCategory category, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _noteCategoriesRepository.SaveOrUpdateAsync(category, cancellationToken);
+		}
+
+		public async Task<NoteCategory> GetNoteCategoryByIdAsync(string categoryId)
+		{
+			return await _noteCategoriesRepository.GetByIdAsync(categoryId);
+		}
+
+		public async Task<bool> DeleteNoteCategoryAsync(NoteCategory category, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _noteCategoriesRepository.DeleteAsync(category, cancellationToken);
+		}
+
+		public async Task<List<NoteCategory>> GetAllCategoriesByDepartmentIdAsync(int departmentId)
+		{
+			var categories = await _noteCategoriesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			if (categories != null)
+				return categories.ToList();
+
+			return new List<NoteCategory>();
+		}
+
+		public async Task<bool> DoesNoteTypeAlreadyExistAsync(int departmentId, string noteTypeText)
+		{
+			var categories = await _noteCategoriesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			if (categories == null)
+				return false;
+
+			return categories.Any(x => x.Name == noteTypeText.Trim());
 		}
 	}
 }

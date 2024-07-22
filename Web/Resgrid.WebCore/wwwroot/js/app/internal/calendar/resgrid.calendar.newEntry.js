@@ -11,17 +11,9 @@ var resgrid;
                 $('#daysOfTheWeekBlock').hide();
                 $('#monthlyBlock').hide();
 
-                $('#Item_Start').kendoDateTimePicker({
-                    interval: 15
-                });
-
-                $('#Item_End').kendoDateTimePicker({
-                    interval: 15
-                });
-
-                $('#Item_RecurrenceEnd').kendoDateTimePicker({
-                    interval: 15
-                });
+                $('#Item_Start').datetimepicker({ step: 15 });
+                $('#Item_End').datetimepicker({ step: 15 });
+                $('#Item_RecurrenceEnd').datetimepicker({ step: 15 });
 
                 $("#Item_RepeatOnDay").kendoNumericTextBox({
                     format: "#",

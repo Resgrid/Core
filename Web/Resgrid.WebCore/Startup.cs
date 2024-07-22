@@ -351,7 +351,7 @@ namespace Resgrid.Web
 					"clib/picEdit/css/picedit.min.css", "clib/bootstrap-wizard/bootstrap-wizard.css", "lib/quill/dist/quill.snow.css", "lib/leaflet/dist/leaflet.css",
 					"lib/fullcalendar/dist/fullcalendar.min.css", "lib/bstreeview/dist/css/bstreeview.min.css",
 					"lib/selectize/selectize/dist/css/selectize.default.css", "lib/claviska/jquery-minicolors/jquery.minicolors.css", "lib/algolia/autocomplete-theme-classic/dist/theme.css",
-					"lib/bootstrap-select/dist/css/bootstrap-select.css", "clib/data-tables/datatables.css", "css/style.css");
+					"lib/bootstrap-select/dist/css/bootstrap-select.css", "clib/data-tables/datatables.css", "lib/jquery-datetimepicker/build/jquery.datetimepicker.min.css", "css/style.css");
 
 				// Internal app js bundle
 				pipeline.AddJavaScriptBundle("/js/int-bundle.js", "lib/metisMenu/dist/metisMenu.min.js", "lib/slimScroll/jquery.slimscroll.js", "lib/pace/pace.js",
@@ -361,7 +361,7 @@ namespace Resgrid.Web
 					"lib/sweetalert/dist/sweetalert.min.js", "clib/bootstrap-wizard/bootstrap-wizard.min.js", "lib/quill/dist/quill.min.js", "lib/moment/min/moment.min.js",
 					"lib/fullcalendar/dist/fullcalendar.min.js", "lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js",
 					"lib/selectize/selectize/dist/js/standalone/selectize.min.js", "lib/claviska/jquery-minicolors/jquery.minicolors.min.js", "lib/algolia/autocomplete-js/dist/umd/index.production.js",
-					"lib/bootstrap-select/dist/js/bootstrap-select.js", "clib/data-tables/datatables.js", "js/site.min.js");
+					"lib/bootstrap-select/dist/js/bootstrap-select.js", "clib/data-tables/datatables.js", "lib/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js", "js/site.min.js");
 			});
 
 

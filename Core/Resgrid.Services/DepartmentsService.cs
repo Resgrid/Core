@@ -121,7 +121,7 @@ namespace Resgrid.Services
 
 
 			var dep = await _departmentRepository.SaveOrUpdateAsync(department, cancellationToken);
-			_cacheProvider.Remove(string.Format(CacheKey, department.DepartmentId));
+			await _cacheProvider.RemoveAsync(string.Format(CacheKey, department.DepartmentId));
 
 			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 			{
@@ -133,7 +133,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> InvalidateAllDepartmentsCache(int departmentId)
 		{
-			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
+			await _cacheProvider.RemoveAsync(string.Format(CacheKey, departmentId));
 			InvalidateDepartmentUsersInCache(departmentId);
 			InvalidateDepartmentInCache(departmentId);
 			InvalidatePersonnelNamesInCache(departmentId);

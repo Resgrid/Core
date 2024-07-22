@@ -111,9 +111,7 @@ var resgrid;
                         }
                     }
                 });
-                $('#Message_ExpireOn').kendoDateTimePicker({
-                    interval: 15
-                });
+                $('#Message_ExpireOn').datetimepicker({ step: 15 });
                 $("#Message_ExpireOn").keypress(function (e) {
                     e.preventDefault();
                 });

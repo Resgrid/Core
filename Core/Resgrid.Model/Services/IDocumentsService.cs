@@ -51,5 +51,15 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> DeleteDocumentAsync(Document document, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<DocumentCategory> SaveDocumentCategoryAsync(DocumentCategory category, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<DocumentCategory> GetDocumentCategoryByIdAsync(string categoryId);
+
+		Task<bool> DeleteDocumentCategoryAsync(DocumentCategory category, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<DocumentCategory>> GetAllCategoriesByDepartmentIdAsync(int departmentId);
+
+		Task<bool> DoesDocumentCategoryAlreadyExistAsync(int departmentId, string documentCategoryText);
 	}
 }

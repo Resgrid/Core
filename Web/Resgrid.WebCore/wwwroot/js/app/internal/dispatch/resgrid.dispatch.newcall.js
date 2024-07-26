@@ -410,6 +410,8 @@ var resgrid;
 
                                 if (data.CallNature && data.CallNature.length > 0) {
                                     $('#Call_NatureOfCall').val(data.CallNature);
+                                    quillNote2.setText(data.CallNature);
+
                                 }
 
                                 if (data.CallType && data.CallType.length > 0) {

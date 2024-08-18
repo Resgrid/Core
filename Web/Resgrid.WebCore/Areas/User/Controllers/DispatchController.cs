@@ -833,6 +833,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AddArchivedCall(NewCallView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
 			model = await FillNewCallView(model);
+			model.CallStates = model.CallState.ToSelectList();
+			model.Call.LoggedOn = DateTime.UtcNow.TimeConverter(model.Department);
+			model.Call.ReportingUserId = UserId;
 
 			if (ModelState.IsValid)
 			{

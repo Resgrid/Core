@@ -30,7 +30,7 @@
 	</div>
 </div>
 
-<form id="newLogForm" class="form-horizontal" role="form" asp-controller="Logs" asp-action="NewLog" asp-route-area="User" method="post">
+<form id="newLogForm" class="form-horizontal" role="form" asp-controller="Logs" asp-action="NewLog" asp-route-area="User" method="post" onsubmit="resgrid.logs.newlog.onNewLogSubmit()">
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="wrapper wrapper-content">

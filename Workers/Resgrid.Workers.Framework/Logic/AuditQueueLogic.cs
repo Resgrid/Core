@@ -476,9 +476,7 @@ namespace Resgrid.Workers.Framework.Logic
 						case AuditLogTypes.DocumentEdited:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 							{
-								var documentEditedBefore= JsonConvert.DeserializeObject<Document>(auditEvent.Before);
-
-								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Document {documentEditedBefore.Name}";
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Document {auditEvent.Before}";
 							}
 							else
 							{
@@ -488,9 +486,7 @@ namespace Resgrid.Workers.Framework.Logic
 						case AuditLogTypes.DocumentRemoved:
 							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 							{
-								var documentRemovedBefore = JsonConvert.DeserializeObject<Document>(auditEvent.Before);
-
-								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Document {documentRemovedBefore.Name}";
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Document {auditEvent.Before}";
 							}
 							else
 							{

@@ -20,8 +20,8 @@ var resgrid;
                 });
 
                 $(document).on('submit', '#addArchivedCallForm', function () {
-                    $('#NatureOfCall').val(quill.root.innerHTML);
-                    $('#CallNotes').val(quill2.root.innerHTML);
+                    $('#Call_NatureOfCall').val(quill.root.innerHTML);
+                    $('#Call_Notes').val(quill2.root.innerHTML);
 
                     return true;
                 });

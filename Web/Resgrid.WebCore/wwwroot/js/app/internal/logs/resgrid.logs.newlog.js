@@ -5,8 +5,25 @@ var resgrid;
     (function (logs) {
         var newlog;
         (function (newlog) {
+            let quill1;
+            let quill2;
+            let quill3;
+            let quill4;
+
             $(document).ready(function () {
                 newlog.validationFilter = ".training-validation, .work-validation, .meeting-validation, .coroner-validation, .callback-validation";
+
+
+                //$('#newLogForm').on('submit', function (e) {
+                //    e.preventDefault();
+                //    $('#Log_Narrative').val(quill1.root.innerHTML);
+                //    $('#Call_NatureOfCall').val(quill2.root.innerHTML);
+                //    $('#Log_Cause').val(quill3.root.innerHTML);
+                //    $('#Log_InitialReport').val(quill4.root.innerHTML);
+
+                //    return true;
+                //});
+
                 supressValidation();
                 $('#Call_LoggedOn').kendoDateTimePicker({
                     interval: 1
@@ -56,34 +73,27 @@ var resgrid;
                     return false;
                 });
 
-                let quill1 = new Quill('#editor-container', {
+                quill1 = new Quill('#editor-container', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
-                let quill2 = new Quill('#editor-container2', {
+                quill2 = new Quill('#editor-container2', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
-                let quill3 = new Quill('#editor-container3', {
+                quill3 = new Quill('#editor-container3', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
-                let quill4 = new Quill('#editor-container4', {
+                quill4 = new Quill('#editor-container4', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
-                $(document).on('submit', '#newLogForm', function () {
-                    $('#Log_Narrative').val(quill1.root.innerHTML);
-                    $('#Call_NatureOfCall').val(quill2.root.innerHTML);
-                    $('#Log_Cause').val(quill3.root.innerHTML);
-                    $('#Log_InitialReport').val(quill4.root.innerHTML);
-
-                    return true;
-                });
+                
 
                 $("#files").kendoUpload({
                     multiple: true,
@@ -311,10 +321,21 @@ var resgrid;
                 supressValidation();
             }
             function supressValidation() {
-                var settngs = $.data($('#newLogForm')[0], 'validator').settings;
+                let settngs = $.data($('#newLogForm')[0], 'validator').settings;
                 settngs.ignore = newlog.validationFilter;
             }
             newlog.supressValidation = supressValidation;
+
+            function onNewLogSubmit() {
+                $('#Log_Narrative').val(quill1.root.innerHTML);
+                $('#Call_NatureOfCall').val(quill2.root.innerHTML);
+                $('#Log_Cause').val(quill3.root.innerHTML);
+                $('#Log_InitialReport').val(quill4.root.innerHTML);
+
+                return true;
+            }
+            newlog.onNewLogSubmit = onNewLogSubmit;
+
         })(newlog = logs.newlog || (logs.newlog = {}));
     })(logs = resgrid.logs || (resgrid.logs = {}));
 })(resgrid || (resgrid = {}));

@@ -309,7 +309,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.CustomStatusUpdated;
-				auditEvent.After = details.CloneJsonToString();
+				auditEvent.After = state.CloneJsonToString();
 				auditEvent.Successful = true;
 				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 				auditEvent.ServerName = Environment.MachineName;

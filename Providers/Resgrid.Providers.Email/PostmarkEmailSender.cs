@@ -65,10 +65,7 @@ namespace Resgrid.Providers.EmailProvider
 			{
 				if (SystemBehaviorConfig.OutboundEmailType == OutboundEmailTypes.Postmark)
 				{
-					if (mail.From != null && mail.From.Address.Contains("resgrid.com") && mail.From.Address != "systemlist@resgrid.com" &&
-							mail.From.Address != "systemcheck@resgrid.com" && mail.From.Address != "systemcheck2@resgrid.com" &&
-							email.To.First() != "systemlist@resgrid.com" &&
-							email.To.First() != "systemcheck@resgrid.com" && email.To.First() != "systemcheck2@resgrid.com")
+					if (mail.From != null && !String.IsNullOrWhiteSpace(mail.From.Address))
 					{
 						var to = new StringBuilder();
 						foreach (var t in email.To)

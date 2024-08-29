@@ -184,6 +184,8 @@ namespace Resgrid.Workers.Console
 			System.Configuration.ConfigurationManager.RefreshSection("connectionStrings");
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
+
+			ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 		}
 	}
 

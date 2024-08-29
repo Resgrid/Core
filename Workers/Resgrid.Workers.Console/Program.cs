@@ -30,6 +30,7 @@ using FluentMigrator.Runner;
 using Resgrid.Providers.Migrations.Migrations;
 using Resgrid.Model.Repositories;
 using System.Reflection;
+using Sentry;
 
 namespace Resgrid.Workers.Console
 {
@@ -48,6 +49,25 @@ namespace Resgrid.Workers.Console
 			System.Console.WriteLine("-----------------------------------------");
 
 			LoadConfiguration(args);
+
+			Resgrid.Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs);
+
+			if (!String.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs))
+			{
+				SentrySdk.Init(options =>
+				{
+					options.Dsn = Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs;
+					options.AttachStacktrace = true;
+					options.SendDefaultPii = true;
+					options.AutoSessionTracking = true;
+					options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
+					options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+					options.IsGlobalModeEnabled = true;
+					options.Environment = ExternalErrorConfig.Environment;
+					options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+				});
+			}
+
 			Prime();
 
 			var builder = new HostBuilder()
@@ -94,8 +114,6 @@ namespace Resgrid.Workers.Console
 			SetConnectionString();
 
 			Bootstrapper.Initialize();
-
-			Resgrid.Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs);
 
 			var eventAggragator = Bootstrapper.GetKernel().Resolve<IEventAggregator>();
 			var outbound = Bootstrapper.GetKernel().Resolve<IOutboundEventProvider>();

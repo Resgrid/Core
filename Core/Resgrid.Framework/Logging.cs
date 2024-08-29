@@ -36,13 +36,8 @@ namespace Resgrid.Framework
 												o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
 												o.MinimumEventLevel = LogEventLevel.Error;
 												o.Dsn = dsn;
-												o.AttachStacktrace = true;
-												o.SendDefaultPii = true;
-												o.AutoSessionTracking = true;
-												o.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 												o.Environment = ExternalErrorConfig.Environment;
 												o.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
-												o.ProfilesSampleRate = 0.0;
 											}).CreateLogger();
 				}
 				else

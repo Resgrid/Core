@@ -7,6 +7,7 @@ using Resgrid.Model.Queue;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework.Logic;
+using Resgrid.Workers.Framework.Workers.Security;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace Resgrid.Workers.Console.Tasks
 		public int Priority => 1;
 		public ILogger _logger;
 		private CancellationToken _cancellationToken;
+
+		private SecurityLogic _securityLogic;
 
 		public QueuesProcessorTask(ILogger logger)
 		{
@@ -46,6 +49,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.AuditEventQueueReceived += OnAuditEventQueueReceived;
 			queue.UnitLocationEventQueueReceived += OnUnitLocationEventQueueReceived;
 			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
+			queue.SecurityRefreshEventQueueReceived += OnSecurityRefreshEventQueueReceived;
 
 			await queue.Start();
 
@@ -126,6 +130,21 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
 			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent);
 			_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
+		}
+
+		private async Task OnSecurityRefreshEventQueueReceived(SecurityRefreshEvent securityRefreshEvent)
+		{
+			_logger.LogInformation($"{Name}: Security Refresh Queue Received with an id of {securityRefreshEvent.EventId}, starting processing...");
+
+			if (_securityLogic == null)
+				_securityLogic = new SecurityLogic();
+
+			SecurityQueueItem item = new SecurityQueueItem();
+			item.DepartmentId = securityRefreshEvent.DepartmentId;
+			item.Type = securityRefreshEvent.Type;
+
+			await _securityLogic.Process(item);
+			_logger.LogInformation($"{Name}: Finished processing of Security Refresh queue item with an id of {securityRefreshEvent.EventId}.");
 		}
 	}
 }

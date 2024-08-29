@@ -16,6 +16,7 @@
 		public static string AuditQueueName = "audittest";
 		public static string UnitLoactionQueueName = "unitlocationtest";
 		public static string PersonnelLoactionQueueName = "personnellocationtest";
+		public static string SecurityRefreshQueueName = "securityrefreshtest";
 #else
 		public static string CallBroadcastQueueName = "callbroadcast";
 		public static string MessageBroadcastQueueName = "messagebroadcast";
@@ -27,6 +28,7 @@
 		public static string AuditQueueName = "audit";
 		public static string UnitLoactionQueueName = "unitlocation";
 		public static string PersonnelLoactionQueueName = "personnellocation";
+		public static string SecurityRefreshQueueName = "securityrefresh";
 #endif
 
 		#region Azure Service Bus Values

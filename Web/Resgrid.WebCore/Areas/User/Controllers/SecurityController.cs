@@ -358,6 +358,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
+				if (type == (int)PermissionTypes.CanSeePersonnelLocations)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnelLocations;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
+				else if (type == (int)PermissionTypes.CanSeeUnitLocations)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnitLocations;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
+				else if (type == (int)PermissionTypes.ViewGroupUnits)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnits;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
+				else if (type == (int)PermissionTypes.ViewGroupUsers)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnel;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
+
 				return new StatusCodeResult((int)HttpStatusCode.OK);
 			}
 
@@ -382,6 +411,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.ServerName = Environment.MachineName;
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+				if (type == (int)PermissionTypes.CanSeePersonnelLocations)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnelLocations;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
+				else if (type == (int)PermissionTypes.CanSeeUnitLocations)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnitLocations;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
+				else if (type == (int)PermissionTypes.ViewGroupUnits)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnits;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
+				else if (type == (int)PermissionTypes.ViewGroupUsers)
+				{
+					var securityEvent = new SecurityRefreshEvent();
+					securityEvent.DepartmentId = DepartmentId;
+					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnel;
+					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+				}
 
 				return new StatusCodeResult((int)HttpStatusCode.OK);
 			}

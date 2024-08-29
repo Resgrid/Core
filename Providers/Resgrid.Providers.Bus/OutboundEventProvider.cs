@@ -49,6 +49,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(shiftUpdatedEventHandler);
 			_eventAggregator.AddListener(shiftDaysAddedEventHandler);
 			_eventAggregator.AddListener(auditEventHandler);
+			_eventAggregator.AddListener(securityRefreshEventHandler);
 
 			// Topics (SignalR Integration)
 			_eventAggregator.AddListener(personnelStatusChangedTopicHandler);
@@ -61,7 +62,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(unitLocationUpdatedTopicHandler);
 		}
 
-		public Action<UnitStatusEvent> unitStatusHandler = async delegate(UnitStatusEvent message)
+		public Action<UnitStatusEvent> unitStatusHandler = async delegate (UnitStatusEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -87,7 +88,7 @@ namespace Resgrid.Providers.Bus
 			}
 		};
 
-		public Action<UnitStatusEvent> unitTypeGroupAvailabilityHandler = async delegate(UnitStatusEvent message)
+		public Action<UnitStatusEvent> unitTypeGroupAvailabilityHandler = async delegate (UnitStatusEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -105,7 +106,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<UnitStatusEvent> unitTypeDepartmentAvailabilityHandler = async delegate(UnitStatusEvent message)
+		public Action<UnitStatusEvent> unitTypeDepartmentAvailabilityHandler = async delegate (UnitStatusEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -123,7 +124,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<UserStaffingEvent> userStaffingHandler = async delegate(UserStaffingEvent message)
+		public Action<UserStaffingEvent> userStaffingHandler = async delegate (UserStaffingEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -141,7 +142,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<UserStaffingEvent> userRoleGroupAvailabilityHandler = async delegate(UserStaffingEvent message)
+		public Action<UserStaffingEvent> userRoleGroupAvailabilityHandler = async delegate (UserStaffingEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -160,7 +161,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<UserStaffingEvent> userRoleDepartmentAvailabilityHandler = async delegate(UserStaffingEvent message)
+		public Action<UserStaffingEvent> userRoleDepartmentAvailabilityHandler = async delegate (UserStaffingEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -180,7 +181,7 @@ namespace Resgrid.Providers.Bus
 			await _signalrProvider.PersonnelStaffingUpdated(message.Staffing.DepartmentId, message.Staffing);
 		};
 
-		public Action<UserStatusEvent> personnelStatusChangedHandler = async delegate(UserStatusEvent message)
+		public Action<UserStatusEvent> personnelStatusChangedHandler = async delegate (UserStatusEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -198,7 +199,7 @@ namespace Resgrid.Providers.Bus
 			await _signalrProvider.PersonnelStatusUpdated(message.Status.DepartmentId, message.Status);
 		};
 
-		public Action<UserCreatedEvent> userCreatedHandler = async delegate(UserCreatedEvent message)
+		public Action<UserCreatedEvent> userCreatedHandler = async delegate (UserCreatedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -210,7 +211,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<UserAssignedToGroupEvent> userAssignedToGroupHandler = async delegate(UserAssignedToGroupEvent message)
+		public Action<UserAssignedToGroupEvent> userAssignedToGroupHandler = async delegate (UserAssignedToGroupEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -228,7 +229,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<CalendarEventUpcomingEvent> calendarEventUpcomingHandler = async delegate(CalendarEventUpcomingEvent message)
+		public Action<CalendarEventUpcomingEvent> calendarEventUpcomingHandler = async delegate (CalendarEventUpcomingEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -240,7 +241,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<CalendarEventAddedEvent> calendarEventAddedHandler = async delegate(CalendarEventAddedEvent message)
+		public Action<CalendarEventAddedEvent> calendarEventAddedHandler = async delegate (CalendarEventAddedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -252,7 +253,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<CalendarEventUpdatedEvent> calendarEventUpdatedHandler = async delegate(CalendarEventUpdatedEvent message)
+		public Action<CalendarEventUpdatedEvent> calendarEventUpdatedHandler = async delegate (CalendarEventUpdatedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -264,7 +265,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<DocumentAddedEvent> documentAddedHandler = async delegate(DocumentAddedEvent message)
+		public Action<DocumentAddedEvent> documentAddedHandler = async delegate (DocumentAddedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -276,7 +277,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<NoteAddedEvent> noteAddedHandler = async delegate(NoteAddedEvent message)
+		public Action<NoteAddedEvent> noteAddedHandler = async delegate (NoteAddedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -288,7 +289,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<UnitAddedEvent> unitAddedHandler = async delegate(UnitAddedEvent message)
+		public Action<UnitAddedEvent> unitAddedHandler = async delegate (UnitAddedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -300,7 +301,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<LogAddedEvent> logAddedHandler = async delegate(LogAddedEvent message)
+		public Action<LogAddedEvent> logAddedHandler = async delegate (LogAddedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -312,7 +313,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<ResourceOrderAddedEvent> resourceOrderAddedHandler = async delegate(ResourceOrderAddedEvent message)
+		public Action<ResourceOrderAddedEvent> resourceOrderAddedHandler = async delegate (ResourceOrderAddedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -324,7 +325,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<ShiftTradeRequestedEvent> shiftTradeRequestedHandler = async delegate(ShiftTradeRequestedEvent message)
+		public Action<ShiftTradeRequestedEvent> shiftTradeRequestedHandler = async delegate (ShiftTradeRequestedEvent message)
 		{
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
@@ -338,7 +339,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};
 
-		public Action<ShiftTradeRejectedEvent> shiftTradeRejectedEventHandler = async delegate(ShiftTradeRejectedEvent message)
+		public Action<ShiftTradeRejectedEvent> shiftTradeRejectedEventHandler = async delegate (ShiftTradeRejectedEvent message)
 		{
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
@@ -353,7 +354,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};
 
-		public Action<ShiftTradeProposedEvent> shiftTradeProposedEventHandler = async delegate(ShiftTradeProposedEvent message)
+		public Action<ShiftTradeProposedEvent> shiftTradeProposedEventHandler = async delegate (ShiftTradeProposedEvent message)
 		{
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
@@ -368,7 +369,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};
 
-		public Action<ShiftTradeFilledEvent> shiftTradeFilledEventHandler = async delegate(ShiftTradeFilledEvent message)
+		public Action<ShiftTradeFilledEvent> shiftTradeFilledEventHandler = async delegate (ShiftTradeFilledEvent message)
 		{
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
@@ -383,7 +384,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};
 
-		public Action<ShiftCreatedEvent> shiftCreatedEventHandler = async delegate(ShiftCreatedEvent message)
+		public Action<ShiftCreatedEvent> shiftCreatedEventHandler = async delegate (ShiftCreatedEvent message)
 		{
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
@@ -397,7 +398,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};
 
-		public Action<ShiftUpdatedEvent> shiftUpdatedEventHandler = async delegate(ShiftUpdatedEvent message)
+		public Action<ShiftUpdatedEvent> shiftUpdatedEventHandler = async delegate (ShiftUpdatedEvent message)
 		{
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
@@ -411,7 +412,7 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};
 
-		public Action<ShiftDaysAddedEvent> shiftDaysAddedEventHandler = async delegate(ShiftDaysAddedEvent message)
+		public Action<ShiftDaysAddedEvent> shiftDaysAddedEventHandler = async delegate (ShiftDaysAddedEvent message)
 		{
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
@@ -427,11 +428,22 @@ namespace Resgrid.Providers.Bus
 
 		private Action<AuditEvent> auditEventHandler = async delegate (AuditEvent message)
 		{
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
+
 			await _outboundQueueProvider.EnqueueAuditEvent(message);
 		};
 
+		private Action<SecurityRefreshEvent> securityRefreshEventHandler = async delegate (SecurityRefreshEvent message)
+		{
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
+
+			await _outboundQueueProvider.EnqueueSecurityRefreshEvent(message);
+		};
+
 		#region Topic Based Events
-		public Action<DepartmentSettingsChangedEvent> departmentSettingsChangedHandler = async delegate(DepartmentSettingsChangedEvent message)
+		public Action<DepartmentSettingsChangedEvent> departmentSettingsChangedHandler = async delegate (DepartmentSettingsChangedEvent message)
 		{
 			var nqi = new NotificationItem();
 
@@ -443,14 +455,14 @@ namespace Resgrid.Providers.Bus
 			await _outboundQueueProvider.EnqueueNotification(nqi);
 		};
 
-		public Action<WorkerHeartbeatEvent> workerHeartbeatHandler = async delegate(WorkerHeartbeatEvent message)
+		public Action<WorkerHeartbeatEvent> workerHeartbeatHandler = async delegate (WorkerHeartbeatEvent message)
 		{
-			
+
 		};
 
-		public Action<DistributionListCheckEvent> dListCheckHandler = async delegate(DistributionListCheckEvent message)
+		public Action<DistributionListCheckEvent> dListCheckHandler = async delegate (DistributionListCheckEvent message)
 		{
-			
+
 		};
 
 		public Action<UserStatusEvent> personnelStatusChangedTopicHandler = async delegate (UserStatusEvent message)
@@ -459,18 +471,18 @@ namespace Resgrid.Providers.Bus
 		};
 
 
-		public Action<UserStaffingEvent> personnelStaffingChangedTopicHandler = async delegate(UserStaffingEvent message)
+		public Action<UserStaffingEvent> personnelStaffingChangedTopicHandler = async delegate (UserStaffingEvent message)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
 				_rabbitTopicProvider.PersonnelStaffingChanged(message);
 		};
 
-		public Action<UnitStatusEvent> unitStatusTopicHandler = async delegate(UnitStatusEvent message)
+		public Action<UnitStatusEvent> unitStatusTopicHandler = async delegate (UnitStatusEvent message)
 		{
 			_rabbitTopicProvider.UnitStatusChanged(message);
 		};
 
-		public Action<CallAddedEvent> callAddedTopicHandler = async delegate(CallAddedEvent message)
+		public Action<CallAddedEvent> callAddedTopicHandler = async delegate (CallAddedEvent message)
 		{
 			_rabbitTopicProvider.CallAdded(message);
 		};

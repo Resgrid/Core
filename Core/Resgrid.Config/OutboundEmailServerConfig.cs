@@ -11,6 +11,7 @@
 		public static string Password = "";
 
 		public static string PostmarkApiKey = "";
+		public static string PostmarkMessageStream = "";
 
 		public static string AwsAccessKey = "";
 		public static string AwsSecretKey = "";

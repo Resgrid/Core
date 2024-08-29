@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
+using MongoDB.Driver;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -27,12 +29,19 @@ namespace Resgrid.Services
 		private readonly ICertificationService _certificationService;
 		private readonly IDocumentsService _documentsService;
 		private readonly INotesService _notesService;
+		private readonly ICacheProvider _cacheProvider;
+
+		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
+		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
+		private static string WhoCanViewPersonnelCacheKey = "ViewUsersSecurityMaxtix_{0}";
+		private static string WhoCanViewPersonnelLocationsCacheKey = "ViewUserLocationsSecurityMaxtix_{0}";
 
 		public AuthorizationService(IDepartmentsService departmentsService, IInvitesService invitesService,
 			ICallsService callsService, IMessageService messageService, IWorkLogsService workLogsService, ISubscriptionsService subscriptionsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
-			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService, IDocumentsService documentsService, INotesService notesService)
+			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService,
+			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider)
 		{
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
@@ -51,6 +60,7 @@ namespace Resgrid.Services
 			_certificationService = certificationService;
 			_documentsService = documentsService;
 			_notesService = notesService;
+			_cacheProvider = cacheProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -1184,6 +1194,94 @@ namespace Resgrid.Services
 				return false;
 
 			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewPersonViaMatrixAsync(string userToView, string userId, int departmentId)
+		{
+			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUsers>(string.Format(WhoCanViewPersonnelCacheKey, departmentId));
+
+			// Fail open if the cache is not available for now. -SJ 8-26-2024
+			if (matrix == null)
+				return true;
+
+			if (matrix.EveryoneNoGroupLock)
+				return true;
+
+			if (!matrix.Users.ContainsKey(userToView))
+				return true;
+
+			var userViewList = matrix.Users[userToView];
+
+			if (userViewList.Contains(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewPersonLocationViaMatrixAsync(string userToView, string userId, int departmentId)
+		{
+			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUsers>(string.Format(WhoCanViewPersonnelLocationsCacheKey, departmentId));
+
+			// Fail open if the cache is not available for now. -SJ 8-26-2024
+			if (matrix == null)
+				return true;
+
+			if (matrix.EveryoneNoGroupLock)
+				return true;
+
+			if (!matrix.Users.ContainsKey(userToView))
+				return true;
+
+			var userViewList = matrix.Users[userToView];
+
+			if (userViewList.Contains(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewUnitViaMatrixAsync(int unitToView, string userId, int departmentId)
+		{
+			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUnits>(string.Format(WhoCanViewUnitsCacheKey, departmentId));
+
+			// Fail open if the cache is not available for now. -SJ 8-26-2024
+			if (matrix == null)
+				return true;
+
+			if (matrix.EveryoneNoGroupLock)
+				return true;
+
+			if (!matrix.Units.ContainsKey(unitToView))
+				return true;
+
+			var userViewList = matrix.Units[unitToView];
+
+			if (userViewList.Contains(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewUnitLocationViaMatrixAsync(int unitToView, string userId, int departmentId)
+		{
+			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUnits>(string.Format(WhoCanViewUnitLocationsCacheKey, departmentId));
+
+			// Fail open if the cache is not available for now. -SJ 8-26-2024
+			if (matrix == null)
+				return true;
+
+			if (matrix.EveryoneNoGroupLock)
+				return true;
+
+			if (!matrix.Units.ContainsKey(unitToView))
+				return true;
+
+			var userViewList = matrix.Units[unitToView];
+
+			if (userViewList.Contains(userId))
 				return true;
 
 			return false;

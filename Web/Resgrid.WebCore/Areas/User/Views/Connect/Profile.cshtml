@@ -2,414 +2,411 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Connect.ProfileView
 @{
-	ViewBag.Title = "Resgrid | Connect Profile";
+    ViewBag.Title = "Resgrid | Connect Profile";
 }
 
 @section Styles
 {
-<link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
+    <link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
 }
 
 <form id="edit_user" class="form-horizontal" role="form" asp-controller="Connect" asp-action="Profile" asp-route-area="User" method="post">
 
-	@Html.AntiForgeryToken()
-	@Html.HiddenFor(m => m.Profile.DepartmentProfileId)
-	@Html.HiddenFor(m => m.Profile.AddressId)
-	@Html.HiddenFor(m => m.Profile.Code)
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Profile.DepartmentProfileId)
+    @Html.HiddenFor(m => m.Profile.AddressId)
+    @Html.HiddenFor(m => m.Profile.Code)
 
 
-	<div class="row wrapper border-bottom white-bg page-heading">
-		<div class="col-sm-4">
-			<h2>Connect Profile</h2>
-			<ol class="breadcrumb">
-				<li>
-					<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
-				</li>
-				<li>
-					<a asp-controller="Connect" asp-action="Index" asp-route-area="User">Connect</a>
-				</li>
-				<li class="active">
-					<strong>Connect Profile</strong>
-				</li>
-			</ol>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-lg-9">
-			<div class="wrapper wrapper-content animated fadeInUp">
-				<div class="ibox">
-					<div class="ibox-content">
-						<div class="row">
-							<div class="col-md-10 col-md-offset-1">
-								<p>This form allows you to configure how your department looks to people using the Resgrid Connect app. You can hide your department from Connect users by checking the Disable Profile checkbox and saving the form. Fields in <span class="required">blue italics</span> are required.</p>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Disable Public Profile</label>
-							<div class="col-sm-10">
-								<div class="checkbox checkbox-warning">
-									<input type="checkbox" asp-for="Profile.Disabled">
-									<label></label>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Name</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="First Name" asp-for="Profile.Name" required=""></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Short Name</label>
-							<div class="col-sm-10"><input type="text" class="form-control" placeholder="Last Name" asp-for="Profile.ShortName" required=""></div>
-						</div>
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-4">
+            <h2>Connect Profile</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                </li>
+                <li>
+                    <a asp-controller="Connect" asp-action="Index" asp-route-area="User">Connect</a>
+                </li>
+                <li class="active">
+                    <strong>Connect Profile</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="wrapper wrapper-content animated fadeInUp">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-1">
+                                <p>This form allows you to configure how your department looks to people using the Resgrid Connect app. You can hide your department from Connect users by checking the Disable Profile checkbox and saving the form. Fields in <span class="required">blue italics</span> are required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Disable Public Profile</label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" asp-for="Profile.Disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="First Name" asp-for="Profile.Name" required=""></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Short Name</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="Last Name" asp-for="Profile.ShortName" required=""></div>
+                        </div>
 
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Description
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-6">
-										<textarea asp-for="Profile.Description" class="form-control" rows="5"></textarea>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								In Case Of Emergency
-							</label>
-							<div class="col-sm-10">
-								<div class="row" style="margin-bottom: 0px;">
-									<div class="col-sm-6">
-										@Html.TextBoxFor(m => m.Profile.InCaseOfEmergency, new { @class = "form-control" })
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-12">
-										<span class="help-block text-left">Resgrid Connect is not intended for life threatening or emergency communications. How can your users communicate in emergency situations?</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Founded
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-2">
-										<input id="Profile_Founded" name="Profile.Founded" onkeydown="return false;">
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Keywords
-							</label>
-							<div class="col-sm-10">
-								<div class="row" style="margin-bottom: 0px;">
-									<div class="col-sm-4">
-										@Html.TextBoxFor(m => m.Profile.Keywords, new { @class = "form-control" })
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-12">
-										<span class="help-block text-left">Tags or Keywords that describe your department separated by commas i.e.: Fire, Firefighters, New York, NYC, EMS</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Services Provided
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-4">
-										@Html.TextBoxFor(m => m.Profile.ServicesProvided, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Description
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <textarea asp-for="Profile.Description" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                In Case Of Emergency
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row" style="margin-bottom: 0px;">
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(m => m.Profile.InCaseOfEmergency, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <span class="help-block text-left">Resgrid Connect is not intended for life threatening or emergency communications. How can your users communicate in emergency situations?</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Founded
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <input id="Profile_Founded" name="Profile.Founded" onkeydown="return false;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Keywords
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row" style="margin-bottom: 0px;">
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.Profile.Keywords, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <span class="help-block text-left">Tags or Keywords that describe your department separated by commas i.e.: Fire, Firefighters, New York, NYC, EMS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Services Provided
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.Profile.ServicesProvided, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
 
-						<h3>Location</h3>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Service Area
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-4">
-										@Html.TextBoxFor(m => m.Profile.ServiceArea, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
+                        <h3>Location</h3>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Service Area
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.Profile.ServiceArea, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
 
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-8">
-										Supply a location that will help users find your department based on location/proximity. Please enter an Address or GPS Coordinates or a <a href="https://what3words.com/about/" target="_blank">what3words address.</a>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Street
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-6">
-										@Html.TextBoxFor(m => m.Address1, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								City
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-4">
-										@Html.TextBoxFor(m => m.City, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								State/Province
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-4">
-										@Html.TextBoxFor(m => m.State, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Zip/Postal Code
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-2">
-										@Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Country
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-4">
-										@Html.DropDownListFor(m => m.Country, new SelectList(Countries.CountryNames), new { @class = "form-control", style = "width: 300px" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								GPS Coordinates
-							</label>
-							<div class="col-sm-10">
-								<div class="col-md-4">
-									@Html.TextBoxFor(m => m.Profile.Latitude, new { @class = "form-control" })
-									<span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
-								</div>
-								<div class="col-md-4">
-									@Html.TextBoxFor(m => m.Profile.Longitude, new { @class = "form-control" })
-									<span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								what3words Address
-							</label>
-							<div class="col-sm-10">
-								<div class="col-md-8">
-									@Html.TextBoxFor(m => m.Profile.What3Words, new { @class = "form-control", @style = "width:250px;", autocomplete = "off", placeholder = "what.three.words", tabindex = "8" })
-									<span class="help-inline">w3w Address (i.e. humble.echo.sticky)</span>
-								</div>
-							</div>
-						</div>
-						<div class="hr-line-dashed"></div>
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        Supply a location that will help users find your department based on location/proximity. Please enter an Address or GPS Coordinates or a <a href="https://what3words.com/about/" target="_blank">what3words address.</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Street
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(m => m.Address1, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                City
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                State/Province
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.State, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Zip/Postal Code
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Country
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.DropDownListFor(m => m.Country, new SelectList(Countries.CountryNames), new { @class = "form-control", style = "width: 300px" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                GPS Coordinates
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(m => m.Profile.Latitude, new { @class = "form-control" })
+                                    <span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
+                                </div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(m => m.Profile.Longitude, new { @class = "form-control" })
+                                    <span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                what3words Address
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(m => m.Profile.What3Words, new { @class = "form-control", @style = "width:250px;", autocomplete = "off", placeholder = "what.three.words", tabindex = "8" })
+                                    <span class="help-inline">w3w Address (i.e. humble.echo.sticky)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
 
-						<h3>Volunteer Info</h3>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Volunteer Positions Available
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-2">
-										@Html.CheckBoxFor(m => m.Profile.VolunteerPositionsAvailable)
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Volunteer Contact Name
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-4">
-										@Html.TextBoxFor(m => m.Profile.VolunteerContactName, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Volunteer Contact Info
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-6">
-										@Html.TextBoxFor(m => m.Profile.VolunteerContactInfo, new { @class = "form-control" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Volunteer Description
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-6">
-										@Html.TextAreaFor(m => m.Profile.VolunteerDescription, new { @class = "form-control", rows = "5" })
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Volunteer Keywords
-							</label>
-							<div class="col-sm-10">
-								<div class="row" style="margin-bottom: 0px;">
-									<div class="col-sm-4">
-										@Html.TextBoxFor(m => m.Profile.VolunteerKeywords, new { @class = "form-control" })
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-12">
-										<span class="help-block text-left">Tags or Keywords that describe your volunteer opportunities separated by commas i.e.: Firefighter, CERT, SAR, EMT</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="hr-line-dashed"></div>
+                        <h3>Volunteer Info</h3>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Volunteer Positions Available
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        @Html.CheckBoxFor(m => m.Profile.VolunteerPositionsAvailable)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Volunteer Contact Name
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.Profile.VolunteerContactName, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Volunteer Contact Info
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(m => m.Profile.VolunteerContactInfo, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Volunteer Description
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        @Html.TextAreaFor(m => m.Profile.VolunteerDescription, new { @class = "form-control", rows = "5" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                Volunteer Keywords
+                            </label>
+                            <div class="col-sm-10">
+                                <div class="row" style="margin-bottom: 0px;">
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.Profile.VolunteerKeywords, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <span class="help-block text-left">Tags or Keywords that describe your volunteer opportunities separated by commas i.e.: Firefighter, CERT, SAR, EMT</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
 
 
 
-						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Connect" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Save Profile</button>
-							</div>
-						</div>
-					</div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Connect" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Save Profile</button>
+                            </div>
+                        </div>
+                    </div>
 
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-3">
-			<div class="wrapper wrapper-content animated fadeInUp">
-				<div class="ibox">
-					<div class="ibox-content">
-						<div id="gravatarSection" style="text-align: center; padding-top: 10px;">
-							<div id="avatar" class="center" style="text-align: center;">
-								<img style="width: 100px; height: 100px; text-align: center;" src="@Model.ImageUrl" onerror="this.src = 'https://resgrid.com/images/defaultDepartment.png'" />
-							</div>
-							<div>&nbsp;</div>
-							<div id="avatar-text" style="color: #337ab7; cursor: pointer;">click here to set a picture</div>
-							<div style="color: #777">picture changes may take up to 24 hours</div>
-						</div>
-					</div>
-				</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="wrapper wrapper-content animated fadeInUp">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div id="gravatarSection" style="text-align: center; padding-top: 10px;">
+                            <div id="avatar" class="center" style="text-align: center;">
+                                <img style="width: 100px; height: 100px; text-align: center;" src="@Model.ImageUrl" onerror="this.src = 'https://resgrid.com/images/defaultDepartment.png'" />
+                            </div>
+                            <div>&nbsp;</div>
+                            <div id="avatar-text" style="color: #337ab7; cursor: pointer;">click here to set a picture</div>
+                            <div style="color: #777">picture changes may take up to 24 hours</div>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="ibox">
-					<div class="ibox-title">
-						<h5>Features</h5>
-					</div>
-					<div class="ibox-content">
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Allow Messages</label>
-							<div class="col-sm-8">
-								<div class="switch">
-									<div class="onoffswitch">
-										<input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.AllowMessages">
-										<label class="onoffswitch-label" for="Profile_SendEmail">
-											<span class="onoffswitch-inner"></span>
-											<span class="onoffswitch-switch"></span>
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Share Stats</label>
-							<div class="col-sm-8">
-								<div class="switch">
-									<div class="onoffswitch">
-										<input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.ShareStats">
-										<label class="onoffswitch-label" for="Profile_SendSms">
-											<span class="onoffswitch-inner"></span>
-											<span class="onoffswitch-switch"></span>
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Invite Only</label>
-							<div class="col-sm-8">
-								<div class="switch">
-									<div class="onoffswitch">
-										<input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.InviteOnly">
-										<label class="onoffswitch-label" for="Profile_SendPush">
-											<span class="onoffswitch-inner"></span>
-											<span class="onoffswitch-switch"></span>
-										</label>
-									</div>
-								</div>
-								<span class="help-block m-b-none">If your department is private people will need to use your access code (@Model.Profile.Code) to follow your department.</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Features</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Allow Messages</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.AllowMessages">
+                                        <label class="onoffswitch-label" for="Profile_SendEmail">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Share Stats</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.ShareStats">
+                                        <label class="onoffswitch-label" for="Profile_SendSms">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Invite Only</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" checked class="onoffswitch-checkbox" asp-for="Profile.InviteOnly">
+                                        <label class="onoffswitch-label" for="Profile_SendPush">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <span class="help-block m-b-none">If your department is private people will need to use your access code (@Model.Profile.Code) to follow your department.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 }
 @section Scripts
 {
-	<script src="~/clib/croppic/js/croppic.js" type="text/javascript"></script>
-	<script>
-		var croppicContainerModalOptions = {
-			uploadUrl: '@Model.ApiUrl/api/v3/Avatars/Upload?id=@Model.Department.DepartmentId' + '?type=2',
-			cropUrl: '@Model.ApiUrl/api/v3/Avatars/Crop',
-			modal: true,
-			imgEyecandyOpacity: 0.4,
-			loaderHtml: '<div class="loader bubblingG"><span id="bubblingG_1"></span><span id="bubblingG_2"></span><span id="bubblingG_3"></span></div> '
-		}
-		var cropContainerModal = new Croppic('avatar', croppicContainerModalOptions);
-	</script>
-	<script src="~/js/app/internal/connect/resgrid.connect.profile.js" type="text/javascript"></script>
+    <script src="~/clib/croppic/js/croppic.js" type="text/javascript"></script>
+    <script>
+        var croppicContainerModalOptions = {
+            uploadUrl: '@Model.ApiUrl/api/v3/Avatars/Upload?id=@Model.Department.DepartmentId' + '?type=2',
+            cropUrl: '@Model.ApiUrl/api/v3/Avatars/Crop',
+            modal: true,
+            imgEyecandyOpacity: 0.4,
+            loaderHtml: '<div class="loader bubblingG"><span id="bubblingG_1"></span><span id="bubblingG_2"></span><span id="bubblingG_3"></span></div> '
+        }
+        var cropContainerModal = new Croppic('avatar', croppicContainerModalOptions);
+    </script>
+    <script src="~/js/app/internal/connect/resgrid.connect.profile.js" type="text/javascript"></script>
 }

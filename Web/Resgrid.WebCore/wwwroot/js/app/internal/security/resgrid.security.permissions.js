@@ -911,6 +911,71 @@ var resgrid;
                     });
                 });
                 ////////////////////////////////////////////////////////
+
+                // View Groups Units
+                ////////////////////////////////////////////////////////
+                $('#ViewGroupsUnits').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=18&perm=' + val + '&lockToGroup=' + $('#LockViewGroupsUnitsToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#ViewGroupsUnits").val() === "2") {
+                        $('#viewUnitsRolesSpan').hide();
+                        $('#viewUnitsRolesDiv').show();
+                    }
+                    else {
+                        $('#viewUnitsRolesSpan').show();
+                        $('#viewUnitsRolesDiv').hide();
+                    }
+                });
+                if ($("#ViewGroupsUnits").val() === "2") {
+                    $('#viewUnitsRolesSpan').hide();
+                    $('#viewUnitsRolesDiv').show();
+                }
+                else {
+                    $('#viewUnitsRolesSpan').show();
+                    $('#viewUnitsRolesDiv').hide();
+                }
+                $("#viewUnitsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#viewUnitsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=18&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=18',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#viewUnitsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                $('#LockViewGroupsUnitsToGroup').change(function () {
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=18&perm=' + $('#ViewGroupsUnits').val() + '&lockToGroup=' + $('#LockViewGroupsUnitsToGroup').is(':checked'),
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                });
+                ////////////////////////////////////////////////////////
+
             });
         })(permissions = security.permissions || (security.permissions = {}));
     })(security = resgrid.security || (resgrid.security = {}));

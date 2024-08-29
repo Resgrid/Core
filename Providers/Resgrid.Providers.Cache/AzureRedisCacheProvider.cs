@@ -203,6 +203,16 @@ namespace Resgrid.Providers.Cache
 			return null;
 		}
 
+		public async Task<T> GetAsync<T>(string cacheKey) where T : class
+		{
+			var cacheValue = await GetStringAsync(cacheKey);
+
+			if (!String.IsNullOrWhiteSpace(cacheValue))
+				return ObjectSerialization.Deserialize<T>(cacheValue);
+
+			return null;
+		}
+
 		public async Task<bool> RemoveAsync(string cacheKey)
 		{
 			try

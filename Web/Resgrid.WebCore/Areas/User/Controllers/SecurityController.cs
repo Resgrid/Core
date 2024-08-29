@@ -51,8 +51,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.RemovePersonnel))
 				model.RemoveUsers = permissions.First(x => x.PermissionType == (int)PermissionTypes.RemovePersonnel).Action;
 
-			if (permissions.Any(x => x.PermissionType == (int) PermissionTypes.CreateCall))
-				model.CreateCall = permissions.First(x => x.PermissionType == (int) PermissionTypes.CreateCall).Action;
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateCall))
+				model.CreateCall = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateCall).Action;
 			else
 				model.CreateCall = 3;
 
@@ -266,6 +266,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			addCallDataPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
 			addCallDataPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
 			model.AddCallDataPermissions = new SelectList(addCallDataPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewGroupUnits))
+			{
+				model.ViewGroupsUnits = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUnits).Action;
+				model.LockViewGroupsUnitsToGroup = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUnits).LockToGroup;
+			}
+			else
+				model.ViewGroupsUnits = 3;
+
+			var viewGroupUnitsPermissions = new List<dynamic>();
+			viewGroupUnitsPermissions.Add(new { Id = 3, Name = "Everyone" });
+			viewGroupUnitsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			viewGroupUnitsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			viewGroupUnitsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.ViewGrouUnitsPermissions = new SelectList(viewGroupUnitsPermissions, "Id", "Name");
 
 			return View(model);
 		}

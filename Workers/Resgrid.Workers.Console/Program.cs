@@ -29,6 +29,7 @@ using Stripe;
 using FluentMigrator.Runner;
 using Resgrid.Providers.Migrations.Migrations;
 using Resgrid.Model.Repositories;
+using System.Reflection;
 
 namespace Resgrid.Workers.Console
 {
@@ -123,9 +124,38 @@ namespace Resgrid.Workers.Console
 			var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
 
-			//var test = Configuration["ConnectionStrings:ResgridContext"];
+			string configPath = Configuration["AppOptions:ConfigPath"];
 
-			ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
+			if (string.IsNullOrWhiteSpace(configPath))
+				configPath = "C:\\Resgrid\\Config\\ResgridConfig.json";
+
+			bool configResult = ConfigProcessor.LoadAndProcessConfig(configPath);
+			if (configResult)
+			{
+				System.Console.WriteLine($"Loaded Config: {configPath}");
+			}
+
+			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
+			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+
+			element.SetValue(settings, false);
+			collection.SetValue(settings, false);
+
+			if (!configResult)
+			{
+				if (settings["ResgridContext"] == null)
+				{
+					settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+				}
+			}
+			else
+			{
+				if (settings["ResgridContext"] == null)
+				{
+					settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
+				}
+			}
 
 			if (connectionStringsSection.ConnectionStrings["ResgridContext"] != null)
 				connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = DataConfig.ConnectionString;
@@ -134,6 +164,8 @@ namespace Resgrid.Workers.Console
 
 			config.Save();
 			System.Configuration.ConfigurationManager.RefreshSection("connectionStrings");
+			collection.SetValue(settings, true);
+			element.SetValue(settings, true);
 		}
 	}
 
@@ -275,6 +307,12 @@ namespace Resgrid.Workers.Console
 				await client.ScheduleAsync("System SQL Queue",
 					new Commands.SystemSqlQueueCommand(14),
 					Cron.Daily(3, 0),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Security Refresh");
+				await client.ScheduleAsync("Security Refresh",
+					new Commands.SecurityRefreshScheduleCommand(15),
+					Cron.Daily(2, 0),
 					stoppingToken);
 			}
 			else

@@ -28,408 +28,429 @@
 </div>
 
 <div class="row">
-<div class="col-xs-12">
-<div class="wrapper wrapper-content">
-<div class="ibox float-e-margins">
-<div class="ibox-content">
-<div class="row">
-    <div class="col-md-8 col-md-offset-1 col-md-pull-1">
-        <p>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</p>
-    </div>
-</div>
-@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-{
-    <div class="table-responsive">
-    <table class="table table-striped">
-    <thead>
-    <tr>
-        <th>
-            Permission
-        </th>
-        <th>
-            Note
-        </th>
-        <th>
-            Selection
-        </th>
-        <th>
-            Group Only
-        </th>
-        <th>
-            Roles
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>
-            Who can Add Users
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can add users/personnel to the department. By default only Department Administrators (and the managing member) can add users.
-            But Group Admins can also be allowed to add users (limited only to the group they are an admin of).
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.AddUsers, Model.AddUserPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            No Roles
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Remove Users
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can remove users/personnel from the department. By default only Department Administrators (and the managing member) can remove users.
-            But Group Admins can also be allowed to remove users (limited only to the users in the group they are an admin of).
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.RemoveUsers, Model.RemoveUserPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            No Roles
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Create Calls
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can manually create calls from the Resgrid system. By default Everyone can create calls.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateCall, Model.CreateCallPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="callCreateNoRolesSpan">No Roles</span>
-            <div id="callCreateRolesDiv" style="display: none;">
-                <select id="callCreateRoles" name="callCreateRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Delete Calls
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can delete calls from the Resgrid system. By default Everyone can delete calls.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.DeleteCall, Model.DeleteCallPermissions)
-        </td>
-        <td>
-            <input type="checkbox" asp-for="LockDeleteCallToGroup"/>
-        </td>
-        <td>
-            <span id="deleteCallsRolesSpan">No Roles</span>
-            <div id="deleteCallsRolesDiv" style="display: none;">
-                <select id="deleteCallsRoles" name="deleteCallsRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Close Calls
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can close calls from the Resgrid system. By default Everyone can close calls.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CloseCall, Model.CloseCallPermissions)
-        </td>
-        <td>
-            <input type="checkbox" asp-for="LockCloseCallToGroup"/>
-        </td>
-        <td>
-            <span id="closeCallsRolesSpan">No Roles</span>
-            <div id="closeCallsRolesDiv" style="display: none;">
-                <select id="closeCallsRoles" name="closeCallsRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-            <td>
-                Who can Add Data To Calls Calls
-            </td>
-            <td style="max-width: 350px">
-                This option determines who can add data; like images, notes and files, to calls from the Resgrid system. By default Everyone can add data to  calls.
-            </td>
-            <td>
-                @Html.DropDownListFor(m => m.AddCallData, Model.AddCallDataPermissions)
-            </td>
-            <td>
-                <input type="checkbox" asp-for="LockAddCallDataToGroup"/>
-            </td>
-            <td>
-                <span id="addCallDataRolesSpan">No Roles</span>
-                <div id="addCallDataRolesDiv" style="display: none;">
-                    <select id="addCallDataRoles" name="addCallDataRoles"></select>
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                            <p>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</p>
+                        </div>
+                    </div>
+                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Permission
+                                        </th>
+                                        <th>
+                                            Note
+                                        </th>
+                                        <th>
+                                            Selection
+                                        </th>
+                                        <th>
+                                            Group Only
+                                        </th>
+                                        <th>
+                                            Roles
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Who can Add Users
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can add users/personnel to the department. By default only Department Administrators (and the managing member) can add users.
+                                            But Group Admins can also be allowed to add users (limited only to the group they are an admin of).
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AddUsers, Model.AddUserPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            No Roles
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Remove Users
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can remove users/personnel from the department. By default only Department Administrators (and the managing member) can remove users.
+                                            But Group Admins can also be allowed to remove users (limited only to the users in the group they are an admin of).
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.RemoveUsers, Model.RemoveUserPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            No Roles
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Create Calls
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can manually create calls from the Resgrid system. By default Everyone can create calls.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateCall, Model.CreateCallPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="callCreateNoRolesSpan">No Roles</span>
+                                            <div id="callCreateRolesDiv" style="display: none;">
+                                                <select id="callCreateRoles" name="callCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Delete Calls
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can delete calls from the Resgrid system. By default Everyone can delete calls.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.DeleteCall, Model.DeleteCallPermissions)
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" asp-for="LockDeleteCallToGroup" />
+                                        </td>
+                                        <td>
+                                            <span id="deleteCallsRolesSpan">No Roles</span>
+                                            <div id="deleteCallsRolesDiv" style="display: none;">
+                                                <select id="deleteCallsRoles" name="deleteCallsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Close Calls
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can close calls from the Resgrid system. By default Everyone can close calls.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CloseCall, Model.CloseCallPermissions)
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" asp-for="LockCloseCallToGroup" />
+                                        </td>
+                                        <td>
+                                            <span id="closeCallsRolesSpan">No Roles</span>
+                                            <div id="closeCallsRolesDiv" style="display: none;">
+                                                <select id="closeCallsRoles" name="closeCallsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Add Data To Calls Calls
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can add data; like images, notes and files, to calls from the Resgrid system. By default Everyone can add data to  calls.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AddCallData, Model.AddCallDataPermissions)
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" asp-for="LockAddCallDataToGroup" />
+                                        </td>
+                                        <td>
+                                            <span id="addCallDataRolesSpan">No Roles</span>
+                                            <div id="addCallDataRolesDiv" style="display: none;">
+                                                <select id="addCallDataRoles" name="addCallDataRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Create Trainings
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can create trainings. By default only Department Admins can create trainings.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateTraining, Model.CreateTrainingPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="trainingCreateNoRolesSpan">No Roles</span>
+                                            <div id="trainingCreateRolesDiv" style="display: none;">
+                                                <select id="trainingCreateRoles" name="trainingCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Add Documents
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can add documents. By default Everyone can add documents
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateDocument, Model.CreateDocumentPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="documentCreateNoRolesSpan">No Roles</span>
+                                            <div id="documentCreateRolesDiv" style="display: none;">
+                                                <select id="documentCreateRoles" name="documentCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Create Calendar Entries
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can create calendar entires. By default Everyone can create calendar entries.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateCalendarEntry, Model.CreateCalendarEntryPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="calendarEntriesCreateNoRolesSpan">No Roles</span>
+                                            <div id="calendarEntriesCreateRolesDiv" style="display: none;">
+                                                <select id="calendarEntiresCreateRoles" name="calendarEntiresCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Create Notes
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can create calendar entires. By default Everyone can create calendar entries.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateNote, Model.CreateNotePermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="noteCreateNoRolesSpan">No Roles</span>
+                                            <div id="noteCreateRolesDiv" style="display: none;">
+                                                <select id="noteCreateRoles" name="noteCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Add Log Entries
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can add log entries. By default Everyone can add log entries.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateLog, Model.CreateLogPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="logCreateNoRolesSpan">No Roles</span>
+                                            <div id="logCreateRolesDiv" style="display: none;">
+                                                <select id="logCreateRoles" name="logCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Create Shifts
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can create and edit shifts. By default only Department Admins can create and edit shifts.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateShift, Model.CreateShiftPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="shiftCreateNoRolesSpan">No Roles</span>
+                                            <div id="shiftCreateRolesDiv" style="display: none;">
+                                                <select id="shiftCreateRoles" name="shiftCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can View Personal Info
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ViewPersonalInfo, Model.ViewPersonalInfoPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="personalInfooRolesSpan">No Roles</span>
+                                            <div id="personalInfoRolesDiv" style="display: none;">
+                                                <select id="personalInfoRoles" name="personalInfoRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Who can Adjust Inventory
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AdjustInventory, Model.AdjustInventoryPermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="adjustInventoryRolesSpan">No Roles</span>
+                                            <div id="adjustInventoryRolesDiv" style="display: none;">
+                                                <select id="adjustInventoryRoles" name="adjustInventoryRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can see the Location of Personnel
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ViewPersonnelLocation, Model.ViewPersonnelLocationPermissions)
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" asp-for="LockViewPersonneLocationToGroup" />
+                                        </td>
+                                        <td>
+                                            <span id="viewPersonnelLocationRolesSpan">No Roles</span>
+                                            <div id="viewPersonnelLocationRolesDiv" style="display: none;">
+                                                <select id="viewPersonnelLocationRoles" name="viewPersonnelLocationRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can see the Location of Units
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can see the location of units on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ViewUnitLocation, Model.ViewUnitLocationPermissions)
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" asp-for="LockViewUnitLocationToGroup" />
+                                        </td>
+                                        <td>
+                                            <span id="viewUnitLocationsRolesSpan">No Roles</span>
+                                            <div id="viewUnitLocationsRolesDiv" style="display: none;">
+                                                <select id="viewUnitLocationsRoles" name="viewUnitLocationsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can send messages
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can create and send messages (in-system mail). By Default everyone can create and send messages.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateMessage, Model.CreateMessagePermissions)
+                                        </td>
+                                        <td>
+                                            N/A
+                                        </td>
+                                        <td>
+                                            <span id="createMessagesRolesSpan">No Roles</span>
+                                            <div id="createMessagesRolesDiv" style="display: none;">
+                                                <select id="createMessagesRoles" name="createMessagesRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can view users
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            By default all users can see all other users in the system. This option allows you to limit who can see users in the system.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ViewGroupsUsers, Model.ViewGroupUsersPermissions)
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" asp-for="LockViewGroupsUsersToGroup" />
+                                        </td>
+                                        <td>
+                                            <span id="viewUsersRolesSpan">No Roles</span>
+                                            <div id="viewUsersRolesDiv" style="display: none;">
+                                                <select id="viewUsersRoles" name="viewUsersRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can view groups and units
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            By default all users can see all units in the system. This option allows you to limit who can units in the system.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ViewGroupsUnits, Model.ViewGrouUnitsPermissions)
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" asp-for="LockViewGroupsUnitsToGroup" />
+                                        </td>
+                                        <td>
+                                            <span id="viewUnitsRolesSpan">No Roles</span>
+                                            <div id="viewUnitsRolesDiv" style="display: none;">
+                                                <select id="viewUnitsRoles" name="viewUnitsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    }
                 </div>
-            </td>
-        </tr>
-    <tr>
-        <td>
-            Who can Create Trainings
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can create trainings. By default only Department Admins can create trainings.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateTraining, Model.CreateTrainingPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="trainingCreateNoRolesSpan">No Roles</span>
-            <div id="trainingCreateRolesDiv" style="display: none;">
-                <select id="trainingCreateRoles" name="trainingCreateRoles"></select>
             </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Add Documents
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can add documents. By default Everyone can add documents
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateDocument, Model.CreateDocumentPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="documentCreateNoRolesSpan">No Roles</span>
-            <div id="documentCreateRolesDiv" style="display: none;">
-                <select id="documentCreateRoles" name="documentCreateRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Create Calendar Entries
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can create calendar entires. By default Everyone can create calendar entries.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateCalendarEntry, Model.CreateCalendarEntryPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="calendarEntriesCreateNoRolesSpan">No Roles</span>
-            <div id="calendarEntriesCreateRolesDiv" style="display: none;">
-                <select id="calendarEntiresCreateRoles" name="calendarEntiresCreateRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Create Notes
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can create calendar entires. By default Everyone can create calendar entries.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateNote, Model.CreateNotePermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="noteCreateNoRolesSpan">No Roles</span>
-            <div id="noteCreateRolesDiv" style="display: none;">
-                <select id="noteCreateRoles" name="noteCreateRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Add Log Entries
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can add log entries. By default Everyone can add log entries.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateLog, Model.CreateLogPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="logCreateNoRolesSpan">No Roles</span>
-            <div id="logCreateRolesDiv" style="display: none;">
-                <select id="logCreateRoles" name="logCreateRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Create Shifts
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can create and edit shifts. By default only Department Admins can create and edit shifts.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateShift, Model.CreateShiftPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="shiftCreateNoRolesSpan">No Roles</span>
-            <div id="shiftCreateRolesDiv" style="display: none;">
-                <select id="shiftCreateRoles" name="shiftCreateRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can View Personal Info
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.ViewPersonalInfo, Model.ViewPersonalInfoPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="personalInfooRolesSpan">No Roles</span>
-            <div id="personalInfoRolesDiv" style="display: none;">
-                <select id="personalInfoRoles" name="personalInfoRoles"></select>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Who can Adjust Inventory
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.AdjustInventory, Model.AdjustInventoryPermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="adjustInventoryRolesSpan">No Roles</span>
-            <div id="adjustInventoryRolesDiv" style="display: none;">
-                <select id="adjustInventoryRoles" name="adjustInventoryRoles"></select>
-            </div>
-        </td>
-    </tr>
-
-    <tr>
-        <td>
-            Who can see the Location of Personnel
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.ViewPersonnelLocation, Model.ViewPersonnelLocationPermissions)
-        </td>
-        <td>
-            <input type="checkbox" asp-for="LockViewPersonneLocationToGroup"/>
-        </td>
-        <td>
-            <span id="viewPersonnelLocationRolesSpan">No Roles</span>
-            <div id="viewPersonnelLocationRolesDiv" style="display: none;">
-                <select id="viewPersonnelLocationRoles" name="viewPersonnelLocationRoles"></select>
-            </div>
-        </td>
-    </tr>
-
-    <tr>
-        <td>
-            Who can see the Location of Units
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can see the location of units on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.ViewUnitLocation, Model.ViewUnitLocationPermissions)
-        </td>
-        <td>
-            <input type="checkbox" asp-for="LockViewUnitLocationToGroup"/>
-        </td>
-        <td>
-            <span id="viewUnitLocationsRolesSpan">No Roles</span>
-            <div id="viewUnitLocationsRolesDiv" style="display: none;">
-                <select id="viewUnitLocationsRoles" name="viewUnitLocationsRoles"></select>
-            </div>
-        </td>
-    </tr>
-
-    <tr>
-        <td>
-            Who can send messages
-        </td>
-        <td style="max-width: 350px">
-            This option determines who can create and send messages (in-system mail). By Default everyone can create and send messages.
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.CreateMessage, Model.CreateMessagePermissions)
-        </td>
-        <td>
-            N/A
-        </td>
-        <td>
-            <span id="createMessagesRolesSpan">No Roles</span>
-            <div id="createMessagesRolesDiv" style="display: none;">
-                <select id="createMessagesRoles" name="createMessagesRoles"></select>
-            </div>
-        </td>
-    </tr>
-
-    <tr>
-        <td>
-            Who can view groups and users
-        </td>
-        <td style="max-width: 350px">
-            By default all users can see all other users and groups in the system. This option allows you to
-        </td>
-        <td>
-            @Html.DropDownListFor(m => m.ViewGroupsUsers, Model.ViewGroupUsersPermissions)
-        </td>
-        <td>
-            <input type="checkbox" asp-for="LockViewGroupsUsersToGroup"/>
-        </td>
-        <td>
-            <span id="viewUsersRolesSpan">No Roles</span>
-            <div id="viewUsersRolesDiv" style="display: none;">
-                <select id="viewUsersRoles" name="viewUsersRoles"></select>
-            </div>
-        </td>
-    </tr>
-    </tbody>
-    </table>
-
+        </div>
     </div>
-}
-</div>
-</div>
-</div>
-</div>
 </div>
 
 @section Scripts

@@ -4,37 +4,37 @@
     ViewBag.Title = "Resgrid | " + @localizer["CallSettingsHeader"];
 }
 @section Styles
-    {
+{
 
 }
 
-    <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-sm-4">
-            <h2>@localizer["CallSettingsHeader"]</h2>
-            <ol class="breadcrumb">
-                <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-                </li>
-                <li class="active">
-                    <strong>@localizer["CallSettingsHeader"]</strong>
-                </li>
-            </ol>
-        </div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["CallSettingsHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["CallSettingsHeader"]</strong>
+            </li>
+        </ol>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="wrapper wrapper-content">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content">
-                        <form class="form-horizontal" role="form" asp-controller="Department" asp-action="CallSettings" asp-route-area="User" method="post">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Department" asp-action="CallSettings" asp-route-area="User" method="post">
 
-                            @Html.AntiForgeryToken()
-                            @Html.HiddenFor(m => m.EmailSettings.DepartmentCallEmailId)
-                            @Html.HiddenFor(m => m.CallType)
-                            @Html.HiddenFor(m => m.TextCallType)
-                            <div asp-validation-summary="All" class="text-danger"></div>
-                            @if (!String.IsNullOrEmpty(Model.Message))
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.EmailSettings.DepartmentCallEmailId)
+                        @Html.HiddenFor(m => m.CallType)
+                        @Html.HiddenFor(m => m.TextCallType)
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @if (!String.IsNullOrEmpty(Model.Message))
                         {
                             <div class="alert alert-success">
                                 @Model.Message
@@ -51,10 +51,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PruneCalls"]</label>
                             <div class="col-sm-10">
-                                <div class="checkbox checkbox-primary">
-                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="PruneEmailCalls">
-                                    <label></label>
-                                </div>
+                                <input type="checkbox" asp-for="PruneEmailCalls">
                                 <span class="help-block m-b-none">@localizer["PruneCallsHelp"]</span>
                             </div>
                         </div>
@@ -181,7 +178,7 @@
 </div>
 
 @section Scripts
-    {
+{
 
     <script type="text/x-kendo-tmpl" id="template">
         <div class="product">
@@ -235,19 +232,19 @@
                 text-transform: uppercase;
             }
         /*.k-state-selected h3
-                    {
-                        color: #fff;
-                        background-color: rgba(0,0,0,0.4);
-                        -moz-box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-                        -webkit-box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-                        box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-                        -moz-border-radius-topright: 5px;
-                        -moz-border-radius-bottomright: 5px;
-                        -webkit-border-top-right-radius: 5px;
-                        -webkit-border-bottom-right-radius: 5px;
-                        border-top-right-radius: 5px;
-                        border-bottom-right-radius: 5px;
-                    }*/
+                            {
+                                color: #fff;
+                                background-color: rgba(0,0,0,0.4);
+                                -moz-box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+                                -webkit-box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+                                box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+                                -moz-border-radius-topright: 5px;
+                                -moz-border-radius-bottomright: 5px;
+                                -webkit-border-top-right-radius: 5px;
+                                -webkit-border-bottom-right-radius: 5px;
+                                border-top-right-radius: 5px;
+                                border-bottom-right-radius: 5px;
+                            }*/
         .k-listview:after {
             content: ".";
             display: block;

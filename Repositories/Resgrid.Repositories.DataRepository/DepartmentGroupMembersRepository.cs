@@ -165,5 +165,49 @@ namespace Resgrid.Repositories.DataRepository
 				throw;
 			}
 		}
+
+
+		public async Task<IEnumerable<DepartmentGroupMember>> GetAllGroupAdminsByDepartmentIdAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroupMember>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectGroupAdminsByDidQuery>();
+
+					return await x.QueryAsync<DepartmentGroupMember, DepartmentGroup, DepartmentGroupMember>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (dgm, dg) => { dgm.DepartmentGroup = dg; return dgm; },
+						splitOn: "DepartmentGroupId");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
 	}
 }

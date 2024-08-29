@@ -308,5 +308,13 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserAddNoteAsync(string userId);
 
 		Task<bool> CanUserEditNoteAsync(string userId, int noteId);
+
+		Task<bool> CanUserViewPersonViaMatrixAsync(string userToView, string userId, int departmentId);
+
+		Task<bool> CanUserViewPersonLocationViaMatrixAsync(string userToView, string userId, int departmentId);
+
+		Task<bool> CanUserViewUnitViaMatrixAsync(int unitToView, string userId, int departmentId);
+
+		Task<bool> CanUserViewUnitLocationViaMatrixAsync(int unitToView, string userId, int departmentId);
 	}
 }

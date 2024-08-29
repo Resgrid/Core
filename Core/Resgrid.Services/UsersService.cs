@@ -280,63 +280,8 @@ namespace Resgrid.Services
 
 		public async Task<List<PersonnelLocation>> GetLatestLocationsForDepartmentPersonnelAsync(int departmentId)
 		{
-			/*
-			var pipeline = new BsonDocument[]
-				{
-					new BsonDocument("$match",
-					new BsonDocument
-					{
-							{ "departmentId", departmentId }
-						}),
-					new BsonDocument("$sort",
-					new BsonDocument("timestamp", -1)),
-					new BsonDocument("$group",
-						new BsonDocument
-						{
-							{ "_id",
-								new BsonDocument
-								{
-									{ "userId", "$userId" },
-									{ "departmentId", "$departmentId" }
-								}
-							},
-							{ "Carddetails",
-								new BsonDocument("$first", "$Carddetails")
-							}
-						}
-					),
-					new BsonDocument("$project",
-						new BsonDocument
-						{
-							{ "_id", 0 },
-							{ "studentid", "$_id.studentid" },
-							{ "dept", "$_id.dept" },
-							{ "Carddetails", "$Carddetails" }
-						}
-					)
-				};
-
-			var result = await _personnelLocationRepository.Aggregate<BsonDocument>(pipeline);
-			*/
-
 			try
 			{
-				//var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
-				//	.GroupBy(x => x.UserId).FirstOrDefault();
-
-				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
-
-
-				//var locations = _personnelLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).ToList();//.OrderByDescending(y => y.Timestamp);//.GroupBy(x => x.UnitId).ToList();//.FirstOrDefault();
-
-				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
-
-				//if (locations != null)
-				//	return locations.OrderBy(y => y.Timestamp)
-				//					.GroupBy(x => x.UserId)
-				//					.Select(y => y.First()).ToList();
-
-
 				var locations = _personnelLocationRepository
 									.AsQueryable()
 									.Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)

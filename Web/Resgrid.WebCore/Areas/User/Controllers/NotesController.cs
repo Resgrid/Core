@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elasticsearch.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Framework;
-using Resgrid.Localization.Areas.User.Notes;
 using Resgrid.Model;
-using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
-using Resgrid.Services;
 using Resgrid.Web.Areas.User.Models.Notes;
 using Resgrid.Web.Helpers;
 using AuditEvent = Resgrid.Model.Events.AuditEvent;

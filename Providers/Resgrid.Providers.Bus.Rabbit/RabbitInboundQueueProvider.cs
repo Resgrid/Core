@@ -25,6 +25,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<AuditEvent, Task> AuditEventQueueReceived;
 		public Func<UnitLocationEvent, Task> UnitLocationEventQueueReceived;
 		public Func<PersonnelLocationEvent, Task> PersonnelLocationEventQueueReceived;
+		public Func<SecurityRefreshEvent, Task> SecurityRefreshEventQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -447,7 +448,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								//_channel.BasicNack(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -458,15 +458,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (UnitLocationEventQueueReceived != null)
 									{
 										await UnitLocationEventQueueReceived.Invoke(unitLocation);
-										//_channel.BasicAck(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
-								// Discard unit location events.
 								Logging.LogException(ex);
-								//_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
 					};
@@ -477,7 +474,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							consumer: unitLocationQueueReceivedConsumer);
 				}
 
-				if (UnitLocationEventQueueReceived != null)
+				if (PersonnelLocationEventQueueReceived != null)
 				{
 					var personnelLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
 					personnelLocationQueueReceivedConsumer.Received += async (model, ea) =>
@@ -493,7 +490,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								//_channel.BasicNack(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -501,18 +497,15 @@ namespace Resgrid.Providers.Bus.Rabbit
 							{
 								if (personnelLocation != null)
 								{
-									if (UnitLocationEventQueueReceived != null)
+									if (PersonnelLocationEventQueueReceived != null)
 									{
 										await PersonnelLocationEventQueueReceived.Invoke(personnelLocation);
-										//_channel.BasicAck(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
-								// Discard unit location events.
 								Logging.LogException(ex);
-								//_channel.BasicNack(ea.DeliveryTag, false, true);
 							}
 						}
 					};
@@ -521,6 +514,48 @@ namespace Resgrid.Providers.Bus.Rabbit
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
 						autoAck: true,
 						consumer: personnelLocationQueueReceivedConsumer);
+				}
+
+				if (SecurityRefreshEventQueueReceived != null)
+				{
+					var securityRefreshEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
+					securityRefreshEventQueueReceivedConsumer.Received += async (model, ea) =>
+					{
+						if (ea != null && ea.Body.Length > 0)
+						{
+							SecurityRefreshEvent securityRefresh = null;
+							try
+							{
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								securityRefresh = ObjectSerialization.Deserialize<SecurityRefreshEvent>(message);
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (securityRefresh != null)
+								{
+									if (SecurityRefreshEventQueueReceived != null)
+									{
+										await SecurityRefreshEventQueueReceived.Invoke(securityRefresh);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+							}
+						}
+					};
+
+					String securityRefreshEventQueueReceivedConsumerTag = _channel.BasicConsume(
+						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SecurityRefreshQueueName),
+						autoAck: true,
+						consumer: securityRefreshEventQueueReceivedConsumer);
 				}
 			}
 		}

@@ -1,0 +1,16 @@
+meta {
+  name: GetMessageStatus
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://api.postmarkapp.com/messages/outbound/8bea308e-cc9c-4801-85e5-b98f8af9de1d/details
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  X-Postmark-Server-Token: 
+}

@@ -27,6 +27,20 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<DepartmentGroupMember>> GetAllGroupMembersByUserAndDepartmentAsync(string userId,
 			int departmentId);
 
+		/// <summary>
+		/// Delete group by group identifier asynchronous.
+		/// </summary>
+		/// <param name="groupId">The group identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;DepartmentGroupMember&gt;&gt;.</returns>
 		Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+
+
+		/// <summary>
+		/// Gets all group admins department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;DepartmentGroupMember&gt;&gt;.</returns>
+		Task<IEnumerable<DepartmentGroupMember>> GetAllGroupAdminsByDepartmentIdAsync(int departmentId);
 	}
 }

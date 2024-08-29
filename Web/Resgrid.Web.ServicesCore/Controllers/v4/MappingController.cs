@@ -42,6 +42,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IMappingService _mappingService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
 		public MappingController(
 			IUsersService usersService,
@@ -56,7 +57,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICustomStateService customStateService,
 			IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider,
-			IMappingService mappingService
+			IMappingService mappingService,
+			Model.Services.IAuthorizationService authorizationService
 			)
 		{
 			_usersService = usersService;
@@ -72,6 +74,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
 			_mappingService = mappingService;
+			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
 
@@ -296,6 +299,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var unit in units)
 				{
+					if (!await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+						continue;
+
 					var latestLocation = unitLocations.FirstOrDefault(x => x.UnitId == unit.UnitId);
 					var state = unitStates.FirstOrDefault(x => x.UnitId == unit.UnitId);
 
@@ -371,6 +377,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var person in personnelNames)
 				{
+					if (!await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(person.UserId, UserId, DepartmentId))
+						continue;
+
 					var latestLocation = personnelLocations.FirstOrDefault(x => x.UserId == person.UserId);
 					var state = personnelStates.FirstOrDefault(x => x.UserId == person.UserId);
 

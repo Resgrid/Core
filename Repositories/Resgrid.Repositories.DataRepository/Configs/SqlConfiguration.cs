@@ -349,6 +349,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectGroupByMessageCodeQuery { get; set; }
 		public string SelectGroupByGroupIdQuery { get; set; }
 		public string DeleteGroupMembersByGroupIdDidQuery { get; set; }
+		public string SelectGroupAdminsByDidQuery { get; set; }
 		#endregion Department Groups
 
 		#region Payments

@@ -14,7 +14,7 @@ namespace Resgrid.Providers.EmailProvider
 	{
 		private readonly IEmailSender _emailSender;
 
-		private static string FROM_EMAIL = OutboundEmailServerConfig.ToMail;
+		private static string FROM_EMAIL = OutboundEmailServerConfig.FromMail;
 		private static string DONOTREPLY_EMAIL = OutboundEmailServerConfig.FromMail;
 		private static string LOGIN_URL = $"{SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn";
 		private static string LIVECHAT_URL = $"https://resgrid.com/contact";

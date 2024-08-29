@@ -12,5 +12,6 @@ namespace Resgrid.Model.Providers
 		bool IsConnected();
 		Task<bool> SetStringAsync(string cacheKey, string value, TimeSpan expiration);
 		Task<string> GetStringAsync(string cacheKey);
+		Task<T> GetAsync<T>(string cacheKey) where T : class;
 	}
 }

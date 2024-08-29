@@ -19,7 +19,8 @@
 		ViewGroupUsers,
 		DeleteCall,
 		CloseCall,
-		AddCallData
+		AddCallData,
+		ViewGroupUnits
 	}
 
 }

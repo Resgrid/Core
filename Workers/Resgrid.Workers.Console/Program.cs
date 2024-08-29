@@ -29,6 +29,8 @@ using Stripe;
 using FluentMigrator.Runner;
 using Resgrid.Providers.Migrations.Migrations;
 using Resgrid.Model.Repositories;
+using System.Reflection;
+using Sentry;
 
 namespace Resgrid.Workers.Console
 {
@@ -47,6 +49,25 @@ namespace Resgrid.Workers.Console
 			System.Console.WriteLine("-----------------------------------------");
 
 			LoadConfiguration(args);
+
+			Resgrid.Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs);
+
+			if (!String.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs))
+			{
+				SentrySdk.Init(options =>
+				{
+					options.Dsn = Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs;
+					options.AttachStacktrace = true;
+					options.SendDefaultPii = true;
+					options.AutoSessionTracking = true;
+					options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
+					options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+					options.IsGlobalModeEnabled = true;
+					options.Environment = ExternalErrorConfig.Environment;
+					options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+				});
+			}
+
 			Prime();
 
 			var builder = new HostBuilder()
@@ -94,8 +115,6 @@ namespace Resgrid.Workers.Console
 
 			Bootstrapper.Initialize();
 
-			Resgrid.Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebjobs);
-
 			var eventAggragator = Bootstrapper.GetKernel().Resolve<IEventAggregator>();
 			var outbound = Bootstrapper.GetKernel().Resolve<IOutboundEventProvider>();
 			var coreEventService = Bootstrapper.GetKernel().Resolve<ICoreEventService>();
@@ -123,9 +142,38 @@ namespace Resgrid.Workers.Console
 			var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
 
-			//var test = Configuration["ConnectionStrings:ResgridContext"];
+			string configPath = Configuration["AppOptions:ConfigPath"];
 
-			ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
+			if (string.IsNullOrWhiteSpace(configPath))
+				configPath = "C:\\Resgrid\\Config\\ResgridConfig.json";
+
+			bool configResult = ConfigProcessor.LoadAndProcessConfig(configPath);
+			if (configResult)
+			{
+				System.Console.WriteLine($"Loaded Config: {configPath}");
+			}
+
+			var settings = System.Configuration.ConfigurationManager.ConnectionStrings;
+			var element = typeof(ConfigurationElement).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+
+			element.SetValue(settings, false);
+			collection.SetValue(settings, false);
+
+			if (!configResult)
+			{
+				if (settings["ResgridContext"] == null)
+				{
+					settings.Add(new System.Configuration.ConnectionStringSettings("ResgridContext", Configuration["ConnectionStrings:ResgridContext"]));
+				}
+			}
+			else
+			{
+				if (settings["ResgridContext"] == null)
+				{
+					settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
+				}
+			}
 
 			if (connectionStringsSection.ConnectionStrings["ResgridContext"] != null)
 				connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = DataConfig.ConnectionString;
@@ -134,6 +182,8 @@ namespace Resgrid.Workers.Console
 
 			config.Save();
 			System.Configuration.ConfigurationManager.RefreshSection("connectionStrings");
+			collection.SetValue(settings, true);
+			element.SetValue(settings, true);
 		}
 	}
 
@@ -275,6 +325,12 @@ namespace Resgrid.Workers.Console
 				await client.ScheduleAsync("System SQL Queue",
 					new Commands.SystemSqlQueueCommand(14),
 					Cron.Daily(3, 0),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Security Refresh");
+				await client.ScheduleAsync("Security Refresh",
+					new Commands.SecurityRefreshScheduleCommand(15),
+					Cron.Daily(2, 0),
 					stoppingToken);
 			}
 			else

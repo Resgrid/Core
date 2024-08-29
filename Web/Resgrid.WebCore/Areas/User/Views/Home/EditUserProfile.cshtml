@@ -134,10 +134,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">@localizer["IsGroupAdminLabel"]</label>
                                 <div class="col-sm-10">
-                                    <div class="checkbox checkbox-primary">
-                                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsUserGroupAdmin">
-                                        <label></label>
-                                    </div>
+                                    <input type="checkbox" asp-for="IsUserGroupAdmin">
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>
@@ -180,7 +177,7 @@
                         </h3>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["SameAsPhysical"]</label>
-                            <div class="col-sm-10"><input type="checkbox" class="checkbox checkbox-primary" asp-for="MailingAddressSameAsPhysical"></div>
+                            <div class="col-sm-10"><input type="checkbox" asp-for="MailingAddressSameAsPhysical"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingAddressLabel"]</label>
@@ -229,19 +226,13 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">@localizer["DisableUserLabel"]</label>
                                 <div class="col-sm-10">
-                                    <div class="checkbox checkbox-primary">
-                                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsDisabled">
-                                        <label></label>
-                                    </div>
+                                    <input type="checkbox" asp-for="IsDisabled">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">@localizer["HideUserLabel"]</label>
                                 <div class="col-sm-10">
-                                    <div class="checkbox checkbox-primary">
-                                        <input type="checkbox" class="checkbox checkbox-primary" asp-for="IsHidden">
-                                        <label></label>
-                                    </div>
+                                    <input type="checkbox" asp-for="IsHidden">
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>

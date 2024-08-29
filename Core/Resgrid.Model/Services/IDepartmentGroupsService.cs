@@ -224,5 +224,7 @@ namespace Resgrid.Model.Services
 		Task<List<DepartmentGroup>> GetAllGroupsForDepartmentUnlimitedThinAsync(int departmentId);
 
 		Task<bool> DeleteAllMembersFromGroupAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<DepartmentGroupMember>> GetAllGroupAdminsByDepartmentIdAsync(int departmentId);
 	}
 }

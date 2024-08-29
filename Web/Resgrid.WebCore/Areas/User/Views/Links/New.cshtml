@@ -60,25 +60,19 @@
                             <label class="col-sm-2 control-label">Type Color</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" asp-for="Link.DepartmentColor" />
-                                <span class="help-block m-b-none">This is the color that will be applied to identifiy Calls\Units\Personnel for this department link</span>
+                                <span class="help-block m-b-none">This is the color that will be applied to identify Calls\Units\Personnel for this department link</span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Share Calls</label>
                             <div class="col-sm-10">
-                                <div class="checkbox checkbox-primary">
-                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareCalls">
-                                    <label></label>
-                                </div>
+                                <input type="checkbox" asp-for="Link.DepartmentShareCalls">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Share Unts</label>
+                            <label class="col-sm-2 control-label">Share Units</label>
                             <div class="col-sm-10">
-                                <div class="checkbox checkbox-primary">
-                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareUnits">
-                                    <label></label>
-                                </div>
+                                <input type="checkbox" asp-for="Link.DepartmentShareUnits">
                             </div>
                         </div>
                         <div class="form-group">
@@ -86,10 +80,7 @@
                                 Share Personnel
                             </label>
                             <div class="col-sm-10">
-                                <div class="checkbox checkbox-primary">
-                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentSharePersonnel">
-                                    <label></label>
-                                </div>
+                                <input type="checkbox" asp-for="Link.DepartmentSharePersonnel">
                             </div>
                         </div>
                         <div class="form-group">
@@ -97,10 +88,7 @@
                                 Share Orders
                             </label>
                             <div class="col-sm-10">
-                                <div class="checkbox checkbox-primary">
-                                    <input type="checkbox" class="checkbox checkbox-primary" asp-for="Link.DepartmentShareOrders">
-                                    <label></label>
-                                </div>
+                                <input type="checkbox" asp-for="Link.DepartmentShareOrders">
                             </div>
                         </div>
 

@@ -33,7 +33,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.0.0" />
     <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300.58" />
-    <PackageReference Include="MimeKit" Version="4.4.0" />
+    <PackageReference Include="MimeKit" Version="4.7.1" />
     <PackageReference Include="Mustachio" Version="2.1.0" />
     <PackageReference Include="Postmark" Version="5.0.0" />
   </ItemGroup>

@@ -16,6 +16,7 @@
 		public static string AuditQueueName = "audittest";
 		public static string UnitLoactionQueueName = "unitlocationtest";
 		public static string PersonnelLoactionQueueName = "personnellocationtest";
+		public static string SecurityRefreshQueueName = "securityrefreshtest";
 #else
 		public static string CallBroadcastQueueName = "callbroadcast";
 		public static string MessageBroadcastQueueName = "messagebroadcast";
@@ -27,6 +28,7 @@
 		public static string AuditQueueName = "audit";
 		public static string UnitLoactionQueueName = "unitlocation";
 		public static string PersonnelLoactionQueueName = "personnellocation";
+		public static string SecurityRefreshQueueName = "securityrefresh";
 #endif
 
 		#region Azure Service Bus Values
@@ -39,8 +41,8 @@
 
 		#region RabbitMQ Bus Values
 		public static string RabbitHostname = "rgdevinfaserver";
-		public static string RabbitHostname2 = "rgdevinfaserver2"; // For 3 host cluster, node 2
-		public static string RabbitHostname3 = "rgdevinfaserver3"; // For 3 host cluster, node 3
+		public static string RabbitHostname2 = ""; // For 3 host cluster, node 2
+		public static string RabbitHostname3 = ""; // For 3 host cluster, node 3
 		public static string RabbitUsername = "";
 		public static string RabbbitPassword = "";
 		public static string RabbbitExchange = "";

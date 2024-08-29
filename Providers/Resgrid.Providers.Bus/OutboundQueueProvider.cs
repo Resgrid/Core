@@ -60,5 +60,10 @@ namespace Resgrid.Providers.Bus
 		{
 			return _rabbitOutboundQueueProvider.EnqueueAuditEvent(auditEvent);
 		}
+
+		public async Task<bool> EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent)
+		{
+			return _rabbitOutboundQueueProvider.EnqueueSecurityRefreshEvent(securityRefreshEvent);
+		}
 	}
 }

@@ -505,5 +505,12 @@ namespace Resgrid.Services
 		{
 			return await _departmentGroupMembersRepository.DeleteGroupMembersByGroupIdAsync(groupId, departmentId, cancellationToken);
 		}
+
+		public async Task<List<DepartmentGroupMember>> GetAllGroupAdminsByDepartmentIdAsync(int departmentId)
+		{
+			var admins = await _departmentGroupMembersRepository.GetAllGroupAdminsByDepartmentIdAsync(departmentId);
+
+			return admins.ToList();
+		}
 	}
 }

@@ -1142,6 +1142,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			DeleteGroupMembersByGroupIdDidQuery = @"
 					DELETE FROM %SCHEMA%.%TABLENAME%
 					WHERE DepartmentId = %DID% AND DepartmentGroupId = %ID%";
+			SelectGroupAdminsByDidQuery = @"
+					SELECT dgm.*, dg.*
+					FROM %SCHEMA%.%GROUPMEMBERSSTABLE% dgm
+					INNER JOIN %SCHEMA%.%GROUPSTABLE% dg ON dg.[DepartmentGroupId] =  dgm.[DepartmentGroupId]
+					WHERE dgm.[IsAdmin] = 1 AND dgm.[DepartmentId] = %DID%";
 			#endregion Department Groups
 
 			#region Payments

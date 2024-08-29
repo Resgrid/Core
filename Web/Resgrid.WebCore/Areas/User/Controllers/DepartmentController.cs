@@ -11,7 +11,6 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Services;
-using Resgrid.Providers.Bus;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models;
 using Resgrid.Web.Areas.User.Models.Departments;
@@ -24,10 +23,6 @@ using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Web.Models.AccountViewModels;
 using Resgrid.Model.Providers;
-using Resgrid.WebCore.Areas.User.Models.Dispatch;
-using Resgrid.Web.Areas.User.Models.Dispatch;
-using Elasticsearch.Net;
-using Microsoft.AspNetCore.Identity;
 using AuditEvent = Resgrid.Model.Events.AuditEvent;
 using Microsoft.AspNetCore.Http;
 

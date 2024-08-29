@@ -27,11 +27,8 @@ namespace Resgrid.Web.ServicesCore
 					logging.ClearProviders();
 					logging.AddConsole();
 				})
-				//.UseIISIntegration()
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
-					webBuilder.UseStartup<Startup>();
-
 					if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForApi))
 					{
 						webBuilder.UseSentry(options =>
@@ -79,6 +76,8 @@ namespace Resgrid.Web.ServicesCore
 							};
 						});
 					}
+
+					webBuilder.UseStartup<Startup>();
 				});
 	}
 }

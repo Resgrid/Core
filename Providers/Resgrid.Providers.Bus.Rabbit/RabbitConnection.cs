@@ -136,6 +136,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 									 autoDelete: false,
 									 arguments: null);
 
+						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.SecurityRefreshQueueName),
+									 durable: false,
+									 exclusive: false,
+									 autoDelete: false,
+									 arguments: null);
+
 						return true;
 					}
 					catch (Exception ex)

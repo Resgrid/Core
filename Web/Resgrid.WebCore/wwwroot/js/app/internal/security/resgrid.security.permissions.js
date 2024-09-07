@@ -624,6 +624,7 @@ var resgrid;
                 });
 
                 // Create message
+                ////////////////////////////////////////////////////////
                 $('#CreateMessage').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -648,6 +649,50 @@ var resgrid;
                     $('#createMessagesRolesSpan').show();
                     $('#createMessagesRolesDiv').hide();
                 }
+
+                $("#createMessagesRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=13&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=13',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=13',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                ////////////////////////////////////////////////////////
+
+                // View Group Users
+                ////////////////////////////////////////////////////////
                 $('#ViewGroupsUsers').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -679,15 +724,15 @@ var resgrid;
                     }).done(function (results) {
                     });
                 });
-                // Create message
-                $("#createMessagesRoles").kendoMultiSelect({
+
+                $("#viewUsersRoles").kendoMultiSelect({
                     placeholder: "Select roles...",
                     dataTextField: "Name",
                     dataValueField: "RoleId",
                     change: function () {
-                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
+                        var multiSelect = $("#viewUsersRoles").data("kendoMultiSelect");
                         $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=13&data=' + encodeURIComponent(multiSelect.value()),
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=14&data=' + encodeURIComponent(multiSelect.value()),
                             type: 'GET'
                         }).done(function (results) {
                         });
@@ -700,12 +745,12 @@ var resgrid;
                     }
                 });
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=13',
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=14',
                     contentType: 'application/json',
                     type: 'GET'
                 }).done(function (data) {
                     if (data) {
-                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
+                        var multiSelect = $("#viewUsersRoles").data("kendoMultiSelect");
                         multiSelect.value(data.split(","));
                     }
                 });
@@ -719,6 +764,7 @@ var resgrid;
                         multiSelect.value(data.split(","));
                     }
                 });
+                ////////////////////////////////////////////////////////
 
                 // Delete Call
                 ////////////////////////////////////////////////////////

@@ -124,6 +124,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
 

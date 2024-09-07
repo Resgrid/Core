@@ -59,6 +59,7 @@ namespace Resgrid.Repositories.DataRepository
 					if (department != null && department.Members != null)
 					{
 						department.AdminUsers = new List<string>();
+						department.AdminUsers.Add(department.ManagingUserId);
 						foreach (var member in department.Members)
 						{
 							if (member.IsAdmin.GetValueOrDefault())

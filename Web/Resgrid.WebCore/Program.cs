@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
@@ -29,6 +30,15 @@ namespace Resgrid.Web
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
+					var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+					.SetBasePath(Directory.GetCurrentDirectory())
+					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+					.AddEnvironmentVariables();
+					var config = builder.Build();
+
+					bool configResult = ConfigProcessor.LoadAndProcessConfig(config["AppOptions:ConfigPath"]);
+					bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(config.AsEnumerable());
+
 					if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
 					{
 						webBuilder.UseSentry(options =>
@@ -60,8 +70,7 @@ namespace Resgrid.Web
 								if (samplingContext != null && samplingContext.CustomSamplingContext != null)
 								{
 									if (samplingContext.CustomSamplingContext.ContainsKey("__HttpPath") &&
-									    samplingContext.CustomSamplingContext["__HttpPath"].ToString().ToLower() ==
-									    "/health/getcurrent")
+									    samplingContext.CustomSamplingContext["__HttpPath"].ToString().ToLower() == "/health/getcurrent")
 									{
 										return 0;
 									}

@@ -775,6 +775,71 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		/// <summary>
+		/// Purpose of this method is to determine if a user can view all people in a department. This is used for the personnel lists where we have an "All" option.
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="departmentId"></param>
+		/// <returns></returns>
+		public async Task<bool> CanUserViewAllPeopleAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewGroupUsers);
+
+			if (permission == null)
+				return true;
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
+			{ // Department Admins only
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (not locked to group)
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
+			{ // Department and group Admins (locked to group)
+				return true; // Department Admins have access.
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
+			{
+				return true;
+			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !department.IsUserAnAdmin(userId))
+			{
+				if (permission.LockToGroup)
+					return false;
+
+				if (!String.IsNullOrWhiteSpace(permission.Data))
+				{
+					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+					var role = from r in roles
+							   where roleIds.Contains(r.PersonnelRoleId)
+							   select r;
+
+					if (role.Any())
+					{
+						return true;
+					}
+				}
+
+			}
+			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		public async Task<bool> CanUserDeleteCallAsync(string userId, int callId, int departmentId)
 		{
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.DeleteCall);
@@ -1210,6 +1275,9 @@ namespace Resgrid.Services
 			if (matrix.EveryoneNoGroupLock)
 				return true;
 
+			if (userToView == userId)
+				return true;
+
 			if (!matrix.Users.ContainsKey(userToView))
 				return true;
 
@@ -1230,6 +1298,9 @@ namespace Resgrid.Services
 				return true;
 
 			if (matrix.EveryoneNoGroupLock)
+				return true;
+
+			if (userToView == userId)
 				return true;
 
 			if (!matrix.Users.ContainsKey(userToView))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -289,10 +290,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				department);
 
 			var profiles = new List<UserProfile>();
-			profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
-			profiles.AddRange(
-				(await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value));
+			if (await _authorizationService.CanUserViewAllPeopleAsync(UserId, DepartmentId))
+				profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
+
+			var users = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			foreach (var u in users)
+			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.Key, UserId, DepartmentId))
+					continue;
+
+				profiles.Add(u.Value);
+			}
+
 			model.Users = new SelectList(profiles, "UserId", "FullName.AsFirstNameLastName", Guid.Empty);
 
 			return View(model);
@@ -322,14 +332,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 				department);
 
 			var profiles = new List<UserProfile>();
-			profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
-			profiles.AddRange(
-				(await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value));
+			if (await _authorizationService.CanUserViewAllPeopleAsync(UserId, DepartmentId))
+				profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
+
+			var users = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			foreach (var u in users)
+			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.Key, UserId, DepartmentId))
+					continue;
+
+				profiles.Add(u.Value);
+			}
+
 			model.Users = new SelectList(profiles, "UserId", "FullName.AsFirstNameLastName", Guid.Empty);
 
-			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name", 0);
+			if (await _authorizationService.CanUserViewAllPeopleAsync(UserId, DepartmentId))
+			{
+				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+				model.Groups = new SelectList(groups, "DepartmentGroupId", "Name", 0);
+			}
+			else
+			{
+				model.Groups = new SelectList(new List<DepartmentGroup>(), "DepartmentGroupId", "Name", 0);
+			}
 
 			return View(model);
 		}
@@ -406,14 +432,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 				department);
 
 			var profiles = new List<UserProfile>();
-			profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
+			if (await _authorizationService.CanUserViewAllPeopleAsync(UserId, DepartmentId))
+				profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
-			profiles.AddRange(
-				(await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value));
+			var users = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			foreach (var u in users)
+			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.Key, UserId, DepartmentId))
+					continue;
+
+				profiles.Add(u.Value);
+			}
+
 			model.Users = new SelectList(profiles, "UserId", "FullName.AsFirstNameLastName", Guid.Empty);
 
-			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name", 0);
+			if (await _authorizationService.CanUserViewAllPeopleAsync(UserId, DepartmentId))
+			{
+				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+				model.Groups = new SelectList(groups, "DepartmentGroupId", "Name", 0);
+			}
+			else
+			{
+				model.Groups = new SelectList(new List<DepartmentGroup>(), "DepartmentGroupId", "Name", 0);
+			}
 
 			return View(model);
 		}
@@ -499,6 +540,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				var person = new StaffingReportRow();
 				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				var staffing = await _userStateService.GetLastUserStateByUserIdAsync(user.UserId);
@@ -626,6 +670,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var departmentUser = await _departmentsService.GetDepartmentMemberAsync(user.UserId, DepartmentId, false);
 
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				if (departmentUser != null)
 				{
 					var person = new PersonnelReportRow();
@@ -707,6 +754,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				var person = new CertificationsReportRow();
 				person.SubRows = new List<CertificationsReportSubRow>();
 
@@ -762,6 +812,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in model.Log.Users)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 				var station = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 
@@ -952,6 +1005,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var person in personnel)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(person.UserId, UserId, DepartmentId))
+					continue;
+
 				var response = new PersonnelResponse();
 				var training = new PersonnelTraining();
 
@@ -1076,6 +1132,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var person in personnel)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(person.UserId, UserId, DepartmentId))
+					continue;
+
 				var callHours = new PersonnelCallHours();
 				var workHours = new PersonnelWorkHours();
 				var trainingHours = new PersonnelTrainingHours();
@@ -1337,6 +1396,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (profiles.ContainsKey(group.UserId))
 				{
+					if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(group.UserId, UserId, DepartmentId))
+						continue;
+
 					var summary = new PersonnelStaffingSummary();
 					var profile = profiles[group.UserId];
 
@@ -1768,7 +1830,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 
 					model.Calls.Add(summary);
-				}	
+				}
 			}
 
 			return model;

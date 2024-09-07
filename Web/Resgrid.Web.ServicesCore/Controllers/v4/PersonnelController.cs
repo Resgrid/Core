@@ -141,6 +141,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var u in users)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.UserId, UserId, DepartmentId))
+					continue;
+
 				var log = (from l in actionLogs
 						   where l.UserId == u.UserId
 						   select l).FirstOrDefault();

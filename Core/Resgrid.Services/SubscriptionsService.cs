@@ -5,19 +5,13 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Resgrid.Config;
-using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Billing.Api;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
-using Resgrid.Providers.Voip.LiveKit;
-using Resgrid.Providers.Voip.LiveKit.Model;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
-using Stripe;
-using Stripe.Checkout;
 
 namespace Resgrid.Services
 {
@@ -61,7 +55,12 @@ namespace Resgrid.Services
 
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetCurrentPlanForDepartment", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -85,7 +84,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+
 				var request = new RestRequest($"/api/Billing/GetPlanCountsForDepartment", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -109,7 +113,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetCurrentPaymentForDepartment", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -154,7 +163,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetPreviousNonFreePaymentForDepartment", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -185,7 +199,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetUpcomingPaymentForDepartment", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -214,7 +233,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetPaymentByTransactionId", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -238,7 +262,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetPlanById", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -272,7 +301,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetPlanByExternalId", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -308,7 +342,12 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				{
+					MaxTimeout = 200000 // ms
+				};
+
+				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetPaymentById", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
@@ -349,26 +388,26 @@ namespace Resgrid.Services
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
 				if (planId == 4 // Professional
-				    || planId == 5 // Ultimate
-				    || planId == 9 // Unlimited
-				    || planId == 10 // Enterprise
-				    || planId == 14 // Professional Monthly
-				    || planId == 15 // Ultimate Monthly
-				    || planId == 16 // Enterprise Monthly
-				    || planId == 17 // Enterprise+
-				    || planId == 18 // Enterprise+ Monthly
-				    || planId == 20 // Univeral
-				    || planId == 21 // Univeral Monthly
-				    || planId == 26 // Professional
-				    || planId == 27 // Professional Monthly
-				    || planId == 28 // Ultimate
-				    || planId == 29 // Ultimate Monthly
-				    || planId == 30 // Enterprise
-				    || planId == 31 // Enterprise Monthly
-				    || planId == 32 // Enterprise+
-				    || planId == 32 // Enterprise+ Monthly
-				    || planId == 34 // Unified
-				    || planId == 35 // Unified Monthly
+					|| planId == 5 // Ultimate
+					|| planId == 9 // Unlimited
+					|| planId == 10 // Enterprise
+					|| planId == 14 // Professional Monthly
+					|| planId == 15 // Ultimate Monthly
+					|| planId == 16 // Enterprise Monthly
+					|| planId == 17 // Enterprise+
+					|| planId == 18 // Enterprise+ Monthly
+					|| planId == 20 // Univeral
+					|| planId == 21 // Univeral Monthly
+					|| planId == 26 // Professional
+					|| planId == 27 // Professional Monthly
+					|| planId == 28 // Ultimate
+					|| planId == 29 // Ultimate Monthly
+					|| planId == 30 // Enterprise
+					|| planId == 31 // Enterprise Monthly
+					|| planId == 32 // Enterprise+
+					|| planId == 32 // Enterprise+ Monthly
+					|| planId == 34 // Unified
+					|| planId == 35 // Unified Monthly
 				   )
 					return true;
 

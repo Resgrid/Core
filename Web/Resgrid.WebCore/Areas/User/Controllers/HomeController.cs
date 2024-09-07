@@ -163,6 +163,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var u in membersToProcess)
 				{
+					if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.UserId, UserId, DepartmentId))
+						continue;
+
 					if (allUsers.Any(x => x.UserId == u.UserId))
 					{
 						groupedUserIds.Add(u.UserId);
@@ -240,6 +243,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			unGroupedUsersGroup.Group = null;
 			foreach (var u in ungroupedUsers)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.UserId, UserId, DepartmentId))
+					continue;
+
 				model.UnGroupedUsers.Add(u.UserId);
 
 				UserState state = userStates.FirstOrDefault(x => x.UserId == u.UserId);
@@ -735,9 +741,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _departmentsService.SaveDepartmentMemberAsync(depMember, cancellationToken);
 				}
 
-				if (!model.Profile.DoNotRecieveNewsletters)
-					await Unsubscribe(model.Email);
-
 				_usersService.UpdateEmail(model.User.Id, model.Email);
 
 				if (model.IsOwnProfile)
@@ -878,21 +881,5 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 		#endregion User Actions
-
-		private async Task Unsubscribe(string emailAddress)
-		{
-			//try
-			//{
-			//	var client = new RestClient("https://app.mailerlite.com");
-			//	var request = new RestRequest("/api/v1/subscribers/unsubscribe/", Method.Post);
-			//	request.AddObject(new
-			//	{
-			//		apiKey = "QDrnoEf6hBONlGye26aZFh5Iv1KEgdJM",
-			//		email = emailAddress
-			//	});
-			//	var response = await client.ExecuteAsync(request);
-			//}
-			//catch { }
-		}
 	}
 }

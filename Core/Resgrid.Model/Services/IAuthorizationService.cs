@@ -316,5 +316,7 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserViewUnitViaMatrixAsync(int unitToView, string userId, int departmentId);
 
 		Task<bool> CanUserViewUnitLocationViaMatrixAsync(int unitToView, string userId, int departmentId);
+
+		Task<bool> CanUserViewAllPeopleAsync(string userId, int departmentId);
 	}
 }

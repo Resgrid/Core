@@ -66,7 +66,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex);
+				Logging.LogException(ex, extraMessage: $"GetDepartmentPlanCountsByDepartmentIdAsync DepartmentId: {departmentId}");
 
 				throw;
 			}

@@ -13,6 +13,7 @@ using Resgrid.Web.Services.Models.v4.Personnel;
 using System.Collections.Generic;
 using System;
 using System.Web;
+using SharpKml.Dom;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -62,6 +63,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var unit in units)
 				{
+					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+						continue;
+
 					UnitType type = null;
 
 					if (types != null && types.Any())
@@ -113,6 +117,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var unit in units)
 				{
+					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+						continue;
+
 					UnitType type = null;
 
 					if (types != null && types.Any())
@@ -203,7 +210,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		public static UnitResultData ConvertUnitsData(Unit unit, UnitState state, UnitType type, string timeZone)
+		public static UnitResultData ConvertUnitsData(Model.Unit unit, UnitState state, UnitType type, string timeZone)
 		{
 			var data = new UnitResultData();
 			data.UnitId = unit.UnitId.ToString();
@@ -250,7 +257,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return data;
 		}
 
-		public static UnitsInfoResultData ConvertUnitsInfoResultData(Unit unit, UnitState state, CustomStateDetail customState, UnitType type, string timeZone,
+		public static UnitsInfoResultData ConvertUnitsInfoResultData(Model.Unit unit, UnitState state, CustomStateDetail customState, UnitType type, string timeZone,
 			bool canViewLocation, List<UnitActiveRole> activeRoles, List<PersonName> names)
 		{
 			var data = new UnitsInfoResultData();

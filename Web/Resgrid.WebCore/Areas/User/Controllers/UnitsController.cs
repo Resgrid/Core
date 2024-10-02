@@ -22,6 +22,7 @@ using Resgrid.WebCore.Areas.User.Models.Units;
 using Resgrid.WebCore.Areas.User.Models;
 using Resgrid.WebCore.Areas.User.Models.Personnel;
 using System.Web;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -68,13 +69,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.CanUserAddUnit = await _limitsService.CanDepartmentAddNewUnit(DepartmentId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentUnlimitedAsync(DepartmentId);
+			model.Units = new List<Unit>();
+			var units = await _unitsService.GetUnitsForDepartmentUnlimitedAsync(DepartmentId);
 			model.States = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
 			model.UnitCustomStates = new Dictionary<int, CustomState>();
 
-			foreach (var unit in model.Units)
+			foreach (var unit in units)
 			{
+				if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					continue;
+
 				var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
 				if (type != null && type.CustomStatesId.HasValue)
 				{
@@ -85,6 +90,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						model.UnitCustomStates.Add(unit.UnitId, customStates);
 					}
 				}
+
+				model.Units.Add(unit);
 			}
 
 			if (model.Department.IsUserAnAdmin(UserId))
@@ -1052,6 +1059,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var unit in units)
 			{
+				if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					continue;
+
 				var unitJson = new UnitForListJson();
 				unitJson.Name = unit.Name;
 				unitJson.Type = unit.Type;

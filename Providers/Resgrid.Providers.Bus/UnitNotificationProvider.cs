@@ -9,6 +9,7 @@ using Microsoft.Azure.NotificationHubs;
 using Newtonsoft.Json.Linq;
 using Resgrid.Providers.Bus.Models;
 using Newtonsoft.Json;
+using static Resgrid.Framework.Testing.TestData;
 
 namespace Resgrid.Providers.Bus
 {
@@ -82,7 +83,8 @@ namespace Resgrid.Providers.Bus
 				{
 					try
 					{
-						var result = await hubClient.CreateFcmNativeRegistrationAsync(pushUri.DeviceId, tagsWithHashedDeviceId.ToArray());
+						//var result = await hubClient.CreateFcmNativeRegistrationAsync(pushUri.DeviceId, tagsWithHashedDeviceId.ToArray());
+						var result = await hubClient.CreateFcmV1NativeRegistrationAsync(pushUri.DeviceId, tagsWithHashedDeviceId.ToArray());
 					}
 					catch (ArgumentException ex)
 					{
@@ -308,7 +310,8 @@ namespace Resgrid.Providers.Bus
 				var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 				string androidNotification = CreateAndroidNotification(subTitle, title, eventCode, type, count, color, "calls");
 
-				var androidOutcome = await hubClient.SendFcmNativeNotificationAsync(androidNotification, string.Format("unitId:{0}", unitId));
+				//var androidOutcome = await hubClient.SendFcmNativeNotificationAsync(androidNotification, string.Format("unitId:{0}", unitId));
+				var androidOutcome = await hubClient.SendFcmV1NativeNotificationAsync(androidNotification, string.Format("unitId:{0}", unitId));
 
 				return androidOutcome.State;
 			}
@@ -480,28 +483,36 @@ namespace Resgrid.Providers.Bus
 
 			dynamic pushNotification = new JObject();
 
-			pushNotification.notification = new JObject();
-			pushNotification.notification.title = title;
-			pushNotification.notification.body = subTitle;
-			pushNotification.notification.android_channel_id = type;
+			pushNotification.message = new JObject();
+			pushNotification.message.notification = new JObject();
+			pushNotification.message.notification.title = title;
+			pushNotification.message.notification.body = subTitle;
+			//pushNotification.notification.android_channel_id = type;
 
-			pushNotification.android = new JObject();
-			pushNotification.android.ttl = "86400";
-			pushNotification.android.notification = new JObject();
-			//pushNotification.android.notification.color = color;
-			pushNotification.android.notification.channel_id = type;
-			//pushNotification.android.notification.sound = soundFilename;
-			pushNotification.android.notification.defaultSound = true;
+			pushNotification.message.android = new JObject();
 
 			if (channel != null && channel == "calls")
-				pushNotification.android.notification.priority = "high";
+				pushNotification.message.android.priority = 1;
 
-			pushNotification.data = new JObject();
-			pushNotification.data.title = title;
-			pushNotification.data.message = subTitle;
-			pushNotification.data.notId = eventCode;
-			pushNotification.data.eventCode = eventCode;
-			pushNotification.data.type = type;
+			//pushNotification.message.android.ttl = "86400";
+			pushNotification.message.android.notification = new JObject();
+			//pushNotification.android.notification.color = color;
+			pushNotification.message.android.notification.channel_id = type;
+			//pushNotification.android.notification.sound = soundFilename;
+			pushNotification.message.android.notification.default_sound = true;
+
+			if (channel != null && channel == "calls")
+			{
+				pushNotification.message.android.notification.sticky = true;
+				pushNotification.message.android.notification.notification_priority = 5;
+			}
+
+			pushNotification.message.data = new JObject();
+			pushNotification.message.data.title = title;
+			pushNotification.message.data.message = subTitle;
+			pushNotification.message.data.notId = eventCode;
+			pushNotification.message.data.eventCode = eventCode;
+			pushNotification.message.data.type = type;
 
 			return pushNotification.ToString();
 		}

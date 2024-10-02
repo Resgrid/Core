@@ -96,6 +96,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (department.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+
+				return result;
+			}
+
 			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 			var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 			var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);

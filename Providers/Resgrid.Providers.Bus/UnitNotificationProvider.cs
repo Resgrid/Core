@@ -342,6 +342,8 @@ namespace Resgrid.Providers.Bus
 					category = "chats";
 				else if (eventCode.ToLower().StartsWith("g")) // group chat
 					category = "chats";
+				else
+					category = "notifications";
 
 				var apnsPayload = new ApnsPayload
 				{
@@ -354,7 +356,12 @@ namespace Resgrid.Providers.Bus
 						},
 						badge = count,
 						category = category,
-						sound = GetSoundFileNameFromType(Platforms.iPhone, type, enableCustomSounds)
+						sound = new ApnsSound
+						{
+							name = GetSoundFileNameFromType(Platforms.iPhone, type, enableCustomSounds),
+							critical = category == "calls" ? 1 : 0,
+							volume = 1.0f
+						}
 					},
 					eventCode = eventCode,
 					type = type

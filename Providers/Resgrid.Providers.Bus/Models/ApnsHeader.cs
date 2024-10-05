@@ -8,6 +8,6 @@ namespace Resgrid.Providers.Bus.Models
 		public ApnsAlert alert { get; set; }
 		public string category { get; set; }
 		public int badge { get; set; }
-		public string sound { get; set; }
+		public ApnsSound sound { get; set; }
 	}
 }

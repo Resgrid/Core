@@ -16,33 +16,64 @@ using Resgrid.Web.Eventing.Hubs;
 
 namespace Resgrid.Web.Eventing
 {
-	public class Worker : IHostedService
+	public class Worker : BackgroundService
 	{
 		private readonly IHubContext<EventingHub> _eventingHub;
 		private readonly IHubContext<GeolocationHub> _geolocationHub;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly IRabbitInboundEventProvider _rabbitInboundEventProvider;
 
 		public Worker(IServiceProvider serviceProvider, IHubContext<EventingHub> eventingHub, IHubContext<GeolocationHub> geolocationHub)
 		{
 			_serviceProvider = serviceProvider;
 			_eventingHub = eventingHub;
 			_geolocationHub = geolocationHub;
-		}
 
-		public async Task StartAsync(CancellationToken cancellationToken)
-		{
 			using var scope = _serviceProvider.CreateScope();
-
-			var rabbitInboundEventProvider = scope.ServiceProvider.GetRequiredService<IRabbitInboundEventProvider>();
-
-			rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated, UnitStatusUpdated, CallsUpdated,
-			PersonnelStaffingUpdated, CallAdded, CallClosed, PersonnelLocationUpdated, UnitLocationUpdated);
-
-			await rabbitInboundEventProvider.Start();
+			_rabbitInboundEventProvider = scope.ServiceProvider.GetRequiredService<IRabbitInboundEventProvider>();
 		}
+
+		protected override Task ExecuteAsync(CancellationToken stoppingToken = default)
+		{
+			Console.WriteLine("Starting Eventing Worker");
+			stoppingToken.ThrowIfCancellationRequested();
+
+				_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated,
+															  UnitStatusUpdated,
+															  CallsUpdated,
+															  PersonnelStaffingUpdated,
+															  CallAdded,
+															  CallClosed,
+															  PersonnelLocationUpdated,
+															  UnitLocationUpdated);
+
+				_rabbitInboundEventProvider.Start("Eventing-Web", "EventingWeb").ConfigureAwait(false);
+
+			return Task.CompletedTask;
+		}
+
+		//public async Task StartAsync(CancellationToken cancellationToken = default)
+		//{
+		//	Console.WriteLine("Starting Eventing Worker");
+
+		//	cancellationToken.ThrowIfCancellationRequested();
+
+		//	_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated,
+		//												  UnitStatusUpdated,
+		//												  CallsUpdated,
+		//												  PersonnelStaffingUpdated,
+		//												  CallAdded,
+		//												  CallClosed,
+		//												  PersonnelLocationUpdated,
+		//												  UnitLocationUpdated);
+
+		//	await _rabbitInboundEventProvider.Start();
+		//}
 
 		public async Task PersonnelStatusUpdated(int departmentId, string id)
 		{
+			Console.WriteLine($"Processing RabbitMQ PersonnelStatusUpdated Event For {departmentId}");
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
@@ -51,6 +82,8 @@ namespace Resgrid.Web.Eventing
 
 		public async Task PersonnelStaffingUpdated(int departmentId, string id)
 		{
+			Console.WriteLine($"Processing RabbitMQ PersonnelStaffingUpdated Event For {departmentId}");
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
@@ -59,6 +92,8 @@ namespace Resgrid.Web.Eventing
 
 		public async Task UnitStatusUpdated(int departmentId, string id)
 		{
+			Console.WriteLine($"Processing RabbitMQ UnitStatusUpdated Event For {departmentId}");
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
@@ -67,6 +102,8 @@ namespace Resgrid.Web.Eventing
 
 		public async Task CallsUpdated(int departmentId, string id)
 		{
+			Console.WriteLine($"Processing RabbitMQ CallsUpdated Event For {departmentId}");
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
@@ -75,6 +112,8 @@ namespace Resgrid.Web.Eventing
 
 		public async Task DepartmentUpdated(int departmentId)
 		{
+			Console.WriteLine($"Processing RabbitMQ DepartmentUpdated Event For {departmentId}");
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
@@ -83,6 +122,8 @@ namespace Resgrid.Web.Eventing
 
 		public async Task CallAdded(int departmentId, string id)
 		{
+			Console.WriteLine($"Processing RabbitMQ CallAdded Event For {departmentId}");
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
@@ -91,6 +132,8 @@ namespace Resgrid.Web.Eventing
 
 		public async Task CallClosed(int departmentId, string id)
 		{
+			Console.WriteLine($"Processing RabbitMQ CallClosed Event For {departmentId}");
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
@@ -128,5 +171,7 @@ namespace Resgrid.Web.Eventing
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		
 	}
 }

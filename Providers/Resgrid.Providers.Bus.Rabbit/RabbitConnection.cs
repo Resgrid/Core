@@ -9,19 +9,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 	{
 		private static IConnection _connection { get; set; }
 		private static ConnectionFactory _factory { get; set; }
-		private static object LOCK = new object();
+		private readonly static object LOCK = new object();
 
 
-		public static bool VerifyAndCreateClients()
+		public static bool VerifyAndCreateClients(string clientName)
 		{
 			if (_connection != null && !_connection.IsOpen)
 			{
-				_connection?.Dispose();
-
+				_connection.Dispose();
 				_connection = null;
 				_factory = null;
 			}
-			
+	
 			if (_connection == null)
 			{
 				lock (LOCK)
@@ -29,7 +28,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 					try
 					{
 						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						_connection = _factory.CreateConnection();
+						_connection = _factory.CreateConnection(clientName);
 					}
 					catch (Exception ex)
 					{
@@ -40,7 +39,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							try
 							{
 								_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-								_connection = _factory.CreateConnection();
+								_connection = _factory.CreateConnection(clientName);
 							}
 							catch (Exception ex2)
 							{
@@ -51,7 +50,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 									try
 									{
 										_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-										_connection = _factory.CreateConnection();
+										_connection = _factory.CreateConnection(clientName);
 									}
 									catch (Exception ex3)
 									{
@@ -155,19 +154,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return false;
 		}
 
-		public static IConnection CreateConnection()
+		public static IConnection CreateConnection(string clientName)
 		{
 			if (_connection == null)
-				VerifyAndCreateClients();
+				VerifyAndCreateClients(clientName);
 
 			if (!_connection.IsOpen)
 			{
-				_connection?.Dispose();
-
+				_connection.Dispose();
 				_connection = null;
 				_factory = null;
 
-				VerifyAndCreateClients();
+				VerifyAndCreateClients(clientName);
 			}
 
 			return _connection;

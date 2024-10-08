@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -15,7 +16,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitInboundEventProvider : IRabbitInboundEventProvider
 	{
-		//private ConnectionFactory _factory;
 		private IConnection _connection;
 		private IModel _channel;
 
@@ -28,17 +28,17 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, PersonnelLocationUpdatedEvent, Task> PersonnelLocationUpdated;
 		public Func<int, UnitLocationUpdatedEvent, Task> UnitLocationUpdated;
 
-		public async Task Start()
+		public async Task Start(string clientName, string queueName)
 		{
-			VerifyAndCreateClients();
-			await StartMonitoring();
+			VerifyAndCreateClients(clientName);
+			await StartMonitoring(queueName);
 		}
 
-		private void VerifyAndCreateClients()
+		private void VerifyAndCreateClients(string clientName)
 		{
 			try
 			{
-				_connection = RabbitConnection.CreateConnection();
+				_connection = RabbitConnection.CreateConnection(clientName);
 
 				if (_connection != null)
 				{
@@ -46,7 +46,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 					if (_channel != null)
 					{
-						_channel.ExchangeDeclare(SetQueueNameForEnv(Topics.EventingTopic), "fanout");
+						_channel.ExchangeDeclare(RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 					}
 				}
 			}
@@ -56,69 +56,69 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 		}
 
-		private async Task StartMonitoring()
+		private async Task StartMonitoring(string queueName)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
+			//var queueName = _channel.QueueDeclare().QueueName;
+
+			var queue = _channel.QueueDeclare(RabbitConnection.SetQueueNameForEnv(queueName), durable: true,
+							autoDelete: false, exclusive: false);
+
+			_channel.QueueBind(queue: queue.QueueName,
+				exchange: RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic),
+				routingKey: "");
+
+			var consumer = new EventingBasicConsumer(_channel);
+			consumer.Received += async (model, ea) =>
 			{
-				var queueName = _channel.QueueDeclare().QueueName;
+				var body = ea.Body.ToArray();
+				var message = Encoding.UTF8.GetString(body);
 
-				_channel.QueueBind(queue: queueName,
-					exchange: SetQueueNameForEnv(Topics.EventingTopic),
-					routingKey: "");
+				var eventingMessage = JsonConvert.DeserializeObject<EventingMessage>(message);
 
-				var consumer = new EventingBasicConsumer(_channel);
-				consumer.Received += async (model, ea) =>
+				if (eventingMessage != null)
 				{
-					var body = ea.Body.ToArray();
-					var message = Encoding.UTF8.GetString(body);
-
-					var eventingMessage = JsonConvert.DeserializeObject<EventingMessage>(message);
-
-					if (eventingMessage != null)
+					switch ((EventingTypes)eventingMessage.Type)
 					{
-						switch ((EventingTypes)eventingMessage.Type)
-						{
-							case EventingTypes.PersonnelStatusUpdated:
-								if (ProcessPersonnelStatusChanged != null)
-									await ProcessPersonnelStatusChanged(eventingMessage.DepartmentId, eventingMessage.ItemId);
-								break;
-							case EventingTypes.UnitStatusUpdated:
-								if (ProcessUnitStatusChanged != null)
-									await ProcessUnitStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-								break;
-							case EventingTypes.CallsUpdated:
-								if (ProcessCallStatusChanged != null)
-									await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-								break;
-							case EventingTypes.CallAdded:
-								if (ProcessCallStatusChanged != null)
-									await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-								break;
-							case EventingTypes.CallClosed:
-								if (ProcessCallStatusChanged != null)
-									await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-								break;
-							case EventingTypes.PersonnelStaffingUpdated:
-								if (ProcessPersonnelStaffingChanged != null)
-									await ProcessPersonnelStaffingChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-								break;
-							case EventingTypes.PersonnelLocationUpdated:
-								if (PersonnelLocationUpdated != null)
-									await PersonnelLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<PersonnelLocationUpdatedEvent>(eventingMessage.Payload));
-								break;
-							case EventingTypes.UnitLocationUpdated:
-								if (UnitLocationUpdated != null)
-									await UnitLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<UnitLocationUpdatedEvent>(eventingMessage.Payload));
-								break;
-							default:
-								throw new ArgumentOutOfRangeException();
-						}
+						case EventingTypes.PersonnelStatusUpdated:
+							if (ProcessPersonnelStatusChanged != null)
+								await ProcessPersonnelStatusChanged(eventingMessage.DepartmentId, eventingMessage.ItemId);
+							break;
+						case EventingTypes.UnitStatusUpdated:
+							if (ProcessUnitStatusChanged != null)
+								await ProcessUnitStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+							break;
+						case EventingTypes.CallsUpdated:
+							if (ProcessCallStatusChanged != null)
+								await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+							break;
+						case EventingTypes.CallAdded:
+							if (ProcessCallAdded != null)
+								await ProcessCallAdded.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+							break;
+						case EventingTypes.CallClosed:
+							if (ProcessCallClosed != null)
+								await ProcessCallClosed.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+							break;
+						case EventingTypes.PersonnelStaffingUpdated:
+							if (ProcessPersonnelStaffingChanged != null)
+								await ProcessPersonnelStaffingChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+							break;
+						case EventingTypes.PersonnelLocationUpdated:
+							if (PersonnelLocationUpdated != null)
+								await PersonnelLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<PersonnelLocationUpdatedEvent>(eventingMessage.Payload));
+							break;
+						case EventingTypes.UnitLocationUpdated:
+							if (UnitLocationUpdated != null)
+								await UnitLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<UnitLocationUpdatedEvent>(eventingMessage.Payload));
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
 					}
-				};
-				_channel.BasicConsume(queue: queueName,
-					autoAck: true,
-					consumer: consumer);
-			}
+				}
+			};
+			_channel.BasicConsume(queue: queue.QueueName,
+				autoAck: true,
+				consumer: consumer);
 		}
 
 		public bool IsConnected()
@@ -146,18 +146,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 			ProcessCallClosed = callClosed;
 			PersonnelLocationUpdated = personnelLocationUpdated;
 			UnitLocationUpdated = unitLocationUpdated;
-		}
-
-		private static string SetQueueNameForEnv(string cacheKey)
-		{
-			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
-				return $"DEV{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
-				return $"QA{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
-				return $"ST{cacheKey}";
-
-			return cacheKey;
 		}
 	}
 }

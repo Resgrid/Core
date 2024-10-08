@@ -78,31 +78,43 @@ var resgrid;
                     //connectionId = id;
                 });
 
-                eventHub.on("personnelStatusUpdated", function (id) {
+                eventHub.on("PersonnelStatusUpdated", function (id) {
                     if (personnelActionUpdatedCallback) {
                         personnelActionUpdatedCallback();
                     }
                 });
 
-                eventHub.on("personnelStaffingUpdated", function (id) {
+                eventHub.on("PersonnelStaffingUpdated", function (id) {
                     if (personnelStaffingUpdatedCallback) {
                         personnelStaffingUpdatedCallback();
                     }
                 });
 
-                eventHub.on("unitStatusUpdated", function (id) {
+                eventHub.on("UnitStatusUpdated", function (id) {
                     if (unitStatusUpdatedCallback) {
                         unitStatusUpdatedCallback();
                     }
                 });
 
-                eventHub.on("callsUpdated", function (id) {
+                eventHub.on("CallsUpdated", function (id) {
                     if (callsUpdatedCallback) {
                         callsUpdatedCallback(id);
                     }
                 });
 
-                eventHub.on("departmentUpdated", function (id) {
+                eventHub.on("CallAdded", function (id) {
+                    if (callsUpdatedCallback) {
+                        callsUpdatedCallback(id);
+                    }
+                });
+
+                eventHub.on("CallClosed", function (id) {
+                    if (callsUpdatedCallback) {
+                        callsUpdatedCallback(id);
+                    }
+                });
+
+                eventHub.on("DepartmentUpdated", function (id) {
 
                 });
 

@@ -35,7 +35,6 @@ using Resgrid.Providers.PdfProvider;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Services;
 using Resgrid.Web.Eventing.Hubs;
-using Resgrid.Web.Eventing.Services;
 using System.Security.Claims;
 using OpenIddict.Validation;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -317,7 +316,7 @@ namespace Resgrid.Web.Eventing
 				};
 			});
 
-			services.AddHostedService<Worker>();
+			//services.AddHostedService<Worker>();
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)
@@ -365,7 +364,6 @@ namespace Resgrid.Web.Eventing
 			var eventAggregator = this.AutofacContainer.Resolve<IEventAggregator>();
 			var outbound = this.AutofacContainer.Resolve<IOutboundEventProvider>();
 			var eventService = this.AutofacContainer.Resolve<ICoreEventService>();
-			//var eventingHubService = this.AutofacContainer.Resolve<EventingHubService>();
 
 			this.Locator = new AutofacServiceLocator(this.AutofacContainer);
 			ServiceLocator.SetLocatorProvider(() => this.Locator);

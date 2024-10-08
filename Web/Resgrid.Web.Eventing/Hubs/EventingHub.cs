@@ -73,7 +73,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group(departmentId.ToString());
 
 			if (group != null)
-				await group.SendAsync("personnelStatusUpdated", id);
+				await group.SendAsync("PersonnelStatusUpdated", id);
 		}
 
 		public async Task PersonnelStaffingUpdated(int departmentId, int id)
@@ -81,7 +81,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group(departmentId.ToString());
 
 			if (group != null)
-				await group.SendAsync("personnelStaffingUpdated", id);
+				await group.SendAsync("PersonnelStaffingUpdated", id);
 		}
 
 		public async Task UnitStatusUpdated(int departmentId, int id)
@@ -89,7 +89,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group(departmentId.ToString());
 
 			if (group != null)
-				await group.SendAsync("unitStatusUpdated", id);
+				await group.SendAsync("UnitStatusUpdated", id);
 		}
 
 		public async Task CallsUpdated(int departmentId, int id)
@@ -97,7 +97,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group(departmentId.ToString());
 
 			if (group != null)
-				await group.SendAsync("callsUpdated", id);
+				await group.SendAsync("CallsUpdated", id);
 		}
 
 		public async Task DepartmentUpdated(int departmentId)
@@ -105,7 +105,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group(departmentId.ToString());
 
 			if (group != null)
-				await group.SendAsync("departmentUpdated");
+				await group.SendAsync("DepartmentUpdated");
 		}
 
 		public async Task SubscribeToCall(int callId)
@@ -123,7 +123,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group($"CallUpdated:${callId}");
 
 			if (group != null)
-				await group.SendAsync("callDataUpdated", callId);
+				await group.SendAsync("CallDataUpdated", callId);
 		}
 
 		public async Task CallAdded(int departmentId, int id)
@@ -131,7 +131,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group(departmentId.ToString());
 
 			if (group != null)
-				await group.SendAsync("callAdded", id);
+				await group.SendAsync("CallAdded", id);
 		}
 
 		public async Task CallClosed(int departmentId, int id)
@@ -139,7 +139,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var group = Clients.Group(departmentId.ToString());
 
 			if (group != null)
-				await group.SendAsync("callClosed", id);
+				await group.SendAsync("CallClosed", id);
 		}
 	}
 }

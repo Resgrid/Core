@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Resgrid.WebCore.Areas.User.Models.Dispatch;
 using System.Text;
+using Resgrid.Localization.Areas.User.Dispatch;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -138,7 +139,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
-			model.NewCall = new Call();
+			model.NewCall = new Resgrid.Model.Call();
 
 			return View(model);
 		}
@@ -171,7 +172,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			var model = new NewCallView();
-			model.Call = new Call();
+			model.Call = new Resgrid.Model.Call();
 			model = await FillNewCallView(model);
 
 			return View(model);
@@ -711,6 +712,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				await _callsService.SaveCallAsync(call, cancellationToken);
+				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				if (model.RebroadcastCall)
 				{
@@ -728,9 +730,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (dispatchingUserIds.Any() || dispatchingGroupIds.Any() || dispatchingUnitIds.Any() || dispatchingRoleIds.Any())
 						await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
-
-
-					_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 				}
 
 				//	scope.Complete();
@@ -770,6 +769,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.IsDeleted = true;
 
 				await _callsService.SaveCallAsync(call, cancellationToken);
+
+				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 			}
 
 			return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
@@ -818,7 +819,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AddArchivedCall()
 		{
 			var model = new NewCallView();
-			model.Call = new Call();
+			model.Call = new Resgrid.Model.Call();
 			model = await FillNewCallView(model);
 			model.Call.LoggedOn = DateTime.UtcNow.TimeConverter(model.Department);
 			model.Call.ReportingUserId = UserId;
@@ -984,6 +985,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					catch { /* If No addy, no addy */ }
 				}
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
+				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				if (model.ReCalcuateCallNumbers)
 				{
@@ -1064,6 +1066,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.State = (int)model.CallState;
 
 				await _callsService.SaveCallAsync(call, cancellationToken);
+				_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 			}
@@ -1417,7 +1420,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				Unauthorized();
 
-			await _callsService.ReOpenCallByIdAsync(callId, cancellationToken);
+			var call = await _callsService.ReOpenCallByIdAsync(callId, cancellationToken);
+			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
 			return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 		}
@@ -1778,7 +1782,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<CallListJson> callsJson = new List<CallListJson>();
 
-			List<Call> calls;
+			List<Resgrid.Model.Call> calls;
 			if (String.IsNullOrWhiteSpace(year))
 				calls = await _callsService.GetClosedCallsByDepartmentAsync(DepartmentId);
 			else

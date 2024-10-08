@@ -6,7 +6,7 @@ namespace Resgrid.Model.Providers
 {
 	public interface IRabbitInboundEventProvider
 	{
-		Task Start();
+		Task Start(string clientName, string queueName);
 		void RegisterForEvents(Func<int, string, Task> personnelStatusChanged,
 							   Func<int, string, Task> unitStatusChanged,
 							   Func<int, string, Task> callStatusChanged,

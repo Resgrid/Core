@@ -21,8 +21,6 @@ namespace Resgrid.Providers.Bus
 			_outboundQueueProvider = outboundQueueProvider;
 			_signalrProvider = signalrProvider;
 
-			_rabbitTopicProvider = new RabbitTopicProvider();
-
 			_eventAggregator.AddListener(unitStatusHandler);
 			_eventAggregator.AddListener(unitTypeGroupAvailabilityHandler);
 			_eventAggregator.AddListener(unitTypeDepartmentAvailabilityHandler);
@@ -64,6 +62,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UnitStatusEvent> unitStatusHandler = async delegate (UnitStatusEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousState = 0;
@@ -90,6 +91,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UnitStatusEvent> unitTypeGroupAvailabilityHandler = async delegate (UnitStatusEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousState = 0;
@@ -108,6 +112,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UnitStatusEvent> unitTypeDepartmentAvailabilityHandler = async delegate (UnitStatusEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousState = 0;
@@ -126,6 +133,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserStaffingEvent> userStaffingHandler = async delegate (UserStaffingEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousStaffing = 0;
@@ -144,6 +154,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserStaffingEvent> userRoleGroupAvailabilityHandler = async delegate (UserStaffingEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousStaffing = 0;
@@ -163,6 +176,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserStaffingEvent> userRoleDepartmentAvailabilityHandler = async delegate (UserStaffingEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousStaffing = 0;
@@ -183,6 +199,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserStatusEvent> personnelStatusChangedHandler = async delegate (UserStatusEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousStatus = 0;
@@ -201,6 +220,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserCreatedEvent> userCreatedHandler = async delegate (UserCreatedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.UserCreated;
@@ -213,6 +235,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserAssignedToGroupEvent> userAssignedToGroupHandler = async delegate (UserAssignedToGroupEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			int previousGroup = 0;
@@ -231,6 +256,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<CalendarEventUpcomingEvent> calendarEventUpcomingHandler = async delegate (CalendarEventUpcomingEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.CalendarEventUpcoming;
@@ -243,6 +271,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<CalendarEventAddedEvent> calendarEventAddedHandler = async delegate (CalendarEventAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.CalendarEventAdded;
@@ -255,6 +286,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<CalendarEventUpdatedEvent> calendarEventUpdatedHandler = async delegate (CalendarEventUpdatedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.CalendarEventUpdated;
@@ -267,6 +301,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<DocumentAddedEvent> documentAddedHandler = async delegate (DocumentAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.DocumentAdded;
@@ -279,6 +316,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<NoteAddedEvent> noteAddedHandler = async delegate (NoteAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.NoteAdded;
@@ -291,6 +331,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UnitAddedEvent> unitAddedHandler = async delegate (UnitAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.UnitAdded;
@@ -303,6 +346,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<LogAddedEvent> logAddedHandler = async delegate (LogAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.LogAdded;
@@ -315,6 +361,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ResourceOrderAddedEvent> resourceOrderAddedHandler = async delegate (ResourceOrderAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.ResourceOrderAdded;
@@ -327,6 +376,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ShiftTradeRequestedEvent> shiftTradeRequestedHandler = async delegate (ShiftTradeRequestedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -341,6 +393,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ShiftTradeRejectedEvent> shiftTradeRejectedEventHandler = async delegate (ShiftTradeRejectedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -356,6 +411,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ShiftTradeProposedEvent> shiftTradeProposedEventHandler = async delegate (ShiftTradeProposedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -371,6 +429,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ShiftTradeFilledEvent> shiftTradeFilledEventHandler = async delegate (ShiftTradeFilledEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -386,6 +447,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ShiftCreatedEvent> shiftCreatedEventHandler = async delegate (ShiftCreatedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -400,6 +464,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ShiftUpdatedEvent> shiftUpdatedEventHandler = async delegate (ShiftUpdatedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -414,6 +481,9 @@ namespace Resgrid.Providers.Bus
 
 		public Action<ShiftDaysAddedEvent> shiftDaysAddedEventHandler = async delegate (ShiftDaysAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -428,6 +498,9 @@ namespace Resgrid.Providers.Bus
 
 		private Action<AuditEvent> auditEventHandler = async delegate (AuditEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -436,6 +509,9 @@ namespace Resgrid.Providers.Bus
 
 		private Action<SecurityRefreshEvent> securityRefreshEventHandler = async delegate (SecurityRefreshEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			if (_outboundQueueProvider == null)
 				_outboundQueueProvider = new OutboundQueueProvider();
 
@@ -445,6 +521,9 @@ namespace Resgrid.Providers.Bus
 		#region Topic Based Events
 		public Action<DepartmentSettingsChangedEvent> departmentSettingsChangedHandler = async delegate (DepartmentSettingsChangedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			var nqi = new NotificationItem();
 
 			nqi.Type = (int)EventTypes.DepartmentSettingsChanged;
@@ -467,43 +546,66 @@ namespace Resgrid.Providers.Bus
 
 		public Action<UserStatusEvent> personnelStatusChangedTopicHandler = async delegate (UserStatusEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			_rabbitTopicProvider.PersonnelStatusChanged(message);
 		};
 
 
 		public Action<UserStaffingEvent> personnelStaffingChangedTopicHandler = async delegate (UserStaffingEvent message)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				_rabbitTopicProvider.PersonnelStaffingChanged(message);
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			_rabbitTopicProvider.PersonnelStaffingChanged(message);
 		};
 
 		public Action<UnitStatusEvent> unitStatusTopicHandler = async delegate (UnitStatusEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			_rabbitTopicProvider.UnitStatusChanged(message);
 		};
 
 		public Action<CallAddedEvent> callAddedTopicHandler = async delegate (CallAddedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			_rabbitTopicProvider.CallAdded(message);
 		};
 
 		public Action<CallUpdatedEvent> callUpdatedTopicHandler = async delegate (CallUpdatedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			_rabbitTopicProvider.CallUpdated(message);
 		};
 
 		public Action<CallClosedEvent> callClosedTopicHandler = async delegate (CallClosedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			_rabbitTopicProvider.CallClosed(message);
 		};
 
 		public Action<PersonnelLocationUpdatedEvent> personnelLocationUpdatedTopicHandler = async delegate (PersonnelLocationUpdatedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			_rabbitTopicProvider.PersonnelLocationUnidatedChanged(message);
 		};
 
 		public Action<UnitLocationUpdatedEvent> unitLocationUpdatedTopicHandler = async delegate (UnitLocationUpdatedEvent message)
 		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
 			_rabbitTopicProvider.UnitLocationUpdatedChanged(message);
 		};
 		#endregion Topic Based Events

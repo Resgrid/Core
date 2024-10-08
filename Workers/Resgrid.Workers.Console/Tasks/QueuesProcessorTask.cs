@@ -51,7 +51,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
 			queue.SecurityRefreshEventQueueReceived += OnSecurityRefreshEventQueueReceived;
 
-			await queue.Start();
+			await queue.Start("QueueProcessor-CQRS");
 
 			while (!_cancellationToken.IsCancellationRequested)
 			{

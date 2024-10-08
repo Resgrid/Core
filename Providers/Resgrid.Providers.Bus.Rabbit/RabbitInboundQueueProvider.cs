@@ -14,6 +14,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitInboundQueueProvider
 	{
+		private string _clientName;
 		private IModel _channel;
 		public Func<CallQueueItem, Task> CallQueueReceived;
 		public Func<MessageQueueItem, Task> MessageQueueReceived;
@@ -32,9 +33,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 			RabbitOutboundQueueProvider provider = new RabbitOutboundQueueProvider();
 		}
 
-		public async Task Start()
+		public async Task Start(string clientName)
 		{
-			var connection = RabbitConnection.CreateConnection();
+			_clientName = clientName;
+			var connection = RabbitConnection.CreateConnection(clientName);
 
 			if (connection != null)
 			{
@@ -584,7 +586,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 				//using (var connection = RabbitConnection.CreateConnection())
 				//{
-				var connection = RabbitConnection.CreateConnection();
+				var connection = RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
 					using (var channel = connection.CreateModel())

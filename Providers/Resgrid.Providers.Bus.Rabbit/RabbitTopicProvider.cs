@@ -12,10 +12,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitTopicProvider
 	{
-		public RabbitTopicProvider()
-		{
-			VerifyAndCreateClients();
-		}
+		private readonly string _clientName = "Resgrid-Topic";
 
 		public bool PersonnelStatusChanged(UserStatusEvent message)
 		{
@@ -115,19 +112,17 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		private static void VerifyAndCreateClients()
+		private static void VerifyAndCreateClients(string clientName)
 		{
 			try
 			{
-				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				//using (var connection = factory.CreateConnection())
-				var connection = RabbitConnection.CreateConnection();
+				var connection = RabbitConnection.CreateConnection(clientName);
 
 				if (connection != null)
 				{
 					using (var channel = connection.CreateModel())
 					{
-						channel.ExchangeDeclare(SetQueueNameForEnv(Topics.EventingTopic), "fanout");
+						channel.ExchangeDeclare(RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 					}
 				}
 			}
@@ -139,15 +134,16 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private bool SendMessage(string topicName, string message)
 		{
+			VerifyAndCreateClients(_clientName);
+
 			try
 			{
-				//using (var connection = RabbitConnection.CreateConnection())
-				var connection = RabbitConnection.CreateConnection();
+				var connection = RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
 					using (var channel = connection.CreateModel())
 					{
-						channel.BasicPublish(exchange: SetQueueNameForEnv(topicName),
+						channel.BasicPublish(exchange: RabbitConnection.SetQueueNameForEnv(topicName),
 									 routingKey: "",
 									 basicProperties: null,
 									 body: Encoding.ASCII.GetBytes(message));
@@ -162,18 +158,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
-		}
-
-		private static string SetQueueNameForEnv(string cacheKey)
-		{
-			if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Dev)
-				return $"DEV{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.QA)
-				return $"QA{cacheKey}";
-			else if (Config.SystemBehaviorConfig.Environment == SystemEnvironment.Staging)
-				return $"ST{cacheKey}";
-
-			return cacheKey;
 		}
 	}
 }

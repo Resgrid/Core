@@ -13,6 +13,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 {
 	public class RabbitOutboundQueueProvider : IRabbitOutboundQueueProvider
 	{
+		private readonly string _clientName = "Resgrid-Outbound";
+
 		public bool EnqueueCall(CallQueueItem callQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(callQueue);
@@ -97,11 +99,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return SendMessage(ServiceBusConfig.SecurityRefreshQueueName, serializedObject, false, "300000");
 		}
 
-		public bool VerifyAndCreateClients()
-		{
-			return RabbitConnection.VerifyAndCreateClients();
-		}
-
 		private bool SendMessage(string queueName, string message, bool durable = true, string expiration = "36000000")
 		{
 			if (String.IsNullOrWhiteSpace(queueName))
@@ -110,15 +107,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			if (String.IsNullOrWhiteSpace(message))
 				throw new ArgumentNullException("message");
 
-			//if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-			//{
 			try
 			{
-				// TODO: Maybe? https://github.com/EasyNetQ/EasyNetQ -SJ
-				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				//using (var connection = RabbitConnection.CreateConnection())
-				//{
-				var connection = RabbitConnection.CreateConnection();
+				var connection = RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
 					using (var channel = connection.CreateModel())
@@ -157,16 +148,17 @@ namespace Resgrid.Providers.Bus.Rabbit
 				}
 
 				return false;
-				//}
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 				return false;
 			}
-			//}
+		}
 
-			//return false;
+		bool IRabbitOutboundQueueProvider.VerifyAndCreateClients()
+		{
+			return RabbitConnection.VerifyAndCreateClients(_clientName);
 		}
 	}
 }

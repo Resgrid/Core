@@ -31,7 +31,7 @@ namespace Resgrid.Workers.Console.Tasks
 			RabbitInboundQueueProvider queue = new RabbitInboundQueueProvider();
 			queue.AuditEventQueueReceived += OnAuditEventQueueReceived;
 
-			await queue.Start();
+			await queue.Start("QueueProcessor-Audit");
 
 			while (!cancellationToken.IsCancellationRequested)
 			{

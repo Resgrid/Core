@@ -30,7 +30,7 @@ namespace Resgrid.Workers.Console.Tasks
 			RabbitInboundQueueProvider queue = new RabbitInboundQueueProvider();
 			queue.PaymentEventQueueReceived += OnPaymentEventQueueReceived;
 
-			await queue.Start();
+			await queue.Start("QueueProcessor-Payment");
 
 			while (!cancellationToken.IsCancellationRequested)
 			{

@@ -1089,7 +1089,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 			}
 
-			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
 			result.Id = call.CallId.ToString();
 			result.PageSize = 0;
@@ -1138,6 +1138,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.HasBeenDispatched = false;
 
 			var savedCall = await _callsService.SaveCallAsync(call);
+			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 
 			result.Id = savedCall.CallId.ToString();
 			result.PageSize = 0;
@@ -1184,6 +1185,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			call.IsDeleted = true;
 			var savedCall = await _callsService.SaveCallAsync(call);
+
+			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 
 			result.Id = savedCall.CallId.ToString();
 			result.PageSize = 0;
@@ -1234,7 +1237,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
-			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+			_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 
 			result.Id = savedCall.CallId.ToString();
 			result.PageSize = 0;

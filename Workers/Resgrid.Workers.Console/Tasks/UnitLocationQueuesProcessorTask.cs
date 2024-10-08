@@ -31,7 +31,7 @@ namespace Resgrid.Workers.Console.Tasks
 			RabbitInboundQueueProvider queue = new RabbitInboundQueueProvider();
 			queue.UnitLocationEventQueueReceived += OnUnitLocationEventQueueReceived;
 
-			await queue.Start();
+			await queue.Start("QueueProcessor-UnitLocation");
 
 			while (!cancellationToken.IsCancellationRequested)
 			{

@@ -31,7 +31,7 @@ namespace Resgrid.Workers.Console.Tasks
 			RabbitInboundQueueProvider queue = new RabbitInboundQueueProvider();
 			queue.CqrsEventQueueReceived += OnCqrsEventQueueReceived;
 
-			await queue.Start();
+			await queue.Start("QueueProcessor-System");
 
 			while (!cancellationToken.IsCancellationRequested)
 			{

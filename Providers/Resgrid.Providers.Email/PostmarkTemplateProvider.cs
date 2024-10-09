@@ -281,7 +281,7 @@ namespace Resgrid.Providers.EmailProvider
 				{ "sender_name", senderName },
 				{ "title", subject },
 				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
-				{ "action_url", $"https://resgrid.com/User/Messages/ViewMessage?messageId={messageId}" },
+				{ "action_url", $"https://app.resgrid.com/User/Messages/ViewMessage?messageId={messageId}" },
 				{ "timestamp", sentOn },
 				{ "commenter_name", senderName }
 			};

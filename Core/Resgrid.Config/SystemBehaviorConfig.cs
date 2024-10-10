@@ -47,7 +47,8 @@ namespace Resgrid.Config
 		/// </summary>
 		public static HashSet<int> BypassDoNotBroadcastDepartments = new HashSet<int>()
 		{
-			1
+			1,
+//			2104
 		};
 
 		/// <summary>
@@ -104,7 +105,7 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Sets the type of External error and logging provider for the system to use
 		/// </summary>
-		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Elk;
+		public static ErrorLoggerTypes ErrorLoggerType = ErrorLoggerTypes.Console;
 
 		/// <summary>
 		/// Sets the type of outbound email server or provider to use

@@ -34,7 +34,8 @@
 
 	public enum ErrorLoggerTypes
 	{
-		Elk,
-		Sentry
+		Elk,	// No longer supported
+		Sentry,
+		Console
 	}
 }

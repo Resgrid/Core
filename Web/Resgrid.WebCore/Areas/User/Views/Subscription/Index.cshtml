@@ -188,6 +188,12 @@
             border-bottom: 1px dashed #ccc;
             background: #999;
         }
+
+        input[type="number"] {
+            width: 80px !important;
+            font-weight: 200;
+            font-size: 21px;
+        }
     </style>
 }
 
@@ -325,7 +331,7 @@
                                                         <div class="price-form">
                                                             <div class="form-group">
                                                                 <div class="col-sm-12 text-center">
-                                                                    <p class="price lead" id="amount-label">10</p> <span>Entities</span>
+                                                                    <input id="amount-input" type="number" pattern="[0-9]" min="10" max="2000" step="10" value="10" /> <span>Entities</span>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
@@ -543,10 +549,31 @@
                         }
                     });
 
+                    $("#amount-input").bind('change mouseup', function () {
+                        let inputAmount = $("#amount-input").val();
+
+                        if (inputAmount < 10) {
+                            $("#slider").slider('value', 10);
+                            update(1, 10);
+                        } else if (inputAmount > 2000) {
+                            $("#slider").slider('value', 2000);
+                            update(1, 2000);
+                        } else if (inputAmount % 10 != 0) {
+                            let newAmount = Math.ceil(parseInt(inputAmount) / 10) * 10;
+                            $("#amount-input").val(newAmount);
+                            $("#slider").slider('value', newAmount);
+                            update(1, newAmount);
+                        } else {
+                            $("#slider").slider('value', inputAmount);
+                            update(1, inputAmount);
+                        }
+                    });
+
                     //Added, set initial value.
                     $("#amount").val(10);
                     //$("#duration").val(0);
-                    $("#amount-label").text(0);
+                    //$("#amount-label").text(0);
+                    $("#amount-input").val(0);
                     $("#monthly-label").text(0);
                     $("#yearly-label").text(0);
 
@@ -574,7 +601,8 @@
 
                     //$total = "$" + ($amount * $duration);
                     $("#amount").val($amount);
-                    $("#amount-label").text($amount);
+                    //$("#amount-label").text($amount);
+                    $("#amount-input").val($amount);
 
                     const totalCostMonthly = calculateCostFromUsers($amount, true);
                     const totalCostYearly = calculateCostFromUsers($amount, false);

@@ -47,8 +47,7 @@ namespace Resgrid.Config
 		/// </summary>
 		public static HashSet<int> BypassDoNotBroadcastDepartments = new HashSet<int>()
 		{
-			1,
-//			2104
+			1
 		};
 
 		/// <summary>

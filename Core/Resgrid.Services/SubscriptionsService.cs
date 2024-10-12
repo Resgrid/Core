@@ -991,6 +991,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/CreateStripeSessionForUpdate", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
@@ -1018,6 +1021,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetActiveStripeSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
@@ -1042,6 +1048,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetActivePTTStripeSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
@@ -1066,6 +1075,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/ModifyPTTAddonSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
@@ -1092,6 +1104,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/CancelSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
@@ -1116,6 +1131,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/CreateStripeSessionForCustomerPortal", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
@@ -1152,6 +1170,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/CreateStripeSessionForSubscriptionCheckout", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
@@ -1182,6 +1203,9 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (string.IsNullOrWhiteSpace(stripeCustomerId))
+					stripeCustomerId = " ";
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/ChangeActiveSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);

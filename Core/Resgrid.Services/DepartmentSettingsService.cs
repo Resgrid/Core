@@ -217,7 +217,7 @@ namespace Resgrid.Services
 			if (settingValue != null)
 				return settingValue.Setting;
 
-			return null;
+			return String.Empty;
 		}
 
 		public async Task<int?> GetDepartmentIdForStripeCustomerIdAsync(string stripeCustomerId, bool bypassCache = false)

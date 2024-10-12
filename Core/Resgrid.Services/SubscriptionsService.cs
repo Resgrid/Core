@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using MongoDB.Driver;
 using Resgrid.Model;
 using Resgrid.Model.Billing.Api;
@@ -995,7 +996,7 @@ namespace Resgrid.Services
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
 				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 				request.AddParameter("email", email, ParameterType.QueryString, true);
 				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
 
@@ -1021,7 +1022,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/GetActiveStripeSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 
 				var response = await client.ExecuteAsync<GetCanceledPlanFromStripeResult>(request);
 
@@ -1045,7 +1046,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/GetActivePTTStripeSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 
 				var response = await client.ExecuteAsync<GetCanceledPlanFromStripeResult>(request);
 
@@ -1069,7 +1070,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/ModifyPTTAddonSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 				request.AddParameter("quantity", quantity, ParameterType.QueryString);
 				request.AddParameter("planAddonId", planAddon.PlanAddonId, ParameterType.QueryString);
 
@@ -1095,7 +1096,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/CancelSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 
 				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
 
@@ -1119,7 +1120,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/CreateStripeSessionForCustomerPortal", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
 
 				if (!String.IsNullOrWhiteSpace(customerConfigId))
@@ -1155,7 +1156,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/CreateStripeSessionForSubscriptionCheckout", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
 				request.AddParameter("stripePlanId", stripePlanId, ParameterType.QueryString);
 				request.AddParameter("planId", planId, ParameterType.QueryString);
@@ -1185,7 +1186,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/ChangeActiveSubscription", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("stripeCustomerId", stripeCustomerId, ParameterType.QueryString);
+				request.AddParameter("stripeCustomerId", Uri.EscapeDataString(stripeCustomerId), ParameterType.QueryString);
 				request.AddParameter("stripePlanId", stripePlanId, ParameterType.QueryString);
 
 				var response = await client.ExecuteAsync<ChangeActiveSubscriptionResult>(request);

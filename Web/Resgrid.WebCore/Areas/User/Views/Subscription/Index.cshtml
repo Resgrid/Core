@@ -40,7 +40,7 @@
             font-size: 15px;
         }
 
-            .ui-slider .ui-slider-handle .glyphicon {
+            .ui-slider .ui-slider-handle .fa {
                 color: #FFFFFF;
                 margin: 0 3px;
                 font-size: 11px;
@@ -99,7 +99,7 @@
         .total {
             border-bottom: 1px solid #7f8c8d;
             /*display: inline;
-                                                                                                            padding: 10px 5px;*/
+                                                                                                                    padding: 10px 5px;*/
             position: relative;
             padding-bottom: 20px;
         }
@@ -140,8 +140,8 @@
             border: 1px solid #eeeeee;
             border-radius: 4px;
             /*-moz-box-shadow:    0 5px 5px 0 #ccc;
-                                                                                                            -webkit-box-shadow: 0 5px 5px 0 #ccc;
-                                                                                                            box-shadow:         0 5px 5px 0 #ccc;*/
+                                                                                                                    -webkit-box-shadow: 0 5px 5px 0 #ccc;
+                                                                                                                    box-shadow:         0 5px 5px 0 #ccc;*/
         }
 
         .form-group {
@@ -191,7 +191,6 @@
 
         input[type="number"] {
             width: 80px !important;
-            font-weight: 200;
             font-size: 21px;
         }
     </style>
@@ -316,6 +315,7 @@
 
                                             @if (Model.Plan == null || Model.Plan.PlanId == 1)
                                             {
+                                                <p>Move the blue slider below with the arrows to select the number of Entities (Users + Units) you require. You can also type in the Entity count (in increments of 10) in the text box below. Please the "Buy Yearly" or "Buy Monthly" depending on the payment interval you wish. This will then take you to the Stripe checkout page. Please note you cannot buy a 10 entity pack as that is our free plan.</p>
                                                 <div class="price-box">
 
                                                     <form class="form-horizontal form-pricing" role="form">
@@ -324,7 +324,13 @@
                                                             <h4 class="great">Entities</h4>
                                                             <span>Users or Units sold in packs of 10</span>
                                                             <div class="col-sm-12">
-                                                                <div id="slider"></div>
+                                                                <div id="slider">
+                                                                    <div id="custom-handle" class="ui-slider-handle">
+                                                                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                                                        <span id="handle-text"></span>
+                                                                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -355,10 +361,10 @@
                                                             <hr class="style">
                                                             <div class="form-group total">
                                                                 <div class="col-sm-6 text-center">
-                                                                    <a title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(36);">@localizer["BuyYearly"]</a>
+                                                                    <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(36);">@localizer["BuyYearly"]</a>
                                                                 </div>
                                                                 <div class="col-sm-6 text-center">
-                                                                    <a title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(37);">@localizer["BuyMonthly"]</a>
+                                                                    <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(37);">@localizer["BuyMonthly"]</a>
                                                                 </div>
                                                             </div>
 
@@ -544,6 +550,10 @@
                         min: 10,
                         max: 2000,
                         step: 10,
+                        create: function () {
+                            let handle = $("#handle-text");
+                            handle.text($(this).slider("value"));
+                        },
                         slide: function (event, ui) {
                             update(1, ui.value); //changed
                         }
@@ -584,14 +594,10 @@
 
                 //changed. now with parameter
                 function update(slider, val) {
+                    let handle = $("#handle-text");
+
                     //changed. Now, directly take value from ui.value. if not set (initial, will use current value.)
                     var $amount = slider == 1 ? val : $("#amount").val();
-
-
-
-
-
-
                     var $duration = slider == 2 ? val : $("#duration").val();
 
                     /* commented
@@ -599,24 +605,28 @@
                     $duration = $( "#slider2" ).slider( "value" );
                      */
 
+                    handle.text($amount);
                     //$total = "$" + ($amount * $duration);
                     $("#amount").val($amount);
                     //$("#amount-label").text($amount);
                     $("#amount-input").val($amount);
 
-                    const totalCostMonthly = calculateCostFromUsers($amount, true);
-                    const totalCostYearly = calculateCostFromUsers($amount, false);
+                    if ($amount > 10) {
+                        const totalCostMonthly = calculateCostFromUsers($amount, true);
+                        const totalCostYearly = calculateCostFromUsers($amount, false);
 
-                    $("#monthly-label").text(totalCostMonthly);
-                    $("#yearly-label").text(totalCostYearly);
+                        $("#monthly-label").text(totalCostMonthly);
+                        $("#yearly-label").text(totalCostYearly);
 
-                    //$("#duration").val($duration);
-                    // $("#duration-label").text($duration);
-                    //$("#total").val($total);
-                    //$("#total-label").text($total);
+                        $("#buyYearlyButton").show();
+                        $("#buyMonthlyButton").show();
+                    } else {
+                        $("#monthly-label").text(0);
+                        $("#yearly-label").text(0);
 
-                    $('#slider a').html('<label><span class="glyphicon glyphicon-chevron-left"></span> ' + $amount + ' <span class="glyphicon glyphicon-chevron-right"></span></label>');
-                    $('#slider2 a').html('<label><span class="glyphicon glyphicon-chevron-left"></span> ' + $duration + ' <span class="glyphicon glyphicon-chevron-right"></span></label>');
+                        $("#buyYearlyButton").hide();
+                        $("#buyMonthlyButton").hide();
+                    }
                 }
 
 
@@ -624,21 +634,21 @@
                     let marginalBreakdownStrs = [];
 
                     const pricingTiersMonthly = [
-                        { tier: 0, marginalUserSlots: 1, costPerUser: 0.0 },
-                        { tier: 1, marginalUserSlots: 5, costPerUser: 20.0 },
-                        { tier: 2, marginalUserSlots: 100, costPerUser: 2.0 },
-                        { tier: 3, marginalUserSlots: 1000, costPerUser: 1.5 },
-                        { tier: 4, marginalUserSlots: 5000, costPerUser: 1.0 },
-                        { tier: 5, marginalUserSlots: 999999999, costPerUser: 0.5 },
+                        //{ tier: 0, marginalUserSlots: 1, costPerUser: 0.0 },
+                        { tier: 0, marginalUserSlots: 5, costPerUser: 20.0 },
+                        { tier: 1, marginalUserSlots: 100, costPerUser: 2.0 },
+                        { tier: 2, marginalUserSlots: 1000, costPerUser: 1.5 },
+                        { tier: 3, marginalUserSlots: 5000, costPerUser: 1.0 },
+                        { tier: 4, marginalUserSlots: 999999999, costPerUser: 0.5 },
                     ];
 
                     const pricingTiersYearly = [
-                        { tier: 0, marginalUserSlots: 1, costPerUser: 0.0 },
-                        { tier: 1, marginalUserSlots: 5, costPerUser: 200.0 },
-                        { tier: 2, marginalUserSlots: 100, costPerUser: 20.0 },
-                        { tier: 3, marginalUserSlots: 1000, costPerUser: 15.0 },
-                        { tier: 4, marginalUserSlots: 1000, costPerUser: 10.0 },
-                        { tier: 5, marginalUserSlots: 999999999, costPerUser: 5.0 },
+                        //{ tier: 0, marginalUserSlots: 1, costPerUser: 0.0 },
+                        { tier: 0, marginalUserSlots: 5, costPerUser: 200.0 },
+                        { tier: 1, marginalUserSlots: 100, costPerUser: 20.0 },
+                        { tier: 2, marginalUserSlots: 1000, costPerUser: 15.0 },
+                        { tier: 3, marginalUserSlots: 1000, costPerUser: 10.0 },
+                        { tier: 4, marginalUserSlots: 999999999, costPerUser: 5.0 },
                     ];
 
                     let finalCost = 0.0;
@@ -659,7 +669,7 @@
                             marginalBreakdownStrs.push(`${remainingUsers} @@ $${tier.costPerUser}`);
                             remainingUsers = 0;
                         }
-                        console.log("RemainingUsers: ", remainingUsers);
+                        //console.log("RemainingUsers: ", remainingUsers);
                     }
 
                     return finalCost;

@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.CustomStates
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectStatesByDidUserQuery
-										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																 string.Empty,
 																 _sqlConfiguration.ParameterNotation,
 																new string[] {

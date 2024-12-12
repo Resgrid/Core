@@ -1,5 +1,6 @@
 ﻿// From https://github.com/grandchamp/Identity.Dapper
 
+using Resgrid.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,12 @@ namespace Resgrid.Repositories.DataRepository.Extensions
 	{
 		public static List<string> InsertQueryValuesFragment(this List<string> valuesArray, string parameterNotation, IEnumerable<string> propertyNames)
 		{
-			foreach (var property in propertyNames)
-				valuesArray.Add($"{parameterNotation}{property.RemoveSpecialCharacters()}");
+			//if (DataConfig.DatabaseType == DatabaseType.Postgres)
+			//	foreach (var property in propertyNames)
+			//		valuesArray.Add($"{parameterNotation}{property.RemoveSpecialCharacters().ToLower()}");
+			//else
+				foreach (var property in propertyNames)
+					valuesArray.Add($"{parameterNotation}{property.RemoveSpecialCharacters()}");
 
 			return valuesArray;
 		}

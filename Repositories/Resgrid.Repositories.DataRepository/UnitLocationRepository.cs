@@ -60,7 +60,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<UnitLocation>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UnitId", unitId);
 
 					var query = _queryFactory.GetQuery<SelectLatestUnitLocationByUnitId>();
@@ -101,7 +101,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<UnitLocation>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UnitId", unitId);
 					dynamicParameters.Add("Timestamp", timestamp);
 

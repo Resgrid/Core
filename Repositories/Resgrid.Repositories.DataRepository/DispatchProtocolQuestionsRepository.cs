@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DispatchProtocolQuestion>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ProtocolId", protocolId);
 
 					var query = _queryFactory.GetQuery<SelectProtocolQuestionsByProIdQuery>();

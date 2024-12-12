@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.UserProfiles
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectAllNonDeletedProfilesByDIdQuery
-										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																 string.Empty,
 																 _sqlConfiguration.ParameterNotation,
 																new string[] {

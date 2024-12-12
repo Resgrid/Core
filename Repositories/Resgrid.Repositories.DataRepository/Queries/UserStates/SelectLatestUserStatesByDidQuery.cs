@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.UserStates
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectLatestUserStatesByDidQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.UserStatesTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%", "%TIMESTAMP%" },

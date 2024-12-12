@@ -6,6 +6,11 @@ namespace Resgrid.Config
 {
 	public static class OidcConfig
 	{
+		/// <summary>
+		/// The underlying database engine for the OIDC database (Does not support Mongo)
+		/// </summary>
+		public static DatabaseTypes DatabaseType = DatabaseTypes.SqlServer;
+
 		public static string Key = "";
 
 		public static string ConnectionString = "Server=rgdevserver;Database=ResgridOIDC;User Id=resgrid_odic;Password=resgrid123;MultipleActiveResultSets=True;TrustServerCertificate=True;";

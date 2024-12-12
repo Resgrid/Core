@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
         public string GetQuery<TEntity>(TEntity entity)
         {
             var query = _sqlConfiguration.UpdateClaimForUserQuery
-                                         .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
                                                                  _sqlConfiguration.UserClaimTable,
                                                                  _sqlConfiguration.ParameterNotation,
                                                                  new string[] {

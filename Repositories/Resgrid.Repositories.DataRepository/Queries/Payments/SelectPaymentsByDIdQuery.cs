@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Payments
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectPaymentsByDIdQuery
-										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																 string.Empty,
 																 _sqlConfiguration.ParameterNotation,
 																new string[] {

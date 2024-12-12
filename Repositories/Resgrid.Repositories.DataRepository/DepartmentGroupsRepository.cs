@@ -73,7 +73,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroup>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectAllGroupsByDidQuery>();
@@ -121,7 +121,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroup>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("GroupId", parentGroupId);
 
 					var query = _queryFactory.GetQuery<SelectAllGroupsByParentIdQuery>();
@@ -169,7 +169,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<DepartmentGroup>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("GroupId", departmentGroupId);
 
 					var query = _queryFactory.GetQuery<SelectGroupByGroupIdQuery>();
@@ -217,7 +217,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<DepartmentGroup>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DispatchEmail", dispatchCode);
 
 					var query = _queryFactory.GetQuery<SelectGroupByDispatchCodeQuery>();
@@ -265,7 +265,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<DepartmentGroup>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("MessageEmail", messageCode);
 
 					var query = _queryFactory.GetQuery<SelectGroupByMessageCodeQuery>();

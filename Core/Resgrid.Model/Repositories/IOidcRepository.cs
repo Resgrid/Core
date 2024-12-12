@@ -1,4 +1,6 @@
-﻿namespace Resgrid.Model.Repositories
+﻿using System.Threading.Tasks;
+
+namespace Resgrid.Model.Repositories
 {
 	/// <summary>
 	/// Interface IOidcRepository
@@ -9,6 +11,6 @@
 		/// Updates the Oidc Database
 		/// </summary>
 		/// <returns>If the operation was successful</returns>
-		bool UpdateOidcDatabase();
+		Task<bool> UpdateOidcDatabaseAsync();
 	}
 }

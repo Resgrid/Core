@@ -16,6 +16,7 @@ using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.ResourceOrders;
 using Resgrid.Repositories.DataRepository.Queries.ScheduledTasks;
+using Resgrid.Config;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -70,8 +71,11 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ScheduledTask>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
-					dynamicParameters.Add("DateTime", DateTime.UtcNow.ToString());
+					var dynamicParameters = new DynamicParametersExtension();
+					if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
+						dynamicParameters.Add("DateTime", DateTime.UtcNow);
+					else
+						dynamicParameters.Add("DateTime", DateTime.UtcNow.ToString());
 
 					var query = _queryFactory.GetQuery<SelectAllUpcomingOrRecurringReportTasksQuery>();
 

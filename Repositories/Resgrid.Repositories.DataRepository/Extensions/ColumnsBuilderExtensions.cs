@@ -1,5 +1,6 @@
 ﻿// From https://github.com/grandchamp/Identity.Dapper
 
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Repositories.DataRepository.Configs;
 using System;
@@ -58,6 +59,11 @@ namespace Resgrid.Repositories.DataRepository.Extensions
 			}
 
 			roleProperties = roleProperties.Select(y => string.Concat(sqlConfiguration.TableColumnStartNotation, y, sqlConfiguration.TableColumnEndNotation));
+
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				roleProperties = roleProperties.Select(x => x.ToLower());
+			}
 
 			return roleProperties;
 		}

@@ -21,7 +21,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
 			var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
 			var query = _sqlConfiguration.UpdateUserQuery
-										 .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceUpdateQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																	   _sqlConfiguration.UserTable,
 																	   setFragment,
 																	   ((IEntity)entity).IdName,

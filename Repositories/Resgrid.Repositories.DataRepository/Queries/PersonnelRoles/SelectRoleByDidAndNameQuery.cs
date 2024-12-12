@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.PersonnelRoles
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectRoleByDidAndNameQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.PersonnelRolesTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%", "%NAME%" },

@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
         public string GetQuery()
         {
             var query = _sqlConfiguration.RemoveClaimsQuery
-                                         .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
                                                                  _sqlConfiguration.UserClaimTable,
                                                                  _sqlConfiguration.ParameterNotation,
                                                                  new string[] {

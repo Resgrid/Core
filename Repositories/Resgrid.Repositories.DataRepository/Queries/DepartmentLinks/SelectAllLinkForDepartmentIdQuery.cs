@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentLinks
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectAllLinkForDepartmentIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.DepartmentLinksTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%", "%ID%" },

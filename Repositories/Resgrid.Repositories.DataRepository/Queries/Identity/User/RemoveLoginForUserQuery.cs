@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
         public string GetQuery()
         {
             var query = _sqlConfiguration.RemoveLoginForUserQuery
-                                         .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
                                                                  _sqlConfiguration.UserLoginTable,
                                                                  _sqlConfiguration.ParameterNotation,
                                                                  new string[] {

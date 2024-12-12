@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftSignupTradeUser>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ShiftTradeId", shiftTradeId);
 
 					var query = _queryFactory.GetQuery<SelectShiftSignupTradeUsersByTradeIdQuery>();

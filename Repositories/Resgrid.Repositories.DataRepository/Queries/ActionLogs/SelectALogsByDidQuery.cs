@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.ActionLogs
 		{
 
 			var query = _sqlConfiguration.SelectALogsByDidQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {

@@ -19,7 +19,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.ResourceOrders
 			var setFragment = updateValues.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
 			var query = _sqlConfiguration.UpdateRoleQuery
-				.ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceUpdateQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.RoleTable,
 					setFragment,
 					"ResourceOrderFillId",

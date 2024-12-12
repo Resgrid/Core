@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Shifts
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectShiftAssignmentByGroupQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.ShiftGroupAssignmentsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%SHIFTGROUPID%" },

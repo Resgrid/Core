@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DistributionListMember>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ListId", listId);
 
 					var query = _queryFactory.GetQuery<SelectDListMembersByListIdQuery>();
@@ -79,7 +79,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DistributionListMember>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectDListMembersByUserQuery>();

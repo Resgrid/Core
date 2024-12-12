@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IdentityRole>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("IdValue", id);
 
 					var query = _queryFactory.GetQuery<SelectByIdQuery>();
@@ -76,7 +76,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IdentityRole>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("Name", roleName);
 
 					var query = _queryFactory.GetQuery<SelectRoleByNameQuery>();
@@ -117,7 +117,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<IdentityRoleClaim>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("RoleId", role.Id);
 
 					var query = _queryFactory.GetQuery<GetClaimsByRoleQuery>();
@@ -240,7 +240,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("IdValue", id);
 
 					var query = _queryFactory.GetDeleteQuery<DeleteQuery>();
@@ -280,7 +280,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("RoleId", role.Id);
 					dynamicParameters.Add("ClaimType", claim.Type);
 					dynamicParameters.Add("ClaimValue", claim.Value);

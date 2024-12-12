@@ -39,7 +39,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 		#endregion Members and Constructors
 
-
 		/// <summary>
 		/// Gets the department calendar items.
 		/// </summary>

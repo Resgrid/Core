@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -38,7 +39,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<T>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 
 					var query = _queryFactory.GetQuery<SelectAllQuery, T>();
 
@@ -77,8 +78,12 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<T>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
-					dynamicParameters.Add("Id", id);
+					var dynamicParameters = new DynamicParametersExtension();
+
+					if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
+						dynamicParameters.Add("id", id);
+					else
+						dynamicParameters.Add("Id", id);
 
 					var query = _queryFactory.GetQuery<SelectByIdQuery, T>();
 
@@ -117,8 +122,12 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<T>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
-					dynamicParameters.Add("DepartmentId", departmentId);
+					var dynamicParameters = new DynamicParametersExtension();
+
+					if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
+						dynamicParameters.Add("departmentid", departmentId);
+					else
+						dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectByDepartmentIdQuery, T>();
 
@@ -255,7 +264,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
 					{
-						var dynamicParameters = new DynamicParameters();
+						var dynamicParameters = new DynamicParametersExtension();
 						dynamicParameters.Add("Id", ((IEntity)entity).IdValue);
 
 						var query = _queryFactory.GetDeleteQuery<DeleteQuery, T>(entity);
@@ -316,7 +325,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<T>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectByUserIdQuery, T>();
@@ -356,13 +365,13 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					var usersToQuery = String.Join(",", ids.Select(p => $"{p.ToString()}").ToArray());
 					dynamicParameters.Add("ParentId", parentKeyId);
 
 					var query = _queryFactory.GetDeleteQuery<DeleteMultipleQuery, T>(entity);
-					query = query.Replace("%IDS%", usersToQuery);
-					query = query.Replace("%PARENTKEYNAME%", parentKeyName);
+					query = query.Replace("%IDS%", usersToQuery, StringComparison.InvariantCultureIgnoreCase);
+					query = query.Replace("%PARENTKEYNAME%", parentKeyName, StringComparison.InvariantCultureIgnoreCase);
 
 					var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 

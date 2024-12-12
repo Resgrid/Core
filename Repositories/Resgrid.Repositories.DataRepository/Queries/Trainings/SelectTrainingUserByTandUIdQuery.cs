@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Trainings
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectTrainingUserByTandUIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.TrainingUsersTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%TRAININGID%", "%USERID%" },

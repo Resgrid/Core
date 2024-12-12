@@ -23,7 +23,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
         {
 	        var entity = Activator.CreateInstance(typeof(TEntity));
 	        var query = _sqlConfiguration.SelectByUserIdQuery
-		        .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+		        .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 			        ((IEntity)entity).TableName,
 			        _sqlConfiguration.ParameterNotation,
 			        new string[] { "%ID%" },

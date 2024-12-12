@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Inventory
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectInventoryByInventoryIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {

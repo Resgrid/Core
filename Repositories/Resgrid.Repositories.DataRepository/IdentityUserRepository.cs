@@ -49,7 +49,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IdentityUser>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("Email", email);
 
 					var query = _queryFactory.GetQuery<SelectUserByEmailQuery>();
@@ -97,7 +97,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IdentityUser>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("Id", id);
 
 					var query = _queryFactory.GetQuery<SelectUserByIdQuery>();
@@ -147,7 +147,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						var dynamicParameters = new DynamicParameters();
+						var dynamicParameters = new DynamicParametersExtension();
 						dynamicParameters.Add("UserName", userName);
 
 						var query = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
@@ -447,7 +447,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						var dynamicParameters = new DynamicParameters();
+						var dynamicParameters = new DynamicParametersExtension();
 						dynamicParameters.Add("Id", id);
 
 						var query = _queryFactory.GetDeleteQuery<DeleteUserQuery>();

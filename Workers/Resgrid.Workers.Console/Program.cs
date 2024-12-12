@@ -31,13 +31,16 @@ using Resgrid.Providers.Migrations.Migrations;
 using Resgrid.Model.Repositories;
 using System.Reflection;
 using Sentry;
+using Resgrid.Framework;
+using Resgrid.Providers.MigrationsPg.Migrations;
+using Quidjibo.Clients;
+using Quidjibo.Postgres.Extensions;
 
 namespace Resgrid.Workers.Console
 {
 	public class Program
 	{
 		public static IConfigurationRoot Configuration { get; private set; }
-
 
 		static async Task Main(string[] args)
 		{
@@ -215,6 +218,8 @@ namespace Resgrid.Workers.Console
 	public class ScheduledJobsService : BackgroundService
 	{
 		private ILogger _logger;
+		private IQuidjiboClient Client { get; set; }
+		private QuidjiboBuilder Builder { get; set; }
 
 		public ScheduledJobsService(ILogger<ScheduledJobsService> logger)
 		{
@@ -240,15 +245,30 @@ namespace Resgrid.Workers.Console
 			var container = containerBuilder.Build();
 
 			// Setup Quidjibo
-			var quidjiboBuilder = new QuidjiboBuilder()
-								  .ConfigureLogging(loggerFactory)
-								  .UseAutofac(container)
-								  .UseAes(Encoding.ASCII.GetBytes(WorkerConfig.PayloadKey))
-								  .UseSqlServer(WorkerConfig.WorkerDbConnectionString)
-								  .ConfigurePipeline(pipeline => pipeline.UseDefault());
+			if (WorkerConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				Builder = new QuidjiboBuilder()
+									  .ConfigureLogging(loggerFactory)
+									  .UseAutofac(container)
+									  .UseAes(Encoding.ASCII.GetBytes(WorkerConfig.PayloadKey))
+									  .UsePostgres(WorkerConfig.WorkerDbConnectionString)
+									  .ConfigurePipeline(pipeline => pipeline.UseDefault());
 
-			// Quidjibo Client
-			var client = quidjiboBuilder.BuildClient();
+				// Quidjibo Client
+				Client = Builder.BuildClient();
+			}
+			else
+			{
+				Builder = new QuidjiboBuilder()
+									  .ConfigureLogging(loggerFactory)
+									  .UseAutofac(container)
+									  .UseAes(Encoding.ASCII.GetBytes(WorkerConfig.PayloadKey))
+									  .UseSqlServer(WorkerConfig.WorkerDbConnectionString)
+									  .ConfigurePipeline(pipeline => pipeline.UseDefault());
+
+				// Quidjibo Client
+				Client = Builder.BuildClient();
+			}
 
 			_logger.Log(LogLevel.Information, "Scheduler Started");
 
@@ -264,7 +284,7 @@ namespace Resgrid.Workers.Console
 				// Scheduled Jobs
 
 				_logger.Log(LogLevel.Information, "Scheduling Calendar Notifications");
-				await client.ScheduleAsync("Calendar Notifications",
+				await Client.ScheduleAsync("Calendar Notifications",
 					new CalendarNotificationCommand(1),
 					Cron.MinuteIntervals(20),
 					stoppingToken);
@@ -276,61 +296,61 @@ namespace Resgrid.Workers.Console
 				//	cancellationToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Call Pruning");
-				await client.ScheduleAsync("Call Pruning",
+				await Client.ScheduleAsync("Call Pruning",
 					new CallPruneCommand(3),
 					Cron.MinuteIntervals(60),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Report Delivery");
-				await client.ScheduleAsync("Report Delivery",
+				await Client.ScheduleAsync("Report Delivery",
 					new ReportDeliveryTaskCommand(5),
 					Cron.MinuteIntervals(14),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Shift Notifier");
-				await client.ScheduleAsync("Shift Notifier",
+				await Client.ScheduleAsync("Shift Notifier",
 					new ShiftNotiferCommand(6),
 					Cron.MinuteIntervals(720),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Staffing Schedule");
-				await client.ScheduleAsync("Staffing Schedule",
+				await Client.ScheduleAsync("Staffing Schedule",
 					new Commands.StaffingScheduleCommand(7),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Training Notifier");
-				await client.ScheduleAsync("Training Notifier",
+				await Client.ScheduleAsync("Training Notifier",
 					new TrainingNotiferCommand(9),
 					Cron.MinuteIntervals(30),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Status Schedule");
-				await client.ScheduleAsync("Status Schedule",
+				await Client.ScheduleAsync("Status Schedule",
 					new Commands.StatusScheduleCommand(11),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Dispatch Scheduled Calls");
-				await client.ScheduleAsync("Scheduled Calls",
+				await Client.ScheduleAsync("Scheduled Calls",
 					new Commands.StatusScheduleCommand(12),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling OIDC Token Cleaning");
-				await client.ScheduleAsync("Clean OIDC Tokens",
+				await Client.ScheduleAsync("Clean OIDC Tokens",
 					new Commands.CleanOIDCCommand(13),
 					Cron.MinuteIntervals(30),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling System SQL Queue");
-				await client.ScheduleAsync("System SQL Queue",
+				await Client.ScheduleAsync("System SQL Queue",
 					new Commands.SystemSqlQueueCommand(14),
 					Cron.Daily(3, 0),
 					stoppingToken);
 
 				_logger.Log(LogLevel.Information, "Scheduling Security Refresh");
-				await client.ScheduleAsync("Security Refresh",
+				await Client.ScheduleAsync("Security Refresh",
 					new Commands.SecurityRefreshScheduleCommand(15),
 					Cron.Daily(2, 0),
 					stoppingToken);
@@ -342,7 +362,7 @@ namespace Resgrid.Workers.Console
 
 
 			// Quidjibo Server
-			using (var workServer = quidjiboBuilder.BuildServer())
+			using (var workServer = Builder.BuildServer())
 			{
 				// Start Quidjibo
 				workServer.Start();
@@ -382,7 +402,7 @@ namespace Resgrid.Workers.Console
 				using (var scope = serviceProvider.CreateScope())
 				{
 					UpdateDatabase(scope.ServiceProvider);
-					UpdateOidcDatabase(scope.ServiceProvider);
+					await UpdateOidcDatabaseAsync(scope.ServiceProvider);
 				}
 
 				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
@@ -410,28 +430,48 @@ namespace Resgrid.Workers.Console
 		/// <summary>
 		/// Update the database
 		/// </summary>
-		private static void UpdateOidcDatabase(IServiceProvider serviceProvider)
+		private static async Task UpdateOidcDatabaseAsync(IServiceProvider serviceProvider)
 		{
 			var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
-			bool result = oidcRepository.UpdateOidcDatabase();
+			bool result = await oidcRepository.UpdateOidcDatabaseAsync();
 		}
 
 		private static IServiceProvider CreateServices()
 		{
-			return new ServiceCollection()
-				// Add common FluentMigrator services
-				.AddFluentMigratorCore()
-				.ConfigureRunner(rb => rb
-					// Add SQL Server support to FluentMigrator
-					.AddSqlServer()
-					// Set the connection string
-					.WithGlobalConnectionString(System.Configuration.ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
-					// Define the assembly containing the migrations
-					.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
-				// Enable logging to console in the FluentMigrator way
-				.AddLogging(lb => lb.AddFluentMigratorConsole())
-				// Build the service provider
-				.BuildServiceProvider(false);
+			if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
+			{
+				return new ServiceCollection()
+					// Add common FluentMigrator services
+					.AddFluentMigratorCore()
+					.ConfigureRunner(rb => rb
+						// Add SQL Server support to FluentMigrator
+						.AddPostgres11_0()
+						// Set the connection string
+						.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
+						// Define the assembly containing the migrations
+						.ScanIn(typeof(M0001_InitialMigrationPg).Assembly).For.Migrations().For.EmbeddedResources())
+					// Enable logging to console in the FluentMigrator way
+					.AddLogging(lb => lb.AddFluentMigratorConsole())
+					// Build the service provider
+					.BuildServiceProvider(false);
+			}
+			else
+			{
+				return new ServiceCollection()
+					// Add common FluentMigrator services
+					.AddFluentMigratorCore()
+					.ConfigureRunner(rb => rb
+						// Add SQL Server support to FluentMigrator
+						.AddSqlServer()
+						// Set the connection string
+						.WithGlobalConnectionString(System.Configuration.ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
+						// Define the assembly containing the migrations
+						.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
+					// Enable logging to console in the FluentMigrator way
+					.AddLogging(lb => lb.AddFluentMigratorConsole())
+					// Build the service provider
+					.BuildServiceProvider(false);
+			}
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
 
 
 	        var query = _sqlConfiguration.SelectByIdQuery
-		        .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+		        .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 			        string.Empty,
 			        _sqlConfiguration.ParameterNotation,
 			        new string[] {

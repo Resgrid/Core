@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Smiggleworth</Authors>
+    <Copyright>Copyright © 2017</Copyright>
+    <Description>Quidjibo delivers flexible async background jobs for .NET applications</Description>
+    <PackageProjectUrl>https://quidjibo.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/smiggleworth/Quidjibo</RepositoryUrl>
+    <Company>Smiggleworth</Company>
+    <PackageLicenseUrl>https://github.com/smiggleworth/Quidjibo/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageTags>async tasks workers cron</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageIconUrl>https://quidjibo.com/images/quidjibo-q.png</PackageIconUrl>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\Complete.sql" />
+    <None Remove="Scripts\Fault.sql" />
+    <None Remove="Scripts\Renew.sql" />
+    <None Remove="Scripts\Schedule\Complete.sql" />
+    <None Remove="Scripts\Schedule\Create.sql" />
+    <None Remove="Scripts\Schedule\List.sql" />
+    <None Remove="Scripts\Schedule\Load.sql" />
+    <None Remove="Scripts\Schedule\LoadByName.sql" />
+    <None Remove="Scripts\Schedule\Receive.sql" />
+    <None Remove="Scripts\Schedule\Setup.sql" />
+    <None Remove="Scripts\Setup.sql" />
+    <None Remove="Scripts\Work\Complete.sql" />
+    <None Remove="Scripts\Work\Fault.sql" />
+    <None Remove="Scripts\Work\List.sql" />
+    <None Remove="Scripts\Work\Receive.sql" />
+    <None Remove="Scripts\Work\Renew.sql" />
+    <None Remove="Scripts\Work\Send.sql" />
+    <None Remove="Scripts\Work\Setup.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Progress\LoadByCorrelationId.sql" />
+    <EmbeddedResource Include="Scripts\Progress\Create.sql" />
+    <EmbeddedResource Include="Scripts\Progress\Setup.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\Complete.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\Create.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\List.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\Load.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\Delete.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\Exists.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\LoadByName.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\Receive.sql" />
+    <EmbeddedResource Include="Scripts\Schedule\Setup.sql" />
+    <EmbeddedResource Include="Scripts\Schema\Setup.sql" />
+    <EmbeddedResource Include="Scripts\Work\Complete.sql" />
+    <EmbeddedResource Include="Scripts\Work\Fault.sql" />
+    <EmbeddedResource Include="Scripts\Work\List.sql" />
+    <EmbeddedResource Include="Scripts\Work\Receive.sql" />
+    <EmbeddedResource Include="Scripts\Work\Renew.sql" />
+    <EmbeddedResource Include="Scripts\Work\Send.sql" />
+    <EmbeddedResource Include="Scripts\Work\Setup.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Npgsql" Version="8.0.5" />
+    <PackageReference Include="Quidjibo" Version="0.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+  </ItemGroup>
+
+</Project>

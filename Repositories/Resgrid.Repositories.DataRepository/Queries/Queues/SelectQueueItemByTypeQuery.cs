@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Queues
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectQueueItemByTypeQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.QueueItemsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%TYPE%" },

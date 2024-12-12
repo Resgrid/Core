@@ -16,11 +16,26 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentSettings
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectDepartmentSettingByTypeUserIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.DepartmentSettingsTable,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
+					string.Empty,
 					_sqlConfiguration.ParameterNotation,
-					new string[] { "%USERID%", "%SETTINGTYPE%" },
-					new string[] { "UserId", "SettingType" });
+					new string[] {
+						"%USERID%",
+						"%SETTINGTYPE%"
+					},
+					new string[] {
+						"UserId",
+						"SettingType"
+					},
+					new string[] {
+						"%DEPARTMENTSETTINGSTABLE%",
+						"%DEPARTMENTMEMBERSTABLE%"
+					},
+					new string[] {
+						_sqlConfiguration.DepartmentSettingsTable,
+						_sqlConfiguration.DepartmentMembersTable
+					}
+				);
 
 			return query;
 		}

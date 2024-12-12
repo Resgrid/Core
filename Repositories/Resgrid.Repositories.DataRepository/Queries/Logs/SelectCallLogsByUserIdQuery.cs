@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Logs
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectCallLogsByUserIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.CallLogsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%USERID%" },

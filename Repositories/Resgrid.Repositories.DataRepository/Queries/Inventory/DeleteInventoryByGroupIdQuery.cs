@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Inventory
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.DeleteInventoryByGroupIdQuery
-										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																 _sqlConfiguration.InventoryTable,
 																 _sqlConfiguration.ParameterNotation,
 																 new string[]

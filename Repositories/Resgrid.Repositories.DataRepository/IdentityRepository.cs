@@ -11,16 +11,27 @@ using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories;
 using Resgrid.Model;
 using Resgrid.Config;
+using Npgsql;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class IdentityRepository: IIdentityRepository
+	public class IdentityRepository : IIdentityRepository
 	{
 		public List<IdentityUser> GetAll()
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers").ToList();
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers").ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers").ToList();
+				}
 			}
 
 			return null;
@@ -28,31 +39,43 @@ namespace Resgrid.Repositories.DataRepository
 
 		public IdentityUser GetUserById(string userId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers WHERE Id = @userId", new { userId = userId }).FirstOrDefault();
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers WHERE id = @userId", new { userId = userId }).FirstOrDefault();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers WHERE Id = @userId", new { userId = userId }).FirstOrDefault();
+				}
 			}
 
 			return null;
 		}
 
-		//public IdentityUser GetUserByUserName(string userName)
-		//{
-		//	using (IDbConnection db = new SqlConnection(connectionString))
-		//	{
-		//		return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers WHERE UserName = @userName", new { userName = userName }).FirstOrDefault();
-		//	}
-
-		//	return null;
-		//}
-
 		public async Task<IdentityUser> GetUserByUserNameAsync(string userName)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM AspNetUsers WHERE UserName = @userName", new { userName = userName });
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM aspnetusers WHERE username = @userName", new { userName = userName });
 
-				return result.FirstOrDefault();
+					return result.FirstOrDefault();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM AspNetUsers WHERE UserName = @userName", new { userName = userName });
+
+					return result.FirstOrDefault();
+				}
 			}
 
 			return null;
@@ -60,9 +83,19 @@ namespace Resgrid.Repositories.DataRepository
 
 		public IdentityUser GetUserByEmail(string email)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers WHERE Email = @email", new { email = email }).FirstOrDefault();
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers WHERE email = @email", new { email = email }).FirstOrDefault();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers WHERE Email = @email", new { email = email }).FirstOrDefault();
+				}
 			}
 
 			return null;
@@ -70,42 +103,93 @@ namespace Resgrid.Repositories.DataRepository
 
 		public void UpdateUsername(string oldUsername, string newUsername)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				db.Execute($"UPDATE [AspNetUsers] SET [UserName] = @newUsername, [NormalizedUserName] = @newUsernameUpper WHERE UserName = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					db.Execute($"UPDATE public.aspnetusers SET username = @newUsername, normalizedusername = @newUsernameUpper WHERE username = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					db.Execute($"UPDATE [AspNetUsers] SET [UserName] = @newUsername, [NormalizedUserName] = @newUsernameUpper WHERE UserName = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
+				}
 			}
 		}
 
 		public void UpdateEmail(string userId, string newEmail)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail, [NormalizedEmail] = @newEmailUpper WHERE Id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail.ToUpper() });
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					db.Execute($"UPDATE public.aspnetusers SET email = @newEmail WHERE id = @userId", new { userId = userId, newEmail = newEmail });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail, [NormalizedEmail] = @newEmailUpper WHERE Id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail.ToUpper() });
+				}
 			}
 		}
 
 		public void AddUserToRole(string userId, string roleId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				db.Execute($"INSERT INTO AspNetUserRoles ([UserId] ,[RoleId]) VALUES (@userId, @roleId)", new { userId = userId, roleId = roleId });
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					db.Execute($"INSERT INTO public.aspnetuserroles ([userid] ,[roleid]) VALUES (@userId, @roleId)", new { userId = userId, roleId = roleId });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					db.Execute($"INSERT INTO AspNetUserRoles ([UserId] ,[RoleId]) VALUES (@userId, @roleId)", new { userId = userId, roleId = roleId });
+				}
 			}
 		}
 
 		public void InitUserExtInfo(string userId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				db.Execute($"INSERT INTO AspNetUsersExt ([UserId] ,[CreateDate] ,[LastActivityDate]) VALUES (@userId,@dateTimeNow,@dateTimeNow)", new { userId = userId, dateTimeNow = DateTime.UtcNow });
-				db.Execute($"UPDATE [dbo].[AspNetUsers] SET [EmailConfirmed] = 1 WHERE Id = @userId", new { userId = userId });
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					db.Execute($"INSERT INTO public.aspnetusersext ([userid] ,[createdate] ,[lastactivitydate]) VALUES (@userId,@dateTimeNow,@dateTimeNow)", new { userId = userId, dateTimeNow = DateTime.UtcNow });
+					db.Execute($"UPDATE public.aspnetusers SET emailconfirmed = 1 WHERE id = @userId", new { userId = userId });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					db.Execute($"INSERT INTO AspNetUsersExt ([UserId] ,[CreateDate] ,[LastActivityDate]) VALUES (@userId,@dateTimeNow,@dateTimeNow)", new { userId = userId, dateTimeNow = DateTime.UtcNow });
+					db.Execute($"UPDATE [dbo].[AspNetUsers] SET [EmailConfirmed] = 1 WHERE Id = @userId", new { userId = userId });
+				}
 			}
 		}
 
 		public IdentityUserRole GetRoleForUserRole(string userId, string roleId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUserRole>($"SELECT * FROM AspNetUserRoles WHERE UserId = @userId AND RoleId = @roleId", new { userId = userId, roleId = roleId }).FirstOrDefault();
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUserRole>($"SELECT * FROM aspnetuserroles WHERE userid = @userId AND roleid = @roleId", new { userId = userId, roleId = roleId }).FirstOrDefault();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUserRole>($"SELECT * FROM AspNetUserRoles WHERE UserId = @userId AND RoleId = @roleId", new { userId = userId, roleId = roleId }).FirstOrDefault();
+				}
 			}
 
 			return null;
@@ -113,23 +197,45 @@ namespace Resgrid.Repositories.DataRepository
 
 		public IdentityUser Update(IdentityUser user)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				db.Update(user);
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					db.Update(user);
+				}
+				return user;
 			}
-
-			return user;
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					db.Update(user);
+				}
+				return user;
+			}
 
 			return null;
 		}
 
 		public List<IdentityUser> GetAllMembershipsForDepartment(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUser>(@"SELECT m.* FROM AspNetUsers m	
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT m.* FROM aspnetusers m	
+																						INNER JOIN departmentmembers dm ON dm.userid = m.id
+																						WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0", new { departmentId = departmentId }).ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT m.* FROM AspNetUsers m	
 																						INNER JOIN DepartmentMembers dm ON dm.UserId = m.Id
 																						WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0", new { departmentId = departmentId }).ToList();
+				}
 			}
 
 			return null;
@@ -137,11 +243,23 @@ namespace Resgrid.Repositories.DataRepository
 
 		public List<IdentityUser> GetAllUsersForDepartment(int departmentId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.* FROM aspnetusers u
+																				INNER JOIN departmentmembers dm ON dm.userid = u.id
+																				WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0", new { departmentId = departmentId }).ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 																				INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
 																				WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0", new { departmentId = departmentId }).ToList();
+				}
 			}
 
 			return null;
@@ -149,13 +267,28 @@ namespace Resgrid.Repositories.DataRepository
 
 		public List<IdentityUser> GetAllUsersForGroup(int groupId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUser>(@"SELECT u.* 
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.* 
+                                                FROM aspnetusers u
+                                                INNER JOIN departmentgroupmembers dgm ON u.id = dgm.userid
+                                                INNER JOIN departmentmembers dm ON u.id = dm.userid
+                                                WHERE dgm.departmentgroupid = @groupId AND dm.isdeleted = 0",
+								new { groupId = groupId }).ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.* 
 												FROM AspNetUsers u
 												INNER JOIN DepartmentGroupMembers dgm ON u.Id = dgm.UserId
 												INNER JOIN DepartmentMembers dm ON u.Id = dm.UserId
 												WHERE dgm.DepartmentGroupId = @groupId AND dm.IsDeleted = 0", new { groupId = groupId }).ToList();
+				}
 			}
 
 			return null;
@@ -163,30 +296,25 @@ namespace Resgrid.Repositories.DataRepository
 
 		public List<IdentityUser> GetAllUsersForDepartmentWithinLimits(int departmentId, bool retrieveHidden)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				//return db.Query<IdentityUser>(@"DECLARE @limit INT
-				//								IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) >= 1)
-				//									BEGIN
-				//										SET @limit = (SELECT TOP 1 (pl.LimitValue * p.Quantity) FROM Payments p
-				//										INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
-				//										WHERE DepartmentId = @departmentId AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
-				//										ORDER BY PaymentId DESC)
-				//									END
-				//								ELSE
-				//									BEGIN
-				//										SET @limit = 10
-				//									END
-
-				//								SELECT TOP (@limit) u.* FROM AspNetUsers u
-				//								INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
-				//								WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
-				//			new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
-
-				return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.* FROM aspnetusers u
+												INNER JOIN departmentmembers dm ON dm.userid = u.id 
+												WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0 AND (@retrieveHidden = 1 OR (dm.ishidden = 0 OR dm.ishidden IS NULL)) AND (dm.isdisabled = 0 OR dm.isdisabled IS NULL)",
+								new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
 												WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
-							new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
+								new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
+				}
 			}
 
 			return null;
@@ -194,32 +322,29 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<List<IdentityUser>> GetAllUsersForDepartmentWithinLimitsAsync(int departmentId, bool retrieveHidden)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				//var result = await db.QueryAsync<IdentityUser>(@"DECLARE @limit INT
-				//								IF ((SELECT COUNT(*) FROM Payments p WHERE p.DepartmentId = @departmentId) >= 1)
-				//									BEGIN
-				//										SET @limit = (SELECT TOP 1 (pl.LimitValue * p.Quantity) FROM Payments p
-				//										INNER JOIN PlanLimits pl ON pl.PlanId = p.PlanId
-				//										WHERE DepartmentId = @departmentId AND pl.LimitType = 1 AND p.EffectiveOn <= GETUTCDATE() AND p.EndingOn >= GETUTCDATE()
-				//										ORDER BY PaymentId DESC)
-				//									END
-				//								ELSE
-				//									BEGIN
-				//										SET @limit = 10
-				//									END
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM aspnetusers u
+												INNER JOIN departmentmembers dm ON dm.userid = u.id 
+												WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0 AND (@retrieveHidden = 1 OR (dm.ishidden = 0 OR dm.ishidden IS NULL)) AND (dm.isdisabled = 0 OR dm.isdisabled IS NULL)",
+						new { departmentId = departmentId, retrieveHidden = retrieveHidden });
 
-				//								SELECT TOP (@limit) u.* FROM AspNetUsers u
-				//								INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
-				//								WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
-				//	new { departmentId = departmentId, retrieveHidden = retrieveHidden });
-
-				var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
+					return result.ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
 												WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
-					new { departmentId = departmentId, retrieveHidden = retrieveHidden });
+						new { departmentId = departmentId, retrieveHidden = retrieveHidden });
 
-				return result.ToList();
+					return result.ToList();
+				}
 			}
 
 			return null;
@@ -227,12 +352,25 @@ namespace Resgrid.Repositories.DataRepository
 
 		public List<IdentityUser> GetAllUsersCreatedAfterTimestamp(DateTime timestamp)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return db.Query<IdentityUser>(@"SELECT u.*, ue.* FROM AspNetUsers u
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.*, ue.* FROM aspnetusers u
+																				INNER JOIN aspnetusersext ue ON u.id = ue.userid
+																				WHERE ue.createdate > @timestamp",
+									new { timestamp = timestamp }).ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					return db.Query<IdentityUser>(@"SELECT u.*, ue.* FROM AspNetUsers u
 																				INNER JOIN AspNetUsersExt ue ON u.Id = ue.UserId
 																				WHERE ue.CreateDate > @timestamp",
-								new { timestamp = timestamp }).ToList();
+									new { timestamp = timestamp }).ToList();
+				}
 			}
 
 			return null;
@@ -240,9 +378,32 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<List<UserGroupRole>> GetAllUsersGroupsAndRolesAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var query = await db.QueryAsync<UserGroupRole>(@"SELECT dgm.DepartmentGroupId, u.Id as 'UserId',
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					var query = await db.QueryAsync<UserGroupRole>(@"SELECT dgm.departmentGroupid, u.id as userid,
+												(SELECT STRING_AGG(pru.personnelroleid::text, ',') FROM public.personnelroleusers pru WHERE pru.userid = u.id AND pru.departmentid = @departmentId) as roles,
+												(SELECT STRING_AGG(pr.name, ', ') FROM public.personnelroleusers pru INNER JOIN public.personnelroles pr ON pr.personnelroleid = pru.personnelroleid WHERE pru.userid = u.id AND pru.departmentid = @departmentId) as rolenames,
+												dg.name as departmentgroupname,
+												up.firstname AS firstname,
+												up.lastname AS lastname
+												FROM public.departmentmembers dm
+												INNER JOIN public.aspnetusers u ON u.id = dm.userid
+												LEFT OUTER JOIN public.departmentgroupmembers dgm ON u.id = dgm.userid AND dgm.departmentid = @departmentId
+												LEFT OUTER JOIN public.departmentgroups dg ON dg.departmentgroupid = dgm.departmentgroupid
+												INNER JOIN public.userprofiles up ON up.userid = u.id
+												WHERE dm.departmentid = @departmentId AND (@retrieveHidden = true OR (dm.ishidden = false OR dm.ishidden IS NULL)) AND (@retrieveDisabled = true OR (dm.isdisabled = false OR dm.isdisabled IS NULL)) AND (@retrieveDeleted = true OR (dm.isdeleted = false OR dm.isdeleted IS NULL))
+												GROUP BY dgm.departmentgroupid, u.id, dg.name, up.firstname, up.lastname",
+									new { departmentId = departmentId, retrieveHidden = retrieveHidden, retrieveDisabled = retrieveDisabled, retrieveDeleted = retrieveDeleted });
+
+					return query.ToList();
+				}
+			}
+			else
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					var query = await db.QueryAsync<UserGroupRole>(@"SELECT dgm.DepartmentGroupId, u.Id as 'UserId',
 												(SELECT STUFF((
 														SELECT ',' +  CONVERT(varchar, pru.PersonnelRoleId)
 														FROM PersonnelRoleUsers pru
@@ -263,19 +424,30 @@ namespace Resgrid.Repositories.DataRepository
 												LEFT OUTER JOIN DepartmentGroups dg ON dg.DepartmentGroupId = dgm.DepartmentGroupId
 												INNER JOIN UserProfiles up ON up.UserId = u.Id
 												WHERE dm.DepartmentId = @departmentId AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (@retrieveDisabled = 1 OR (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)) AND (@retrieveDeleted = 1 OR (dm.IsDeleted = 0 OR dm.IsDeleted IS NULL))",
-								new { departmentId = departmentId, retrieveHidden = retrieveHidden, retrieveDisabled = retrieveDisabled, retrieveDeleted = retrieveDeleted });
+									new { departmentId = departmentId, retrieveHidden = retrieveHidden, retrieveDisabled = retrieveDisabled, retrieveDeleted = retrieveDeleted });
 
-				return query.ToList();
-			}
+					return query.ToList();
+				}
 		}
 
 		public async Task<bool> CleanUpOIDCTokensAsync(DateTime timestamp)
 		{
-			using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+			if (OidcConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+				using (IDbConnection db = new NpgsqlConnection(OidcConfig.ConnectionString))
+				{
+					var result = await db.ExecuteAsync(@"DELETE FROM public.openiddicttokens WHERE expirationdate < @timestamp",
+									new { timestamp = timestamp });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+				{
+					var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
 													 WHERE ExpirationDate < @timestamp",
-								new { timestamp = timestamp });
+									new { timestamp = timestamp });
+				}
 			}
 
 			return false;
@@ -283,13 +455,27 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<bool> ClearOutUserLoginAsync(string userId)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					var result = await db.ExecuteAsync(@"UPDATE public.aspnetusers
+													 SET username = @deleteid,
+													 email = @deleteid + '@resgrid.del' 
+													 WHERE id = @userId",
+									new { userId = userId, deleteid = Guid.NewGuid().ToString() });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				{
+					var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
 													 SET UserName = @deleteid,
 													 Email = @deleteid + '@resgrid.del' 
 													 WHERE Id = @userId",
-								new { userId = userId, deleteid = Guid.NewGuid().ToString() });
+									new { userId = userId, deleteid = Guid.NewGuid().ToString() });
+				}
 			}
 
 			return false;
@@ -297,11 +483,22 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<bool> CleanUpOIDCTokensByUserAsync(string userId)
 		{
-			using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+			if (OidcConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+				using (IDbConnection db = new NpgsqlConnection(OidcConfig.ConnectionString))
+				{
+					var result = await db.ExecuteAsync(@"DELETE FROM public.openiddicttokens WHERE subject = @userId",
+									new { userId = userId });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+				{
+					var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
 													 WHERE Subject = @userId",
-								new { userId = userId });
+									new { userId = userId });
+				}
 			}
 
 			return false;

@@ -156,20 +156,20 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			DepartmentSettingsTable = "DepartmentSettings";
 			SelectDepartmentSettingByDepartmentIdTypeQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND SettingType = %SETTINGTYPE%";
-			SelectDepartmentSettingByTypeUserIdQuery = @"SELECT ds.* FROM [DepartmentSettings] ds
-						INNER JOIN [DepartmentMembers] dm ON ds.DepartmentId = dm.DepartmentId
+			SelectDepartmentSettingByTypeUserIdQuery = @"SELECT ds.* FROM %SCHEMA%.%DEPARTMENTSETTINGSTABLE% ds
+						INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON ds.DepartmentId = dm.DepartmentId
 						WHERE dm.UserId = %USERID% AND ds.SettingType = %SETTINGTYPE%";
 			SelectDepartmentSettingBySettingAndTypeQuery = @"SELECT ds.* FROM %SCHEMA%.%TABLENAME% ds
 						WHERE ds.Setting = %SETTING% AND ds.SettingType = %SETTINGTYPE%";
 			SelectAllDepartmentManagerInfoQuery = @"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email
-						FROM [Departments] d
-						INNER JOIN [AspNetUsers] u ON u.Id = d.ManagingUserId
-						LEFT OUTER JOIN [UserProfiles] up ON up.UserId = d.ManagingUserId";
+						FROM %SCHEMA%.%DEPARTMENTSTABLE% d
+						INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = d.ManagingUserId
+						LEFT OUTER JOIN UserProfiles up ON up.UserId = d.ManagingUserId";
 			SelectDepartmentManagerInfoByEmailQuery =
 				@"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email
-						FROM [Departments] d
-						INNER JOIN [AspNetUsers] u ON u.Id = d.ManagingUserId
-						LEFT OUTER JOIN [UserProfiles] up ON up.UserId = d.ManagingUserId
+						FROM %SCHEMA%.%DEPARTMENTSTABLE% d
+						INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = d.ManagingUserId
+						LEFT OUTER JOIN %SCHEMA%.%USERPROFILESTABLE% up ON up.UserId = d.ManagingUserId
 						WHERE u.Email = %EMAILADDRESS%";
 
 			#endregion Department Settings
@@ -291,23 +291,23 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectRoleByDidAndNameQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Name] = %NAME%";
 			SelectRolesByDidAndUserQuery = @"
-					SELECT * FROM [PersonnelRoles] pr
-					INNER JOIN [PersonnelRoleUsers] pru ON pr.[PersonnelRoleId] = pru.[PersonnelRoleId]
-					WHERE pru.[UserId] = %USERID% AND pr.[DepartmentId] = %DID%";
+					SELECT * FROM %SCHEMA%.%PERSONNELROLESTABLE% pr
+					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% pru ON pr.PersonnelRoleId = pru.PersonnelRoleId
+					WHERE pru.UserId = %USERID% AND pr.DepartmentId = %DID%";
 			//SelectRoleUsersByRoleQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [PersonnelRoleId] = %ROLEID%";
 			SelectRoleUsersByRoleQuery = @"
-					SELECT * FROM [PersonnelRoleUsers] pru
-					INNER JOIN [dbo].DepartmentMembers dm ON dm.UserId = pru.UserId AND dm.[DepartmentId] = pru.[DepartmentId]
-					WHERE pru.[PersonnelRoleId] = %ROLEID% AND dm.[IsDisabled] = 0 AND dm.[IsDeleted] = 0";
+					SELECT * FROM %SCHEMA%.%PERSONNELROLEUSERSTABLE% pru
+					INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.UserId = pru.UserId AND dm.DepartmentId = pru.DepartmentId
+					WHERE pru.PersonnelRoleId = %ROLEID% AND dm.IsDisabled = 0 AND dm.IsDeleted = 0";
 
 			SelectRoleUsersByUserQuery = @"
-					SELECT * FROM [PersonnelRoleUsers] pru
-					INNER JOIN [PersonnelRoles] pr ON pru.[PersonnelRoleId] = pr.[PersonnelRoleId]
-					WHERE pru.[UserId] = %USERID% AND pr.[DepartmentId] = %DID%";
+					SELECT * FROM %SCHEMA%.%PERSONNELROLEUSERSTABLE% pru
+					INNER JOIN %SCHEMA%.%PERSONNELROLESTABLE% pr ON pru.PersonnelRoleId = pr.PersonnelRoleId
+					WHERE pru.UserId = %USERID% AND pr.DepartmentId = %DID%";
 			SelectRoleUsersByDidQuery = @"
-					SELECT * FROM [PersonnelRoleUsers] pru
-					INNER JOIN [PersonnelRoles] pr ON pru.[PersonnelRoleId] = pr.[PersonnelRoleId]
-					WHERE pr.[DepartmentId] = %DID%";
+					SELECT * FROM %SCHEMA%.%PERSONNELROLEUSERSTABLE% pru
+					INNER JOIN %SCHEMA%.%PERSONNELROLESTABLE% pr ON pru.PersonnelRoleId = pr.PersonnelRoleId
+					WHERE pr.DepartmentId = %DID%";
 			SelectRolesByDidQuery = @"
 					SELECT pr.*, pru.*
 					FROM %SCHEMA%.%ROLESTABLE% pr
@@ -1101,10 +1101,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 
 			SelectGroupMembersByGroupIdQuery = @"
 					SELECT dgm.*
-					FROM [dbo].DepartmentGroupMembers dgm
-					INNER JOIN [dbo].DepartmentGroups dg ON dg.[DepartmentGroupId] =  dgm.[DepartmentGroupId]
-					INNER JOIN [dbo].DepartmentMembers dm ON dm.UserId = dgm.UserId AND dm.[DepartmentId] = dg.[DepartmentId]
-					WHERE dgm.[DepartmentGroupId] = %GROUPID% AND dm.[IsDisabled] = 0 AND dm.[IsDeleted] = 0";
+					FROM %SCHEMA%.%GROUPMEMBERSSTABLE% dgm
+					INNER JOIN %SCHEMA%.%GROUPSTABLE% dg ON dg.DepartmentGroupId =  dgm.DepartmentGroupId
+					INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.UserId = dgm.UserId AND dm.DepartmentId = dg.DepartmentId
+					WHERE dgm.DepartmentGroupId = %GROUPID% AND dm.IsDisabled = 0 AND dm.IsDeleted = 0";
 
 			SelectGroupMembersByUserDidQuery = @"
 					SELECT dgm.*, dg.*

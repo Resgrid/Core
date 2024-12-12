@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentSettings
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectDepartmentSettingByDepartmentIdTypeQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.DepartmentSettingsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%", "%SETTINGTYPE%" },

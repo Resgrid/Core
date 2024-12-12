@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentGroups
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.DeleteGroupMembersByGroupIdDidQuery
-										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																 _sqlConfiguration.DepartmentGroupMembersTable,
 																 _sqlConfiguration.ParameterNotation,
 																 new string[]

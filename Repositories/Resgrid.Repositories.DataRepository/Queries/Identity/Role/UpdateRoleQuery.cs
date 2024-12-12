@@ -20,7 +20,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.Role
             var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
             var query = _sqlConfiguration.UpdateRoleQuery
-                                         .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceUpdateQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.RoleTable,
                                                                        setFragment,
                                                                        ((IEntity)entity).IdName,

@@ -39,5 +39,16 @@ namespace Resgrid.Model
 
 		[BsonElement("heading")]
 		public decimal? Heading { get; set; }
+
+		[BsonIgnore()]
+		public string PgId { get; set; }
+
+		public string GetId()
+		{
+			if (!String.IsNullOrWhiteSpace(PgId))
+				return PgId;
+
+			return Id.ToString();
+		}
 	}
 }

@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.DistributionLists
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectAllEnabledDListsQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.DistributionListsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {  },

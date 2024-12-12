@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<TrainingQuestion>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("TrainingId", trainingId);
 
 					var query = _queryFactory.GetQuery<SelectTrainingQuestionsByTrainIdQuery>();

@@ -11,6 +11,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string TableColumnStartNotation { get; set; }
 		public string TableColumnEndNotation { get; set; }
 		public string InsertGetReturnIdCommand { get; set; }
+		public string QueryPrefix { get; set; }
 
 		#region Common
 		public string InsertQuery { get; set; }

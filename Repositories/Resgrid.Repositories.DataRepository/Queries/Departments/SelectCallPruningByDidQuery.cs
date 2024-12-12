@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Departments
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectCallPruningByDidQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.DepartmentCallPruningTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%" },

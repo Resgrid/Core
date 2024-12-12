@@ -16,11 +16,24 @@ namespace Resgrid.Repositories.DataRepository.Queries.Units
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectUnitsByDIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.UnitsTable,
-					_sqlConfiguration.ParameterNotation,
-					new string[] { "%DID%" },
-					new string[] { "DepartmentId" });
+						.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
+												 string.Empty,
+												 _sqlConfiguration.ParameterNotation,
+												new string[] {
+																"%DID%"
+															  },
+												 new string[] {
+																"DepartmentId",
+															  },
+												 new string[] {
+																"%UNITSTABLE%",
+																"%UNITROLESTABLE%"
+												 },
+												 new string[] {
+																_sqlConfiguration.UnitsTable,
+																_sqlConfiguration.UnitRolesTable
+												 }
+						);
 
 			return query;
 		}

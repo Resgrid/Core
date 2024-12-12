@@ -9,6 +9,10 @@ namespace Resgrid.Repositories.DataRepository
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>)).InstancePerLifetimeScope();
+
+			builder.RegisterType<MapLayersDocRepository>().As<IMapLayersDocRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PersonnelLocationsDocRepository>().As<IPersonnelLocationsDocRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitLocationsDocRepository>().As<IUnitLocationsDocRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

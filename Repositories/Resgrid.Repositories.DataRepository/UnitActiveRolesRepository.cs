@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<UnitActiveRole>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UnitId", unitId);
 
 					var query = _queryFactory.GetQuery<SelectUnitActiveRolesByUnitIdQuery>();
@@ -77,7 +77,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<UnitActiveRole>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectActiveRolesForUnitsByDidQuery>();
@@ -120,11 +120,11 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						var dynamicParameters = new DynamicParameters();
+						var dynamicParameters = new DynamicParametersExtension();
 						dynamicParameters.Add("UnitId", unitId);
 
 						var query = _queryFactory.GetDeleteQuery<DeleteUnitActiveRolesByUnitIdQuery>();
-						query = query.Replace("%UNITID%", unitId.ToString());
+						query = query.Replace("%UNITID%", unitId.ToString(), StringComparison.InvariantCultureIgnoreCase);
 
 						var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 

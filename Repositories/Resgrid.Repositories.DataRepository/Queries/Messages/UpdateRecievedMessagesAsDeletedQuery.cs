@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Messages
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.UpdateRecievedMessagesAsDeletedQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.MessageRecipientsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%USERID%" },

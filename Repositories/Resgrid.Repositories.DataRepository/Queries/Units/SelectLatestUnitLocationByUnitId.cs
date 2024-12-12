@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Units
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectLatestUnitLocationByUnitId
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.UnitLocationsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%UNITID%" },

@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<CustomState>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectStatesByDidUserQuery>();
@@ -84,7 +84,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<CustomState>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CustomStateId", customStateId);
 
 					var query = _queryFactory.GetQuery<SelectStatesByIdQuery>();

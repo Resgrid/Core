@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<ShiftSignupTrade>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ShiftSignupId", shiftSignupId);
 
 					var query = _queryFactory.GetQuery<SelectShiftSignupTradeBySourceIdQuery>();
@@ -84,7 +84,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<ShiftSignupTrade>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ShiftSignupId", shiftSignupId);
 
 					var query = _queryFactory.GetQuery<SelectShiftSignupTradeByTargetIdQuery>();
@@ -132,7 +132,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<ShiftSignupTrade>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ShiftSignupId", shiftSignupId);
 
 					var query = _queryFactory.GetQuery<SelectShiftSignupTradeByTargetIdQuery>();
@@ -180,7 +180,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftSignupTrade>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectOpenShiftSignupTradesByUserIdQuery>();
@@ -221,7 +221,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftSignupTrade>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectShiftTradeAndSourceByUserIdQuery>();

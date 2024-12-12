@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.Role
         public string GetQuery()
         {
             var query = _sqlConfiguration.DeleteRoleQuery
-                                         .ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceDeleteQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.RoleTable,
 																	   "Id", // TODO: Me Fix -SJ
                                                                        $"{_sqlConfiguration.ParameterNotation}Id");

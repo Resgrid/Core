@@ -37,7 +37,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<DepartmentPlanCount>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectGetDepartmentPlanCountsQuery>();
@@ -78,7 +78,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<Payment>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("TransactionId", transactionId);
 
 					var query = _queryFactory.GetQuery<SelectPaymentByTransactionIdQuery>();
@@ -119,7 +119,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Payment>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectPaymentsByDIdQuery>();
@@ -162,7 +162,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<Payment>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("PaymentId", paymentId);
 
 					var query = _queryFactory.GetQuery<SelectPaymentByIdQuery>();

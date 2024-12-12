@@ -35,7 +35,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<WorkshiftEntity>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("WorkshiftId", workshiftId);
 
 					var query = _queryFactory.GetQuery<SelectWorkshiftEntitiesByWorkshiftIdQuery>();

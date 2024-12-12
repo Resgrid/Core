@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.ResourceOrders
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectAllItemsByOrderIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.ResourceOrderItemsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%ID%" },

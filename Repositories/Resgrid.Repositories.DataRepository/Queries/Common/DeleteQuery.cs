@@ -21,8 +21,8 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
         public string GetQuery<TEntity>(TEntity entity) where TEntity : class, IEntity
         {
 	        var query = _sqlConfiguration.DeleteQuery
-		        .ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
-			        ((IEntity)entity).TableName,
+		        .ReplaceDeleteQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
+					((IEntity)entity).TableName,
 			        ((IEntity)entity).IdName,
 			        $"{_sqlConfiguration.ParameterNotation}Id");
 

@@ -2,6 +2,9 @@
 using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
+using static Resgrid.Framework.Testing.TestData;
+using Stripe;
+using System.Text.RegularExpressions;
 
 namespace Resgrid.Repositories.DataRepository.Queries.DepartmentGroups
 {
@@ -16,7 +19,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentGroups
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectGroupMembersByGroupIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {
@@ -35,7 +38,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentGroups
 						_sqlConfiguration.DepartmentGroupMembersTable,
 						_sqlConfiguration.DepartmentMembersTable
 					}
-				);
+			);
 
 			return query;
 		}

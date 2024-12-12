@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Certifications
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectCertsByUserQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.CertificationsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%USERID%" },

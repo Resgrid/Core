@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Forms
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.UpdateFormsToDisableQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.CallsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%FORMID%" },

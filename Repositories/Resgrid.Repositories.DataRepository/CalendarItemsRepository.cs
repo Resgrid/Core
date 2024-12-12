@@ -37,7 +37,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<CalendarItem>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CalendarItemId", id);
 
 					var query = _queryFactory.GetQuery<SelectCalendarItemByRecurrenceIdQuery>();
@@ -80,7 +80,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						var dynamicParameters = new DynamicParameters();
+						var dynamicParameters = new DynamicParametersExtension();
 						dynamicParameters.Add("CalendarItemId", id);
 
 						var query = _queryFactory.GetDeleteQuery<DeleteCalendarItemQuery>();
@@ -128,7 +128,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<CalendarItem>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("StartDate", startDate);
 
 					var query = _queryFactory.GetQuery<SelectCalendarItemsByDateQuery>();
@@ -169,7 +169,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<CalendarItem>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CalendarItemId", calendarItemId);
 
 					var query = _queryFactory.GetQuery<SelectCalendarItemByIdQuery>();
@@ -217,7 +217,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<CalendarItem>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectCalendarItemByDIdQuery>();

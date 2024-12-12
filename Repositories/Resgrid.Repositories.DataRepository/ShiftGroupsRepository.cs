@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftGroup>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("GroupId", departmentGroupId);
 
 					var query = _queryFactory.GetQuery<SelectShiftGroupByGroupQuery>();
@@ -87,7 +87,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftGroup>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ShiftId", shiftId);
 
 					var query = _queryFactory.GetQuery<SelectShiftGroupByShiftIdQuery>();

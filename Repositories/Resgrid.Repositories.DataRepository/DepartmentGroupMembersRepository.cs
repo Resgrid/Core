@@ -36,7 +36,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroupMember>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("GroupId", groupId);
 
 					var query = _queryFactory.GetQuery<SelectGroupMembersByGroupIdQuery>();
@@ -77,7 +77,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroupMember>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 					dynamicParameters.Add("DepartmentId", departmentId);
 
@@ -123,7 +123,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						var dynamicParameters = new DynamicParameters();
+						var dynamicParameters = new DynamicParametersExtension();
 						dynamicParameters.Add("GroupId", groupId);
 						dynamicParameters.Add("DepartmentId", departmentId);
 
@@ -173,7 +173,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<DepartmentGroupMember>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectGroupAdminsByDidQuery>();

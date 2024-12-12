@@ -16,11 +16,26 @@ namespace Resgrid.Repositories.DataRepository.Queries.DepartmentSettings
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectDepartmentManagerInfoByEmailQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.DepartmentSettingsTable,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
+					string.Empty,
 					_sqlConfiguration.ParameterNotation,
-					new string[] { "%EMAILADDRESS%" },
-					new string[] { "EmailAddress" });
+					new string[] {
+						"%EMAILADDRESS%"
+					},
+					new string[] {
+						"EmailAddress"
+					},
+					new string[] {
+						"%DEPARTMENTSTABLE%",
+						"%ASPNETUSERSTABLE%",
+						"%USERPROFILESTABLE%",
+					},
+					new string[] {
+						_sqlConfiguration.DepartmentsTable,
+						"AspNetUsers",
+						_sqlConfiguration.UserProfilesTable
+					}
+				);
 
 			return query;
 		}

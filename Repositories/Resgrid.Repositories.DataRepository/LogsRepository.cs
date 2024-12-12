@@ -35,7 +35,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Log>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectLogsByUserIdQuery>();
@@ -76,7 +76,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Log>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CallId", callId);
 
 					var query = _queryFactory.GetQuery<SelectLogsByCallIdQuery>();
@@ -117,7 +117,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Log>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("GroupId", groupId);
 
 					var query = _queryFactory.GetQuery<SelectLogsByGroupIdQuery>();
@@ -158,7 +158,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<string>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectLogYearsByDeptQuery>();
@@ -199,9 +199,9 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Log>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
-					dynamicParameters.Add("Year", year);
+					dynamicParameters.Add("Year", int.Parse(year));
 
 					var query = _queryFactory.GetQuery<SelecAllLogsByDidYearQuery>();
 

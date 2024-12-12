@@ -16,11 +16,26 @@ namespace Resgrid.Repositories.DataRepository.Queries.PersonnelRoles
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectRoleUsersByUserQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-					_sqlConfiguration.PersonnelRoleUsersTable,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
+					string.Empty,
 					_sqlConfiguration.ParameterNotation,
-					new string[] { "%USERID%", "%DID%" },
-					new string[] { "UserId", "DepartmentId" });
+					new string[] {
+						"%USERID%",
+						"%DID%"
+					},
+					new string[] {
+						"UserId",
+						"DepartmentId"
+					},
+					new string[] {
+						"%PERSONNELROLEUSERSTABLE%",
+						"%PERSONNELROLESTABLE%"
+					},
+					new string[] {
+						_sqlConfiguration.PersonnelRoleUsersTable,
+						_sqlConfiguration.PersonnelRolesTable
+					}
+				);
 
 			return query;
 		}

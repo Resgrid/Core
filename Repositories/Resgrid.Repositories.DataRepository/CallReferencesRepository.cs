@@ -38,7 +38,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<CallReference>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CallId", callId);
 
 					var query = _queryFactory.GetQuery<SelectAllCallReferencesByTargetCallIdQuery>();
@@ -82,7 +82,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<CallReference>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CallId", callId);
 
 					var query = _queryFactory.GetQuery<SelectAllCallReferencesBySourceCallIdQuery>();

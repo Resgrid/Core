@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Calls
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectAllCallGroupDispsByCallIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.CallDispatchGroupsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%CALLID%" },

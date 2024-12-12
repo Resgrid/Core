@@ -21,7 +21,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
         public string GetQuery<TEntity>(TEntity entity) where TEntity : class, IEntity
         {
 	        var query = _sqlConfiguration.DeleteMultipleQuery.
-				ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 			        string.Empty,
 			        _sqlConfiguration.ParameterNotation,
 			        new string[] {

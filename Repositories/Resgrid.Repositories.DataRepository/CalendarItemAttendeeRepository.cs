@@ -34,7 +34,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<CalendarItemAttendee>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CalendarItemId", calendarEventItemId);
 					dynamicParameters.Add("UserId", userId);
 

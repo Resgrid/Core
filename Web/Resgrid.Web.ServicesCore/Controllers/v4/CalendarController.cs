@@ -39,7 +39,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 		#endregion Members and Constructors
 
-
 		/// <summary>
 		/// Gets the department calendar items.
 		/// </summary>
@@ -109,7 +108,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			
 			if (items != null && items.Any())
 			{
-
+				items = items.OrderBy(x => x.Start).ToList();
 				foreach (var item in items)
 				{
 					if (item.ItemType > 0)

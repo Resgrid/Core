@@ -23,7 +23,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
             valuesArray = valuesArray.InsertQueryValuesFragment(_sqlConfiguration.ParameterNotation, columns);
 
             var query = _sqlConfiguration.InsertUserLoginQuery
-                                         .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceInsertQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.UserLoginTable,
                                                                        _sqlConfiguration.InsertGetReturnIdCommand,
                                                                        columns.GetCommaSeparatedColumns(),

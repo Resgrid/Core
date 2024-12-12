@@ -25,7 +25,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
             var userProperties = entity.GetColumns(_sqlConfiguration, ignoreIdProperty: false, ignoreProperties: new string[] { "ConcurrencyStamp" }, forInsert: false);
 
             var query = _sqlConfiguration.GetUserLoginByLoginProviderAndProviderKeyQuery
-                                         .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
                                                                  string.Empty,
                                                                  _sqlConfiguration.ParameterNotation,
                                                                  new string[] {

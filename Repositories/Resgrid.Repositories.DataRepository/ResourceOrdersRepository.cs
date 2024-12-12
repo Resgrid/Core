@@ -45,7 +45,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrder>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 
 
 					var query = _queryFactory.GetQuery<SelectAllOpenOrdersQuery>();
@@ -88,7 +88,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrder>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 					dynamicParameters.Add("CurrentDate", DateTime.UtcNow.AddDays(-7));
 
@@ -213,7 +213,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrderItem>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ResourceOrderId", resourceOrderId);
 
 					var query = _queryFactory.GetQuery<SelectItemsByResourceOrderIdQuery>();

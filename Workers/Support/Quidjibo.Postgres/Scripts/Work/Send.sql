@@ -1,0 +1,30 @@
+﻿INSERT INTO public.work 
+( 
+    id, 
+    scheduleid, 
+    correlationid, 
+    name,
+    worker,
+    queue,
+    attempts, 
+    createdon,
+    expireon, 
+    visibleon, 
+    status, 
+    payload
+) 
+VALUES 
+(
+    @Id, 
+    @ScheduleId, 
+    @CorrelationId, 
+    @Name,
+    @Worker,
+    @Queue,
+    @Attempts, 
+    @CreatedOn, 	
+    @ExpireOn, 
+    @VisibleOn, 
+    @Status, 
+    @Payload
+)

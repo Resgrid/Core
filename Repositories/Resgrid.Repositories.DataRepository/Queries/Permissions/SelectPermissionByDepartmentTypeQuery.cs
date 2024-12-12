@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Permissions
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectPermissionByDepartmentTypeQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.PermissionsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%", "%TYPE%" },

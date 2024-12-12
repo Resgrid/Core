@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Calls
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectAllCallsByDidDateQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.CallsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%", "%STARTDATE%", "%ENDDATE%" },

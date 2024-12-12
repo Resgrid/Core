@@ -28,7 +28,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
 			var idName = ((IEntity)entity).IdName;
 
             var query = _sqlConfiguration.UpdateQuery
-                                         .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
+                                         .ReplaceUpdateQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 	                                         tableName,
 	                                         setFragment,
 	                                         idName,

@@ -37,7 +37,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Inventory>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("TypeId", typeId);
 
 					var query = _queryFactory.GetQuery<SelectInventoryByTypeIdQuery>();
@@ -78,7 +78,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Inventory>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectInventoryByDIdQuery>();
@@ -121,7 +121,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<Inventory>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("InventoryId", inventoryId);
 
 					var query = _queryFactory.GetQuery<SelectInventoryByInventoryIdQuery>();
@@ -166,7 +166,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
-						var dynamicParameters = new DynamicParameters();
+						var dynamicParameters = new DynamicParametersExtension();
 						dynamicParameters.Add("GroupId", groupId);
 						dynamicParameters.Add("DepartmentId", departmentId);
 

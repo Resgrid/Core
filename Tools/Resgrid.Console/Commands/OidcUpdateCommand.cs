@@ -29,7 +29,7 @@ namespace Resgrid.Console.Commands
 				_console.WriteLine($"Using Database: {builder.InitialCatalog} on Server: {builder.DataSource}");
 
 				var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
-				bool result = oidcRepository.UpdateOidcDatabase();
+				bool result = oidcRepository.UpdateOidcDatabaseAsync().Result;
 
 				if (result)
 					_console.WriteLine("Completed updating the Resgrid OIDC DB!");

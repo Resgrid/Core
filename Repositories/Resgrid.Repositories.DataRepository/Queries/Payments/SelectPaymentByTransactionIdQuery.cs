@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Departments
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectPaymentByTransactionIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.PaymentsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%TRANSACTIONID%" },

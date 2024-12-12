@@ -38,7 +38,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ResourceOrderItem>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("ResourceOrderId", resourceOrderId);
 
 					var query = _queryFactory.GetQuery<SelectAllItemsByOrderIdQuery>();

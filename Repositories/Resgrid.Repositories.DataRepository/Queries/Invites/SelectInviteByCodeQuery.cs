@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Invites
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectInviteByCodeQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.InvitesTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%CODE%" },

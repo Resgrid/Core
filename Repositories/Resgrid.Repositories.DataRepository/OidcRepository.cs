@@ -6,49 +6,92 @@ using Resgrid.Config;
 using System.IO;
 using Resgrid.Providers.Migrations.Migrations;
 using System;
-using DnsClient;
-using Serilog.Core;
+using Resgrid.Providers.MigrationsPg.Migrations;
+using Npgsql;
+using System.Threading.Tasks;
 
 namespace Resgrid.Repositories.DataRepository
 {
 	public class OidcRepository : IOidcRepository
 	{
-		public bool UpdateOidcDatabase()
+		public async Task<bool> UpdateOidcDatabaseAsync()
 		{
 			try
 			{
-				var assembly = typeof(M0001_InitialMigration).Assembly;
-
-				// Initial Migration
-				var resourceName = "Resgrid.Providers.Migrations.Sql.EF0001_PopulateOIDCDb.sql";
-
-				using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-				using (StreamReader reader = new StreamReader(stream))
+				if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
 				{
-					string migrationScript = reader.ReadToEnd();
+					var assembly = typeof(M0001_InitialMigrationPg).Assembly;
 
-					if (!string.IsNullOrWhiteSpace(migrationScript))
+					// Initial Migration
+					var resourceName = "Resgrid.Providers.MigrationsPg.Sql.EF0001_PopulateOIDCDb.sql";
+
+					using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+					using (StreamReader reader = new StreamReader(stream))
 					{
-						using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+						string migrationScript = reader.ReadToEnd();
+
+						if (!string.IsNullOrWhiteSpace(migrationScript))
 						{
-							var response = db.Execute(migrationScript);
+							using (var conn = new NpgsqlConnection(OidcConfig.ConnectionString))
+							using (var cmd = conn.CreateCommand())
+							{
+								{
+									await conn.OpenAsync();
+									using (var tran = conn.BeginTransaction())
+									{
+										try
+										{
+											cmd.Transaction = tran;
+											cmd.CommandText = migrationScript;
+											await cmd.ExecuteNonQueryAsync();
+											await tran.CommitAsync();
+										}
+										catch
+										{
+											await tran.RollbackAsync();
+											throw;
+										}
+									}
+								}
+							}
 						}
 					}
 				}
-
-				// Update to V5
-				var resourceName2 = "Resgrid.Providers.Migrations.Sql.EF0003_MigrateOIDCDbToV5.sql";
-
-				using (Stream stream = assembly.GetManifestResourceStream(resourceName2))
-				using (StreamReader reader = new StreamReader(stream))
+				else
 				{
-					string migrationScript = reader.ReadToEnd();
+					var assembly = typeof(M0001_InitialMigration).Assembly;
 
-					if (!string.IsNullOrWhiteSpace(migrationScript))
+					// Initial Migration
+					var resourceName = "Resgrid.Providers.Migrations.Sql.EF0001_PopulateOIDCDb.sql";
+
+					using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+					using (StreamReader reader = new StreamReader(stream))
 					{
-						using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+						string migrationScript = reader.ReadToEnd();
+
+						if (!string.IsNullOrWhiteSpace(migrationScript))
 						{
-							var response = db.Execute(migrationScript);
+							using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+							{
+								var response = await db.ExecuteAsync(migrationScript);
+							}
+						}
+					}
+
+					// Update to V5
+					var resourceName2 = "Resgrid.Providers.Migrations.Sql.EF0003_MigrateOIDCDbToV5.sql";
+
+					using (Stream stream = assembly.GetManifestResourceStream(resourceName2))
+					using (StreamReader reader = new StreamReader(stream))
+					{
+						string migrationScript = reader.ReadToEnd();
+
+						if (!string.IsNullOrWhiteSpace(migrationScript))
+						{
+							using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
+							{
+								var response = await db.ExecuteAsync(migrationScript);
+							}
 						}
 					}
 				}

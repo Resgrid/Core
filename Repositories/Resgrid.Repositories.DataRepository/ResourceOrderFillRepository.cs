@@ -35,7 +35,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var updateFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("Accepted", accepted);
 					dynamicParameters.Add("AcceptedUserId", userId);
 					dynamicParameters.Add("AcceptedOn", DateTime.UtcNow);

@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Calendar
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectCalendarItemAttendeeByUserQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.CalendarItemAttendeesTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%ID%", "%USERID%" },

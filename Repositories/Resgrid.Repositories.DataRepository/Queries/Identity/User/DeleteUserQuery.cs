@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Identity.User
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.DeleteUserQuery
-										 .ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceDeleteQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																	   _sqlConfiguration.UserTable,
 																	   "Id", // TODO: Fix MEEEE!
 																	   $"{_sqlConfiguration.ParameterNotation}Id");

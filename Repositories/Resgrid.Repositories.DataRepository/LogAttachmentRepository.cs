@@ -35,7 +35,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<LogAttachment>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("LogId", logId);
 
 					var query = _queryFactory.GetQuery<SelectLogAttachmentByLogIdQuery>();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,12 +14,15 @@ namespace Resgrid.Services
 		private readonly IPoiTypesRepository _poiTypesRepository;
 		private readonly IPoisRepository _poisRepository;
 		private readonly IMongoRepository<MapLayer> _mapLayersRepository;
+		private readonly IMapLayersDocRepository _mapLayersDocRepository;
 
-		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository, IMongoRepository<MapLayer> mapLayersRepository)
+		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository, IMongoRepository<MapLayer> mapLayersRepository,
+			IMapLayersDocRepository mapLayersDocRepository)
 		{
 			_poiTypesRepository = poiTypesRepository;
 			_poisRepository = poisRepository;
 			_mapLayersRepository = mapLayersRepository;
+			_mapLayersDocRepository = mapLayersDocRepository;
 		}
 
 		public async Task<PoiType> SavePOITypeAsync(PoiType type, CancellationToken cancellationToken = default(CancellationToken))
@@ -59,26 +63,56 @@ namespace Resgrid.Services
 
 		public async Task<MapLayer> SaveMapLayerAsync(MapLayer mapLayer)
 		{
-			if (mapLayer.Id.Timestamp == 0)
-				await _mapLayersRepository.InsertOneAsync(mapLayer);
-			else
-				await _mapLayersRepository.ReplaceOneAsync(mapLayer);
+			if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+			{
+				if (String.IsNullOrEmpty(mapLayer.PgId))
+					await _mapLayersDocRepository.InsertAsync(mapLayer);
+				else
+					await _mapLayersDocRepository.UpdateAsync(mapLayer);
 
-			return mapLayer;
+				return mapLayer;
+			}
+			else
+			{
+				if (mapLayer.Id.Timestamp == 0)
+					await _mapLayersRepository.InsertOneAsync(mapLayer);
+				else
+					await _mapLayersRepository.ReplaceOneAsync(mapLayer);
+
+				return mapLayer;
+			}
 		}
 
 		public async Task<List<MapLayer>> GetMapLayersForTypeDepartmentAsync(int departmentId, MapLayerTypes type)
 		{
-			var layers = await _mapLayersRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+			if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+			{
+				var layers = await _mapLayersDocRepository.GetAllMapLayersByDepartmentIdAsync(departmentId, type);
 
-			return layers.ToList();
+				return layers;
+			}
+			else
+			{
+				var layers = await _mapLayersRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+
+				return layers.ToList();
+			}
 		}
 
 		public async Task<MapLayer> GetMapLayersByIdAsync(string id)
 		{
-			var layers = await _mapLayersRepository.FindByIdAsync(id);
+			if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+			{
+				var layers = await _mapLayersDocRepository.GetByIdAsync(id);
 
-			return layers;
+				return layers;
+			}
+			else
+			{
+				var layers = await _mapLayersRepository.FindByIdAsync(id);
+
+				return layers;
+			}
 		}
 	}
 }

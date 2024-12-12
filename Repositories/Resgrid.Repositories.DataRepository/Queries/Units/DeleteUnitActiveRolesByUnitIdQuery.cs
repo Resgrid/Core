@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Units
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.DeleteUnitActiveRolesByUnitIdQuery
-				.ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceDeleteQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.UnitActiveRolesTable,
 					"UnitId",
 					"%UNITID%");

@@ -33,7 +33,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
 
 
 			var query = _sqlConfiguration.InsertQuery
-										 .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceInsertQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 											((IEntity)entity).TableName,
 											returnId,
 											columns.GetCommaSeparatedColumns(),

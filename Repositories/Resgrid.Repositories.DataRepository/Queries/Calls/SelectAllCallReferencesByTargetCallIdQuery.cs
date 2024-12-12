@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Calls
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectAllCallReferencesByTargetCallIdQuery
-										 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+										 .ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 																 string.Empty,
 																 _sqlConfiguration.ParameterNotation,
 																new string[] {

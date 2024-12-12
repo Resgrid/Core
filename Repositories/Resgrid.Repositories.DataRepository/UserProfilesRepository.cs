@@ -37,7 +37,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<UserProfile>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectProfileByUserIdQuery>();
@@ -81,7 +81,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<UserProfile>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("MobileNumber", mobileNumber);
 
 					var query = _queryFactory.GetQuery<SelectProfileByMobileQuery>();
@@ -125,7 +125,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<UserProfile>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("HomeNumber", homeNumber);
 
 					var query = _queryFactory.GetQuery<SelectProfileByHomeQuery>();
@@ -169,7 +169,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<UserProfile>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectAllNonDeletedProfilesByDIdQuery>();
@@ -219,7 +219,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<UserProfile>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectAllProfilesByDIdQuery>();
@@ -267,13 +267,13 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<UserProfile>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 
 					var usersToQuery = String.Join(",", userIds.Select(p => $"'{p.ToString()}'").ToArray());
 					dynamicParameters.Add("UserIds", usersToQuery);
 
 					var query = _queryFactory.GetQuery<SelectProfilesByIdsQuery>();
-					query = query.Replace("@UserIds", usersToQuery);
+					query = query.Replace("@UserIds", usersToQuery, StringComparison.InvariantCultureIgnoreCase);
 
 					var dictionary = new Dictionary<int, UserProfile>();
 					var result = await x.QueryAsync<UserProfile, IdentityUser, UserProfile>(sql: query,

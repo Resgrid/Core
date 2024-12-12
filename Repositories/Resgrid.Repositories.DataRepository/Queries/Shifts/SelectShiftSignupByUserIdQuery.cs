@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Shifts
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectShiftSignupByUserIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.ShiftSignupsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%USERID%" },

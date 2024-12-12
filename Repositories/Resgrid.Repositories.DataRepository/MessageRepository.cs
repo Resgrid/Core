@@ -37,7 +37,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<int>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectUnreadMessageCountQuery>();
@@ -122,7 +122,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<Message>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("MessageId", messageId);
 
 					var query = _queryFactory.GetQuery<SelectMessageByIdQuery>();
@@ -170,7 +170,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Message>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectInboxMessagesByUserQuery>();
@@ -218,7 +218,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Message>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectSentMessagesByUserQuery>();
@@ -266,7 +266,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Message>>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<SelectMessagesByUserQuery>();
@@ -328,11 +328,11 @@ namespace Resgrid.Repositories.DataRepository
 
 				var selectFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 
 					var query = _queryFactory.GetQuery<UpdateRecievedMessagesAsDeletedQuery>();
-					query = query.Replace("%MESSAGEIDS%", ids.ToString());
+					query = query.Replace("%MESSAGEIDS%", ids.ToString(), StringComparison.InvariantCultureIgnoreCase);
 
 					var result = await x.QueryAsync(sql: query,
 						param: dynamicParameters,
@@ -386,12 +386,12 @@ namespace Resgrid.Repositories.DataRepository
 
 				var selectFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
-					var dynamicParameters = new DynamicParameters();
+					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("UserId", userId);
 					dynamicParameters.Add("ReadOn", DateTime.UtcNow);
 
 					var query = _queryFactory.GetQuery<UpdateRecievedMessagesAsReadQuery>();
-					query = query.Replace("%MESSAGEIDS%", ids.ToString());
+					query = query.Replace("%MESSAGEIDS%", ids.ToString(), StringComparison.InvariantCultureIgnoreCase);
 
 					var result = await x.QueryAsync(sql: query,
 						param: dynamicParameters,

@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Protocols
 		public string GetQuery()
 		{
 			var query = _sqlConfiguration.SelectProtocolAttachmentsByProIdQuery
-				.ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.DispatchProtocolAttachmentsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%PROTOCOLID%" },

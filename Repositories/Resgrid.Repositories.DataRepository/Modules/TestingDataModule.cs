@@ -17,13 +17,20 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			builder.RegisterType<StandardIsolation>().As<IISolationLevel>().InstancePerLifetimeScope();
 
+			if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
+			{
+				builder.RegisterType<PostgreSqlConfiguration>().As<SqlConfiguration>().InstancePerLifetimeScope();
+				builder.RegisterType<PostgreSqlConnectionProvider>().As<IConnectionProvider>().InstancePerLifetimeScope();
+			}
+			else
+			{
+				builder.RegisterType<SqlServerConfiguration>().As<SqlConfiguration>().InstancePerLifetimeScope();
+				builder.RegisterType<SqlServerConnectionProvider>().As<IConnectionProvider>().InstancePerLifetimeScope();
+			}
+
 			builder.RegisterType<QueryList>().As<IQueryList>().InstancePerLifetimeScope();
-			//builder.RegisterType<SqlServerConfiguration>().As<SqlConfiguration>().InstancePerLifetimeScope();
-			builder.RegisterType<PostgreSqlConfiguration>().As<SqlConfiguration>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
 			builder.RegisterType<QueryFactory>().As<IQueryFactory>().InstancePerLifetimeScope();
-			//builder.RegisterType<SqlServerConnectionProvider>().As<IConnectionProvider>().InstancePerLifetimeScope();
-			builder.RegisterType<PostgreSqlConnectionProvider>().As<IConnectionProvider>().InstancePerLifetimeScope();
 
 			// Custom Repositories
 			builder.RegisterType<UserStatesRepository>().As<IUserStatesRepository>().InstancePerLifetimeScope();

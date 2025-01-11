@@ -23,7 +23,13 @@ namespace Resgrid.Repositories.DataRepository.Queries.Common
 			if (((IEntity)entity).IdType == 0)
 			{
 				ignoredProperties.Add(((IEntity)entity).IdName);
-				returnId = _sqlConfiguration.InsertGetReturnIdCommand;
+
+				if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
+				{
+					returnId = $" RETURNING {((IEntity)entity).IdName.ToLower()}";
+				}
+				else
+					returnId = _sqlConfiguration.InsertGetReturnIdCommand;
 			}
 
 			var columns = entity.GetColumns(_sqlConfiguration, ignoreProperties: ignoredProperties);

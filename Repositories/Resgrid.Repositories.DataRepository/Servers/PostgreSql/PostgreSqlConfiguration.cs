@@ -24,8 +24,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SchemaName = "public";
 			TableColumnStartNotation = "\"";
 			TableColumnEndNotation = "\"";
-			InsertGetReturnIdCommand =
-				"; SELECT lastval();"; // For Postgresql INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id; https://stackoverflow.com/questions/2944297/postgresql-function-for-last-inserted-id/2944481
+			//InsertGetReturnIdCommand =
+			//	"; SELECT lastval();"; // For Postgresql INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id; https://stackoverflow.com/questions/2944297/postgresql-function-for-last-inserted-id/2944481
+			InsertGetReturnIdCommand = "";
 			QueryPrefix = DataConfig.QueryPrefix;
 			#region Common Queries
 
@@ -391,7 +392,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			UpdateRoleQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
 			SelectRoleByNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Name = %NAME%";
 			SelectRoleByIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
-			InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% OUTPUT INSERTED.Id VALUES(%VALUES%)";
+			InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%) RETURNING id;";
 			DeleteUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
 			UpdateUserQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
 			SelectUserByUserNameQuery =

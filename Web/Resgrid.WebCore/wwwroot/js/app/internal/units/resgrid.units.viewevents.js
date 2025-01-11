@@ -6,20 +6,10 @@ var resgrid;
         var viewevents;
         (function (viewevents) {
             $(document).ready(function () {
-
-
-
-
-                //var mapOptions = {
-                //    center: new google.maps.LatLng(43, 16),
-                //    zoom: 11,
-                //    mapTypeId: google.maps.MapTypeId.ROADMAP
-                //};
-                //map = new google.maps.Map(document.getElementById('eventsMap'), mapOptions);
-
                 viewevents.markers = [];
                 viewevents.map = L.map('eventsMap').setView([centerLat, centerLon], 13);
-                L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' + osmKey, {
+
+                L.tileLayer(osmTileUrl, {
                     attribution: ''
                 }).addTo(viewevents.map);
 

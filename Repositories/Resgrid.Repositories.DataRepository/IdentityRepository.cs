@@ -143,7 +143,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"INSERT INTO public.aspnetuserroles ([userid] ,[roleid]) VALUES (@userId, @roleId)", new { userId = userId, roleId = roleId });
+					db.Execute($"INSERT INTO public.aspnetuserroles (\"userid\" ,\"roleid\") VALUES (@userId, @roleId)", new { userId = userId, roleId = roleId });
 				}
 			}
 			else
@@ -161,8 +161,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"INSERT INTO public.aspnetusersext ([userid] ,[createdate] ,[lastactivitydate]) VALUES (@userId,@dateTimeNow,@dateTimeNow)", new { userId = userId, dateTimeNow = DateTime.UtcNow });
-					db.Execute($"UPDATE public.aspnetusers SET emailconfirmed = 1 WHERE id = @userId", new { userId = userId });
+					db.Execute($"INSERT INTO public.aspnetusersext (\"userid\" ,\"createdate\" ,\"lastactivitydate\") VALUES (@userId,@dateTimeNow,@dateTimeNow)", new { userId = userId, dateTimeNow = DateTime.UtcNow });
+					db.Execute($"UPDATE public.aspnetusers SET emailconfirmed = true WHERE id = @userId", new { userId = userId });
 				}
 			}
 			else

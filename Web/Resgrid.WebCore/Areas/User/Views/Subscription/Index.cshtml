@@ -483,7 +483,7 @@
                     const amount = slider == 1 ? val : $("#amount").val();
 
                     if (amount && amount > 10) {
-                        const packs = amount / 10;
+                        const packs = (amount / 10) - 1; // First 10 users are free.
 
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs,
@@ -652,7 +652,7 @@
                     ];
 
                     let finalCost = 0.0;
-                    let remainingUsers = totalNumUsers / 10;
+                    let remainingUsers = (totalNumUsers / 10) - 1; // First 10 users are free.
                     let pricingTiers = isMonthly ? pricingTiersMonthly : pricingTiersYearly;
 
                     for (let i = 0; i < pricingTiers.length; i++) {

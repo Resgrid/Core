@@ -2,7 +2,7 @@
   "profiles": {
     "Resgrid.Console": {
       "commandName": "Project",
-      "commandLineArgs": "--MigrateDocsDb"
+      "commandLineArgs": "--DbUpdate"
     }
   }
 }

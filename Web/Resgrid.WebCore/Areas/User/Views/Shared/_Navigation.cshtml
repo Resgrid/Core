@@ -15,7 +15,10 @@
 					</a>
 					<ul class="dropdown-menu animated fadeInRight m-t-xs" style="z-index: 10000;">
 						<li><a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-UserId="@ClaimsAuthorizationHelper.GetUserId()">@commonLocalizer["Profile"]</a></li>
-						<li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">@commonLocalizer["Mailbox"]</a></li>
+						@if (SettingsHelper.IsMessagingEnabled())
+						{
+							<li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">@commonLocalizer["Mailbox"]</a></li>
+						}
 						<li><a asp-controller="Profile" asp-action="YourDepartments" asp-route-area="User">@commonLocalizer["YourDepartments"]</a></li>
 						<li class="divider"></li>
 						<li><a asp-controller="Account" asp-action="LogOff" asp-route-area="">@commonLocalizer["Logout"]</a></li>
@@ -34,33 +37,66 @@
 			<li class="@Html.IsSelected(controller: "Units")">
 				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">@commonLocalizer["UnitsModule"]</span></a>
 			</li>
-			<li class="@Html.IsSelected(controller: "Mapping")">
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["MappingModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Shifts")">
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["ShiftsModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Logs")">
-				<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@commonLocalizer["LogsModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Reports")">
-				<a asp-controller="Reports" asp-action="Index" asp-route-area="User"><i class="fa fa-files-o"></i> <span class="nav-label" data-i18n="nav.reports">@commonLocalizer["ReportsModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Documents")">
-				<a asp-controller="Documents" asp-action="Index" asp-route-area="User"><i class="fa fa-file-archive-o"></i> <span class="nav-label" data-i18n="nav.documents">@commonLocalizer["DocumentsModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Calendar")">
-				<a asp-controller="Calendar" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> <span class="nav-label" data-i18n="nav.calendar">@commonLocalizer["CalendarModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Notes")">
-				<a asp-controller="Notes" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> <span class="nav-label" data-i18n="nav.notes">@commonLocalizer["NotesModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Trainings")">
-				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">@commonLocalizer["TrainingsModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Inventory")">
-				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User"><i class="fa fa-barcode"></i> <span class="nav-label" data-i18n="nav.inventory">@commonLocalizer["InventoryModule"]</span></a>
-			</li>
+			@if (ClaimsAuthorizationHelper.CanViewContacts())
+			{
+				<li class="@Html.IsSelected(controller: "Contacts")">
+					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@commonLocalizer["ContactsModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsMappingEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Mapping")">
+					<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["MappingModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsShiftsEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Shifts")">
+					<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["ShiftsModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsLogsEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Logs")">
+					<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@commonLocalizer["LogsModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsReportsEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Reports")">
+					<a asp-controller="Reports" asp-action="Index" asp-route-area="User"><i class="fa fa-files-o"></i> <span class="nav-label" data-i18n="nav.reports">@commonLocalizer["ReportsModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsDocumentsEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Documents")">
+					<a asp-controller="Documents" asp-action="Index" asp-route-area="User"><i class="fa fa-file-archive-o"></i> <span class="nav-label" data-i18n="nav.documents">@commonLocalizer["DocumentsModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsCalendarEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Calendar")">
+					<a asp-controller="Calendar" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> <span class="nav-label" data-i18n="nav.calendar">@commonLocalizer["CalendarModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsNotesEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Notes")">
+					<a asp-controller="Notes" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> <span class="nav-label" data-i18n="nav.notes">@commonLocalizer["NotesModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsTrainingEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Trainings")">
+					<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">@commonLocalizer["TrainingsModule"]</span></a>
+				</li>
+			}
+			@if (SettingsHelper.IsInventoryEnabled())
+			{
+				<li class="@Html.IsSelected(controller: "Inventory")">
+					<a asp-controller="Inventory" asp-action="Index" asp-route-area="User"><i class="fa fa-barcode"></i> <span class="nav-label" data-i18n="nav.inventory">@commonLocalizer["InventoryModule"]</span></a>
+				</li>
+			}
 		</ul>
 	</div>
 </nav>

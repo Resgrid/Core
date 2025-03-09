@@ -8,7 +8,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("PaymentAddons").AddColumn("Quantity").AsInt64().NotNullable().WithDefaultValue(1);
+			Alter.Table("PaymentAddons".ToLower()).AddColumn("Quantity".ToLower()).AsInt64().NotNullable().WithDefaultValue(1);
 		}
 
 		public override void Down()

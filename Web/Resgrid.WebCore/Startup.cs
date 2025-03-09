@@ -310,6 +310,11 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.CustomStates_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.CustomStates_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.CustomStates_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Contacts_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Contacts_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Contacts_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Contacts_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 

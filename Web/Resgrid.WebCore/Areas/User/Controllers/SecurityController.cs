@@ -282,6 +282,42 @@ namespace Resgrid.Web.Areas.User.Controllers
 			viewGroupUnitsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
 			model.ViewGrouUnitsPermissions = new SelectList(viewGroupUnitsPermissions, "Id", "Name");
 
+			var viewContactsPermissions = new List<dynamic>();
+			viewContactsPermissions.Add(new { Id = 3, Name = "Everyone" });
+			viewContactsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			viewContactsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			viewContactsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.ViewContactsPermissions = new SelectList(viewContactsPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactView))
+				model.ViewContacts = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactView).Action;
+			else
+				model.ViewContacts = 3;
+
+			var editContactsPermissions = new List<dynamic>();
+			editContactsPermissions.Add(new { Id = 3, Name = "Everyone" });
+			editContactsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			editContactsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			editContactsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.EditContactsPermissions = new SelectList(editContactsPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactEdit))
+				model.EditContacts = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactEdit).Action;
+			else
+				model.EditContacts = 3;
+
+			var deleteContactsPermissions = new List<dynamic>();
+			deleteContactsPermissions.Add(new { Id = 3, Name = "Everyone" });
+			deleteContactsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			deleteContactsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			deleteContactsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.DeleteContactsPermissions = new SelectList(deleteContactsPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactDelete))
+				model.DeleteContacts = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactDelete).Action;
+			else
+				model.DeleteContacts = 3;
+
 			return View(model);
 		}
 

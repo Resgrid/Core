@@ -8,35 +8,35 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Create.Table("Forms")
-			   .WithColumn("FormId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("DepartmentId").AsInt32().NotNullable()
-			   .WithColumn("Type").AsInt32().NotNullable()
-			   .WithColumn("Name").AsCustom("citext").NotNullable()
-			   .WithColumn("IsActive").AsBoolean()
-			   .WithColumn("IsDeleted").AsBoolean()
-			   .WithColumn("Data").AsCustom("citext")
-			   .WithColumn("CreatedOn").AsDateTime2()
-			   .WithColumn("CreatedBy").AsCustom("citext")
-			   .WithColumn("UpdatedOn").AsDateTime2()
-			   .WithColumn("UpdatedBy").AsCustom("citext");
+			Create.Table("Forms".ToLower())
+			   .WithColumn("FormId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("DepartmentId".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("Type".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("Name".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("IsActive".ToLower()).AsBoolean()
+			   .WithColumn("IsDeleted".ToLower()).AsBoolean()
+			   .WithColumn("Data".ToLower()).AsCustom("citext")
+			   .WithColumn("CreatedOn".ToLower()).AsDateTime2()
+			   .WithColumn("CreatedBy".ToLower()).AsCustom("citext")
+			   .WithColumn("UpdatedOn".ToLower()).AsDateTime2()
+			   .WithColumn("UpdatedBy".ToLower()).AsCustom("citext");
 
-			Create.Table("FormAutomations")
-			   .WithColumn("FormAutomationId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("FormId").AsCustom("citext").NotNullable()
-			   .WithColumn("TriggerField").AsCustom("citext").NotNullable()
-			   .WithColumn("TriggerValue").AsCustom("citext")
-			   .WithColumn("OperationType").AsInt32().NotNullable()
-			   .WithColumn("OperationValue").AsCustom("citext");
+			Create.Table("FormAutomations".ToLower())
+			   .WithColumn("FormAutomationId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("FormId".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("TriggerField".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("TriggerValue".ToLower()).AsCustom("citext")
+			   .WithColumn("OperationType".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("OperationValue".ToLower()).AsCustom("citext");
 
 
 			Create.ForeignKey("FK_Forms_Departments")
-				.FromTable("Forms").ForeignColumn("DepartmentId")
-				.ToTable("Departments").PrimaryColumn("DepartmentId");
+				.FromTable("Forms".ToLower()).ForeignColumn("DepartmentId".ToLower())
+				.ToTable("Departments".ToLower()).PrimaryColumn("DepartmentId".ToLower());
 
 			Create.ForeignKey("FK_FormAutomations_Forms")
-				.FromTable("FormAutomations").ForeignColumn("FormId")
-				.ToTable("Forms").PrimaryColumn("FormId");
+				.FromTable("FormAutomations".ToLower()).ForeignColumn("FormId".ToLower())
+				.ToTable("Forms".ToLower()).PrimaryColumn("FormId".ToLower());
 		}
 
 		public override void Down()

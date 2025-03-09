@@ -1,0 +1,227 @@
+﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentModulesSettingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["DispatchSettingsModuleHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["DispatchSettingsModuleHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["DispatchSettingsHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["DispatchSettingsModuleHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form role="form" class="form-horizontal" asp-controller="Department" asp-action="ModuleSettings" asp-route-area="User" method="post">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-horizontal">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="All" class="text-danger"></div>
+
+                            @if (Model.SaveSuccess)
+				            {
+                              <div class="alert alert-success">
+                                    @localizer["SavedModuleSettings"]
+                              </div>
+				            }
+
+                            <div class="alert alert-info">
+                                @localizer["DepartmentModuleSettingsInfo"]
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisableMessagingLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="MessagingEnabled">
+                                            <label class="onoffswitch-label" for="MessagingEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisableMappingLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="MappingEnabled">
+                                            <label class="onoffswitch-label" for="MappingEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisableShiftsLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="ShiftsEnabled">
+                                            <label class="onoffswitch-label" for="ShiftsEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisabledLogsLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="LogsEnabled">
+                                            <label class="onoffswitch-label" for="LogsEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisabledReportsLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="ReportsEnabled">
+                                            <label class="onoffswitch-label" for="ReportsEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["ReportsDocumentsLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="DocumentsEnabled">
+                                            <label class="onoffswitch-label" for="DocumentsEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisabledCalendarLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="CalendarEnabled">
+                                            <label class="onoffswitch-label" for="CalendarEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisabledNotesLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="NotesEnabled">
+                                            <label class="onoffswitch-label" for="NotesEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisabledTrainingLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="TrainingEnabled">
+                                            <label class="onoffswitch-label" for="TrainingEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisabledInventoryLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="InventoryEnabled">
+                                            <label class="onoffswitch-label" for="InventoryEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+@*                             <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["DisabledMaintenanceLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="MaintenanceEnabled">
+                                            <label class="onoffswitch-label" for="MaintenanceEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> *@
+                            
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts
+{
+
+}

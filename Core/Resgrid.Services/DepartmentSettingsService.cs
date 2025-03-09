@@ -664,5 +664,41 @@ namespace Resgrid.Services
 
 			return await getSetting();
 		}
+
+		public async Task<DepartmentModuleSettings> GetDepartmentModuleSettingsAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<DepartmentModuleSettings> getSetting()
+			{
+				var actualSetting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.ModuleSettings);
+
+				if (actualSetting != null)
+				{
+					var setting = ObjectSerialization.Deserialize<DepartmentModuleSettings>(actualSetting.Setting);
+
+					if (setting != null)
+						return setting;
+					else
+						return new DepartmentModuleSettings();
+				}
+
+				return new DepartmentModuleSettings();
+			}
+
+			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				var cachedValue = await _cacheProvider.RetrieveAsync<DepartmentModuleSettings>(string.Format(StaffingSupressInfo, departmentId),
+					getSetting, ThatsNotLongThisIsLongCacheLength);
+
+				return cachedValue;
+			}
+
+			return await getSetting();
+		}
+
+		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),
+				DepartmentSettingTypes.ModuleSettings, cancellationToken);
+		}
 	}
 }

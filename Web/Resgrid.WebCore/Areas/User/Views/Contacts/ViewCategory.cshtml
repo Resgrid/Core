@@ -1,0 +1,107 @@
+﻿@model Resgrid.Web.Areas.User.Models.Contacts.AddCategoryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["ViewCategoryHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["ViewCategoryHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="Index" asp-route-area="User">@commonLocalizer["ContactsModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="Categories" asp-route-area="User">@localizer["CategoriesHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ViewCategoryHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h2>@Model.Category.Name</h2>
+                    <p>
+                        @Model.Category.Description
+                    </p>
+                    <p>
+                        @if (!String.IsNullOrWhiteSpace(Model.Category.Color))
+                        {
+                            <span>@commonLocalizer["Color"]:</span>
+
+                            <span style="color: @Model.Category.Color;">@Model.Category.Color</span>
+                        }
+                        else
+                        {
+                            <span>@commonLocalizer["Color"]:</span>
+                            <span>None</span>
+                        }
+                    </p>
+                    <p>
+                        @if (Model.Category.DisplayOnMap)
+                        {
+                            <span>@commonLocalizer["DisplayOnMap"]:</span>
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>@commonLocalizer["DisplayOnMap"]:</span>
+                            <span>No</span>
+                        }
+                    </p>
+                    <p>
+                        @if (Model.Category.MapIcon <= 0)
+                        {
+                            <span>@commonLocalizer["MapIcon"]:</span>
+                            <span>None</span>
+                        }
+                        else
+                        {
+                            var imgUrl = "/images/Mapping/" + ((Resgrid.Model.MapIconTypes)Model.Category.MapIcon).ToString().ToLower() + ".png";
+                            <img src="@imgUrl" style="height: 37px; width: 32px;" />
+                        }
+                    </p>
+                    <div class="clients-list">
+                        <div class="tab-content">
+                            <div class="full-height-scroll">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <tbody>
+                                            @foreach (var u in Model.Category.Contacts)
+                                            {
+                                                <tr>
+                                                    <td class="client-avatar"></td>
+                                                    <td><a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@u.ContactId" class="client-link">@u.GetName()</a></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - View Contact Category');
+        });
+    </script>
+}

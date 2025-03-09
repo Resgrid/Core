@@ -427,7 +427,7 @@
                                             Who can view units
                                         </td>
                                         <td style="max-width: 350px">
-                                            By default all users can see all units in the system. This option allows you to limit who can units in the system.
+                                            By default all users can see all units in the system. This option allows you to limit who can view units in the system.
                                         </td>
                                         <td>
                                             @Html.DropDownListFor(m => m.ViewGroupsUnits, Model.ViewGrouUnitsPermissions)
@@ -439,6 +439,67 @@
                                             <span id="viewUnitsRolesSpan">No Roles</span>
                                             <div id="viewUnitsRolesDiv" style="display: none;">
                                                 <select id="viewUnitsRoles" name="viewUnitsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can view Contacts
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            By default all users can see all contacts in the system. This option allows you to limit who can view contacts in the system. If a user cannot view Contacts they also won't be able to add them to a call.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ViewContacts, Model.ViewContactsPermissions)
+                                        </td>
+                                        <td>
+                                            
+                                        </td>
+                                        <td>
+                                            <span id="viewContactsRolesSpan">No Roles</span>
+                                            <div id="viewContactsRolesDiv" style="display: none;">
+                                                <select id="viewContactsRoles" name="viewContactsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can edit or create Contacts
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            By default all users can create and edit contacts in the system. This option allows you to limit who can create or edit contacts in the system.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.EditContacts, Model.EditContactsPermissions)
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <span id="editContactsRolesSpan">No Roles</span>
+                                            <div id="editContactsRolesDiv" style="display: none;">
+                                                <select id="editContactsRoles" name="editContactsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can delete Contacts
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            By default all users can delete contacts in the system. This option allows you to limit who can delete contacts in the system.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.DeleteContacts, Model.DeleteContactsPermissions)
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <span id="deleteContactsRolesSpan">No Roles</span>
+                                            <div id="deleteContactsRolesDiv" style="display: none;">
+                                                <select id="deleteContactsRoles" name="deleteContactsRoles"></select>
                                             </div>
                                         </td>
                                     </tr>

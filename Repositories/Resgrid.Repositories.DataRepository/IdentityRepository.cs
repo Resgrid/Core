@@ -225,7 +225,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					return db.Query<IdentityUser>(@"SELECT m.* FROM aspnetusers m	
 																						INNER JOIN departmentmembers dm ON dm.userid = m.id
-																						WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0", new { departmentId = departmentId }).ToList();
+																						WHERE dm.departmentid = @departmentId AND dm.isdeleted = false", new { departmentId = departmentId }).ToList();
 				}
 			}
 			else
@@ -249,7 +249,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					return db.Query<IdentityUser>(@"SELECT u.* FROM aspnetusers u
 																				INNER JOIN departmentmembers dm ON dm.userid = u.id
-																				WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0", new { departmentId = departmentId }).ToList();
+																				WHERE dm.departmentid = @departmentId AND dm.isdeleted = false", new { departmentId = departmentId }).ToList();
 				}
 			}
 			else
@@ -275,7 +275,7 @@ namespace Resgrid.Repositories.DataRepository
                                                 FROM aspnetusers u
                                                 INNER JOIN departmentgroupmembers dgm ON u.id = dgm.userid
                                                 INNER JOIN departmentmembers dm ON u.id = dm.userid
-                                                WHERE dgm.departmentgroupid = @groupId AND dm.isdeleted = 0",
+                                                WHERE dgm.departmentgroupid = @groupId AND dm.isdeleted = false",
 								new { groupId = groupId }).ToList();
 				}
 			}
@@ -302,7 +302,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					return db.Query<IdentityUser>(@"SELECT u.* FROM aspnetusers u
 												INNER JOIN departmentmembers dm ON dm.userid = u.id 
-												WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0 AND (@retrieveHidden = 1 OR (dm.ishidden = 0 OR dm.ishidden IS NULL)) AND (dm.isdisabled = 0 OR dm.isdisabled IS NULL)",
+												WHERE dm.departmentid = @departmentId AND dm.isdeleted = false AND (@retrieveHidden = true OR (dm.ishidden = false OR dm.ishidden IS NULL)) AND (dm.isdisabled = false OR dm.isdisabled IS NULL)",
 								new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
 				}
 			}
@@ -328,7 +328,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM aspnetusers u
 												INNER JOIN departmentmembers dm ON dm.userid = u.id 
-												WHERE dm.departmentid = @departmentId AND dm.isdeleted = 0 AND (@retrieveHidden = 1 OR (dm.ishidden = 0 OR dm.ishidden IS NULL)) AND (dm.isdisabled = 0 OR dm.isdisabled IS NULL)",
+												WHERE dm.departmentid = @departmentId AND dm.isdeleted = false AND (@retrieveHidden = true OR (dm.ishidden = false OR dm.ishidden IS NULL)) AND (dm.isdisabled = false OR dm.isdisabled IS NULL)",
 						new { departmentId = departmentId, retrieveHidden = retrieveHidden });
 
 					return result.ToList();

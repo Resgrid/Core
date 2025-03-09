@@ -8,18 +8,18 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Create.Table("DepartmentAudios")
-			   .WithColumn("DepartmentAudioId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("DepartmentId").AsInt32().NotNullable()
-			   .WithColumn("DepartmentAudioType").AsInt32().NotNullable()
-			   .WithColumn("Name").AsCustom("citext").Nullable()
-			   .WithColumn("Data").AsCustom("citext").Nullable()
-			   .WithColumn("AddedOn").AsDateTime2().NotNullable()
-			   .WithColumn("AddedByUserId").AsCustom("citext").NotNullable();
+			Create.Table("DepartmentAudios".ToLower())
+			   .WithColumn("DepartmentAudioId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("DepartmentId".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("DepartmentAudioType".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("Name".ToLower()).AsCustom("citext").Nullable()
+			   .WithColumn("Data".ToLower()).AsCustom("citext").Nullable()
+			   .WithColumn("AddedOn".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("AddedByUserId".ToLower()).AsCustom("citext").NotNullable();
 
 			Create.ForeignKey("FK_DepartmentAudios_Department")
-				.FromTable("DepartmentAudios").ForeignColumn("DepartmentId")
-				.ToTable("Departments").PrimaryColumn("DepartmentId");
+				.FromTable("DepartmentAudios".ToLower()).ForeignColumn("DepartmentId".ToLower())
+				.ToTable("Departments".ToLower()).PrimaryColumn("DepartmentId".ToLower());
 		}
 
 		public override void Down()

@@ -2,22 +2,25 @@
 
 
 <ul class="nav navbar-top-links navbar-left">
-	<li class="dropdown">
-		<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-			<i class="fa fa-envelope"></i> <span class="label label-info">@Model.NewMessages</span>
-		</a>
-		<ul class="dropdown-menu dropdown-messages dropdown-menu-left">
-			<div id="unreadMessages"></div>
-			<li>
-				<div class="text-center link-block">
-					<a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">
-						<i class="fa fa-envelope"></i> <strong>@commonLocalizer["ViewInbox"]</strong>
-					</a>
-				</div>
-			</li>
-		</ul>
+	@if (SettingsHelper.IsMessagingEnabled())
+	{
+		<li class="dropdown">
+			<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+				<i class="fa fa-envelope"></i> <span class="label label-info">@Model.NewMessages</span>
+			</a>
+			<ul class="dropdown-menu dropdown-messages dropdown-menu-left">
+				<div id="unreadMessages"></div>
+				<li>
+					<div class="text-center link-block">
+						<a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">
+							<i class="fa fa-envelope"></i> <strong>@commonLocalizer["ViewInbox"]</strong>
+						</a>
+					</div>
+				</li>
+			</ul>
 
-	</li>
+		</li>
+	}
 	<li class="dropdown">
 		<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
 			<i class="fa fa-bullhorn"></i> <span class="label label-danger">@Model.NewCalls</span>

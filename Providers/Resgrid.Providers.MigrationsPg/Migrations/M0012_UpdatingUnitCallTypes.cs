@@ -8,8 +8,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("UnitTypes").AddColumn("MapIconType").AsInt32().Nullable();
-			Alter.Table("CallTypes").AddColumn("MapIconType").AsInt32().Nullable();
+			Alter.Table("UnitTypes".ToLower()).AddColumn("MapIconType".ToLower()).AsInt32().Nullable();
+			Alter.Table("CallTypes".ToLower()).AddColumn("MapIconType".ToLower()).AsInt32().Nullable();
 		}
 
 		public override void Down()

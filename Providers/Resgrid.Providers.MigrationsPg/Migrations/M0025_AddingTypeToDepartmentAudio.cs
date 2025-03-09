@@ -8,7 +8,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("DepartmentAudios").AddColumn("Type").AsCustom("citext").Nullable();
+			Alter.Table("DepartmentAudios".ToLower()).AddColumn("Type".ToLower()).AsCustom("citext").Nullable();
 		}
 
 		public override void Down()

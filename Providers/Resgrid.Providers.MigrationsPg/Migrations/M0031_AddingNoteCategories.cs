@@ -8,16 +8,16 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Create.Table("NoteCategories")
-			   .WithColumn("NoteCategoryId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("DepartmentId").AsInt32().NotNullable()
-			   .WithColumn("Name").AsCustom("citext").NotNullable()
-			   .WithColumn("AddedOn").AsDateTime2().NotNullable()
-			   .WithColumn("AddedById").AsCustom("citext").NotNullable();
+			Create.Table("NoteCategories".ToLower())
+			   .WithColumn("NoteCategoryId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("DepartmentId".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("Name".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("AddedOn".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("AddedById".ToLower()).AsCustom("citext").NotNullable();
 
 			Create.ForeignKey("FK_NoteCategories_Department")
-				.FromTable("NoteCategories").ForeignColumn("DepartmentId")
-				.ToTable("Departments").PrimaryColumn("DepartmentId");
+				.FromTable("NoteCategories".ToLower()).ForeignColumn("DepartmentId".ToLower())
+				.ToTable("Departments".ToLower()).PrimaryColumn("DepartmentId".ToLower());
 		}
 
 		public override void Down()

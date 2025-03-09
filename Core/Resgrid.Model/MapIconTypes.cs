@@ -45,8 +45,37 @@
 		Truck, //truck.png
 		Van, //van.png
 		Velocimeter, //velocimeter.png
-		Watercraft //watercraft.png
+		Watercraft, //watercraft.png
 		// End Unit Icons
+
+		// Begin Contact Icons
+		Always,
+		AboveGround,
+		Administration,
+		AadministrativeBoundary,
+		Apartment,
+		ColdStorage,
+		CommunityCentre,
+		Condominium,
+		Conference,
+		Congress,
+		Court,
+		Embassy,
+		Expert,
+		Job,
+		People,
+		House,
+		Laboratory,
+		Key,
+		OfficeBuilding,
+		Police,
+		Postal,
+		Townhouse,
+		WorkCase,
+		Home,
+		Adult,
+		Family,
+		// End Contact Icons
 	}
 
 	public class MapIcons

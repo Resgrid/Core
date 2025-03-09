@@ -20,7 +20,10 @@
 		DeleteCall,
 		CloseCall,
 		AddCallData,
-		ViewGroupUnits
+		ViewGroupUnits,
+		ContactEdit,
+		ContactView,
+		ContactDelete
 	}
 
 }

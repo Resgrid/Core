@@ -1806,6 +1806,61 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#endregion Delete Department
 
+		#region Module Settings
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ModuleSettings()
+		{
+			var model = new DepartmentModulesSettingView();
+			model.Modules = await _departmentSettingsService.GetDepartmentModuleSettingsAsync(DepartmentId);
+
+			model.MessagingEnabled = !model.Modules.MessagingDisabled;
+			model.MappingEnabled = !model.Modules.MappingDisabled;
+			model.ShiftsEnabled = !model.Modules.ShiftsDisabled;
+			model.LogsEnabled = !model.Modules.LogsDisabled;
+			model.ReportsEnabled = !model.Modules.ReportsDisabled;
+			model.DocumentsEnabled = !model.Modules.DocumentsDisabled;
+			model.CalendarEnabled = !model.Modules.CalendarDisabled;
+			model.NotesEnabled = !model.Modules.NotesDisabled;
+			model.TrainingEnabled = !model.Modules.TrainingDisabled;
+			model.InventoryEnabled = !model.Modules.InventoryDisabled;
+			model.MaintenanceEnabled = !model.Modules.MaintenanceDisabled;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ModuleSettings(DepartmentModulesSettingView model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				var modules = await _departmentSettingsService.GetDepartmentModuleSettingsAsync(DepartmentId);
+
+				modules.MessagingDisabled = !model.MessagingEnabled;
+				modules.MappingDisabled = !model.MappingEnabled;
+				modules.ShiftsDisabled = !model.ShiftsEnabled;
+				modules.LogsDisabled = !model.LogsEnabled;
+				modules.ReportsDisabled = !model.ReportsEnabled;
+				modules.DocumentsDisabled = !model.DocumentsEnabled;
+				modules.CalendarDisabled = !model.CalendarEnabled;
+				modules.NotesDisabled = !model.NotesEnabled;
+				modules.TrainingDisabled = !model.TrainingEnabled;
+				modules.InventoryDisabled = !model.InventoryEnabled;
+				modules.MaintenanceDisabled = !model.MaintenanceEnabled;
+
+				await _departmentSettingsService.SetDepartmentModuleSettingsAsync(DepartmentId, modules, cancellationToken);
+
+				model.SaveSuccess = true;
+				return View(model);
+			}
+
+			model.SaveSuccess = false;
+			return View(model);
+		}
+		#endregion Module Settings
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> GetPrinterNetPrinters(string key)

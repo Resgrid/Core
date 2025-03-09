@@ -1,0 +1,123 @@
+﻿@using Resgrid.Framework
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Contacts.ContactCategoriesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["CategoriesHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["CategoriesHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="Index" asp-route-area="User">@commonLocalizer["ContactsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["CategoriesHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins" id="personnelContainer">
+                <div class="ibox-title">
+                    <h5>@localizer["CategoriesHeader"]</h5>
+                    <div class="ibox-tools">
+                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                        {
+                            <div class="buttons-actions">
+                                <a title="@localizer["AddCategoryHeader"]" class="btn btn-success" asp-controller="Contacts" asp-action="AddCategory" asp-route-area="User">@localizer["AddCategoryHeader"]</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @commonLocalizer["Name"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Description"]
+                                    </th>
+                                    <th>
+                                        @commonLocalizer["Color"]
+                                    </th>
+                                    <th>
+                                        @localizer["ContactsInCategory"]
+                                    </th>
+                                    <th>
+                                        @localizer["LastUpdated"]
+                                    </th>
+                                    <th class='span1'>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var u in Model.Categories)
+                                {
+                                    <tr>
+                                        <td>
+                                            @u.Name
+                                        </td>
+                                        <td>
+                                            @StringHelpers.StripHtmlTagsCharArray(u.Description).Truncate(100)
+                                        </td>
+                                        <td>
+                                            @if (!String.IsNullOrWhiteSpace(u.Color))
+                                            {
+                                                <span style="color: @u.Color;">@u.Color</span>
+                                            }
+                                            else
+                                            {
+                                                <span>None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @u.Contacts.Count()
+                                        </td>
+                                        <td>
+                                            @if (u.EditedOn.HasValue)
+                                            {
+                                                <span>@u.EditedOn.Value.TimeConverter(Model.Department).FormatForDepartment(Model.Department)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@u.AddedOn.TimeConverter(Model.Department).FormatForDepartment(Model.Department)</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a style="text-decoration:none;" class="btn btn-xs btn-info" asp-controller="Contacts" asp-action="ViewCategory" asp-route-area="User" asp-route-categoryId="@u.ContactCategoryId">@commonLocalizer["View"]</a>
+                                            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                            {
+                                                <a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Contacts" asp-action="EditCategory" asp-route-area="User" asp-route-categoryId="@u.ContactCategoryId">@commonLocalizer["Edit"]</a>
+                                                if (u.Contacts.Count() == 0)
+                                                {
+                                                    <a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="Contacts" asp-action="DeleteCategory" asp-route-area="User" asp-route-categoryId="@u.ContactCategoryId" data-confirm="@localizer["RoleCategoryWarning"] @u.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+
+}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
 
@@ -1077,6 +1078,133 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Update));
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Create));
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Delete));
+			}
+		}
+
+		public static void AddContactsClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactView))
+			{
+				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactView);
+
+				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && (isAdmin || isGroupAdmin))
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
+				{
+					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+					var role = from r in roles
+							   where roleIds.Contains(r.PersonnelRoleId)
+							   select r;
+
+					if (role.Any())
+					{
+						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+					}
+
+				}
+				else if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+				}
+			}
+			else
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+			}
+
+			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactEdit))
+			{
+				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactEdit);
+
+				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && (isAdmin || isGroupAdmin))
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
+				{
+					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+					var role = from r in roles
+							   where roleIds.Contains(r.PersonnelRoleId)
+							   select r;
+
+					if (role.Any())
+					{
+						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+					}
+
+				}
+				else if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+				}
+
+			}
+			else
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+			}
+
+			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactDelete))
+			{
+				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactDelete);
+
+				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && (isAdmin || isGroupAdmin))
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
+				{
+					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+					var role = from r in roles
+							   where roleIds.Contains(r.PersonnelRoleId)
+							   select r;
+
+					if (role.Any())
+					{
+						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
+					}
+
+				}
+				else if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
+				}
+			}
+			else
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
 			}
 		}
 	}

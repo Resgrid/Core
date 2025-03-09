@@ -8,21 +8,21 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Create.Table("CallReferences")
-			   .WithColumn("CallReferenceId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("SourceCallId").AsInt32().NotNullable()
-			   .WithColumn("TargetCallId").AsInt32().NotNullable()
-			   .WithColumn("AddedOn").AsDateTime2().NotNullable()
-			   .WithColumn("AddedByUserId").AsCustom("citext").NotNullable()
-			   .WithColumn("Note").AsCustom("citext").Nullable();
+			Create.Table("CallReferences".ToLower())
+			   .WithColumn("CallReferenceId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("SourceCallId".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("TargetCallId".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("AddedOn".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("AddedByUserId".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("Note".ToLower()).AsCustom("citext").Nullable();
 
 			Create.ForeignKey("FK_CallReferences_Call_Source")
-				.FromTable("CallReferences").ForeignColumn("SourceCallId")
-				.ToTable("Calls").PrimaryColumn("CallId");
+				.FromTable("CallReferences".ToLower()).ForeignColumn("SourceCallId".ToLower())
+				.ToTable("Calls".ToLower()).PrimaryColumn("CallId".ToLower());
 
 			Create.ForeignKey("FK_CallReferences_Call_Target")
-				.FromTable("CallReferences").ForeignColumn("TargetCallId")
-				.ToTable("Calls").PrimaryColumn("CallId");
+				.FromTable("CallReferences".ToLower()).ForeignColumn("TargetCallId".ToLower())
+				.ToTable("Calls".ToLower()).PrimaryColumn("CallId".ToLower());
 		}
 
 		public override void Down()

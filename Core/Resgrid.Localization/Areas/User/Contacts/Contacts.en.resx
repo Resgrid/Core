@@ -1,0 +1,417 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddCategoryHeader" xml:space="preserve">
+    <value>Add Category</value>
+  </data>
+  <data name="AddContact" xml:space="preserve">
+    <value>Add Contact</value>
+  </data>
+  <data name="AddressLabel" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="AddressPlaceholder" xml:space="preserve">
+    <value>Physical Street Address</value>
+  </data>
+  <data name="BlueskyLabel" xml:space="preserve">
+    <value>Bluesky</value>
+  </data>
+  <data name="BlueskyPlaceholder" xml:space="preserve">
+    <value>Bluesky Url</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="CategoriesHeader" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="CategoryDescriptionPlaceholder" xml:space="preserve">
+    <value>Category Discription</value>
+  </data>
+  <data name="CategoryNamePlaceholder" xml:space="preserve">
+    <value>Category Name</value>
+  </data>
+  <data name="CellPhoneLabel" xml:space="preserve">
+    <value>Cell Phone</value>
+  </data>
+  <data name="CellPhonePlaceholder" xml:space="preserve">
+    <value>Cell or Mobile Phone Number</value>
+  </data>
+  <data name="CityLabel" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="CityPlaceholder" xml:space="preserve">
+    <value>Physical City</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Location or Company</value>
+  </data>
+  <data name="CompanyNameLabel" xml:space="preserve">
+    <value>Company\Location Name</value>
+  </data>
+  <data name="CompanyNamePlaceholder" xml:space="preserve">
+    <value>Organization or Location Name</value>
+  </data>
+  <data name="ContactsHeader" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="ContactsInCategory" xml:space="preserve">
+    <value>Contacts In Category</value>
+  </data>
+  <data name="ContactTypeLabel" xml:space="preserve">
+    <value>Contact Type</value>
+  </data>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="CurrentPasswordHelp" xml:space="preserve">
+    <value>If your changing your password you need enter your current password (not the new one) here</value>
+  </data>
+  <data name="DataHeader" xml:space="preserve">
+    <value>Other Data</value>
+  </data>
+  <data name="DeleteUnitWarning" xml:space="preserve">
+    <value>Are you sure you want to delete the contact with the following name?</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DisplayOnMap" xml:space="preserve">
+    <value>Display On Map</value>
+  </data>
+  <data name="EditCategoryHeader" xml:space="preserve">
+    <value>Edit Category</value>
+  </data>
+  <data name="EmailAddressHelper" xml:space="preserve">
+    <value>Email address of the Contact iteself or the Contact Person (or shared mailbox) of the Company</value>
+  </data>
+  <data name="EmailAddressLabel" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve">
+    <value>Email Address of the Person or Company</value>
+  </data>
+  <data name="EntranceGpsLabel" xml:space="preserve">
+    <value>Entrance GPS Location</value>
+  </data>
+  <data name="EntranceGpsLatitudePlaceholder" xml:space="preserve">
+    <value>Latitude Gps of the Location Entrance</value>
+  </data>
+  <data name="EntranceGpsLatitudePlaceholderHelp" xml:space="preserve">
+    <value>Latitude (Decimal Notation: i.e. 39.1517)</value>
+  </data>
+  <data name="EntranceGpsLongitudePlaceholder" xml:space="preserve">
+    <value>Longitude Gps of the Location Entrance</value>
+  </data>
+  <data name="EntranceGpsLongitudePlaceholderHelp" xml:space="preserve">
+    <value>Longitude (Decimal Notation: i.e. -119.4571)</value>
+  </data>
+  <data name="ExitGpsLabel" xml:space="preserve">
+    <value>Exit GPS Location</value>
+  </data>
+  <data name="ExitGpsLatitudePlaceholder" xml:space="preserve">
+    <value>Latitude Gps of the Location Exit</value>
+  </data>
+  <data name="ExitGpsLatitudePlaceholderHelp" xml:space="preserve">
+    <value>Latitude (Decimal Notation: i.e. 39.1517)</value>
+  </data>
+  <data name="ExitGpsLongitudePlaceholder" xml:space="preserve">
+    <value>Longitude Gps of the Location Exit</value>
+  </data>
+  <data name="ExitGpsLongitudePlaceholderHelp" xml:space="preserve">
+    <value>Longitude (Decimal Notation: i.e. -119.4571)</value>
+  </data>
+  <data name="FacebookLabel" xml:space="preserve">
+    <value>Facebook</value>
+  </data>
+  <data name="FacebookPlaceholder" xml:space="preserve">
+    <value>Facebook name or url</value>
+  </data>
+  <data name="FaxPhoneLabel" xml:space="preserve">
+    <value>Fax Number</value>
+  </data>
+  <data name="FaxPhonePlaceholder" xml:space="preserve">
+    <value>Fax Phone Number</value>
+  </data>
+  <data name="FirstNameLabel" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="FirstNamePlaceholder" xml:space="preserve">
+    <value>First name of the contact</value>
+  </data>
+  <data name="HomePhoneLabel" xml:space="preserve">
+    <value>Home Phone</value>
+  </data>
+  <data name="HomePhonePlaceholder" xml:space="preserve">
+    <value>Home Phone Number</value>
+  </data>
+  <data name="InstagramLabel" xml:space="preserve">
+    <value>Instagram</value>
+  </data>
+  <data name="InstagramPlaceholder" xml:space="preserve">
+    <value>Instagram name</value>
+  </data>
+  <data name="LastNameLabel" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="LastNamePlaceholder" xml:space="preserve">
+    <value>Last name of the contact</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Last Updated</value>
+  </data>
+  <data name="LinkedInLabel" xml:space="preserve">
+    <value>LinkedIn</value>
+  </data>
+  <data name="LinkedInPlaceholder" xml:space="preserve">
+    <value>LinkedIn name or url</value>
+  </data>
+  <data name="LocationGpsLabel" xml:space="preserve">
+    <value>GPS Location</value>
+  </data>
+  <data name="LocationGpsLatitudePlaceholder" xml:space="preserve">
+    <value>Latitude Gps Location</value>
+  </data>
+  <data name="LocationGpsLatitudePlaceholderHelp" xml:space="preserve">
+    <value>Latitude (Decimal Notation: i.e. 39.1517)</value>
+  </data>
+  <data name="LocationGpsLongitudePlaceholder" xml:space="preserve">
+    <value>Longitude Gps Location</value>
+  </data>
+  <data name="LocationGpsLongitudePlaceholderHelp" xml:space="preserve">
+    <value>Longitude (Decimal Notation: i.e. -119.4571)</value>
+  </data>
+  <data name="LocationHeader" xml:space="preserve">
+    <value>Location Info</value>
+  </data>
+  <data name="MailingAddressLabel" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="MailingAddressPlaceholder" xml:space="preserve">
+    <value>Mailing Street Address</value>
+  </data>
+  <data name="MailingCityLabel" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="MailingCityPlaceholder" xml:space="preserve">
+    <value>Mailing City</value>
+  </data>
+  <data name="MailingCountryLabel" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="MailingPostalCodeLabel" xml:space="preserve">
+    <value>Postal Code</value>
+  </data>
+  <data name="MailingPostalCodePlaceholder" xml:space="preserve">
+    <value>Mailing Zip\Postal Code</value>
+  </data>
+  <data name="MailingStateLabel" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="MapIcon" xml:space="preserve">
+    <value>Map Icon</value>
+  </data>
+  <data name="MastodonLabel" xml:space="preserve">
+    <value>Mastodon</value>
+  </data>
+  <data name="MastodonPlaceholder" xml:space="preserve">
+    <value>Mastodon Username and Server</value>
+  </data>
+  <data name="MiddleNameLabel" xml:space="preserve">
+    <value>Middle Name</value>
+  </data>
+  <data name="MiddleNamePlaceholder" xml:space="preserve">
+    <value>Middle name of the contact</value>
+  </data>
+  <data name="NewContact" xml:space="preserve">
+    <value>New Contact</value>
+  </data>
+  <data name="NoContactsInDepartment" xml:space="preserve">
+    <value>You do not have any Contacts added in the system.</value>
+  </data>
+  <data name="NoContactsInThisCategory" xml:space="preserve">
+    <value>You do not have any Contacts associated with this Category.</value>
+  </data>
+  <data name="OfficePhoneLabel" xml:space="preserve">
+    <value>Office Phone</value>
+  </data>
+  <data name="OfficePhonePlaceholder" xml:space="preserve">
+    <value>Office Phone Number</value>
+  </data>
+  <data name="OtherContactHeader" xml:space="preserve">
+    <value>Contact Info</value>
+  </data>
+  <data name="OtherInfoLabel" xml:space="preserve">
+    <value>Other Info</value>
+  </data>
+  <data name="OtherNameLabel" xml:space="preserve">
+    <value>Other Name</value>
+  </data>
+  <data name="OtherNamePlaceholder" xml:space="preserve">
+    <value>Other name of alias</value>
+  </data>
+  <data name="PhysicalAddressHeader" xml:space="preserve">
+    <value>Physical Address</value>
+  </data>
+  <data name="PostalCodeLabel" xml:space="preserve">
+    <value>Postal Code</value>
+  </data>
+  <data name="PostalCodePlaceholder" xml:space="preserve">
+    <value>Physical Zip\Postal Code</value>
+  </data>
+  <data name="RoleCategoryWarning" xml:space="preserve">
+    <value>You are trying to delete a Contact Category. Are you sure you want to delete the category with the name </value>
+  </data>
+  <data name="SameAsPhysical" xml:space="preserve">
+    <value>Same as Physical?</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="StatePlaceholder" xml:space="preserve">
+    <value>Physical State\Province</value>
+  </data>
+  <data name="ThreadsLabel" xml:space="preserve">
+    <value>Threads</value>
+  </data>
+  <data name="ThreadsPlaceholder" xml:space="preserve">
+    <value>Threads handle</value>
+  </data>
+  <data name="TwitterLabel" xml:space="preserve">
+    <value>Twitter</value>
+  </data>
+  <data name="TwitterPlaceholder" xml:space="preserve">
+    <value>@TwtiterHandle</value>
+  </data>
+  <data name="ViewCategoryHeader" xml:space="preserve">
+    <value>View Category</value>
+  </data>
+  <data name="ViewContact" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="ViewContactHeader" xml:space="preserve">
+    <value>View Contact</value>
+  </data>
+  <data name="WebsiteNameLabel" xml:space="preserve">
+    <value>Website URL</value>
+  </data>
+  <data name="WebsitePlaceholder" xml:space="preserve">
+    <value>Contact website Url</value>
+  </data>
+</root>

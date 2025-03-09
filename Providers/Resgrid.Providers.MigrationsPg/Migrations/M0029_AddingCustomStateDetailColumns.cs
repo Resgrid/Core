@@ -8,8 +8,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("CustomStateDetails").AddColumn("BaseType").AsInt32().NotNullable().WithDefaultValue(-1);
-			Alter.Table("CustomStateDetails").AddColumn("TTL").AsInt32().NotNullable().WithDefaultValue(0);
+			Alter.Table("CustomStateDetails".ToLower()).AddColumn("BaseType".ToLower()).AsInt32().NotNullable().WithDefaultValue(-1);
+			Alter.Table("CustomStateDetails".ToLower()).AddColumn("TTL".ToLower()).AsInt32().NotNullable().WithDefaultValue(0);
 		}
 
 		public override void Down()

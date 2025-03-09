@@ -8,8 +8,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("Calls").AddColumn("DispatchOn").AsDateTime2().Nullable();
-			Alter.Table("Calls").AddColumn("HasBeenDispatched").AsBoolean().Nullable();
+			Alter.Table("Calls".ToLower()).AddColumn("DispatchOn".ToLower()).AsDateTime2().Nullable();
+			Alter.Table("Calls".ToLower()).AddColumn("HasBeenDispatched".ToLower()).AsBoolean().Nullable();
 		}
 
 		public override void Down()

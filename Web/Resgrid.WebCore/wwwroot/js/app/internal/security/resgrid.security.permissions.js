@@ -1022,6 +1022,180 @@ var resgrid;
                 });
                 ////////////////////////////////////////////////////////
 
+
+                // View Contacts
+                ////////////////////////////////////////////////////////
+                $('#ViewContacts').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=19&perm=' + val + '&lockToGroup=false',
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#ViewContacts").val() === "2") {
+                        $('#viewContactsRolesSpan').hide();
+                        $('#viewContactsRolesDiv').show();
+                    }
+                    else {
+                        $('#viewContactsRolesSpan').show();
+                        $('#viewContactsRolesDiv').hide();
+                    }
+                });
+                if ($("#ViewContacts").val() === "2") {
+                    $('#viewContactsRolesSpan').hide();
+                    $('#viewContactsRolesDiv').show();
+                }
+                else {
+                    $('#viewContactsRolesSpan').show();
+                    $('#viewContactsRolesDiv').hide();
+                }
+                $("#viewContactsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#viewContactsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=19&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=19',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#viewContactsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                ////////////////////////////////////////////////////////
+
+
+                // View Contacts
+                ////////////////////////////////////////////////////////
+                $('#EditContacts').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=20&perm=' + val + '&lockToGroup=false',
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#EditContacts").val() === "2") {
+                        $('#editContactsRolesSpan').hide();
+                        $('#editContactsRolesDiv').show();
+                    }
+                    else {
+                        $('#editContactsRolesSpan').show();
+                        $('#editContactsRolesDiv').hide();
+                    }
+                });
+                if ($("#ViewContacts").val() === "2") {
+                    $('#editContactsRolesSpan').hide();
+                    $('#editContactsRolesDiv').show();
+                }
+                else {
+                    $('#editContactsRolesSpan').show();
+                    $('#editContactsRolesDiv').hide();
+                }
+                $("#editContactsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#editContactsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=20&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=20',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#editContactsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                ////////////////////////////////////////////////////////
+
+
+                // Delete Contacts
+                ////////////////////////////////////////////////////////
+                $('#DeleteContacts').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=21&perm=' + val + '&lockToGroup=false',
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#DeleteContacts").val() === "2") {
+                        $('#deleteContactsRolesSpan').hide();
+                        $('#deleteContactsRolesDiv').show();
+                    }
+                    else {
+                        $('#deleteContactsRolesSpan').show();
+                        $('#deleteContactsRolesDiv').hide();
+                    }
+                });
+                if ($("#DeleteContacts").val() === "2") {
+                    $('#deleteContactsRolesSpan').hide();
+                    $('#deleteContactsRolesDiv').show();
+                }
+                else {
+                    $('#deleteContactsRolesSpan').show();
+                    $('#deleteContactsRolesDiv').hide();
+                }
+                $("#deleteContactsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#deleteContactsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=21&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=21',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#deleteContactsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                ////////////////////////////////////////////////////////
+
             });
         })(permissions = security.permissions || (security.permissions = {}));
     })(security = resgrid.security || (resgrid.security = {}));

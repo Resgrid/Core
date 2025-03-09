@@ -178,5 +178,25 @@ namespace Resgrid.Web.Helpers
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Inventory, ResgridClaimTypes.Actions.Create);
 		}
+
+		public static bool CanViewContacts()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View);
+		}
+
+		public static bool CanCreateContacts()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create);
+		}
+
+		public static bool CanEditContacts()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update);
+		}
+
+		public static bool CanDeleteContacts()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete);
+		}
 	}
 }

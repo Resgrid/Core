@@ -8,61 +8,61 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Create.Table("Workshifts")
-			   .WithColumn("WorkshiftId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("DepartmentId").AsInt32().NotNullable()
-			   .WithColumn("Type").AsInt32().NotNullable()
-			   .WithColumn("Name").AsCustom("citext").NotNullable()
-			   .WithColumn("Color").AsCustom("citext").NotNullable()
-			   .WithColumn("Start").AsDateTime2().NotNullable()
-			   .WithColumn("End").AsDateTime2().NotNullable()
-			   .WithColumn("AddedOn").AsDateTime2().NotNullable()
-			   .WithColumn("AddedById").AsCustom("citext").NotNullable();
+			Create.Table("Workshifts".ToLower())
+			   .WithColumn("WorkshiftId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("DepartmentId".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("Type".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("Name".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("Color".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("Start".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("End".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("AddedOn".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("AddedById".ToLower()).AsCustom("citext").NotNullable();
 
 			Create.ForeignKey("FK_Workshifts_Department")
-				.FromTable("Workshifts").ForeignColumn("DepartmentId")
-				.ToTable("Departments").PrimaryColumn("DepartmentId");
+				.FromTable("Workshifts".ToLower()).ForeignColumn("DepartmentId".ToLower())
+				.ToTable("Departments".ToLower()).PrimaryColumn("DepartmentId".ToLower());
 
-			Create.Table("WorkshiftDays")
-			   .WithColumn("WorkshiftDayId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("WorkshiftId").AsCustom("citext").NotNullable()
-			   .WithColumn("Day").AsDateTime2().NotNullable()
-			   .WithColumn("Processed").AsBoolean().NotNullable();
+			Create.Table("WorkshiftDays".ToLower())
+			   .WithColumn("WorkshiftDayId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("WorkshiftId".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("Day".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("Processed".ToLower()).AsBoolean().NotNullable();
 
 			Create.ForeignKey("FK_WorkshiftDays_Workshifts")
-				.FromTable("WorkshiftDays").ForeignColumn("WorkshiftId")
-				.ToTable("Workshifts").PrimaryColumn("WorkshiftId");
+				.FromTable("WorkshiftDays".ToLower()).ForeignColumn("WorkshiftId".ToLower())
+				.ToTable("Workshifts".ToLower()).PrimaryColumn("WorkshiftId".ToLower());
 
-			Create.Table("WorkshiftEntities")
-			   .WithColumn("WorkshiftEntityId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("WorkshiftId").AsCustom("citext").NotNullable()
-			   .WithColumn("BackingId").AsCustom("citext").NotNullable();
+			Create.Table("WorkshiftEntities".ToLower())
+			   .WithColumn("WorkshiftEntityId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("WorkshiftId".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("BackingId".ToLower()).AsCustom("citext").NotNullable();
 
 			Create.ForeignKey("FK_WorkshiftEntities_Workshifts")
-				.FromTable("WorkshiftEntities").ForeignColumn("WorkshiftId")
-				.ToTable("Workshifts").PrimaryColumn("WorkshiftId");
+				.FromTable("WorkshiftEntities".ToLower()).ForeignColumn("WorkshiftId".ToLower())
+				.ToTable("Workshifts".ToLower()).PrimaryColumn("WorkshiftId".ToLower());
 
-			Create.Table("WorkshiftFills")
-			   .WithColumn("WorkshiftFillId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("WorkshiftId").AsCustom("citext").NotNullable()
-			   .WithColumn("WorkshiftDayId").AsCustom("citext").NotNullable()
-			   .WithColumn("WorkshiftEntityId").AsCustom("citext").NotNullable()
-			   .WithColumn("FilledById").AsInt32().NotNullable()
-			   .WithColumn("Approved").AsBoolean().NotNullable()
-			   .WithColumn("AddedOn").AsDateTime2().NotNullable()
-			   .WithColumn("AddedById").AsCustom("citext").NotNullable();
+			Create.Table("WorkshiftFills".ToLower())
+			   .WithColumn("WorkshiftFillId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("WorkshiftId".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("WorkshiftDayId".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("WorkshiftEntityId".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("FilledById".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("Approved".ToLower()).AsBoolean().NotNullable()
+			   .WithColumn("AddedOn".ToLower()).AsDateTime2().NotNullable()
+			   .WithColumn("AddedById".ToLower()).AsCustom("citext").NotNullable();
 
 			Create.ForeignKey("FK_WorkshiftFills_Workshifts")
-				.FromTable("WorkshiftFills").ForeignColumn("WorkshiftId")
-				.ToTable("Workshifts").PrimaryColumn("WorkshiftId");
+				.FromTable("WorkshiftFills".ToLower()).ForeignColumn("WorkshiftId".ToLower())
+				.ToTable("Workshifts".ToLower()).PrimaryColumn("WorkshiftId".ToLower());
 
 			Create.ForeignKey("FK_WorkshiftFills_WorkshiftDays")
-				.FromTable("WorkshiftFills").ForeignColumn("WorkshiftDayId")
-				.ToTable("WorkshiftDays").PrimaryColumn("WorkshiftDayId");
+				.FromTable("WorkshiftFills".ToLower()).ForeignColumn("WorkshiftDayId".ToLower())
+				.ToTable("WorkshiftDays".ToLower()).PrimaryColumn("WorkshiftDayId".ToLower());
 
 			Create.ForeignKey("FK_WorkshiftFills_WorkshiftEntities")
-				.FromTable("WorkshiftFills").ForeignColumn("WorkshiftEntityId")
-				.ToTable("WorkshiftEntities").PrimaryColumn("WorkshiftEntityId");
+				.FromTable("WorkshiftFills".ToLower()).ForeignColumn("WorkshiftEntityId".ToLower())
+				.ToTable("WorkshiftEntities".ToLower()).PrimaryColumn("WorkshiftEntityId".ToLower());
 		}
 
 		public override void Down()

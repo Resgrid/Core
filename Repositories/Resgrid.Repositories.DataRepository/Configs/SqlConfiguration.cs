@@ -435,6 +435,16 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllUpcomingOrRecurringReportTasksQuery { get; set; }
 		#endregion Scheduled Tasks
 
+		#region Contacts
+		public string ContactsTableName { get; set; }
+		public string ContactAssociationsTableName { get; set; }
+		public string ContactCategoriesTableName { get; set; }
+		public string ContactNotesTableName { get; set; }
+		public string ContactNoteTypesTableName { get; set; }
+		public string CallContactTableName { get; set; }
+		public string SelectContactsByCategoryIdQuery { get; set; }
+		#endregion Contacts
+
 		// Identity
 
 		#region Table Names

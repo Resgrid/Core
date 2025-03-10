@@ -8,7 +8,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Insert.IntoTable("PlanLimits").Row(new { PlanId = 1, LimitType = 6, LimitValue = 10 });
+			Insert.IntoTable("PlanLimits".ToLower()).Row(new { PlanId = 1, LimitType = 6, LimitValue = 10 });
 		}
 
 		public override void Down()

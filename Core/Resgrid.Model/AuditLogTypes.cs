@@ -54,5 +54,11 @@
 		NoteAdded,
 		NoteEdited,
 		NoteRemoved,
+		ContactAdded,
+		ContactEdited,
+		ContactRemoved,
+		ContactCategoryAdded,
+		ContactCategoryEdited,
+		ContactCategoryRemoved
 	}
 }

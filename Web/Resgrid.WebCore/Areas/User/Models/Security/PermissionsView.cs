@@ -69,5 +69,14 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int ViewGroupsUnits { get; set; }
 		public bool LockViewGroupsUnitsToGroup { get; set; }
 		public SelectList ViewGrouUnitsPermissions { get; set; }
+
+		public int ViewContacts { get; set; }
+		public SelectList ViewContactsPermissions { get; set; }
+
+		public int EditContacts { get; set; }
+		public SelectList EditContactsPermissions { get; set; }
+
+		public int DeleteContacts { get; set; }
+		public SelectList DeleteContactsPermissions { get; set; }
 	}
 }

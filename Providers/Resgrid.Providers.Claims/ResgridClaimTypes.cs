@@ -56,6 +56,7 @@
 			public const string Forms = "Forms";
 			public const string Voice = "Voice";
 			public const string CustomStates = "CustomStates";
+			public const string Contacts = "Contacts";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

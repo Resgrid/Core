@@ -8,8 +8,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("Workshifts").AddColumn("DeletedOn").AsDateTime2().Nullable();
-			Alter.Table("Workshifts").AddColumn("DeletedById").AsCustom("citext").Nullable();
+			Alter.Table("Workshifts".ToLower()).AddColumn("DeletedOn".ToLower()).AsDateTime2().Nullable();
+			Alter.Table("Workshifts".ToLower()).AddColumn("DeletedById".ToLower()).AsCustom("citext").Nullable();
 		}
 
 		public override void Down()

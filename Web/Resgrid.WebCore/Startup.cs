@@ -40,6 +40,7 @@ using Resgrid.Providers.EmailProvider;
 using Resgrid.Providers.Firebase;
 using Resgrid.Providers.GeoLocationProvider;
 using Resgrid.Providers.Marketing;
+using Resgrid.Providers.Messaging;
 using Resgrid.Providers.NumberProvider;
 using Resgrid.Providers.PdfProvider;
 using Resgrid.Providers.Voip;
@@ -310,6 +311,11 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.CustomStates_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.CustomStates_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.CustomStates_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomStates, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Contacts_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Contacts_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Contacts_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Contacts_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 
@@ -454,6 +460,7 @@ namespace Resgrid.Web
 			builder.RegisterModule(new PdfProviderModule());
 			builder.RegisterModule(new FirebaseProviderModule());
 			builder.RegisterModule(new VoipProviderModule());
+			builder.RegisterModule(new MessagingProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

@@ -61,24 +61,21 @@ const getEventingUrl = (): string => {
       realtimeGeolocationHubName: '/geolocationHub',
 			logLevel: 0,
 			isMobileApp: false,
-      cacheProvider: null
+      cacheProvider: null,
+      storageProvider: null
 		})
   ],
   providers: [],
   exports: [
     ShiftsCalendarComponent,
     MapComponent
-  ],
-  entryComponents: [
-    ShiftsCalendarComponent,
-    MapComponent
   ]
 })
 export class AppModule {
   constructor(private injector: Injector) {
-    
+
   }
-  
+
   ngDoBootstrap() {
     customElements.define('rg-shifts-calendar', createCustomElement(ShiftsCalendarComponent, { injector: this.injector }));
     customElements.define('rg-map', createCustomElement(MapComponent, { injector: this.injector }));

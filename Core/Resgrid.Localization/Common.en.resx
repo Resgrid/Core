@@ -204,6 +204,9 @@
   <data name="Connect" xml:space="preserve">
     <value>Connect</value>
   </data>
+  <data name="ContactsModule" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
   <data name="ContactUs" xml:space="preserve">
     <value>Contact Us</value>
   </data>

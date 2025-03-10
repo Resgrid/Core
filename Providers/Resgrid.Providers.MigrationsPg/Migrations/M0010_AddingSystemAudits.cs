@@ -8,18 +8,18 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Create.Table("SystemAudits")
-			   .WithColumn("SystemAuditId").AsCustom("citext").NotNullable().PrimaryKey()
-			   .WithColumn("DepartmentId").AsInt32().Nullable()
-			   .WithColumn("Type").AsInt32().NotNullable()
-			   .WithColumn("System").AsInt32().NotNullable()
-			   .WithColumn("UserId").AsCustom("citext").Nullable()
-			   .WithColumn("Username").AsCustom("citext").Nullable()
-			   .WithColumn("IpAddress").AsCustom("citext")
-			   .WithColumn("Data").AsCustom("citext")
-			   .WithColumn("Successful").AsBoolean().NotNullable()
-			   .WithColumn("ServerName").AsCustom("citext")
-			   .WithColumn("LoggedOn").AsDateTime2().NotNullable();
+			Create.Table("SystemAudits".ToLower())
+			   .WithColumn("SystemAuditId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()
+			   .WithColumn("DepartmentId".ToLower()).AsInt32().Nullable()
+			   .WithColumn("Type".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("System".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("UserId".ToLower()).AsCustom("citext").Nullable()
+			   .WithColumn("Username".ToLower()).AsCustom("citext").Nullable()
+			   .WithColumn("IpAddress".ToLower()).AsCustom("citext")
+			   .WithColumn("Data".ToLower()).AsCustom("citext")
+			   .WithColumn("Successful".ToLower()).AsBoolean().NotNullable()
+			   .WithColumn("ServerName".ToLower()).AsCustom("citext")
+			   .WithColumn("LoggedOn".ToLower()).AsDateTime2().NotNullable();
 		}
 
 		public override void Down()

@@ -8,7 +8,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("Calls").AddColumn("LinkedCallId").AsInt32().Nullable();
+			Alter.Table("Calls".ToLower()).AddColumn("LinkedCallId".ToLower()).AsInt32().Nullable();
 		}
 
 		public override void Down()

@@ -127,5 +127,10 @@
 		public const string CustomStates_Update = "CustomStates_Update";
 		public const string CustomStates_Create = "CustomStates_Create";
 		public const string CustomStates_Delete = "CustomStates_Delete";
+
+		public const string Contacts_View = "Contacts_View";
+		public const string Contacts_Update = "Contacts_Update";
+		public const string Contacts_Create = "Contacts_Create";
+		public const string Contacts_Delete = "Contacts_Delete";
 	}
 }

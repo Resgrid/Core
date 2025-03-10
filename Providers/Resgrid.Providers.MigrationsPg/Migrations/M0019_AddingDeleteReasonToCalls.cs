@@ -7,9 +7,9 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("Calls").AddColumn("DeletedReason").AsCustom("citext").Nullable();
-			Alter.Table("Calls").AddColumn("DeletedByUserId").AsCustom("citext").Nullable();
-			Alter.Table("Calls").AddColumn("DeletedOn").AsDateTime2().Nullable();
+			Alter.Table("Calls".ToLower()).AddColumn("DeletedReason".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("Calls".ToLower()).AddColumn("DeletedByUserId".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("Calls".ToLower()).AddColumn("DeletedOn".ToLower()).AsDateTime2().Nullable();
 		}
 
 		public override void Down()

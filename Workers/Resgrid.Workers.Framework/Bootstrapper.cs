@@ -11,6 +11,7 @@ using Resgrid.Providers.EmailProvider;
 using Resgrid.Providers.Firebase;
 using Resgrid.Providers.GeoLocationProvider;
 using Resgrid.Providers.Marketing;
+using Resgrid.Providers.Messaging;
 using Resgrid.Providers.NumberProvider;
 using Resgrid.Providers.PdfProvider;
 using Resgrid.Providers.Voip;
@@ -47,6 +48,7 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new PdfProviderModule());
 				builder.RegisterModule(new FirebaseProviderModule());
 				builder.RegisterModule(new VoipProviderModule());
+				builder.RegisterModule(new MessagingProviderModule());
 
 				_container = builder.Build();
 

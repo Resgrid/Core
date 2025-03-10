@@ -265,5 +265,9 @@ namespace Resgrid.Model.Services
 		Task<bool> GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(int departmentId);
 
 		Task<bool> GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(int departmentId);
+
+		Task<DepartmentModuleSettings> GetDepartmentModuleSettingsAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

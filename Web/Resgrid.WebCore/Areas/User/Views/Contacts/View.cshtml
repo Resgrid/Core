@@ -1,0 +1,55 @@
+﻿@model Resgrid.Web.Areas.User.Models.Contacts.AddContactView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["ViewContactHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["ViewContactHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="Index" asp-route-area="User">@commonLocalizer["ContactsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ViewContactHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h2></h2>
+                    <p>
+                        
+                    </p>
+                    <p>
+                        
+                    </p>
+                    <p>
+                       
+                    </p>
+                    <p>
+                       
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - View Contact');
+        });
+    </script>
+}

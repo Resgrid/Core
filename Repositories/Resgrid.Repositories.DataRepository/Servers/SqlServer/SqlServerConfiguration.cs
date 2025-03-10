@@ -1345,6 +1345,19 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			";
 
 			#endregion Scheduled Tasks
+
+			#region Contacts
+			ContactsTableName = "Contacts";
+			ContactAssociationsTableName = "ContactAssociations";
+			ContactCategoriesTableName = "ContactCategories";
+			ContactNotesTableName = "ContactNotes";
+			ContactNoteTypesTableName = "ContactNoteTypes";
+			CallContactTableName = "CallContacts";
+			SelectContactsByCategoryIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME% 
+					WHERE [ContactCategoryId] = %CATEGORYID% AND DepartmentId = %DID%";
+			#endregion Contacts
 		}
-	}
+}
 }

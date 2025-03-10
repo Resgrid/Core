@@ -7,26 +7,26 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("CallAttachments").AddColumn("IsDeleted").AsBoolean().NotNullable().WithDefaultValue(false);
-			Alter.Table("CallAttachments").AddColumn("IsFlagged").AsBoolean().NotNullable().WithDefaultValue(false);
-			Alter.Table("CallAttachments").AddColumn("FlaggedReason").AsCustom("citext").Nullable();
-			Alter.Table("CallAttachments").AddColumn("FlaggedByUserId").AsCustom("citext").Nullable();
-			Alter.Table("CallAttachments").AddColumn("DeletedByUserId").AsCustom("citext").Nullable();
-			Alter.Table("CallAttachments").AddColumn("FlaggedOn").AsDateTime2().Nullable();
-			Alter.Table("CallAttachments").AddColumn("DeletedOn").AsDateTime2().Nullable();
+			Alter.Table("CallAttachments".ToLower()).AddColumn("IsDeleted".ToLower()).AsBoolean().NotNullable().WithDefaultValue(false);
+			Alter.Table("CallAttachments".ToLower()).AddColumn("IsFlagged".ToLower()).AsBoolean().NotNullable().WithDefaultValue(false);
+			Alter.Table("CallAttachments".ToLower()).AddColumn("FlaggedReason".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("CallAttachments".ToLower()).AddColumn("FlaggedByUserId".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("CallAttachments".ToLower()).AddColumn("DeletedByUserId".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("CallAttachments".ToLower()).AddColumn("FlaggedOn".ToLower()).AsDateTime2().Nullable();
+			Alter.Table("CallAttachments".ToLower()).AddColumn("DeletedOn".ToLower()).AsDateTime2().Nullable();
 
-			Alter.Table("CallNotes").AddColumn("IsDeleted").AsBoolean().NotNullable().WithDefaultValue(false);
-			Alter.Table("CallNotes").AddColumn("IsFlagged").AsBoolean().NotNullable().WithDefaultValue(false);
-			Alter.Table("CallNotes").AddColumn("FlaggedReason").AsCustom("citext").Nullable();
-			Alter.Table("CallNotes").AddColumn("FlaggedByUserId").AsCustom("citext").Nullable();
-			Alter.Table("CallNotes").AddColumn("DeletedByUserId").AsCustom("citext").Nullable();
-			Alter.Table("CallNotes").AddColumn("FlaggedOn").AsDateTime2().Nullable();
-			Alter.Table("CallNotes").AddColumn("DeletedOn").AsDateTime2().Nullable();
+			Alter.Table("CallNotes".ToLower()).AddColumn("IsDeleted".ToLower()).AsBoolean().NotNullable().WithDefaultValue(false);
+			Alter.Table("CallNotes".ToLower()).AddColumn("IsFlagged".ToLower()).AsBoolean().NotNullable().WithDefaultValue(false);
+			Alter.Table("CallNotes".ToLower()).AddColumn("FlaggedReason".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("CallNotes".ToLower()).AddColumn("FlaggedByUserId".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("CallNotes".ToLower()).AddColumn("DeletedByUserId".ToLower()).AsCustom("citext").Nullable();
+			Alter.Table("CallNotes".ToLower()).AddColumn("FlaggedOn".ToLower()).AsDateTime2().Nullable();
+			Alter.Table("CallNotes".ToLower()).AddColumn("DeletedOn".ToLower()).AsDateTime2().Nullable();
 
-			Alter.Table("CallDispatches").AddColumn("DispatchedOn").AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
-			Alter.Table("CallDispatchGroups").AddColumn("DispatchedOn").AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
-			Alter.Table("CallDispatchRoles").AddColumn("DispatchedOn").AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
-			Alter.Table("CallDispatchUnits").AddColumn("DispatchedOn").AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
+			Alter.Table("CallDispatches".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
+			Alter.Table("CallDispatchGroups".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
+			Alter.Table("CallDispatchRoles".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
+			Alter.Table("CallDispatchUnits".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
 		}
 
 		public override void Down()

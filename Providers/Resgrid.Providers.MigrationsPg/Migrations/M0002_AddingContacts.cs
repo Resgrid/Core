@@ -7,28 +7,28 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Create.Table("Contacts")
-			   .WithColumn("ContactId").AsInt32().NotNullable().PrimaryKey().Identity()
-			   .WithColumn("DepartmentId").AsInt32().NotNullable()
-			   .WithColumn("ContactTypeId").AsInt32()
-			   .WithColumn("Name").AsCustom("citext").NotNullable()
-			   .WithColumn("PhoneNumber").AsCustom("citext")
-			   .WithColumn("FaxNumber").AsCustom("citext")
-			   .WithColumn("Email").AsCustom("citext")
-			   .WithColumn("Twitter").AsCustom("citext")
-			   .WithColumn("Facebook").AsCustom("citext")
-			   .WithColumn("Notes").AsCustom("citext")
-			   .WithColumn("Address").AsCustom("citext")
-			   .WithColumn("City").AsCustom("citext")
-			   .WithColumn("State").AsCustom("citext")
-			   .WithColumn("PostalCode").AsCustom("citext")
-			   .WithColumn("Country").AsCustom("citext")
-			   .WithColumn("Location").AsCustom("citext");
+			Create.Table("Contacts".ToLower())
+			   .WithColumn("ContactId".ToLower()).AsInt32().NotNullable().PrimaryKey().Identity()
+			   .WithColumn("DepartmentId".ToLower()).AsInt32().NotNullable()
+			   .WithColumn("ContactTypeId".ToLower()).AsInt32()
+			   .WithColumn("Name".ToLower()).AsCustom("citext").NotNullable()
+			   .WithColumn("PhoneNumber".ToLower()).AsCustom("citext")
+			   .WithColumn("FaxNumber".ToLower()).AsCustom("citext")
+			   .WithColumn("Email".ToLower()).AsCustom("citext")
+			   .WithColumn("Twitter".ToLower()).AsCustom("citext")
+			   .WithColumn("Facebook".ToLower()).AsCustom("citext")
+			   .WithColumn("Notes".ToLower()).AsCustom("citext")
+			   .WithColumn("Address".ToLower()).AsCustom("citext")
+			   .WithColumn("City".ToLower()).AsCustom("citext")
+			   .WithColumn("State".ToLower()).AsCustom("citext")
+			   .WithColumn("PostalCode".ToLower()).AsCustom("citext")
+			   .WithColumn("Country".ToLower()).AsCustom("citext")
+			   .WithColumn("Location".ToLower()).AsCustom("citext");
 
 
 			Create.ForeignKey("FK_Conacts_Departments")
-				.FromTable("Contacts").ForeignColumn("DepartmentId")
-				.ToTable("Departments").PrimaryColumn("DepartmentId");
+				.FromTable("Contacts".ToLower()).ForeignColumn("DepartmentId".ToLower())
+				.ToTable("Departments".ToLower()).PrimaryColumn("DepartmentId");
 		}
 
 		public override void Down()

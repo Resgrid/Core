@@ -8,14 +8,14 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			if (Schema.Table("PlanAddons").Constraint("FK_PlanAddons_Plans").Exists())
+			if (Schema.Table("PlanAddons".ToLower()).Constraint("FK_PlanAddons_Plans").Exists())
 			{
-				Delete.ForeignKey("FK_PlanAddons_Plans").OnTable("PlanAddons");
+				Delete.ForeignKey("FK_PlanAddons_Plans").OnTable("PlanAddons".ToLower());
 			}
 
-			Alter.Table("PlanAddons").AlterColumn("PlanId").AsInt32().Nullable();
-			Alter.Table("PlanAddons").AddColumn("TestExternalId").AsCustom("citext").Nullable();
-			Insert.IntoTable("PlanAddons").Row(new { PlanAddonId = "6f4c5f8b-584d-4291-8a7d-29bf97ae6aa9", AddonType = 1, Cost = 35, ExternalId = "price_0N7MM5qJFDZJcnkVZy4Z51IC", TestExternalId = "price_0NLHvaqJFDZJcnkVS3DHnRA8" });
+			Alter.Table("PlanAddons".ToLower()).AlterColumn("PlanId".ToLower()).AsInt32().Nullable();
+			Alter.Table("PlanAddons".ToLower()).AddColumn("TestExternalId".ToLower()).AsCustom("citext").Nullable();
+			Insert.IntoTable("PlanAddons".ToLower()).Row(new { PlanAddonId = "6f4c5f8b-584d-4291-8a7d-29bf97ae6aa9", AddonType = 1, Cost = 35, ExternalId = "price_0N7MM5qJFDZJcnkVZy4Z51IC", TestExternalId = "price_0NLHvaqJFDZJcnkVS3DHnRA8" });
 		}
 
 		public override void Down()

@@ -7,7 +7,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("CallQuickTemplates").AddColumn("Sort").AsInt32().Nullable();
+			Alter.Table("CallQuickTemplates".ToLower()).AddColumn("Sort".ToLower()).AsInt32().Nullable();
 		}
 
 		public override void Down()

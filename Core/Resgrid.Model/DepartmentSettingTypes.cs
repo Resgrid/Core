@@ -32,6 +32,7 @@
 		MappingPersonnelLocationTTL = 28,
 		MappingUnitLocationTTL = 29,
 		MappingPersonnelAllowStatusWithNoLocationToOverwrite = 30,
-		MappingUnitAllowStatusWithNoLocationToOverwrite = 31
+		MappingUnitAllowStatusWithNoLocationToOverwrite = 31,
+		ModuleSettings = 32
 	}
 }

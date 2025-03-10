@@ -161,6 +161,12 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentAudioRepository>().As<IDepartmentAudioRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DocumentCategoriesRepository>().As<IDocumentCategoriesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<NoteCategoriesRepository>().As<INoteCategoriesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallContactsRepository>().As<ICallContactsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactAssociationsRepository>().As<IContactAssociationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactNoteTypesRepository>().As<IContactNoteTypesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactNotesRepository>().As<IContactNotesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactsRepository>().As<IContactsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactCategoryRepository>().As<IContactCategoryRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

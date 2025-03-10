@@ -6,6 +6,7 @@ using Consolas2.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Providers.Migrations.Migrations;
 using FluentMigrator.Runner;
+using Resgrid.Providers.MigrationsPg.Migrations;
 
 namespace Resgrid.Console.Commands
 {
@@ -53,22 +54,40 @@ namespace Resgrid.Console.Commands
 		/// </summary>
 		private static IServiceProvider CreateServices()
 		{
-			return new ServiceCollection()
-				// Add common FluentMigrator services
-				.AddFluentMigratorCore()
-				.ConfigureRunner(rb => rb
-					// Add SQL Server support to FluentMigrator
-					.AddSqlServer()
-					// Set the timeout
-					.WithGlobalCommandTimeout(TimeSpan.Zero)
-					// Set the connection string
-					.WithGlobalConnectionString(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
-					// Define the assembly containing the migrations
-					.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
-				// Enable logging to console in the FluentMigrator way
-				.AddLogging(lb => lb.AddFluentMigratorConsole())
-				// Build the service provider
-				.BuildServiceProvider(false);
+			if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
+			{
+				return new ServiceCollection()
+					// Add common FluentMigrator services
+					.AddFluentMigratorCore()
+					.ConfigureRunner(rb => rb
+						// Add SQL Server support to FluentMigrator
+						.AddPostgres11_0()
+						// Set the connection string
+						.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
+						// Define the assembly containing the migrations
+						.ScanIn(typeof(M0001_InitialMigrationPg).Assembly).For.Migrations().For.EmbeddedResources())
+					// Enable logging to console in the FluentMigrator way
+					.AddLogging(lb => lb.AddFluentMigratorConsole())
+					// Build the service provider
+					.BuildServiceProvider(false);
+			}
+			else
+			{
+				return new ServiceCollection()
+					// Add common FluentMigrator services
+					.AddFluentMigratorCore()
+					.ConfigureRunner(rb => rb
+						// Add SQL Server support to FluentMigrator
+						.AddSqlServer()
+						// Set the connection string
+						.WithGlobalConnectionString(System.Configuration.ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
+						// Define the assembly containing the migrations
+						.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
+					// Enable logging to console in the FluentMigrator way
+					.AddLogging(lb => lb.AddFluentMigratorConsole())
+					// Build the service provider
+					.BuildServiceProvider(false);
+			}
 		}
 
 		/// <summary>

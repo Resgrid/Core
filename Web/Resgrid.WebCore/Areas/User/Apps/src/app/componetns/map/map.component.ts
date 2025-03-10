@@ -11,15 +11,16 @@ import {
   ConnectionState,
   Consts,
   EventsService,
-  GetMapDataAndMarkersResult,
+  GetMapDataAndMarkersResult, GetMapLayersResult,
   MapDataAndMarkersData,
   MappingService,
   RealtimeGeolocationService,
 } from '@resgrid/ngx-resgridlib';
-import { environment } from 'src/environments/environment';
+import { environment } from 'environments/environment';
 import * as L from 'leaflet';
-import { debounceTime, distinctUntilChanged, Observable, take } from 'rxjs';
+import { Observable } from 'rxjs';
 import * as _ from 'lodash';
+import {debounceTime, distinctUntilChanged, take} from "rxjs/operators";
 
 @Component({
   templateUrl: './map.component.html',
@@ -73,7 +74,7 @@ export class MapComponent implements OnInit {
     const date = new Date();
     this.updateDate = date.toString();
 
-    this.mapProvider.getMapDataAndMarkers().pipe(take(1)).subscribe((data) => {
+    this.mapProvider.getMapDataAndMarkers().pipe(take(1)).subscribe((data: GetMapDataAndMarkersResult) => {
       this.processMapData(data.Data);
     });
 
@@ -174,7 +175,7 @@ export class MapComponent implements OnInit {
     this.mapProvider
       .getMayLayers(0)
       .pipe(take(1))
-      .subscribe((data) => {
+      .subscribe((data: GetMapLayersResult) => {
         if (data && data.Data && data.Data.LayerJson) {
           this.clearLayers();
 
@@ -211,7 +212,7 @@ export class MapComponent implements OnInit {
           this.layerControl.removeLayer(layer);
           this.map.removeLayer(layer);
         } catch (error) {
-          
+
         }
       });
       this.layers = [];
@@ -399,7 +400,7 @@ export class MapComponent implements OnInit {
           if (personMarker) {
             const date = new Date();
             this.updateDate = date.toString();
-          
+
             personMarker.setLatLng([data.latitude, data.longitude]);
           }
         }
@@ -415,7 +416,7 @@ export class MapComponent implements OnInit {
           if (unitMarker) {
             const date = new Date();
             this.updateDate = date.toString();
-            
+
             unitMarker.setLatLng([data.latitude, data.longitude]);
           }
         }

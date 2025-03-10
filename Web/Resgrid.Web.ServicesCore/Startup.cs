@@ -63,6 +63,7 @@ using Resgrid.Web.ServicesCore.Middleware;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 using OpenTelemetry.Metrics;
 using System.Net.Http;
+using Resgrid.Providers.Messaging;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -579,6 +580,7 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new PdfProviderModule());
 			builder.RegisterModule(new FirebaseProviderModule());
 			builder.RegisterModule(new VoipProviderModule());
+			builder.RegisterModule(new MessagingProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

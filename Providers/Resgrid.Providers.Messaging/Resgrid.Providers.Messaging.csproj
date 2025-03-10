@@ -7,11 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Novu" Version="0.6.0" />
     <PackageReference Include="WhatsappBusiness.CloudApi" Version="1.0.35" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Whatsapp\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
   </ItemGroup>
 
 </Project>

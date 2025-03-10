@@ -7,13 +7,12 @@
     "gulp": "^3.9.1",
     "gulp-concat": "2.5.2",
     "gulp-cssmin": "0.1.7",
-    "gulp-sass": "2.1.1",
+    "gulp-sass": "5.0.0",
     "gulp-uglify": "1.2.0",
     "har-validator": "^4.2.0",
     "mkdirp": "^0.5.1",
-    "node-sass": "^3.13.1",
     "rimraf": "2.2.8",
-    "sass": "^0.5.0"
+    "sass": "^1.85.0"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",

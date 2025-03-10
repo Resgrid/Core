@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Messaging\Resgrid.Providers.Messaging.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />

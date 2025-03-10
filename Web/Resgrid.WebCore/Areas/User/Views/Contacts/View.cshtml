@@ -26,46 +26,18 @@
         <div class="col-sm-12">
             <div class="ibox">
                 <div class="ibox-content">
-                    <h2>@Model.Category.Name</h2>
+                    <h2></h2>
                     <p>
-                        @Model.Category.Description
+                        
                     </p>
                     <p>
-                        @if (!String.IsNullOrWhiteSpace(Model.Category.Color))
-                        {
-                            <span>@commonLocalizer["Color"]:</span>
-
-                            <span style="color: @Model.Category.Color;">@Model.Category.Color</span>
-                        }
-                        else
-                        {
-                            <span>@commonLocalizer["Color"]:</span>
-                            <span>None</span>
-                        }
+                        
                     </p>
                     <p>
-                        @if (Model.Category.DisplayOnMap)
-                        {
-                            <span>@commonLocalizer["DisplayOnMap"]:</span>
-                            <span>Yes</span>
-                        }
-                        else
-                        {
-                            <span>@commonLocalizer["DisplayOnMap"]:</span>
-                            <span>No</span>
-                        }
+                       
                     </p>
                     <p>
-                        @if (Model.Category.MapIcon <= 0)
-                        {
-                            <span>@commonLocalizer["MapIcon"]:</span>
-                            <span>None</span>
-                        }
-                        else
-                        {
-                            var imgUrl = "/images/Mapping/" + ((Resgrid.Model.MapIconTypes)Model.Category.MapIcon).ToString().ToLower() + ".png";
-                            <img src="@imgUrl" style="height: 37px; width: 32px;" />
-                        }
+                       
                     </p>
                 </div>
             </div>

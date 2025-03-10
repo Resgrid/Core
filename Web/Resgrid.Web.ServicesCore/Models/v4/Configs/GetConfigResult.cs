@@ -85,5 +85,25 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		/// API Key for the OpenWeatherAPI
 		/// </summary>
 		public string OpenWeatherApiKey { get; set; }
+
+		/// <summary>
+		/// API url for Novu
+		/// </summary>
+		public string NovuBackendApiUrl { get; set; }
+
+		/// <summary>
+		/// Websocket url for Novu
+		/// </summary>
+		public string NovuSocketUrl { get; set; }
+
+		/// <summary>
+		/// Novu Application Id
+		/// </summary>
+		public string NovuApplicationId { get; set; }
+
+		/// <summary>
+		/// Novu Environment Id
+		/// </summary>
+		public string NovuEnvironmentId { get; set; }
 	}
 }

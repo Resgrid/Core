@@ -29,6 +29,11 @@ namespace Resgrid.Web.Services.Models.v4.Security
 		public string DepartmentName { get; set; }
 
 		/// <summary>
+		/// Department code
+		/// </summary>
+		public string DepartmentCode { get; set; }
+
+		/// <summary>
 		/// Users full name
 		/// </summary>
 		public string FullName { get; set; }

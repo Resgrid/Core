@@ -2,34 +2,35 @@
 using Novu.Domain.Models.Subscribers;
 using Resgrid.Framework;
 using Resgrid.Model.Providers;
+using static Resgrid.Framework.Testing.TestData;
 
 namespace Resgrid.Providers.Messaging
 {
-	public class NovuProvider: INovuProvider
+	public class NovuProvider : INovuProvider
 	{
-		public async Task<bool> CreateSubscriber(string userId, int departmentId, string email, string firstName, string lastName)
+		private async Task<bool> CreateSubscriber(string id, int departmentId, string email, string firstName, string lastName)
 		{
 			try
 			{
 				var novuConfiguration = new NovuClientConfiguration
 				{
-					Url = Config.ChatConfig.NovuBackendUrl, //"https://novu-api.my-domain.com/v1",
+					Url = $"{Config.ChatConfig.NovuBackendUrl}/v1", //"https://novu-api.my-domain.com/v1",
 					ApiKey = Config.ChatConfig.NovuSecretKey //"12345",
 				};
 
 				var novu = new NovuClient(novuConfiguration);
 
 				var subscriberCreateData = new SubscriberCreateData();
-				subscriberCreateData.SubscriberId = userId;
+				subscriberCreateData.SubscriberId = id;
 				subscriberCreateData.FirstName = firstName;
 				subscriberCreateData.LastName = lastName;
 				subscriberCreateData.Email = email;
-				subscriberCreateData.Data = new List<AdditionalData>();
-				subscriberCreateData.Data.Add(new AdditionalData
-				{
-					Key = "DepartmentId",
-					Value = departmentId.ToString()
-				});
+				//subscriberCreateData.Data = new List<AdditionalData>();
+				//subscriberCreateData.Data.Add(new AdditionalData
+				//{
+				//	Key = "DepartmentId",
+				//	Value = departmentId.ToString()
+				//});
 
 				var subscriber = await novu.Subscriber.Create(subscriberCreateData);
 
@@ -45,6 +46,14 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
+		public async Task<bool> CreateUserSubscriber(string userId, string code, int departmentId, string email, string firstName, string lastName)
+		{
+			return await CreateSubscriber($"{code}_User_{userId}", departmentId, email, firstName, lastName);
+		}
 
+		public async Task<bool> CreateUnitSubscriber(int unitId, string code, int departmentId, string unitName)
+		{
+			return await CreateSubscriber($"{code}_Unit_{unitId}", departmentId, $"{code}_Unit_{unitId}@units.resgrid.net", unitName, "");
+		}
 	}
 }

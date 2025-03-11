@@ -42,10 +42,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IGeoService _geoService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly INovuProvider _novuProvider;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider)
+			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -59,6 +60,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_geoService = geoService;
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
+			_novuProvider = novuProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -290,6 +292,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (roles.Count > 0)
 					await _unitsService.SetRolesForUnitAsync(model.Unit.UnitId, roles, cancellationToken);
 
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+				await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name);
+
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
@@ -330,6 +335,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = groups;
 
 			model.UnitRoles = await _unitsService.GetRolesForUnitAsync(unitId);
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name);
 
 			return View(model);
 		}

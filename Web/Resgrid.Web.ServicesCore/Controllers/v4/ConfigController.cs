@@ -17,9 +17,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class ConfigController : ControllerBase
 	{
 		#region Members and Constructors
-
 		public ConfigController()
 		{
+
 		}
 		#endregion Members and Constructors
 

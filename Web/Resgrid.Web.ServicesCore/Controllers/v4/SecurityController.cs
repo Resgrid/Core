@@ -67,6 +67,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			result.Data.DepartmentId = department.DepartmentId.ToString();
 			result.Data.DepartmentName = department.Name;
+			result.Data.DepartmentCode = department.Code;
 
 			var profile = await _userProfileService.GetProfileByUserIdAsync(UserId);
 			result.Data.EmailAddress = profile.MembershipEmail;
@@ -99,7 +100,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.CanAddNote = _permissionsService.IsUserAllowed(createNotePermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanCreateMessage = _permissionsService.IsUserAllowed(createMessagePermission, result.Data.IsAdmin, isGroupAdmin, roles);
 
-			var novuSuccess = await _novuProvider.CreateSubscriber(UserId, DepartmentId, profile.MembershipEmail, profile.FirstName, profile.LastName);
+			var novuSuccess = await _novuProvider.CreateUserSubscriber(UserId, department.Code, DepartmentId, profile.MembershipEmail, profile.FirstName, profile.LastName);
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

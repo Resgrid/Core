@@ -30,36 +30,6 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					case CqrsEventTypes.None:
 						break;
-					//case CqrsEventTypes.UnitLocation:
-					//	UnitLocation unitLocation = null;
-					//	try
-					//	{
-					//		unitLocation = ObjectSerialization.Deserialize<UnitLocation>(qi.Data);
-					//	}
-					//	catch (Exception ex)
-					//	{
-
-					//	}
-
-					//	if (unitLocation != null)
-					//	{
-					//		IUnitsService unitService;
-					//		try
-					//		{
-					//			unitService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
-					//			var unit = await unitService.GetUnitByIdAsync(unitLocation.UnitId);
-					//			await unitService.AddUnitLocationAsync(unitLocation, unit.DepartmentId, cancellationToken);
-					//		}
-					//		catch (Exception ex)
-					//		{
-
-					//		}
-					//		finally
-					//		{
-					//			unitService = null;
-					//		}
-					//	}
-					//	break;
 					case CqrsEventTypes.PushRegistration:
 
 						PushUri data = null;

@@ -53,11 +53,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (registrationInput == null)
 						return BadRequest();
 
+
+
 					PushRegisterionEvent pushRegisterionEvent = new PushRegisterionEvent();
 					pushRegisterionEvent.PushUriId = 0;
 					pushRegisterionEvent.UserId = UserId;
 					pushRegisterionEvent.PlatformType = registrationInput.Platform;
-					pushRegisterionEvent.PushLocation = "";
+
+					if (!string.IsNullOrWhiteSpace(registrationInput.Prefix))
+						pushRegisterionEvent.PushLocation = registrationInput.Prefix;
+					else
+						pushRegisterionEvent.PushLocation = "";
+
 					pushRegisterionEvent.DepartmentId = DepartmentId;
 					pushRegisterionEvent.DeviceId = registrationInput.Token;
 					pushRegisterionEvent.Uuid = registrationInput.DeviceUuid;

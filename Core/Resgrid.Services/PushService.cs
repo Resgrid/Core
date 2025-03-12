@@ -17,14 +17,17 @@ namespace Resgrid.Services
 		private readonly INotificationProvider _notificationProvider;
 		private readonly IUnitNotificationProvider _unitNotificationProvider;
 		private readonly IUserProfileService _userProfileService;
+		private readonly INovuProvider _novuProvider;
 
 		public PushService(IPushLogsService pushLogsService, INotificationProvider notificationProvider,
-			IUserProfileService userProfileService, IUnitNotificationProvider unitNotificationProvider)
+			IUserProfileService userProfileService, IUnitNotificationProvider unitNotificationProvider,
+			INovuProvider novuProvider)
 		{
 			_pushLogsService = pushLogsService;
 			_notificationProvider = notificationProvider;
 			_userProfileService = userProfileService;
 			_unitNotificationProvider = unitNotificationProvider;
+			_novuProvider = novuProvider;
 		}
 
 		public async Task<bool> Register(PushUri pushUri)
@@ -37,7 +40,7 @@ namespace Resgrid.Services
 			// We just store the full Device Id in the PushUri object, the hashed version is for Azure
 			//var existingPushUri = _pushUriService.GetPushUriByPlatformDeviceId((Platforms)pushUri.PlatformType, pushUri.DeviceId);
 			List<PushRegistrationDescription> usersDevices = null;
-			
+
 			try
 			{
 				usersDevices = await _notificationProvider.GetRegistrationsByUserId(pushUri.UserId);
@@ -77,6 +80,9 @@ namespace Resgrid.Services
 			}
 			catch (TimeoutException)
 			{ }
+
+			if (pushUri.UnitId.HasValue)
+				await _novuProvider.UpdateUnitSubscriberFcm(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
 
 
 			if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(string.Format("unitId:{0}", pushUri.UnitId.ToString()))))
@@ -161,7 +167,7 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendPush)
 				await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
-			
+
 			return true;
 		}
 
@@ -236,7 +242,7 @@ namespace Resgrid.Services
 		//	var exception = (PushSharp.WindowsPhone.WindowsPhoneNotificationSendFailureException) notificationFailureException;
 		//	_pushLogsService.LogPushResult(exception.MessageStatus.DeviceConnectionStatus.ToString(),
 		//																 exception.MessageStatus.HttpStatus.ToString(), exception.MessageStatus.MessageID.ToString(),
-		//																 exception.MessageStatus.NotificationStatus.ToString(), exception.MessageStatus.SubscriptionStatus.ToString(), 
+		//																 exception.MessageStatus.NotificationStatus.ToString(), exception.MessageStatus.SubscriptionStatus.ToString(),
 		//																 exception.MessageStatus.Notification.EndPointUrl, exception);
 
 		//	//Console.WriteLine("Failure: " + notification.Platform.ToString() + " -> " + notificationFailureException.Message + " -> " + notification.ToString());

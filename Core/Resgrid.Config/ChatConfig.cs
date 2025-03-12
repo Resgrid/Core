@@ -9,5 +9,8 @@
 		public static string NovuEnvironmentId = "";
 		public static string NovuApplicationId = "";
 		public static string NovuSecretKey = "";
+
+		public static string NovuUnitFcmProviderId = "";
+		public static string NovuResponderFcmProviderId = "";
 	}
 }

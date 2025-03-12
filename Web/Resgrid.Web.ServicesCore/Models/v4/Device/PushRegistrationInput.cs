@@ -24,5 +24,10 @@
 		/// Device UDID
 		/// </summary>
 		public string DeviceUuid { get; set; }
+
+		/// <summary>
+		/// Prefix
+		/// </summary>
+		public string Prefix { get; set; }
 	}
 }

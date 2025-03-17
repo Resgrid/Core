@@ -1,46 +1,64 @@
-﻿using System.Text;
+﻿using System;
+using System.Net.Http;
+using System.Text;
 using Newtonsoft.Json;
 using Novu;
+using Novu.Domain.Models.Notifications;
 using Novu.Domain.Models.Subscribers;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model.Providers;
+using Resgrid.Providers.Messaging.Novu.Model;
+using Sentry.Protocol;
 using static Resgrid.Framework.Testing.TestData;
 
 namespace Resgrid.Providers.Messaging
 {
 	public class NovuProvider : INovuProvider
 	{
-		private async Task<bool> CreateSubscriber(string id, int departmentId, string email, string firstName, string lastName)
+		private async Task<bool> CreateSubscriber(string id, int departmentId, string email, string firstName, string lastName, List<AdditionalData> data)
 		{
 			try
 			{
-				var novuConfiguration = new NovuClientConfiguration
+				using (var httpClient = new HttpClient())
 				{
-					Url = $"{Config.ChatConfig.NovuBackendUrl}/v1", //"https://novu-api.my-domain.com/v1",
-					ApiKey = Config.ChatConfig.NovuSecretKey //"12345",
-				};
+					var requestUrl = $"{ChatConfig.NovuBackendUrl}/v2/subscribers";
+					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
+					httpClient.DefaultRequestHeaders.Add("Authorization", Config.ChatConfig.NovuSecretKey);
 
-				var novu = new NovuClient(novuConfiguration);
+					var payload = new
+					{
+						subscriberId = id,
+						firstName = firstName,
+						lastName = lastName,
+						email = email,
+						phone = "",
+						avatar = "",
+						timezone = "",
+						locale = "",
+						data = new Dictionary<string, object>()
+					};
 
-				var subscriberCreateData = new SubscriberCreateData();
-				subscriberCreateData.SubscriberId = id;
-				subscriberCreateData.FirstName = firstName;
-				subscriberCreateData.LastName = lastName;
-				subscriberCreateData.Email = email;
-				//subscriberCreateData.Data = new List<AdditionalData>();
-				//subscriberCreateData.Data.Add(new AdditionalData
-				//{
-				//	Key = "DepartmentId",
-				//	Value = departmentId.ToString()
-				//});
+					payload.data.Add("DepartmentId", departmentId);
 
-				var subscriber = await novu.Subscriber.Create(subscriberCreateData);
+					if (data != null)
+					{
+						foreach (var item in data)
+						{
+							payload.data.Add(item.Key, item.Value);
+						}
+					}
+					string jsonContent = JsonConvert.SerializeObject(payload);
 
-				if (subscriber != null && subscriber.Data != null)
-					return true;
+					var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-				return false;
+					var response = await httpClient.PostAsync(requestUrl, content);
+
+					if (response.IsSuccessStatusCode)
+						return true;
+					else
+						return false;
+				}
 			}
 			catch (Exception e)
 			{
@@ -51,12 +69,22 @@ namespace Resgrid.Providers.Messaging
 
 		public async Task<bool> CreateUserSubscriber(string userId, string code, int departmentId, string email, string firstName, string lastName)
 		{
-			return await CreateSubscriber($"{code}_User_{userId}", departmentId, email, firstName, lastName);
+			return await CreateSubscriber($"{code}_User_{userId}", departmentId, email, firstName, lastName, null);
 		}
 
-		public async Task<bool> CreateUnitSubscriber(int unitId, string code, int departmentId, string unitName)
+		public async Task<bool> CreateUnitSubscriber(int unitId, string code, int departmentId, string unitName, string deviceId)
 		{
-			return await CreateSubscriber($"{code}_Unit_{unitId}", departmentId, $"{code}_Unit_{unitId}@units.resgrid.net", unitName, "");
+			var data = new List<AdditionalData>();
+
+			if (!String.IsNullOrWhiteSpace(deviceId))
+			{
+				data.Add(new AdditionalData
+				{
+					Key = "DeviceId",
+					Value = deviceId
+				});
+			}
+			return await CreateSubscriber($"{code}_Unit_{unitId}", departmentId, $"{code}_Unit_{unitId}@units.resgrid.net", unitName, "", data);
 		}
 
 		private async Task<bool> UpdateSubscriberFcm(string id, string token, string fcmId)
@@ -65,9 +93,10 @@ namespace Resgrid.Providers.Messaging
 			{
 				using (HttpClient client = new HttpClient())
 				{
-					var url = $"${ChatConfig.NovuBackendUrl}v1/subscribers/{id}/credentials";
+					var url = $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{id}/credentials";
 					var request = new HttpRequestMessage(HttpMethod.Put, url);
 					request.Headers.Add("Accept", "application/json");
+					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
 					request.Headers.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
 					var payload = new

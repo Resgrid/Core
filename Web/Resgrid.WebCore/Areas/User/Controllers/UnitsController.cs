@@ -293,7 +293,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _unitsService.SetRolesForUnitAsync(model.Unit.UnitId, roles, cancellationToken);
 
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-				await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name);
+				await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
@@ -337,7 +337,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitRoles = await _unitsService.GetRolesForUnitAsync(unitId);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name);
+			await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
 
 			return View(model);
 		}

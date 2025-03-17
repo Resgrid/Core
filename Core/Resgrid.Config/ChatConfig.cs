@@ -12,5 +12,6 @@
 
 		public static string NovuUnitFcmProviderId = "";
 		public static string NovuResponderFcmProviderId = "";
+		public static string NovuDispatchUnitWorkflowId = "unit-dispatch";
 	}
 }

@@ -53,8 +53,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (registrationInput == null)
 						return BadRequest();
 
-
-
 					PushRegisterionEvent pushRegisterionEvent = new PushRegisterionEvent();
 					pushRegisterionEvent.PushUriId = 0;
 					pushRegisterionEvent.UserId = UserId;

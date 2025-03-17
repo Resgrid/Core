@@ -9,4 +9,7 @@ public interface INovuProvider
 	Task<bool> UpdateUserSubscriberFcm(string userId, string code, string token);
 	Task<bool> UpdateUnitSubscriberFcm(int unitId, string code, string token);
 
+	Task<bool> SendUnitDispatch(string title, string body, int unitId, string depCode, string eventCode, string type,
+		bool enableCustomSounds, int count, string color);
+
 }

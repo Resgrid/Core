@@ -1,8 +1,15 @@
-﻿using Resgrid.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Contacts;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -20,6 +27,47 @@ namespace Resgrid.Repositories.DataRepository
 			_sqlConfiguration = sqlConfiguration;
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
+		}
+
+		public async Task<IEnumerable<ContactNote>> GetContactNotesByContactIdAsync(string contactId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ContactNote>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("ContactId", contactId);
+
+					var query = _queryFactory.GetQuery<SelectContactNotesByContactIdQuery>();
+
+					return await x.QueryAsync<ContactNote>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
 		}
 	}
 }

@@ -1,0 +1,153 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Contacts.ContactsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @commonLocalizer["ContactsModule"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@commonLocalizer["ContactsModule"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@commonLocalizer["ContactsModule"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            @if (ClaimsAuthorizationHelper.CanCreateContacts())
+            {
+                <a title="Create Contact" class="btn btn-success" asp-controller="Contacts" asp-action="Add" asp-route-area="User">@localizer["NewContact"]</a>
+            }
+            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+            {
+                <a id="contactCategories" class="btn btn-info top-button" title="@localizer["UnitStaffing"]" asp-controller="Contacts" asp-action="Categories" asp-route-area="User">@localizer["Categories"]</a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-3">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content mailbox-content">
+                    <div>
+                        <div id="tree"></div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @{
+                        if (Model.Contacts != null && Model.Contacts.Any())
+                        {
+                            @Html.Raw("<div id='contactsTab-1' class='contactsTabPannel'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_0'>")
+
+                            foreach (var c in Model.Contacts)
+                            {
+
+                                ContactsTableButtonTemplate(c);
+
+                                @Html.Raw("</td>")
+                                @Html.Raw("</tr>")
+
+                            }
+                            @Html.Raw("</tbody></table></div></div>")
+                        }
+                        else
+                        {
+                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoContactsInDepartment"]}</h3></div>")
+                        }
+                    }
+
+                    @{
+                        for (var i = 0; i < Model.ContactCategories.Count(); i++)
+                        {
+                            var categoryContacts = Model.Contacts.Where(x => x.ContactCategoryId == Model.ContactCategories[i].ContactCategoryId).ToList();
+
+                            if (categoryContacts != null && categoryContacts.Any())
+                            {
+                                @Html.Raw("<div id='contactsTab" + Model.Contacts[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
+
+                                @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.Contacts[i].ContactCategoryId}'>")
+
+
+                                foreach (var c in categoryContacts)
+                                {
+                                    ContactsTableButtonTemplate(c);
+
+                                    @Html.Raw("</td>")
+                                    @Html.Raw("</tr>")
+                                }
+
+                                @Html.Raw("</tbody></table></div></div>")
+                            }
+                            else
+                            {
+                                @Html.Raw("<div id='contactsTab" + Model.Contacts[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
+                                @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoContactsInThisCategory"]}</h3></div>")
+                                @Html.Raw("</div>")
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    void ContactsTableButtonTemplate(Contact c)
+    {
+        string timestamp;
+        if (c.EditedOn.HasValue)
+        {
+            timestamp = c.EditedOn.Value.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
+        }
+        else
+        {
+            timestamp = c.AddedOn.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
+        }
+
+        @Html.Raw("<tr><td></td><td>" + c.GetName() + "</td><td>" + c.GetTypeName() + "</td><td>" + c.GetCategoryName() + "</td><td>" + timestamp + "</td>")
+
+        @Html.Raw("<td>")
+
+        @if (ClaimsAuthorizationHelper.CanViewContacts())
+        {
+            @Html.Raw($"<a type='button' href='{@Url.Action("View", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-primary'>{@localizer["ViewContact"]}</a>&nbsp;")
+        }
+        @if (ClaimsAuthorizationHelper.CanEditContacts())
+        {
+            @Html.Raw($"<a type='button' href='{@Url.Action("Edit", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-warning'>{@commonLocalizer["Edit"]}</a>&nbsp;")
+            ;
+        }
+        @if (ClaimsAuthorizationHelper.CanDeleteContacts())
+        {
+            @Html.Raw($"<a type='button' href='{@Url.Action("Delete", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-danger' data-confirm='{@localizer["DeleteUnitWarning"]} {c.GetName()}?' rel='nofollow'>{@commonLocalizer["Delete"]}</a>")
+            ;
+        }
+    }
+}
+
+@section Scripts
+{
+    <script>
+        var treeData = @Html.Raw(@Model.TreeData);
+    </script>
+
+    <script src="~/js/app/internal/contacts/resgrid.contacts.index.js" type="text/javascript"></script>
+}

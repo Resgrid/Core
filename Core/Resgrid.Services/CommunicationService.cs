@@ -227,6 +227,7 @@ namespace Resgrid.Services
 			spc.Priority = call.Priority;
 			spc.ActiveCallCount = 1;
 			spc.DepartmentId = call.DepartmentId;
+			spc.DepartmentCode = call.Department?.Code;
 
 			if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
 			{

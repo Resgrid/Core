@@ -26,11 +26,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D2D96CD8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workers", "Workers", "{DBB9862A-C008-4C3F-A9DB-320429E4A07F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.WebCore", "Web\Resgrid.WebCore\Resgrid.WebCore.csproj", "{D867D4CA-D348-4485-A7B0-5293DF8F93D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Web", "Web\Resgrid.Web\Resgrid.Web.csproj", "{D867D4CA-D348-4485-A7B0-5293DF8F93D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CA1CBFB1-B5B3-4D74-BE2D-DDC2C9474F17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Web.ServicesCore", "Web\Resgrid.Web.ServicesCore\Resgrid.Web.ServicesCore.csproj", "{24E2241D-D82C-443D-9613-F900E44C003E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Web.Services", "Web\Resgrid.Web.Services\Resgrid.Web.Services.csproj", "{24E2241D-D82C-443D-9613-F900E44C003E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Config", "Core\Resgrid.Config\Resgrid.Config.csproj", "{C8A18F9F-93BC-44F6-AFFD-6187EA0BFF78}"
 EndProject

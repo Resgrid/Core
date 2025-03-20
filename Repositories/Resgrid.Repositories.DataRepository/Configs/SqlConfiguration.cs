@@ -443,6 +443,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string ContactNoteTypesTableName { get; set; }
 		public string CallContactTableName { get; set; }
 		public string SelectContactsByCategoryIdQuery { get; set; }
+		public string SelectContactNotesByContactIdQuery { get; set; }
 		#endregion Contacts
 
 		// Identity

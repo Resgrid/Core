@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/pepper-grinder/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="jquery-ui.multidatespicker.css">
+
+    <script type="application/javascript" src="https://code.jquery.com/jquery-2.2.4.js"></script>
+    <script type="application/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="application/javascript" src="jquery-ui.multidatespicker.js"></script>
+</head>
+<body>
+<div id="mdp-demo"></div>
+<script>
+    var today = new Date();
+    var y = today.getFullYear();
+    $('#mdp-demo').datepicker({
+//        addDates: ['1/14/'+y, '1/19/'+y, '1/14/'+y, '2/16/'+y],
+        numberOfMonths: 2,
+        showCurrentAtPos: 1
+    });
+</script>
+</body>
+</html>

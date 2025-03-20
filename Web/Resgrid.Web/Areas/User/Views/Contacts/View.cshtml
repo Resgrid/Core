@@ -1,0 +1,355 @@
+﻿@model Resgrid.Web.Areas.User.Models.Contacts.ViewContactView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["ViewContactHeader"];
+}
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>@Model.Contact.GetName()</h5>
+                </div>
+                <div class="ibox-content">
+                    <!-- Contact Details Section -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><i class="fa fa-user"></i> @localizer["ContactDetails"]</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["Name"]:</strong></div>
+                                        <div class="col-md-8">@Model.Contact.GetName()</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["Email"]:</strong></div>
+                                        <div class="col-md-8">@Model.Contact.Email</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["MobilePhone"]:</strong></div>
+                                        <div class="col-md-8">@Model.Contact.CellPhoneNumber</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["HomePhone"]:</strong></div>
+                                        <div class="col-md-8">@Model.Contact.HomePhoneNumber</div>
+                                    </div>
+                                    @if (Model.PhysicalAddress != null)
+                                    {
+                                        <div class="row">
+                                            <div class="col-md-4"><strong>@localizer["PhysicalAddress"]:</strong></div>
+                                            <div class="col-md-8">
+                                                @Model.PhysicalAddress.Address1<br/>
+                                                @if (!string.IsNullOrEmpty(Model.PhysicalAddress.Address1))
+                                                {
+                                                    @Model.PhysicalAddress.Address1<br/>
+                                                }
+                                                @Model.PhysicalAddress.City, @Model.PhysicalAddress.State @Model.PhysicalAddress.PostalCode<br/>
+                                                @Model.PhysicalAddress.Country
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (Model.MailingAddress != null)
+                                    {
+                                        <div class="row mt-2">
+                                            <div class="col-md-4"><strong>@localizer["MailingAddress"]:</strong></div>
+                                            <div class="col-md-8">
+                                                @Model.MailingAddress.Address1<br/>
+                                                @if (!string.IsNullOrEmpty(Model.MailingAddress.Address1))
+                                                {
+                                                    @Model.MailingAddress.Address1<br/>
+                                                }
+                                                @Model.MailingAddress.City, @Model.MailingAddress.State @Model.MailingAddress.PostalCode<br/>
+                                                @Model.MailingAddress.Country
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><i class="fa fa-info-circle"></i> @localizer["AdditionalInfo"]</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["ContactType"]:</strong></div>
+                                        <div class="col-md-8">@Model.Contact.ContactType</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["Status"]:</strong></div>
+                                        <div class="col-md-8">@Model.Contact</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["CreatedOn"]:</strong></div>
+                                        <div class="col-md-8">@Model.Contact.AddedOn.ToString("MM/dd/yyyy HH:mm")</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4"><strong>@localizer["CreatedBy"]:</strong></div>
+                                        <div class="col-md-8">@UserHelper.GetFullNameForUser(Model.Contact.AddedByUserId)</div>
+                                    </div>
+                                    @if (Model.Contact.EditedOn.HasValue)
+                                    {
+                                        <div class="row">
+                                            <div class="col-md-4"><strong>@localizer["LastUpdated"]:</strong></div>
+                                            <div class="col-md-8">@Model.Contact.EditedOn.Value.ToString("MM/dd/yyyy HH:mm")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Notes Section -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><i class="fa fa-sticky-note"></i> @localizer["ContactNotes"]</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <!-- Search and filter section -->
+                                    <div class="row m-b-sm">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <input type="text" id="notesSearchInput" class="form-control" placeholder="@localizer["SearchNotes"]">
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-primary" id="searchNotesBtn">
+                                                        <i class="fa fa-search"></i> @localizer["Search"]
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">@localizer["FilterBy"]</span>
+                                                <select id="notesFilterSelect" class="form-control">
+                                                    <option value="">@localizer["All"]</option>
+                                                    <option value="recent">@localizer["Recent"]</option>
+                                                    <option value="oldest">@localizer["Oldest"]</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Notes cards container -->
+                                    <div class="row" id="notesContainer">
+                                        @if (Model.Notes != null && Model.Notes.Any())
+                                        {
+                                            @foreach (var note in Model.Notes)
+                                            {
+                                                <div class="col-md-4 note-card" data-date="@note.AddedOn.ToString("yyyy-MM-ddTHH:mm:ss")">
+                                                    <div class="ibox">
+                                                        <div class="ibox-content">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <h4 class="note-title">@note.NoteType.Name</h4>
+                                                                    <p class="small text-muted">
+                                                                        <i class="fa fa-clock-o"></i> @note.AddedOn.ToString("MM/dd/yyyy HH:mm")
+                                                                        @if (!string.IsNullOrEmpty(note.AddedByUserId))
+                                                                        {
+                                                                            <span> | <i class="fa fa-user"></i> @UserHelper.GetFullNameForUser(note.AddedByUserId)</span>
+                                                                        }
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 note-content">
+                                                                    @Html.Raw(note.Note)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+
+                                    <!-- No results message -->
+                                    <div id="noNotesFound" class="text-center p-md" style="display: none;">
+                                        <h3><i class="fa fa-search-minus"></i> @localizer["NoNotesFound"]</h3>
+                                    </div>
+                                    
+                                    <!-- Add New Note Section -->
+                                    @if (ClaimsAuthorizationHelper.CanEditContacts())
+                                    {
+                                        <div class="row m-t-lg">
+                                            <div class="col-md-12">
+                                                <div class="ibox">
+                                                    <div class="ibox-title">
+                                                        <h5><i class="fa fa-plus-circle"></i> @localizer["AddNewNote"]</h5>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <form id="addNoteForm" asp-controller="Contacts" asp-action="AddNote" asp-route-area="User" method="post" class="form-horizontal">
+                                                            <input type="hidden" name="ContactId" value="@Model.Contact.ContactId" />
+                                                            
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label">@localizer["NoteTitle"]:</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" name="Title" class="form-control" required />
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label">@localizer["NoteContent"]:</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea name="Note" class="form-control" rows="5" required></textarea>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label">@localizer["NoteType"]:</label>
+                                                                <div class="col-sm-10">
+                                                                    <select name="ContactNoteTypeId" class="form-control">
+                                                                        @if (Model.NoteTypes != null)
+                                                                        {
+                                                                            @foreach (var type in Model.NoteTypes)
+                                                                            {
+                                                                                <option value="@type.ContactNoteTypeId">@type.Name</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label">@localizer["ExpiresOn"]:</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group date">
+                                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                                        <input type="datetime-local" name="ExpiresOn" class="form-control" />
+                                                                    </div>
+                                                                    <span class="help-block m-b-none">@localizer["LeaveBlankForNoExpiration"]</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <div class="checkbox">
+                                                                        <label>
+                                                                            <input type="checkbox" name="ShouldAlert" value="true" /> @localizer["ShouldAlert"]
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-primary">
+                                                                        <i class="fa fa-save"></i> @localizer["SaveNote"]
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - View Contact');
+            
+            // Notes search and filter functionality
+            const $noteCards = $('.note-card');
+            const $notesContainer = $('#notesContainer');
+            const $noNotesFound = $('#noNotesFound');
+            
+            // Search functionality
+            function searchNotes() {
+                const searchTerm = $('#notesSearchInput').val().toLowerCase();
+                let foundCount = 0;
+                
+                $noteCards.each(function() {
+                    const $card = $(this);
+                    const noteTitle = $card.find('.note-title').text().toLowerCase();
+                    const noteContent = $card.find('.note-content').text().toLowerCase();
+                    
+                    if (noteTitle.includes(searchTerm) || noteContent.includes(searchTerm)) {
+                        $card.show();
+                        foundCount++;
+                    } else {
+                        $card.hide();
+                    }
+                });
+                
+                if (foundCount === 0) {
+                    $noNotesFound.show();
+                } else {
+                    $noNotesFound.hide();
+                }
+            }
+            
+            // Filter functionality
+            function filterNotes() {
+                const filterValue = $('#notesFilterSelect').val();
+                let notes = $noteCards.toArray();
+                
+                if (filterValue === 'recent') {
+                    notes.sort((a, b) => {
+                        const dateA = $(a).data('date');
+                        const dateB = $(b).data('date');
+                        return dateB.localeCompare(dateA);
+                    });
+                } else if (filterValue === 'oldest') {
+                    notes.sort((a, b) => {
+                        const dateA = $(a).data('date');
+                        const dateB = $(b).data('date');
+                        return dateA.localeCompare(dateB);
+                    });
+                }
+                
+                $notesContainer.empty();
+                $(notes).each(function() {
+                    $notesContainer.append(this);
+                });
+                
+                // Re-apply search if there's a search term
+                if ($('#notesSearchInput').val().trim().length > 0) {
+                    searchNotes();
+                }
+            }
+            
+            // Event handlers
+            $('#searchNotesBtn').on('click', searchNotes);
+            $('#notesSearchInput').on('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    searchNotes();
+                }
+            });
+            
+            $('#notesFilterSelect').on('change', filterNotes);
+            
+            // Initialize form components
+            $('textarea[name="Note"]').summernote({
+                height: 150,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['para', ['ul', 'ol']],
+                    ['insert', ['link']]
+                ]
+            });
+            
+            // Form validation and submission
+            $('#addNoteForm').on('submit', function(e) {
+                // You can add additional validation here if needed
+                // This will be handled by the server-side validation as well
+            });
+        });
+    </script>
+}

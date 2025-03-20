@@ -59,6 +59,9 @@
 		ContactRemoved,
 		ContactCategoryAdded,
 		ContactCategoryEdited,
-		ContactCategoryRemoved
+		ContactCategoryRemoved,
+		ContactNoteTypeAdded,
+		ContactNoteTypeEdited,
+		ContactNoteTypeRemoved
 	}
 }

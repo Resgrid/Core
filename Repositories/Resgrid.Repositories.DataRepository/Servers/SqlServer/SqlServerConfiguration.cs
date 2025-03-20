@@ -1355,8 +1355,12 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			CallContactTableName = "CallContacts";
 			SelectContactsByCategoryIdQuery = @"
 					SELECT *
-					FROM %SCHEMA%.%TABLENAME% 
+					FROM %SCHEMA%.%TABLENAME%
 					WHERE [ContactCategoryId] = %CATEGORYID% AND DepartmentId = %DID%";
+			SelectContactNotesByContactIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE [ContactId] = %CONTACTID%";
 			#endregion Contacts
 		}
 }

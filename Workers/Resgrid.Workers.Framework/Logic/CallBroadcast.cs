@@ -87,7 +87,14 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 				}
 
-				_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
+				if (_departmentGroupsService == null)
+					_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
+
+				if (_departmentsService == null)
+					_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+
+				var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
+				cqi.Call.Department = department;
 
 				// Dispatch Groups
 				if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())
@@ -98,11 +105,7 @@ namespace Resgrid.Workers.Framework.Logic
 					if (_shiftsService == null)
 						_shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
 
-					if (_departmentsService == null)
-						_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-
 					var dispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(cqi.Call.DepartmentId);
-					var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
 					var localizedDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
 					var shiftDate = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day);
 
@@ -144,7 +147,8 @@ namespace Resgrid.Workers.Framework.Logic
 				// Dispatch Units
 				if (cqi.Call.UnitDispatches != null && cqi.Call.UnitDispatches.Any())
 				{
-					_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+					if (_unitsService == null)
+						_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
 
 					foreach (var d in cqi.Call.UnitDispatches)
 					{
@@ -215,7 +219,8 @@ namespace Resgrid.Workers.Framework.Logic
 				// Dispatch Roles
 				if (cqi.Call.RoleDispatches != null && cqi.Call.RoleDispatches.Any())
 				{
-					_rolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
+					if (_rolesService == null)
+						_rolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
 
 					foreach (var d in cqi.Call.RoleDispatches)
 					{

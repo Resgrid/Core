@@ -1,0 +1,18 @@
+@tailwind base;
+
+@layer base {
+  html {
+    @apply text-[hsl(0,0%,31%)];
+  }
+  html.dark {
+    @apply text-neutral-50;
+    @apply bg-neutral-800;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
+
+p {
+  @apply leading-[1.6];
+}

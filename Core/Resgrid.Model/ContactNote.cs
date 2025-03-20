@@ -40,6 +40,9 @@ namespace Resgrid.Model
 		public string EditedByUserId { get; set; }
 
 		[NotMapped]
+		public ContactNoteType NoteType { get; set; }
+
+		[NotMapped]
 		public string TableName => "ContactNotes";
 
 		[NotMapped]
@@ -57,6 +60,6 @@ namespace Resgrid.Model
 		}
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "NoteType" };
 	}
 }

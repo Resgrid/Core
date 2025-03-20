@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<style>
+svg {
+  background: orange;
+}
+</style>
+</head>
+<body>
+
+<p><span>2,4,5</span></p>
+
+<!--<p><span>1,1,2,3,5,8,13</span></p>-->
+
+<!--<p><span>10,15,13,14,11</span></p>-->
+<!--<p><span>10,-15,13,14,-11</span></p>-->
+<!--<p><span>-10,-15,-13,-14,-11</span></p>-->
+<!--<p><span>1000,1005,1003,1004,1001</span></p>-->
+<!--<p><span>0,0,0,0,0</span></p>-->
+<!--<p><span>1,1,1,1,1</span></p>-->
+
+<script src="test/jquery-1.6.2.min.js"></script>
+<script src="jquery.peity.js"></script>
+
+<script>
+  $('span').peity('donut', {
+    after: function() {
+      var xy = this.scale(4, 4)
+
+      this.svg.appendChild(
+        this.svgElement('rect', {
+          fill: 'none',
+          height: 3,
+          stroke: 'black',
+          width: 3,
+          x: xy[0],
+          y: xy[1]
+        })
+      )
+    }
+  })
+
+  //var average = function(values) {
+    //return values.reduce(function(sum, n) {
+      //return sum + n
+    //}, 0) / values.length
+  //}
+//
+  //$('span').peity('line', {
+    ////after: function() {
+      //var y = average(this.values())
+//
+      //var line = this.svgElement('line', {
+        //stroke: 'black',
+        //x1: 0,
+        //x2: this.x(this.values().length - 1),
+        //y1: this.y(y),
+        //y2: this.y(y)
+      //})
+//
+      //this.svg.appendChild(line)
+    //}
+  //})
+</script>
+
+</body>
+</html>

@@ -168,6 +168,12 @@
   <data name="CompanyNamePlaceholder" xml:space="preserve">
     <value>Organization or Location Name</value>
   </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>Contact Details</value>
+  </data>
+  <data name="ContactInformation" xml:space="preserve">
+    <value>Contact Information</value>
+  </data>
   <data name="ContactsHeader" xml:space="preserve">
     <value>Contacts</value>
   </data>

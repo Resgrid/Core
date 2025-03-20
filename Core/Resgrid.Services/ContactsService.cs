@@ -88,5 +88,67 @@ namespace Resgrid.Services
 		{
 			return await _contactCategoryRepository.DeleteAsync(contactCategory, cancellationToken);
 		}
+
+		public async Task<Contact> GetContactByIdAsync(string contactId)
+		{
+			return await _contactsRepository.GetByIdAsync(contactId);
+		}
+
+		public async Task<List<ContactNote>> GetContactNotesByContactIdAsync(string contactId, int departmentId, bool getDeleted = false)
+		{
+			var notes = await _contactNotesRepository.GetContactNotesByContactIdAsync(contactId);
+			var notesResult =  new List<ContactNote>();
+
+			if (notes == null)
+				return notesResult;
+
+			var noteTypes = await _contactNoteTypesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			foreach (var note in notes)
+			{
+				if (!note.IsDeleted || (note.IsDeleted && getDeleted))
+				{
+					note.NoteType = noteTypes.FirstOrDefault(x => x.ContactNoteTypeId == note.ContactNoteTypeId);
+					notesResult.Add(note);
+				}
+			}
+
+			return notes.ToList();
+		}
+
+		public async Task<List<ContactNoteType>> GetContactNoteTypesByDepartmentIdAsync(int departmentId)
+		{
+			var types = await _contactNoteTypesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			if (types == null)
+				return new List<ContactNoteType>();
+
+			return types.ToList();
+		}
+
+		public async Task<ContactNoteType> SaveContactNoteTypeAsync(ContactNoteType type, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _contactNoteTypesRepository.SaveOrUpdateAsync(type, cancellationToken);
+		}
+
+		public async Task<ContactNoteType> GetContactNoteTypeByIdAsync(string contactNoteTypeId)
+		{
+			return await _contactNoteTypesRepository.GetByIdAsync(contactNoteTypeId);
+		}
+
+		public async Task<bool> DoesContactNoteTypeAlreadyExistAsync(int departmentId, string noteTypeText)
+		{
+			var types = await GetContactNoteTypesByDepartmentIdAsync(departmentId);
+
+			if (types == null)
+				return false;
+
+			return types.Any(x => x.Name == noteTypeText.Trim());
+		}
+
+		public async Task<bool> DeleteContactNoteTypeAsync(ContactNoteType type, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _contactNoteTypesRepository.DeleteAsync(type, cancellationToken);
+		}
 	}
 }

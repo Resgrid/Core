@@ -1,0 +1,417 @@
+﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentTypesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["DepartmentTypesHeader"];
+}
+@section Styles
+{
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["DepartmentTypesHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["DepartmentTypesHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <a id="manageListOrderingButton" class="btn btn-info top-button" title="@localizer["ManagedListOrderingHeader"]" asp-controller="Types" asp-action="ListOrdering" asp-route-area="User">@localizer["ManagedListOrderingHeader"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["CallTypesHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="@localizer["AddNewCallTypeButtonAltText"]" class="btn btn-success" href="@Url.Action("NewCallType", "Types", new { area = "User"})">@localizer["NewCallTypeButton"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["CallTypeNameHeader"]</th>
+                                    <th>@localizer["CallTypeMapIconHeader"]</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CallTypes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Type
+                                        </td>
+                                        <td>
+                                            @if (c.MapIconType.HasValue)
+                                            {
+                                                <span>@(((MapIconTypes)c.MapIconType.Value).ToString())</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@commonLocalizer["Default"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-primary" href="@Url.Action("EditCallType", "Types", new { area = "User", callTypeId = c.CallTypeId })">@commonLocalizer["Edit"]</a>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallType", "Types", new { area = "User", callTypeId = c.CallTypeId })" data-confirm="@localizer["DeleteCallTypeWarning"] @c.Type ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["CallPrioritiesHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="@localizer["NewCallPriorityButtonAlt"]" class="btn btn-success" asp-controller="Types" asp-action="NewCallPriority" asp-route-area="User">@localizer["NewCallPriorityHeader"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@commonLocalizer["Name"]</th>
+                                    <th>@commonLocalizer["Color"]</th>
+                                    <th>@localizer["CallPriorityIsDefault"]</th>
+                                    <th>@localizer["CallPriorityAlertSound"]</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CallPriorites)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Name
+                                        </td>
+                                        <td>
+                                            <span style="color: @c.Color;">@c.Color</span>
+                                        </td>
+                                        <td>
+                                            @if (c.IsDefault)
+                                            {
+                                                <span style="color: green;">Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color: gray;">No</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.Tone > 0)
+                                            {
+                                                var name = ((CustomAudioTypes)c.Tone).ToString();
+                                                <span>@name</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@commonLocalizer["Default"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.DepartmentId != 0 && c.IsSystemPriority == false)
+                                            {
+                                                <a class="btn btn-xs btn-primary" href="@Url.Action("EditCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })">@commonLocalizer["Edit"]</a>
+
+                                                if (!c.IsDefault)
+                                                {
+                                                    <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })" data-confirm="WARNING: This will permanently delete this call priority. Are you sure you want to delete the priority @c.Name ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.CallPriorites.First().DepartmentId == 0)
+                        {
+                            <div class="alert alert-warning">
+                                @localizer["CallPriorityUsingDefaultText"]
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                @localizer["CallPriorityUsingCustomText"]
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["UnitTypesHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="@localizer["NewUnitTypeHeader"]" class="btn btn-success" asp-controller="Types" asp-action="NewUnitType" asp-route-area="User">@localizer["NewUnitTypeHeader"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@commonLocalizer["Name"]</th>
+                                    <th>@localizer["UnitTypeActionsLabel"]</th>
+                                    <th>@localizer["UnitTypeMapIconLabel"]</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.UnitTypes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Type
+                                        </td>
+                                        <td>
+                                            @if (c.CustomStatesId.GetValueOrDefault() > 0 && Model.States.Any(x => x.CustomStateId == c.CustomStatesId.Value))
+                                            {
+                                                <span>@Model.States.First(x => x.CustomStateId == c.CustomStatesId.Value).Name</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@localizer["DefaultUnitActionsLabel"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.MapIconType.HasValue)
+                                            {
+                                                <span>@(((MapIconTypes)c.MapIconType.Value).ToString())</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@commonLocalizer["Default"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-primary" href="@Url.Action("EditUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })">@commonLocalizer["Edit"]</a>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })" data-confirm="@localizer["DeleteUnitTypeWarning"] @c.Type ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["CertificationTypesHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="@localizer["NewCertificationTypeHeader"]" class="btn btn-success" href="@Url.Action("NewCertificationType", "Types", new { area = "User"})">@localizer["NewCertificationTypeHeader"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["CertificationTypesName"]</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CertificationTypes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Type
+                                        </td>
+
+                                        <td>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Types", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="@localizer["CertificationTypesDeleteWarning"] @c.Type ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["DocumentTypesHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="@localizer["NewDocumentTypesHeader"]" class="btn btn-success" href="@Url.Action("NewDocumentType", "Types", new { area = "User"})">@localizer["NewDocumentTypesHeader"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["CertificationTypesName"]</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.DocumentCategories)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Name
+                                        </td>
+
+                                        <td>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteDocumentType", "Types", new { area = "User", documentTypeId = c.DocumentCategoryId })" data-confirm="@localizer["DeleteDocumentTypesWarning"] @c.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["NoteTypesHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="@localizer["NewNoteTypesHeader"]" class="btn btn-success" href="@Url.Action("NewNoteType", "Types", new { area = "User"})">@localizer["NewNoteTypesHeader"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["NoteTypesName"]</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.NoteCategories)
+                                {
+                                    <tr>
+                                        <td>
+                                            @c.Name
+                                        </td>
+
+                                        <td>
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteNoteType", "Types", new { area = "User", noteTypeId = c.NoteCategoryId })" data-confirm="@localizer["DeleteNoteTypesWarning"] @c.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["ContactNoteTypesHeader"]</h5>
+                    <div class="ibox-tools">
+                        <div class="buttons-actions">
+                            <a title="@localizer["NewContactNoteTypesHeader"]" class="btn btn-success" href="@Url.Action("NewContactNoteType", "Types", new { area = "User"})">@localizer["NewContactNoteTypes"]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>@localizer["ContactNoteTypesName"]</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var c in Model.ContactNoteTypes)
+                            {
+                            <tr>
+                                <td>
+                                    @c.Name
+                                </td>
+
+                                <td>
+                                    <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteContactNoteType", "Types", new { area = "User", contactNoteTypeId = c.ContactNoteTypeId })" data-confirm="@localizer["DeleteContactNoteTypesWarning"] @c.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                </td>
+                            </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - Types');
+        });
+    </script>
+}

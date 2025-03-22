@@ -420,4 +420,55 @@
   <data name="WebsitePlaceholder" xml:space="preserve">
     <value>Contact website Url</value>
   </data>
+  <data name="AdditionalInfo" xml:space="preserve">
+    <value>Additional Info</value>
+  </data>
+  <data name="CreatedOn" xml:space="preserve">
+    <value>Created On</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>Created By</value>
+  </data>
+  <data name="ContactType" xml:space="preserve">
+    <value>Contact Type</value>
+  </data>
+  <data name="MailingAddressHeader" xml:space="preserve">
+    <value>Mailing Address</value>
+  </data>
+  <data name="LocationDetails" xml:space="preserve">
+    <value>Location Info</value>
+  </data>
+  <data name="SocialsInfo" xml:space="preserve">
+    <value>Socials</value>
+  </data>
+  <data name="NoNotesFound" xml:space="preserve">
+    <value>No Notes have been entered for this Contact</value>
+  </data>
+  <data name="AddNewNote" xml:space="preserve">
+    <value>Add Note</value>
+  </data>
+  <data name="NoteTitle" xml:space="preserve">
+    <value>Note Title</value>
+  </data>
+  <data name="NoteContent" xml:space="preserve">
+    <value>Note Content</value>
+  </data>
+  <data name="NoteType" xml:space="preserve">
+    <value>Note Type</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Expires On</value>
+  </data>
+  <data name="LeaveBlankForNoExpiration" xml:space="preserve">
+    <value>Leave Expired On blank or empty for no Expiration.</value>
+  </data>
+  <data name="ShouldAlert" xml:space="preserve">
+    <value>Should Note Alert</value>
+  </data>
+  <data name="ShouldAlertInfo" xml:space="preserve">
+    <value>If checked this note will appear when a new call is created for this contact. </value>
+  </data>
+  <data name="SaveNote" xml:space="preserve">
+    <value>Add Note</value>
+  </data>
 </root>

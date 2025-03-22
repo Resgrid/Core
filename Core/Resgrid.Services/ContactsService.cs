@@ -150,5 +150,11 @@ namespace Resgrid.Services
 		{
 			return await _contactNoteTypesRepository.DeleteAsync(type, cancellationToken);
 		}
+
+		public async Task<ContactNote> SaveContactNoteAsync(ContactNote note, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _contactNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
+		}
+
 	}
 }

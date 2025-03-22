@@ -33,8 +33,10 @@ using System.Reflection;
 using Resgrid.Localization;
 using Microsoft.AspNetCore.Localization;
 using System.Web;
+using Google.Api.Gax.Rest;
 using Resgrid.Web.Areas.User.Models.Contacts;
 using Resgrid.WebCore.Areas.User.Models;
+using Resgrid.WebCore.Areas.User.Models.Contacts;
 using SharpKml.Dom.Atom;
 using SharpKml.Dom;
 
@@ -293,6 +295,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Connect_Create)]
+		public async Task<IActionResult> AddNote(AddContactNoteView model, CancellationToken cancellationToken)
+		{
+			if (ModelState.IsValid)
+			{
+				var contact = await _contactsService.GetContactByIdAsync(model.ContactId);
+
+				if (contact == null)
+					return BadRequest();
+
+				if (contact.DepartmentId != DepartmentId)
+					return BadRequest();
+
+				var note = new ContactNote();
+				note.ContactId = model.ContactId;
+				note.Note = model.Note;
+				note.DepartmentId = DepartmentId;
+				note.AddedByUserId = UserId;
+				note.ShouldAlert = model.ShouldAlert;
+				note.ContactNoteTypeId = model.ContactNoteTypeId;
+				note.ExpiresOn = model.ExpiresOn;
+				note.AddedOn = DateTime.UtcNow;
+
+				await _contactsService.SaveContactNoteAsync(note, cancellationToken);
+
+				return Ok();
+			}
+
+			return BadRequest();
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Contacts_Create)]
 		public async Task<IActionResult> Categories()
@@ -462,6 +496,61 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			return RedirectToAction("Categories", "Contacts", new { Area = "User" });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> GetNotesJson(string contactId)
+		{
+			List<ContactNoteJson> notes = new List<ContactNoteJson>();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			if (contact == null)
+				return Json(notes);
+
+			if (contact.DepartmentId != DepartmentId)
+				return Json(notes);
+
+			var contactNotes = await _contactsService.GetContactNotesByContactIdAsync(contactId, DepartmentId);
+			var noteTypes = await _contactsService.GetContactNoteTypesByDepartmentIdAsync(DepartmentId);
+
+			if (contactNotes != null && contactNotes.Any())
+			{
+				foreach (var note in contactNotes)
+				{
+					var noteJson = new ContactNoteJson();
+					noteJson.ContactNoteId = note.ContactNoteId;
+					noteJson.Note = note.Note;
+
+					if (note.ExpiresOn.HasValue)
+						noteJson.ExpiresOn = note.ExpiresOn.Value.FormatForDepartment(department);
+
+					noteJson.CreatedOn = note.AddedOn.FormatForDepartment(department);
+					noteJson.CreatedBy = await UserHelper.GetFullNameForUser(note.AddedByUserId);
+					noteJson.ShouldAlert = note.ShouldAlert;
+
+					if (note.ShouldAlert)
+						noteJson.BackgroundColor = "#FFCC00";
+					else
+						noteJson.BackgroundColor = "#FFFFFF";
+
+					noteJson.ContactNoteType = "";
+
+					if (!String.IsNullOrWhiteSpace(note.ContactNoteTypeId))
+					{
+						var noteType = noteTypes.FirstOrDefault(x => x.ContactNoteTypeId == note.ContactNoteTypeId);
+
+						if (noteType != null)
+							noteJson.ContactNoteType = noteType.Name;
+					}
+
+					notes.Add(noteJson);
+				}
+			}
+
+			return Json(notes);
 		}
 	}
 }

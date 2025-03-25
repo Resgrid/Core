@@ -471,4 +471,16 @@
   <data name="SaveNote" xml:space="preserve">
     <value>Add Note</value>
   </data>
+  <data name="FilterBy" xml:space="preserve">
+    <value>Filter By</value>
+  </data>
+  <data name="LoadingNotes" xml:space="preserve">
+    <value>Loading Notes</value>
+  </data>
+  <data name="SearchNotes" xml:space="preserve">
+    <value>Search Notes</value>
+  </data>
+  <data name="EditContact" xml:space="preserve">
+    <value>Edit Contact</value>
+  </data>
 </root>

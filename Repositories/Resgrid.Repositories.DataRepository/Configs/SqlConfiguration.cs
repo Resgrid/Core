@@ -306,6 +306,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string CallAttachmentsTable { get; set; }
 		public string DepartmentCallPrioritiesTable { get; set; }
 		public string CallProtocolsTable { get; set; }
+		public string CallContactsTable { get; set; }
 		public string SelectAllCallsByDidDateQuery { get; set; }
 		public string SelectAllClosedCallsByDidDateQuery { get; set; }
 		public string SelectAllCallDispatchesByGroupIdQuery { get; set; }
@@ -324,6 +325,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllClosedCallsByDidYearQuery { get; set; }
 		public string SelectNonDispatchedScheduledCallsByDateQuery { get; set; }
 		public string SelectNonDispatchedScheduledCallsByDidQuery { get; set; }
+		public string SelectCallsByContactQuery { get; set; }
 		#endregion Calls
 
 		#region Dispatch Protocols

@@ -39,6 +39,7 @@ using Resgrid.WebCore.Areas.User.Models;
 using Resgrid.WebCore.Areas.User.Models.Contacts;
 using SharpKml.Dom.Atom;
 using SharpKml.Dom;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -46,21 +47,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public class ContactsController : SecureBaseController
 	{
 		#region Private Members and Constructors
+
 		private readonly IContactsService _contactsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IAddressService _addressService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ICallsService _callsService;
+		private readonly IAuthorizationService _authorizationService;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
-			IAddressService addressService, IEventAggregator eventAggregator)
+			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService)
 		{
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
 			_addressService = addressService;
 			_eventAggregator = eventAggregator;
+			_callsService = callsService;
+			_authorizationService = authorizationService;
 		}
+
 		#endregion Private Members and Constructors
 
 		[Authorize(Policy = ResgridResources.Contacts_View)]
@@ -131,7 +138,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return View(model);
 		}
-
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Contacts_Create)]
@@ -295,6 +301,264 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_Create)]
+		public async Task<IActionResult> Edit(string contactId)
+		{
+			if (String.IsNullOrWhiteSpace(contactId))
+				return BadRequest();
+
+			var model = new EditContactView();
+			model.Contact = await _contactsService.GetContactByIdAsync(contactId);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			if (model.Contact == null)
+				return BadRequest();
+
+			if (model.Contact.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			if (!String.IsNullOrWhiteSpace(model.Contact.EntranceGpsCoordinates))
+			{
+				var entranceGpsCoordinates = model.Contact.EntranceGpsCoordinates.Split(',');
+				model.LocationGpsLatitude = entranceGpsCoordinates[0];
+				model.LocationGpsLongitude = entranceGpsCoordinates[1];
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.Contact.LocationGpsCoordinates))
+			{
+				var locationGpsCoordinates = model.Contact.LocationGpsCoordinates.Split(',');
+				model.LocationGpsLatitude = locationGpsCoordinates[0];
+				model.LocationGpsLongitude = locationGpsCoordinates[1];
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.Contact.ExitGpsCoordinates))
+			{
+				var exitGpsCoordinates = model.Contact.ExitGpsCoordinates.Split(',');
+				model.ExitGpsLatitude = exitGpsCoordinates[0];
+				model.ExitGpsLongitude = exitGpsCoordinates[1];
+			}
+
+			if (model.Contact.PhysicalAddressId.HasValue)
+			{
+				var address = await _addressService.GetAddressByIdAsync(model.Contact.PhysicalAddressId.Value);
+				model.PhysicalAddress1 = address.Address1;
+				model.PhysicalCity = address.City;
+				model.PhysicalCountry = address.Country;
+				model.PhysicalPostalCode = address.PostalCode;
+				model.PhysicalState = address.State;
+			}
+
+			if (model.Contact.MailingAddressId.HasValue)
+			{
+				var address = await _addressService.GetAddressByIdAsync(model.Contact.MailingAddressId.Value);
+
+				model.MailingAddress1 = address.Address1;
+				model.MailingCity = address.City;
+				model.MailingCountry = address.Country;
+				model.MailingPostalCode = address.PostalCode;
+				model.MailingState = address.State;
+			}
+
+			ViewBag.Countries = new SelectList(Countries.CountryNames);
+			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
+			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_Create)]
+		public async Task<IActionResult> Edit(EditContactView model, CancellationToken cancellationToken)
+		{
+			if (model.Contact.ContactType == 0 && (string.IsNullOrWhiteSpace(model.Contact.FirstName) || string.IsNullOrWhiteSpace(model.Contact.LastName)))
+				ModelState.AddModelError("Contact.ContactType", "For the Person Contact Type you must supply and First Name and Last Name.");
+			else if (model.Contact.ContactType == 1 && string.IsNullOrWhiteSpace(model.Contact.CompanyName))
+				ModelState.AddModelError("Contact.ContactType", "For the Company Contact Type you must supply a Company Name.");
+
+			ViewBag.Countries = new SelectList(Countries.CountryNames);
+			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
+			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			// They specified a street address for physical
+			if (!String.IsNullOrWhiteSpace(model.PhysicalAddress1))
+			{
+				if (String.IsNullOrEmpty(model.PhysicalCity))
+					ModelState.AddModelError("City", string.Format("The Physical City field is required"));
+
+				if (String.IsNullOrEmpty(model.PhysicalCountry))
+					ModelState.AddModelError("Country", string.Format("The Physical Country field is required"));
+
+				if (String.IsNullOrEmpty(model.PhysicalPostalCode))
+					ModelState.AddModelError("PostalCode", string.Format("The Physical Postal Code field is required"));
+
+				if (String.IsNullOrEmpty(model.PhysicalState))
+					ModelState.AddModelError("State", string.Format("The Physical State/Provence field is required"));
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.MailingAddress1) && !model.MailingAddressSameAsPhysical)
+			{
+				if (String.IsNullOrEmpty(model.MailingCity))
+					ModelState.AddModelError("City", string.Format("The Mailing City field is required"));
+
+				if (String.IsNullOrEmpty(model.MailingCountry))
+					ModelState.AddModelError("Country", string.Format("The Mailing Country field is required"));
+
+				if (String.IsNullOrEmpty(model.MailingPostalCode))
+					ModelState.AddModelError("PostalCode", string.Format("The Mailing Postal Code field is required"));
+
+				if (String.IsNullOrEmpty(model.MailingState))
+					ModelState.AddModelError("State", string.Format("The Mailing State/Provence field is required"));
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.LocationGpsLatitude) && !LocationHelpers.IsValidLatitude(model.LocationGpsLatitude))
+			{
+				ModelState.AddModelError("LocationGpsLatitude", "Location Latitude value seems invalid, MUST be decimal format.");
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.LocationGpsLongitude) && !LocationHelpers.IsValidLongitude(model.LocationGpsLongitude))
+			{
+				ModelState.AddModelError("LocationGpsLongitude", "Location Longitude value seems invalid, MUST be decimal format.");
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.EntranceGpsLatitude) && !LocationHelpers.IsValidLatitude(model.EntranceGpsLatitude))
+			{
+				ModelState.AddModelError("EntranceGpsLatitude", "Entrance Latitude value seems invalid, MUST be decimal format.");
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.EntranceGpsLongitude) && !LocationHelpers.IsValidLongitude(model.EntranceGpsLongitude))
+			{
+				ModelState.AddModelError("EntranceGpsLongitude", "Entrance Longitude value seems invalid, MUST be decimal format.");
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.ExitGpsLatitude) && !LocationHelpers.IsValidLongitude(model.ExitGpsLatitude))
+			{
+				ModelState.AddModelError("ExitGpsLatitude", "Exit Longitude value seems invalid, MUST be decimal format.");
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.ExitGpsLongitude) && !LocationHelpers.IsValidLongitude(model.ExitGpsLongitude))
+			{
+				ModelState.AddModelError("ExitGpsLongitude", "Exit Longitude value seems invalid, MUST be decimal format.");
+			}
+
+			if (ModelState.IsValid)
+			{
+				var contact = await _contactsService.GetContactByIdAsync(model.Contact.ContactId);
+
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.ContactEdited;
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				auditEvent.Before = contact.CloneJsonToString();
+
+				if (!String.IsNullOrWhiteSpace(model.LocationGpsLatitude) && !String.IsNullOrWhiteSpace(model.LocationGpsLongitude))
+				{
+					contact.EntranceGpsCoordinates = $"{model.LocationGpsLatitude},{model.LocationGpsLongitude}";
+				}
+				else
+				{
+					contact.EntranceGpsCoordinates = null;
+				}
+
+				if (!String.IsNullOrWhiteSpace(model.EntranceGpsLatitude) && !String.IsNullOrWhiteSpace(model.EntranceGpsLongitude))
+				{
+					contact.EntranceGpsCoordinates = $"{model.EntranceGpsLatitude},{model.EntranceGpsLongitude}";
+				}
+				else
+				{
+					contact.EntranceGpsCoordinates = null;
+				}
+
+				if (!String.IsNullOrWhiteSpace(model.ExitGpsLatitude) && !String.IsNullOrWhiteSpace(model.ExitGpsLongitude))
+				{
+					contact.ExitGpsCoordinates = $"{model.ExitGpsLatitude},{model.ExitGpsLongitude}";
+				}
+				else
+				{
+					contact.ExitGpsCoordinates = null;
+				}
+
+				if (!String.IsNullOrWhiteSpace(model.PhysicalAddress1))
+				{
+					var physicalAddress = new Address();
+
+					if (contact.PhysicalAddressId.HasValue)
+						physicalAddress = await _addressService.GetAddressByIdAsync(model.Contact.PhysicalAddressId.Value);
+
+					physicalAddress.Address1 = model.PhysicalAddress1;
+					physicalAddress.City = model.PhysicalCity;
+					physicalAddress.Country = model.PhysicalCountry;
+					physicalAddress.PostalCode = model.PhysicalPostalCode;
+					physicalAddress.State = model.PhysicalState;
+
+					physicalAddress = await _addressService.SaveAddressAsync(physicalAddress, cancellationToken);
+					contact.PhysicalAddressId = physicalAddress.AddressId;
+
+					if (model.MailingAddressSameAsPhysical)
+						model.Contact.MailingAddressId = physicalAddress.AddressId;
+				}
+
+				if (!String.IsNullOrWhiteSpace(model.MailingAddress1) && !model.MailingAddressSameAsPhysical)
+				{
+					var mailingAddress = new Address();
+
+					if (contact.MailingAddressId.HasValue)
+						mailingAddress = await _addressService.GetAddressByIdAsync(model.Contact.MailingAddressId.Value);
+
+					mailingAddress.Address1 = model.PhysicalAddress1;
+					mailingAddress.City = model.PhysicalCity;
+					mailingAddress.Country = model.PhysicalCountry;
+					mailingAddress.PostalCode = model.PhysicalPostalCode;
+					mailingAddress.State = model.PhysicalState;
+
+					mailingAddress = await _addressService.SaveAddressAsync(mailingAddress, cancellationToken);
+					contact.MailingAddressId = mailingAddress.AddressId;
+				}
+
+				model.Contact.DepartmentId = DepartmentId;
+				model.Contact.AddedByUserId = UserId;
+				model.Contact.AddedOn = DateTime.UtcNow;
+
+				await _contactsService.SaveContactAsync(model.Contact, cancellationToken);
+
+				auditEvent.After = model.Contact.CloneJsonToString();
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+				return RedirectToAction("Index", "Contacts", new { Area = "User" });
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_Create)]
+		public async Task<IActionResult> Delete(string contactId, CancellationToken cancellationToken)
+		{
+			if (String.IsNullOrWhiteSpace(contactId))
+				return BadRequest();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+
+			if (contact == null)
+				return NotFound();
+
+			if (contact.DepartmentId != DepartmentId)
+				Unauthorized();
+
+			if (!(await _authorizationService.CanUserDeleteContactAsync(UserId, DepartmentId)))
+				Unauthorized();
+
+			var result = await _contactsService.DeleteContactAsync(contactId, UserId, DepartmentId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+			return RedirectToAction("Index", "Contacts", new { Area = "User" });
+		}
+
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Connect_Create)]
 		public async Task<IActionResult> AddNote(AddContactNoteView model, CancellationToken cancellationToken)
@@ -400,7 +664,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return View(model);
 		}
-
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Contacts_Create)]
@@ -551,6 +814,47 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(notes);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> GetCallsJson(string contactId)
+		{
+			List<CallJson> callsJson = new List<CallJson>();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			if (contact == null)
+				return Json(callsJson);
+
+			if (contact.DepartmentId != DepartmentId)
+				return Json(callsJson);
+
+			var calls = await _callsService.GetCallsByContactIdAsync(contactId, DepartmentId);
+
+			if (calls != null && calls.Any())
+			{
+				foreach (var call in calls)
+				{
+					var callJson = new CallJson();
+					callJson.CallId = call.CallId;
+					callJson.CallNumber = call.Number;
+					callJson.CallName = call.Name;
+					callJson.CallNature = call.NatureOfCall;
+					callJson.LoggedOn = call.LoggedOn.FormatForDepartment(department);
+
+					var priority = await _callsService.GetCallPrioritiesByIdAsync(call.Priority, DepartmentId);
+
+					callJson.Priority = call.Priority;
+					callJson.PriorityName = priority.Name;
+					callJson.PriorityColor = priority.Color;
+
+					callsJson.Add(callJson);
+				}
+			}
+
+			return Json(callsJson);
 		}
 	}
 }

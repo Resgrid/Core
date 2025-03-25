@@ -322,5 +322,9 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserDeleteContactNoteTypeAsync(string userId, string contactNoteTypeId);
 
 		Task<bool> CanUserEditContactNoteTypeAsync(string userId, string contactNoteTypeId);
+
+		Task<bool> CanUserDeleteContactAsync(string userId, int departmentId);
+
+		Task<bool> CanUserAddOrEditContactAsync(string userId, int departmentId);
 	}
 }

@@ -71,5 +71,13 @@ namespace Resgrid.Model.Repositories
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Call&gt;&gt;.</returns>
 		Task<IEnumerable<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets all calls by department and contact asynchronous.
+		/// </summary>
+		/// <param name="contactId">The contact identifier.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Call&gt;&gt;.</returns>
+		Task<IEnumerable<Call>> GetAllCallsByContactIdAsync(string contactId, int departmentId);
 	}
 }

@@ -40,6 +40,7 @@ namespace Resgrid.Services
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICallReferencesRepository _callReferencesRepository;
+		private readonly ICallContactsRepository _callContactsRepository;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
@@ -48,7 +49,7 @@ namespace Resgrid.Services
 			ICallDispatchUnitRepository callDispatchUnitRepository, ICallDispatchRoleRepository callDispatchRoleRepository,
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
-			ICallReferencesRepository callReferencesRepository)
+			ICallReferencesRepository callReferencesRepository,  ICallContactsRepository callContactsRepository)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
@@ -67,6 +68,7 @@ namespace Resgrid.Services
 			_geoLocationProvider = geoLocationProvider;
 			_departmentsService = departmentsService;
 			_callReferencesRepository = callReferencesRepository;
+			_callContactsRepository = callContactsRepository;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
@@ -892,6 +894,16 @@ namespace Resgrid.Services
 					else
 						return "#008000";
 			}
+		}
+
+		public async Task<List<Call>> GetCallsByContactIdAsync(string contactId, int departmentId)
+		{
+			var calls = await _callsRepository.GetAllCallsByContactIdAsync(contactId, departmentId);
+
+			if (calls != null && calls.Any())
+				return calls.ToList();
+
+			return new List<Call>();
 		}
 	}
 }

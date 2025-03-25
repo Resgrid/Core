@@ -335,7 +335,8 @@
                                                     <input type="text" id="notesSearchInput" class="form-control"
                                                            placeholder="@localizer["SearchNotes"]">
                                                     <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-primary" id="searchNotesBtn">
+                                                        <button type="button" class="btn btn-primary"
+                                                                id="searchNotesBtn">
                                                             <i class="fa fa-search"></i> @localizer["Search"]
                                                         </button>
                                                     </span>
@@ -375,7 +376,8 @@
                                     {
                                         <div class="row m-t-lg">
                                             <div class="col-md-12 text-center">
-                                                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addNoteModal">
+                                                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
+                                                        data-target="#addNoteModal">
                                                     <i class="fa fa-plus-circle"></i> @localizer["AddNewNote"]
                                                 </button>
                                             </div>
@@ -386,26 +388,66 @@
 
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                        <!-- Calls Tab -->
+                        <div class="tab-pane fade" id="calls" role="tabpanel">
+                            <div class="row m-t-sm">
+                                <div class="col-md-12">
+                                    <div class="panel-body">
+                                        <!-- Search and filter section -->
+                                        <div class="row m-b-sm">
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <input type="text" id="callsSearchInput" class="form-control"
+                                                           placeholder="@localizer["SearchCalls"]">
+                                                    <span class="input-group-btn">
+                                            <button type="button" class="btn btn-primary" id="searchCallsBtn">
+                                                <i class="fa fa-search"></i> @localizer["Search"]
+                                            </button>
+                                        </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">@localizer["SortBy"]</span>
+                                                    <select id="callsSortSelect" class="form-control">
+                                                        <option value="recent">@localizer["MostRecent"]</option>
+                                                        <option value="oldest">@localizer["Oldest"]</option>
+                                                        <option value="priority">@localizer["Priority"]</option>
+                                                        <option value="number">@localizer["CallNumber"]</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
 
-            <!-- Calls Tab -->
-            <div class="tab-pane fade" id="calls" role="tabpanel">
-                <div class="row m-t-sm">
-                    <div class="col-md-12">
-                        <div class="alert alert-info">
-                            <i class="fa fa-info-circle"></i> Call history will be displayed here
+                                        <!-- Loading indicator -->
+                                        <div id="callsLoading" class="text-center p-md">
+                                            <i class="fa fa-spinner fa-spin fa-3x"></i>
+                                            <p>@localizer["LoadingCalls"]</p>
+                                        </div>
+
+                                        <!-- Calls container - will be populated by JavaScript -->
+                                        <div class="row" id="callsContainer"></div>
+
+                                        <!-- No results message -->
+                                        <div id="noCallsFound" class="text-center p-md" style="display: none;">
+                                            <h3>
+                                                <i class="fa fa-search-minus"></i> @localizer["NoCallsFound"]
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
-</div>
 
-<div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModalLabel" aria-hidden="true">
+<div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -417,8 +459,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addNoteForm" asp-controller="Contacts" asp-action="AddNote" asp-route-area="User" method="post">
-                    <input type="hidden" name="ContactId" value="@Model.Contact.ContactId" />
+                <form id="addNoteForm" asp-controller="Contacts" asp-action="AddNote" asp-route-area="User"
+                      method="post">
+                    <input type="hidden" name="ContactId" value="@Model.Contact.ContactId"/>
 
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">@localizer["NoteContent"]:</label>
@@ -449,7 +492,7 @@
                                 <span class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </span>
-                                <input type="datetime-local" name="ExpiresOn" class="form-control" />
+                                <input type="datetime-local" name="ExpiresOn" class="form-control"/>
                             </div>
                             <small class="form-text text-muted">@localizer["LeaveBlankForNoExpiration"]</small>
                         </div>
@@ -459,7 +502,8 @@
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="shouldAlert" name="ShouldAlert" value="true">
+                                <input type="checkbox" class="form-check-input" id="shouldAlert" name="ShouldAlert"
+                                       value="true">
                                 <label class="form-check-label" for="shouldAlert">@localizer["ShouldAlert"]</label>
                             </div>
                             <small class="form-text text-muted">@localizer["ShouldAlertInfo"]</small>
@@ -523,8 +567,18 @@
                 loadNotes();
             }
 
+            // Load calls when the calls tab is shown
+            $('a[data-toggle="tab"][href="#calls"]').on('shown.bs.tab', function (e) {
+                loadCalls();
+            });
+
+            // Initial load if calls tab is active
+            if ($('a[data-toggle="tab"][href="#calls"]').parent().hasClass('active')) {
+                loadCalls();
+            }
+
             // Notes search and filter functionality
-            const $noteCards = $('.note-card');
+            let $noteCards = $('.note-card');
             const $notesContainer = $('#notesContainer');
             const $noNotesFound = $('#noNotesFound');
 
@@ -537,7 +591,7 @@
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Contacts/GetNotesJson?contactId=' + contactId,
                     type: 'GET',
-                    data: { contactId: contactId },
+                    data: {contactId: contactId},
                     dataType: 'json',
                     success: function (data) {
                         $('#notesLoading').hide();
@@ -570,27 +624,27 @@
 
                 notes.forEach(function (note) {
                     const $noteCard = $(`
-                                                <div class="col-md-4 note-card" data-date="${note.CreatedOn}">
-                                            <div class="ibox">
-                                                        <div class="ibox-content" style="background-color:${note.BackgroundColor}">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                                            <h4 class="note-title">${note.ContactNoteType}</h4>
-                                                            <p class="small text-muted">
-                                                                        <i class="fa fa-clock-o"></i> ${note.CreatedOn}
-                                                                                ${note.CreatedBy ? `| <i class="fa fa-user"></i> ${note.CreatedBy}` : ''}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12 note-content">
-                                                                    ${note.Note}
+                                                        <div class="col-md-4 note-card" data-date="${note.CreatedOn}">
+                                                    <div class="ibox">
+                                                                <div class="ibox-content" style="background-color:${note.BackgroundColor}">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                                    <h4 class="note-title">${note.ContactNoteType}</h4>
+                                                                    <p class="small text-muted">
+                                                                                <i class="fa fa-clock-o"></i> ${note.CreatedOn}
+                                                                                        ${note.CreatedBy ? `| <i class="fa fa-user"></i> ${note.CreatedBy}` : ''}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 note-content">
+                                                                            ${note.Note}
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    `);
+                                            `);
 
                     $container.append($noteCard);
                 });
@@ -599,6 +653,7 @@
             // Search functionality
             function searchNotes() {
                 const searchTerm = $('#notesSearchInput').val().toLowerCase();
+                $noteCards = $('.note-card');
                 let foundCount = 0;
 
                 $noteCards.each(function () {
@@ -624,6 +679,7 @@
             // Filter functionality
             function filterNotes() {
                 const filterValue = $('#notesFilterSelect').val();
+                $noteCards = $('.note-card');
                 let notes = $noteCards.toArray();
 
                 if (filterValue === 'recent') {
@@ -710,6 +766,175 @@
                     quillNote.root.innerHTML = '';
                 });
             });
+
+            // Calls functionality
+            let $callCards = $('.call-card');
+            const $callsContainer = $('#callsContainer');
+            const $noCallsFound = $('#noCallsFound');
+
+            // Function to load calls asynchronously
+            function loadCalls() {
+                $('#callsLoading').show();
+                $('#callsContainer').empty();
+                $('#noCallsFound').hide();
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Contacts/GetCallsJson?contactId=' + contactId,
+                    type: 'GET',
+                    data: {contactId: contactId},
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#callsLoading').hide();
+
+                        if (data && data.length > 0) {
+                            renderCalls(data);
+                        } else {
+                            $('#noCallsFound').show();
+                        }
+
+                        // Apply sort if selected
+                        if ($('#callsSortSelect').val()) {
+                            sortCalls();
+                        }
+
+                        // Apply search if there's a term
+                        if ($('#callsSearchInput').val().trim().length > 0) {
+                            searchCalls();
+                        }
+                    },
+                    error: function () {
+                        $('#callsLoading').hide();
+                        toastr.error('Error loading calls');
+                    }
+                });
+            }
+
+            function renderCalls(calls) {
+                const $container = $('#callsContainer');
+
+                calls.forEach(function (call) {
+                    // Format the priority badge
+                    let priorityClass = 'badge-info';
+                    if (call.Priority === 1) priorityClass = 'badge-danger';
+                    else if (call.Priority === 2) priorityClass = 'badge-warning';
+                    else if (call.Priority === 3) priorityClass = 'badge-primary';
+                    else if (call.Priority === 4) priorityClass = 'badge-success';
+
+                    const $callCard = $(`
+                                        <div class="col-md-4 call-card" data-date="${call.LoggedOn}" data-priority="${call.Priority}" data-number="${call.Number}">
+                                            <div class="ibox">
+                                                <div class="ibox-content">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <h4>
+                                                                <span class="badge ${priorityClass}">${call.PriorityText}</span>
+                                                                ${call.Name}
+                                                            </h4>
+                                                            <p class="small text-muted">
+                                                                <i class="fa fa-hashtag"></i> ${call.Number}
+                                                                | <i class="fa fa-clock-o"></i> ${call.LoggedOn}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <p>${call.NatureOfCall || ''}</p>
+                                                            <p><strong>Address:</strong> ${call.Address || 'No address provided'}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12 text-right">
+                                                            <a href="${resgrid.absoluteBaseUrl}/User/Calls/View/${call.CallId}" class="btn btn-sm btn-primary">
+                                                                <i class="fa fa-eye"></i> View
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `);
+                })
+            }
+
+            // Search functionality
+            function searchCalls() {
+                const searchTerm = $('#callsSearchInput').val().toLowerCase();
+                $callCards = $('.call-card');
+                let foundCount = 0;
+
+                $callCards.each(function () {
+                    const $card = $(this);
+                    const cardText = $card.text().toLowerCase();
+
+                    if (cardText.includes(searchTerm)) {
+                        $card.show();
+                        foundCount++;
+                    } else {
+                        $card.hide();
+                    }
+                });
+
+                if (foundCount === 0) {
+                    $noCallsFound.show();
+                } else {
+                    $noCallsFound.hide();
+                }
+            }
+
+            // Sort functionality
+            function sortCalls() {
+                const sortValue = $('#callsSortSelect').val();
+                $callCards = $('.call-card');
+                let calls = $callCards.toArray();
+
+                if (sortValue === 'recent') {
+                    calls.sort((a, b) => {
+                        const dateA = $(a).data('date');
+                        const dateB = $(b).data('date');
+                        return dateB.localeCompare(dateA);
+                    });
+                } else if (sortValue === 'oldest') {
+                    calls.sort((a, b) => {
+                        const dateA = $(a).data('date');
+                        const dateB = $(b).data('date');
+                        return dateA.localeCompare(dateB);
+                    });
+                } else if (sortValue === 'priority') {
+                    calls.sort((a, b) => {
+                        const priorityA = $(a).data('priority');
+                        const priorityB = $(b).data('priority');
+                        return priorityA - priorityB; // Lower number = higher priority
+                    });
+                } else if (sortValue === 'number') {
+                    calls.sort((a, b) => {
+                        const numA = $(a).data('number');
+                        const numB = $(b).data('number');
+                        return numA.localeCompare(numB);
+                    });
+                }
+
+                $callsContainer.empty();
+                $(calls).each(function () {
+                    $callsContainer.append(this);
+                });
+
+                // Re-apply search if there's a search term
+                if ($('#callsSearchInput').val().trim().length > 0) {
+                    searchCalls();
+                }
+            }
+
+            // Event handlers
+            $('#searchCallsBtn').on('click', searchCalls);
+            $('#callsSearchInput').on('keyup', function (e) {
+                if (e.key === 'Enter') {
+                    searchCalls();
+                }
+            });
+
+            $('#callsSortSelect').on('change', sortCalls);
+
         });
+
     </script>
 }

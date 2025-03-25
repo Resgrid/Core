@@ -25,5 +25,6 @@ namespace Resgrid.Model.Services
 		Task<bool> DoesContactNoteTypeAlreadyExistAsync(int departmentId, string noteTypeText);
 		Task<bool> DeleteContactNoteTypeAsync(ContactNoteType type, CancellationToken cancellationToken = default(CancellationToken));
 		Task<ContactNote> SaveContactNoteAsync(ContactNote note, CancellationToken cancellationToken = default(CancellationToken));
+		Task<bool> DeleteContactAsync(string contactId, string userId, int departmentId, string ipAddress, string userAgent, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

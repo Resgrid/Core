@@ -6,27 +6,19 @@ var resgrid;
         (function (analytics) {
             function register(userId, departmentId, name, email, departmentName, createdOn) {
                 if (window.location.host.indexOf('resgrid.local') < 0 && window.location.host.indexOf('localhost') < 0) {
-                    if (typeof mixpanel !== "undefined") {
-                        mixpanel.identify(userId);
-                        mixpanel.register_once({
-                            "DepartmentId": departmentId //,
-                        });
-                        mixpanel.people.set({
-                            "$email": email,
-                            "$created": new Date(createdOn * 1000),
-                            "$last_login": new Date(),
-                            "departmentId": departmentId,
-                            "departmentName": departmentName,
-                            "$name": name
-                        });
+                    if (typeof posthog !== "undefined") {
+                        posthog.identify(
+                            userId,
+                            { email: email, name: name, createdOn: new Date(createdOn * 1000), departmentId: departmentId, departmentName: departmentName } // optional: set additional person properties
+                        );
                     }
                 }
             }
             analytics.register = register;
             function track(event) {
                 if (window.location.host.indexOf('resgrid.local') < 0 && window.location.host.indexOf('localhost') < 0) {
-                    if (typeof mixpanel !== "undefined") {
-                        mixpanel.track(event);
+                    if (typeof posthog !== "undefined") {
+                        posthog.capture(event)
                     }
                 }
             }

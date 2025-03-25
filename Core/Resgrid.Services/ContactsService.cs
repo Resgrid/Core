@@ -1,10 +1,14 @@
-﻿using Resgrid.Model;
+﻿using System;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Services
 {
@@ -15,20 +19,23 @@ namespace Resgrid.Services
 		private readonly IContactNotesRepository _contactNotesRepository;
 		private readonly IContactNoteTypesRepository _contactNoteTypesRepository;
 		private readonly IContactAssociationsRepository _contactAssociationsRepository;
+		private readonly IEventAggregator _eventAggregator;
 
 		public ContactsService(IContactsRepository contactsRepository, IContactNotesRepository contactNotesRepository,
-			IContactCategoryRepository contactCategoryRepository,
-			IContactNoteTypesRepository contactNoteTypesRepository, IContactAssociationsRepository contactAssociationsRepository)
+			IContactCategoryRepository contactCategoryRepository,  IContactNoteTypesRepository contactNoteTypesRepository,
+			IContactAssociationsRepository contactAssociationsRepository, IEventAggregator eventAggregator)
 		{
 			_contactsRepository = contactsRepository;
 			_contactCategoryRepository = contactCategoryRepository;
 			_contactNotesRepository = contactNotesRepository;
 			_contactNoteTypesRepository = contactNoteTypesRepository;
 			_contactAssociationsRepository = contactAssociationsRepository;
+			_eventAggregator = eventAggregator;
 		}
 
 		public async Task<List<Contact>> GetAllContactsForDepartmentAsync(int departmentId)
 		{
+			var contactsResult = new List<Contact>();
 			var contacts = await _contactsRepository.GetAllByDepartmentIdAsync(departmentId);
 			var categories = await _contactCategoryRepository.GetAllByDepartmentIdAsync(departmentId);
 
@@ -37,11 +44,16 @@ namespace Resgrid.Services
 
 			foreach (var contact in contacts)
 			{
+				if (contact.IsDeleted)
+					continue;
+
 				if (categories != null && categories.Any())
 					contact.Category = categories.FirstOrDefault(x => x.ContactCategoryId == contact.ContactCategoryId);
+
+				contactsResult.Add(contact);
 			}
 
-			return contacts.ToList();
+			return contactsResult;
 		}
 
 		public async Task<List<ContactCategory>> GetContactCategoriesForDepartmentAsync(int departmentId)
@@ -156,5 +168,30 @@ namespace Resgrid.Services
 			return await _contactNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
 		}
 
+		public async Task<bool> DeleteContactAsync(string contactId, string userId, int departmentId, string ipAddress, string userAgent, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = departmentId;
+			auditEvent.UserId = userId;
+			auditEvent.Type = AuditLogTypes.ContactRemoved;
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = ipAddress;
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = userAgent;
+
+			var contact = await _contactsRepository.GetByIdAsync(contactId);
+			auditEvent.Before = contact.CloneJsonToString();
+
+			contact.IsDeleted = true;
+			contact.EditedByUserId = userId;
+			contact.EditedOn = DateTime.UtcNow;
+
+			await SaveContactAsync(contact, cancellationToken);
+
+			auditEvent.After = contact.CloneJsonToString();
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+			return true;
+		}
 	}
 }

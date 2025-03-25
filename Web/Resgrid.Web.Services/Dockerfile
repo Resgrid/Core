@@ -10,7 +10,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0.203-jammy-amd64 AS build
 ARG BUILD_VERSION
 WORKDIR /src
-COPY ["Web/Resgrid.Web.ServicesCore/Resgrid.Web.ServicesCore.csproj", "Web/Resgrid.Web.ServicesCore/"]
+COPY ["Web/Resgrid.Web.Services/Resgrid.Web.Services.csproj", "Web/Resgrid.Web.Services/"]
 COPY ["Providers/Resgrid.Providers.Bus.Rabbit/Resgrid.Providers.Bus.Rabbit.csproj", "Providers/Resgrid.Providers.Bus.Rabbit/"]
 COPY ["Core/Resgrid.Framework/Resgrid.Framework.csproj", "Core/Resgrid.Framework/"]
 COPY ["Core/Resgrid.Config/Resgrid.Config.csproj", "Core/Resgrid.Config/"]
@@ -29,13 +29,13 @@ COPY ["Providers/Resgrid.Providers.Pdf/Resgrid.Providers.Pdf.csproj", "Providers
 COPY ["Providers/Resgrid.Providers.Claims/Resgrid.Providers.Claims.csproj", "Providers/Resgrid.Providers.Claims/"]
 COPY ["Providers/Resgrid.Providers.Migrations/Resgrid.Providers.Migrations.csproj", "Providers/Resgrid.Providers.Migrations/"]
 COPY ["Providers/Resgrid.Providers.Voip/Resgrid.Providers.Voip.csproj", "Providers/Resgrid.Providers.Voip/"]
-RUN dotnet restore "Web/Resgrid.Web.ServicesCore/Resgrid.Web.ServicesCore.csproj"
+RUN dotnet restore "Web/Resgrid.Web.Services/Resgrid.Web.Services.csproj"
 COPY . .
-WORKDIR "/src/Web/Resgrid.Web.ServicesCore"
+WORKDIR "/src/Web/Resgrid.Web.Services"
 
 FROM build AS publish
 ARG BUILD_VERSION
-RUN dotnet publish "Resgrid.Web.ServicesCore.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
+RUN dotnet publish "Resgrid.Web.Services.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 
 FROM base AS final
 ## Add the wait script to the image

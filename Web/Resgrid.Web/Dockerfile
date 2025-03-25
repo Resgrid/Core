@@ -21,7 +21,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x  | bash -
 RUN apt-get -y install nodejs
 ARG BUILD_VERSION
 WORKDIR /src
-COPY ["Web/Resgrid.WebCore/Resgrid.WebCore.csproj", "Web/Resgrid.WebCore/"]
+COPY ["Web/Resgrid.Web/Resgrid.Web.csproj", "Web/Resgrid.Web/"]
 COPY ["Providers/Resgrid.Providers.Bus.Rabbit/Resgrid.Providers.Bus.Rabbit.csproj", "Providers/Resgrid.Providers.Bus.Rabbit/"]
 COPY ["Core/Resgrid.Framework/Resgrid.Framework.csproj", "Core/Resgrid.Framework/"]
 COPY ["Core/Resgrid.Config/Resgrid.Config.csproj", "Core/Resgrid.Config/"]
@@ -40,15 +40,15 @@ COPY ["Providers/Resgrid.Providers.Pdf/Resgrid.Providers.Pdf.csproj", "Providers
 COPY ["Providers/Resgrid.Providers.Claims/Resgrid.Providers.Claims.csproj", "Providers/Resgrid.Providers.Claims/"]
 COPY ["Providers/Resgrid.Providers.Migrations/Resgrid.Providers.Migrations.csproj", "Providers/Resgrid.Providers.Migrations/"]
 COPY ["Providers/Resgrid.Providers.Voip/Resgrid.Providers.Voip.csproj", "Providers/Resgrid.Providers.Voip/"]
-RUN dotnet restore "Web/Resgrid.WebCore/Resgrid.WebCore.csproj"
+RUN dotnet restore "Web/Resgrid.Web/Resgrid.Web.csproj"
 COPY . .
-WORKDIR "/src/Web/Resgrid.WebCore"
+WORKDIR "/src/Web/Resgrid.Web"
 
 FROM build AS publish
 ARG BUILD_VERSION
 RUN dotnet tool install -g Microsoft.Web.LibraryManager.Cli
 ENV PATH="${PATH}:/root/.dotnet/tools"
-RUN dotnet publish "Resgrid.WebCore.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
+RUN dotnet publish "Resgrid.Web.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 
 FROM base AS final
 ## Add the wait script to the image
@@ -57,4 +57,4 @@ RUN chmod +x wait
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["sh", "-c", "./wait && dotnet Resgrid.WebCore.dll"]
+ENTRYPOINT ["sh", "-c", "./wait && dotnet Resgrid.Web.dll"]

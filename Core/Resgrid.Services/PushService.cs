@@ -184,6 +184,7 @@ namespace Resgrid.Services
 				color = priority.Color;
 
 			await _unitNotificationProvider.SendAllNotifications(call.SubTitle, call.Title, unitId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+			await _novuProvider.SendUnitDispatch(call.Title, call.SubTitle, unitId, call.DepartmentCode, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
 
 			return true;
 		}

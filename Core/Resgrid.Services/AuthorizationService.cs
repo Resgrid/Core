@@ -30,6 +30,7 @@ namespace Resgrid.Services
 		private readonly IDocumentsService _documentsService;
 		private readonly INotesService _notesService;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IContactsService _contactsService;
 
 		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
 		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
@@ -41,7 +42,7 @@ namespace Resgrid.Services
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
 			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService,
-			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider)
+			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider, IContactsService contactsService)
 		{
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
@@ -61,6 +62,7 @@ namespace Resgrid.Services
 			_documentsService = documentsService;
 			_notesService = notesService;
 			_cacheProvider = cacheProvider;
+			_contactsService = contactsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -1357,5 +1359,78 @@ namespace Resgrid.Services
 
 			return false;
 		}
+
+		public async Task<bool> CanUserDeleteContactNoteTypeAsync(string userId, string contactNoteTypeId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var type = await _contactsService.GetContactNoteTypeByIdAsync(contactNoteTypeId);
+
+			if (type == null)
+				return false;
+
+			if (type.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserEditContactNoteTypeAsync(string userId, string contactNoteTypeId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+
+			if (department == null)
+				return false;
+
+			var type = await _contactsService.GetContactNoteTypeByIdAsync(contactNoteTypeId);
+
+			if (type == null)
+				return false;
+
+			if (type.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserDeleteContactAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ContactDelete);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserAddOrEditContactAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ContactEdit);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
 	}
 }

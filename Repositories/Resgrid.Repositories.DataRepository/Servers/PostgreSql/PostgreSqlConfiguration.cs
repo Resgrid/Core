@@ -1077,6 +1077,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			CallAttachmentsTable = "CallAttachments";
 			DepartmentCallPrioritiesTable = "DepartmentCallPriorities";
 			CallProtocolsTable = "CallProtocols";
+			CallContactsTable = "CallContacts";
 			SelectAllCallsByDidDateQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND IsDeleted = false AND LoggedOn >= %STARTDATE% AND LoggedOn <= %ENDDATE%";
 			SelectAllClosedCallsByDidDateQuery =
@@ -1127,7 +1128,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
 					WHERE HasBeenDispatched = false AND IsDeleted = false AND DepartmentId = %DID%";
-
+			SelectCallsByContactQuery= @"
+					SELECT %SCHEMA%.%CALLSTABLE%.*
+					FROM %SCHEMA%.%CALLSTABLE%
+					INNER JOIN %SCHEMA%.%CALLCONTACTSTABLE% ON %SCHEMA%.%CALLCONTACTSTABLE%.CallId = %SCHEMA%.%CALLSTABLE%.CallId
+					WHERE %SCHEMA%.%CALLCONTACTSTABLE%.ContactId = %CONTACTID% AND %SCHEMA%.%CALLSTABLE%.IsDeleted = false AND %SCHEMA%.%CALLSTABLE%.DepartmentId = %DID%";
 			#endregion Calls
 
 			#region Department Groups
@@ -1392,8 +1397,12 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			CallContactTableName = "CallContacts";
 			SelectContactsByCategoryIdQuery = @"
 					SELECT *
-					FROM %SCHEMA%.%TABLENAME% 
+					FROM %SCHEMA%.%TABLENAME%
 					WHERE ContactCategoryId = %CATEGORYID% AND DepartmentId = %DID%";
+			SelectContactNotesByContactIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE ContactId = %CONTACTID%";
 			#endregion Contacts
 		}
 	}

@@ -1,0 +1,2 @@
+jquery bug with getting the dimensions of a svg element whose width is defined as a percentage - http://jsfiddle.net/ckGcJ/31/
+use environment variables for FUZZY and TIMEOUT

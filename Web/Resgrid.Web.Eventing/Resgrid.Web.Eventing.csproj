@@ -11,8 +11,12 @@
     <Optimize>True</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Resgrid.Web.ServicesCore\Helpers\ClaimsAuthorizationHelper.cs" Link="Helpers\ClaimsAuthorizationHelper.cs" />
-    <Compile Include="..\Resgrid.Web.ServicesCore\Models\AuthorizationDbContext.cs" Link="Models\AuthorizationDbContext.cs" />
+    <Compile Include="..\Resgrid.Web.Services\Helpers\ClaimsAuthorizationHelper.cs">
+      <Link>Helpers\ClaimsAuthorizationHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Resgrid.Web.Services\Models\AuthorizationDbContext.cs">
+      <Link>Models\AuthorizationDbContext.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
@@ -70,6 +74,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />
-    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

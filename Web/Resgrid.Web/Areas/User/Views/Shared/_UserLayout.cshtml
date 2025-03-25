@@ -1,0 +1,143 @@
+﻿@using Microsoft.AspNetCore.Http
+@using System.Web
+@inject IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute" />
+
+    <link rel="stylesheet" href="~/lib/fullcalendar/dist/fullcalendar.print.min.css" media="print" />
+    <link rel="stylesheet" href="/css/int-bundle.css" />
+
+    <link rel="stylesheet" href="/js/ng/styles.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+    <link rel="shortcut icon" href="~/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Add local styles, mostly for plugins css file -->
+    @if (IsSectionDefined("Styles"))
+    {
+        @RenderSection("Styles", required: false)
+    }
+
+    @if (Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate > 0 && !String.IsNullOrWhiteSpace(Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
+    {
+        <script src="https://browser.sentry-cdn.com/7.116.0/bundle.min.js"></script>
+        <script>
+            if (Sentry && window["Sentry"]) {
+                Sentry.init({
+                    dsn: '@Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite',
+                    integrations: [new Sentry.Integrations.Breadcrumbs({ console: false })],
+                    tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate
+                        });
+            }
+        </script>
+        <script src="https://sentry.resgrid.net/js-sdk-loader/8a935a7e61f257ce1a3b9131600ecb29.min.js" crossorigin="anonymous"></script>
+    }
+
+    @if (!String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.PostHogUrl) && !String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.PostHogApiKey))
+    {
+         <script>
+             !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+                posthog.init('@Resgrid.Config.TelemetryConfig.PostHogApiKey', {
+                    api_host: '@Resgrid.Config.TelemetryConfig.PostHogUrl',
+                    person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+                })
+        </script>
+    }
+</head>
+<body>
+    <!-- Wrapper-->
+    <div id="wrapper" class="md-skin">
+
+        <!-- Navigation -->
+        @await Html.PartialAsync("_Navigation")
+
+        <!-- Page wraper -->
+        <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
+
+            <!-- Top Navbar -->
+            @await Html.PartialAsync("_TopNavbar")
+
+            <!-- Main view  -->
+            @RenderBody()
+
+            <!-- Footer -->
+            @await Html.PartialAsync("_Footer")
+        </div>
+        <!-- End page wrapper-->
+    </div>
+    <!-- End wrapper-->
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"
+            asp-fallback-src="lib/jquery/jquery-1.12.3.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha384-ugqypGWrzPLdx2zEQTF17cVktjb01piRKaDNnbYGRSxyEoeAm+MKZVtbDUYjxfZ6">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/js/bootstrap.min.js"
+            asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+            crossorigin="anonymous"
+            integrity="sha384-vhJnz1OVIdLktyixHY4Uk3OHEwdQqPppqYR8+5mjsauETgLOcEynD9oPHhhz18Nw">
+    </script>
+
+    <script src="/js/int-bundle.js"></script>
+    <script src="~/js/app/resgrid.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/resgrid.user.js" asp-append-version="true"></script>
+    <script src="~/js/app/common/analytics/resgrid.common.analytics.js" asp-append-version="true"></script>
+    <script src="~/js/app/common/notifications/resgrid.common.notifications.js" asp-append-version="true"></script>
+
+    <script>
+        var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
+        var userId = '@(ClaimsAuthorizationHelper.GetUserId())';
+        window.rgApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
+        window.rgGoogleMapsKey = "@Resgrid.Config.MappingConfig.GoogleMapsJSKey";
+        window.rgChannelUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
+
+        resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
+        resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
+        resgrid.absoluteEventingBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
+
+        localStorage.setItem("RgWebApp.auth-tokens", '@Html.Raw(await JavasriptHelpers.GetApiToken())');
+    </script>
+
+    <environment names="Release,Staging,Production,Docker">
+        <script src="/js/ng/app.js"></script>
+    </environment>
+
+    <environment names="Development">
+        <script src="/js/ng/runtime.js" asp-append-version="false"></script>
+        <script src="/js/ng/polyfills.js" asp-append-version="false"></script>
+        <script src="/js/ng/vendor.js" asp-append-version="false"></script>
+        <script src="/js/ng/main.js" asp-append-version="false"></script>
+    </environment>
+
+    @if (IsSectionDefined("Scripts"))
+    {
+        @RenderSection("Scripts", required: false)
+    }
+
+    @Html.Raw(ViewBag.BodyObjects)
+
+    <script>
+        resgrid.init();
+    </script>
+
+    @*@await Html.PartialAsync("_ChatWidget")*@
+</body>
+</html>

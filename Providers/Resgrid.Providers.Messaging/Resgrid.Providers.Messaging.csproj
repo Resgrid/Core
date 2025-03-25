@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+    <ProjectReference Include="..\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
   </ItemGroup>
 
 </Project>

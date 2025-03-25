@@ -1,0 +1,31 @@
+{
+  "name": "@algolia/autocomplete-theme-classic",
+  "description": "Classic theme for Algolia Autocomplete.",
+  "version": "1.6.3",
+  "license": "MIT",
+  "homepage": "https://github.com/algolia/autocomplete",
+  "repository": "algolia/autocomplete",
+  "author": {
+    "name": "Algolia, Inc.",
+    "url": "https://www.algolia.com"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist/"
+  ],
+  "main": "dist/theme.min.css",
+  "unpkg": "dist/theme.min.css",
+  "jsdelivr": "dist/theme.min.css",
+  "scripts": {
+    "build:clean": "rm -rf ./dist",
+    "build:css": "yarn build:css:minified && yarn build:css:unminified",
+    "build:css:minified": "MINIFIED=TRUE node ../../scripts/buildCss.mjs src/theme.scss dist/theme.min.css",
+    "build:css:unminified": "node ../../scripts/buildCss.mjs src/theme.scss dist/theme.css",
+    "build": "yarn build:clean && yarn build:css",
+    "on:change": "yarn build:css",
+    "prepare": "yarn build:css",
+    "watch": "watch \"yarn on:change\" --ignoreDirectoryPattern \"/dist/\""
+  }
+}

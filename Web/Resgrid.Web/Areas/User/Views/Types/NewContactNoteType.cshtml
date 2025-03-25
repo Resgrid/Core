@@ -1,0 +1,87 @@
+﻿@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Types.NewContactNoteCategoryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["NewContactNoteTypeHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["NewContactNoteTypeHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["DepartmentTypes"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["NewContactNoteTypeHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="NewContactNoteType" asp-route-area="User" method="post">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                                @if (!String.IsNullOrEmpty(Model.Message))
+                                {
+                                    <div class="alert alert-success">
+                                        @Model.Message
+                                    </div>
+                                }
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                @Html.AntiForgeryToken()
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["ContactNoteTypeNameLabel"]</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ContactNoteTypeNameText"]" asp-for="Name"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["ContactNoteTypeColorLabel"]</label>
+                            <div class="col-sm-2"><input class="form-control" asp-for="Color"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            resgrid.common.analytics.track('Department - New Contact Note Type');
+
+            $("#Color").minicolors({
+                animationSpeed: 50,
+                animationEasing: 'swing',
+                changeDelay: 0,
+                control: 'hue',
+                defaultValue: '#0080ff',
+                format: 'hex',
+                showSpeed: 100,
+                hideSpeed: 100,
+                inline: false,
+                theme: 'bootstrap'
+            });
+        });
+    </script>
+}

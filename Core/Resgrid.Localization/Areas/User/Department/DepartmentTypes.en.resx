@@ -279,4 +279,34 @@
   <data name="UnitTypesHeader" xml:space="preserve">
     <value>Unit Types</value>
   </data>
+  <data name="ContactNoteTypesHeader" xml:space="preserve">
+    <value>Contact Note Types</value>
+  </data>
+  <data name="NewContactNoteTypesHeader" xml:space="preserve">
+    <value>Add New Contact Note Type</value>
+  </data>
+  <data name="NewContactNoteTypes" xml:space="preserve">
+    <value>New Contact Note Type</value>
+  </data>
+  <data name="ContactNoteTypesName" xml:space="preserve">
+    <value>Contact Note Type Name</value>
+  </data>
+  <data name="DeleteContactNoteTypesWarning" xml:space="preserve">
+    <value>Are you sure you want to delete the contact note type with the name of?</value>
+  </data>
+  <data name="ContactNoteTypeNameLabel" xml:space="preserve">
+    <value>Contact Note Type Name</value>
+  </data>
+  <data name="ContactNoteTypeNameText" xml:space="preserve">
+    <value>The Name of the Contact Note Type</value>
+  </data>
+  <data name="ContactNoteTypeColorLabel" xml:space="preserve">
+    <value>Contact Note Type Color</value>
+  </data>
+  <data name="EditContactNoteTypeHeader" xml:space="preserve">
+    <value>Edit Contact Note Type</value>
+  </data>
+  <data name="NewContactNoteTypeHeader" xml:space="preserve">
+    <value>New Contact Note Type</value>
+  </data>
 </root>

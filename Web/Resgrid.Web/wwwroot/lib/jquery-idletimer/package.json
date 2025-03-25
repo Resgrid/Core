@@ -1,0 +1,23 @@
+{
+  "name": "jquery-idletimer",
+  "version": "1.0.0",
+  "description": "Package reupload by rezky from thorst (github) forked from nzakas/yui-misc",
+  "main": "Gruntfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jquery-idletimer",
+    "timer",
+    "jquery",
+    "idle",
+    "idle-timer",
+    "idletimer",
+    "package"
+  ],
+  "author": "Rezky Maulana <rezkymaulanabisnis@gmail.com>",
+  "license": "MIT"
+}

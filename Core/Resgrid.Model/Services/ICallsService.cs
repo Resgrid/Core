@@ -408,5 +408,7 @@ namespace Resgrid.Model.Services
 		Task<List<CallReference>> GetChildCallsForCallAsync(int callId);
 
 		Task<bool> DeleteCallReferenceAsync(CallReference callReference, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<Call>> GetCallsByContactIdAsync(string contactId, int departmentId);
 	}
 }

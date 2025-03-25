@@ -1,0 +1,90 @@
+{
+  "name": "@geoman-io/leaflet-geoman-free",
+  "version": "2.13.0",
+  "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
+  "keywords": [
+    "leaflet",
+    "geoman",
+    "polygon management",
+    "geometry editing",
+    "map data",
+    "map overlay",
+    "polygon",
+    "geojson",
+    "leaflet-draw",
+    "data-field-geojson",
+    "ui-leaflet-draw"
+  ],
+  "files": [
+    "dist"
+  ],
+  "main": "dist/leaflet-geoman.min.js",
+  "types": "dist/leaflet-geoman.d.ts",
+  "dependencies": {
+    "@turf/boolean-contains": "^6.5.0",
+    "@turf/kinks": "^6.5.0",
+    "@turf/line-intersect": "^6.5.0",
+    "@turf/line-split": "^6.5.0",
+    "lodash": "4.17.21",
+    "polygon-clipping": "0.15.3"
+  },
+  "devDependencies": {
+    "@babel/core": "7.14.0",
+    "@babel/preset-env": "7.14.1",
+    "@types/leaflet": "^1.7.9",
+    "babel-loader": "8.2.2",
+    "copy-webpack-plugin": "8.1.1",
+    "css-loader": "5.2.4",
+    "cypress": "6.9.1",
+    "cypress-wait-until": "1.7.1",
+    "eslint": "7.26.0",
+    "eslint-config-airbnb-base": "14.2.1",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-cypress": "2.11.3",
+    "eslint-plugin-import": "2.22.1",
+    "file-loader": "6.2.0",
+    "leaflet": "1.8.0",
+    "mini-css-extract-plugin": "1.6.0",
+    "prettier": "2.2.1",
+    "prosthetic-hand": "1.3.1",
+    "terser-webpack-plugin": "^5.1.2",
+    "url-loader": "4.1.1",
+    "webpack": "5.36.2",
+    "webpack-cli": "4.7.0"
+  },
+  "peerDependencies": {
+    "leaflet": "^1.2.0"
+  },
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "webpack --config=webpack.dev.js",
+    "test": "cypress run",
+    "cypress": "cypress open",
+    "build": "webpack --config=webpack.build.js",
+    "prepare": "npm run build",
+    "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
+    "eslint": "eslint src/ --fix",
+    "prettier": "prettier --write '{src,cypress}/**/*.{js,css}'",
+    "lint": "npm run eslint && npm run prettier"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/geoman-io/leaflet-geoman.git"
+  },
+  "author": {
+    "name": "Sumit Kumar",
+    "email": "sumit@geoman.io",
+    "url": "http://geoman.io/leaflet-geoman"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/geoman-io/leaflet-geoman/issues"
+  },
+  "homepage": "https://geoman.io/leaflet-geoman",
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true
+  }
+}

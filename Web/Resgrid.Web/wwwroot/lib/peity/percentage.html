@@ -1,0 +1,14 @@
+<script src="test/jquery-1.6.2.min.js"></script>
+<script src="jquery.peity.js"></script>
+
+<span class="donut">3,1,6,2,5,4</span>
+<span class="pie">3,1,6,2,5,4</span>
+<span class="line">3,1,6,2,5,4</span>
+<span class="bar">3,1,6,2,5,4</span>
+
+<script>
+  $('span').each(function() {
+    var type = this.className
+    $(this).peity(type, { height: '100%', width: '100%' })
+  })
+</script>

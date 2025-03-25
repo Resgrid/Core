@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<title>WIP</title>
+<script src="test/jquery-1.6.2.min.js"></script>
+<script src="jquery.peity.js"></script>
+<style>
+  svg {
+    border: 1px solid #ccc;
+  }
+</style>
+</head>
+<body>
+<span>0,0,0,0,0</span><br>
+<span>0,-1,1,-1,0</span><br>
+<span>-1,-1,-1,-1,-1</span><br>
+<span>1,1,1,1,1</span><br>
+<span>1,3,2,5,4</span><br>
+<script>
+$('span').peity('line', { min: -1 })
+</script>
+</body>
+</html>

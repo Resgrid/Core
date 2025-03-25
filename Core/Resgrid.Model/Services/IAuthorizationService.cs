@@ -318,5 +318,13 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserViewUnitLocationViaMatrixAsync(int unitToView, string userId, int departmentId);
 
 		Task<bool> CanUserViewAllPeopleAsync(string userId, int departmentId);
+
+		Task<bool> CanUserDeleteContactNoteTypeAsync(string userId, string contactNoteTypeId);
+
+		Task<bool> CanUserEditContactNoteTypeAsync(string userId, string contactNoteTypeId);
+
+		Task<bool> CanUserDeleteContactAsync(string userId, int departmentId);
+
+		Task<bool> CanUserAddOrEditContactAsync(string userId, int departmentId);
 	}
 }

@@ -75,8 +75,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			   .WithColumn("DefaultVisibility".ToLower()).AsInt32().NotNullable()
 			   .WithColumn("AddedOn".ToLower()).AsDateTime2().NotNullable()
 			   .WithColumn("AddedByUserId".ToLower()).AsCustom("citext").NotNullable()
-			   .WithColumn("EditedOn".ToLower()).AsDateTime2()
-			   .WithColumn("EditedByUserId".ToLower()).AsCustom("citext");
+			   .WithColumn("EditedOn".ToLower()).AsDateTime2().Nullable()
+			   .WithColumn("EditedByUserId".ToLower()).AsCustom("citext").Nullable();
 
 			Create.ForeignKey("FK_ContactNoteTypes_Department")
 				.FromTable("ContactNoteTypes".ToLower()).ForeignColumn("DepartmentId".ToLower())
@@ -134,7 +134,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			   .WithColumn("DepartmentId".ToLower()).AsInt32().NotNullable()
 			   .WithColumn("CallId".ToLower()).AsInt32().NotNullable()
 			   .WithColumn("ContactId".ToLower()).AsCustom("citext").NotNullable()
-			   .WithColumn("CallContactType".ToLower()).AsInt32();
+			   .WithColumn("CallContactType".ToLower()).AsInt32().NotNullable();
 
 			Create.ForeignKey("FK_CallContacts_Department")
 				.FromTable("CallContacts".ToLower()).ForeignColumn("DepartmentId".ToLower())

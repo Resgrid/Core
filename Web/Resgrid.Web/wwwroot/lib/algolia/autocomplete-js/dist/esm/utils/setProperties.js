@@ -6,6 +6,7 @@
  * See https://w3c.github.io/touch-events/#extensions-to-the-globaleventhandlers-mixin
  */
 var TOUCH_EVENTS_ALIASES = ['ontouchstart', 'ontouchend', 'ontouchmove', 'ontouchcancel'];
+
 /*
  * Taken from Preact
  *
@@ -21,24 +22,21 @@ function setStyle(style, key, value) {
     style[key] = value + 'px';
   }
 }
+
 /**
  * Proxy an event to hooked event handlers
  */
-
-
 function eventProxy(event) {
   this._listeners[event.type](event);
 }
+
 /**
  * Set a property value on a DOM node
  */
-
-
 export function setProperty(dom, name, value) {
   var useCapture;
   var nameLower;
   var oldValue = dom[name];
-
   if (name === 'style') {
     if (typeof value == 'string') {
       dom.style = value;
@@ -53,7 +51,8 @@ export function setProperty(dom, name, value) {
         }
       }
     }
-  } // Benchmark for comparison: https://esbench.com/bench/574c954bdb965b9a00965ac6
+  }
+  // Benchmark for comparison: https://esbench.com/bench/574c954bdb965b9a00965ac6
   else if (name[0] === 'o' && name[1] === 'n') {
     useCapture = name !== (name = name.replace(/Capture$/, ''));
     nameLower = name.toLowerCase();
@@ -61,18 +60,19 @@ export function setProperty(dom, name, value) {
     name = name.slice(2);
     if (!dom._listeners) dom._listeners = {};
     dom._listeners[name] = value;
-
     if (value) {
       if (!oldValue) dom.addEventListener(name, eventProxy, useCapture);
     } else {
       dom.removeEventListener(name, eventProxy, useCapture);
     }
-  } else if (name !== 'list' && name !== 'tagName' && // HTMLButtonElement.form and HTMLInputElement.form are read-only but can be set using
+  } else if (name !== 'list' && name !== 'tagName' &&
+  // HTMLButtonElement.form and HTMLInputElement.form are read-only but can be set using
   // setAttribute
   name !== 'form' && name !== 'type' && name !== 'size' && name !== 'download' && name !== 'href' && name in dom) {
     dom[name] = value == null ? '' : value;
   } else if (typeof value != 'function' && name !== 'dangerouslySetInnerHTML') {
-    if (value == null || value === false && // ARIA-attributes have a different notion of boolean values.
+    if (value == null || value === false &&
+    // ARIA-attributes have a different notion of boolean values.
     // The value `false` is different from the attribute not
     // existing on the DOM, so we can't remove it. For non-boolean
     // ARIA-attributes we could treat false as a removal, but the
@@ -85,17 +85,17 @@ export function setProperty(dom, name, value) {
     }
   }
 }
-
 function getNormalizedName(name) {
   switch (name) {
     case 'onChange':
       return 'onInput';
-
+    // see: https://github.com/preactjs/preact/issues/1978
+    case 'onCompositionEnd':
+      return 'oncompositionend';
     default:
       return name;
   }
 }
-
 export function setProperties(dom, props) {
   for (var name in props) {
     setProperty(dom, getNormalizedName(name), props[name]);

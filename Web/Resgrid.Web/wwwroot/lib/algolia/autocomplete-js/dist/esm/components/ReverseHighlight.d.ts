@@ -1,6 +1,5 @@
-/// <reference types="react" />
-import { AutocompleteRenderer, HighlightHitParams } from '../types';
+import { AutocompleteRenderer, HighlightHitParams, VNode } from '../types';
 export declare function createReverseHighlightComponent({ createElement, Fragment, }: AutocompleteRenderer): {
-    <THit>({ hit, attribute, tagName, }: HighlightHitParams<THit>): JSX.Element;
+    <THit>({ hit, attribute, tagName, }: HighlightHitParams<THit>): VNode<any>;
     __autocomplete_componentName: string;
 };

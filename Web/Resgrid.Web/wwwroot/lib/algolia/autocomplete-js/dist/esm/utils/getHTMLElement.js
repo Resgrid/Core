@@ -5,6 +5,5 @@ export function getHTMLElement(environment, value) {
     invariant(element !== null, "The element ".concat(JSON.stringify(value), " is not in the document."));
     return element;
   }
-
   return value;
 }

@@ -8,15 +8,12 @@ export function createReactiveWrapper() {
         _ref: {
           current: current
         },
-
         get value() {
           return this._ref.current;
         },
-
         set value(value) {
           this._ref.current = value;
         }
-
       };
       reactives.push(reactive);
       return reactive;

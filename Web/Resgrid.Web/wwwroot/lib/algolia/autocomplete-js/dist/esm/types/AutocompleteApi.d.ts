@@ -1,5 +1,5 @@
 import { AutocompleteScopeApi as AutocompleteCoreScopeApi, BaseItem } from '@algolia/autocomplete-core';
-import { AutocompleteOptions } from './AutocompleteOptions';
+import { AutocompleteOptions } from './';
 export interface AutocompleteApi<TItem extends BaseItem> extends AutocompleteCoreScopeApi<TItem> {
     /**
      * Updates the Autocomplete experience.

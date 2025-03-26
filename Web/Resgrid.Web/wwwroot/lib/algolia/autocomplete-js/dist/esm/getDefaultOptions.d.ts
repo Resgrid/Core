@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { BaseItem } from '@algolia/autocomplete-core';
 import { AutocompleteClassNames, AutocompleteOptions, AutocompleteRender } from './types';
 export declare function getDefaultOptions<TItem extends BaseItem>(options: AutocompleteOptions<TItem>): {
@@ -12,7 +11,7 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
                 onMouseDown(event: MouseEvent): void;
             };
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
             onTouchStart(event: TouchEvent): void;
             onTouchMove(event: TouchEvent): void;
@@ -27,7 +26,7 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
                 onReset(event: Event): void;
             };
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
             action: "";
             noValidate: true;
@@ -41,10 +40,10 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
                 value: string;
                 autoFocus: boolean;
                 placeholder: string;
-                autoComplete: "off" | "on";
-                autoCorrect: "off" | "on";
-                autoCapitalize: "off" | "on";
-                enterKeyHint: "search" | "go";
+                autoComplete: "on" | "off";
+                autoCorrect: "on" | "off";
+                autoCapitalize: "on" | "off";
+                enterKeyHint: import("@algolia/autocomplete-core").AutocompleteEnterKeyHint;
                 spellCheck: "false";
                 maxLength: number;
                 type: "search";
@@ -53,6 +52,7 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
                 'aria-controls': string | undefined;
                 'aria-labelledby': string;
                 onChange(event: Event): void;
+                onCompositionEnd(event: Event): void;
                 onKeyDown(event: KeyboardEvent): void;
                 onFocus(event: Event): void;
                 onBlur(): void;
@@ -60,16 +60,16 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
             };
             inputElement: HTMLInputElement;
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
             id: string;
             value: string;
             autoFocus: boolean;
             placeholder: string;
-            autoComplete: "off" | "on";
-            autoCorrect: "off" | "on";
-            autoCapitalize: "off" | "on";
-            enterKeyHint: "search" | "go";
+            autoComplete: "on" | "off";
+            autoCorrect: "on" | "off";
+            autoCapitalize: "on" | "off";
+            enterKeyHint: import("@algolia/autocomplete-core").AutocompleteEnterKeyHint;
             spellCheck: "false";
             maxLength: number;
             type: "search";
@@ -78,6 +78,7 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
             'aria-controls': string | undefined;
             'aria-labelledby': string;
             onChange(event: Event): void;
+            onCompositionEnd(event: Event): void;
             onKeyDown(event: KeyboardEvent): void;
             onFocus(event: Event): void;
             onBlur(): void;
@@ -86,17 +87,17 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
         getItemProps: (params: {
             props: {
                 id: string;
-                role: string;
+                role: "option";
                 'aria-selected': boolean;
                 onMouseMove(event: MouseEvent): void;
                 onMouseDown(event: MouseEvent): void;
                 onClick(event: MouseEvent): void;
             };
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
             id: string;
-            role: string;
+            role: "option";
             'aria-selected': boolean;
             onMouseMove(event: MouseEvent): void;
             onMouseDown(event: MouseEvent): void;
@@ -108,21 +109,21 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
                 id: string;
             };
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
             htmlFor: string;
             id: string;
         };
         getListProps: (params: {
             props: {
-                role: string;
+                role: "listbox";
                 'aria-labelledby': string;
                 id: string;
             };
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
-            role: string;
+            role: "listbox";
             'aria-labelledby': string;
             id: string;
         };
@@ -132,26 +133,26 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
                 onMouseLeave(): void;
             };
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
             onMouseDown(event: MouseEvent): void;
             onMouseLeave(): void;
         };
         getRootProps: (params: {
             props: {
-                role: string;
+                role: "combobox";
                 'aria-expanded': boolean;
                 'aria-haspopup': boolean | "dialog" | "menu" | "true" | "false" | "grid" | "listbox" | "tree" | undefined;
-                'aria-owns': string | undefined;
+                'aria-controls': string | undefined;
                 'aria-labelledby': string;
             };
         } & {
-            state: import("./types").AutocompleteState<TItem>;
+            state: import("@algolia/autocomplete-shared").AutocompleteState<TItem>;
         } & import("@algolia/autocomplete-core").AutocompleteScopeApi<TItem>) => {
-            role: string;
+            role: "combobox";
             'aria-expanded': boolean;
             'aria-haspopup': boolean | "dialog" | "menu" | "true" | "false" | "grid" | "listbox" | "tree" | undefined;
-            'aria-owns': string | undefined;
+            'aria-controls': string | undefined;
             'aria-labelledby': string;
         };
         panelContainer: HTMLElement;
@@ -159,38 +160,42 @@ export declare function getDefaultOptions<TItem extends BaseItem>(options: Autoc
         render: AutocompleteRender<any> | AutocompleteRender<TItem>;
         renderNoResults: AutocompleteRender<TItem> | undefined;
         renderer: {
-            createElement: import("./types").Pragma;
+            createElement: import("@algolia/autocomplete-shared").Pragma;
             Fragment: any;
-            render: import("./types").Render;
+            render: import("@algolia/autocomplete-shared").Render;
         };
         detachedMediaQuery: string;
         components: {
-            [x: string]: (props: any) => JSX.Element;
-            Highlight: <THit>({ hit, attribute, tagName, }: import("./types").HighlightHitParams<THit>) => JSX.Element;
-            ReverseHighlight: <THit>({ hit, attribute, tagName, }: import("./types").HighlightHitParams<THit>) => JSX.Element;
-            ReverseSnippet: <THit>({ hit, attribute, tagName, }: import("./types").HighlightHitParams<THit>) => JSX.Element;
-            Snippet: <THit>({ hit, attribute, tagName, }: import("./types").HighlightHitParams<THit>) => JSX.Element;
+            [x: string]: (props: any) => import("@algolia/autocomplete-shared").VNode<any>;
+            Highlight: <THit>({ hit, attribute, tagName, }: import("@algolia/autocomplete-shared").HighlightHitParams<THit>) => import("@algolia/autocomplete-shared").VNode<any>;
+            ReverseHighlight: <THit>({ hit, attribute, tagName, }: import("@algolia/autocomplete-shared").HighlightHitParams<THit>) => import("@algolia/autocomplete-shared").VNode<any>;
+            ReverseSnippet: <THit>({ hit, attribute, tagName, }: import("@algolia/autocomplete-shared").HighlightHitParams<THit>) => import("@algolia/autocomplete-shared").VNode<any>;
+            Snippet: <THit>({ hit, attribute, tagName, }: import("@algolia/autocomplete-shared").HighlightHitParams<THit>) => import("@algolia/autocomplete-shared").VNode<any>;
         };
         translations: {
             detachedCancelButtonText: string;
             clearButtonTitle: string;
             submitButtonTitle: string;
+            detachedSearchButtonTitle: string;
         };
     };
     core: {
         id: string;
         environment: Window;
-        getSources?: import("./types").GetSources<TItem> | undefined;
-        initialState?: Partial<import("./types").AutocompleteState<TItem>> | undefined;
-        onStateChange?(props: import("./types").OnStateChangeProps<TItem>): void;
-        plugins?: import("./types").AutocompletePlugin<any, any>[] | undefined;
+        insights?: boolean | import("@algolia/autocomplete-plugin-algolia-insights").CreateAlgoliaInsightsPluginParams | undefined;
+        getSources?: import("@algolia/autocomplete-shared").GetSources<TItem> | undefined;
+        initialState?: Partial<import("@algolia/autocomplete-shared").AutocompleteState<TItem>> | undefined;
+        onStateChange?(props: import("@algolia/autocomplete-shared").OnStateChangeProps<TItem>): void;
+        plugins?: import("@algolia/autocomplete-shared").AutocompletePlugin<any, any>[] | undefined;
         debug?: boolean | undefined;
+        enterKeyHint?: import("@algolia/autocomplete-core").AutocompleteEnterKeyHint | undefined;
+        ignoreCompositionEvents?: boolean | undefined;
         placeholder?: string | undefined;
         autoFocus?: boolean | undefined;
         defaultActiveItemId?: number | null | undefined;
         openOnFocus?: boolean | undefined;
         stallThreshold?: number | undefined;
-        navigator?: Partial<import("@algolia/autocomplete-core/dist/esm/types/AutocompleteNavigator").AutocompleteNavigator<TItem>> | undefined;
+        navigator?: Partial<import("@algolia/autocomplete-shared/dist/esm/core/AutocompleteNavigator").AutocompleteNavigator<TItem>> | undefined;
         shouldPanelOpen?(params: {
             state: import("@algolia/autocomplete-core").AutocompleteState<TItem>;
         }): boolean;

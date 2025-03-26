@@ -1,13 +1,11 @@
 export function createEffectWrapper() {
   var effects = [];
   var cleanups = [];
-
   function runEffect(fn) {
     effects.push(fn);
     var effectCleanup = fn();
     cleanups.push(effectCleanup);
   }
-
   return {
     runEffect: runEffect,
     cleanupEffects: function cleanupEffects() {

@@ -1,24 +1,24 @@
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 import { ClearIcon, Input, LoadingIcon, SearchIcon } from './elements';
 import { getCreateDomElement } from './getCreateDomElement';
 import { setProperties } from './utils';
 export function createAutocompleteDom(_ref) {
   var autocomplete = _ref.autocomplete,
-      autocompleteScopeApi = _ref.autocompleteScopeApi,
-      classNames = _ref.classNames,
-      environment = _ref.environment,
-      isDetached = _ref.isDetached,
-      _ref$placeholder = _ref.placeholder,
-      placeholder = _ref$placeholder === void 0 ? 'Search' : _ref$placeholder,
-      propGetters = _ref.propGetters,
-      setIsModalOpen = _ref.setIsModalOpen,
-      state = _ref.state,
-      translations = _ref.translations;
+    autocompleteScopeApi = _ref.autocompleteScopeApi,
+    classNames = _ref.classNames,
+    environment = _ref.environment,
+    isDetached = _ref.isDetached,
+    _ref$placeholder = _ref.placeholder,
+    placeholder = _ref$placeholder === void 0 ? 'Search' : _ref$placeholder,
+    propGetters = _ref.propGetters,
+    setIsModalOpen = _ref.setIsModalOpen,
+    state = _ref.state,
+    translations = _ref.translations;
   var createDomElement = getCreateDomElement(environment);
   var rootProps = propGetters.getRootProps(_objectSpread({
     state: state,
@@ -53,9 +53,13 @@ export function createAutocompleteDom(_ref) {
       environment: environment
     })]
   });
+  // @MAJOR Remove the label wrapper for the submit button.
+  // The submit button is sufficient for accessibility purposes, and
+  // wrapping it with the label actually makes it less accessible (see CR-6077).
   var label = createDomElement('label', _objectSpread({
     class: classNames.label,
-    children: [submitButton]
+    children: [submitButton],
+    ariaLabel: translations.submitButtonTitle
   }, labelProps));
   var clearButton = createDomElement('button', {
     class: classNames.clearButton,
@@ -118,13 +122,11 @@ export function createAutocompleteDom(_ref) {
     hidden: Boolean(state.query),
     textContent: placeholder
   });
-
   if (process.env.NODE_ENV === 'test') {
     setProperties(panel, {
       'data-testid': 'panel'
     });
   }
-
   if (isDetached) {
     var detachedSearchButtonIcon = createDomElement('div', {
       class: classNames.detachedSearchButtonIcon,
@@ -135,6 +137,8 @@ export function createAutocompleteDom(_ref) {
     var detachedSearchButton = createDomElement('button', {
       type: 'button',
       class: classNames.detachedSearchButton,
+      title: translations.detachedSearchButtonTitle,
+      id: labelProps.id,
       onClick: function onClick() {
         setIsModalOpen(true);
       },
@@ -163,7 +167,6 @@ export function createAutocompleteDom(_ref) {
   } else {
     root.appendChild(form);
   }
-
   return {
     detachedContainer: detachedContainer,
     detachedOverlay: detachedOverlay,

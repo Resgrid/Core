@@ -22,10 +22,10 @@ namespace Resgrid.Web.ServicesCore.Middleware
 				var user = new SentryUser();
 				user.Username = ClaimsAuthorizationHelper.GetUsername();
 				user.Id = ClaimsAuthorizationHelper.GetUserId();
-				user.Segment = ClaimsAuthorizationHelper.GetDepartmentId().ToString();
 				user.IpAddress = IpAddressHelper.GetRequestIP(_httpContext.HttpContext?.Request, true);
 				user.Other.Add("Name", ClaimsAuthorizationHelper.GetFullName());
 				user.Other.Add("Department", ClaimsAuthorizationHelper.GetDepartmentName());
+				user.Other.Add("DepartmentId", ClaimsAuthorizationHelper.GetDepartmentId().ToString());
 				@event.User = user;
 			} catch (Exception ex) { }
 

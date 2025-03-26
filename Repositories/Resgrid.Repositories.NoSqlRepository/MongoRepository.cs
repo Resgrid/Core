@@ -29,7 +29,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			return ((BsonCollectionAttribute)documentType.GetCustomAttributes(typeof(BsonCollectionAttribute), true).FirstOrDefault())?.CollectionName;
 		}
 
-		public virtual IMongoQueryable<TDocument> AsQueryable()
+		public virtual IQueryable<TDocument> AsQueryable()
 		{
 			return _collection.AsQueryable();
 		}

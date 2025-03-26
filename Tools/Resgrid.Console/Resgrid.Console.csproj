@@ -20,22 +20,22 @@
     <EmbeddedResource Include="Views\Default.template" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Autofac" Version="8.2.0" />
     <PackageReference Include="Consolas2" Version="1.0.0" />
-    <PackageReference Include="FluentMigrator" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Runner" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Runner.Core" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="5.1.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="FluentMigrator" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner.Core" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="7.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />

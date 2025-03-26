@@ -19,37 +19,37 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.1.0" />
-    <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
-    <PackageReference Include="Microsoft.IdentityModel.Logging" Version="7.4.1">
+    <PackageReference Include="GeoJSON.Net" Version="1.4.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Logging" Version="8.7.0">
       <NoWarn>NU1605</NoWarn>
     </PackageReference>
-    <PackageReference Include="Microsoft.IdentityModel.LoggingExtensions" Version="7.4.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="7.4.1">
+    <PackageReference Include="Microsoft.IdentityModel.LoggingExtensions" Version="8.7.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="8.7.0">
       <NoWarn>NU1605</NoWarn>
     </PackageReference>
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.4.1">
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.7.0">
       <NoWarn>NU1605</NoWarn>
     </PackageReference>
-    <PackageReference Include="OpenIddict" Version="5.3.0" />
-    <PackageReference Include="OpenIddict.AspNetCore" Version="5.3.0" />
-    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.3.0" />
-    <PackageReference Include="OpenIddict.Server.AspNetCore" Version="5.3.0" />
-    <PackageReference Include="OpenIddict.Validation" Version="5.3.0" />
-    <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="5.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.3" />
-    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
-    <PackageReference Include="Sentry.AspNetCore" Version="4.10.2" />
-    <PackageReference Include="Sentry.Profiling" Version="4.10.2" />
+    <PackageReference Include="OpenIddict" Version="6.1.1" />
+    <PackageReference Include="OpenIddict.AspNetCore" Version="6.1.1" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="6.1.1" />
+    <PackageReference Include="OpenIddict.Server.AspNetCore" Version="6.1.1" />
+    <PackageReference Include="OpenIddict.Validation" Version="6.1.1" />
+    <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="6.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="9.0.3" />
+    <PackageReference Include="OpenTelemetry" Version="1.11.2" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
+    <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.11.2" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.2" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.1" />
+    <PackageReference Include="Sentry.AspNetCore" Version="5.4.0" />
+    <PackageReference Include="Sentry.Profiling" Version="5.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />

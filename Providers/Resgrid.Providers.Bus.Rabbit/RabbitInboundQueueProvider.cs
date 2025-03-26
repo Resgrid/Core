@@ -15,7 +15,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 	public class RabbitInboundQueueProvider
 	{
 		private string _clientName;
-		private IModel _channel;
+		private IChannel _channel;
 		public Func<CallQueueItem, Task> CallQueueReceived;
 		public Func<MessageQueueItem, Task> MessageQueueReceived;
 		public Func<DistributionListQueueItem, Task> DistributionListQueueReceived;
@@ -40,7 +40,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			if (connection != null)
 			{
-				_channel = connection.CreateModel();
+				_channel = await connection.CreateChannelAsync();
 				await StartMonitoring();
 			}
 		}
@@ -51,8 +51,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				if (CallQueueReceived != null)
 				{
-					var callQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					callQueueReceivedConsumer.Received += async (model, ea) =>
+					var callQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					callQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -65,7 +65,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -76,22 +76,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (CallQueueReceived != null)
 									{
 										await CallQueueReceived.Invoke(cqi);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicNack(ea.DeliveryTag, false, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String callQueueReceivedConsumerTag = _channel.BasicConsume(
+					String callQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
 							autoAck: false,
 							consumer: callQueueReceivedConsumer);
@@ -99,8 +99,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (MessageQueueReceived != null)
 				{
-					var messageQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					messageQueueReceivedConsumer.Received += async (model, ea) =>
+					var messageQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					messageQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -113,7 +113,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -124,22 +124,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (MessageQueueReceived != null)
 									{
 										await MessageQueueReceived.Invoke(mqi);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicAck(ea.DeliveryTag, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String messageQueueReceivedConsumerTag = _channel.BasicConsume(
+					String messageQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
 						autoAck: false,
 						consumer: messageQueueReceivedConsumer);
@@ -147,8 +147,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (DistributionListQueueReceived != null)
 				{
-					var distributionListQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					distributionListQueueReceivedConsumer.Received += async (model, ea) =>
+					var distributionListQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					distributionListQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -161,7 +161,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -172,22 +172,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (DistributionListQueueReceived != null)
 									{
 										await DistributionListQueueReceived.Invoke(dlqi);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicAck(ea.DeliveryTag, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String distributionListQueueReceivedConsumerTag = _channel.BasicConsume(
+					String distributionListQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
 							autoAck: false,
 							consumer: distributionListQueueReceivedConsumer);
@@ -195,8 +195,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (NotificationQueueReceived != null)
 				{
-					var notificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					notificationQueueReceivedConsumer.Received += async (model, ea) =>
+					var notificationQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					notificationQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -209,7 +209,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -220,22 +220,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (NotificationQueueReceived != null)
 									{
 										await NotificationQueueReceived.Invoke(ni);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicAck(ea.DeliveryTag, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String notificationQueueReceivedConsumerTag = _channel.BasicConsume(
+					String notificationQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
 							autoAck: false,
 							consumer: notificationQueueReceivedConsumer);
@@ -243,8 +243,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (ShiftNotificationQueueReceived != null)
 				{
-					var shiftNotificationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					shiftNotificationQueueReceivedConsumer.Received += async (model, ea) =>
+					var shiftNotificationQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					shiftNotificationQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -257,7 +257,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -269,22 +269,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (ShiftNotificationQueueReceived != null)
 									{
 										await ShiftNotificationQueueReceived.Invoke(sqi);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicAck(ea.DeliveryTag, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String shiftNotificationQueueReceivedConsumerTag = _channel.BasicConsume(
+					String shiftNotificationQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
 						autoAck: false,
 						consumer: shiftNotificationQueueReceivedConsumer);
@@ -292,8 +292,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (CqrsEventQueueReceived != null)
 				{
-					var cqrsEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					cqrsEventQueueReceivedConsumer.Received += async (model, ea) =>
+					var cqrsEventQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					cqrsEventQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -306,7 +306,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -317,22 +317,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (CqrsEventQueueReceived != null)
 									{
 										await CqrsEventQueueReceived.Invoke(cqrs);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicAck(ea.DeliveryTag, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String cqrsEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					String cqrsEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 							autoAck: false,
 							consumer: cqrsEventQueueReceivedConsumer);
@@ -340,8 +340,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (PaymentEventQueueReceived != null)
 				{
-					var paymentEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					paymentEventQueueReceivedConsumer.Received += async (model, ea) =>
+					var paymentEventQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					paymentEventQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -354,7 +354,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -365,22 +365,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (PaymentEventQueueReceived != null)
 									{
 										await PaymentEventQueueReceived.Invoke(cqrs);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicAck(ea.DeliveryTag, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String paymentEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					String paymentEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
 							autoAck: false,
 							consumer: paymentEventQueueReceivedConsumer);
@@ -388,8 +388,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (AuditEventQueueReceived != null)
 				{
-					var auditEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					auditEventQueueReceivedConsumer.Received += async (model, ea) =>
+					var auditEventQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					auditEventQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -402,7 +402,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								_channel.BasicNack(ea.DeliveryTag, false, false);
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -413,22 +413,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (AuditEventQueueReceived != null)
 									{
 										await AuditEventQueueReceived.Invoke(audit);
-										_channel.BasicAck(ea.DeliveryTag, false);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (RetryQueueItem(ea, ex))
-									_channel.BasicAck(ea.DeliveryTag, false);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
 								else
-									_channel.BasicNack(ea.DeliveryTag, false, true);
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String auditEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					String auditEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
 							autoAck: false,
 							consumer: auditEventQueueReceivedConsumer);
@@ -436,8 +436,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (UnitLocationEventQueueReceived != null)
 				{
-					var unitLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					unitLocationQueueReceivedConsumer.Received += async (model, ea) =>
+					var unitLocationQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					unitLocationQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -470,7 +470,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 						}
 					};
 
-					String unitLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					String unitLocationEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
 							autoAck: true,
 							consumer: unitLocationQueueReceivedConsumer);
@@ -478,8 +478,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (PersonnelLocationEventQueueReceived != null)
 				{
-					var personnelLocationQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					personnelLocationQueueReceivedConsumer.Received += async (model, ea) =>
+					var personnelLocationQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					personnelLocationQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -512,7 +512,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 						}
 					};
 
-					String personnelLocationEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					String personnelLocationEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
 						autoAck: true,
 						consumer: personnelLocationQueueReceivedConsumer);
@@ -520,8 +520,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (SecurityRefreshEventQueueReceived != null)
 				{
-					var securityRefreshEventQueueReceivedConsumer = new EventingBasicConsumer(_channel);
-					securityRefreshEventQueueReceivedConsumer.Received += async (model, ea) =>
+					var securityRefreshEventQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					securityRefreshEventQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
 						{
@@ -554,7 +554,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 						}
 					};
 
-					String securityRefreshEventQueueReceivedConsumerTag = _channel.BasicConsume(
+					String securityRefreshEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SecurityRefreshQueueName),
 						autoAck: true,
 						consumer: securityRefreshEventQueueReceivedConsumer);
@@ -570,7 +570,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return _channel.IsOpen;
 		}
 
-		private bool RetryQueueItem(BasicDeliverEventArgs ea, Exception mex)
+		private async Task<bool> RetryQueueItem(BasicDeliverEventArgs ea, Exception mex)
 		{
 			try
 			{
@@ -589,10 +589,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 				var connection = RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
-					using (var channel = connection.CreateModel())
+					using (var channel = await connection.CreateChannelAsync())
 					{
-						IBasicProperties props = channel.CreateBasicProperties();
-						props.DeliveryMode = 2;
+						var props = new BasicProperties();
+						props.DeliveryMode = DeliveryModes.Persistent;
 
 						// I *THINK* these headers are appearing in the body when trying to deserialze and it's blowing up protobuf. -SJ
 						//props.Expiration = "36000000";
@@ -603,8 +603,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 						// https://github.com/rabbitmq/rabbitmq-delayed-message-exchange
 						//props.Headers.Add("x-delay", 5000);
 
-						channel.BasicPublish(exchange: ea.Exchange,
+						await channel.BasicPublishAsync(exchange: ea.Exchange,
 									 routingKey: ea.RoutingKey,
+									 mandatory: true,
 									 basicProperties: props,
 									 body: ea.Body);
 					}

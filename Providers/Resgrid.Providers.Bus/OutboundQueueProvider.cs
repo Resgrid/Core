@@ -19,7 +19,7 @@ namespace Resgrid.Providers.Bus
 		public async Task<bool> EnqueueCall(CallQueueItem callQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return _rabbitOutboundQueueProvider.EnqueueCall(callQueue);
+				return await _rabbitOutboundQueueProvider.EnqueueCall(callQueue);
 
 			return false;
 		}
@@ -27,7 +27,7 @@ namespace Resgrid.Providers.Bus
 		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return _rabbitOutboundQueueProvider.EnqueueMessage(messageQueue);
+				return await _rabbitOutboundQueueProvider.EnqueueMessage(messageQueue);
 
 			return false;
 		}
@@ -35,7 +35,7 @@ namespace Resgrid.Providers.Bus
 		public async Task<bool> EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return _rabbitOutboundQueueProvider.EnqueueDistributionList(distributionListQueue);
+				return await _rabbitOutboundQueueProvider.EnqueueDistributionList(distributionListQueue);
 
 			return false;
 		}
@@ -43,7 +43,7 @@ namespace Resgrid.Providers.Bus
 		public async Task<bool> EnqueueNotification(NotificationItem notificationQueue)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return _rabbitOutboundQueueProvider.EnqueueNotification(notificationQueue);
+				return await _rabbitOutboundQueueProvider.EnqueueNotification(notificationQueue);
 
 			return false;
 		}
@@ -51,19 +51,19 @@ namespace Resgrid.Providers.Bus
 		public async Task<bool> EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
 		{
 			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return _rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
+				return await _rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
 
 			return false;
 		}
 
 		public async Task<bool> EnqueueAuditEvent(AuditEvent auditEvent)
 		{
-			return _rabbitOutboundQueueProvider.EnqueueAuditEvent(auditEvent);
+			return await _rabbitOutboundQueueProvider.EnqueueAuditEvent(auditEvent);
 		}
 
 		public async Task<bool> EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent)
 		{
-			return _rabbitOutboundQueueProvider.EnqueueSecurityRefreshEvent(securityRefreshEvent);
+			return await _rabbitOutboundQueueProvider.EnqueueSecurityRefreshEvent(securityRefreshEvent);
 		}
 	}
 }

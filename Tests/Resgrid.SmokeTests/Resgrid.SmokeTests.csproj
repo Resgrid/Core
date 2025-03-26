@@ -7,8 +7,8 @@
     <Compile Include="..\Resgrid.Tests\Bootstrapper.cs" Link="Bootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
-    <PackageReference Include="NUnit" Version="4.1.0" />
+    <PackageReference Include="FluentAssertions" Version="8.2.0" />
+    <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="SimpleBrowser" Version="0.6.0" />
   </ItemGroup>
   <ItemGroup>

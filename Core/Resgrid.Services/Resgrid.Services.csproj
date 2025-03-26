@@ -7,11 +7,11 @@
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Autofac" Version="8.2.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
-    <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
-    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="110.2.0" />
-    <PackageReference Include="Stripe.net" Version="45.1.0" />
+    <PackageReference Include="GeoJSON.Net" Version="1.4.1" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="112.1.0" />
+    <PackageReference Include="Stripe.net" Version="47.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>

@@ -21,11 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentMigrator" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Abstractions" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Extensions.Postgres" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="5.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="FluentMigrator" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Abstractions" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Extensions.Postgres" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
     <PackageReference Include="Quidjibo" Version="0.6.0" />
   </ItemGroup>
 

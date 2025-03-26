@@ -28,9 +28,9 @@ namespace Resgrid.Services
 			return _cacheProvider.IsConnected();
 		}
 
-		public bool IsServiceBusProviderConnected()
+		public async Task<bool> IsServiceBusProviderConnected()
 		{
-			return _rabbitOutboundQueueProvider.VerifyAndCreateClients();
+			return await _rabbitOutboundQueueProvider.VerifyAndCreateClients();
 		}
 	}
 }

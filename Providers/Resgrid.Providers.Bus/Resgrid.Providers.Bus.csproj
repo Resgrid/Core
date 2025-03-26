@@ -7,10 +7,10 @@
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.0.0" />
-    <PackageReference Include="Easy.MessageHub" Version="5.0.0" />
+    <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="Easy.MessageHub" Version="5.1.0" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />

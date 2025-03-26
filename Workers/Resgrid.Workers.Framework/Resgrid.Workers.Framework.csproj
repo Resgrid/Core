@@ -7,7 +7,7 @@
     <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.1.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
     <PackageReference Include="CompareNETObjects" Version="4.83.0" />
-    <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
+    <PackageReference Include="GeoJSON.Net" Version="1.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />

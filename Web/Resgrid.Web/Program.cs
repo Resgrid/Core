@@ -49,8 +49,8 @@ namespace Resgrid.Web
 							options.AttachStacktrace = true;
 							options.SendDefaultPii = true;
 
-							if (ExternalErrorConfig.SentryPerfSampleRate > 0)
-								options.EnableTracing = true;
+							//if (ExternalErrorConfig.SentryPerfSampleRate > 0)
+							//	options.EnableTracing = true;
 
 							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 							options.Environment = ExternalErrorConfig.Environment;

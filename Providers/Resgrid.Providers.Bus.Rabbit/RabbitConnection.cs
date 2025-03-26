@@ -2,6 +2,8 @@
 using Resgrid.Config;
 using Resgrid.Framework;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
@@ -9,10 +11,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 	{
 		private static IConnection _connection { get; set; }
 		private static ConnectionFactory _factory { get; set; }
-		private readonly static object LOCK = new object();
+		private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
 
-		public static bool VerifyAndCreateClients(string clientName)
+		public static async Task<bool> VerifyAndCreateClients(string clientName)
 		{
 			if (_connection != null && !_connection.IsOpen)
 			{
@@ -20,122 +22,130 @@ namespace Resgrid.Providers.Bus.Rabbit
 				_connection = null;
 				_factory = null;
 			}
-	
+
 			if (_connection == null)
 			{
-				lock (LOCK)
+				await _semaphore.WaitAsync();
+
+				try
 				{
-					try
-					{
-						_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-						_connection = _factory.CreateConnection(clientName);
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
+					_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+					_connection = await _factory.CreateConnectionAsync(clientName);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 
-						if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
+					if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
+					{
+						try
 						{
-							try
-							{
-								_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-								_connection = _factory.CreateConnection(clientName);
-							}
-							catch (Exception ex2)
-							{
-								Logging.LogException(ex2);
+							_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+							_connection = await _factory.CreateConnectionAsync(clientName);
+						}
+						catch (Exception ex2)
+						{
+							Logging.LogException(ex2);
 
-								if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
+							if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
+							{
+								try
 								{
-									try
-									{
-										_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-										_connection = _factory.CreateConnection(clientName);
-									}
-									catch (Exception ex3)
-									{
-										Logging.LogException(ex3);
-										throw;
-									}
+									_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+									_connection = await _factory.CreateConnectionAsync(clientName);
+								}
+								catch (Exception ex3)
+								{
+									Logging.LogException(ex3);
+									throw;
 								}
 							}
 						}
+						finally
+						{
+							_semaphore.Release();
+						}
 					}
 				}
+				finally
+				{
+					_semaphore.Release();
+				}
+
 
 				if (_connection != null)
 				{
 					try
 					{
-						var channel = _connection.CreateModel();
+						var channel = await _connection.CreateChannelAsync();
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.MessageBroadcastQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.EmailBroadcastQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.NotificaitonBroadcastQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.ShiftNotificationsQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.PaymentQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.AuditQueueName),
 									 durable: true,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
 									 durable: false,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
 									 durable: false,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(Topics.EventingTopic),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(Topics.EventingTopic),
 									 durable: false,
 									 exclusive: false,
 									 autoDelete: false,
 									 arguments: null);
 
-						channel.QueueDeclare(queue: SetQueueNameForEnv(ServiceBusConfig.SecurityRefreshQueueName),
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.SecurityRefreshQueueName),
 									 durable: false,
 									 exclusive: false,
 									 autoDelete: false,

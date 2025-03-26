@@ -18,8 +18,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentMigrator" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="5.1.0" />
-    <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="5.1.0" />
+    <PackageReference Include="FluentMigrator" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="7.0.0" />
   </ItemGroup>
 </Project>

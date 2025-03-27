@@ -179,6 +179,8 @@ namespace Resgrid.Repositories.DataRepository
 
 				return false;
 			}
+
+			return false;
 		}
 	}
 }

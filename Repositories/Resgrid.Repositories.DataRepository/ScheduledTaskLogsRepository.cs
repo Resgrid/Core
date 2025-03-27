@@ -59,14 +59,14 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					return (await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM scheduledtasklogs WHERE CAST(rundate AS DATE) = CAST(@timeStamp AS DATE)", new { timeStamp = timeStamp })).ToList();
+					return (await db.QueryAsync<ScheduledTaskLog>("SELECT * FROM scheduledtasklogs WHERE CAST(rundate AS DATE) = CAST(@timeStamp AS DATE)", new { timeStamp = timeStamp })).ToList();
 				}
 			}
 			else
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					return await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM ScheduledTaskLogs WHERE CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { timeStamp = timeStamp });
+					return await db.QueryAsync<ScheduledTaskLog>("SELECT * FROM ScheduledTaskLogs WHERE CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { timeStamp = timeStamp });
 				}
 			}
 		}
@@ -77,7 +77,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					var items = await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM scheduledtasklogs WHERE scheduledtaskid = @scheduledTaskId AND CAST(rundate AS DATE) = CAST(@timeStamp AS DATE)", new { scheduledTaskId = scheduledTaskId, timeStamp = timeStamp });
+					var items = await db.QueryAsync<ScheduledTaskLog>("SELECT * FROM scheduledtasklogs WHERE scheduledtaskid = @scheduledTaskId AND CAST(rundate AS DATE) = CAST(@timeStamp AS DATE)", new { scheduledTaskId = scheduledTaskId, timeStamp = timeStamp });
 					return items.FirstOrDefault();
 				}
 			}
@@ -85,7 +85,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					var items = await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM ScheduledTaskLogs WHERE ScheduledTaskId = @scheduledTaskId AND CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { scheduledTaskId = scheduledTaskId, timeStamp = timeStamp });
+					var items = await db.QueryAsync<ScheduledTaskLog>("SELECT * FROM ScheduledTaskLogs WHERE ScheduledTaskId = @scheduledTaskId AND CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { scheduledTaskId = scheduledTaskId, timeStamp = timeStamp });
 					return items.FirstOrDefault();
 				}
 			}

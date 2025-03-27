@@ -14,17 +14,21 @@ using Resgrid.Config;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DeleteRepository: IDeleteRepository
+	public class DeleteRepository : IDeleteRepository
 	{
 		public async Task<bool> DeleteDepartmentAndUsersAsync(int departmentId)
 		{
 			Dapper.SqlMapper.Settings.CommandTimeout = 300;
 
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			// TODO: Ok this needs to be revisited and also made compatible with PgSql. -SJ 3-26-2025
+
+			if (Config.DataConfig.DatabaseType == DatabaseTypes.SqlServer)
 			{
-				using (var transaction = db.BeginTransaction())
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					var result = await db.ExecuteAsync(@"
+					using (var transaction = db.BeginTransaction())
+					{
+						var result = await db.ExecuteAsync(@"
 								DECLARE @UserId NVARCHAR(128)
 								DECLARE @UnitId INT
 								DECLARE @ManagingUserId NVARCHAR(128)
@@ -167,13 +171,14 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[AspNetUsersExt] WHERE UserId = @ManagingUserId
 								DELETE FROM [dbo].[AspNetUsers] WHERE Id = @ManagingUserId
 						",
-						new { DepartmentId = departmentId });
+							new { DepartmentId = departmentId });
 
-					transaction.Commit();
+						transaction.Commit();
+					}
 				}
-			}
 
-			return false;
+				return false;
+			}
 		}
 	}
 }

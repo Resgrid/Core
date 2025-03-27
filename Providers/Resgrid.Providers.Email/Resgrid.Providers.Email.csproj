@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
   <ItemGroup>
@@ -31,11 +31,11 @@
     <EmbeddedResource Include="Template\Welcome.html" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.0.0" />
-    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300.58" />
-    <PackageReference Include="MimeKit" Version="4.7.1" />
+    <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.402.63" />
+    <PackageReference Include="MimeKit" Version="4.11.0" />
     <PackageReference Include="Mustachio" Version="2.1.0" />
-    <PackageReference Include="Postmark" Version="5.0.0" />
+    <PackageReference Include="Postmark" Version="5.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />

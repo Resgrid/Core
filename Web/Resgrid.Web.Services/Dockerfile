@@ -2,12 +2,12 @@
 
 ARG BUILD_VERSION=3.5.0
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0.3-jammy-amd64 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0.3-noble-amd64 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0.203-jammy-amd64 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
 ARG BUILD_VERSION
 WORKDIR /src
 COPY ["Web/Resgrid.Web.Services/Resgrid.Web.Services.csproj", "Web/Resgrid.Web.Services/"]

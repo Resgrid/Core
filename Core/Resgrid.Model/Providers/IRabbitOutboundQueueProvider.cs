@@ -1,19 +1,20 @@
 ﻿using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Providers
 {
 	public interface IRabbitOutboundQueueProvider
 	{
-		bool EnqueueCall(CallQueueItem callQueue);
-		bool EnqueueMessage(MessageQueueItem messageQueue);
-		bool EnqueueDistributionList(DistributionListQueueItem distributionListQueue);
-		bool EnqueueNotification(NotificationItem notificationQueue);
-		bool EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
-		bool EnqueueCqrsEvent(CqrsEvent cqrsEvent);
-		bool EnqueueAuditEvent(AuditEvent auditEvent);
-		bool EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent);
-		bool EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent);
-		bool VerifyAndCreateClients();
+		Task<bool> EnqueueCall(CallQueueItem callQueue);
+		Task<bool> EnqueueMessage(MessageQueueItem messageQueue);
+		Task<bool> EnqueueDistributionList(DistributionListQueueItem distributionListQueue);
+		Task<bool> EnqueueNotification(NotificationItem notificationQueue);
+		Task<bool> EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
+		Task<bool> EnqueueCqrsEvent(CqrsEvent cqrsEvent);
+		Task<bool> EnqueueAuditEvent(AuditEvent auditEvent);
+		Task<bool> EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent);
+		Task<bool> EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent);
+		Task<bool> VerifyAndCreateClients();
 	}
 }

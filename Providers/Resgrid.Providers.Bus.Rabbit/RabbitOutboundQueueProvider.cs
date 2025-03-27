@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using System.Collections.Generic;
 using Resgrid.Model.Events;
+using System.Threading.Tasks;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
@@ -15,91 +16,91 @@ namespace Resgrid.Providers.Bus.Rabbit
 	{
 		private readonly string _clientName = "Resgrid-Outbound";
 
-		public bool EnqueueCall(CallQueueItem callQueue)
+		public async Task<bool> EnqueueCall(CallQueueItem callQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(callQueue);
 
-			return SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
 		}
 
-		public bool EnqueueMessage(MessageQueueItem messageQueue)
+		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(messageQueue);
 
 			if (messageQueue != null && messageQueue.Message != null && messageQueue.MessageId == 0 && messageQueue.Message.MessageId != 0)
 				messageQueue.MessageId = messageQueue.Message.MessageId;
 
-			return SendMessage(ServiceBusConfig.MessageBroadcastQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.MessageBroadcastQueueName, serializedObject);
 		}
 
-		public bool EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
+		public async Task<bool> EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(distributionListQueue);
 
-			return SendMessage(ServiceBusConfig.EmailBroadcastQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.EmailBroadcastQueueName, serializedObject);
 		}
 
-		public bool EnqueueNotification(NotificationItem notificationQueue)
+		public async Task<bool> EnqueueNotification(NotificationItem notificationQueue)
 		{
 			string serializedObject = String.Empty;
 
 			serializedObject = ObjectSerialization.Serialize(notificationQueue);
 
-			return SendMessage(ServiceBusConfig.NotificaitonBroadcastQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.NotificaitonBroadcastQueueName, serializedObject);
 		}
 
-		public bool EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
+		public async Task<bool> EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
 		{
 			string serializedObject = String.Empty;
 
 			serializedObject = ObjectSerialization.Serialize(shiftQueueItem);
 
-			return SendMessage(ServiceBusConfig.ShiftNotificationsQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.ShiftNotificationsQueueName, serializedObject);
 		}
 
-		public bool EnqueueCqrsEvent(CqrsEvent cqrsEvent)
+		public async Task<bool> EnqueueCqrsEvent(CqrsEvent cqrsEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(cqrsEvent);
 
-			return SendMessage(ServiceBusConfig.SystemQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.SystemQueueName, serializedObject);
 		}
 
-		public bool EnqueuePaymentEvent(CqrsEvent cqrsEvent)
+		public async Task<bool> EnqueuePaymentEvent(CqrsEvent cqrsEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(cqrsEvent);
 
-			return SendMessage(ServiceBusConfig.PaymentQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.PaymentQueueName, serializedObject);
 		}
 
-		public bool EnqueueAuditEvent(AuditEvent auditEvent)
+		public async Task<bool> EnqueueAuditEvent(AuditEvent auditEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(auditEvent);
 
-			return SendMessage(ServiceBusConfig.AuditQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.AuditQueueName, serializedObject);
 		}
 
-		public bool EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent)
+		public async Task<bool> EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(unitLocationEvent);
 
-			return SendMessage(ServiceBusConfig.UnitLoactionQueueName, serializedObject, false, "300000");
+			return await SendMessage(ServiceBusConfig.UnitLoactionQueueName, serializedObject, false, "300000");
 		}
 
-		public bool EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent)
+		public async Task<bool> EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(personnelLocationEvent);
 
-			return SendMessage(ServiceBusConfig.PersonnelLoactionQueueName, serializedObject, false, "300000");
+			return await SendMessage(ServiceBusConfig.PersonnelLoactionQueueName, serializedObject, false, "300000");
 		}
 
-		public bool EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent)
+		public async Task<bool> EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent)
 		{
 			var serializedObject = ObjectSerialization.Serialize(securityRefreshEvent);
 
-			return SendMessage(ServiceBusConfig.SecurityRefreshQueueName, serializedObject, false, "300000");
+			return await SendMessage(ServiceBusConfig.SecurityRefreshQueueName, serializedObject, false, "300000");
 		}
 
-		private bool SendMessage(string queueName, string message, bool durable = true, string expiration = "36000000")
+		private async Task<bool> SendMessage(string queueName, string message, bool durable = true, string expiration = "36000000")
 		{
 			if (String.IsNullOrWhiteSpace(queueName))
 				throw new ArgumentNullException("queueName");
@@ -112,25 +113,26 @@ namespace Resgrid.Providers.Bus.Rabbit
 				var connection = RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
-					using (var channel = connection.CreateModel())
+					using (var channel = await connection.CreateChannelAsync())
 					{
 						if (channel != null)
 						{
-							IBasicProperties props = channel.CreateBasicProperties();
+							var props = new BasicProperties();
 							props.Headers = new Dictionary<string, object>();
 
 							if (durable)
 							{
-								props.DeliveryMode = 2;
+								props.DeliveryMode = DeliveryModes.Persistent;
 								props.Headers.Add("x-redelivered-count", 0);
 							}
 							else
-								props.DeliveryMode = 1;
+								props.DeliveryMode = DeliveryModes.Transient;
 
 							props.Expiration = expiration;
 
-							channel.BasicPublish(exchange: ServiceBusConfig.RabbbitExchange,
+							await channel.BasicPublishAsync(exchange: ServiceBusConfig.RabbbitExchange,
 											 routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
+											 mandatory: true,
 											 basicProperties: props,
 											 body: Encoding.ASCII.GetBytes(message));
 
@@ -156,9 +158,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 		}
 
-		bool IRabbitOutboundQueueProvider.VerifyAndCreateClients()
+		public async Task<bool> VerifyAndCreateClients()
 		{
-			return RabbitConnection.VerifyAndCreateClients(_clientName);
+			return await RabbitConnection.VerifyAndCreateClients(_clientName);
 		}
 	}
 }

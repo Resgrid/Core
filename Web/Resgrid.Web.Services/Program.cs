@@ -50,8 +50,8 @@ namespace Resgrid.Web.ServicesCore
 							options.SendDefaultPii = true;
 							options.AutoSessionTracking = true;
 
-							if (ExternalErrorConfig.SentryPerfSampleRate > 0)
-								options.EnableTracing = true;
+							//if (ExternalErrorConfig.SentryPerfSampleRate > 0)
+							//	options.EnableTracing = true;
 
 							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 							options.Environment = ExternalErrorConfig.Environment;

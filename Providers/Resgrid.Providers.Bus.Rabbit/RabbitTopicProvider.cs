@@ -7,6 +7,7 @@ using Resgrid.Model.Events;
 using System;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Providers.Bus.Rabbit
 {
@@ -14,9 +15,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 	{
 		private readonly string _clientName = "Resgrid-Topic";
 
-		public bool PersonnelStatusChanged(UserStatusEvent message)
+		public async Task<bool> PersonnelStatusChanged(UserStatusEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.PersonnelStatusUpdated,
@@ -26,9 +27,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		public bool PersonnelStaffingChanged(UserStaffingEvent message)
+		public async Task<bool> PersonnelStaffingChanged(UserStaffingEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.PersonnelStaffingUpdated,
@@ -38,9 +39,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		public bool UnitStatusChanged(UnitStatusEvent message)
+		public async Task<bool> UnitStatusChanged(UnitStatusEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.UnitStatusUpdated,
@@ -50,9 +51,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		public bool CallAdded(CallAddedEvent message)
+		public async Task<bool> CallAdded(CallAddedEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.CallAdded,
@@ -62,9 +63,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		public bool CallUpdated(CallUpdatedEvent message)
+		public async Task<bool> CallUpdated(CallUpdatedEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.CallsUpdated,
@@ -74,9 +75,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		public bool CallClosed(CallClosedEvent message)
+		public async Task<bool> CallClosed(CallClosedEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.CallClosed,
@@ -86,9 +87,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		public bool PersonnelLocationUnidatedChanged(PersonnelLocationUpdatedEvent message)
+		public async Task<bool> PersonnelLocationUnidatedChanged(PersonnelLocationUpdatedEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.PersonnelLocationUpdated,
@@ -99,9 +100,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		public bool UnitLocationUpdatedChanged(UnitLocationUpdatedEvent message)
+		public async Task<bool> UnitLocationUpdatedChanged(UnitLocationUpdatedEvent message)
 		{
-			return SendMessage(Topics.EventingTopic, new EventingMessage
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
 			{
 				Id = Guid.NewGuid(),
 				Type = (int)EventingTypes.UnitLocationUpdated,
@@ -112,7 +113,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
-		private static void VerifyAndCreateClients(string clientName)
+		private static async Task<bool> VerifyAndCreateClients(string clientName)
 		{
 			try
 			{
@@ -120,32 +121,36 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (connection != null)
 				{
-					using (var channel = connection.CreateModel())
+					using (var channel = await connection.CreateChannelAsync())
 					{
-						channel.ExchangeDeclare(RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic), "fanout");
+						await channel.ExchangeDeclareAsync(RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 					}
 				}
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
+				return false;
 			}
+
+			return true;
 		}
 
-		private bool SendMessage(string topicName, string message)
+		private async Task<bool> SendMessage(string topicName, string message)
 		{
-			VerifyAndCreateClients(_clientName);
+			await VerifyAndCreateClients(_clientName);
 
 			try
 			{
 				var connection = RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
-					using (var channel = connection.CreateModel())
+					using (var channel = await connection.CreateChannelAsync())
 					{
-						channel.BasicPublish(exchange: RabbitConnection.SetQueueNameForEnv(topicName),
+						await channel.BasicPublishAsync(exchange: RabbitConnection.SetQueueNameForEnv(topicName),
 									 routingKey: "",
-									 basicProperties: null,
+									 //mandatory: false, //TODO: Not sure here. -SJ
+									 //basicProperties: null,
 									 body: Encoding.ASCII.GetBytes(message));
 					}
 				}

@@ -7,8 +7,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Npgsql;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
@@ -37,34 +40,66 @@ namespace Resgrid.Repositories.DataRepository
 		public async Task<List<DepartmentGroup>> GetAllStationGroupsForDepartmentAsync(int departmentId)
 		{
 			Dictionary<int, DepartmentGroup> lookup = new Dictionary<int, DepartmentGroup>();
-
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var query = @"SELECT * FROM DepartmentGroups dg
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					var query = @"SELECT * FROM departmentgroups dg
+							LEFT OUTER JOIN addresses a ON dg.addressid = a.addressid
+							WHERE dg.departmentid = @departmentId AND dg.type = 2";
+
+					await db.QueryAsync<DepartmentGroup, Address, DepartmentGroup>(query, (dg, a) =>
+					{
+						DepartmentGroup group;
+
+						if (!lookup.TryGetValue(dg.DepartmentGroupId, out group))
+						{
+							lookup.Add(dg.DepartmentGroupId, dg);
+							group = dg;
+						}
+
+						if (a != null && dg.Address == null)
+						{
+							group.Address = a;
+						}
+
+						return dg;
+
+					}, new { departmentId = departmentId }, splitOn: "AddressId");
+				}
+
+				return lookup.Values.ToList();
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					var query = @"SELECT * FROM DepartmentGroups dg
 							LEFT OUTER JOIN Addresses a ON dg.AddressId = a.AddressId
 							WHERE dg.DepartmentId = @departmentId AND dg.Type = 2";
 
-				await db.QueryAsync<DepartmentGroup, Address, DepartmentGroup>(query, (dg, a) =>
-				{
-					DepartmentGroup group;
-
-					if (!lookup.TryGetValue(dg.DepartmentGroupId, out group))
+					await db.QueryAsync<DepartmentGroup, Address, DepartmentGroup>(query, (dg, a) =>
 					{
-						lookup.Add(dg.DepartmentGroupId, dg);
-						group = dg;
-					}
+						DepartmentGroup group;
 
-					if (a != null && dg.Address == null)
-					{
-						group.Address = a;
-					}
+						if (!lookup.TryGetValue(dg.DepartmentGroupId, out group))
+						{
+							lookup.Add(dg.DepartmentGroupId, dg);
+							group = dg;
+						}
 
-					return dg;
+						if (a != null && dg.Address == null)
+						{
+							group.Address = a;
+						}
 
-				}, new { departmentId = departmentId }, splitOn: "AddressId");
+						return dg;
+
+					}, new { departmentId = departmentId }, splitOn: "AddressId");
+				}
+
+				return lookup.Values.ToList();
 			}
-
-			return lookup.Values.ToList();
 		}
 
 		public async Task<IEnumerable<DepartmentGroup>> GetAllGroupsByDepartmentIdAsync(int departmentId)

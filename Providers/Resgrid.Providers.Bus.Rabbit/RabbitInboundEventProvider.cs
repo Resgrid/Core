@@ -17,7 +17,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 	public class RabbitInboundEventProvider : IRabbitInboundEventProvider
 	{
 		private IConnection _connection;
-		private IModel _channel;
+		private IChannel _channel;
 
 		public Func<int, string, Task> ProcessPersonnelStatusChanged;
 		public Func<int, string, Task> ProcessUnitStatusChanged;
@@ -30,11 +30,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public async Task Start(string clientName, string queueName)
 		{
-			VerifyAndCreateClients(clientName);
+			await VerifyAndCreateClients(clientName);
 			await StartMonitoring(queueName);
 		}
 
-		private void VerifyAndCreateClients(string clientName)
+		private async Task<bool> VerifyAndCreateClients(string clientName)
 		{
 			try
 			{
@@ -42,33 +42,36 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (_connection != null)
 				{
-					_channel = _connection.CreateModel();
+					_channel = await _connection.CreateChannelAsync();
 
 					if (_channel != null)
 					{
-						_channel.ExchangeDeclare(RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic), "fanout");
+						await _channel.ExchangeDeclareAsync(RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 					}
 				}
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
+				return false;
 			}
+
+			return true;
 		}
 
 		private async Task StartMonitoring(string queueName)
 		{
 			//var queueName = _channel.QueueDeclare().QueueName;
 
-			var queue = _channel.QueueDeclare(RabbitConnection.SetQueueNameForEnv(queueName), durable: true,
+			var queue = await _channel.QueueDeclareAsync(RabbitConnection.SetQueueNameForEnv(queueName), durable: true,
 							autoDelete: false, exclusive: false);
 
-			_channel.QueueBind(queue: queue.QueueName,
+			await _channel.QueueBindAsync(queue: queue.QueueName,
 				exchange: RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic),
 				routingKey: "");
 
-			var consumer = new EventingBasicConsumer(_channel);
-			consumer.Received += async (model, ea) =>
+			var consumer = new AsyncEventingBasicConsumer(_channel);
+			consumer.ReceivedAsync += async (model, ea) =>
 			{
 				var body = ea.Body.ToArray();
 				var message = Encoding.UTF8.GetString(body);
@@ -116,7 +119,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 					}
 				}
 			};
-			_channel.BasicConsume(queue: queue.QueueName,
+			await _channel.BasicConsumeAsync(queue: queue.QueueName,
 				autoAck: true,
 				consumer: consumer);
 		}

@@ -28,7 +28,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers").ToList();
 				}
@@ -48,7 +48,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers WHERE Id = @userId", new { userId = userId }).FirstOrDefault();
 				}
@@ -70,7 +70,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM AspNetUsers WHERE UserName = @userName", new { userName = userName });
 
@@ -92,7 +92,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>($"SELECT * FROM AspNetUsers WHERE Email = @email", new { email = email }).FirstOrDefault();
 				}
@@ -112,7 +112,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					db.Execute($"UPDATE [AspNetUsers] SET [UserName] = @newUsername, [NormalizedUserName] = @newUsernameUpper WHERE UserName = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
 				}
@@ -130,7 +130,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail, [NormalizedEmail] = @newEmailUpper WHERE Id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail.ToUpper() });
 				}
@@ -148,7 +148,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					db.Execute($"INSERT INTO AspNetUserRoles ([UserId] ,[RoleId]) VALUES (@userId, @roleId)", new { userId = userId, roleId = roleId });
 				}
@@ -167,7 +167,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					db.Execute($"INSERT INTO AspNetUsersExt ([UserId] ,[CreateDate] ,[LastActivityDate]) VALUES (@userId,@dateTimeNow,@dateTimeNow)", new { userId = userId, dateTimeNow = DateTime.UtcNow });
 					db.Execute($"UPDATE [dbo].[AspNetUsers] SET [EmailConfirmed] = 1 WHERE Id = @userId", new { userId = userId });
@@ -186,7 +186,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUserRole>($"SELECT * FROM AspNetUserRoles WHERE UserId = @userId AND RoleId = @roleId", new { userId = userId, roleId = roleId }).FirstOrDefault();
 				}
@@ -207,7 +207,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					db.Update(user);
 				}
@@ -230,7 +230,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>(@"SELECT m.* FROM AspNetUsers m	
 																						INNER JOIN DepartmentMembers dm ON dm.UserId = m.Id
@@ -254,7 +254,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 																				INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
@@ -281,7 +281,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>(@"SELECT u.* 
 												FROM AspNetUsers u
@@ -308,7 +308,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
@@ -336,7 +336,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
 												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
@@ -364,7 +364,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>(@"SELECT u.*, ue.* FROM AspNetUsers u
 																				INNER JOIN AspNetUsersExt ue ON u.Id = ue.UserId
@@ -401,7 +401,7 @@ namespace Resgrid.Repositories.DataRepository
 				}
 			}
 			else
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					var query = await db.QueryAsync<UserGroupRole>(@"SELECT dgm.DepartmentGroupId, u.Id as 'UserId',
 												(SELECT STUFF((
@@ -468,7 +468,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
 													 SET UserName = @deleteid,

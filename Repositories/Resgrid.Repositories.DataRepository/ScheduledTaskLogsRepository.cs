@@ -11,6 +11,9 @@ using Dapper;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
+using Npgsql;
+using Resgrid.Config;
+using static Resgrid.Framework.Testing.TestData;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -52,18 +55,39 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<IEnumerable<ScheduledTaskLog>> GetAllLogForDateAsync(DateTime timeStamp)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				return await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM ScheduledTaskLogs WHERE CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { timeStamp = timeStamp });
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return (await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM scheduledtasklogs WHERE CAST(rundate AS DATE) = CAST(@timeStamp AS DATE)", new { timeStamp = timeStamp })).ToList();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					return await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM ScheduledTaskLogs WHERE CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { timeStamp = timeStamp });
+				}
 			}
 		}
 
 		public async Task<ScheduledTaskLog> GetLogForTaskAndDateAsync(int scheduledTaskId, DateTime timeStamp)
 		{
-			using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString))
+			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var items = await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM ScheduledTaskLogs WHERE ScheduledTaskId = @scheduledTaskId AND CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { scheduledTaskId = scheduledTaskId, timeStamp = timeStamp });
-				return items.FirstOrDefault();
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					var items = await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM scheduledtasklogs WHERE scheduledtaskid = @scheduledTaskId AND CAST(rundate AS DATE) = CAST(@timeStamp AS DATE)", new { scheduledTaskId = scheduledTaskId, timeStamp = timeStamp });
+					return items.FirstOrDefault();
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					var items = await db.QueryAsync<ScheduledTaskLog>($"SELECT * FROM ScheduledTaskLogs WHERE ScheduledTaskId = @scheduledTaskId AND CAST(RunDate AS DATE) = CAST(@timeStamp AS DATE)", new { scheduledTaskId = scheduledTaskId, timeStamp = timeStamp });
+					return items.FirstOrDefault();
+				}
 			}
 		}
 	}

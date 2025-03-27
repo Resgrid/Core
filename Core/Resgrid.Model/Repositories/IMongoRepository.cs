@@ -13,7 +13,7 @@ namespace Resgrid.Model.Repositories
 	{
 		IMongoCollection<TDocument> GetCollection();
 
-		IMongoQueryable<TDocument> AsQueryable();
+		IQueryable<TDocument> AsQueryable();
 
 		IEnumerable<TDocument> FilterBy(
 			Expression<Func<TDocument, bool>> filterExpression);

@@ -11,8 +11,8 @@ namespace Resgrid.Tests.Framework
         public void TestRandomNumberGeneration()
         {
             var number = RandomGenerator.GetRandomNumber(1, 100);
-            number.Should().BeGreaterOrEqualTo(1);
-            number.Should().BeLessOrEqualTo(100);
+            number.Should().BeGreaterThanOrEqualTo(1);
+            number.Should().BeLessThanOrEqualTo(100);
         }
 
         [Test]

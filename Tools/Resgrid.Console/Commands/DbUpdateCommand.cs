@@ -80,7 +80,7 @@ namespace Resgrid.Console.Commands
 						// Add SQL Server support to FluentMigrator
 						.AddSqlServer()
 						// Set the connection string
-						.WithGlobalConnectionString(System.Configuration.ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString)
+						.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
 						// Define the assembly containing the migrations
 						.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
 					// Enable logging to console in the FluentMigrator way

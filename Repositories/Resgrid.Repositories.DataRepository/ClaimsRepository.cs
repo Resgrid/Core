@@ -19,7 +19,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var query = $@"SELECT anr.name FROM aspnetuserroles anur
+				var query = @"SELECT anr.name FROM aspnetuserroles anur
 							INNER JOIN aspnetroles anr ON anur.roleid = anr.id
 							WHERE anur.userid = @userId";
 
@@ -31,7 +31,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				var query = $@"SELECT anr.Name FROM AspNetUserRoles anur
+				var query = @"SELECT anr.Name FROM AspNetUserRoles anur
 							INNER JOIN AspNetRoles anr ON anur.RoleId = anr.Id
 							WHERE anur.UserId = @userId";
 
@@ -49,7 +49,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				var query = $@"SELECT * FROM aspnetusers WHERE id = @userId";
+				var query = @"SELECT * FROM aspnetusers WHERE id = @userId";
 
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
@@ -58,7 +58,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			else
 			{
-				var query = $@"SELECT * FROM AspNetUsers WHERE Id = @userId";
+				var query = @"SELECT * FROM AspNetUsers WHERE Id = @userId";
 
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{

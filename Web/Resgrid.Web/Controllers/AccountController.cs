@@ -23,6 +23,8 @@ using Resgrid.WebCore.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Localization;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
+using PostHog;
 
 namespace Resgrid.Web.Controllers
 {
@@ -45,12 +47,14 @@ namespace Resgrid.Web.Controllers
 		private readonly IEmailMarketingProvider _emailMarketingProvider;
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly ICacheProvider _cacheProvider;
-		
+		private readonly IPostHogClient _posthog;
+
+
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
 						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider,
-						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider)
+						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider, IPostHogClient posthog)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -65,6 +69,7 @@ namespace Resgrid.Web.Controllers
 			_emailMarketingProvider = emailMarketingProvider;
 			_systemAuditsService = systemAuditsService;
 			_cacheProvider = cacheProvider;
+			_posthog = posthog;
 		}
 		#endregion Private Members and Constructors
 
@@ -128,6 +133,29 @@ namespace Resgrid.Web.Controllers
 								{
 									var token = await ApiAuthHelper.GetBearerApiTokenAsync(model.Username, model.Password);
 									await _cacheProvider.SetStringAsync(CacheConfig.ApiBearerTokenKeyName + $"_${userId}", token, new TimeSpan(48, 0, 0));
+
+									if (!String.IsNullOrWhiteSpace(TelemetryConfig.PostHogApiKey))
+									{
+										var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+										var departmentId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimaryGroupSid)?.Value;
+										var departmentName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Actor)?.Value;
+										var name = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
+										var createdOn = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.OtherPhone)?.Value;
+
+										await _posthog.IdentifyAsync(
+												userId,
+												email,
+												name,
+												personPropertiesToSet: new()
+												{
+													["departmentId"] = departmentId,
+													["departmentName"] = departmentName,
+												},
+												personPropertiesToSetOnce: new()
+												{
+													["createdOn"] = createdOn
+												});
+									}
 								}
 							}
 							catch (Exception ex)
@@ -139,7 +167,7 @@ namespace Resgrid.Web.Controllers
 							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC1");
 							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC2");
 							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC3");
-							
+
 							if (!String.IsNullOrWhiteSpace(returnUrl))
 								return RedirectToLocal(returnUrl);
 							else

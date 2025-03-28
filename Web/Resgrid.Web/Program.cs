@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
 using Sentry.Profiling;
+using PostHog;
 
 namespace Resgrid.Web
 {

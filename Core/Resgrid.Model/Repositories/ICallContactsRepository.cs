@@ -10,6 +10,6 @@ namespace Resgrid.Model.Repositories
 	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.CallContact}" />
 	public interface ICallContactsRepository : IRepository<CallContact>
 	{
-
+		Task<IEnumerable<CallContact>> GetCallContactsByCallIdAsync(int callId);
 	}
 }

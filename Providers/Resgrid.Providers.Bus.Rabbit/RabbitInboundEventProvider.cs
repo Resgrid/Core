@@ -38,7 +38,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			try
 			{
-				_connection = RabbitConnection.CreateConnection(clientName);
+				_connection = await RabbitConnection.CreateConnection(clientName);
 
 				if (_connection != null)
 				{

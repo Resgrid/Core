@@ -3360,6 +3360,29 @@
             </summary>
             <returns>ValidateResult object, with IsValid set if the settings are correct</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ContactsController">
+            <summary>
+            Contacts, which are people, entities, and things that can be contacted (i.e. people, departments, groups, etc.) to dispatch a call to.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetAllContactCategories">
+            <summary>
+            Gets all the contact categories for the department.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetAllContacts">
+            <summary>
+            Gets all the contacts for the department.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactById(System.String)">
+            <summary>
+            Gets the contact by id
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CustomStatusesController">
             <summary>
             Custom statuses
@@ -5288,6 +5311,96 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResult">
+            <summary>
+            Gets the contact category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData">
+            <summary>
+            A contact category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.ContactCategoryId">
+            <summary>
+            Unique identifier for the contact category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.Name">
+            <summary>
+            Display name of the contact category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.Description">
+            <summary>
+            Optional description of the contact category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.Color">
+            <summary>
+            Color code used for visual identification of this category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.AddedOnUtc">
+            <summary>
+            Date and time when this category was created in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.AddedOn">
+            <summary>
+            Date and time when this category was created in local department time zone
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.AddedByUserId">
+            <summary>
+            User identifier of who created this category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.AddedByUserName">
+            <summary>
+            Name of who created this category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.EditedOnUtc">
+            <summary>
+            Date and time when this category was last modified, null if never edited in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.EditedOn">
+            <summary>
+            Date and time when this category was last modified, null if never edited  in local department time zone
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.EditedByUserId">
+            <summary>
+            User identifier of who last modified this category
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactCategoryResultData.EditedByUserName">
+            <summary>
+            Name of who last edited the Category
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.ContactResult">
+            <summary>
+            Gets the contact
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData">
+            <summary>
+            A contact
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetConfigResult">
             <summary>
             Gets Configuration Information by a key
@@ -5386,6 +5499,46 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.NovuEnvironmentId">
             <summary>
             Novu Environment Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PostHogApiKey">
+            <summary>
+            PostHog Api Key
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PostHogHost">
+            <summary>
+            PostHog Host
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactsCategoriesResult">
+            <summary>
+            Gets the contact categories
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactsCategoriesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Contacts.ContactsCategoriesResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactsResult">
+            <summary>
+            Gets the contact
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Contacts.ContactsResult.#ctor">
+            <summary>
+            Default constructor
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CustomStatuses.CustomStatusesResult">

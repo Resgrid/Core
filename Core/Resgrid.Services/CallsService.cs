@@ -445,8 +445,11 @@ namespace Resgrid.Services
 			return activePriorities;
 		}
 
-		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences)
+		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences, bool getContacts)
 		{
+			if (call == null)
+				return null;
+
 			if (getDispatches && call.Dispatches == null)
 			{
 				var items = await _callDispatchesRepository.GetCallDispatchesByCallIdAsync(call.CallId);
@@ -519,6 +522,15 @@ namespace Resgrid.Services
 					call.References = items.ToList();
 				else
 					call.References = new List<CallReference>();
+			}
+			if (getContacts && call.Contacts == null)
+			{
+				var items = await _callContactsRepository.GetCallContactsByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.Contacts = items.ToList();
+				else
+					call.Contacts = new List<CallContact>();
 			}
 
 			return call;

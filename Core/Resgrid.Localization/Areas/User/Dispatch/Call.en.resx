@@ -144,6 +144,9 @@
   <data name="AddImage" xml:space="preserve">
     <value>Add Image</value>
   </data>
+  <data name="AdditionalContactLabel" xml:space="preserve">
+    <value>Additional Contacts</value>
+  </data>
   <data name="AddLinkedCall" xml:space="preserve">
     <value>Add Linked Call</value>
   </data>
@@ -153,11 +156,17 @@
   <data name="AddNotePlaceholder" xml:space="preserve">
     <value>Enter note here...</value>
   </data>
+  <data name="AlertNotesHeader" xml:space="preserve">
+    <value>Alert Notes for Contact</value>
+  </data>
   <data name="ArchivedCallsHeader" xml:space="preserve">
     <value>Archived Calls</value>
   </data>
   <data name="AttachedImages" xml:space="preserve">
     <value>Attached Images</value>
+  </data>
+  <data name="CallContactType" xml:space="preserve">
+    <value>Call Contact Type</value>
   </data>
   <data name="CallDocumentsHeader" xml:space="preserve">
     <value>Call Documents</value>
@@ -236,6 +245,9 @@
   </data>
   <data name="CompletedTypeLabel" xml:space="preserve">
     <value>Completed Type</value>
+  </data>
+  <data name="Contacts" xml:space="preserve">
+    <value>Contacts</value>
   </data>
   <data name="CreateCall" xml:space="preserve">
     <value>Create and Dispatch Call</value>
@@ -334,7 +346,7 @@
     <value>Name of the Call</value>
   </data>
   <data name="NewCallFormHeader" xml:space="preserve">
-    <value />
+    <value>New Call Form</value>
   </data>
   <data name="NewCallHeader" xml:space="preserve">
     <value>New Call</value>
@@ -371,6 +383,9 @@
   </data>
   <data name="PersonnelEvents" xml:space="preserve">
     <value>Personnel Events</value>
+  </data>
+  <data name="PrimaryContactLabel" xml:space="preserve">
+    <value>Primary Contact</value>
   </data>
   <data name="PrioirtyLabel" xml:space="preserve">
     <value>Priority</value>

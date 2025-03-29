@@ -164,10 +164,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return false;
 		}
 
-		public static IConnection CreateConnection(string clientName)
+		public static async Task<IConnection> CreateConnection(string clientName)
 		{
 			if (_connection == null)
-				VerifyAndCreateClients(clientName);
+				await VerifyAndCreateClients(clientName);
 
 			if (!_connection.IsOpen)
 			{
@@ -175,7 +175,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				_connection = null;
 				_factory = null;
 
-				VerifyAndCreateClients(clientName);
+				await VerifyAndCreateClients(clientName);
 			}
 
 			return _connection;

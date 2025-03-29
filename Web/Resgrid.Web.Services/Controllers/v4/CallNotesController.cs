@@ -65,7 +65,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false, false);
 
 			if (call.CallNotes != null && call.CallNotes.Any())
 			{

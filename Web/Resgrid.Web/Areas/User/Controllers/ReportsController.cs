@@ -1766,7 +1766,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				summary.LoggedOn = call.LoggedOn.TimeConverter(model.Department);
 				summary.Type = call.Type;
 
-				var callData = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false);
+				var callData = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
 
 				if (callData != null)
 				{

@@ -17,6 +17,9 @@ var resgrid;
                     theme: 'snow'
                 });
 
+                $('#PrimaryContact').select2();
+                $('#AdditionalContacts').select2();
+
                 $("#Call_Address").bind("keypress", function (event) {
                     if (event.keyCode == 13) {
                         $("#searchButton").click();

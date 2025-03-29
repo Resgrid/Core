@@ -446,6 +446,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string CallContactTableName { get; set; }
 		public string SelectContactsByCategoryIdQuery { get; set; }
 		public string SelectContactNotesByContactIdQuery { get; set; }
+		public string SelectAllCallContactsByCallIdQuery { get; set; }
 		#endregion Contacts
 
 		// Identity

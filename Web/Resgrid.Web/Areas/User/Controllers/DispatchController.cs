@@ -62,6 +62,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtocolsService _protocolsService;
 		private readonly IFormsService _formsService;
 		private readonly IShiftsService _shiftsService;
+		private readonly IContactsService _contactsService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -69,7 +70,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
-						IShiftsService shiftsService)
+						IShiftsService shiftsService, IContactsService contactsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -92,6 +93,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_protocolsService = protocolsService;
 			_formsService = formsService;
 			_shiftsService = shiftsService;
+			_contactsService = contactsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -427,6 +429,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				model.Call.Contacts = new List<CallContact>();
+				if (!String.IsNullOrWhiteSpace(model.PrimaryContact))
+				{
+					CallContact contact = new CallContact();
+					contact.DepartmentId = DepartmentId;
+					contact.ContactId = model.PrimaryContact;
+					contact.CallContactType = 0;
+
+					model.Call.Contacts.Add(contact);
+				}
+
+				if (model.AdditionalContacts != null && model.AdditionalContacts.Any())
+				{
+					foreach (var additionalContact in model.AdditionalContacts)
+					{
+						if (!String.IsNullOrWhiteSpace(additionalContact))
+						{
+							CallContact contact = new CallContact();
+							contact.DepartmentId = DepartmentId;
+							contact.ContactId = additionalContact;
+							contact.CallContactType = 1;
+
+							model.Call.Contacts.Add(contact);
+						}
+					}
+				}
+
 				model.Call.CallSource = (int)CallSources.User;
 
 				if (!string.IsNullOrWhiteSpace(model.Call.GeoLocationData) && model.Call.GeoLocationData.Length > 1 && string.IsNullOrWhiteSpace(model.Call.Address))
@@ -482,7 +511,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			UpdateCallView model = new UpdateCallView();
 			model = await FillUpdateCallView(model);
 			model.Call = await _callsService.GetCallByIdAsync(callId);
-			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true);
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 			model.CallPriority = model.Call.Priority;
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
@@ -508,7 +537,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				var call = await _callsService.GetCallByIdAsync(model.Call.CallId);
-				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
+				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
 				call.NatureOfCall = System.Net.WebUtility.HtmlDecode(model.Call.NatureOfCall);
 				call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
@@ -789,7 +818,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
-			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true);
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 
 			if (model.Stations == null)
 				model.Stations = new List<DepartmentGroup>();
@@ -1086,7 +1115,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (call == null)
 				Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false, false);
 			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
 
 			if (call.CallNotes == null || !call.CallNotes.Any())
@@ -1128,7 +1157,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (call == null)
 				Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false, false);
 			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
 
 			if (call.CallNotes == null || !call.CallNotes.Any())
@@ -1210,7 +1239,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			call.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
-			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false, false);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			List<CallNoteJson> callNotes = new List<CallNoteJson>();
 
@@ -1261,7 +1290,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true);
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 			model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 
@@ -1304,7 +1333,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
@@ -1332,7 +1361,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Unauthorized();
 
 				var model = new CallExportView();
-				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
+				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
@@ -1434,7 +1463,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			var call = await _callsService.GetCallByIdAsync(callId);
-			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false);
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false, false);
 
 			if (call.Attachments != null && call.Attachments.Count > 0)
 			{
@@ -1573,7 +1602,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			List<CallDispatchJson> dispatchJson = new List<CallDispatchJson>();
 			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(DepartmentId);
 			var call = await _callsService.GetCallByIdAsync(callId);
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
 			foreach (var userDispatch in call.Dispatches)
 			{
@@ -1927,6 +1956,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetAlertNotesForContact(string contactId)
+		{
+			List<ContactNoteJson> contactNotesJson = new List<ContactNoteJson>();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+
+			if (contact != null && contact.DepartmentId == DepartmentId)
+			{
+				var notes = await _contactsService.GetContactNotesByContactIdAsync(contactId, DepartmentId, false);
+				var types = await _contactsService.GetContactNoteTypesByDepartmentIdAsync(DepartmentId);
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+				if (notes != null && notes.Any())
+				{
+					foreach (var note in notes)
+					{
+						if (note.ShouldAlert)
+						{
+							ContactNoteJson json = new ContactNoteJson();
+							json.Id = note.ContactNoteTypeId;
+							json.ContactId = contactId;
+							json.Note = note.Note;
+							json.ShouldAlert = note.ShouldAlert;
+							json.AddedOn = note.AddedOn.FormatForDepartment(department, true);
+							json.AddedBy = await UserHelper.GetFullNameForUser(note.AddedByUserId);
+
+							if (!string.IsNullOrWhiteSpace(note.ContactNoteTypeId))
+							{
+								var type = types.FirstOrDefault(x => x.ContactNoteTypeId == note.ContactNoteTypeId);
+								if (type != null)
+								{
+									json.TypeName = type.Name;
+									json.TypeColor = type.Color;
+								}
+							}
+
+							contactNotesJson.Add(json);
+						}
+					}
+				}
+			}
+
+			return Json(contactNotesJson);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetCallPriorities()
 		{
 			List<CallPriorityJson> callPrioritiesJson = new List<CallPriorityJson>();
@@ -2028,6 +2104,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (form != null)
 				model.NewCallFormData = form.Data;
 
+			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			if (model.Contacts != null && model.Contacts.Any())
+			{
+				SelectListItem selListItem = new SelectListItem() { Value = "", Text = "Select Contact" };
+				List<SelectListItem> newList = new List<SelectListItem>();
+				newList.Add(selListItem);
+				newList.AddRange(new SelectList(model.Contacts, "ContactId", "Name"));
+
+				//Return the list of selectlistitems as a selectlist
+				model.ContactsList = new SelectList(newList, "Value", "Text", null);
+
+				//model.ContactsList = new SelectList(model.Contacts, "ContactId", "Name");
+			}
+
 			return model;
 		}
 
@@ -2115,6 +2205,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Units = units;
 			else
 				model.Units = new List<Unit>();
+
+			var contacts = await _contactsService.GetAllContactsForDepartmentAsync(model.Call.DepartmentId);
+
+			if (contacts != null)
+				model.Contacts = contacts;
+			else
+				model.Contacts = new List<Contact>();
 
 			return model;
 		}

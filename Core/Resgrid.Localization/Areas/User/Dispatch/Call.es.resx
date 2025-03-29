@@ -144,6 +144,9 @@
   <data name="AddImage" xml:space="preserve">
     <value>Añadir imagen</value>
   </data>
+  <data name="AdditionalContactLabel" xml:space="preserve">
+    <value />
+  </data>
   <data name="AddLinkedCall" xml:space="preserve">
     <value>Agregar llamada vinculada</value>
   </data>
@@ -153,11 +156,17 @@
   <data name="AddNotePlaceholder" xml:space="preserve">
     <value>Introduzca la nota aquí...</value>
   </data>
+  <data name="AlertNotesHeader" xml:space="preserve">
+    <value />
+  </data>
   <data name="ArchivedCallsHeader" xml:space="preserve">
     <value>Llamadas archivadas</value>
   </data>
   <data name="AttachedImages" xml:space="preserve">
     <value>Imágenes adjuntas</value>
+  </data>
+  <data name="CallContactType" xml:space="preserve">
+    <value />
   </data>
   <data name="CallDocumentsHeader" xml:space="preserve">
     <value>Documentos de llamadas</value>
@@ -236,6 +245,9 @@
   </data>
   <data name="CompletedTypeLabel" xml:space="preserve">
     <value>Tipo completado</value>
+  </data>
+  <data name="Contacts" xml:space="preserve">
+    <value />
   </data>
   <data name="CreateCall" xml:space="preserve">
     <value>Crear y enviar llamadas</value>
@@ -371,6 +383,9 @@
   </data>
   <data name="PersonnelEvents" xml:space="preserve">
     <value>Eventos de personal</value>
+  </data>
+  <data name="PrimaryContactLabel" xml:space="preserve">
+    <value />
   </data>
   <data name="PrioirtyLabel" xml:space="preserve">
     <value>Prioridad</value>

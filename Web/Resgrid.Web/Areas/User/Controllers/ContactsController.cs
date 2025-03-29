@@ -40,6 +40,7 @@ using Resgrid.WebCore.Areas.User.Models.Contacts;
 using SharpKml.Dom.Atom;
 using SharpKml.Dom;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
+using Resgrid.WebCore.Areas.User.Models.Voice;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -118,6 +119,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new ViewContactView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Contact = await _contactsService.GetContactByIdAsync(contactId);
+
+			var noteTypes = new List<ContactNoteType>();
+			noteTypes.Add(new ContactNoteType { ContactNoteTypeId = "", Name = "No Type" });
+			noteTypes.AddRange(await _contactsService.GetContactNoteTypesByDepartmentIdAsync(DepartmentId));
+			model.NoteTypes = noteTypes;
 
 			if (model.Contact == null)
 				Unauthorized();

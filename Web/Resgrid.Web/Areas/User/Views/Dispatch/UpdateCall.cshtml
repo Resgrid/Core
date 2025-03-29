@@ -14,6 +14,14 @@
         .select2-dropdown {
             z-index: 3051;
         }
+
+        .alert-icon {
+            cursor: pointer;
+            font-size: 18px;
+            padding-left: 5px;
+            vertical-align: middle;
+            display: none;
+        }
     </style>
 }
 
@@ -78,6 +86,24 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["ReportContactLabel"]</label>
                             <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReportContactPlaceholder"]" asp-for="Call.ContactNumber"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PrimaryContactLabel"]</label>
+                            <div class="col-sm-10">
+                                <select asp-for="PrimaryContact" asp-items="Model.ContactsList" style="padding-left: 0; width: 100%;"></select>
+                                <span class="input-group-addon">
+                                    <i id="primaryNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="Note Alerts"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["AdditionalContactLabel"]</label>
+                            <div class="col-sm-10">
+                                <select asp-for="AdditionalContacts" asp-items="Model.ContactsList" multiple="multiple" style="padding-left: 0; width: 100%;"></select>
+                                <span class="input-group-addon">
+                                    <i id="additionalNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="Note Alerts"></i>
+                                </span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallIdentifierLabel"]</label>
@@ -252,4 +278,104 @@
     </script>
 
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.editcall.js"></script>
+
+    <script type="text/javascript">
+        // Function to call the GetAlertNotesForContact endpoint and show modal if notes exist.
+        function checkAlertNotes(contactId, iconSelector) {
+            if (contactId) {
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + "/User/Dispatch/GetAlertNotesForContact",
+                    type: "GET",
+                    data: { contactId: contactId },
+                    success: function(response) {
+                        if (response) {
+                            $(iconSelector).show();
+                            var notesHtml = "";
+                            if ($.isArray(response)) {
+                                $.each(response, function(i, note) {
+
+                                     notesHtml +=`
+                                                        <div class="note-card">
+                                                    <div class="ibox">
+                                                                <div class="ibox-content" style="background-color:${note.TypeColor}">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                                    <h4 class="note-title">${note.TypeName ? note.TypeName : ""}</h4>
+                                                                    <p class="small text-muted">
+                                                                                <i class="fa fa-clock-o"></i> ${note.AddedOn}
+                                                                                        ${note.AddedBy ? `| <i class="fa fa-user"></i> ${note.AddedBy}` : ''}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 note-content">
+                                                                            ${note.Note}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
+
+                                    // notesHtml += '<div class="card mb-2">';
+                                    // notesHtml += `  <div class="card-header">Note from ${note.AddedBy} (${note.AddedOn})</div>`;
+
+                                    // if (note.TypeColor)
+                                    // {
+                                    //     notesHtml += `  <div class="card-body" style="background-color: rgba(${note.TypeColor}, 0.1)">`;
+                                    // }
+                                    // else
+                                    // {
+                                    //     notesHtml += '  <div class="card-body">';
+                                    // }
+                                    // notesHtml += `    <p class="card-text">${note.Note}</p>`;
+                                    // notesHtml += '  </div>';
+                                    // notesHtml += '</div>';
+                                });
+                            }
+
+                            $("#alertNotesModal .modal-body").html(notesHtml);
+
+                            $("#alertNotesModal").modal("show");
+                        } else {
+                            $(iconSelector).hide(); // no notes—hide the icon
+                        }
+                    },
+                    error: function() {
+
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function () {
+            // Listen for changes on the PrimaryContact select.
+            $("#PrimaryContact").on("change", function () {
+                var contactId = $(this).val();
+                checkAlertNotes(contactId, "#primaryNotesIcon");
+            });
+
+            // Listen for changes on the AdditionalContacts select.
+            $("#AdditionalContacts").on("change", function () {
+                // For multiple selection, you can check for one or more selected contacts.
+                // Here we use the first selected contact as an example.
+                var contactId = $(this).val();
+                if (contactId && contactId.length) {
+                    checkAlertNotes(contactId[0], "#additionalNotesIcon");
+                } else {
+                    $("#additionalNotesIcon").hide();
+                }
+            });
+
+            // Clicking the icons re-shows the alert notes modal if it’s already loaded.
+            $("#primaryNotesIcon, #additionalNotesIcon").on("click", function () {
+                $("#alertNotesModal").modal("show");
+            });
+
+            checkAlertNotes($("#PrimaryContact").val(), "#primaryNotesIcon");
+            $("#AdditionalContacts :selected").map(function(i, el) {
+                checkAlertNotes($(el).val(), "#additionalNotesIcon");
+            }).get();
+        });
+    </script>
 }

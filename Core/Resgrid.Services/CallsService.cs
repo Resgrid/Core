@@ -49,7 +49,7 @@ namespace Resgrid.Services
 			ICallDispatchUnitRepository callDispatchUnitRepository, ICallDispatchRoleRepository callDispatchRoleRepository,
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
-			ICallReferencesRepository callReferencesRepository,  ICallContactsRepository callContactsRepository)
+			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
@@ -83,41 +83,41 @@ namespace Resgrid.Services
 			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length == 1)
 				call.GeoLocationData = "";
 
-				if (call.Dispatches != null && call.Dispatches.Any())
+			if (call.Dispatches != null && call.Dispatches.Any())
+			{
+				foreach (var dispatch in call.Dispatches)
 				{
-					foreach (var dispatch in call.Dispatches)
-					{
-						if (dispatch.CallDispatchId == 0)
-							dispatch.DispatchedOn = DateTime.UtcNow;
-					}
+					if (dispatch.CallDispatchId == 0)
+						dispatch.DispatchedOn = DateTime.UtcNow;
 				}
+			}
 
-				if (call.GroupDispatches != null && call.GroupDispatches.Any())
+			if (call.GroupDispatches != null && call.GroupDispatches.Any())
+			{
+				foreach (var dispatch in call.GroupDispatches)
 				{
-					foreach (var dispatch in call.GroupDispatches)
-					{
-						if (dispatch.CallDispatchGroupId == 0)
-							dispatch.DispatchedOn = DateTime.UtcNow;
-					}
+					if (dispatch.CallDispatchGroupId == 0)
+						dispatch.DispatchedOn = DateTime.UtcNow;
 				}
+			}
 
-				if (call.RoleDispatches != null && call.RoleDispatches.Any())
+			if (call.RoleDispatches != null && call.RoleDispatches.Any())
+			{
+				foreach (var dispatch in call.RoleDispatches)
 				{
-					foreach (var dispatch in call.RoleDispatches)
-					{
-						if (dispatch.CallDispatchRoleId == 0)
-							dispatch.DispatchedOn = DateTime.UtcNow;
-					}
+					if (dispatch.CallDispatchRoleId == 0)
+						dispatch.DispatchedOn = DateTime.UtcNow;
 				}
+			}
 
-				if (call.UnitDispatches != null && call.UnitDispatches.Any())
+			if (call.UnitDispatches != null && call.UnitDispatches.Any())
+			{
+				foreach (var dispatch in call.UnitDispatches)
 				{
-					foreach (var dispatch in call.UnitDispatches)
-					{
-						if (dispatch.CallDispatchUnitId == 0)
-							dispatch.DispatchedOn = DateTime.UtcNow;
-					}
+					if (dispatch.CallDispatchUnitId == 0)
+						dispatch.DispatchedOn = DateTime.UtcNow;
 				}
+			}
 
 			if (call.References != null && call.References.Any())
 			{
@@ -534,6 +534,23 @@ namespace Resgrid.Services
 			}
 
 			return call;
+		}
+
+		public async Task<bool> DeleteCallContactsAsync(int callId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var callContacts = await _callContactsRepository.GetCallContactsByCallIdAsync(callId);
+
+			if (callContacts != null || callContacts.Any())
+			{
+				foreach (var contact in callContacts)
+				{
+					await _callContactsRepository.DeleteAsync(contact, cancellationToken);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
 		public List<DepartmentCallPriority> GetDefaultCallPriorities()

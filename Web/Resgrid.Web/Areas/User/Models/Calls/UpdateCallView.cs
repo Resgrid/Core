@@ -26,5 +26,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public bool RebroadcastCall { get; set; }
 		public List<Unit> Units { get; set; }
 		public List<UnitState> UnitStates { get; set; }
+		public List<Contact> Contacts { get; set; }
+		public SelectList ContactsList { get; set; }
+		public string PrimaryContact { get; set; }
+		public List<string> AdditionalContacts { get; set; }
 	}
 }

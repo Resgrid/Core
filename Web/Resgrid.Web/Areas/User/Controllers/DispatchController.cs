@@ -509,10 +509,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			UpdateCallView model = new UpdateCallView();
-			model = await FillUpdateCallView(model);
 			model.Call = await _callsService.GetCallByIdAsync(callId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 			model.CallPriority = model.Call.Priority;
+			model = await FillUpdateCallView(model);
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
 			{
@@ -739,6 +739,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 						}
 					}
 				}
+
+
+				var contacts = new List<CallContact>();
+				if (!String.IsNullOrWhiteSpace(model.PrimaryContact))
+				{
+					CallContact contact = new CallContact();
+					contact.DepartmentId = DepartmentId;
+					contact.ContactId = model.PrimaryContact;
+					contact.CallContactType = 0;
+
+					contacts.Add(contact);
+				}
+
+				if (model.AdditionalContacts != null && model.AdditionalContacts.Any())
+				{
+					foreach (var additionalContact in model.AdditionalContacts)
+					{
+						if (!String.IsNullOrWhiteSpace(additionalContact))
+						{
+							CallContact contact = new CallContact();
+							contact.DepartmentId = DepartmentId;
+							contact.ContactId = additionalContact;
+							contact.CallContactType = 1;
+
+							contacts.Add(contact);
+						}
+					}
+				}
+
+				await _callsService.DeleteCallContactsAsync(call.CallId);
+				call.Contacts = contacts;
 
 				await _callsService.SaveCallAsync(call, cancellationToken);
 				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
@@ -2160,6 +2191,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UnGroupedUsers.Add(allUsers.Where(x => x.UserId == u.UserId).FirstOrDefault());
 			}
 
+			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			if (model.Contacts != null && model.Contacts.Any())
+			{
+				SelectListItem selListItem = new SelectListItem() { Value = "", Text = "Select Contact" };
+				List<SelectListItem> newList = new List<SelectListItem>();
+				newList.Add(selListItem);
+				newList.AddRange(new SelectList(model.Contacts, "ContactId", "Name"));
+
+				model.ContactsList = new SelectList(newList, "Value", "Text", null);
+
+				if (model.Call.Contacts != null && model.Call.Contacts.Any())
+				{
+					var primaryContact = model.Call.Contacts.FirstOrDefault(x => x.CallContactType == 0);
+
+					if (primaryContact != null)
+					{
+						model.PrimaryContact = primaryContact.ContactId;
+					}
+
+					var additionalContacts = model.Call.Contacts.Where(x => x.CallContactType == 1);
+
+					if (additionalContacts != null && additionalContacts.Any())
+					{
+						foreach (var contact in additionalContacts)
+						{
+							model.AdditionalContacts.Add(contact.ContactId);
+						}
+					}
+				}
+			}
+
 			return model;
 		}
 
@@ -2192,7 +2254,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var ungroupedUsers = from u in allUsers
 								 where !(groupedUserIds.Contains(u.UserId))
 								 select u;
-
+			
 			foreach (var u in ungroupedUsers)
 			{
 				model.UnGroupedUsers.Add(allUsers.Where(x => x.UserId == u.UserId).FirstOrDefault());

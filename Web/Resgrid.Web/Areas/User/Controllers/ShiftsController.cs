@@ -916,7 +916,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//	{
 				//		var personId = form[i].ToString();
 
-						
+
 
 				//	}
 				//}
@@ -1257,13 +1257,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var groups = new List<dynamic>();
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
-			foreach (var group in shift.Groups)
+			if (shift != null && shift.Groups != null)
 			{
-				groups.Add(new
+				if (shift.DepartmentId != DepartmentId)
+					Unauthorized();
+
+				foreach (var group in shift.Groups)
 				{
-					Id = group.DepartmentGroupId,
-					Name = group.DepartmentGroup.Name
-				});
+					groups.Add(new
+					{
+						Id = group.DepartmentGroupId,
+						Name = group.DepartmentGroup.Name
+					});
+				}
 			}
 
 			return Json(groups);
@@ -1278,6 +1284,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (shift != null && shift.Days != null)
 			{
+				if (shift.DepartmentId != DepartmentId)
+					Unauthorized();
+
 				foreach (var day in shift.Days)
 				{
 					days.Add(new
@@ -1313,13 +1322,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shiftsJson = new List<dynamic>();
 			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId);
 
-			foreach (var shift in shifts)
+			if (shifts != null && shifts.Any())
 			{
-				shiftsJson.Add(new
+				foreach (var shift in shifts)
 				{
-					Id = shift.ShiftId,
-					Name = shift.Name
-				});
+					shiftsJson.Add(new
+					{
+						Id = shift.ShiftId,
+						Name = shift.Name
+					});
+				}
 			}
 
 			return Json(shiftsJson);

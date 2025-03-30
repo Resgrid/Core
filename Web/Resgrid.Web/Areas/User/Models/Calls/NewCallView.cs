@@ -34,10 +34,15 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string ClosedCallNotes { get; set; }
 		public ClosedOnlyCallStates CallState { get; set; }
 		public SelectList CallStates { get; set; }
+		public List<Contact> Contacts { get; set; }
+		public SelectList ContactsList { get; set; }
+		public string PrimaryContact { get; set; }
+		public List<string> AdditionalContacts { get; set; }
 
 		public NewCallView()
 		{
 			What3Words = new W3W();
+			AdditionalContacts = new List<string>();
 		}
 	}
 }

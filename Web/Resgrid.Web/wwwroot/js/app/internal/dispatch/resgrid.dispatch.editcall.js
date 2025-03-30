@@ -27,6 +27,9 @@ var resgrid;
                     }
                 });
 
+                $('#PrimaryContact').select2();
+                $('#AdditionalContacts').select2();
+
                 let quillNote = new Quill('#note-container', {
                     placeholder: '',
                     theme: 'snow'

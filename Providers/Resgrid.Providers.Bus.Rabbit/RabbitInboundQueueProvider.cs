@@ -36,7 +36,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public async Task Start(string clientName)
 		{
 			_clientName = clientName;
-			var connection = RabbitConnection.CreateConnection(clientName);
+			var connection = await RabbitConnection.CreateConnection(clientName);
 
 			if (connection != null)
 			{
@@ -586,7 +586,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 				//using (var connection = RabbitConnection.CreateConnection())
 				//{
-				var connection = RabbitConnection.CreateConnection(_clientName);
+				var connection = await RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
 					using (var channel = await connection.CreateChannelAsync())

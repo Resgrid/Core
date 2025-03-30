@@ -1367,6 +1367,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
 					WHERE [ContactId] = %CONTACTID%";
+			SelectAllCallContactsByCallIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE CallId = %CALLID%";
 			#endregion Contacts
 		}
 }

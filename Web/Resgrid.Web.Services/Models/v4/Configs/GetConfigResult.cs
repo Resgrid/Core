@@ -105,5 +105,15 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		/// Novu Environment Id
 		/// </summary>
 		public string NovuEnvironmentId { get; set; }
+
+		/// <summary>
+		/// PostHog Api Key
+		/// </summary>
+		public string PostHogApiKey { get; set; }
+
+		/// <summary>
+		/// PostHog Host
+		/// </summary>
+		public string PostHogHost { get; set; }
 	}
 }

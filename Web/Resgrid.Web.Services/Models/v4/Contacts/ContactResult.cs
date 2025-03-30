@@ -1,17 +1,26 @@
-﻿using System;
+﻿using Resgrid.Model;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
-using ProtoBuf;
 
-namespace Resgrid.Model
+namespace Resgrid.Web.Services.Models.v4.CallTypes
 {
-	public class Contact : IEntity
+	/// <summary>
+	/// Gets the contact
+	/// </summary>
+	public class ContactResult : StandardApiResponseV4Base
+	{
+		/// <summary>
+		/// Response Data
+		/// </summary>
+		public ContactResultData Data { get; set; }
+	}
+
+	/// <summary>
+	/// A contact
+	/// </summary>
+	public class ContactResultData
 	{
 		public string ContactId { get; set; }
-
-		public int DepartmentId { get; set; }
 
 		public int ContactType { get; set; } // 0 = Person, 1 = Company
 
@@ -85,80 +94,20 @@ namespace Resgrid.Model
 
 		public bool IsDeleted { get; set; }
 
-		public DateTime AddedOn { get; set; }
+		public DateTime AddedOnUtc { get; set; }
+
+		public string AddedOn { get; set; }
 
 		public string AddedByUserId { get; set; }
 
-		public DateTime? EditedOn { get; set; }
+		public string AddedByUserName { get; set; }
+
+		public DateTime? EditedOnUtc { get; set; }
+
+		public string EditedOn { get; set; }
 
 		public string EditedByUserId { get; set; }
 
-		[NotMapped]
-		public string Name
-		{
-			get
-			{
-				if (ContactType == 0)
-				{
-					return $"{FirstName} {LastName}";
-				}
-				else
-				{
-					return CompanyName;
-				}
-			}
-		}
-
-		public string GetName()
-		{
-			if (ContactType == 0)
-			{
-				return $"{FirstName} {LastName}";
-			}
-			else
-			{
-				return CompanyName;
-			}
-		}
-
-		public string GetTypeName()
-		{
-			if (ContactType == 0)
-			{
-				return "Person";
-			}
-			else
-			{
-				return "Location\\Company";
-			}
-		}
-
-		public string GetCategoryName()
-		{
-			if (Category != null)
-				return Category.Name;
-
-			return "None";
-		}
-
-		[NotMapped]
-		public string TableName => "Contacts";
-
-		[NotMapped]
-		public string IdName => "ContactId";
-
-		[NotMapped]
-		public int IdType => 1;
-
-		[NotMapped]
-		[JsonIgnore]
-		public object IdValue
-		{
-			get { return ContactId; }
-			set { ContactId = (string)value; }
-		}
-
-		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Category", "Name" };
+		public string EditedByUserName { get; set; }
 	}
 }

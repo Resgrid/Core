@@ -398,7 +398,7 @@ namespace Resgrid.Model.Services
 		/// <param name="getProtocols">if set to <c>true</c> [get protocols].</param>
 		/// <param name="getReferences">if set to <c>true</c> [get references].</param>
 		/// <returns>Task&lt;Call&gt;.</returns>
-		Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences);
+		Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences, bool getContacts);
 
 		Task<List<Call>> GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime startDate, DateTime endDate);
 
@@ -410,5 +410,7 @@ namespace Resgrid.Model.Services
 		Task<bool> DeleteCallReferenceAsync(CallReference callReference, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<List<Call>> GetCallsByContactIdAsync(string contactId, int departmentId);
+
+		Task<bool> DeleteCallContactsAsync(int callId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

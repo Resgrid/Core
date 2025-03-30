@@ -105,7 +105,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var c in calls)
 				{
-					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true);
+					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
 
 					string address = "";
 					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
@@ -161,7 +161,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await _authorizationService.CanUserViewCallAsync(UserId, int.Parse(callId)))
 				return Unauthorized();
 
-			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true);
+			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
 
 			string address = "";
 			if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
@@ -220,7 +220,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				return Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
 			result.Data.CallFormData = call.CallFormData;
 
@@ -829,7 +829,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var call = await _callsService.GetCallByIdAsync(int.Parse(editCallInput.Id));
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (call == null)
@@ -1313,7 +1313,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				Unauthorized();
 
-			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true);
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			result.Data.Add(new CallHistoryResultData()
@@ -1521,7 +1521,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var c in calls)
 				{
-					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true);
+					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
 
 					string address = "";
 					if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())

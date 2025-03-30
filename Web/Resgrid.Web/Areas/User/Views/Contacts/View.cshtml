@@ -746,7 +746,7 @@
                         quillNote.root.innerHTML = '';
 
                         // Refresh notes container
-                        refreshNotesContainer();
+                        loadNotes();
 
                         // Show success message
                         toastr.success('Note added successfully');
@@ -827,24 +827,23 @@
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <h4>
-                                                                <span class="badge ${priorityClass}">${call.PriorityText}</span>
-                                                                ${call.Name}
+                                                                <span class="badge" style="background-color: ${call.PriorityColor}">${call.PriorityName}</span>
+                                                                ${call.CallName}
                                                             </h4>
                                                             <p class="small text-muted">
-                                                                <i class="fa fa-hashtag"></i> ${call.Number}
+                                                                <i class="fa fa-hashtag"></i> ${call.CallNumber}
                                                                 | <i class="fa fa-clock-o"></i> ${call.LoggedOn}
                                                             </p>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <p>${call.NatureOfCall || ''}</p>
-                                                            <p><strong>Address:</strong> ${call.Address || 'No address provided'}</p>
+                                                            <p>${call.CallNature || ''}</p>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12 text-right">
-                                                            <a href="${resgrid.absoluteBaseUrl}/User/Calls/View/${call.CallId}" class="btn btn-sm btn-primary">
+                                                            <a href="${resgrid.absoluteBaseUrl}/User/Dispatch/ViewCall?callId=${call.CallId}" class="btn btn-sm btn-primary">
                                                                 <i class="fa fa-eye"></i> View
                                                             </a>
                                                         </div>
@@ -853,6 +852,8 @@
                                             </div>
                                         </div>
                                     `);
+
+                    $container.append($callCard);
                 })
             }
 

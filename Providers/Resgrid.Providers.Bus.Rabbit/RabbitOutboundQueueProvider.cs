@@ -110,7 +110,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			try
 			{
-				var connection = RabbitConnection.CreateConnection(_clientName);
+				var connection = await RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
 					using (var channel = await connection.CreateChannelAsync())

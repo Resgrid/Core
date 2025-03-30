@@ -10,33 +10,33 @@
 }
 @section Styles
     {
-    <link rel="stylesheet" href="~/lib/jplayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css" />
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.3.22/plyr.css" />
+<link rel="stylesheet" href="~/lib/jplayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css" />
+<link rel="stylesheet" href="https://cdn.plyr.io/3.3.22/plyr.css" />
 }
 
-    @Html.HiddenFor(m => m.Latitude)
-    @Html.HiddenFor(m => m.Longitude)
+@Html.HiddenFor(m => m.Latitude)
+@Html.HiddenFor(m => m.Longitude)
 
-    <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-sm-4">
-            <h2>@localizer["ViewCallHeader"]</h2>
-            <ol class="breadcrumb">
-                <li>
-                    <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-                </li>
-                <li>
-                    <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
-                </li>
-                <li class="active">
-                    <strong>@localizer["ViewCallHeader"]</strong>
-                </li>
-            </ol>
-        </div>
-        <div class="col-sm-8">
-            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <div class="buttons-actions">
-                    @if (ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State != 0)
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["ViewCallHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ViewCallHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <div class="buttons-actions">
+                @if (ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State != 0)
                 {
                     <button class="btn btn-danger" onclick="resgrid.dispatch.viewcall.reOpenCall();">@localizer["ReopenCall"]</button>
                 }
@@ -180,6 +180,7 @@
                                             <li class=""><a href="#tab-6" data-toggle="tab" aria-expanded="false">@commonLocalizer["Notes"]</a></li>
                                             <li class=""><a href="#tab-8" data-toggle="tab" aria-expanded="false">@commonLocalizer["Protocols"]</a></li>
                                             <li class=""><a href="#tab-9" data-toggle="tab" aria-expanded="false">@localizer["LinkedCalls"]</a></li>
+                                            <li class=""><a href="#tab-11" data-toggle="tab" aria-expanded="false">@localizer["Contacts"]</a></li>
                                             @if (!String.IsNullOrWhiteSpace(Model.Call.CallFormData))
                                             {
                                                 <li class=""><a href="#tab-10" data-toggle="tab" aria-expanded="false">@localizer["CallFormLabel"]</a></li>
@@ -630,6 +631,49 @@
                                                             </td>
                                                         </tr>
 
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane" id="tab-11">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>@commonLocalizer["Type"]</th>
+                                                        <th>@commonLocalizer["Name"]</th>
+                                                        <th>@localizer["CallContactType"]</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var callContact in Model.Call.Contacts)
+                                                    {
+                                                        var contact = Model.Contacts.FirstOrDefault(x => x.ContactId == callContact.ContactId);
+
+                                                        if (contact != null)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    <span>@contact.GetTypeName()</span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>@contact.Name</span>
+                                                                </td>
+                                                                <td>
+                                                                    @if (callContact.CallContactType == 0)
+                                                                    {
+                                                                        <span>Primary</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span>Additional</span>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <a style="text-decoration:none;" class="btn btn-xs btn-info" asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@callContact.ContactId">@commonLocalizer["View"]</a>
+                                                                </td>
+                                                            </tr>
+                                                        }
                                                     }
                                                 </tbody>
                                             </table>

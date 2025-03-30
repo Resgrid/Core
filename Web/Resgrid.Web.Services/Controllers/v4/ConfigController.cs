@@ -78,6 +78,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.NovuBackendApiUrl = ChatConfig.NovuBackendUrl;
 			result.Data.NovuSocketUrl = ChatConfig.NovuSocketUrl;
 
+			result.Data.PostHogApiKey = TelemetryConfig.PostHogApiKey;
+			result.Data.PostHogHost = TelemetryConfig.PostHogUrl;
+
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);

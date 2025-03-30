@@ -22,5 +22,6 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public string EndLon { get; set; }
 		public List<PersonName> Names { get; set; }
 		public List<CallReference> ChildCalls { get; set; }
+		public List<Contact> Contacts { get; set; }
 	}
 }

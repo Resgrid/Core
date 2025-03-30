@@ -220,6 +220,38 @@
                 </table>
             </div>
         </div>
+        @if (Model.Call.Contacts != null && Model.Call.Contacts.Any())
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <strong><small>@localizer["Contacts"]</small></strong>
+                    <table class="table table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@commonLocalizer["Name"]</th>
+                                <th>@commonLocalizer["Type"]</th>
+                                <th>@localizer["CallContactType"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.Call.Contacts)
+                            {
+                                var contact = Model.Contacts.FirstOrDefault(x => x.ContactId == c.ContactId);
+
+                                if (contact != null)
+                                {
+                                    <tr>
+                                        <td>@contact.GetName()</td>
+                                        <td>@contact.GetTypeName()</td>
+                                        <td>@c.GetContactTypeName()</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
         <div class="row">
             <div class="col-xs-12">
                 <strong><small>@localizer["DispatchedUnits"]</small></strong>

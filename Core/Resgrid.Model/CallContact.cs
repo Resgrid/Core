@@ -29,6 +29,14 @@ namespace Resgrid.Model
 		[ProtoMember(5)]
 		public int CallContactType { get; set; } // 0 = Primary
 
+		public string GetContactTypeName()
+		{
+			if (CallContactType == 0)
+				return "Primary";
+
+			return "Additional";
+		}
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

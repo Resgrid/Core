@@ -1324,6 +1324,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 			model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
+			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -1373,6 +1374,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
+				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 
 				return View(model);
 			}

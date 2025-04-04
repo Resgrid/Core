@@ -1,9 +1,12 @@
 ﻿//https://github.com/sonnd9x/Bitly.Net/blob/master/Bitly.Net/BitlyAPI.cs
 
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Model.Providers;
 
 namespace Resgrid.Providers.Marketing
@@ -94,6 +97,47 @@ namespace Resgrid.Providers.Marketing
 					{
 						return "Can not short URL";
 					}
+				}
+			}
+			else if (Config.SystemBehaviorConfig.LinkProviderType == Config.LinksProviderTypes.Kutt)
+			{
+				try
+				{
+					using (HttpClient client = new HttpClient())
+					{
+						client.DefaultRequestHeaders.Add("X-API-KEY", Config.LinksConfig.KuttAccessToken);
+						client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+						var requestBody = new
+						{
+							target = long_url,
+							reuse = true,  // resuse the same short url for the same target
+							//customSlug = customSlug,
+							//domain = domain
+						};
+
+						var jsonContent = JsonConvert.SerializeObject(requestBody);
+						var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+						// Make POST request to the Kutt API
+						var response = await client.PostAsync(Config.LinksConfig.KuttApi + "/api/v2/links", content);
+
+						if (response.IsSuccessStatusCode)
+						{
+							var responseContent = await response.Content.ReadAsStringAsync();
+							dynamic result = JsonConvert.DeserializeObject(responseContent);
+							return result.link; // Assuming the API returns the short URL in a 'link' property
+						}
+						else
+						{
+							var error = await response.Content.ReadAsStringAsync();
+							Logging.LogError($"Failed to create Kutt short URL: {error}");
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 				}
 			}
 

@@ -10,7 +10,6 @@ var resgrid;
 
                 $('.table').DataTable();
                 $('#tree').bstreeview({ data: treeData });
-                $('input[type="checkbox"]').click(evaluate);
                 $('#TreeGroup_-1').css("font-weight", "bold");
 
                 $(document).on('click', '.list-group-item', function (e) {

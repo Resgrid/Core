@@ -7,6 +7,9 @@
 
 		public static string PolrAccessToken = "";
 		public static string PolrApi = @"";
+
+		public static string KuttAccessToken = "";
+		public static string KuttApi = @"";
 	}
 
 	/// <summary>
@@ -15,6 +18,7 @@
 	public enum LinksProviderTypes
 	{
 		Bitly = 0,
-		Polr = 1
+		Polr = 1,
+		Kutt = 2
 	}
 }

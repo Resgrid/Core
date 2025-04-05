@@ -522,6 +522,9 @@
   <data name="StatusColumn" xml:space="preserve">
     <value>Estado</value>
   </data>
+  <data name="StatusPage" xml:space="preserve">
+    <value />
+  </data>
   <data name="String1" xml:space="preserve">
     <value>Formulario de nueva convocatoria</value>
   </data>

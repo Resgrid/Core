@@ -308,6 +308,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string CallProtocolsTable { get; set; }
 		public string CallContactsTable { get; set; }
 		public string SelectAllCallsByDidDateQuery { get; set; }
+		public string SelectCallsCountByDidDateQuery { get; set; }
 		public string SelectAllClosedCallsByDidDateQuery { get; set; }
 		public string SelectAllCallDispatchesByGroupIdQuery { get; set; }
 		public string SelectCallAttachmentByCallIdTypeQuery { get; set; }

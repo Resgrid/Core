@@ -10,5 +10,7 @@
 		public static string PrivacyPolicyUrl = "https://resgrid.com/privacy";
 
 		public static string HomeUrl = "https://resgrid.com";
+
+		public static string SystemStatusPageUrl = "https://resgrid.freshstatus.io";
 	}
 }

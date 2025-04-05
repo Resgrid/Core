@@ -4,6 +4,7 @@
   "devDependencies": {
     "clean-css": "^3.4.23",
     "dateformat": "^2.0.0",
+    "eslint": "^9.24.0",
     "gulp": "^3.9.1",
     "gulp-concat": "2.5.2",
     "gulp-cssmin": "0.1.7",

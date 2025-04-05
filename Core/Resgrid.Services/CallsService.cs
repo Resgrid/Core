@@ -168,15 +168,18 @@ namespace Resgrid.Services
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
-			int year = DateTimeHelpers.GetLocalDateTime(utcDate, department.TimeZone).Year;
-			var start = (new DateTime(year, 1, 1, 1, 1, 1, DateTimeKind.Local)).SetToMidnight();
-			var end = (new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Local)).SetToEndOfDay();
+			DateTime localTime = DateTimeHelpers.GetLocalDateTime(utcDate, department.TimeZone);
+			int year = localTime.Year;
 
-			var calls = await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, DateTimeHelpers.ConvertToUtc(start, department.TimeZone), DateTimeHelpers.ConvertToUtc(end, department.TimeZone));
-			//var count = calls.Count(x => x.LoggedOn.Year == year) + 1;
-			var count = calls.Count() + 1;
+			var localYearStart = new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+			var localYearEnd = new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Unspecified);
 
-			return string.Format("{0}-{1}", year % 100, count);
+			var utcYearStart = DateTimeHelpers.ConvertToUtc(localYearStart, department.TimeZone);
+			var utcYearEnd = DateTimeHelpers.ConvertToUtc(localYearEnd, department.TimeZone);
+
+			var callCount = await _callsRepository.GetCallsCountByDepartmentDateRangeAsync(departmentId, utcYearStart, utcYearEnd);
+
+			return string.Format("{0}-{1}", year % 100, callCount + 1);
 		}
 
 		public async Task<List<Call>> GetAllCallsByDepartmentAsync(int departmentId)

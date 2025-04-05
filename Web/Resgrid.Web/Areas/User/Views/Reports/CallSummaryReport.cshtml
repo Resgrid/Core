@@ -174,10 +174,10 @@
 								<td style="padding-left: 10px;">@callState.Number</td>
 								<td>@callState.Name</td>
 								<td>@callState.Type</td>
-								<td>@callState.LoggedOn.FormatForDepartment(Model.Department)</td>
+								<td>@callState.LoggedOn.TimeConverterToString(Model.Department)</td>
 								@if (callState.ClosedOn.HasValue)
 								{
-									<td>@callState.ClosedOn.Value.FormatForDepartment(Model.Department)</td>
+									<td>@callState.ClosedOn.Value.TimeConverterToString(Model.Department)</td>
 								}
 								else
 								{

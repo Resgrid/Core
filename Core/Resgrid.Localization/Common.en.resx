@@ -531,6 +531,9 @@
   <data name="StatusColumn" xml:space="preserve">
     <value>Status</value>
   </data>
+  <data name="StatusPage" xml:space="preserve">
+    <value>System Status</value>
+  </data>
   <data name="String1" xml:space="preserve">
     <value>New Call Form</value>
   </data>

@@ -1044,6 +1044,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			CallContactsTable = "CallContacts";
 			SelectAllCallsByDidDateQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE%";
+			SelectCallsCountByDidDateQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE%";
 			SelectAllClosedCallsByDidDateQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0";
 			SelectAllCallDispatchesByGroupIdQuery =

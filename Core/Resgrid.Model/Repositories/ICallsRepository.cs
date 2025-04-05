@@ -79,5 +79,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Call&gt;&gt;.</returns>
 		Task<IEnumerable<Call>> GetAllCallsByContactIdAsync(string contactId, int departmentId);
+
+		Task<int> GetCallsCountByDepartmentDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
 	}
 }

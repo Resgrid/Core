@@ -1789,6 +1789,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<CallTypesJson> callTypes = new List<CallTypesJson>();
 
+			if (String.IsNullOrWhiteSpace(startDate) || String.IsNullOrWhiteSpace(endDate))
+				return Json(callTypes);
+
 			if (!String.IsNullOrWhiteSpace(startDate) && !String.IsNullOrWhiteSpace(endDate))
 			{
 				var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, DateTime.Parse(System.Net.WebUtility.UrlDecode((startDate))), DateTime.Parse(System.Net.WebUtility.UrlDecode(endDate)));

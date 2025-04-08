@@ -14,7 +14,7 @@ namespace Resgrid.Model
 
 		[ProtoMember(3)]
 		public bool MappingDisabled { get; set; }
-		[ProtoMember(41)]
+		[ProtoMember(4)]
 		public string MappingNameOverride { get; set; }
 
 		[ProtoMember(5)]

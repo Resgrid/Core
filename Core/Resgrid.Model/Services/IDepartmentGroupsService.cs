@@ -36,7 +36,7 @@ namespace Resgrid.Model.Services
 		/// Invalidates the group in cache.
 		/// </summary>
 		/// <param name="groupId">The group identifier.</param>
-		void InvalidateGroupInCache(int groupId);
+		Task InvalidateGroupInCache(int groupId);
 
 		/// <summary>
 		/// Gets all groups for department unlimited asynchronous.
@@ -141,7 +141,7 @@ namespace Resgrid.Model.Services
 		/// <param name="depMember">The dep member.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>DepartmentGroupMember.</returns>
-		DepartmentGroupMember SaveGroupMember(DepartmentGroupMember depMember,
+		Task<DepartmentGroupMember> SaveGroupMember(DepartmentGroupMember depMember,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

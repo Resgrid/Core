@@ -148,8 +148,8 @@
       "destination": "wwwroot/lib/bootstrapvalidator/"
     },
     {
-      "provider": "unpkg",
-      "library": "twitter-bootstrap-wizard@1.2",
+      "provider": "jsdelivr",
+      "library": "bootstrap-wizard@1.4.2",
       "destination": "wwwroot/lib/twitter-bootstrap-wizard/"
     },
     {
@@ -275,7 +275,7 @@
       "destination": "wwwroot/lib/jquery-ui-multidatespicker/"
     },
     {
-      "provider": "unpkg",
+      "provider": "jsdelivr",
       "library": "jquery-datetimepicker@2.5.21",
       "destination": "wwwroot/lib/jquery-datetimepicker/"
     },

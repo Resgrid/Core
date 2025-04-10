@@ -63,6 +63,7 @@
               	<ul>
 					<li><a href="examples/basic.html">Basic Usage</a></li>
 					<li><a href="examples/basic-pills.html">Basic Pills Usage</a></li>
+          <li><a href="examples/basic-visible.html">Basic withVisible False</a></li>
 					<li><a href="examples/basic-inverse.html">Basic Inverse Usage</a></li>
 					<li><a href="examples/basic-tabsleft.html">Basic Tabs Left Usage</a></li>
 					<li><a href="examples/basic-custombuttons.html">Wizard With Custom Next/Previous Buttons</a></li>
@@ -180,7 +181,7 @@
 					  </div>
 					</div>
 					<div id="bar" class="progress progress-striped active">
-					  <div class="bar"></div>
+					  <div class="progress-bar"></div>
 					</div>
 					<div class="tab-content">
 					    <div class="tab-pane" id="tab1">
@@ -236,7 +237,7 @@
 			var $total = navigation.find('li').length;
 			var $current = index+1;
 			var $percent = ($current/$total) * 100;
-			$('#rootwizard').find('.bar').css({width:$percent+'%'});
+			$('#rootwizard').find('.progress-bar').css({width:$percent+'%'});
 		}});
 	});
 	</script>

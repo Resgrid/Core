@@ -1,6 +1,6 @@
 {
-  "name": "twitter-bootstrap-wizard",
-  "version": "1.2.0",
+  "name": "bootstrap-wizard",
+  "version": "1.4.2",
   "description": "This twitter bootstrap plugin builds a wizard out of a formatter tabbable structure. It allows to build a wizard functionality using buttons to go through the different wizard steps and using events allows to hook into each step individually.",
   "main": "jquery.bootstrap.wizard.js",
   "directories": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/excellalabs/twitter-bootstrap-wizard.git"
+    "url": "git+https://github.com/javanile/bootstrap-wizard.git"
   },
   "keywords": [
     "twitter",
@@ -21,7 +21,7 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/excellalabs/twitter-bootstrap-wizard/issues"
+    "url": "https://github.com/javanile/bootstrap-wizard/issues"
   },
-  "homepage": "https://github.com/excellalabs/twitter-bootstrap-wizard#readme"
+  "homepage": "https://github.com/javanile/bootstrap-wizard#readme"
 }

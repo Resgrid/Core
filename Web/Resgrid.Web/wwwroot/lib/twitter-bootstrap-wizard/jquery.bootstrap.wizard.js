@@ -1,7 +1,7 @@
 /*!
  * jQuery twitter bootstrap wizard plugin
  * Examples and documentation at: http://github.com/VinceG/twitter-bootstrap-wizard
- * version 1.0
+ * version 1.4.2
  * Requires jQuery v1.3.2 or later
  * Supports Bootstrap 2.2.x, 2.3.x, 3.0
  * Dual licensed under the MIT and GPL licenses:
@@ -13,7 +13,7 @@
 var bootstrapWizardCreate = function(element, options) {
 	var element = $(element);
 	var obj = this;
-	
+
 	// selector skips any 'li' elements that do not contain a child with a tab data-toggle
 	var baseItemSelector = 'li:has([data-toggle="tab"])';
 	var historyStack = [];
@@ -22,7 +22,7 @@ var bootstrapWizardCreate = function(element, options) {
 	var $settings = $.extend({}, $.fn.bootstrapWizard.defaults, options);
 	var $activeTab = null;
 	var $navigation = null;
-	
+
 	this.rebindClick = function(selector, fn)
 	{
 		selector.unbind('click', fn).bind('click', fn);
@@ -69,13 +69,13 @@ var bootstrapWizardCreate = function(element, options) {
 		}
 
 		var formerIndex = obj.currentIndex();
-		$index = obj.nextIndex();
+		var $index = obj.nextIndex();
 
 	  // Did we click the last button
 		if($index > obj.navigationLength()) {
 		} else {
 		  historyStack.push(formerIndex);
-		  $navigation.find(baseItemSelector + ':eq(' + $index + ') a').tab('show');
+		  $navigation.find(baseItemSelector + ($settings.withVisible ? ':visible' : '') + ':eq(' + $index + ') a').tab('show');
 		}
 	};
 
@@ -90,12 +90,12 @@ var bootstrapWizardCreate = function(element, options) {
 		}
 
 		var formerIndex = obj.currentIndex();
-		$index = obj.previousIndex();
+		var $index = obj.previousIndex();
 
 		if($index < 0) {
 		} else {
 		  historyStack.push(formerIndex);
-		  $navigation.find(baseItemSelector + ':eq(' + $index + ') a').tab('show');
+		  $navigation.find(baseItemSelector + ($settings.withVisible ? ':visible' : '') + ':eq(' + $index + ') a').tab('show');
 		}
 	};
 
@@ -109,6 +109,7 @@ var bootstrapWizardCreate = function(element, options) {
 			return false;
 		}
 
+        
 		historyStack.push(obj.currentIndex());
 		$navigation.find(baseItemSelector + ':eq(0) a').tab('show');
 	};
@@ -148,7 +149,7 @@ var bootstrapWizardCreate = function(element, options) {
 	};
 
 	this.currentIndex = function() {
-		return $navigation.find(baseItemSelector).index($activeTab);
+		return $navigation.find(baseItemSelector + ($settings.withVisible ? ':visible' : '')).index($activeTab);
 	};
 
 	this.firstIndex = function() {
@@ -158,17 +159,31 @@ var bootstrapWizardCreate = function(element, options) {
 	this.lastIndex = function() {
 		return obj.navigationLength();
 	};
+	
 	this.getIndex = function(e) {
-		return $navigation.find(baseItemSelector).index(e);
+		return $navigation.find(baseItemSelector + ($settings.withVisible ? ':visible' : '')).index(e);
 	};
+	
 	this.nextIndex = function() {
-		return $navigation.find(baseItemSelector).index($activeTab) + 1;
+		var nextIndexCandidate=this.currentIndex();
+		var nextTabCandidate=null;
+		do {
+			nextIndexCandidate++;
+			nextTabCandidate = $navigation.find(baseItemSelector + ($settings.withVisible ? ':visible' : '') + ":eq(" + nextIndexCandidate + ")");
+		} while ((nextTabCandidate)&&(nextTabCandidate.hasClass("disabled")));
+		return nextIndexCandidate;
 	};
 	this.previousIndex = function() {
-		return $navigation.find(baseItemSelector).index($activeTab) - 1;
-	};
+		var prevIndexCandidate=this.currentIndex();
+		var prevTabCandidate=null;
+		do {
+			prevIndexCandidate--;
+			prevTabCandidate = $navigation.find(baseItemSelector + ($settings.withVisible ? ':visible' : '') + ":eq(" + prevIndexCandidate + ")");
+		} while ((prevTabCandidate)&&(prevTabCandidate.hasClass("disabled")));
+		return prevIndexCandidate;
+	};	
 	this.navigationLength = function() {
-		return $navigation.find(baseItemSelector).length - 1;
+		return $navigation.find(baseItemSelector + ($settings.withVisible ? ':visible' : '')).length - 1;
 	};
 	this.activeTab = function() {
 		return $activeTab;
@@ -183,8 +198,8 @@ var bootstrapWizardCreate = function(element, options) {
 		return $navigation.find(baseItemSelector + ':eq('+parseInt(obj.currentIndex()-1)+')');
 	};
 	this.show = function(index) {
-	  var tabToShow = isNaN(index) ? 
-      element.find(baseItemSelector + ' a[href=#' + index + ']') : 
+	  var tabToShow = isNaN(index) ?
+      element.find(baseItemSelector + ' a[href="#' + index + '"]') :
       element.find(baseItemSelector + ':eq(' + index + ') a');
 	  if (tabToShow.length > 0) {
 	    historyStack.push(obj.currentIndex());
@@ -217,7 +232,7 @@ var bootstrapWizardCreate = function(element, options) {
 		// Remove menu item
 		$item.remove();
 	};
-	
+
 	var innerTabClick = function (e) {
 		// Get the index of the clicked tab
 		var $ul = $navigation.find(baseItemSelector);
@@ -227,9 +242,9 @@ var bootstrapWizardCreate = function(element, options) {
 		    return false;
 		}
 	};
-	
-	var innerTabShown = function (e) {  // use shown instead of show to help prevent double firing
-		$element = $(e.target).parent();
+
+	var innerTabShown = function (e) {  
+		var $element = $(e.target).parent();
 		var nextTab = $navigation.find(baseItemSelector).index($element);
 
 		// If it's disabled then do not change
@@ -244,21 +259,21 @@ var bootstrapWizardCreate = function(element, options) {
 		$activeTab = $element; // activated tab
 		obj.fixNavigationButtons();
 	};
-	
+
 	this.resetWizard = function() {
-		
+
 		// remove the existing handlers
 		$('a[data-toggle="tab"]', $navigation).off('click', innerTabClick);
-		$('a[data-toggle="tab"]', $navigation).off('shown shown.bs.tab', innerTabShown);
-		
+		$('a[data-toggle="tab"]', $navigation).off('show show.bs.tab', innerTabShown);
+
 		// reset elements based on current state of the DOM
 		$navigation = element.find('ul:first', element);
 		$activeTab = $navigation.find(baseItemSelector + '.active', element);
-		
+
 		// re-add handlers
 		$('a[data-toggle="tab"]', $navigation).on('click', innerTabClick);
-		$('a[data-toggle="tab"]', $navigation).on('shown shown.bs.tab', innerTabShown);
-		
+		$('a[data-toggle="tab"]', $navigation).on('show show.bs.tab', innerTabShown);
+
 		obj.fixNavigationButtons();
 	};
 
@@ -281,8 +296,8 @@ var bootstrapWizardCreate = function(element, options) {
 
 	$('a[data-toggle="tab"]', $navigation).on('click', innerTabClick);
 
-	// attach to both shown and shown.bs.tab to support Bootstrap versions 2.3.2 and 3.0.0
-	$('a[data-toggle="tab"]', $navigation).on('shown shown.bs.tab', innerTabShown);
+	// attach to both show and show.bs.tab to support Bootstrap versions 2.3.2 and 3.0.0
+	$('a[data-toggle="tab"]', $navigation).on('show show.bs.tab', innerTabShown);
 };
 $.fn.bootstrapWizard = function(options) {
 	//expose methods
@@ -308,6 +323,7 @@ $.fn.bootstrapWizard = function(options) {
 
 // expose options
 $.fn.bootstrapWizard.defaults = {
+	withVisible:      true,
 	tabClass:         'nav nav-pills',
 	nextSelector:     '.wizard li.next',
 	previousSelector: '.wizard li.previous',
@@ -323,7 +339,7 @@ $.fn.bootstrapWizard.defaults = {
 	onFirst:          null,
   onFinish:         null,
   onBack:           null,
-	onTabChange:      null, 
+	onTabChange:      null,
 	onTabClick:       null,
 	onTabShow:        null
 };

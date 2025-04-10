@@ -9,8 +9,8 @@
 }
 
 <form id="editContactForm" class="form-horizontal" role="form" asp-controller="Contacts" asp-action="Edit" asp-route-area="User" method="post">
-
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Contact.ContactId)
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
@@ -36,9 +36,6 @@
                     <div class="ibox">
                         <div class="ibox-content">
                             @{
-                                @Html.AntiForgeryToken()
-                                @Html.HiddenFor(m => m.Contact.ContactId)
-                                
                                 var validationErrors = ViewData.ModelState.Values.Where(E => E.Errors.Count > 0)
                                 .SelectMany(E => E.Errors)
                                 .Select(E => E.ErrorMessage)

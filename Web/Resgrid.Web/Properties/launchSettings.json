@@ -8,7 +8,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Resgrid.WebCore": {
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/",
+      "publishAllPorts": true,
+      "useSSL": true
+    },
+    "Resgrid.Web": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "http://localhost:5000",
@@ -17,13 +24,6 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "nativeDebugging": false
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/",
-      "publishAllPorts": true,
-      "useSSL": true
     }
   },
   "iisSettings": {

@@ -54,12 +54,12 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					var knownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.departmentid as 'DepartmentId', d.timezone as 'DepartmentTimeZone'
+					var knownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
 																					FROM scheduledtasks st
 																					INNER JOIN departments d ON d.departmentid = st.departmentid
 																					WHERE st.departmentid > 0 AND st.active = 1 AND st.tasktype IN @types", new { types = types });
 
-					var unknownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.departmentid as 'DepartmentId', d.timezone as 'DepartmentTimeZone'
+					var unknownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
 																					FROM scheduledtasks st
 																					INNER JOIN departmentmembers dm ON dm.userid = st.userid
 																					INNER JOIN departments d ON d.departmentid = dm.departmentid

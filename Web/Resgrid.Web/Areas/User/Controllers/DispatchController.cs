@@ -510,6 +510,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			UpdateCallView model = new UpdateCallView();
 			model.Call = await _callsService.GetCallByIdAsync(callId);
+
+			if (model.Call == null || model.Call.DepartmentId != DepartmentId)
+				Unauthorized();
+
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 			model.CallPriority = model.Call.Priority;
 			model = await FillUpdateCallView(model);
@@ -2263,7 +2267,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var ungroupedUsers = from u in allUsers
 								 where !(groupedUserIds.Contains(u.UserId))
 								 select u;
-			
+
 			foreach (var u in ungroupedUsers)
 			{
 				model.UnGroupedUsers.Add(allUsers.Where(x => x.UserId == u.UserId).FirstOrDefault());

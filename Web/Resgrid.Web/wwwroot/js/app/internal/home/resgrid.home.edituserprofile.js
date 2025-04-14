@@ -52,11 +52,14 @@ var resgrid;
                 }).done(function (data) {
                     if (data) {
                         var multiSelect = $("#roles").data("kendoMultiSelect");
-                        var valuesToAdd = [];
-                        for (var i = 0; i < data.length; i++) {
-                            valuesToAdd.push(data[i].RoleId);
+
+                        if (multiSelect) {
+                            var valuesToAdd = [];
+                            for (var i = 0; i < data.length; i++) {
+                                valuesToAdd.push(data[i].RoleId);
+                            }
+                            multiSelect.value(valuesToAdd);
                         }
-                        multiSelect.value(valuesToAdd);
                     }
                 });
             });

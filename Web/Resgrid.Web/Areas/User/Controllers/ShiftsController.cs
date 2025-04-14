@@ -1223,8 +1223,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 			var group = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
-			if (shift.DepartmentId != DepartmentId)
-				return null;
+			if (shift == null || shift.DepartmentId != DepartmentId)
+				return Json(usersJson);
 
 			shift = await _shiftsService.PopulateShiftData(shift, true, true, true, true, true);
 

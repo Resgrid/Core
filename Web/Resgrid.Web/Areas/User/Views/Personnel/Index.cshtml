@@ -23,14 +23,18 @@
 
             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && Model.CanAddNewUser)
             {
-                <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})">@localizer["AddAPerson"]</a>
-                <a id="manageInvitesButton" title="@localizer["ManageInvitesHelp"]" class="btn btn-success" href="@Url.Action("Invites", "Department", new {area = "User"})">@localizer["ManageInvites"]</a>
+                <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info"
+                   href="@Url.Action("AddPerson", "Personnel", new { area = "User" })">@localizer["AddAPerson"]</a>
+                <a id="manageInvitesButton" title="@localizer["ManageInvitesHelp"]" class="btn btn-success"
+                   href="@Url.Action("Invites", "Department", new { area = "User" })">@localizer["ManageInvites"]</a>
             }
             else if (Model.CanGroupAdminsAdd && Model.CanAddNewUser)
             {
-                <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info" href="@Url.Action("AddPerson", "Personnel", new {area = "User"})">@localizer["AddAPerson"]</a>
+                <a id="addPersonButton" title="@localizer["AddAPersonHelp"]" class="btn btn-info"
+                   href="@Url.Action("AddPerson", "Personnel", new { area = "User" })">@localizer["AddAPerson"]</a>
             }
-            <a id="rolesButton" class="btn btn-primary top-button" title="@localizer["ManageRoles"]" asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@localizer["ManageRoles"]</a>
+            <a id="rolesButton" class="btn btn-primary top-button" title="@localizer["ManageRoles"]"
+               asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@localizer["ManageRoles"]</a>
         </div>
     </div>
 </div>
@@ -92,8 +96,8 @@
 
                                 @Html.Raw("</td>")
                                 @Html.Raw("</tr>")
-
                             }
+
                             @Html.Raw("</tbody></table></div></div>")
                         }
                         else
@@ -147,9 +151,9 @@
 
                                     @Html.Raw("</td>")
                                     @Html.Raw("</tr>")
-
                                 }
                             }
+
                             @Html.Raw("</tbody></table></div></div>")
 
                             count2++;
@@ -216,6 +220,7 @@
                                         @Html.Raw("</tr>")
                                     }
                                 }
+
                                 @Html.Raw("</tbody></table></div></div>")
 
                                 count2++;
@@ -234,8 +239,10 @@
 
                         <div class="row">
                             <div class="col-xs-6">
-                                <button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setSelectedPersonnelStaffingModal'>@localizer["SetStaffingForSelectedPersonnel"]</button>
-                                <button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setSelectedPersonnelStatusModal'>@localizer["SetStatusForSelectedPersonnel"]</button>
+                                <button class='btn btn-xs btn-primary' data-toggle='modal'
+                                        data-target='#setSelectedPersonnelStaffingModal'>@localizer["SetStaffingForSelectedPersonnel"]</button>
+                                <button class='btn btn-xs btn-primary' data-toggle='modal'
+                                        data-target='#setSelectedPersonnelStatusModal'>@localizer["SetStatusForSelectedPersonnel"]</button>
                             </div>
                         </div>
                     </div>
@@ -245,15 +252,16 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setPersonStatusModal">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     id="setPersonStatusModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">@localizer["SetPersonStatusHeader"]</h4>
             </div>
-            <input type="hidden" id="setPersonStatusUserId" />
-            <input type="hidden" id="setPersonStatusCustomStateId" />
+            <input type="hidden" id="setPersonStatusUserId"/>
+            <input type="hidden" id="setPersonStatusCustomStateId"/>
             <div class="modal-body">
                 <div class="form-group">
                     <label class=" control-label">
@@ -268,7 +276,8 @@
                         @commonLocalizer["Destination"]
                     </label>
                     <div class="controls">
-                        <select name="PersonnelStatusDestinationDropdown" id="PersonnelStatusDestinationDropdown"></select>
+                        <select name="PersonnelStatusDestinationDropdown"
+                                id="PersonnelStatusDestinationDropdown"></select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -276,7 +285,7 @@
                         @commonLocalizer["Note"]
                     </label>
                     <div class="controls">
-                        <input type="text" style="width: 90%;" name="PersonnelStatusNote" id="PersonnelStatusNote" />
+                        <input type="text" style="width: 90%;" name="PersonnelStatusNote" id="PersonnelStatusNote"/>
                     </div>
                 </div>
             </div>
@@ -284,10 +293,12 @@
                 <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
                     @commonLocalizer["Close"]
                 </button>
-                <button id="savingPersonnelStatusButton" type="button" class="btn btn-primary" name="savingPersonnelStatusButton">
+                <button id="savingPersonnelStatusButton" type="button" class="btn btn-primary"
+                        name="savingPersonnelStatusButton">
                     @commonLocalizer["Save"]
                 </button>
-                <button id="savingPersonnelStatusButtonLoader" name="savingPersonnelStatusButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                <button id="savingPersonnelStatusButtonLoader" name="savingPersonnelStatusButtonLoader"
+                        class="btn btn-primary" type="button" disabled style="display: none;">
                     <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
                         <div class="sk-rect1"></div>
                         <div class="sk-rect2"></div>
@@ -299,15 +310,16 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setPersonStaffingModal">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     id="setPersonStaffingModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">@localizer["SetPersonStaffingHeader"]</h4>
             </div>
-            <input type="hidden" id="setPersonStaffingUserId" />
-            <input type="hidden" id="setPersonStaffingCustomStateId" />
+            <input type="hidden" id="setPersonStaffingUserId"/>
+            <input type="hidden" id="setPersonStaffingCustomStateId"/>
             <div class="modal-body">
                 <div class="form-group">
                     <label class=" control-label">
@@ -322,7 +334,7 @@
                         @commonLocalizer["Note"]
                     </label>
                     <div class="controls">
-                        <input type="text" style="width: 90%;" name="PersonnelStaffingNote" id="PersonnelStaffingNote" />
+                        <input type="text" style="width: 90%;" name="PersonnelStaffingNote" id="PersonnelStaffingNote"/>
                     </div>
                 </div>
             </div>
@@ -330,10 +342,12 @@
                 <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
                     @commonLocalizer["Close"]
                 </button>
-                <button id="savingPersonnelStaffingButton" type="button" class="btn btn-primary" name="savingPersonnelStaffingButton">
+                <button id="savingPersonnelStaffingButton" type="button" class="btn btn-primary"
+                        name="savingPersonnelStaffingButton">
                     @commonLocalizer["Save"]
                 </button>
-                <button id="savingPersonnelStaffingButtonLoader" name="savingPersonnelStaffingButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                <button id="savingPersonnelStaffingButtonLoader" name="savingPersonnelStaffingButtonLoader"
+                        class="btn btn-primary" type="button" disabled style="display: none;">
                     <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
                         <div class="sk-rect1"></div>
                         <div class="sk-rect2"></div>
@@ -345,7 +359,8 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setSelectedPersonnelStatusModal">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     id="setSelectedPersonnelStatusModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -366,7 +381,8 @@
                         @commonLocalizer["Destination"]
                     </label>
                     <div class="controls">
-                        <select name="SelectedPersonnelStatusDestinationDropdown" id="SelectedPersonnelStatusDestinationDropdown"></select>
+                        <select name="SelectedPersonnelStatusDestinationDropdown"
+                                id="SelectedPersonnelStatusDestinationDropdown"></select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -374,7 +390,8 @@
                         @commonLocalizer["Note"]
                     </label>
                     <div class="controls">
-                        <input type="text" style="width: 90%;" name="SelectedPersonnelStatusNote" id="SelectedPersonnelStatusNote" />
+                        <input type="text" style="width: 90%;" name="SelectedPersonnelStatusNote"
+                               id="SelectedPersonnelStatusNote"/>
                     </div>
                 </div>
             </div>
@@ -382,10 +399,12 @@
                 <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
                     @commonLocalizer["Close"]
                 </button>
-                <button id="savingSelectedPersonnelStatusButton" type="button" class="btn btn-primary" name="savingSelectedPersonnelStatusButton">
+                <button id="savingSelectedPersonnelStatusButton" type="button" class="btn btn-primary"
+                        name="savingSelectedPersonnelStatusButton">
                     @commonLocalizer["Save"]
                 </button>
-                <button id="savingSelectedPersonnelStatusButtonLoader" name="savingSelectedPersonnelStatusButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                <button id="savingSelectedPersonnelStatusButtonLoader" name="savingSelectedPersonnelStatusButtonLoader"
+                        class="btn btn-primary" type="button" disabled style="display: none;">
                     <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
                         <div class="sk-rect1"></div>
                         <div class="sk-rect2"></div>
@@ -397,7 +416,8 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="setSelectedPersonnelStaffingModal">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     id="setSelectedPersonnelStaffingModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -410,7 +430,8 @@
                         @commonLocalizer["Staffing"]
                     </label>
                     <div class="controls">
-                        <select name="SelectedPersonnelStaffingDropdown" id="SelectedPersonnelStaffingDropdown"></select>
+                        <select name="SelectedPersonnelStaffingDropdown"
+                                id="SelectedPersonnelStaffingDropdown"></select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -418,7 +439,8 @@
                         @commonLocalizer["Note"]
                     </label>
                     <div class="controls">
-                        <input type="text" style="width: 90%;" name="SelectedPersonnelStaffingNote" id="SelectedPersonnelStaffingNote" />
+                        <input type="text" style="width: 90%;" name="SelectedPersonnelStaffingNote"
+                               id="SelectedPersonnelStaffingNote"/>
                     </div>
                 </div>
             </div>
@@ -426,10 +448,13 @@
                 <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">
                     @commonLocalizer["Close"]
                 </button>
-                <button id="savingSelectedPersonnelStaffingButton" type="button" class="btn btn-primary" name="savingSelectedPersonnelStaffingButton">
+                <button id="savingSelectedPersonnelStaffingButton" type="button" class="btn btn-primary"
+                        name="savingSelectedPersonnelStaffingButton">
                     @commonLocalizer["Save"]
                 </button>
-                <button id="savingSelectedPersonnelStaffingButtonLoader" name="savingSelectedPersonnelStaffingButtonLoader" class="btn btn-primary" type="button" disabled style="display: none;">
+                <button id="savingSelectedPersonnelStaffingButtonLoader"
+                        name="savingSelectedPersonnelStaffingButtonLoader" class="btn btn-primary" type="button"
+                        disabled style="display: none;">
                     <div class="sk-spinner sk-spinner-wave" style="height: 20px;">
                         <div class="sk-rect1"></div>
                         <div class="sk-rect2"></div>
@@ -446,7 +471,7 @@
     {
         @if (p.CanEditUser)
         {
-             @Html.Raw($"<tr><td><input type='checkbox' id='selectPerson_{p.UserId}' class='selectPersonCheckbox' data-grouptype='{groupType}' data-staffingid='{Model.PersonnelCustomStaffingId}' data-statusid='{Model.PersonnelCustomStatusesId}' value='{p.UserId}'/></td><td>{p.Name}</td><td>{p.Roles}</td><td><span class='label' style='color:{staffingTextColor};background-color:{staffingColor};'>{staffingText}</span></td><td><span class='label' style='color:{stateTextColor};background-color:{stateColor};'>{stateText}</span></td><td>{p.State}</td>")
+            @Html.Raw($"<tr><td><input type='checkbox' id='selectPerson_{p.UserId}' class='selectPersonCheckbox' data-grouptype='{groupType}' data-staffingid='{Model.PersonnelCustomStaffingId}' data-statusid='{Model.PersonnelCustomStatusesId}' value='{p.UserId}'/></td><td>{p.Name}</td><td>{p.Roles}</td><td><span class='label' style='color:{staffingTextColor};background-color:{staffingColor};'>{staffingText}</span></td><td><span class='label' style='color:{stateTextColor};background-color:{stateColor};'>{stateText}</span></td><td>{p.State}</td>")
             @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStaffingModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStaffingId}'>{@localizer["SetStaffing"]}</button></td>")
             @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStatusModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStatusesId}'>{@localizer["SetStatus"]}</button></td>")
         }
@@ -458,25 +483,25 @@
 
         @Html.Raw("<td>")
 
-        @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-info' href='{@Url.Action("ViewPerson", "Personnel", new {area = "User"})}?userId={p.UserId}'>{@commonLocalizer["View"]}</a>&nbsp;")
+        @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-info' href='{@Url.Action("ViewPerson", "Personnel", new { area = "User" })}?userId={p.UserId}'>{@commonLocalizer["View"]}</a>&nbsp;")
 
         @if (p.CanEditUser)
         {
             @Html.Raw("<div class='btn-group'>")
-            @Html.Raw($"<a href='{@Url.Action("EditUserProfile", "Home", new {area = "User"})}?userId={p.UserId}' class='btn btn-xs btn-primary'>{@commonLocalizer["Edit"]}</a>")
+            @Html.Raw($"<a href='{@Url.Action("EditUserProfile", "Home", new { area = "User" })}?userId={p.UserId}' class='btn btn-xs btn-primary'>{@commonLocalizer["Edit"]}</a>")
             @Html.Raw("<button type='button' class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>")
             @Html.Raw("<span class='caret'></span>")
             @Html.Raw("<span class='sr-only'>Toggle Dropdown</span>")
             @Html.Raw("</button>")
             @Html.Raw("<ul class='dropdown-menu'>")
-            @Html.Raw($"<li><a href='{@Url.Action("ResetPasswordForUser", "Profile", new {area = "User"})}?userId={p.UserId}'>{@localizer["ChangePassword"]}</a></li>")
+            @Html.Raw($"<li><a href='{@Url.Action("ResetPasswordForUser", "Profile", new { area = "User" })}?userId={p.UserId}'>{@localizer["ChangePassword"]}</a></li>")
             @Html.Raw("</ul>")
             @Html.Raw("</div>&nbsp;")
         }
 
         @if (p.CanRemoveUser)
         {
-            @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-danger' href='{@Url.Action("DeletePerson", "Personnel", new {area = "User"})}?userId={p.UserId}'>{@commonLocalizer["Delete"]}</a>")
+            @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-danger' href='{@Url.Action("DeletePerson", "Personnel", new { area = "User" })}?userId={p.UserId}'>{@commonLocalizer["Delete"]}</a>")
         }
     }
 }
@@ -486,7 +511,7 @@
 
 
 @section Scripts
-    {
+{
     <script>
         var treeData = @Html.Raw(@Model.TreeData);
     </script>
@@ -494,30 +519,34 @@
     <script src="~/js/app/internal/personnel/resgrid.personnel.index.js" type="text/javascript"></script>
 
     <script>
-        (function() {
+        (function () {
             $('.table').DataTable();
 
             // hold onto the drop down menu
             var dropdownMenu;
             // and when you show it, move it to the body
-            $(window).on('show.bs.dropdown', function(e) {
+            $(window).on('show.bs.dropdown', function (e) {
                 // grab the menu
                 dropdownMenu = $(e.target).find('.dropdown-menu');
                 // detach it and append it to the body
-                $('body').append(dropdownMenu.detach());
-                // grab the new offset position
-                var eOffset = $(e.target).offset();
-                // make sure to place it where it would normally go (this could be improved)
-                dropdownMenu.css({
-                    'display': 'block',
-                    'top': eOffset.top + $(e.target).outerHeight(),
-                    'left': eOffset.left
-                });
+                if (dropdownMenu) {
+                    $('body').append(dropdownMenu.detach());
+                    // grab the new offset position
+                    var eOffset = $(e.target).offset();
+                    // make sure to place it where it would normally go (this could be improved)
+                    dropdownMenu.css({
+                        'display': 'block',
+                        'top': eOffset.top + $(e.target).outerHeight(),
+                        'left': eOffset.left
+                    });
+                }
             });
             // and when you hide it, reattach the drop down, and hide it normally
-            $(window).on('hide.bs.dropdown', function(e) {
-                $(e.target).append(dropdownMenu.detach());
-                dropdownMenu.hide();
+            $(window).on('hide.bs.dropdown', function (e) {
+                if (dropdownMenu) {
+                    $(e.target).append(dropdownMenu.detach());
+                    dropdownMenu.hide();
+                }
             });
         })();
     </script>

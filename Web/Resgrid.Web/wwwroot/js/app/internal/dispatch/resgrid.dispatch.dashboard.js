@@ -128,7 +128,7 @@ var resgrid;
                //     height = "330px";
                //     width = "100%";
                // }
-                //map = new google.maps.Map(document.getElementById('map'), mapOptions);
+               map = new google.maps.Map(document.getElementById('map'), mapOptions);
                 //initMap();
             });
             function refreshCalls() {

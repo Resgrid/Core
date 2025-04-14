@@ -1794,7 +1794,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!String.IsNullOrWhiteSpace(startDate) && !String.IsNullOrWhiteSpace(endDate))
 			{
-				var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, DateTime.Parse(System.Net.WebUtility.UrlDecode((startDate))), DateTime.Parse(System.Net.WebUtility.UrlDecode(endDate)));
+				// Temp fix, trying to locate where &#x202F; is coming from and why it's not properly urlencoded instead. -SJ
+				var startDateTime = DateTime.Parse(System.Net.WebUtility.UrlDecode(startDate.Replace("&#x202F;", " ")));
+				var endDateTime = DateTime.Parse(System.Net.WebUtility.UrlDecode(endDate.Replace("&#x202F;", " ")));
+
+				var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDateTime, endDateTime);
 
 				var groupedCallStates = calls.GroupBy(x => x.State);
 				foreach (var grouppedCall in groupedCallStates)

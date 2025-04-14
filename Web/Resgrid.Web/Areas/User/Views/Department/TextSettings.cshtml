@@ -28,8 +28,6 @@
 
 						<div class="row">
 							<div class="col-md-8 col-md-offset-1">
-								<p>Here you can configure how Resgrid will handle text messages to you department. Resgrid can import dispatches sent via Text Messages and personnel can control Resgrid via text messages as well. Fields in <span class="required">blue italics</span> are required.</p>
-								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.TextCallType)
 								<div asp-validation-summary="All" class="text-danger"></div>
 
@@ -41,7 +39,7 @@
 								}
 							</div>
 						</div>
-
+						@*
 						@if (!Model.CanProvisionNumber)
 						{
 							<div class="row">
@@ -58,7 +56,7 @@
 							</div>
 						}
 
-@*						<div class="form-group">
+						<div class="form-group">
 							<label class="col-sm-2 control-label">Enable Text to Call</label>
 							<div class="col-sm-10">
 								<div class="checkbox checkbox-primary">
@@ -77,7 +75,7 @@
 								</div>
 								<span class="help-block m-b-none">This enables the ability of personnel to control Resgrid via text messages</span>
 							</div>
-						</div>*@
+						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-10">
@@ -106,7 +104,7 @@
 									</div>
 								</div>
 							</div>
-						</div>
+						</div>*@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
 								Inbound Dispatch Numbers

@@ -74,32 +74,35 @@
                     }
 
                     @{
-                        for (var i = 0; i < Model.ContactCategories.Count(); i++)
+                        if (Model.ContactCategories != null && Model.ContactCategories.Any())
                         {
-                            var categoryContacts = Model.Contacts.Where(x => x.ContactCategoryId == Model.ContactCategories[i].ContactCategoryId).ToList();
-
-                            if (categoryContacts != null && categoryContacts.Any())
+                            for (var i = 0; i < Model.ContactCategories.Count; i++)
                             {
-                                @Html.Raw("<div id='contactsTab" + Model.Contacts[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
+                                var categoryContacts = Model.Contacts.Where(x => x.ContactCategoryId == Model.ContactCategories[i].ContactCategoryId).ToList();
 
-                                @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.Contacts[i].ContactCategoryId}'>")
-
-
-                                foreach (var c in categoryContacts)
+                                if (categoryContacts != null && categoryContacts.Any())
                                 {
-                                    ContactsTableButtonTemplate(c);
+                                    @Html.Raw("<div id='contactsTab" + Model.Contacts[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
 
-                                    @Html.Raw("</td>")
-                                    @Html.Raw("</tr>")
+                                    @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.Contacts[i].ContactCategoryId}'>")
+
+
+                                    foreach (var c in categoryContacts)
+                                    {
+                                        ContactsTableButtonTemplate(c);
+
+                                        @Html.Raw("</td>")
+                                        @Html.Raw("</tr>")
+                                    }
+
+                                    @Html.Raw("</tbody></table></div></div>")
                                 }
-
-                                @Html.Raw("</tbody></table></div></div>")
-                            }
-                            else
-                            {
-                                @Html.Raw("<div id='contactsTab" + Model.Contacts[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
-                                @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoContactsInThisCategory"]}</h3></div>")
-                                @Html.Raw("</div>")
+                                else
+                                {
+                                    @Html.Raw("<div id='contactsTab' class='contactsTabPannel' style='display: none;'>")
+                                    @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoContactsInThisCategory"]}</h3></div>")
+                                    @Html.Raw("</div>")
+                                }
                             }
                         }
                     }

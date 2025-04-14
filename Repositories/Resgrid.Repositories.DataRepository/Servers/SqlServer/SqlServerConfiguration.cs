@@ -1097,7 +1097,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT c.*
 					FROM %SCHEMA%.%CALLSTABLE% c
 					INNER JOIN %SCHEMA%.%CALLCONTACTSTABLE% cc ON cc.CallId = c.CallId
-					WHERE cc.ContactId = %CONTACTID% AND c.IsDeleted = false AND c.DepartmentId = %DID%";
+					WHERE cc.ContactId = %CONTACTID% AND c.IsDeleted = 0 AND c.DepartmentId = %DID%";
 
 			#endregion Calls
 

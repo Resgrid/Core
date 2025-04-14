@@ -257,7 +257,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteGroup(int departmentGroupId)
 		{
 			DeleteGroupView model = new DeleteGroupView();
-			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
+			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId, true);
 
 			if (model.Group == null || model.Group.DepartmentId != DepartmentId || !await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
 				Unauthorized();
@@ -297,7 +297,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.Group.DepartmentGroupId))
 				Unauthorized();
 
-			var group = await _departmentGroupsService.GetGroupByIdAsync(model.Group.DepartmentGroupId);
+			var group = await _departmentGroupsService.GetGroupByIdAsync(model.Group.DepartmentGroupId, true);
+
+			if (group == null)
+				return RedirectToAction("Index", "Groups", new { Area = "User" });
+
+			if (group.DepartmentId != DepartmentId)
+				Unauthorized();
 
 			var users = _departmentGroupsService.GetAllUsersForGroup(model.Group.DepartmentGroupId);
 			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(model.Group.DepartmentGroupId);
@@ -586,7 +592,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Geofence(int departmentGroupId)
 		{
 			var model = new GeofenceView();
-			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId);
+			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId, true);
+
+			if (model.Group == null)
+				Unauthorized();
 
 			if (model.Group.DepartmentId != DepartmentId)
 				Unauthorized();

@@ -28,7 +28,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 
 			Create.ForeignKey("FK_Conacts_Departments")
 				.FromTable("Contacts".ToLower()).ForeignColumn("DepartmentId".ToLower())
-				.ToTable("Departments".ToLower()).PrimaryColumn("DepartmentId");
+				.ToTable("Departments".ToLower()).PrimaryColumn("DepartmentId".ToLower());
 		}
 
 		public override void Down()

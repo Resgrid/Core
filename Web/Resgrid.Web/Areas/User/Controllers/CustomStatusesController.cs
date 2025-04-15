@@ -112,8 +112,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 						detail.NoteType = noteType;
 						detail.DetailType = detailType;
 						detail.TextColor = textColor;
-						detail.Order = int.Parse(order);
-						detail.BaseType = int.Parse(baseType);
+
+						if (!string.IsNullOrWhiteSpace(order))
+							detail.Order = int.Parse(order);
+						else
+							detail.Order = 0;
+
+						if (!string.IsNullOrWhiteSpace(baseType))
+							detail.BaseType = int.Parse(baseType);
+						else
+							detail.BaseType = 0;
 
 						model.State.Details.Add(detail);
 					}

@@ -23,15 +23,15 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Alter.Table("CallNotes".ToLower()).AddColumn("FlaggedOn".ToLower()).AsDateTime2().Nullable();
 			Alter.Table("CallNotes".ToLower()).AddColumn("DeletedOn".ToLower()).AsDateTime2().Nullable();
 
-			Alter.Table("CallDispatches".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
-			Alter.Table("CallDispatchGroups".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
-			Alter.Table("CallDispatchRoles".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
-			Alter.Table("CallDispatchUnits".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime); ;
+			Alter.Table("CallDispatches".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
+			Alter.Table("CallDispatchGroups".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
+			Alter.Table("CallDispatchRoles".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
+			Alter.Table("CallDispatchUnits".ToLower()).AddColumn("DispatchedOn".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
 		}
 
 		public override void Down()
 		{
-			
+
 		}
 	}
 }

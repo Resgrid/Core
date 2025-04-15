@@ -11,7 +11,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			// Adding in Invoice limits
 
 			// Enterprise Plus Plan Invoice Limits
-			Insert.IntoTable("PlanLimits").Row(new { PlanId = 1, LimitType = 5, LimitValue = 100000 });
+			Insert.IntoTable("PlanLimits".ToLower()).Row(new { PlanId = 1, LimitType = 5, LimitValue = 100000 });
 
 			// Finish Adding in Invoice limits
 
@@ -27,7 +27,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 				.ToTable("Plans".ToLower()).PrimaryColumn("PlanId".ToLower());
 
 			// Standard Plan PTT Addon
-			Insert.IntoTable("PlanAddons").Row(new { PlanAddonId = "456ed5d4-57e1-4882-b433-1d3cc239103d", PlanId = 1, AddonType = 1, Cost = 0, ExternalId = "" });
+			Insert.IntoTable("PlanAddons".ToLower()).Row(new { PlanAddonId = "456ed5d4-57e1-4882-b433-1d3cc239103d", PlanId = 1, AddonType = 1, Cost = 0, ExternalId = "" });
 
 			Create.Table("PaymentAddons".ToLower())
 			   .WithColumn("PaymentAddonId".ToLower()).AsCustom("citext").NotNullable().PrimaryKey()

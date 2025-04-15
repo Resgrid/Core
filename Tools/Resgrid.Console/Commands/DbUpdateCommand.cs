@@ -6,6 +6,7 @@ using Consolas2.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Providers.Migrations.Migrations;
 using FluentMigrator.Runner;
+using Resgrid.Model.Repositories;
 using Resgrid.Providers.MigrationsPg.Migrations;
 
 namespace Resgrid.Console.Commands
@@ -22,8 +23,6 @@ namespace Resgrid.Console.Commands
 		public string Execute(DbUpdateArgs args)
 		{
 			_console.WriteLine("Starting the Resgrid Database Update Process");
-			WriteConnectionString();
-
 			_console.WriteLine("Please Wait...");
 
 			try
@@ -97,7 +96,7 @@ namespace Resgrid.Console.Commands
 		{
 			// Instantiate the runner
 			var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
-			
+
 			// Execute the migrations
 			runner.MigrateUp();
 		}

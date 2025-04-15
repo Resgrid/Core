@@ -25,9 +25,6 @@ namespace Resgrid.Console.Commands
 
 			try
 			{
-				SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(OidcConfig.ConnectionString);
-				_console.WriteLine($"Using Database: {builder.InitialCatalog} on Server: {builder.DataSource}");
-
 				var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
 				bool result = oidcRepository.UpdateOidcDatabaseAsync().Result;
 

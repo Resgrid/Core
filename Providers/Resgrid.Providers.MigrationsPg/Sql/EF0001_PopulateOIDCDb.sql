@@ -1,21 +1,21 @@
 ﻿DO $$ BEGIN
-  IF EXISTS(SELECT migrationid FROM public.__efmigrationshistory WHERE migrationid = '20210904153137_CreateOpenIddictModels') THEN
-  
   --
   -- CREATE TABLE IF NOT EXISTS "public"."__efmigrationshistory"
   --
-  CREATE TABLE IF NOT EXISTS public.__efmigrationshistory(
-    migrationid character varying(150) NOT NULL,
-    productversion character varying(32) NOT NULL
-  );
-  
-
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = '__efmigrationshistory' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.__efmigrationshistory 
-    ADD PRIMARY KEY (migrationid);
-END IF;
-  
-  
+    CREATE TABLE IF NOT EXISTS public.__efmigrationshistory(
+                                                               migrationid character varying(150) NOT NULL,
+        productversion character varying(32) NOT NULL
+        );
+    
+    
+    IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = '__efmigrationshistory' and constraint_type = 'PRIMARY KEY') then
+    ALTER TABLE public.__efmigrationshistory
+        ADD PRIMARY KEY (migrationid);
+    END IF;
+      
+      
+  IF EXISTS(SELECT migrationid FROM public.__efmigrationshistory WHERE migrationid = '20210904153137_CreateOpenIddictModels') THEN
+    
   --
   -- CREATE TABLE IF NOT EXISTS "public"."openiddictscopes"
   --

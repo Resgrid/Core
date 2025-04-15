@@ -25,6 +25,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Localization;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using PostHog;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Resgrid.Web.Controllers
 {
@@ -47,14 +48,14 @@ namespace Resgrid.Web.Controllers
 		private readonly IEmailMarketingProvider _emailMarketingProvider;
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly ICacheProvider _cacheProvider;
-		private readonly IPostHogClient _posthog;
+		private readonly IServiceProvider _serviceProvider;
 
 
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
 						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider,
-						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider, IPostHogClient posthog)
+						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider, IServiceProvider serviceProvider)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -69,7 +70,7 @@ namespace Resgrid.Web.Controllers
 			_emailMarketingProvider = emailMarketingProvider;
 			_systemAuditsService = systemAuditsService;
 			_cacheProvider = cacheProvider;
-			_posthog = posthog;
+			_serviceProvider = serviceProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -142,19 +143,27 @@ namespace Resgrid.Web.Controllers
 										var name = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
 										var createdOn = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.OtherPhone)?.Value;
 
-										await _posthog.IdentifyAsync(
-												userId,
-												email,
-												name,
-												personPropertiesToSet: new()
-												{
-													["departmentId"] = departmentId,
-													["departmentName"] = departmentName,
-												},
-												personPropertiesToSetOnce: new()
-												{
-													["createdOn"] = createdOn
-												});
+										if (!string.IsNullOrWhiteSpace(Config.TelemetryConfig.PostHogApiKey))
+										{
+											var posthog = _serviceProvider.GetService<IPostHogClient>();
+
+											if (posthog != null)
+											{
+												await posthog.IdentifyAsync(
+													userId,
+													email,
+													name,
+													personPropertiesToSet: new()
+													{
+														["departmentId"] = departmentId,
+														["departmentName"] = departmentName,
+													},
+													personPropertiesToSetOnce: new()
+													{
+														["createdOn"] = createdOn
+													});
+											}
+										}
 									}
 								}
 							}

@@ -55,10 +55,12 @@ var resgrid;
                     return true;
                 });
 
-                let newCallForm = $('#fb-template').formRender({
-                    dataType: 'json',
-                    formData: newCallFormData
-                });
+                if (newCallFormData) {
+                    let newCallForm = $('#fb-template').formRender({
+                        dataType: 'json',
+                        formData: newCallFormData
+                    });
+                }
 
                 $("#saveNewCallFrom").click(function (evt) {
                     var data = JSON.stringify(newCallForm.userData);

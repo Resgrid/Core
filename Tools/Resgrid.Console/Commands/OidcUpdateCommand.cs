@@ -5,41 +5,50 @@ using Resgrid.Workers.Framework;
 using Resgrid.Model.Repositories;
 using Autofac;
 using System.Data.SqlClient;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Resgrid.Console.Models;
 
 namespace Resgrid.Console.Commands
 {
-	public class OidcUpdateCommand : Command
+	public sealed class OidcUpdateCommand(
+		IConfiguration configuration,
+		ILogger<OidcUpdateCommand> logger,
+		IOidcRepository oidcRepository) : ICommandService
 	{
-		private readonly IConsole _console;
-
-		public OidcUpdateCommand(IConsole console)
+		/// <summary>
+		///     Executes the main functionality of the application.
+		/// </summary>
+		/// <param name="args">An array of command-line arguments passed to the application.</param>
+		/// <param name="cancellationToken">A token that can be used to signal the operation should be canceled.</param>
+		/// <returns>Returns an <see cref="ExitCode" /> indicating the result of the execution.</returns>
+		public async Task<ExitCode> ExecuteMainAsync(string[] args, CancellationToken cancellationToken)
 		{
-			_console = console;
-		}
-
-		public string Execute(OidcUpdateArgs args)
-		{
-			_console.WriteLine("Starting the Resgrid OIDC DB Update Process");
-			_console.WriteLine("Please Wait...");
+			logger.LogInformation("Starting the Resgrid OIDC DB Update Process");
+			logger.LogInformation("Please Wait...");
 
 			try
 			{
-				var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
 				bool result = oidcRepository.UpdateOidcDatabaseAsync().Result;
 
 				if (result)
-					_console.WriteLine("Completed updating the Resgrid OIDC DB!");
+					logger.LogInformation("Completed updating the Resgrid OIDC DB!");
 				else
-					_console.WriteLine("Process did not complete with a success code. OIDC DB may have been properly updated, please check it and ensure everything is there.");
+					logger.LogError("Process did not complete with a success code. OIDC DB may have been properly updated, please check it and ensure everything is there.");
 			}
 			catch (Exception ex)
 			{
-				_console.WriteLine("There was an error trying to update the Resgrid OIDC DB, see the error output below:");
-				_console.WriteLine(ex.ToString());
+				logger.LogError("There was an error trying to update the Resgrid OIDC DB, see the error output below:");
+				logger.LogError(ex.ToString());
+				return ExitCode.Failed;
 			}
 
-			return "";
+			return ExitCode.Success;
 		}
 	}
 }

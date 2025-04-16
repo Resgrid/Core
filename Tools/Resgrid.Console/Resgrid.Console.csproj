@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Consolas2" Version="1.0.0" />
     <PackageReference Include="FluentMigrator" Version="7.0.0" />
     <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="7.0.0" />
@@ -28,6 +29,7 @@
     <PackageReference Include="FluentMigrator.Runner.Core" Version="7.0.0" />
     <PackageReference Include="FluentMigrator.Runner.Postgres" Version="7.0.0" />
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.3" />

@@ -1,24 +1,28 @@
-using Resgrid.Console.Args;
 using System;
 using System.IO;
 using System.Text;
-using Consolas2.Core;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Resgrid.Console.Models;
 
 namespace Resgrid.Console.Commands
 {
-	public class AddHostsCommand : Command
+	public sealed class AddHostsCommand(
+		IConfiguration configuration,
+		ILogger<AddHostsCommand> logger) : ICommandService
 	{
-		private readonly IConsole _console;
-
-		public AddHostsCommand(IConsole console)
+		/// <summary>
+		///     Executes the main functionality of the application.
+		/// </summary>
+		/// <param name="args">An array of command-line arguments passed to the application.</param>
+		/// <param name="cancellationToken">A token that can be used to signal the operation should be canceled.</param>
+		/// <returns>Returns an <see cref="ExitCode" /> indicating the result of the execution.</returns>
+		public async Task<ExitCode> ExecuteMainAsync(string[] args, CancellationToken cancellationToken)
 		{
-			_console = console;
-		}
-
-		public string Execute(AddHostsArgs args)
-		{
-			_console.WriteLine("Adding Resgrid local Urls to the hostfile");
-			_console.WriteLine("Please Wait...");
+			logger.LogInformation("Adding Resgrid local Urls to the hostfile");
+			logger.LogInformation("Please Wait...");
 
 			string webUrl = "127.0.0.1 resgrid.local";
 			string apiUrl = "127.0.0.1 resgridapi.local";
@@ -28,15 +32,16 @@ namespace Resgrid.Console.Commands
 				WriteRedirectToHostFile(webUrl);
 				WriteRedirectToHostFile(apiUrl);
 
-				_console.WriteLine("Successfully updated the Hostfile with the Resgrid Loopback urls!");
+				logger.LogInformation("Successfully updated the Hostfile with the Resgrid Loopback urls!");
 			}
 			catch (Exception ex)
 			{
-				_console.WriteLine("There was an error trying to update the hostfile, see the error output below:");
-				_console.WriteLine(ex.ToString());
+				logger.LogError("There was an error trying to update the hostfile, see the error output below:");
+				logger.LogError(ex.ToString());
+				return ExitCode.Failed;
 			}
 
-			return "";
+			return ExitCode.Success;
 		}
 
 		private void WriteRedirectToHostFile(string entry)

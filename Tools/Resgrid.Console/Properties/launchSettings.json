@@ -2,7 +2,7 @@
   "profiles": {
     "Resgrid.Console": {
       "commandName": "Project",
-      "commandLineArgs": "--DbUpdate"
+      "commandLineArgs": "--ResetPassword -- --UserId=88b16e75-a5ca-4489-8b38-eba1e4cdcba0 --Password=changeme1234"
     }
   }
 }

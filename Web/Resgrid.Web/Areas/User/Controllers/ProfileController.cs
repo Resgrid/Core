@@ -955,7 +955,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.UserId == department.ManagingUserId)
 				Unauthorized();
 
-			var userDepartment= await _departmentsService.GetDepartmentByUserIdAsync(model.UserId);
+			var userDepartment = await _departmentsService.GetDepartmentByUserIdAsync(model.UserId);
 
 			if (department.DepartmentId != userDepartment.DepartmentId)
 				Unauthorized();
@@ -964,7 +964,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Name = await UserHelper.GetFullNameForUser(model.UserId);
 			model.Email = user.Email;
 
-			var profile= await _userProfileService.GetProfileByUserIdAsync(model.UserId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(model.UserId);
 
 			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 			var result = await _userManager.ResetPasswordAsync(user, token, model.Password);

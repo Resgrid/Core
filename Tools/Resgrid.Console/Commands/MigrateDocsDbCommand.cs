@@ -1,5 +1,6 @@
 using Resgrid.Console.Args;
 using System;
+using System.IO;
 using Consolas2.Core;
 using Resgrid.Workers.Framework;
 using Autofac;
@@ -7,35 +8,40 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model;
 using Stripe.Identity;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Resgrid.Console.Models;
+using File = Resgrid.Model.File;
 
 namespace Resgrid.Console.Commands
 {
-	public class MigrateDocsDbCommand : Command
-    {
-	    private readonly IConsole _console;
-
-	    public MigrateDocsDbCommand(IConsole console)
-	    {
-		    _console = console;
-	    }
-
-		public string Execute(MigrateDocsDbArgs args)
-        {
-			_console.WriteLine("Migrating Documents from Mongo to Postgres");
-			_console.WriteLine("Please Wait...");
+	public sealed class MigrateDocsDbCommand(
+		IConfiguration configuration,
+		ILogger<MigrateDocsDbCommand> logger,
+		IMongoRepository<MapLayer> mapLayersRepository,
+		IMongoRepository<UnitsLocation> unitsLocationRepository,
+		IMongoRepository<PersonnelLocation> personnelLocationRepository,
+		IMapLayersDocRepository mapLayersDocRepository,
+		IUnitLocationsDocRepository unitsLocationsDocRepository,
+		IPersonnelLocationsDocRepository personnelLocationsDocRepository) : ICommandService
+	{
+		/// <summary>
+		///     Executes the main functionality of the application.
+		/// </summary>
+		/// <param name="args">An array of command-line arguments passed to the application.</param>
+		/// <param name="cancellationToken">A token that can be used to signal the operation should be canceled.</param>
+		/// <returns>Returns an <see cref="ExitCode" /> indicating the result of the execution.</returns>
+		public async Task<ExitCode> ExecuteMainAsync(string[] args, CancellationToken cancellationToken)
+		{
+			logger.LogInformation("Migrating Documents from Mongo to Postgres");
+			logger.LogInformation("Please Wait...");
 
 			try
 			{
-				var mapLayersRepository = Bootstrapper.GetKernel().Resolve<IMongoRepository<MapLayer>>();
-				var unitsLocationRepository = Bootstrapper.GetKernel().Resolve<IMongoRepository<UnitsLocation>>();
-				var personnelLocationRepository = Bootstrapper.GetKernel().Resolve<IMongoRepository<PersonnelLocation>>();
-
-				var mapLayersDocRepository = Bootstrapper.GetKernel().Resolve<IMapLayersDocRepository>();
-				var unitsLocationsDocRepository = Bootstrapper.GetKernel().Resolve<IUnitLocationsDocRepository>();
-				var personnelLocationsDocRepository = Bootstrapper.GetKernel().Resolve<IPersonnelLocationsDocRepository>();
-
-				_console.WriteLine("Migrating Map Layers...");
+				logger.LogInformation("Migrating Map Layers...");
 
 				var layers = mapLayersRepository.AsQueryable().ToList();
 
@@ -47,10 +53,10 @@ namespace Resgrid.Console.Commands
 
 						if (existingLayer == null)
 						{
-							_console.WriteLine($"Migrating Map: {layer.Id.ToString()}");
+							logger.LogInformation($"Migrating Map: {layer.Id.ToString()}");
 							mapLayersDocRepository.InsertAsync(layer).
-								ContinueWith(t => _console.WriteLine(t.Exception),
-								TaskContinuationOptions.OnlyOnFaulted);
+								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
+									TaskContinuationOptions.OnlyOnFaulted);
 						}
 					});
 				}
@@ -65,10 +71,10 @@ namespace Resgrid.Console.Commands
 
 						if (existingLocation == null)
 						{
-							_console.WriteLine($"Migrating Unit Location: {unitLocation.Id.ToString()}");
+							logger.LogInformation($"Migrating Unit Location: {unitLocation.Id.ToString()}");
 							unitsLocationsDocRepository.InsertAsync(unitLocation).
-								ContinueWith(t => _console.WriteLine(t.Exception),
-								TaskContinuationOptions.OnlyOnFaulted);
+								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
+									TaskContinuationOptions.OnlyOnFaulted);
 						}
 					});
 				}
@@ -83,23 +89,24 @@ namespace Resgrid.Console.Commands
 
 						if (existingLocation == null)
 						{
-							_console.WriteLine($"Migrating Personnel Location: {personLocation.Id.ToString()}");
+							logger.LogInformation($"Migrating Personnel Location: {personLocation.Id.ToString()}");
 							personnelLocationsDocRepository.InsertAsync(personLocation).
-								ContinueWith(t => _console.WriteLine(t.Exception),
-								TaskContinuationOptions.OnlyOnFaulted);
+								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
+									TaskContinuationOptions.OnlyOnFaulted);
 						}
 					});
 				}
 
-				_console.WriteLine("Finished Migrating Documents.");
+				logger.LogInformation("Finished Migrating Documents.");
 			}
 			catch (Exception ex)
 			{
-				_console.WriteLine(ex.ToString());
+				logger.LogError("Failed to migrate the document database, see the error output below:");
+				logger.LogError(ex.ToString());
+				return ExitCode.Failed;
 			}
 
-
-			return "";
+			return ExitCode.Success;
 		}
-    }
+	}
 }

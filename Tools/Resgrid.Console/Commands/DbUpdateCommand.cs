@@ -1,117 +1,53 @@
 using Resgrid.Console.Args;
 using System;
-using System.Configuration;
 using System.Data.SqlClient;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Consolas2.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Providers.Migrations.Migrations;
 using FluentMigrator.Runner;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Resgrid.Console.Models;
 using Resgrid.Model.Repositories;
 using Resgrid.Providers.MigrationsPg.Migrations;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace Resgrid.Console.Commands
 {
-	public class DbUpdateCommand : Command
+	public sealed class DbUpdateCommand(
+		IConfiguration configuration,
+		ILogger<DbUpdateCommand> logger,
+		IMigrationRunner migrationRunner) : ICommandService
 	{
-		private readonly IConsole _console;
-
-		public DbUpdateCommand(IConsole console)
+		/// <summary>
+		///     Executes the main functionality of the application.
+		/// </summary>
+		/// <param name="args">An array of command-line arguments passed to the application.</param>
+		/// <param name="cancellationToken">A token that can be used to signal the operation should be canceled.</param>
+		/// <returns>Returns an <see cref="ExitCode" /> indicating the result of the execution.</returns>
+		public async Task<ExitCode> ExecuteMainAsync(string[] args, CancellationToken cancellationToken)
 		{
-			_console = console;
-		}
-
-		public string Execute(DbUpdateArgs args)
-		{
-			_console.WriteLine("Starting the Resgrid Database Update Process");
-			_console.WriteLine("Please Wait...");
+			logger.LogInformation("Starting the Resgrid Database Update Process");
+			logger.LogInformation("Please Wait...");
 
 			try
 			{
-				var serviceProvider = CreateServices();
+				migrationRunner.MigrateUp();
 
-				// Put the database update into a scope to ensure
-				// that all resources will be disposed.
-				using (var scope = serviceProvider.CreateScope())
-				{
-					UpdateDatabase(scope.ServiceProvider);
-				}
-
-				_console.WriteLine("Completed updating the Resgrid Database!");
+				logger.LogInformation("Completed updating the Resgrid Database!");
 			}
 			catch (Exception ex)
 			{
-				_console.WriteLine("There was an error trying to update the Resgrid Database, see the error output below:");
-				_console.WriteLine(ex.ToString());
+				logger.LogError("There was an error trying to update the Resgrid Database, see the error output below:");
+				logger.LogError(ex.ToString());
+				return ExitCode.Failed;
 			}
 
-
-			return "";
-		}
-
-		/// <summary>
-		/// Configure the dependency injection services
-		/// </summary>
-		private static IServiceProvider CreateServices()
-		{
-			if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
-			{
-				return new ServiceCollection()
-					// Add common FluentMigrator services
-					.AddFluentMigratorCore()
-					.ConfigureRunner(rb => rb
-						// Add SQL Server support to FluentMigrator
-						.AddPostgres11_0()
-						// Set the connection string
-						.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
-						// Define the assembly containing the migrations
-						.ScanIn(typeof(M0001_InitialMigrationPg).Assembly).For.Migrations().For.EmbeddedResources())
-					// Enable logging to console in the FluentMigrator way
-					.AddLogging(lb => lb.AddFluentMigratorConsole())
-					// Build the service provider
-					.BuildServiceProvider(false);
-			}
-			else
-			{
-				return new ServiceCollection()
-					// Add common FluentMigrator services
-					.AddFluentMigratorCore()
-					.ConfigureRunner(rb => rb
-						// Add SQL Server support to FluentMigrator
-						.AddSqlServer()
-						// Set the connection string
-						.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
-						// Define the assembly containing the migrations
-						.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
-					// Enable logging to console in the FluentMigrator way
-					.AddLogging(lb => lb.AddFluentMigratorConsole())
-					// Build the service provider
-					.BuildServiceProvider(false);
-			}
-		}
-
-		/// <summary>
-		/// Update the database
-		/// </summary>
-		private static void UpdateDatabase(IServiceProvider serviceProvider)
-		{
-			// Instantiate the runner
-			var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
-
-			// Execute the migrations
-			runner.MigrateUp();
-		}
-
-		private void WriteConnectionString()
-		{
-			var connection = ConfigurationManager.ConnectionStrings["ResgridContext"].ConnectionString;
-
-			if (!String.IsNullOrWhiteSpace(connection))
-			{
-
-				var csb = new SqlConnectionStringBuilder(connection);
-				_console.WriteLine($"SQL Server: {csb.DataSource}");
-				_console.WriteLine($"Database Name: {csb.InitialCatalog}");
-			}
+			return ExitCode.Success;
 		}
 	}
 }

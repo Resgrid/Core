@@ -1,31 +1,23 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Resgrid.Model.Services;
+using Microsoft.AspNetCore.Identity;
+using Resgrid.Model.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Resgrid.Console.Models;
 
 namespace Resgrid.Console.Commands
 {
-	public sealed class ClearCacheCommand(
+	public sealed class ResetPasswordCommand(
 		IConfiguration configuration,
-		ILogger<ClearCacheCommand> logger,
-		ICallsService callsService,
-		IUserProfileService userProfileService,
-		ICommunicationService communicationService,
-		IMessageService messageService,
-		IDepartmentSettingsService departmentSettingsService,
-		IQueueService queueService,
-		IPushService pushService,
-		ISubscriptionsService subscriptionsService,
-		IScheduledTasksService scheduledTasksService,
-		IDepartmentsService departmentsService,
-		IActionLogsService actionLogsService,
-		ICustomStateService customStateService,
-		IUsersService usersService) : ICommandService
+		ILogger<ResetPasswordCommand> logger,
+		UserManager<IdentityUser> userManager) : ICommandService
 	{
-		private int DepartmentId => int.Parse(GetConfigurationValue("DepartmentId"));
+		private string UserId => GetConfigurationValue("UserId");
+
+		private string Password => GetConfigurationValue("Password");
 
 		/// <summary>
 		///     Executes the main functionality of the application.
@@ -35,29 +27,34 @@ namespace Resgrid.Console.Commands
 		/// <returns>Returns an <see cref="ExitCode" /> indicating the result of the execution.</returns>
 		public async Task<ExitCode> ExecuteMainAsync(string[] args, CancellationToken cancellationToken)
 		{
-			logger.LogInformation("Clearing Cache for Department Id " + DepartmentId);
-			logger.LogInformation("Please Wait...");
-
 			try
 			{
-				subscriptionsService.ClearCacheForCurrentPayment(DepartmentId);
-				departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
-				departmentsService.InvalidateDepartmentInCache(DepartmentId);
-				departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);
-				userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
-				usersService.ClearCacheForDepartment(DepartmentId);
-				actionLogsService.InvalidateActionLogs(DepartmentId);
-				customStateService.InvalidateCustomStateInCache(DepartmentId);
-				departmentsService.InvalidateDepartmentMembers();
+				var user = await userManager.FindByIdAsync(UserId);
 
-				logger.LogInformation("Completed Clearing Cache");
+				if (user == null)
+				{
+					logger.LogInformation("Could not find the user with the Id of " + UserId);
+					return ExitCode.Failed;
+				}
+
+				var token = await userManager.GeneratePasswordResetTokenAsync(user);
+				var result = await userManager.ResetPasswordAsync(user, token, Password);
+
+				if (result.Succeeded)
+					logger.LogInformation("Successfully Reset the Password");
+				else
+				{
+					logger.LogError("Failed to reset the Password: " + result.Errors.FirstOrDefault()?.Description);
+					return ExitCode.Failed;
+				}
 			}
 			catch (Exception ex)
 			{
-				logger.LogError("Failed to clear Cache");
+				logger.LogError("There was an error trying to reset the password, see the error output below:");
 				logger.LogError(ex.ToString());
 				return ExitCode.Failed;
 			}
+
 
 			return ExitCode.Success;
 		}

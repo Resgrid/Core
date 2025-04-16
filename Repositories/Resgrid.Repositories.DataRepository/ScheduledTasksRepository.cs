@@ -54,12 +54,12 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					var knownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
+					var knownDepartments = await db.QueryAsync<ScheduledTask>(@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
 																					FROM scheduledtasks st
 																					INNER JOIN departments d ON d.departmentid = st.departmentid
 																					WHERE st.departmentid > 0 AND st.active = 1 AND st.tasktype IN @types", new { types = types });
 
-					var unknownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
+					var unknownDepartments = await db.QueryAsync<ScheduledTask>(@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
 																					FROM scheduledtasks st
 																					INNER JOIN departmentmembers dm ON dm.userid = st.userid
 																					INNER JOIN departments d ON d.departmentid = dm.departmentid
@@ -72,12 +72,12 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					var knownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
+					var knownDepartments = await db.QueryAsync<ScheduledTask>(@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
 																					FROM ScheduledTasks st
 																					INNER JOIN Departments d ON d.DepartmentId = st.DepartmentId
 																					WHERE st.DepartmentId > 0 AND st.Active = 1 AND st.TaskType IN @types", new { types = types });
 
-					var unknownDepartments = await db.QueryAsync<ScheduledTask>($@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
+					var unknownDepartments = await db.QueryAsync<ScheduledTask>(@"SELECT st.*, d.DepartmentId as 'DepartmentId', d.TimeZone as 'DepartmentTimeZone'
 																					FROM ScheduledTasks st
 																					INNER JOIN DepartmentMembers dm ON dm.UserId = st.UserId
 																					INNER JOIN Departments d ON d.DepartmentId = dm.DepartmentId

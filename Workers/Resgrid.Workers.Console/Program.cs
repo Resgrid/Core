@@ -441,6 +441,7 @@ namespace Resgrid.Workers.Console
 			if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
 			{
 				return new ServiceCollection()
+					.AddOptions()
 					// Add common FluentMigrator services
 					.AddFluentMigratorCore()
 					.ConfigureRunner(rb => rb
@@ -458,6 +459,7 @@ namespace Resgrid.Workers.Console
 			else
 			{
 				return new ServiceCollection()
+					.AddOptions()
 					// Add common FluentMigrator services
 					.AddFluentMigratorCore()
 					.ConfigureRunner(rb => rb

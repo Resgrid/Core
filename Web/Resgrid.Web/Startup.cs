@@ -389,14 +389,14 @@ namespace Resgrid.Web
 #endif
 
 			//#if (!DEBUG)
-			var redis = ConnectionMultiplexer.Connect(CacheConfig.RedisConnectionString);
-			services.AddDataProtection().SetApplicationName($"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-web").PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
-
 			services.AddStackExchangeRedisCache(option =>
 			{
 				option.Configuration = CacheConfig.RedisConnectionString;//Environment.GetEnvironmentVariable("Redis-Session");
 				option.InstanceName = "RedisInstance";
 			});
+
+			var redis = ConnectionMultiplexer.Connect(CacheConfig.RedisConnectionString);
+			services.AddDataProtection().SetApplicationName($"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-web").PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
 			services.AddSession(options =>
 			{

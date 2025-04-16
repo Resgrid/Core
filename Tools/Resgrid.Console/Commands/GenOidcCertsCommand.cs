@@ -3,26 +3,34 @@ using System;
 using Consolas2.Core;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentMigrator.Runner;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Resgrid.Console.Models;
 
 namespace Resgrid.Console.Commands
 {
-	public class GenOidcCertsCommand : Command
+	public sealed class GenOidcCertsCommand(
+		IConfiguration configuration,
+		ILogger<GenOidcCertsCommand> logger,
+		IMigrationRunner migrationRunner) : ICommandService
 	{
-		private readonly IConsole _console;
-
-		public GenOidcCertsCommand(IConsole console)
+		/// <summary>
+		///     Executes the main functionality of the application.
+		/// </summary>
+		/// <param name="args">An array of command-line arguments passed to the application.</param>
+		/// <param name="cancellationToken">A token that can be used to signal the operation should be canceled.</param>
+		/// <returns>Returns an <see cref="ExitCode" /> indicating the result of the execution.</returns>
+		public async Task<ExitCode> ExecuteMainAsync(string[] args, CancellationToken cancellationToken)
 		{
-			_console = console;
-		}
-
-		public string Execute(GenOidcCertsArgs args)
-		{
-			_console.WriteLine("Starting the Resgrid OIDC Certification Generation Process");
-			_console.WriteLine("Please Wait...");
+			logger.LogInformation("Starting the Resgrid OIDC Certification Generation Process");
+			logger.LogInformation("Please Wait...");
 
 			try
 			{
-				using var algorithm = RSA.Create(keySizeInBits: 2048);
+				var algorithm = RSA.Create(keySizeInBits: 2048);
 
 				var subject = new X500DistinguishedName("CN=Resgrid Encryption Certificate");
 				var request = new CertificateRequest(subject, algorithm,
@@ -36,15 +44,15 @@ namespace Resgrid.Console.Commands
 
 				var encryptionCertificate = certificate.Export(X509ContentType.Pfx, string.Empty);
 
-				_console.WriteLine("==========================================================");
-				_console.WriteLine("=                 BEGIN ENCRYPTION CERT                  =");
-				_console.WriteLine("==========================================================");
+				logger.LogInformation("==========================================================");
+				logger.LogInformation("=                 BEGIN ENCRYPTION CERT                  =");
+				logger.LogInformation("==========================================================");
 				//_console.WriteLine("-----BEGIN CERTIFICATE-----");
-				_console.WriteLine(Convert.ToBase64String(encryptionCertificate));
+				logger.LogInformation(Convert.ToBase64String(encryptionCertificate));
 				//_console.WriteLine("-----END CERTIFICATE-----");
-				_console.WriteLine("==========================================================");
-				_console.WriteLine("=                  END ENCRYPTION CERT                   =");
-				_console.WriteLine("==========================================================");
+				logger.LogInformation("==========================================================");
+				logger.LogInformation("=                  END ENCRYPTION CERT                   =");
+				logger.LogInformation("==========================================================");
 
 				using var algorithm2 = RSA.Create(keySizeInBits: 2048);
 
@@ -60,23 +68,26 @@ namespace Resgrid.Console.Commands
 
 				var signingCertificate = certificate2.Export(X509ContentType.Pfx, string.Empty);
 
-				_console.WriteLine("==========================================================");
-				_console.WriteLine("=                  BEGIN SIGNING CERT                    =");
-				_console.WriteLine("==========================================================");
+				logger.LogInformation("==========================================================");
+				logger.LogInformation("=                  BEGIN SIGNING CERT                    =");
+				logger.LogInformation("==========================================================");
 				//_console.WriteLine("-----BEGIN CERTIFICATE-----");
-				_console.WriteLine(Convert.ToBase64String(signingCertificate));
+				logger.LogInformation(Convert.ToBase64String(signingCertificate));
 				//_console.WriteLine("-----END CERTIFICATE-----");
-				_console.WriteLine("==========================================================");
-				_console.WriteLine("=                   END SIGNING CERT                     =");
-				_console.WriteLine("==========================================================");
+				logger.LogInformation("==========================================================");
+				logger.LogInformation("=                   END SIGNING CERT                     =");
+				logger.LogInformation("==========================================================");
+
+				logger.LogInformation("Completed updating the Resgrid Database!");
 			}
 			catch (Exception ex)
 			{
-				_console.WriteLine("There was an error trying to Generation the OIDC Certificates, see the error output below:");
-				_console.WriteLine(ex.ToString());
+				logger.LogError("There was an error trying to Generation the OIDC Certificates, see the error output below:");
+				logger.LogError(ex.ToString());
+				return ExitCode.Failed;
 			}
 
-			return "";
+			return ExitCode.Success;
 		}
 	}
 }

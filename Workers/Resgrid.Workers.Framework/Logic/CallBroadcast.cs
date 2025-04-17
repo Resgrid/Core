@@ -64,6 +64,12 @@ namespace Resgrid.Workers.Framework.Logic
 
 				var dispatchedUsers = new HashSet<string>();
 
+				if (_departmentsService == null)
+					_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+
+				var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
+				cqi.Call.Department = department;
+
 				// Dispatch Personnel
 				if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
 				{
@@ -89,12 +95,6 @@ namespace Resgrid.Workers.Framework.Logic
 
 				if (_departmentGroupsService == null)
 					_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
-
-				if (_departmentsService == null)
-					_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-
-				var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
-				cqi.Call.Department = department;
 
 				// Dispatch Groups
 				if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())

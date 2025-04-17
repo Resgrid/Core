@@ -2,52 +2,98 @@
 @model Resgrid.Web.Areas.User.Models.MessagesInboxModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> localizer
 @{
-  ViewBag.Title = "Resgrid | " + @localizer["MessageInboxHeader"];
-  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    ViewBag.Title = "Resgrid | " + @localizer["MessageInboxHeader"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
 <div class="wrapper wrapper-content">
-  <div class="row">
-	<div class="col-lg-3">
-	  <div class="ibox float-e-margins">
-		<div class="ibox-content mailbox-content">
-		  <div class="file-manager">
-			<a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">@localizer["ComposeMessageHeader"]</a>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content mailbox-content">
+                    <div class="file-manager">
+                        <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">@localizer["ComposeMessageHeader"]</a>
 
-			<div class="space-25"></div>
-			<h5>Folders</h5>
-			<ul class="folder-list m-b-md" style="padding: 0">
-			  <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> @localizer["Inbox"] <span class="label label-warning pull-right">@Model.UnreadMessages</span> </a></li>
-			  <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> @localizer["SentMessagesHeader"]</a></li>
-			</ul>
-			<div class="clearfix"></div>
-		  </div>
-		</div>
-	  </div>
-	</div>
-	<div id="inboxPageList" class="col-lg-9 animated fadeInRight">
-	  <div class="mail-box-header">
-		  <div class="pull-right tooltip-demo">
-			  <a title="Mark selected messages as read" class="btn btn-info btn-sm" onclick="resgrid.message.inbox.markMessagesAsRead()">@localizer["MarkSelectedAsRead"]</a>
-			  <a title="Delete selected messages" class="btn btn-danger btn-sm" onclick="resgrid.message.inbox.deleteMessages()">@localizer["DeleteSelected"]</a>
-		  </div>
-		<h2>
-		  @localizer["Inbox"] (@Model.UnreadMessages)
-		</h2>
-	  </div>
-	  <div class="mail-box">
-		<div id="inboxMailList"></div>
-	  </div>
-	</div>
-  </div>
+                        <div class="space-25"></div>
+                        <h5>Folders</h5>
+                        <ul class="folder-list m-b-md" style="padding: 0">
+                            <li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User"> <i class="fa fa-inbox "></i> @localizer["Inbox"] <span class="label label-warning pull-right">@Model.UnreadMessages</span> </a></li>
+                            <li><a asp-controller="Messages" asp-action="Outbox" asp-route-area="User"> <i class="fa fa-envelope-o"></i> @localizer["SentMessagesHeader"]</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="inboxPageList" class="col-lg-9 animated fadeInRight">
+            <div class="mail-box-header">
+                <div class="pull-right tooltip-demo">
+                    <a title="Mark selected messages as read" class="btn btn-info btn-sm" onclick="resgrid.message.inbox.markMessagesAsRead()">@localizer["MarkSelectedAsRead"]</a>
+                    <a title="Delete selected messages" class="btn btn-danger btn-sm" onclick="resgrid.message.inbox.deleteMessages()">@localizer["DeleteSelected"]</a>
+                </div>
+                <h2>
+                    @localizer["Inbox"] (@Model.UnreadMessages)
+                </h2>
+            </div>
+            <div class="mail-box">
+                @{
+                    if (Model.Messages != null && Model.Messages.Any())
+                    {
+                        @Html.Raw("<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'>")
+                        @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='-1'/></th><th>{@localizer["Subject"]}</th><th>{@localizer["SentBy"]}</th><th>{@localizer["SentOn"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                        @Html.Raw("<tbody>")
+
+                        foreach (var message in Model.Messages)
+                        {
+
+
+                            @Html.Raw($"<tr><td><input type='checkbox' id='message' name='message' value='{message.MessageId}'/></td>")
+
+                            if (message.HasUserRead(Model.User.Id))
+                            {
+                                @Html.Raw($"<td>{message.Subject}</td>")
+                            }
+                            else
+                            {
+                                @Html.Raw($"<td><strong>{message.Subject}</strong></td>")
+                            }
+
+
+                            if (message.SystemGenerated)
+                            {
+                                @Html.Raw($"<td>System</td>")
+                            }
+                            else
+                            {
+                                @Html.Raw($"<td>{(await UserHelper.GetFullNameForUser(message.SendingUserId))}</td>")
+                            }
+
+                            @Html.Raw($"<td>{message.SentOn.TimeConverterToString(Model.Department)}</td>")
+                            @Html.Raw($"<td><a href='{@Url.Action("ViewMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-primary btn-xs' title='View Message'>{@commonLocalizer["View"]}</a>&nbsp;<a href='{@Url.Action("DeleteMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-danger btn-xs' title='Delete Message' data-confirm='{@localizer["DeleteMessageWarning"]} {message.Subject}?' rel='nofollow'>{@commonLocalizer["Delete"]}</a></td>")
+
+                            @Html.Raw("</tr>")
+                        }
+
+                        @Html.Raw("</tbody></table></div></div>")
+                    }
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-  {
-  <script id="inboxCommand-template" type="text/x-kendo-template">
-	<a href="@Url.Action("ViewMessage", "Messages", new { area = "User"})?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> @commonLocalizer["View"]</a>
-	<a href="@Url.Action("DeleteMessage", "Messages", new {area = "User"})?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="@localizer["DeleteMessageWarning"] #=Subject#?" rel="nofollow">@commonLocalizer["Delete"]</a>
-  </script>
+{
+    <script>
+        (function () {
+            $('.table').DataTable();
+        })();
+    </script>
 
-  <script src="~/js/app/internal/messages/resgrid.messages.inbox.js" type="text/javascript"></script>
+    <script id="inboxCommand-template" type="text/x-kendo-template">
+        <a href="@Url.Action("ViewMessage", "Messages", new { area = "User" })?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> @commonLocalizer["View"]</a>
+        <a href="@Url.Action("DeleteMessage", "Messages", new { area = "User" })?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="@localizer["DeleteMessageWarning"] #=Subject#?" rel="nofollow">@commonLocalizer["Delete"]</a>
+    </script>
+
+    <script src="~/js/app/internal/messages/resgrid.messages.inbox.js" type="text/javascript"></script>
 }

@@ -57,13 +57,13 @@ namespace Resgrid.Repositories.DataRepository
 					var knownDepartments = await db.QueryAsync<ScheduledTask>(@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
 																					FROM scheduledtasks st
 																					INNER JOIN departments d ON d.departmentid = st.departmentid
-																					WHERE st.departmentid > 0 AND st.active = 1 AND st.tasktype IN @types", new { types = types });
+																					WHERE st.departmentid > 0 AND st.active = 1 AND st.tasktype = any (@types)", new { types = types });
 
 					var unknownDepartments = await db.QueryAsync<ScheduledTask>(@"SELECT st.*, d.departmentid as departmentid, d.timezone as departmenttimezone
 																					FROM scheduledtasks st
 																					INNER JOIN departmentmembers dm ON dm.userid = st.userid
 																					INNER JOIN departments d ON d.departmentid = dm.departmentid
-																					WHERE st.departmentid = 0 AND st.active = 1 AND st.tasktype IN @types", new { types = types });
+																					WHERE st.departmentid = 0 AND st.active = 1 AND st.tasktype = any (@types)", new { types = types });
 
 					return knownDepartments.Concat(unknownDepartments);
 				}

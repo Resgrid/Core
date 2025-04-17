@@ -141,7 +141,7 @@
                         <div class="form-group">
                             <label for="baseType" class="control-label">@localizer["BaseType"]:</label>
                             <select id="baseType" name="baseType">
-                                <option value="-1">@localizer["None"]</option>
+                                <option value="-1" selected="">@localizer["None"]</option>
                                 <option value="0">@localizer["Available"]</option>
                                 <option value="1">@localizer["NotResponding"]</option>
                                 <option value="2">@localizer["Responding"]</option>
@@ -171,6 +171,10 @@
                                 <option value="1">@localizer["Stations"]</option>
                                 <option value="2">@localizer["Calls"]</option>
                                 <option value="3">@localizer["CallsAndStations"]</option>
+                            </select>
+
+                            <select id="baseType" name="baseType" hidden>
+                                <option value="-1" selected="">@localizer["None"]</option>
                             </select>
                         </div>
                     }

@@ -148,7 +148,6 @@
       "destination": "wwwroot/lib/bootstrapvalidator/"
     },
     {
-      "provider": "jsdelivr",
       "library": "bootstrap-wizard@1.4.2",
       "destination": "wwwroot/lib/twitter-bootstrap-wizard/"
     },
@@ -275,14 +274,16 @@
       "destination": "wwwroot/lib/jquery-ui-multidatespicker/"
     },
     {
-      "provider": "jsdelivr",
       "library": "jquery-datetimepicker@2.5.21",
       "destination": "wwwroot/lib/jquery-datetimepicker/"
     },
     {
-      "provider": "jsdelivr",
       "library": "fullcalendar@3.10.0",
       "destination": "wwwroot/lib/fullcalendar/"
+    },
+    {
+      "library": "printthis@0.1.5",
+      "destination": "wwwroot/lib/printthis/"
     }
   ]
 }

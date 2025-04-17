@@ -195,11 +195,20 @@
   <data name="SendToPersonnelSelectedRoleGroupLabel" xml:space="preserve">
     <value>Enviar al personal solo en roles seleccionados/grupos</value>
   </data>
+  <data name="SentBy" xml:space="preserve">
+    <value />
+  </data>
   <data name="SentMessages" xml:space="preserve">
     <value>Mensajes enviados</value>
   </data>
   <data name="SentMessagesHeader" xml:space="preserve">
     <value>Mensajes enviados</value>
+  </data>
+  <data name="SentOn" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value />
   </data>
   <data name="SubjectLabel" xml:space="preserve">
     <value>Sujeto</value>

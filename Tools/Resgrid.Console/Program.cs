@@ -63,7 +63,20 @@ namespace Resgrid.Console
 					});
 
 					Configuration = config.Build();
+
+					string configPath = Configuration["AppOptions:ConfigPath"];
+
+					if (string.IsNullOrWhiteSpace(configPath))
+						configPath = "C:\\Resgrid\\Config\\ResgridConfig.json";
+
+					bool configResult = ConfigProcessor.LoadAndProcessConfig(configPath);
+					if (configResult)
+					{
+						System.Console.WriteLine($"Loaded Config: {configPath}");
+					}
+
 					ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
+
 				})
 				.ConfigureServices((hostContext, services) =>
 				{

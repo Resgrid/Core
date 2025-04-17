@@ -2213,6 +2213,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				newList.AddRange(new SelectList(model.Contacts, "ContactId", "Name"));
 
 				model.ContactsList = new SelectList(newList, "Value", "Text", null);
+				model.AdditionalContacts = new List<string>();
 
 				if (model.Call.Contacts != null && model.Call.Contacts.Any())
 				{

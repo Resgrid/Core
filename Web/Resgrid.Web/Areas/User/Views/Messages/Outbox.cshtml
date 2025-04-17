@@ -35,17 +35,42 @@
                 </h2>
             </div>
             <div class="mail-box">
-                <div id="outboxMailList"></div>
+                @{
+                    if (Model.Messages != null && Model.Messages.Any())
+                    {
+                        @Html.Raw("<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'>")
+                        @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='-1'/></th><th>{@localizer["Subject"]}</th><th>{@localizer["SentOn"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                        @Html.Raw("<tbody>")
+
+                        foreach (var message in Model.Messages)
+                        {
+                            @Html.Raw($"<tr><td><input type='checkbox' id='message' name='message' value='{message.MessageId}'/></td>")
+                            @Html.Raw($"<td>{message.Subject}</td>")
+                            @Html.Raw($"<td>{message.SentOn.TimeConverterToString(Model.Department)}</td>")
+                            @Html.Raw($"<td><a href='{@Url.Action("ViewMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-primary btn-xs' title='View Message'>{@commonLocalizer["View"]}</a>&nbsp;<a href='{@Url.Action("DeleteMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-danger btn-xs' title='Delete Message' data-confirm='{@localizer["DeleteMessageWarning"]} {message.Subject}?' rel='nofollow'>{@commonLocalizer["Delete"]}</a></td>")
+
+                            @Html.Raw("</tr>")
+                        }
+
+                        @Html.Raw("</tbody></table></div></div>")
+                    }
+                }
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts
-    {
+{
+    <script>
+        (function () {
+            $('.table').DataTable();
+        })();
+    </script>
+
     <script id="outboxCommand-template" type="text/x-kendo-template">
-        <a href="@Url.Action("ViewMessage", "Messages", new { area = "User"})?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> @commonLocalizer["View"]</a>
-        <a href="@Url.Action("DeleteOutboxMessage", "Messages", new {area = "User"})?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="@localizer["DeleteMessageWarning"] #=Subject#?" rel="nofollow">@commonLocalizer["Delete"]</a>
+        <a href="@Url.Action("ViewMessage", "Messages", new { area = "User" })?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> @commonLocalizer["View"]</a>
+        <a href="@Url.Action("DeleteOutboxMessage", "Messages", new { area = "User" })?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="@localizer["DeleteMessageWarning"] #=Subject#?" rel="nofollow">@commonLocalizer["Delete"]</a>
     </script>
 
     <script src="~/js/app/internal/messages/resgrid.messages.outbox.js" type="text/javascript"></script>

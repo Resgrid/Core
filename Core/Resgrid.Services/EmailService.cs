@@ -184,7 +184,7 @@ namespace Resgrid.Services
 
 			string subject = string.Empty;
 			string priority = string.Empty;
-			string address = string.Empty;
+			string address = "No Address Supplied";
 
 			if (call.IsCritical)
 			{
@@ -199,9 +199,12 @@ namespace Resgrid.Services
 
 			string coordinates = "No Coordinates Supplied";
 			if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
-			{
 				coordinates = call.GeoLocationData;
 
+			if (!string.IsNullOrEmpty(call.Address))
+				address = call.Address;
+			else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+			{
 				string[] points = call.GeoLocationData.Split(char.Parse(","));
 
 				if (points != null && points.Length == 2)
@@ -216,15 +219,10 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (!string.IsNullOrEmpty(call.Address) && string.IsNullOrWhiteSpace(address))
-				address = call.Address;
-			else
-				address = "No Address Supplied";
-
 			string dispatchedOn = String.Empty;
 
 			if (call.Department != null)
-				dispatchedOn = call.LoggedOn.FormatForDepartment(call.Department);
+				dispatchedOn = call.LoggedOn.TimeConverterToString(call.Department);
 			else
 				dispatchedOn = call.LoggedOn.ToString("G") + " UTC";
 

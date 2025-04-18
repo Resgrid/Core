@@ -26,6 +26,7 @@ namespace Resgrid.Web.Services.Controllers
 	public class TwilioController : ControllerBase
 	{
 		#region Private Readonly Properties and Constructors
+
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly INumbersService _numbersService;
 		private readonly ILimitsService _limitsService;
@@ -41,12 +42,15 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IUnitsService _unitsService;
+		private readonly IUsersService _usersService;
+		private readonly ICalendarService _calendarService;
 
 		public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
-			IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService)
+			IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
+			IUsersService usersService, ICalendarService calendarService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -63,12 +67,15 @@ namespace Resgrid.Web.Services.Controllers
 			_departmentGroupsService = departmentGroupsService;
 			_customStateService = customStateService;
 			_unitsService = unitsService;
+			_usersService = usersService;
+			_calendarService = calendarService;
 		}
+
 		#endregion Private Readonly Properties and Constructors
 
 		[HttpGet("IncomingMessage")]
 		[Produces("application/xml")]
-		public async Task<ActionResult> IncomingMessage([FromQuery]TwilioMessage request)
+		public async Task<ActionResult> IncomingMessage([FromQuery] TwilioMessage request)
 		{
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From) || string.IsNullOrWhiteSpace(request.Body))
 				return BadRequest();
@@ -215,6 +222,7 @@ namespace Resgrid.Web.Services.Controllers
 											help.Append("onscene or 3: On Scene" + Environment.NewLine);
 											help.Append("available or 4: Available" + Environment.NewLine);
 										}
+
 										help.Append("---------------------" + Environment.NewLine);
 										help.Append("Staffing Commands" + Environment.NewLine);
 										help.Append("---------------------" + Environment.NewLine);
@@ -261,7 +269,8 @@ namespace Resgrid.Web.Services.Controllers
 										messageEvent.Processed = true;
 										await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, payload.GetCustomActionType());
 
-										if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any() && customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType()) != null)
+										if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any() &&
+										    customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType()) != null)
 										{
 											var detail = customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType());
 											response.Message(string.Format("Resgrid received your text command. Status changed to: {0}", detail.ButtonText));
@@ -270,12 +279,14 @@ namespace Resgrid.Web.Services.Controllers
 										{
 											response.Message("Resgrid received your text command and updated your status");
 										}
+
 										break;
 									case TextCommandTypes.CustomStaffing:
 										messageEvent.Processed = true;
 										await _userStateService.CreateUserState(profile.UserId, department.DepartmentId, payload.GetCustomStaffingType());
 
-										if (customStaffing != null && customStaffing.IsDeleted == false && customStaffing.GetActiveDetails() != null && customStaffing.GetActiveDetails().Any() && customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType()) != null)
+										if (customStaffing != null && customStaffing.IsDeleted == false && customStaffing.GetActiveDetails() != null && customStaffing.GetActiveDetails().Any() &&
+										    customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType()) != null)
 										{
 											var detail = customStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomStaffingType());
 											response.Message(string.Format("Resgrid received your text command. Staffing changed to: {0}", detail.ButtonText));
@@ -284,6 +295,7 @@ namespace Resgrid.Web.Services.Controllers
 										{
 											response.Message("Resgrid received your text command and updated your staffing");
 										}
+
 										break;
 									case TextCommandTypes.MyStatus:
 										messageEvent.Processed = true;
@@ -295,7 +307,8 @@ namespace Resgrid.Web.Services.Controllers
 										var customStatusLevel = await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, userStatus);
 										var customStaffingLevel = await _customStateService.GetCustomPersonnelStaffingAsync(department.DepartmentId, userStaffing);
 
-										response.Message($"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.");
+										response.Message(
+											$"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.");
 										break;
 									case TextCommandTypes.Calls:
 										messageEvent.Processed = true;
@@ -386,7 +399,8 @@ namespace Resgrid.Web.Services.Controllers
 							var help = new StringBuilder();
 							help.Append("Resgrid Text Commands" + Environment.NewLine);
 							help.Append("---------------------" + Environment.NewLine);
-							help.Append("This is the Resgrid system for first responders (https://resgrid.com) automated text system. Your department isn't signed up for inbound text messages, but you can send the following commands." + Environment.NewLine);
+							help.Append("This is the Resgrid system for first responders (https://resgrid.com) automated text system. Your department isn't signed up for inbound text messages, but you can send the following commands." +
+							            Environment.NewLine);
 							help.Append("---------------------" + Environment.NewLine);
 							help.Append("STOP: To turn off all text messages" + Environment.NewLine);
 							help.Append("HELP: This help text" + Environment.NewLine);
@@ -448,7 +462,7 @@ namespace Resgrid.Web.Services.Controllers
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
 
 			if (call.Attachments != null &&
-				call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
+			    call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
 			{
 				var audio = call.Attachments.FirstOrDefault(x =>
 					x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
@@ -500,7 +514,9 @@ namespace Resgrid.Web.Services.Controllers
 						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
 					}
 				}
-				catch { }
+				catch
+				{
+				}
 			}
 
 			if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
@@ -541,7 +557,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceCallAction")]
 		[Produces("application/xml")]
-		public async Task<ActionResult> VoiceCallAction(string userId, int callId, [FromQuery]VoiceRequest twilioRequest)
+		public async Task<ActionResult> VoiceCallAction(string userId, int callId, [FromQuery] VoiceRequest twilioRequest)
 		{
 			var response = new VoiceResponse();
 
@@ -574,7 +590,6 @@ namespace Resgrid.Web.Services.Controllers
 
 						response.Say(string.Format("You have been marked responding to {0}, goodbye.", station.Name)).Hangup();
 					}
-
 				}
 			}
 
@@ -588,56 +603,196 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("InboundVoice")]
 		[Produces("application/xml")]
-		public async Task<ActionResult> InboundVoice([FromQuery]TwilioGatherRequest request)
+		public async Task<ActionResult> InboundVoice([FromQuery] TwilioGatherRequest request)
 		{
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From))
 				return BadRequest();
 
 			var response = new VoiceResponse();
-			var departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(request.To.Replace("+", ""));
+			UserProfile profile = null;
+			profile = await _userProfileService.GetProfileByMobileNumberAsync(request.From.Replace("+", ""));
 
-			if (departmentId.HasValue)
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByHomeNumberAsync(request.From.Replace("+", ""));
+
+			if (profile != null)
 			{
-				var authroized = await _limitsService.CanDepartmentProvisionNumberAsync(departmentId.Value);
+				var department = await _departmentsService.GetDepartmentByUserIdAsync(profile.UserId, false);
 
-
-				request.From.Replace("+", "");
-				if (authroized)
+				if (department != null)
 				{
-					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId.Value, false);
+					var authroized = await _limitsService.CanDepartmentProvisionNumberAsync(department.DepartmentId);
 
-					UserProfile profile = null;
-					profile = await _userProfileService.GetProfileByMobileNumberAsync(request.From.Replace("+", ""));
-
-					if (profile == null)
-						profile = await _userProfileService.GetProfileByHomeNumberAsync(request.From.Replace("+", ""));
-
-					if (department != null && profile != null)
+					request.From.Replace("+", "");
+					if (authroized)
 					{
 						StringBuilder sb = new StringBuilder();
-						sb.Append($@"Hello {profile.FirstName}, this is the Automated Voice System for {department.Name}. Please select from the following options. 
-											To list current active calls press 1, 
-											To list current user statuses press 2, 
-											To list current unit statuses press 3, 
+						sb.Append($@"Hello {profile.FirstName}, this is the Resgrid Automated Voice System for {department.Name}. Please select from the following options.
+											To list current active calls press 1,
+											To list current user statuses press 2,
+											To list current unit statuses press 3,
 											To list upcoming Calendar events press 4,
-											To list upcoming Shifts press 5");
+											To list upcoming Shifts press 5,
+											To Set your current status press 6,
+											To set your current staffing level press 7");
 
 						response.Say(sb.ToString());
+
+						Gather gatherResponse = new Gather();
+						gatherResponse.NumDigits = 1;
+						gatherResponse.Method = "GET";
+						gatherResponse.Action = new Uri(string.Format("{0}/api/Twilio/InboundVoiceAction?userId={1}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, profile.UserId));
+
+						response.Say(sb.ToString()).Append(gatherResponse).Hangup();
+
+						return new ContentResult
+						{
+							Content = response.ToString(),
+							ContentType = "application/xml",
+							StatusCode = 200
+						};
 					}
 					else
 					{
-						response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
+						response.Say("Thank you for calling Resgrid, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
 					}
 				}
 				else
 				{
-					response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
+					response.Say("Thank you for calling Resgrid, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
 				}
 			}
 			else
 			{
-				response.Say("Thank you for calling Raesgrid, the only complete software solution for first responders, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
+				response.Say("Thank you for calling Resgrid, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
 			}
+
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		[HttpGet("InboundVoiceAction")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> InboundVoiceAction(string userId, [FromQuery] VoiceRequest twilioRequest)
+		{
+			var response = new VoiceResponse();
+
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			Gather gatherResponse = new Gather();
+			gatherResponse.NumDigits = 1;
+			gatherResponse.Method = "GET";
+			gatherResponse.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
+
+			if (twilioRequest.Digits == "0")
+			{
+				StringBuilder sb = new StringBuilder();
+				sb.Append($@"Hello {profile.FirstName}, this is the Resgrid Automated Voice System for {department.Name}. Please select from the following options.
+											To list current active calls press 1,
+											To list current user statuses press 2,
+											To list current unit statuses press 3,
+											To list upcoming Calendar events press 4,
+											To list upcoming Shifts press 5,
+											To Set your current status press 6,
+											To set your current staffing level press 7");
+
+				response.Say(sb.ToString());
+			}
+			else if (twilioRequest.Digits == "1")
+			{
+				var calls = await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId);
+
+				if (calls != null && calls.Any())
+				{
+					response.Say($"There are {calls.Count()} active calls for department {department.Name}.");
+
+					StringBuilder sb = new StringBuilder();
+					foreach (var call in calls)
+					{
+						sb.Append($"{call.Name}, Priority {call.GetPriorityText()} Address {call.Address} Nature {call.NatureOfCall}.");
+					}
+
+					response.Say(sb.ToString());
+				}
+				else
+				{
+					response.Say($"There are no active calls for department {department.Name}.");
+				}
+			}
+			else if (twilioRequest.Digits == "2")
+			{
+				var allUsers = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(department.DepartmentId, false, false, false);
+				var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(department.DepartmentId);
+				var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(department.DepartmentId);
+
+				if (allUsers != null && allUsers.Any())
+				{
+					StringBuilder sb = new StringBuilder();
+					foreach (var user in allUsers)
+					{
+						var lastActionLog = lastUserActionlogs.FirstOrDefault(x => x.UserId == user.UserId);
+						var userState = userStates.FirstOrDefault(x => x.UserId == user.UserId);
+						var staffingLevel = await _customStateService.GetCustomPersonnelStaffingAsync(department.DepartmentId, userState);
+						var status = await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, lastActionLog);
+
+						sb.Append($"{user.LastName}, {user.FirstName}, Status {status.ButtonText} Staffing Level {staffingLevel.ButtonText}.");
+					}
+					response.Say(sb.ToString());
+				}
+			}
+			else if (twilioRequest.Digits == "3")
+			{
+				var units = await _unitsService.GetUnitsForDepartmentUnlimitedAsync(department.DepartmentId);
+				var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(department.DepartmentId);
+				var unitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(department.DepartmentId);
+
+				StringBuilder sb = new StringBuilder();
+				if (units != null && units.Any())
+				{
+					foreach (var unit in units)
+					{
+						var unitState = states.FirstOrDefault(x => x.UnitId == unit.UnitId);
+						var unitStatus = await _customStateService.GetCustomUnitStateAsync(unitState);
+
+						sb.Append($"{unit.Name}, Status {unitStatus.ButtonText}.");
+					}
+					response.Say(sb.ToString());
+				}
+				else
+				{
+					response.Say($"There are no units for department {department.Name}.");
+				}
+			}
+			else if (twilioRequest.Digits == "4")
+			{
+				var upcomingItems = await _calendarService.GetUpcomingCalendarItemsAsync(department.DepartmentId, DateTime.UtcNow);
+
+				StringBuilder sb = new StringBuilder();
+				if (upcomingItems != null && upcomingItems.Any())
+				{
+					foreach (var item in upcomingItems)
+					{
+						sb.Append($"{item.Title}, {item.Start.TimeConverter(department).ToShortDateString()}, {item.Start.TimeConverter(department).ToShortTimeString()}, {item.Location}");
+					}
+					response.Say(sb.ToString());
+				}
+				else
+				{
+					response.Say($"There are no upcoming Calendar events for department {department.Name}.");
+				}
+			}
+			else if (twilioRequest.Digits == "5")
+			{
+				// This will be a little complicated. Gotta think on it. -SJ
+				response.Say($"There are no upcoming shifts for department {department.Name}.");
+			}
+
+			response.Say("Press 0 to go back to the main menu.").Append(gatherResponse).Pause(10).Hangup();
 
 			return new ContentResult
 			{

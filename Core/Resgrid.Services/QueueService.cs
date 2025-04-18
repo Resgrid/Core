@@ -116,42 +116,28 @@ namespace Resgrid.Services
 
 		public async Task<bool> EnqueueMessageBroadcastAsync(MessageQueueItem mqi, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if (Config.SystemBehaviorConfig.IsAzure)
+			if (!String.IsNullOrWhiteSpace(mqi.Message.ReceivingUserId))
 			{
-				if (!String.IsNullOrWhiteSpace(mqi.Message.ReceivingUserId))
+				var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.ReceivingUserId, mqi.DepartmentId);
+				string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
+				mqi.DepartmentTextNumber = departmentNumber;
+
+				if (mqi.Message.ReceivingUser == null)
 				{
-					var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.ReceivingUserId, mqi.DepartmentId);
-					string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
-					mqi.DepartmentTextNumber = departmentNumber;
+					var user = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.ReceivingUserId);
 
-					if (mqi.Message.ReceivingUser == null)
-					{
-						var user = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.ReceivingUserId);
-
-						if (user != null && user.User != null)
-							mqi.Message.ReceivingUser = user.User;
-					}
+					if (user != null && user.User != null)
+						mqi.Message.ReceivingUser = user.User;
 				}
-				else if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId))
-				{
-					var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.SendingUserId, mqi.DepartmentId);
-					string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
-					mqi.DepartmentTextNumber = departmentNumber;
-				}
-
-				return await _outboundQueueProvider.EnqueueMessage(mqi);
 			}
-			else
+			else if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId))
 			{
-				QueueItem item = new QueueItem();
-				item.QueueType = (int)QueueTypes.MessageBroadcast;
-				item.SourceId = mqi.Message.MessageId.ToString();
-				item.QueuedOn = DateTime.UtcNow;
-
-				await _queueItemsRepository.SaveOrUpdateAsync(item, cancellationToken);
+				var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.SendingUserId, mqi.DepartmentId);
+				string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
+				mqi.DepartmentTextNumber = departmentNumber;
 			}
 
-			return true;
+			return await _outboundQueueProvider.EnqueueMessage(mqi);
 		}
 
 		public async Task<bool> EnqueueCallBroadcastAsync(CallQueueItem cqi, CancellationToken cancellationToken = default(CancellationToken))

@@ -119,8 +119,8 @@ namespace Resgrid.Web.Services.Controllers
 				if (departmentId.HasValue)
 				{
 					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId.Value);
-					var textToCallEnabled = await _departmentSettingsService.GetDepartmentIsTextCallImportEnabledAsync(departmentId.Value);
-					var textCommandEnabled = await _departmentSettingsService.GetDepartmentIsTextCommandEnabledAsync(departmentId.Value);
+					//var textToCallEnabled = await _departmentSettingsService.GetDepartmentIsTextCallImportEnabledAsync(departmentId.Value);
+					//var textCommandEnabled = await _departmentSettingsService.GetDepartmentIsTextCommandEnabledAsync(departmentId.Value);
 					var dispatchNumbers = await _departmentSettingsService.GetTextToCallSourceNumbersForDepartmentAsync(departmentId.Value);
 					var authroized = await _limitsService.CanDepartmentProvisionNumberAsync(departmentId.Value);
 					var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId.Value);
@@ -134,11 +134,7 @@ namespace Resgrid.Web.Services.Controllers
 						if (!String.IsNullOrWhiteSpace(dispatchNumbers))
 							isDispatchSource = _numbersService.DoesNumberMatchAnyPattern(dispatchNumbers.Split(Char.Parse(",")).ToList(), textMessage.Msisdn);
 
-						// If we don't have dispatchNumbers and Text Command isn't enabled it's a dispatch text
-						if (!isDispatchSource && !textCommandEnabled)
-							isDispatchSource = true;
-
-						if (isDispatchSource && textToCallEnabled)
+						if (isDispatchSource)
 						{
 							var c = new Call();
 							c.Notes = textMessage.Text;
@@ -173,7 +169,7 @@ namespace Resgrid.Web.Services.Controllers
 							messageEvent.Processed = true;
 						}
 
-						if (!isDispatchSource && textCommandEnabled)
+						if (!isDispatchSource)
 						{
 							var profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
@@ -383,7 +379,7 @@ namespace Resgrid.Web.Services.Controllers
 						}
 					}
 				}
-				else if (textMessage.To == Config.NumberProviderConfig.TwilioResgridNumber) //"17753765253") // Resgrid master text number
+				else if (textMessage.To == Config.NumberProviderConfig.TwilioResgridNumber) // Resgrid master text number
 				{
 					var profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 					var payload = _textCommandService.DetermineType(textMessage.Text);
@@ -425,12 +421,6 @@ namespace Resgrid.Web.Services.Controllers
 				await _numbersService.SaveInboundMessageEventAsync(messageEvent);
 			}
 
-			//Ok();
-
-			//var response = new TwilioResponse();
-
-			//return Request.CreateResponse(HttpStatusCode.OK, response.Element, new XmlMediaTypeFormatter());
-			//return Ok(new StringContent(response.ToString(), Encoding.UTF8, "application/xml"));
 			return new ContentResult
 			{
 				Content = response.ToString(),

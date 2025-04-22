@@ -1771,7 +1771,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!String.IsNullOrWhiteSpace(startDate) && !String.IsNullOrWhiteSpace(endDate))
 			{
-				var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, DateTime.Parse(System.Net.WebUtility.UrlDecode((startDate))), DateTime.Parse(System.Net.WebUtility.UrlDecode(endDate)));
+				var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, DateTime.Parse(System.Net.WebUtility.UrlDecode((startDate.Replace("&#x202F;", " ")))), DateTime.Parse(System.Net.WebUtility.UrlDecode(endDate.Replace("&#x202F;", " "))));
 
 				var groupedCalls = calls.GroupBy(x => x.Type);
 				foreach (var grouppedCall in groupedCalls)

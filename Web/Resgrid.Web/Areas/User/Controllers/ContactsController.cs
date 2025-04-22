@@ -849,12 +849,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 					callJson.CallName = call.Name;
 					callJson.CallNature = call.NatureOfCall;
 					callJson.LoggedOn = call.LoggedOn.FormatForDepartment(department);
+					callJson.Priority = call.Priority;
 
 					var priority = await _callsService.GetCallPrioritiesByIdAsync(call.Priority, DepartmentId);
 
-					callJson.Priority = call.Priority;
-					callJson.PriorityName = priority.Name;
-					callJson.PriorityColor = priority.Color;
+					if (priority != null)
+					{
+						callJson.PriorityName = priority.Name;
+						callJson.PriorityColor = priority.Color;
+					}
+					else
+					{
+						callJson.PriorityName = "Unknown Priority";
+						callJson.PriorityColor = "#000000";
+					}
 
 					callsJson.Add(callJson);
 				}

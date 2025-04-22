@@ -439,34 +439,34 @@
     <value>Here you can control high level information about every Module in the Resgrid system. New high level module options will be added here. These settings are in the early stages and may not yet propagate to all parts of the Resgrid system. So for example if you Disable the Training module it may appear in a screen deep in another feature. We will be working on in the future to ensure it's consistent.</value>
   </data>
   <data name="DisabledCalendarLabel" xml:space="preserve">
-    <value>Disable Calendar</value>
+    <value>Calendar</value>
   </data>
   <data name="DisabledInventoryLabel" xml:space="preserve">
-    <value>Disable Inventory</value>
+    <value>Inventory</value>
   </data>
   <data name="DisabledLogsLabel" xml:space="preserve">
-    <value>Disable Logs</value>
+    <value>Logs</value>
   </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
-    <value>Disable Maintenance</value>
+    <value>Maintenance</value>
   </data>
   <data name="DisabledNotesLabel" xml:space="preserve">
-    <value>Disable Notes</value>
+    <value>Notes</value>
   </data>
   <data name="DisabledReportsLabel" xml:space="preserve">
-    <value>Disable Reports</value>
+    <value>Reports</value>
   </data>
   <data name="DisabledTrainingLabel" xml:space="preserve">
-    <value>Disable Training</value>
+    <value>Training</value>
   </data>
   <data name="DisableMappingLabel" xml:space="preserve">
-    <value>Disable Mapping</value>
+    <value>Mapping</value>
   </data>
   <data name="DisableMessagingLabel" xml:space="preserve">
-    <value>Disable Messaging</value>
+    <value>Messaging</value>
   </data>
   <data name="DisableShiftsLabel" xml:space="preserve">
-    <value>Disable Shifts</value>
+    <value>Shifts</value>
   </data>
   <data name="DispatchSettingsModuleHeader" xml:space="preserve">
     <value>Department Modules</value>

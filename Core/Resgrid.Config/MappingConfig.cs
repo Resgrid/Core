@@ -62,7 +62,7 @@
 		public static string GetWebsiteOSMUrl()
 		{
 			if (!string.IsNullOrWhiteSpace(WebsiteOSMKey))
-				return string.Format(LeafletTileUrl, WebsiteOSMKey);
+				return string.Format(MapBoxTileUrl, WebsiteOSMKey);
 			else
 				return LeafletTileUrl;
 		}

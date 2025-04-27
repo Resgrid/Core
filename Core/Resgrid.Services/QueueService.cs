@@ -119,8 +119,8 @@ namespace Resgrid.Services
 			if (!String.IsNullOrWhiteSpace(mqi.Message.ReceivingUserId))
 			{
 				var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.ReceivingUserId, mqi.DepartmentId);
-				string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
-				mqi.DepartmentTextNumber = departmentNumber;
+				//string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
+				//mqi.DepartmentTextNumber = departmentNumber;
 
 				if (mqi.Message.ReceivingUser == null)
 				{
@@ -133,8 +133,8 @@ namespace Resgrid.Services
 			else if (!String.IsNullOrWhiteSpace(mqi.Message.SendingUserId))
 			{
 				var dm = await _departmentsService.GetDepartmentMemberAsync(mqi.Message.SendingUserId, mqi.DepartmentId);
-				string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
-				mqi.DepartmentTextNumber = departmentNumber;
+				//string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(dm.DepartmentId);
+				//mqi.DepartmentTextNumber = departmentNumber;
 			}
 
 			return await _outboundQueueProvider.EnqueueMessage(mqi);

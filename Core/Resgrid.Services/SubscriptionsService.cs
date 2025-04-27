@@ -388,31 +388,10 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				if (planId == 4 // Professional
-					|| planId == 5 // Ultimate
-					|| planId == 9 // Unlimited
-					|| planId == 10 // Enterprise
-					|| planId == 14 // Professional Monthly
-					|| planId == 15 // Ultimate Monthly
-					|| planId == 16 // Enterprise Monthly
-					|| planId == 17 // Enterprise+
-					|| planId == 18 // Enterprise+ Monthly
-					|| planId == 20 // Univeral
-					|| planId == 21 // Univeral Monthly
-					|| planId == 26 // Professional
-					|| planId == 27 // Professional Monthly
-					|| planId == 28 // Ultimate
-					|| planId == 29 // Ultimate Monthly
-					|| planId == 30 // Enterprise
-					|| planId == 31 // Enterprise Monthly
-					|| planId == 32 // Enterprise+
-					|| planId == 32 // Enterprise+ Monthly
-					|| planId == 34 // Unified
-					|| planId == 35 // Unified Monthly
-				   )
-					return true;
+				if (planId == 1)
+					return false;
 
-				return false;
+				return true;
 			}
 
 			return true;

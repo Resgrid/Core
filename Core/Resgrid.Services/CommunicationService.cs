@@ -526,7 +526,8 @@ namespace Resgrid.Services
 			var supressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(departmentId);
 			var lastUserStaffing = await _userStateService.GetLastUserStateByUserIdAsync(userId);
 
-			if (lastUserStaffing == null && supressStaffingInfo != null)
+			// Looks like this was a bug, lastUserStaffing was going through here == null. -SJ
+			if (lastUserStaffing != null && supressStaffingInfo != null)
 			{
 				if (supressStaffingInfo.EnableSupressStaffing)
 				{

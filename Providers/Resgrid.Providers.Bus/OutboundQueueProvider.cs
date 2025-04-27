@@ -18,42 +18,27 @@ namespace Resgrid.Providers.Bus
 
 		public async Task<bool> EnqueueCall(CallQueueItem callQueue)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return await _rabbitOutboundQueueProvider.EnqueueCall(callQueue);
-
-			return false;
+			return await _rabbitOutboundQueueProvider.EnqueueCall(callQueue);
 		}
 
 		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return await _rabbitOutboundQueueProvider.EnqueueMessage(messageQueue);
-
-			return false;
+			return await _rabbitOutboundQueueProvider.EnqueueMessage(messageQueue);
 		}
 
 		public async Task<bool> EnqueueDistributionList(DistributionListQueueItem distributionListQueue)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return await _rabbitOutboundQueueProvider.EnqueueDistributionList(distributionListQueue);
-
-			return false;
+			return await _rabbitOutboundQueueProvider.EnqueueDistributionList(distributionListQueue);
 		}
 
 		public async Task<bool> EnqueueNotification(NotificationItem notificationQueue)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return await _rabbitOutboundQueueProvider.EnqueueNotification(notificationQueue);
-
-			return false;
+			return await _rabbitOutboundQueueProvider.EnqueueNotification(notificationQueue);
 		}
 
 		public async Task<bool> EnqueueShiftNotification(ShiftQueueItem shiftQueueItem)
 		{
-			if (SystemBehaviorConfig.ServiceBusType == ServiceBusTypes.Rabbit)
-				return await _rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
-
-			return false;
+			return await _rabbitOutboundQueueProvider.EnqueueShiftNotification(shiftQueueItem);
 		}
 
 		public async Task<bool> EnqueueAuditEvent(AuditEvent auditEvent)

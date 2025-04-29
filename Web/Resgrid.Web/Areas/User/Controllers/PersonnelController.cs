@@ -483,7 +483,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
+				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString().ToUpper() };
 				var result = await _userManager.CreateAsync(user, model.NewPassword);
 				if (result.Succeeded)
 				{
@@ -529,7 +529,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (roles.Any())
 							await _personnelRolesService.SetRolesForUserAsync(DepartmentId, user.UserId, roles, cancellationToken);
 					}
-					
+
 					_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
 					_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
 					_departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);

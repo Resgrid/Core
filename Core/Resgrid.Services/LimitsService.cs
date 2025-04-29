@@ -206,7 +206,14 @@ namespace Resgrid.Services
 						return limits;
 					}
 				}
-				else if (plan == null || plan.PlanId == 1)
+				else if ((!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey)) && plan.PlanId == 1)
+				{
+					limits.PersonnelLimit = plan.GetLimitForTypeAsInt(PlanLimitTypes.Personnel);
+					limits.UnitsLimit = plan.GetLimitForTypeAsInt(PlanLimitTypes.Units);
+
+					return limits;
+				}
+				else if (plan == null)
 				{
 					limits.PersonnelLimit = 10;
 					limits.UnitsLimit = 10;

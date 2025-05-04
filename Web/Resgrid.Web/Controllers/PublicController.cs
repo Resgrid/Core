@@ -11,5 +11,10 @@ namespace Resgrid.Web.Controllers
 		{
 			return View();
 		}
+
+		public async Task<IActionResult> Unauthorized()
+		{
+			return View();
+		}
 	}
 }

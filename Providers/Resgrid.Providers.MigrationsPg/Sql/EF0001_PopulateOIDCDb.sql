@@ -1,343 +1,316 @@
 ﻿DO $$ BEGIN
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."__efmigrationshistory"
+  -- CREATE TABLE IF NOT EXISTS public."__Efmigrationshistory"
   --
-    CREATE TABLE IF NOT EXISTS public.__efmigrationshistory(
-                                                               migrationid character varying(150) NOT NULL,
-        productversion character varying(32) NOT NULL
+    CREATE TABLE IF NOT EXISTS public."__Efmigrationshistory"(
+        "MigrationId" character varying(150) NOT NULL,
+        "ProductVersion" character varying(32) NOT NULL
         );
-    
-    
-    IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = '__efmigrationshistory' and constraint_type = 'PRIMARY KEY') then
-    ALTER TABLE public.__efmigrationshistory
-        ADD PRIMARY KEY (migrationid);
+
+    IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = '__Efmigrationshistory' and constraint_type = 'PRIMARY KEY') then
+    ALTER TABLE public."__Efmigrationshistory"
+        ADD PRIMARY KEY ("MigrationId");
     END IF;
-      
-      
-  IF EXISTS(SELECT migrationid FROM public.__efmigrationshistory WHERE migrationid = '20210904153137_CreateOpenIddictModels') THEN
-    
+
+  IF NOT EXISTS(SELECT "MigrationId" FROM public."__Efmigrationshistory" WHERE "MigrationId" = '20210904153137_CreateOpenIddictModels') THEN
+
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."openiddictscopes"
+  -- CREATE TABLE IF NOT EXISTS public."OpenIddictScopes"
   --
-  CREATE TABLE IF NOT EXISTS public.openiddictscopes(
-    id uuid NOT NULL,
-    concurrencytoken character varying(50),
-    description character varying,
-    descriptions character varying,
-    displayname character varying,
-    displaynames character varying,
-    name character varying(200),
-    properties character varying,
-    resources character varying
+  CREATE TABLE IF NOT EXISTS public."OpenIddictScopes"(
+    "Id" uuid NOT NULL,
+    "ConcurrencyToken" character varying(50),
+    "Description" character varying,
+    "Descriptions" character varying,
+    "DisplayName" character varying,
+    "DisplayNames" character varying,
+    "Name" character varying(200),
+    "Properties" character varying,
+    "Resources" character varying
   );
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddictscopes' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.openiddictscopes 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictScopes' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."OpenIddictScopes"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddictscopes' and constraint_type = 'UNIQUE') then
-  ALTER TABLE public.openiddictscopes 
-    ADD CONSTRAINT openiddictscopes_name_key UNIQUE(name);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictScopes' and constraint_type = 'UNIQUE') then
+  ALTER TABLE public."OpenIddictScopes"
+    ADD CONSTRAINT "OpenIddictScopes_Name_key" UNIQUE("Name");
 END IF;
 
-  
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."openiddictapplications"
+  -- CREATE TABLE IF NOT EXISTS public."OpenIddictApplications"
   --
-  CREATE TABLE IF NOT EXISTS public.openiddictapplications(
-    id uuid NOT NULL,
-    clientid character varying(100),
-    clientsecret character varying,
-    concurrencytoken character varying(50),
-    consenttype character varying(50),
-    displayname character varying,
-    displaynames character varying,
-    permissions character varying,
-    postlogoutredirecturis character varying,
-    properties character varying,
-    redirecturis character varying,
-    requirements character varying,
-    clienttype character varying(50),
-    applicationtype character varying,
-    jsonwebkeyset character varying,
-    settings character varying
+  CREATE TABLE IF NOT EXISTS public."OpenIddictApplications"(
+    "Id" uuid NOT NULL,
+    "ClientId" character varying(100),
+    "ClientSecret" character varying,
+    "ConcurrencyToken" character varying(50),
+    "ConsentType" character varying(50),
+    "DisplayName" character varying,
+    "DisplayNames" character varying,
+    "Permissions" character varying,
+    "PostLogoutRedirectUris" character varying,
+    "Properties" character varying,
+    "RedirectUris" character varying,
+    "Requirements" character varying,
+    "ClientType" character varying(50),
+    "ApplicationType" character varying,
+    "JsonWebKeySet" character varying,
+    "Settings" character varying
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddictapplications' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.openiddictapplications 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictApplications' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."OpenIddictApplications"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddictapplications' and constraint_type = 'UNIQUE') then
-  ALTER TABLE public.openiddictapplications 
-    ADD CONSTRAINT openiddictapplications_clientid_key UNIQUE(clientid);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictApplications' and constraint_type = 'UNIQUE') then
+  ALTER TABLE public."OpenIddictApplications"
+    ADD CONSTRAINT "OpenIddictApplications_ClientId_key" UNIQUE("ClientId");
 END IF;
 
-  
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."openiddictauthorizations"
+  -- CREATE TABLE IF NOT EXISTS public."OpenIddictAuthorizations"
   --
-  CREATE TABLE IF NOT EXISTS public.openiddictauthorizations(
-    id uuid NOT NULL,
-    applicationid uuid,
-    concurrencytoken character varying(50),
-    creationdate timestamp without time zone,
-    properties character varying,
-    scopes character varying,
-    status character varying(50),
-    subject character varying(400),
-    type character varying(50)
+  CREATE TABLE IF NOT EXISTS public."OpenIddictAuthorizations"(
+    "Id" uuid NOT NULL,
+    "ApplicationId" uuid,
+    "ConcurrencyToken" character varying(50),
+    "CreationDate" timestamp without time zone,
+    "Properties" character varying,
+    "Scopes" character varying,
+    "Status" character varying(50),
+    "Subject" character varying(400),
+    "Type" character varying(50)
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddictauthorizations' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.openiddictauthorizations 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictAuthorizations' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."OpenIddictAuthorizations"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-  
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddictauthorizations' and constraint_type = 'FOREIGN KEY') then
-  ALTER TABLE public.openiddictauthorizations 
-    ADD CONSTRAINT fk_openiddictauthorizations_openiddictapplications_applicationi FOREIGN KEY (applicationid)
-      REFERENCES public.openiddictapplications(id) ON DELETE NO ACTION ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictAuthorizations' and constraint_type = 'FOREIGN KEY') then
+  ALTER TABLE public."OpenIddictAuthorizations"
+    ADD CONSTRAINT "FK_OpenIddictAuthorizations_OpenIddictApplications_ApplicationId" FOREIGN KEY ("ApplicationId")
+      REFERENCES public."OpenIddictApplications"("Id") ON DELETE NO ACTION ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
 
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."openiddicttokens"
+  -- CREATE TABLE IF NOT EXISTS public."OpenIddictTokens"
   --
-  CREATE TABLE IF NOT EXISTS public.openiddicttokens(
-    id uuid NOT NULL,
-    applicationid uuid,
-    authorizationid uuid,
-    concurrencytoken character varying(50),
-    creationdate timestamp without time zone,
-    expirationdate timestamp without time zone,
-    payload character varying,
-    properties character varying,
-    redemptiondate timestamp without time zone,
-    referenceid character varying(100),
-    status character varying(50),
-    subject character varying(400),
-    type character varying(50)
+  CREATE TABLE IF NOT EXISTS public."OpenIddictTokens"(
+    "Id" uuid NOT NULL,
+    "ApplicationId" uuid,
+    "AuthorizationId" uuid,
+    "ConcurrencyToken" character varying(50),
+    "CreationDate" timestamp without time zone,
+    "ExpirationDate" timestamp without time zone,
+    "Payload" character varying,
+    "Properties" character varying,
+    "RedemptionDate" timestamp without time zone,
+    "ReferenceId" character varying(100),
+    "Status" character varying(50),
+    "Subject" character varying(400),
+    "Type" character varying(50)
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddicttokens' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.openiddicttokens 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictTokens' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."OpenIddictTokens"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddicttokens' and constraint_type = 'UNIQUE') then
-  ALTER TABLE public.openiddicttokens 
-    ADD CONSTRAINT openiddicttokens_referenceid_key UNIQUE(referenceid);
-END IF;
-  
-
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddicttokens' and constraint_type = 'FOREIGN KEY' and constraint_name = 'fk_openiddicttokens_openiddictapplications_applicationid') then
-  ALTER TABLE public.openiddicttokens 
-    ADD CONSTRAINT fk_openiddicttokens_openiddictapplications_applicationid FOREIGN KEY (applicationid)
-      REFERENCES public.openiddictapplications(id) ON DELETE NO ACTION ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictTokens' and constraint_type = 'UNIQUE') then
+  ALTER TABLE public."OpenIddictTokens"
+    ADD CONSTRAINT "OpenIddictTokens_ReferenceId_key" UNIQUE("ReferenceId");
 END IF;
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'openiddicttokens' and constraint_type = 'FOREIGN KEY' and constraint_name = 'fk_openiddicttokens_openiddictauthorizations_authorizationid') then
-  ALTER TABLE public.openiddicttokens 
-    ADD CONSTRAINT fk_openiddicttokens_openiddictauthorizations_authorizationid FOREIGN KEY (authorizationid)
-      REFERENCES public.openiddictauthorizations(id) ON DELETE NO ACTION ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictTokens' and constraint_type = 'FOREIGN KEY' and constraint_name = 'FK_OpenIddictTokens_OpenIddictApplications_ApplicationId') then
+  ALTER TABLE public."OpenIddictTokens"
+    ADD CONSTRAINT "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId" FOREIGN KEY ("ApplicationId")
+      REFERENCES public."OpenIddictApplications"("Id") ON DELETE NO ACTION ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
 
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'OpenIddictTokens' and constraint_type = 'FOREIGN KEY' and constraint_name = 'FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId') then
+  ALTER TABLE public."OpenIddictTokens"
+    ADD CONSTRAINT "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId" FOREIGN KEY ("AuthorizationId")
+      REFERENCES public."OpenIddictAuthorizations"("Id") ON DELETE NO ACTION ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+END IF;
 
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."aspnetusers"
+  -- CREATE TABLE IF NOT EXISTS public."AspNetUsers"
   --
-  CREATE TABLE IF NOT EXISTS public.aspnetusers(
-    id character varying(450) NOT NULL,
-    username character varying(256),
-    normalizedusername character varying(256),
-    email character varying(256),
-    normalizedemail character varying(256),
-    emailconfirmed boolean NOT NULL,
-    passwordhash character varying,
-    securitystamp character varying,
-    concurrencystamp character varying,
-    phonenumber character varying,
-    phonenumberconfirmed boolean NOT NULL,
-    twofactorenabled boolean NOT NULL,
-    lockoutend timestamp with time zone,
-    lockoutenabled boolean NOT NULL,
-    accessfailedcount integer NOT NULL
+  CREATE TABLE IF NOT EXISTS public."AspNetUsers"(
+    "Id" character varying(450) NOT NULL,
+    "UserName" character varying(256),
+    "NormalizedUserName" character varying(256),
+    "Email" character varying(256),
+    "NormalizedEmail" character varying(256),
+    "EmailConfirmed" boolean NOT NULL,
+    "PasswordHash" character varying,
+    "SecurityStamp" character varying,
+    "ConcurrencyStamp" character varying,
+    "PhoneNumber" character varying,
+    "PhoneNumberConfirmed" boolean NOT NULL,
+    "TwoFactorEnabled" boolean NOT NULL,
+    "LockoutEnd" timestamp with time zone,
+    "LockoutEnabled" boolean NOT NULL,
+    "AccessFailedCount" integer NOT NULL
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetusers' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.aspnetusers 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUsers' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."AspNetUsers"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetusers' and constraint_type = 'UNIQUE') then
-  ALTER TABLE public.aspnetusers 
-    ADD CONSTRAINT aspnetusers_normalizedusername_key UNIQUE(normalizedusername);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUsers' and constraint_type = 'UNIQUE') then
+  ALTER TABLE public."AspNetUsers"
+    ADD CONSTRAINT "AspNetUsers_NormalizedUserName_key" UNIQUE("NormalizedUserName");
 END IF;
 
-  
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."aspnetusertokens"
+  -- CREATE TABLE IF NOT EXISTS public."AspNetUserTokens"
   --
-  CREATE TABLE IF NOT EXISTS public.aspnetusertokens(
-    userid character varying(450) NOT NULL,
-    loginprovider character varying(450) NOT NULL,
-    name character varying(450) NOT NULL,
-    value character varying
+  CREATE TABLE IF NOT EXISTS public."AspNetUserTokens"(
+    "UserId" character varying(450) NOT NULL,
+    "LoginProvider" character varying(450) NOT NULL,
+    "Name" character varying(450) NOT NULL,
+    "Value" character varying
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetusertokens' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.aspnetusertokens 
-    ADD PRIMARY KEY (userid, loginprovider, name);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserTokens' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."AspNetUserTokens"
+    ADD PRIMARY KEY ("UserId", "LoginProvider", "Name");
 END IF;
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetusertokens' and constraint_type = 'FOREIGN KEY') then
-  ALTER TABLE public.aspnetusertokens 
-    ADD CONSTRAINT fk_aspnetusertokens_aspnetusers_userid FOREIGN KEY (userid)
-      REFERENCES public.aspnetusers(id) ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserTokens' and constraint_type = 'FOREIGN KEY') then
+  ALTER TABLE public."AspNetUserTokens"
+    ADD CONSTRAINT "FK_AspNetUserTokens_AspNetUsers_UserId" FOREIGN KEY ("UserId")
+      REFERENCES public."AspNetUsers"("Id") ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
 
-  
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."aspnetuserlogins"
+  -- CREATE TABLE IF NOT EXISTS public."AspNetUserLogins"
   --
-  CREATE TABLE IF NOT EXISTS public.aspnetuserlogins(
-    loginprovider character varying(450) NOT NULL,
-    providerkey character varying(450) NOT NULL,
-    providerdisplayname character varying,
-    userid character varying(450) NOT NULL
+  CREATE TABLE IF NOT EXISTS public."AspNetUserLogins"(
+    "LoginProvider" character varying(450) NOT NULL,
+    "ProviderKey" character varying(450) NOT NULL,
+    "ProviderDisplayName" character varying,
+    "UserId" character varying(450) NOT NULL
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetuserlogins' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.aspnetuserlogins 
-    ADD PRIMARY KEY (loginprovider, providerkey);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserLogins' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."AspNetUserLogins"
+    ADD PRIMARY KEY ("LoginProvider", "ProviderKey");
 END IF;
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetuserlogins' and constraint_type = 'FOREIGN KEY') then
-  ALTER TABLE public.aspnetuserlogins 
-    ADD CONSTRAINT fk_aspnetuserlogins_aspnetusers_userid FOREIGN KEY (userid)
-      REFERENCES public.aspnetusers(id) ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserLogins' and constraint_type = 'FOREIGN KEY') then
+  ALTER TABLE public."AspNetUserLogins"
+    ADD CONSTRAINT "FK_AspNetUserLogins_AspNetUsers_UserId" FOREIGN KEY ("UserId")
+      REFERENCES public."AspNetUsers"("Id") ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
- 
-  
+
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."aspnetuserclaims"
+  -- CREATE TABLE IF NOT EXISTS public."AspNetUserClaims"
   --
-  CREATE TABLE IF NOT EXISTS public.aspnetuserclaims(
-    id serial,
-    userid character varying(450) NOT NULL,
-    claimtype character varying,
-    claimvalue character varying
+  CREATE TABLE IF NOT EXISTS public."AspNetUserClaims"(
+    "Id" serial,
+    "UserId" character varying(450) NOT NULL,
+    "ClaimType" character varying,
+    "ClaimValue" character varying
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetuserclaims' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.aspnetuserclaims 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserClaims' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."AspNetUserClaims"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetuserclaims' and constraint_type = 'FOREIGN KEY') then
-  ALTER TABLE public.aspnetuserclaims 
-    ADD CONSTRAINT fk_aspnetuserclaims_aspnetusers_userid FOREIGN KEY (userid)
-      REFERENCES public.aspnetusers(id) ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserClaims' and constraint_type = 'FOREIGN KEY') then
+  ALTER TABLE public."AspNetUserClaims"
+    ADD CONSTRAINT "FK_AspNetUserClaims_AspNetUsers_UserId" FOREIGN KEY ("UserId")
+      REFERENCES public."AspNetUsers"("Id") ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
-  
+
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."aspnetroles"
+  -- CREATE TABLE IF NOT EXISTS public."AspNetRoles"
   --
-  CREATE TABLE IF NOT EXISTS public.aspnetroles(
-    id character varying(450) NOT NULL,
-    name character varying(256),
-    normalizedname character varying(256),
-    concurrencystamp character varying
+  CREATE TABLE IF NOT EXISTS public."AspNetRoles"(
+    "Id" character varying(450) NOT NULL,
+    "Name" character varying(256),
+    "NormalizedName" character varying(256),
+    "ConcurrencyStamp" character varying
   );
-  
 
-
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetroles' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.aspnetroles 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetRoles' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."AspNetRoles"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetroles' and constraint_type = 'UNIQUE') then
-  ALTER TABLE public.aspnetroles 
-    ADD CONSTRAINT aspnetroles_normalizedname_key UNIQUE(normalizedname);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetRoles' and constraint_type = 'UNIQUE') then
+  ALTER TABLE public."AspNetRoles"
+    ADD CONSTRAINT "AspNetRoles_NormalizedName_key" UNIQUE("NormalizedName");
 END IF;
-  
+
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."aspnetuserroles"
+  -- CREATE TABLE IF NOT EXISTS public."AspNetUserRoles"
   --
-  CREATE TABLE IF NOT EXISTS public.aspnetuserroles(
-    userid character varying(450) NOT NULL,
-    roleid character varying(450) NOT NULL
+  CREATE TABLE IF NOT EXISTS public."AspNetUserRoles"(
+    "UserId" character varying(450) NOT NULL,
+    "RoleId" character varying(450) NOT NULL
   );
-  
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetuserroles' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.aspnetuserroles 
-    ADD PRIMARY KEY (userid, roleid);
+
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserRoles' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."AspNetUserRoles"
+    ADD PRIMARY KEY ("UserId", "RoleId");
 END IF;
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetuserroles' and constraint_type = 'FOREIGN KEY' and constraint_name = 'fk_aspnetuserroles_aspnetroles_roleid') then
-  ALTER TABLE public.aspnetuserroles 
-    ADD CONSTRAINT fk_aspnetuserroles_aspnetroles_roleid FOREIGN KEY (roleid)
-      REFERENCES public.aspnetroles(id) ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
-END IF;
-  
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetuserroles' and constraint_type = 'FOREIGN KEY' and constraint_name = 'fk_aspnetuserroles_aspnetusers_userid') then
-  ALTER TABLE public.aspnetuserroles 
-    ADD CONSTRAINT fk_aspnetuserroles_aspnetusers_userid FOREIGN KEY (userid)
-      REFERENCES public.aspnetusers(id) ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserRoles' and constraint_type = 'FOREIGN KEY' and constraint_name = 'FK_AspNetUserRoles_AspNetRoles_RoleId') then
+  ALTER TABLE public."AspNetUserRoles"
+    ADD CONSTRAINT "FK_AspNetUserRoles_AspNetRoles_RoleId" FOREIGN KEY ("RoleId")
+      REFERENCES public."AspNetRoles"("Id") ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
 
-  
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetUserRoles' and constraint_type = 'FOREIGN KEY' and constraint_name = 'FK_AspNetUserRoles_AspNetUsers_UserId') then
+  ALTER TABLE public."AspNetUserRoles"
+    ADD CONSTRAINT "FK_AspNetUserRoles_AspNetUsers_UserId" FOREIGN KEY ("UserId")
+      REFERENCES public."AspNetUsers"("Id") ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+END IF;
+
   --
-  -- CREATE TABLE IF NOT EXISTS "public"."aspnetroleclaims"
+  -- CREATE TABLE IF NOT EXISTS public."AspNetRoleClaims"
   --
-  CREATE TABLE IF NOT EXISTS public.aspnetroleclaims(
-    id serial,
-    roleid character varying(450) NOT NULL,
-    claimtype character varying,
-    claimvalue character varying
+  CREATE TABLE IF NOT EXISTS public."AspNetRoleClaims"(
+    "Id" serial,
+    "RoleId" character varying(450) NOT NULL,
+    "ClaimType" character varying,
+    "ClaimValue" character varying
   );
-  
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetroleclaims' and constraint_type = 'PRIMARY KEY') then
-  ALTER TABLE public.aspnetroleclaims 
-    ADD PRIMARY KEY (id);
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetRoleClaims' and constraint_type = 'PRIMARY KEY') then
+  ALTER TABLE public."AspNetRoleClaims"
+    ADD PRIMARY KEY ("Id");
 END IF;
 
-IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'aspnetroleclaims' and constraint_type = 'FOREIGN KEY') then
-  ALTER TABLE public.aspnetroleclaims 
-    ADD CONSTRAINT fk_aspnetroleclaims_aspnetroles_roleid FOREIGN KEY (roleid)
-      REFERENCES public.aspnetroles(id) ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
+IF NOT exists (select constraint_name from information_schema.table_constraints where table_name = 'AspNetRoleClaims' and constraint_type = 'FOREIGN KEY') then
+  ALTER TABLE public."AspNetRoleClaims"
+    ADD CONSTRAINT "FK_AspNetRoleClaims_AspNetRoles_RoleId" FOREIGN KEY ("RoleId")
+      REFERENCES public."AspNetRoles"("Id") ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
-  
-  
-  
-  INSERT INTO public.__efmigrationshistory (migrationid, productversion)
-  SELECT '20210904153137_CreateOpenIddictModels' AS migrationid,'5.0.9' AS productversion FROM public.__efmigrationshistory
+
+  INSERT INTO public."__Efmigrationshistory" ("MigrationId", "ProductVersion")
+  SELECT '20210904153137_CreateOpenIddictModels' AS "MigrationId",'5.0.9' AS "ProductVersion" FROM public."__Efmigrationshistory"
   WHERE NOT EXISTS(
-              SELECT migrationid FROM public.__efmigrationshistory WHERE migrationid = '20210904153137_CreateOpenIddictModels'
+              SELECT "MigrationId" FROM public."__Efmigrationshistory" WHERE "MigrationId" = '20210904153137_CreateOpenIddictModels'
       )
   LIMIT 1;
-  
-  INSERT INTO public.__efmigrationshistory (migrationid, productversion)
-  SELECT '20240412153137_UpdateOpenIddictModelsToV5' AS migrationid,'5.0.9' AS productversion FROM public.__efmigrationshistory
+
+  INSERT INTO public."__Efmigrationshistory" ("MigrationId", "ProductVersion")
+  SELECT '20240412153137_UpdateOpenIddictModelsToV5' AS "MigrationId",'5.0.9' AS "ProductVersion" FROM public."__Efmigrationshistory"
   WHERE NOT EXISTS(
-              SELECT migrationid FROM public.__efmigrationshistory WHERE migrationid = '20240412153137_UpdateOpenIddictModelsToV5'
+              SELECT "MigrationId" FROM public."__Efmigrationshistory" WHERE "MigrationId" = '20240412153137_UpdateOpenIddictModelsToV5'
       )
   LIMIT 1;
-  
+
   END IF;
 END $$;

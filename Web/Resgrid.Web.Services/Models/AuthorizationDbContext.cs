@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Resgrid.Web.Services.Models
 {
 	public class ApplicationUser : IdentityUser { }

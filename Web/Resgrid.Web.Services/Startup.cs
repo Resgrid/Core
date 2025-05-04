@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -69,8 +70,8 @@ namespace Resgrid.Web.ServicesCore
 {
 	public class Startup
 	{
-        //public IConfiguration Configuration { get; }
-        public IConfigurationRoot Configuration { get; private set; }
+		//public IConfiguration Configuration { get; }
+		public IConfigurationRoot Configuration { get; private set; }
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
@@ -233,7 +234,7 @@ namespace Resgrid.Web.ServicesCore
 						Title = "Resgrid API",
 						Version = "v4",
 						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
-						Contact = new OpenApiContact() {Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com")},
+						Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
 						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
 					}
 				);
@@ -246,7 +247,8 @@ namespace Resgrid.Web.ServicesCore
 			services.AddSignalR(hubOptions =>
 			{
 				hubOptions.EnableDetailedErrors = true;
-			}).AddStackExchangeRedis(CacheConfig.RedisConnectionString, options => {
+			}).AddStackExchangeRedis(CacheConfig.RedisConnectionString, options =>
+			{
 				options.Configuration.ChannelPrefix = $"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-evt-sr";
 			});
 
@@ -397,17 +399,6 @@ namespace Resgrid.Web.ServicesCore
 
 			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.IsTestMode ? PaymentProviderConfig.TestApiKey : PaymentProviderConfig.ProductionApiKey;
 
-			services.AddDbContext<AuthorizationDbContext>(options =>
-			{
-				// Configure the context to use Microsoft SQL Server.
-				options.UseSqlServer(OidcConfig.ConnectionString);
-
-				// Register the entity sets needed by OpenIddict.
-				// Note: use the generic overload if you need
-				// to replace the default OpenIddict entities.
-				options.UseOpenIddict<Guid>();
-			});
-
 			// Register the Identity services.
 			//services.AddIdentity<ApplicationUser, IdentityRole>()
 			//	.AddEntityFrameworkStores<ApplicationDbContext>()
@@ -435,6 +426,42 @@ namespace Resgrid.Web.ServicesCore
 			//// Register the Quartz.NET service and configure it to block shutdown until jobs are complete.
 			//services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
+			if (OidcConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				services.AddDbContext<AuthorizationDbContext>(options =>
+				{
+					// Configure the context to use Microsoft SQL Server.
+					options.UseNpgsql(
+						Config.OidcConfig.ConnectionString,
+						opt =>
+						{
+							opt.EnableRetryOnFailure(
+								maxRetryCount: 10,
+								maxRetryDelay: TimeSpan.FromSeconds(30),
+								errorCodesToAdd: new List<string>() { });
+
+							opt.UseAdminDatabase("postgres");
+						});//.UseLowerCaseNamingConvention();
+
+					options.UseOpenIddict<Guid>();
+				});
+
+				AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+			}
+			else
+			{
+				services.AddDbContext<AuthorizationDbContext>(options =>
+				{
+					// Configure the context to use Microsoft SQL Server.
+					options.UseSqlServer(OidcConfig.ConnectionString);
+
+					// Register the entity sets needed by OpenIddict.
+					// Note: use the generic overload if you need
+					// to replace the default OpenIddict entities.
+					options.UseOpenIddict<Guid>();
+				});
+			}
+
 			services.AddOpenIddict()
 				// Register the OpenIddict core components.
 				.AddCore(options =>
@@ -442,8 +469,8 @@ namespace Resgrid.Web.ServicesCore
 					// Configure OpenIddict to use the Entity Framework Core stores and models.
 					// Note: call ReplaceDefaultEntities() to replace the default OpenIddict entities.
 					options.UseEntityFrameworkCore()
-					   .UseDbContext<AuthorizationDbContext>()
-					   .ReplaceDefaultEntities<Guid>();
+						.UseDbContext<AuthorizationDbContext>()
+						.ReplaceDefaultEntities<Guid>();
 
 					// Enable Quartz.NET integration.
 					//options.UseQuartz();
@@ -469,7 +496,7 @@ namespace Resgrid.Web.ServicesCore
 					//options.AllowPasswordFlow()
 					//	   .AllowRefreshTokenFlow();
 					options//.AllowAuthorizationCodeFlow()
-					   //.AllowHybridFlow()
+						   //.AllowHybridFlow()
 					   .AllowClientCredentialsFlow()
 					   .AllowPasswordFlow()
 					   .AllowRefreshTokenFlow();
@@ -615,7 +642,8 @@ namespace Resgrid.Web.ServicesCore
 			this.Locator = new AutofacServiceLocator(this.AutofacContainer);
 			ServiceLocator.SetLocatorProvider(() => this.Locator);
 
-			app.Use(async (context, next) => {
+			app.Use(async (context, next) =>
+			{
 				context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
 				context.Request.Scheme = "https";
 				await next.Invoke();

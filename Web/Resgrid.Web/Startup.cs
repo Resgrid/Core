@@ -419,11 +419,15 @@ namespace Resgrid.Web
 					opts.SupportedUICultures = SupportedLocales.GetSupportedCultureInfos();
 				});
 
-			Audit.Core.Configuration.Setup()
-				.UseMongoDB(config => config
-					.ConnectionString(Config.DataConfig.NoSqlConnectionString)
-					.Database("Audit")
-					.Collection("Event"));
+			// Not ported over to Postgres yet. -SJ.
+			if (Config.DataConfig.DocDatabaseType == DatabaseTypes.MongoDb)
+			{
+				Audit.Core.Configuration.Setup()
+					.UseMongoDB(config => config
+						.ConnectionString(Config.DataConfig.NoSqlConnectionString)
+						.Database("Audit")
+						.Collection("Event"));
+			}
 
 			// Sentry logging
 			if (!string.IsNullOrWhiteSpace(Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))

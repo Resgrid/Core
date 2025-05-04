@@ -1,0 +1,62 @@
+﻿@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Resgrid - Unauthorized</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute" />
+
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <link rel="stylesheet" href="~/css/pub-bundle.css" asp-append-version="true" />
+</head>
+<body class="gray-bg">
+
+
+	<div class="middle-box text-center animated fadeInDown">
+		<h2>Unauthorized</h2>
+		<h3 class="font-bold">Due to security permissions or access rights you cannot perform that operation</h3>
+
+		<div class="error-desc">
+			The resource you requested or operation you tried to perform could not be be completed, due to a lack of permissions or access rights.
+			<ul class="list-inline">
+				<li>
+					<a class="btn btn-primary m-t" href="javascript:history.back();">Go Back</a>
+				</li>
+				<li>
+
+				</li>
+				<li>
+					<a class="btn btn-primary m-t" asp-controller="Account" asp-action="LogOff" asp-route-area="">Log Out</a>
+				</li>
+				<li>
+
+				</li>
+				<li>
+					<a class="btn btn-primary m-t" href="https://resgrid.com">Home</a>
+				</li>
+				<li>
+
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

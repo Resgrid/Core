@@ -631,12 +631,15 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
+				if (planAddonIds == null || planAddonIds.Count == 0)
+					return new List<PaymentAddon>();
+
 				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetCurrentPaymentAddonsForDepartment", Method.Get);
+				var request = new RestRequest($"/api/Billing/GetCurrentPaymentAddonsForDepartmentPost", Method.Post);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
-				request.AddParameter("planAddonIds", planAddonIds.ToString(), ParameterType.QueryString);
+				request.AddHeader("Content-Type", "application/json; charset=utf-8");
+				//request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddBody(new { DepartmentId = departmentId, PlanAddonIds = planAddonIds.ToArray() });
 
 				var response = await client.ExecuteAsync<GetAllPaymentAddonsForDepartmentResult>(request);
 
@@ -680,7 +683,7 @@ namespace Resgrid.Services
 				var request = new RestRequest($"/api/Billing/GetAllAddonPlansByType", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("planAddonType", planAddonType, ParameterType.QueryString);
+				request.AddParameter("type", (int)planAddonType, ParameterType.QueryString);
 
 				var response = await client.ExecuteAsync<GetAllPlanAddonsByTypeResult>(request);
 

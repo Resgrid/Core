@@ -455,19 +455,31 @@ namespace Resgrid.Services
 				if (notification.Type == EventTypes.UnitStatusChanged)
 				{
 					var unitEvent = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
-					return await _departmentGroupsService.GetGroupByIdAsync(unitEvent.Unit.StationGroupId.GetValueOrDefault());
+
+					if (unitEvent != null)
+					{
+						return await _departmentGroupsService.GetGroupByIdAsync(unitEvent.Unit.StationGroupId.GetValueOrDefault());
+					}
 				}
 				else if (notification.Type == EventTypes.PersonnelStatusChanged)
 				{
 					var userStaffing = await _userStateService.GetUserStateByIdAsync(dynamicData.StateId);
-					var group = await _departmentGroupsService.GetGroupForUserAsync(userStaffing.UserId, notification.DepartmentId);
-					return group;
+
+					if (userStaffing != null)
+					{
+						var group = await _departmentGroupsService.GetGroupForUserAsync(userStaffing.UserId, notification.DepartmentId);
+						return group;
+					}
 				}
 				else if (notification.Type == EventTypes.PersonnelStatusChanged)
 				{
 					var actionLog = await _actionLogsService.GetActionLogByIdAsync(dynamicData.StateId);
-					var group = await _departmentGroupsService.GetGroupForUserAsync(actionLog.UserId, notification.DepartmentId);
-					return group;
+
+					if (actionLog != null)
+					{
+						var group = await _departmentGroupsService.GetGroupForUserAsync(actionLog.UserId, notification.DepartmentId);
+						return group;
+					}
 				}
 				else if (notification.Type == EventTypes.UserAssignedToGroup)
 				{

@@ -450,26 +450,29 @@ namespace Resgrid.Services
 			//NotificationItem dynamicData = (NotificationItem)JsonConvert.DeserializeObject(data);
 			NotificationItem dynamicData = ObjectSerialization.Deserialize<NotificationItem>(notification.Data);
 
-			if (notification.Type == EventTypes.UnitStatusChanged)
+			if (dynamicData != null)
 			{
-				var unitEvent = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
-				return await _departmentGroupsService.GetGroupByIdAsync(unitEvent.Unit.StationGroupId.GetValueOrDefault());
-			}
-			else if (notification.Type == EventTypes.PersonnelStatusChanged)
-			{
-				var userStaffing = await _userStateService.GetUserStateByIdAsync(dynamicData.StateId);
-				var group = await _departmentGroupsService.GetGroupForUserAsync(userStaffing.UserId, notification.DepartmentId);
-				return group;
-			}
-			else if (notification.Type == EventTypes.PersonnelStatusChanged)
-			{
-				var actionLog = await  _actionLogsService.GetActionLogByIdAsync(dynamicData.StateId);
-				var group = await  _departmentGroupsService.GetGroupForUserAsync(actionLog.UserId, notification.DepartmentId);
-				return group;
-			}
-			else if (notification.Type == EventTypes.UserAssignedToGroup)
-			{
-				return await  _departmentGroupsService.GetGroupByIdAsync(dynamicData.GroupId);
+				if (notification.Type == EventTypes.UnitStatusChanged)
+				{
+					var unitEvent = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
+					return await _departmentGroupsService.GetGroupByIdAsync(unitEvent.Unit.StationGroupId.GetValueOrDefault());
+				}
+				else if (notification.Type == EventTypes.PersonnelStatusChanged)
+				{
+					var userStaffing = await _userStateService.GetUserStateByIdAsync(dynamicData.StateId);
+					var group = await _departmentGroupsService.GetGroupForUserAsync(userStaffing.UserId, notification.DepartmentId);
+					return group;
+				}
+				else if (notification.Type == EventTypes.PersonnelStatusChanged)
+				{
+					var actionLog = await _actionLogsService.GetActionLogByIdAsync(dynamicData.StateId);
+					var group = await _departmentGroupsService.GetGroupForUserAsync(actionLog.UserId, notification.DepartmentId);
+					return group;
+				}
+				else if (notification.Type == EventTypes.UserAssignedToGroup)
+				{
+					return await _departmentGroupsService.GetGroupByIdAsync(dynamicData.GroupId);
+				}
 			}
 
 			return null;
@@ -953,7 +956,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteDepartmentNotificationByIdAsync(int notificationId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var notification = await 
+			var notification = await
 				_departmentNotificationRepository.GetByIdAsync(notificationId);
 
 			if (notification != null)

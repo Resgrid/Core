@@ -166,6 +166,53 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>
+		/// Gets all the Notes for a Contact by the contact id
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("GetContactNotesByContactId")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<ActionResult<ContactNotesResult>> GetContactNotesByContactId(string contactId)
+		{
+			var result = new ContactNotesResult();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			if (contact != null && contact.DepartmentId == DepartmentId)
+			{
+				var contactNotes = await _contactsService.GetContactNotesByContactIdAsync(contactId, Int32.MaxValue, false);
+
+				foreach (var contactNote in contactNotes)
+				{
+					var addedOnPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
+					UserProfile editedPerson = null;
+
+					if (!String.IsNullOrWhiteSpace(contact.EditedByUserId))
+						editedPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
+
+					ContactNoteType noteType = null;
+					if (!String.IsNullOrWhiteSpace(contactNote.ContactNoteTypeId))
+						noteType = await _contactsService.GetContactNoteTypeByIdAsync(contactNote.ContactNoteTypeId);
+
+					result.Data.Add(ConvertContactNoteData(contactNote, noteType, department, addedOnPerson, editedPerson));
+				}
+
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
 		public static ContactCategoryResultData ConvertCategoryData(ContactCategory category, Department department, UserProfile addedProfile, UserProfile editedProfile)
 		{
 			var cat = new ContactCategoryResultData();
@@ -245,6 +292,45 @@ namespace Resgrid.Web.Services.Controllers.v4
 				con.EditedByUserName = editedProfile.FullName.AsFirstNameLastName;
 
 			return con;
+		}
+
+		public static ContactNoteResultData ConvertContactNoteData(ContactNote contactNote, ContactNoteType contactNoteType, Department department, UserProfile addedProfile, UserProfile editedProfile)
+		{
+			var conNote = new ContactNoteResultData();
+			conNote.ContactId = contactNote.ContactId;
+			conNote.ContactNoteId = contactNote.ContactNoteId;
+			conNote.ContactNoteTypeId = contactNote.ContactNoteTypeId;
+			conNote.Note = contactNote.Note;
+			conNote.ShouldAlert = contactNote.ShouldAlert;
+			conNote.Visibility = contactNote.Visibility;
+
+			if (contactNoteType != null)
+			{
+				conNote.ContactNoteTypeId = contactNoteType.ContactNoteTypeId;
+				conNote.NoteType = contactNoteType.Name;
+			}
+
+			if (contactNote.ExpiresOn.HasValue)
+			{
+				conNote.ExpiresOnUtc = contactNote.ExpiresOn;
+				conNote.ExpiresOn = contactNote.ExpiresOn.Value.FormatForDepartment(department);
+			}
+
+			conNote.IsDeleted = contactNote.IsDeleted;
+			conNote.AddedOnUtc = contactNote.AddedOn;
+			conNote.AddedOn = contactNote.AddedOn.FormatForDepartment(department);
+			conNote.AddedByUserId = contactNote.AddedByUserId;
+			conNote.AddedByName = addedProfile.FullName.AsFirstNameLastName;
+
+			if (contactNote.EditedOn.HasValue)
+			{
+				conNote.EditedOnUtc = contactNote.EditedOn;
+				conNote.EditedOn = contactNote.EditedOn.Value.FormatForDepartment(department);
+				conNote.EditedByUserId = contactNote.EditedByUserId;
+				conNote.EditedByName = editedProfile.FullName.AsFirstNameLastName;
+			}
+
+			return conNote;
 		}
 	}
 }

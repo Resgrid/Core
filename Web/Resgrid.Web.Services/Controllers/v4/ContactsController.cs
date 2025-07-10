@@ -199,7 +199,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					result.Data.Add(ConvertContactNoteData(contactNote, noteType, department, addedOnPerson, editedPerson));
 				}
 
-				result.PageSize = 1;
+				result.PageSize = contactNotes.Count;
 				result.Status = ResponseHelper.Success;
 			}
 			else

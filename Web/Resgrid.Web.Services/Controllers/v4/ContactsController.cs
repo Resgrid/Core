@@ -186,7 +186,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var contactNote in contactNotes)
 				{
-					var addedOnPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
+					var addedOnPerson = await _userProfileService.GetProfileByUserIdAsync(contactNote.AddedByUserId);
 					UserProfile editedPerson = null;
 
 					if (!String.IsNullOrWhiteSpace(contactNote.EditedByUserId))

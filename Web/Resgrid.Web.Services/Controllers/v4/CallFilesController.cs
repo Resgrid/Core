@@ -131,6 +131,44 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Get a users avatar from the Resgrid system based on their ID
+		/// </summary>
+		/// <param name="query">ID of the file</param>
+		/// <returns></returns>
+		[HttpHead("GetFile")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult> GetFileHead(string query)
+		{
+			if (String.IsNullOrWhiteSpace(query))
+				return NotFound();
+
+			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query));
+
+			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+
+			var items = decryptedQuery.Split(char.Parse("|"));
+
+			if (String.IsNullOrWhiteSpace(items[0]) || items[0] == "0" || String.IsNullOrWhiteSpace(items[1]))
+				return NotFound();
+
+			int departmentId = int.Parse(items[0].Trim());
+			string id = items[1].Trim();
+
+			var attachment = await _callsService.GetCallAttachmentAsync(int.Parse(id));
+
+			if (attachment == null)
+				return NotFound();
+
+			var call = await _callsService.GetCallByIdAsync(attachment.CallId);
+			if (call.DepartmentId != departmentId)
+				return Unauthorized();
+
+			return Ok();
+		}
+
+		/// <summary>
 		/// Attaches a file to a call
 		/// </summary>
 		/// <param name="input">ID of the user</param>

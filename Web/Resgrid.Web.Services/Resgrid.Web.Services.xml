@@ -3179,6 +3179,13 @@
             <param name="query">ID of the file</param>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.GetFileHead(System.String)">
+            <summary>
+            Get a users avatar from the Resgrid system based on their ID
+            </summary>
+            <param name="query">ID of the file</param>
+            <returns></returns>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.SaveCallFile(Resgrid.Web.Services.Models.v4.CallFiles.SaveCallFileInput,System.Threading.CancellationToken)">
             <summary>
             Attaches a file to a call
@@ -3380,6 +3387,12 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactById(System.String)">
             <summary>
             Gets the contact by id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactNotesByContactId(System.String)">
+            <summary>
+            Gets all the Notes for a Contact by the contact id
             </summary>
             <returns></returns>
         </member>
@@ -5509,6 +5522,26 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PostHogHost">
             <summary>
             PostHog Host
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactNotesResult">
+            <summary>
+            Gets the notes for a contact
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactNotesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Contacts.ContactNotesResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactNoteResultData">
+            <summary>
+            A contact note
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactsCategoriesResult">

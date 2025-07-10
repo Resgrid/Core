@@ -189,8 +189,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var addedOnPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
 					UserProfile editedPerson = null;
 
-					if (!String.IsNullOrWhiteSpace(contact.EditedByUserId))
-						editedPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
+					if (!String.IsNullOrWhiteSpace(contactNote.EditedByUserId))
+						editedPerson = await _userProfileService.GetProfileByUserIdAsync(contactNote.EditedByUserId);
 
 					ContactNoteType noteType = null;
 					if (!String.IsNullOrWhiteSpace(contactNote.ContactNoteTypeId))

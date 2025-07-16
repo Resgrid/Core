@@ -1580,7 +1580,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#endregion Setup Wizard
 
-		#region Dispatch Settings
+		#region Shift Settings
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
@@ -1610,7 +1610,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		#endregion Dispatch Settings
+		#endregion Shift Settings
 
 		#region Dispatch Settings
 
@@ -1640,6 +1640,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.AutoSetStatusForShiftPersonnel = await _departmentSettingsService.GetAutoSetStatusForShiftDispatchPersonnelAsync(DepartmentId);
 			model.ShiftDispatchStatus = await _departmentSettingsService.GetShiftCallDispatchPersonnelStatusToSetAsync(DepartmentId);
 			model.ShiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
+			model.UnitDispatchAlsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(DepartmentId);
+			model.UnitDispatchAlsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -1675,6 +1677,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentSettingTypes.ShiftCallDispatchPersonnelStatusToSet, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.ShiftClearStatus.ToString(),
 					DepartmentSettingTypes.ShiftCallReleasePersonnelStatusToSet, cancellationToken);
+
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitDispatchAlsoDispatchToAssignedPersonnel.ToString(),
+					DepartmentSettingTypes.UnitDispatchAlsoDispatchToAssignedPersonnel, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitDispatchAlsoDispatchToGroup.ToString(),
+					DepartmentSettingTypes.UnitDispatchAlsoDispatchToGroup, cancellationToken);
 
 				model.SaveSuccess = true;
 				return View(model);

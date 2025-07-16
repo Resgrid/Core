@@ -35,7 +35,7 @@
                               </div>
 				            }
 
-                            <h3>Group Dispatch Settings</h3>
+                            <h3>@localizer["GroupDispatchSettingsHeader"]</h3>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">@localizer["UseShiftForGroupDispatchLabel"]</label>
                                 <div class="col-sm-9">
@@ -64,6 +64,29 @@
                                 <label class="col-sm-3 control-label">@localizer["PersonCallReleaseStatusLabel"]</label>
                                 <div class="col-sm-9">@Html.DropDownListFor(m => m.ShiftClearStatus, Model.StatusLevels, new { style = "width: 70%" })</div>
                             </div>
+
+                            <h3>@localizer["UnitDispatchSettingsHeader"]</h3>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["UnitDispatchAlsoDispatchToAssignedPersonnelLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <input type="checkbox" asp-for="UnitDispatchAlsoDispatchToAssignedPersonnel">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["UnitDispatchAlsoDispatchToGroupLabel"]</label>
+                                <div class="col-sm-9">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <input type="checkbox" asp-for="UnitDispatchAlsoDispatchToGroup">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
                                     <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>

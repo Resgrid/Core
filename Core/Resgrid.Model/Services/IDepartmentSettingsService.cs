@@ -268,6 +268,10 @@ namespace Resgrid.Model.Services
 
 		Task<DepartmentModuleSettings> GetDepartmentModuleSettingsAsync(int departmentId, bool bypassCache = false);
 
+		Task<bool> GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(int departmentId);
+
+		Task<bool> GetUnitDispatchAlsoDispatchToGroupAsync(int departmentId);
+
 		Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

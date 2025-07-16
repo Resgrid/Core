@@ -11,6 +11,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
+using SharpKml.Dom;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -149,6 +150,9 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					if (_unitsService == null)
 						_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+
+					bool alsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(cqi.Call.DepartmentId);
+					bool alsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(cqi.Call.DepartmentId);
 
 					foreach (var d in cqi.Call.UnitDispatches)
 					{

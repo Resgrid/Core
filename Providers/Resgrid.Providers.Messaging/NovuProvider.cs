@@ -118,6 +118,28 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
+		public async Task<bool> DeleteMessage(string messageId)
+		{
+			try
+			{
+				using (var httpClient = new HttpClient())
+				{
+					var requestUrl = $"{ChatConfig.NovuBackendUrl}/v1/messages/{messageId}";
+					httpClient.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
+
+					var response = await httpClient.DeleteAsync(requestUrl);
+
+					return response.IsSuccessStatusCode;
+				}
+			}
+			catch (Exception e)
+			{
+				Logging.LogException(e, "Failed to delete novu message");
+				return false;
+			}
+		}
+
 		public async Task<bool> UpdateUserSubscriberFcm(string userId, string code, string token)
 		{
 			return await UpdateSubscriberFcm($"{code}_User_{userId}", token, ChatConfig.NovuResponderFcmProviderId);
@@ -162,10 +184,11 @@ namespace Resgrid.Providers.Messaging
 									priority = androidChannelName == "calls" ? "high" : "normal",
 									notification = new
 									{
-										channel_id = androidChannelName,
-										default_sound = true,
+										channelId = type,
+										defaultSound = true,
 										sticky = androidChannelName == "calls" ? true : false,
-										notification_priority = androidChannelName == "calls" ? 5 : 3,
+										//priority = androidChannelName == "calls" ? 5 : 3,
+										priority = androidChannelName == "calls" ? "max" : "default",
 									},
 									data = new
 									{
@@ -174,14 +197,14 @@ namespace Resgrid.Providers.Messaging
 										eventCode = eventCode,
 										type = type
 									}
-								},
-								data = new
-								{
-									title = title,
-									message = body,
-									eventCode = eventCode,
-									type = type
-								}
+								}//,
+								//data = new
+								//{
+								//	title = title,
+								//	message = body,
+								//	eventCode = eventCode,
+								//	type = type
+								//}
 							}
 						},
 						to = new[]{ new

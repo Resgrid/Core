@@ -3544,6 +3544,17 @@
             </summary>
             <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.InboxController">
+            <summary>
+            For interacting with the Inbox
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InboxController.DeleteMessage(System.String)">
+            <summary>
+            Deletes a message from the inbox by its ID
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
             <summary>
             Mapping operations

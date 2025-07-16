@@ -78,7 +78,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						catch (Exception ex)
 						{
-
+							Logging.LogException(ex);
 						}
 						break;
 					case CqrsEventTypes.ClearDepartmentCache:
@@ -112,10 +112,6 @@ namespace Resgrid.Workers.Framework.Logic
 							actionLogsService = null;
 							customStatesService = null;
 							usersService = null;
-						}
-						else
-						{
-
 						}
 						break;
 					case CqrsEventTypes.NewChatMessage:

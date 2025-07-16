@@ -33,6 +33,8 @@
 		MappingUnitLocationTTL = 29,
 		MappingPersonnelAllowStatusWithNoLocationToOverwrite = 30,
 		MappingUnitAllowStatusWithNoLocationToOverwrite = 31,
-		ModuleSettings = 32
+		ModuleSettings = 32,
+		UnitDispatchAlsoDispatchToAssignedPersonnel = 33,
+		UnitDispatchAlsoDispatchToGroup = 34,
 	}
 }

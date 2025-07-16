@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
+using DnsClient;
 
 namespace Resgrid.Services
 {
@@ -74,24 +75,24 @@ namespace Resgrid.Services
 			//string deviceId = pushUri.DeviceId;
 			List<PushRegistrationDescription> usersDevices = null;
 
-			try
-			{
-				usersDevices = await _unitNotificationProvider.GetRegistrationsByUUID(pushUri.PushLocation);
-			}
-			catch (TimeoutException)
-			{ }
+			//try
+			//{
+			//	usersDevices = await _unitNotificationProvider.GetRegistrationsByUUID(pushUri.PushLocation);
+			//}
+			//catch (TimeoutException)
+			//{ }
 
-			if (pushUri.UnitId.HasValue)
+			if (pushUri.UnitId.HasValue && !string.IsNullOrWhiteSpace(pushUri.PushLocation))
 				await _novuProvider.UpdateUnitSubscriberFcm(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
 
 
-			if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(string.Format("unitId:{0}", pushUri.UnitId.ToString()))))
-				await _unitNotificationProvider.RegisterPush(pushUri);
-			else
-			{
-				await _unitNotificationProvider.UnRegisterPushByUUID(pushUri.PushLocation);
-				await _unitNotificationProvider.RegisterPush(pushUri);
-			}
+			//if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(string.Format("unitId:{0}", pushUri.UnitId.ToString()))))
+			//	await _unitNotificationProvider.RegisterPush(pushUri);
+			//else
+			//{
+			//	await _unitNotificationProvider.UnRegisterPushByUUID(pushUri.PushLocation);
+			//	await _unitNotificationProvider.RegisterPush(pushUri);
+			//}
 
 			return true;
 		}
@@ -183,8 +184,23 @@ namespace Resgrid.Services
 			if (priority != null)
 				color = priority.Color;
 
-			await _unitNotificationProvider.SendAllNotifications(call.SubTitle, call.Title, unitId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
-			await _novuProvider.SendUnitDispatch(call.Title, call.SubTitle, unitId, call.DepartmentCode, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+			try
+			{
+				await _unitNotificationProvider.SendAllNotifications(call.SubTitle, call.Title, unitId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			try
+			{
+				await _novuProvider.SendUnitDispatch(call.Title, call.SubTitle, unitId, call.DepartmentCode, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
 
 			return true;
 		}

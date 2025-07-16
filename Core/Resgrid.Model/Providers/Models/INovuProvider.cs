@@ -12,4 +12,5 @@ public interface INovuProvider
 	Task<bool> SendUnitDispatch(string title, string body, int unitId, string depCode, string eventCode, string type,
 		bool enableCustomSounds, int count, string color);
 
+	Task<bool> DeleteMessage(string messageId);
 }

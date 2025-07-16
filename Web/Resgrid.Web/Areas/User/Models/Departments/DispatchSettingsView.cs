@@ -12,6 +12,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool DispatchShiftInsteadOfGroup { get; set; }
 		public bool AutoSetStatusForShiftPersonnel { get; set; }
 
+		public bool UnitDispatchAlsoDispatchToAssignedPersonnel { get; set; }
+		public bool UnitDispatchAlsoDispatchToGroup { get; set; }
+
 		public bool? SaveSuccess { get; set; }
 		public string Message { get; set; }
 

@@ -11,6 +11,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
+using SharpKml.Dom;
 
 namespace Resgrid.Workers.Framework.Logic
 {
@@ -150,6 +151,9 @@ namespace Resgrid.Workers.Framework.Logic
 					if (_unitsService == null)
 						_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
 
+					bool alsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(cqi.Call.DepartmentId);
+					bool alsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(cqi.Call.DepartmentId);
+
 					foreach (var d in cqi.Call.UnitDispatches)
 					{
 						var unit = await _unitsService.GetUnitByIdAsync(d.UnitId);
@@ -160,32 +164,37 @@ namespace Resgrid.Workers.Framework.Logic
 
 						await _communicationService.SendUnitCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Address);
 
-						var unitAssignedMembers = await _unitsService.GetCurrentRolesForUnitAsync(d.UnitId);
-
-						if (unitAssignedMembers != null && unitAssignedMembers.Count() > 0)
+						if (alsoDispatchToAssignedPersonnel)
 						{
-							foreach (var member in unitAssignedMembers)
+							var unitAssignedMembers = await _unitsService.GetCurrentRolesForUnitAsync(d.UnitId);
+							if (unitAssignedMembers != null && unitAssignedMembers.Count() > 0)
 							{
-								if (!dispatchedUsers.Contains(member.UserId))
+								foreach (var member in unitAssignedMembers)
 								{
-									dispatchedUsers.Add(member.UserId);
-									try
+									if (!dispatchedUsers.Contains(member.UserId))
 									{
-										var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-										await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
-									}
-									catch (SocketException sex)
-									{
-									}
-									catch (Exception ex)
-									{
-										Logging.LogException(ex);
-									}
+										dispatchedUsers.Add(member.UserId);
+										try
+										{
+											var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
+											await _communicationService.SendCallAsync(cqi.Call,
+												new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber,
+												cqi.Call.DepartmentId, profile, cqi.Address);
+										}
+										catch (SocketException sex)
+										{
+										}
+										catch (Exception ex)
+										{
+											Logging.LogException(ex);
+										}
 
+									}
 								}
 							}
 						}
-						else
+
+						if (alsoDispatchToGroup)
 						{
 							if (unit.StationGroupId.HasValue)
 							{

@@ -695,6 +695,26 @@ namespace Resgrid.Services
 			return await getSetting();
 		}
 
+		public async Task<bool> GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitDispatchAlsoDispatchToAssignedPersonnel);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+
+		public async Task<bool> GetUnitDispatchAlsoDispatchToGroupAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitDispatchAlsoDispatchToGroup);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),

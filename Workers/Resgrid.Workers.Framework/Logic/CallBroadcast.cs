@@ -32,6 +32,7 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
 			_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
+			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
 
 			if (cqi != null && cqi.Call != null && cqi.Call.HasAnyDispatches())
 			{
@@ -100,9 +101,6 @@ namespace Resgrid.Workers.Framework.Logic
 				// Dispatch Groups
 				if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())
 				{
-					if (_departmentSettingsService == null)
-						_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-
 					if (_shiftsService == null)
 						_shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
 

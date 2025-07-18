@@ -2425,52 +2425,6 @@
             Is the user a group admin
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Uid">
-            <summary>
-            UserId (GUID/UUID) of the User to set. This field will be ignored if the input is used on a 
-            function that is setting status for the current user.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Typ">
-            <summary>
-            The state/staffing level of the user to set for the user.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Not">
-            <summary>
-            Note for the staffing level
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult">
-            <summary>
-            The result object for a state/staffing level request.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Uid">
-            <summary>
-            The UserId GUID/UUID for the user state/staffing level being return
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Nme">
-            <summary>
-            The full name of the user for the state/staffing level being returned
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Typ">
-            <summary>
-            The current staffing level (state) type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Tms">
-            <summary>
-            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Not">
-            <summary>
-            Staffing note for the User's staffing
-            </summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput">
             <summary>
             Input data to add a staffing schedule in the Resgrid system
@@ -2574,6 +2528,52 @@
         <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Not">
             <summary>
             Note for this staffing schedule
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Uid">
+            <summary>
+            UserId (GUID/UUID) of the User to set. This field will be ignored if the input is used on a 
+            function that is setting status for the current user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Typ">
+            <summary>
+            The state/staffing level of the user to set for the user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Not">
+            <summary>
+            Note for the staffing level
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult">
+            <summary>
+            The result object for a state/staffing level request.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Uid">
+            <summary>
+            The UserId GUID/UUID for the user state/staffing level being return
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Nme">
+            <summary>
+            The full name of the user for the state/staffing level being returned
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Typ">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Tms">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Not">
+            <summary>
+            Staffing note for the User's staffing
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult">
@@ -6530,171 +6530,6 @@
             Identifier of the new npte
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.FilterResult">
-            <summary>
-            The result of getting all personnel filters for the system
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Id">
-            <summary>
-            The Id value of the filter
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Type">
-            <summary>
-            The type of the filter
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Name">
-            <summary>
-            The filters name
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult">
-            <summary>
-            Result containing all the data required to populate the New Call form
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult">
-            <summary>
-            Result that contains all the options available to filter personnel against compatible Resgrid APIs
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult">
-            <summary>
-            Result containing all the data required to populate the New Call form
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData">
-            <summary>
-            Information about a User
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UserId">
-            <summary>
-            The UserId GUID/UUID for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.DepartmentId">
-            <summary>
-            DepartmentId of the deparment the user belongs to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.IdentificationNumber">
-            <summary>
-            Department specificed ID number for this user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.FirstName">
-            <summary>
-            The Users First Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.LastName">
-            <summary>
-            The Users Last Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.EmailAddress">
-            <summary>
-            The Users Email Address
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.MobilePhone">
-            <summary>
-            The Users Mobile Telephone Number
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupId">
-            <summary>
-            GroupId the user is assigned to (0 for no group)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupName">
-            <summary>
-            Name of the group the user is assigned to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Roles">
-            <summary>
-            Enumeration/List of roles the user currently holds
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusId">
-            <summary>
-            The current action/status type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Status">
-            <summary>
-            The current action/status string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusColor">
-            <summary>
-            The current action/status color hex string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusTimestamp">
-            <summary>
-            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationId">
-            <summary>
-            The current action/status destination id for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationName">
-            <summary>
-            The current action/status destination name for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingId">
-            <summary>
-            The current staffing level (state) type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Staffing">
-            <summary>
-            The current staffing level (state) string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingColor">
-            <summary>
-            The current staffing level (state) color hex string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingTimestamp">
-            <summary>
-            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Location">
-            <summary>
-            Users last known location
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Weight">
-            <summary>
-            Sorting weight for the user
-            </summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput">
             <summary>
             A GPS location for a point in time of a specificed person
@@ -7168,6 +7003,171 @@
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusResult.Id">
             <summary>
             Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.FilterResult">
+            <summary>
+            The result of getting all personnel filters for the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Id">
+            <summary>
+            The Id value of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Type">
+            <summary>
+            The type of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Name">
+            <summary>
+            The filters name
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult">
+            <summary>
+            Result containing all the data required to populate the New Call form
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult">
+            <summary>
+            Result that contains all the options available to filter personnel against compatible Resgrid APIs
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult">
+            <summary>
+            Result containing all the data required to populate the New Call form
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData">
+            <summary>
+            Information about a User
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UserId">
+            <summary>
+            The UserId GUID/UUID for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.DepartmentId">
+            <summary>
+            DepartmentId of the deparment the user belongs to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.IdentificationNumber">
+            <summary>
+            Department specificed ID number for this user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.FirstName">
+            <summary>
+            The Users First Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.LastName">
+            <summary>
+            The Users Last Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.EmailAddress">
+            <summary>
+            The Users Email Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.MobilePhone">
+            <summary>
+            The Users Mobile Telephone Number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupId">
+            <summary>
+            GroupId the user is assigned to (0 for no group)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupName">
+            <summary>
+            Name of the group the user is assigned to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Roles">
+            <summary>
+            Enumeration/List of roles the user currently holds
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusId">
+            <summary>
+            The current action/status type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Status">
+            <summary>
+            The current action/status string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusColor">
+            <summary>
+            The current action/status color hex string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusTimestamp">
+            <summary>
+            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationId">
+            <summary>
+            The current action/status destination id for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationName">
+            <summary>
+            The current action/status destination name for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingId">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Staffing">
+            <summary>
+            The current staffing level (state) string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingColor">
+            <summary>
+            The current staffing level (state) color hex string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingTimestamp">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Location">
+            <summary>
+            Users last known location
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Weight">
+            <summary>
+            Sorting weight for the user
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetAllProtocolsResult">
@@ -8081,6 +8081,232 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult">
+            <summary>
+            Depicts a result after saving a unit status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult.Id">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput">
+            <summary>
+            Object inputs for setting a users Status/Action. If this object is used in an operation that sets
+            a status for the current user the UserId value in this object will be ignored.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Id">
+            <summary>
+            UnitId of the apparatus that the state is being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Type">
+            <summary>
+            The UnitStateType of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.RespondingTo">
+            <summary>
+            The Call/Station the unit is responding to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.TimestampUtc">
+            <summary>
+            The timestamp of the status event in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Timestamp">
+            <summary>
+            The timestamp of the status event in the local time of the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Note">
+            <summary>
+            User provided note for this event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Latitude">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Longitude">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Altitude">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Speed">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Heading">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.EventId">
+            <summary>
+            The event id used for queuing on mobile applications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Roles">
+            <summary>
+            The accountability roles filed for this event
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput">
+            <summary>
+            Role filled by a User on a Unit for an event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Id">
+            <summary>
+            Id of the locally stored event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.EventId">
+            <summary>
+            Local Event Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.UserId">
+            <summary>
+            UserId of the user filling the role
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.RoleId">
+            <summary>
+            RoleId of the role being filled
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Name">
+            <summary>
+             The name of the Role
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult">
+            <summary>
+            Depicts a unit status in the Resgrid system.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData">
+            <summary>
+            Depicts a unit's status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.UnitId">
+            <summary>
+            Unit Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Name">
+            <summary>
+            Units Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Type">
+            <summary>
+            The Type of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
+            <summary>
+            Units current Status (State)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateCss">
+            <summary>
+            CSS for status (for display)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateStyle">
+            <summary>
+            CSS Style for status (for display)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Timestamp">
+            <summary>
+            Timestamp of this Unit State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TimestampUtc">
+            <summary>
+            Timestamp in Utc of this Unit State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationId">
+            <summary>
+            Destination Id (Station or Call)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationName">
+            <summary>
+            Name of the Desination (Call or Station)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">
+            <summary>
+            Note for the State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Latitude">
+            <summary>
+            Latitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Longitude">
+            <summary>
+            Longitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupName">
+            <summary>
+            Name of the Group the Unit is in
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupId">
+            <summary>
+            Id of the Group the Unit is in
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult">
+            <summary>
+            Unit statuses (states)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Units.GetUnitsFilterOptionsResult">
             <summary>
             Result that contains all the options available to filter units against compatible Resgrid APIs
@@ -8367,232 +8593,6 @@
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Models.v4.Units.UnitsResult.#ctor">
-            <summary>
-            Default constructor
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult">
-            <summary>
-            Depicts a result after saving a unit status
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult.Id">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput">
-            <summary>
-            Object inputs for setting a users Status/Action. If this object is used in an operation that sets
-            a status for the current user the UserId value in this object will be ignored.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Id">
-            <summary>
-            UnitId of the apparatus that the state is being set for
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Type">
-            <summary>
-            The UnitStateType of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.RespondingTo">
-            <summary>
-            The Call/Station the unit is responding to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.TimestampUtc">
-            <summary>
-            The timestamp of the status event in UTC
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Timestamp">
-            <summary>
-            The timestamp of the status event in the local time of the device
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Note">
-            <summary>
-            User provided note for this event
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Latitude">
-            <summary>
-            GPS Latitude of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Longitude">
-            <summary>
-            GPS Longitude of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Accuracy">
-            <summary>
-            GPS Latitude\Longitude Accuracy of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Altitude">
-            <summary>
-            GPS Altitude of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.AltitudeAccuracy">
-            <summary>
-            GPS Altitude Accuracy of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Speed">
-            <summary>
-            GPS Speed of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Heading">
-            <summary>
-            GPS Heading of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.EventId">
-            <summary>
-            The event id used for queuing on mobile applications
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Roles">
-            <summary>
-            The accountability roles filed for this event
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput">
-            <summary>
-            Role filled by a User on a Unit for an event
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Id">
-            <summary>
-            Id of the locally stored event
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.EventId">
-            <summary>
-            Local Event Id
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.UserId">
-            <summary>
-            UserId of the user filling the role
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.RoleId">
-            <summary>
-            RoleId of the role being filled
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Name">
-            <summary>
-             The name of the Role
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult">
-            <summary>
-            Depicts a unit status in the Resgrid system.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData">
-            <summary>
-            Depicts a unit's status
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.UnitId">
-            <summary>
-            Unit Id
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Name">
-            <summary>
-            Units Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Type">
-            <summary>
-            The Type of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
-            <summary>
-            Units current Status (State)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateCss">
-            <summary>
-            CSS for status (for display)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateStyle">
-            <summary>
-            CSS Style for status (for display)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Timestamp">
-            <summary>
-            Timestamp of this Unit State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TimestampUtc">
-            <summary>
-            Timestamp in Utc of this Unit State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationId">
-            <summary>
-            Destination Id (Station or Call)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationName">
-            <summary>
-            Name of the Desination (Call or Station)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">
-            <summary>
-            Note for the State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Latitude">
-            <summary>
-            Latitude
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Longitude">
-            <summary>
-            Longitude
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupName">
-            <summary>
-            Name of the Group the Unit is in
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupId">
-            <summary>
-            Id of the Group the Unit is in
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult">
-            <summary>
-            Unit statuses (states)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.#ctor">
             <summary>
             Default constructor
             </summary>

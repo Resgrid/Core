@@ -65,6 +65,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="userId">UserId to get the status for</param>
 		/// <returns></returns>
 		[HttpGet("GetCurrentStatffing")]
+		[HttpGet("GetCurrentStaffing")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<ActionResult<GetCurrentStaffingResult>> GetCurrentStatffing(string userId)

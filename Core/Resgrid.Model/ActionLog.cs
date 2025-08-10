@@ -51,6 +51,12 @@ namespace Resgrid.Model
 		[ProtoMember(9)]
 		public string Note { get; set; }
 
+		[ProtoMember(12)]
+		public int? UnitStateId { get; set; }
+
+		[ProtoMember(13)]
+		public string UnitName { get; set; }
+
 		[NotMapped]
 		[ProtoMember(10)]
 		public double Eta { get; set; }

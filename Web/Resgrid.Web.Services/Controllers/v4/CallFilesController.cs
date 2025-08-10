@@ -125,6 +125,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != departmentId)
 				return Unauthorized();
 
+			if (String.IsNullOrWhiteSpace(attachment.FileName) || attachment.Data == null || attachment.Data.Length == 0)
+				return NotFound();
+
 			var extension = Path.GetExtension(attachment.FileName).ToLowerInvariant();
 			var contentType = FileHelper.GetContentTypeByExtension(extension);
 			return File(attachment.Data, contentType);
@@ -159,6 +162,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var attachment = await _callsService.GetCallAttachmentAsync(int.Parse(id));
 
 			if (attachment == null)
+				return NotFound();
+
+			if (String.IsNullOrWhiteSpace(attachment.FileName) || attachment.Data == null || attachment.Data.Length == 0)
 				return NotFound();
 
 			var call = await _callsService.GetCallByIdAsync(attachment.CallId);
@@ -201,6 +207,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.State != (int)CallStates.Active)
 				return BadRequest();
 
+			if (String.IsNullOrWhiteSpace(input.Data))
+			    return BadRequest();
+
 			var callAttachment = new CallAttachment();
 			callAttachment.CallId = int.Parse(input.CallId);
 			callAttachment.CallAttachmentType = input.Type;
@@ -212,7 +221,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			callAttachment.UserId = input.UserId;
 			callAttachment.Timestamp = DateTime.UtcNow;
-			callAttachment.Data = Convert.FromBase64String(input.Data);
+
+			try
+			{
+				callAttachment.Data = Convert.FromBase64String(input.Data);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest();
+			}
 
 			if (!String.IsNullOrWhiteSpace(input.Latitude))
 			{

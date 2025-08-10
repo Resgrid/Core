@@ -348,6 +348,7 @@ namespace Resgrid.Services
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.AvailableStation, ButtonText = "Available Station", ButtonColor = "#d1dade", TextColor = "5E5E5E", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Stations });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToStation, ButtonText = "Responding to Station", ButtonColor = "#449d44", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Stations });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToScene, ButtonText = "Responding to Scene", ButtonColor = "#449d44", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Calls });
+			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.OnUnit, ButtonText = "On Unit", ButtonColor = "#449d44", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.CallsAndStations });
 
 			return details;
 		}
@@ -360,7 +361,7 @@ namespace Resgrid.Services
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Unavailable, ButtonText = "Unavailable", ButtonColor = "#ed5565", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Committed, ButtonText = "Committed", ButtonColor = "#23c6c8", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.OnShift, ButtonText = "On Shift", ButtonColor = "#228bcb", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional });
-		
+
 
 			return details;
 		}

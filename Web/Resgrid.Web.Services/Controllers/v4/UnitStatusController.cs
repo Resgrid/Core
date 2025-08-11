@@ -34,18 +34,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICallsService _callsService;
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEventAggregator _eventAggregator;
 
 		public UnitStatusController(
 			ICallsService callsService,
 			IUnitsService unitsService,
 			IDepartmentGroupsService departmentGroupsService,
+			IDepartmentSettingsService departmentSettingsService,
 			IEventAggregator eventAggregator
 			)
 		{
 			_callsService = callsService;
 			_unitsService = unitsService;
 			_departmentGroupsService = departmentGroupsService;
+			_departmentSettingsService = departmentSettingsService;
 			_eventAggregator = eventAggregator;
 		}
 		#endregion Members and Constructors
@@ -192,6 +195,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new SaveUnitStatusResult();
 			var unit = await _unitsService.GetUnitByIdAsync(int.Parse(stateInput.Id));
+			var setPersonnelStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 
 			if (unit == null)
 			{

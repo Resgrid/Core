@@ -715,6 +715,16 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus);
+
+			if (settingValue != null)
+				return bool.Parse(settingValue.Setting);
+
+			return false;
+		}
+
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),

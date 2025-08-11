@@ -36,5 +36,6 @@
 		ModuleSettings = 32,
 		UnitDispatchAlsoDispatchToAssignedPersonnel = 33,
 		UnitDispatchAlsoDispatchToGroup = 34,
+		PersonnelOnUnitSetUnitStatus = 35,
 	}
 }

@@ -15,6 +15,8 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool UnitDispatchAlsoDispatchToAssignedPersonnel { get; set; }
 		public bool UnitDispatchAlsoDispatchToGroup { get; set; }
 
+		public bool PersonnelOnUnitSetUnitStatus { get; set; }
+
 		public bool? SaveSuccess { get; set; }
 		public string Message { get; set; }
 

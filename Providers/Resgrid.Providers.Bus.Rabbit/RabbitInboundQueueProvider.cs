@@ -583,9 +583,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 				if (currentDeliveryCount >= 3)
 					return true;
 
-				//var factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-				//using (var connection = RabbitConnection.CreateConnection())
-				//{
 				var connection = await RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
@@ -593,15 +590,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 					{
 						var props = new BasicProperties();
 						props.DeliveryMode = DeliveryModes.Persistent;
+						props.Expiration = "36000000";
 
-						// I *THINK* these headers are appearing in the body when trying to deserialze and it's blowing up protobuf. -SJ
-						//props.Expiration = "36000000";
-						//props.Headers = new Dictionary<string, object>();
-						//props.Headers.Add("x-redelivered-count", currentDeliveryCount++);
-						//props.Headers.Add("x-previous-error", mex.Message);
-
-						// https://github.com/rabbitmq/rabbitmq-delayed-message-exchange
-						//props.Headers.Add("x-delay", 5000);
+						props.Headers = new Dictionary<string, object>();
+						props.Headers.Add("x-redelivered-count", currentDeliveryCount++);
+						props.Headers.Add("x-previous-error", mex.Message);
 
 						await channel.BasicPublishAsync(exchange: ea.Exchange,
 									 routingKey: ea.RoutingKey,
@@ -612,15 +605,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 					return true;
 				}
-
-				return false;
-				//}
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return false;
+				return true; // Somethings really wrong, just don't retry.
 			}
+
+			return false;
 		}
 	}
 }

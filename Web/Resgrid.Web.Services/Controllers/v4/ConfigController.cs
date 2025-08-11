@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Configs;
 using Resgrid.Config;
+using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -67,6 +68,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.Data.MapAttribution = MappingConfig.LeafletAttribution;
+			result.Data.EventingUrl = SystemBehaviorConfig.ResgridEventingBaseUrl;
 
 			result.Data.PersonnelLocationStaleSeconds = MappingConfig.PersonnelLocationStaleSeconds;
 			result.Data.UnitLocationStaleSeconds = MappingConfig.UnitLocationStaleSeconds;
@@ -78,8 +80,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.NovuBackendApiUrl = ChatConfig.NovuBackendUrl;
 			result.Data.NovuSocketUrl = ChatConfig.NovuSocketUrl;
 
-			result.Data.PostHogApiKey = TelemetryConfig.PostHogApiKey;
-			result.Data.PostHogHost = TelemetryConfig.PostHogUrl;
+			result.Data.AnalyticsApiKey = TelemetryConfig.GetAnalyticsKey();
+
+			if (TelemetryConfig.ExporterType == TelemetryExporters.PostHog)
+				result.Data.AnalyticsHost = TelemetryConfig.PostHogUrl;
+			else if (TelemetryConfig.ExporterType == TelemetryExporters.Aptabase)
+				result.Data.AnalyticsHost = TelemetryConfig.AptabaseUrl;
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

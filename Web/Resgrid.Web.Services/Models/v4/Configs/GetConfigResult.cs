@@ -32,6 +32,11 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string W3WKey { get; set; }
 
 		/// <summary>
+		/// Url for the event hub
+		/// </summary>
+		public string EventingUrl { get; set; }
+
+		/// <summary>
 		/// The key for Google Maps
 		/// </summary>
 		public string GoogleMapsKey { get; set; }
@@ -107,13 +112,13 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string NovuEnvironmentId { get; set; }
 
 		/// <summary>
-		/// PostHog Api Key
+		/// Analytics Api Key
 		/// </summary>
-		public string PostHogApiKey { get; set; }
+		public string AnalyticsApiKey { get; set; }
 
 		/// <summary>
-		/// PostHog Host
+		/// Analytics Host
 		/// </summary>
-		public string PostHogHost { get; set; }
+		public string AnalyticsHost { get; set; }
 	}
 }

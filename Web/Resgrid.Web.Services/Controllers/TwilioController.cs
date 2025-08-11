@@ -464,12 +464,6 @@ namespace Resgrid.Web.Services.Controllers
 					Play playResponse = new Play();
 					playResponse.Url = new Uri(url);
 
-					Gather gatherResponse1 = new Gather();
-					gatherResponse1.NumDigits = 1;
-					//gatherResponse1.Timeout = 10;
-					gatherResponse1.Method = "GET";
-					gatherResponse1.Action = new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
-
 					StringBuilder sb1 = new StringBuilder();
 					sb1.Append("Press 0 to repeat, Press 1 to respond to the scene");
 
@@ -481,7 +475,18 @@ namespace Resgrid.Web.Services.Controllers
 						sb1.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
 					}
 
-					response.Say(sb1.ToString()).Append(playResponse).Append(gatherResponse1).Hangup();
+					for (int repeat = 0; repeat < 2; repeat++)
+					{
+						var gatherResponse1 = new Gather(numDigits: 1, action: new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), method: "GET")
+						{
+							BargeIn = true
+						};
+						gatherResponse1.Append(new Say(sb1.ToString()));
+						gatherResponse1.Append(playResponse);
+						response.Append(gatherResponse1);
+					}
+
+					response.Hangup();
 
 					return new ContentResult
 					{
@@ -529,13 +534,17 @@ namespace Resgrid.Web.Services.Controllers
 				sb.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
 			}
 
-			Gather gatherResponse = new Gather();
-			gatherResponse.NumDigits = 1;
-			//gatherResponse.Timeout = 10;
-			gatherResponse.Method = "GET";
-			gatherResponse.Action = new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId));
+			for (int repeat = 0; repeat < 2; repeat++)
+			{
+				var gatherResponse = new Gather(numDigits: 1, action: new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), method: "GET")
+				{
+					BargeIn = true
+				};
+				gatherResponse.Append(new Say(sb.ToString()));
+				response.Append(gatherResponse);
+			}
 
-			response.Say(sb.ToString()).Append(gatherResponse).Hangup();
+			response.Hangup();
 
 			return new ContentResult
 			{
@@ -722,7 +731,7 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (allUsers != null && allUsers.Any())
 				{
-					StringBuilder sb = new StringBuilder();
+				 StringBuilder sb = new StringBuilder();
 					foreach (var user in allUsers)
 					{
 						var lastActionLog = lastUserActionlogs.FirstOrDefault(x => x.UserId == user.UserId);

@@ -130,6 +130,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var extension = Path.GetExtension(attachment.FileName).ToLowerInvariant();
 			var contentType = FileHelper.GetContentTypeByExtension(extension);
+
+			if (String.IsNullOrWhiteSpace(contentType))
+				contentType = MediaTypeNames.Image.Png;
+
 			return File(attachment.Data, contentType);
 		}
 

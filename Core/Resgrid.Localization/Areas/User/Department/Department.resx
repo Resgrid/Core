@@ -174,4 +174,19 @@
   <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
     <value />
   </data>
+  <data name="ShiftSettingsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SaveShiftSettingsText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftSignupSettingsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftSignupsMultipleGroupsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusLabel" xml:space="preserve">
+    <value />
+  </data>
 </root>

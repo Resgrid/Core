@@ -1,17 +1,21 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.ShiftSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @{
-    ViewBag.Title = "Resgrid | Shift Settings";
+    ViewBag.Title = "Resgrid | " + @localizer["ShiftSettingsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Shift Settings</h2>
+        <h2>@localizer["ShiftSettingsHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Settings" asp-route-area="User">@localizer["DepartmentSettingsHeader"]</a>
             </li>
             <li class="active">
-                <strong>Shift Settings</strong>
+                <strong>@localizer["ShiftSettingsHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -30,13 +34,13 @@
                             @if (Model.SaveSuccess.GetValueOrDefault())
 				            {
                               <div class="alert alert-success">
-                                Successfully saved Shift Settings.
+                                  @localizer["SaveShiftSettingsText"]
                               </div>
 				            }
 
-                            <h3>Shift Signup Settings</h3>
+                            <h3>@localizer["ShiftSignupSettingsHeader"]</h3>
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">Allow Signups For Multiple Groups</label>
+                                <label class="col-sm-3 control-label">@localizer["ShiftSignupsMultipleGroupsHeader"]</label>
                                 <div class="col-sm-9">
                                     <div class="row">
                                         <div class="col-sm-10">
@@ -47,8 +51,8 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
-                                    <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Cancel</a>
-                                    <button class="btn btn-primary" type="submit">Save Settings</button>
+                                    <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
                                 </div>
                             </div>
                         </div>

@@ -1642,6 +1642,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ShiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
 			model.UnitDispatchAlsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(DepartmentId);
 			model.UnitDispatchAlsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(DepartmentId);
+			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -1682,6 +1683,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentSettingTypes.UnitDispatchAlsoDispatchToAssignedPersonnel, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitDispatchAlsoDispatchToGroup.ToString(),
 					DepartmentSettingTypes.UnitDispatchAlsoDispatchToGroup, cancellationToken);
+
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelOnUnitSetUnitStatus.ToString(),
+					DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus, cancellationToken);
 
 				model.SaveSuccess = true;
 				return View(model);

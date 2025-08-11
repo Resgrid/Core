@@ -489,4 +489,19 @@
   <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
     <value>Also Dispatch To Entire Group</value>
   </data>
+  <data name="ShiftSettingsHeader" xml:space="preserve">
+    <value>Shift Settings</value>
+  </data>
+  <data name="SaveShiftSettingsText" xml:space="preserve">
+    <value>Successfully saved Shift Settings.</value>
+  </data>
+  <data name="ShiftSignupSettingsHeader" xml:space="preserve">
+    <value>Shift Signup Settings</value>
+  </data>
+  <data name="ShiftSignupsMultipleGroupsHeader" xml:space="preserve">
+    <value>Allow Signups For Multiple Groups</value>
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusLabel" xml:space="preserve">
+    <value>Personnel on Unit Set Unit Status</value>
+  </data>
 </root>

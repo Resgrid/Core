@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Amazon.SimpleEmail.Model;
+using Resgrid.Model;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Repositories;
+using Resgrid.Model.Services;
+using Resgrid.Providers.Bus;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Resgrid.Model.Providers;
-using Resgrid.Model;
-using Resgrid.Model.Events;
-using Resgrid.Model.Repositories;
-using Resgrid.Model.Services;
-using Resgrid.Providers.Bus;
 
 namespace Resgrid.Services
 {
@@ -405,6 +406,19 @@ namespace Resgrid.Services
 
 			var items = await _actionLogsRepository.GetActionLogsForCallAndTypesAsync(callId, callEnabledStates);
 			return items.ToList();
+		}
+
+		public async Task<ActionLog> CreateUnitLinkedStatus(string userId, int departmentId, int unitStateId, string unitName, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var al = new ActionLog();
+			al.ActionTypeId = (int)ActionTypes.OnUnit;
+			al.DepartmentId = departmentId;
+			al.UserId = userId;
+			al.Timestamp = DateTime.UtcNow;
+			al.UnitStateId = unitStateId;
+			al.UnitName = unitName;
+
+			return await SaveActionLogAsync(al, cancellationToken);
 		}
 	}
 }

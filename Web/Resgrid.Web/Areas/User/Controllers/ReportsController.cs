@@ -176,6 +176,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						else
 							actionLog.Action = "Responding To Scene ";
 					}
+					else if (l.ActionTypeId == 7)
+					{
+							actionLog.Action = l.GetActionText();
+					}
 				}
 				else
 				{

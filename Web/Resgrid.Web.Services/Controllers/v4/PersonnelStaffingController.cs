@@ -65,6 +65,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="userId">UserId to get the status for</param>
 		/// <returns></returns>
 		[HttpGet("GetCurrentStatffing")]
+		[HttpGet("GetCurrentStaffing")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<ActionResult<GetCurrentStaffingResult>> GetCurrentStatffing(string userId)
@@ -74,7 +75,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrEmpty(userId))
 				userId = UserId;
 
-			var userState = await _userStateService.GetLastUserStateByUserIdAsync(UserId);
+			var userState = await _userStateService.GetLastUserStateByUserIdAsync(userId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (userState != null)
@@ -166,6 +167,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid)
 				return BadRequest();
 
+			// Validate and parse Type once
+			if (!int.TryParse(input.Type, out var typeVal))
+				return BadRequest("`Type` must be a valid integer.");
+
 			List<string> logIds = new List<string>();
 			foreach (var userId in input.UserIds)
 			{
@@ -184,9 +189,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// TODO: We need to check here if the user is a department admin, or the admin that the user is a part of
 
 				if (String.IsNullOrWhiteSpace(input.Note))
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, int.Parse(input.Type), cancellationToken);
+					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, typeVal, cancellationToken);
 				else
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, int.Parse(input.Type), input.Note, cancellationToken);
+					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, typeVal, input.Note, cancellationToken);
 
 				logIds.Add(savedState.UserStateId.ToString());
 			}

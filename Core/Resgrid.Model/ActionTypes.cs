@@ -47,6 +47,12 @@ namespace Resgrid.Model
 		/// User is Responding directly to a scene (For a Specific Call)
 		/// </summary>
 		[Display(Name = "Responding To Scene")]
-		RespondingToScene = 6
+		RespondingToScene = 6,
+
+		/// <summary>
+		/// User is on a Unit and has a state submitted recently
+		/// </summary>
+		[Display(Name = "On Unit")]
+		OnUnit = 7
 	}
 }

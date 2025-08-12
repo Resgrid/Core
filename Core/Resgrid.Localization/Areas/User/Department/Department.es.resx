@@ -120,6 +120,18 @@
   <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
     <value />
   </data>
+  <data name="GroupDispatchSettingsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UnitDispatchSettingsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UnitDispatchAlsoDispatchToAssignedPersonnelLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
+    <value />
+  </data>
   <data name="AccountOwner" xml:space="preserve">
     <value>Propietario de la cuenta</value>
   </data>
@@ -378,16 +390,7 @@
   <data name="DeleteDepartmentSettingsHeader" xml:space="preserve">
     <value />
   </data>
-  <data name="GroupDispatchSettingsHeader" xml:space="preserve">
-    <value />
-  </data>
-  <data name="UnitDispatchSettingsHeader" xml:space="preserve">
-    <value />
-  </data>
-  <data name="UnitDispatchAlsoDispatchToAssignedPersonnelLabel" xml:space="preserve">
-    <value />
-  </data>
-  <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
+  <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
     <value />
   </data>
 </root>

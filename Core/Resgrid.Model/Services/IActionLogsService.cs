@@ -225,5 +225,7 @@ namespace Resgrid.Model.Services
 		Task<List<ActionLog>> GetActionLogsForCallAsync(int departmentId, int callId);
 
 		Task<List<ActionLog>> GetAllActionLogsInDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
+
+		Task<ActionLog> CreateUnitLinkedStatus(string userId, int departmentId, int unitStateId, string unitName, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

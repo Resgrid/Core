@@ -311,7 +311,7 @@
                 <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.CompletedNotes)</div>
             </div>
         </div>
-         <div class="row">
+        <div class="row">
             <div class="col-xs-12">
                 <strong><small>@commonLocalizer["Notes"]</small></strong>
                 <table class="table table-condensed table-bordered">
@@ -323,15 +323,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var note in Model.Call.CallNotes)
+                        @if (Model.Call.CallNotes == null || !Model.Call.CallNotes.Any() || Model.Names == null || !Model.Names.Any())
                         {
-                            var name = Model.Names.FirstOrDefault(x => x.UserId == note.UserId);
                             <tr>
-                                <td>@note.Timestamp.TimeConverterToString(Model.Department)</td>
-                                <td>@name.FirstName @name.LastName</td>
-                                <td>@note.Note</td>
+                                <td colspan="3">@localizer["NoCallNotes"]</td>
                             </tr>
+                        }
+                        else
+                        {
+                            @foreach (var note in Model.Call.CallNotes)
+                            {
+                                PersonName personName = null;
+                                personName = Model.Names.FirstOrDefault(x => x.UserId == note.UserId);
 
+                                if (personName == null)
+                                    personName = new PersonName() { UserId = note.UserId, FirstName = "", LastName = "" };
+
+                                <tr>
+                                    <td>@note.Timestamp.TimeConverterToString(Model.Department)</td>
+                                    <td>@personName.FirstName @personName.LastName</td>
+                                    <td>@note.Note</td>
+                                </tr>
+
+                            }
                         }
                     </tbody>
                 </table>
@@ -518,7 +532,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <img style="max-width:600px;" src="@Url.Action("GetCallImage", "Dispatch", new {Area = "User", callId = img.CallId, attachmentId = img.CallAttachmentId})" />
+                            <img style="max-width:600px;" src="@Url.Action("GetCallImage", "Dispatch", new { Area = "User", callId = img.CallId, attachmentId = img.CallAttachmentId })" />
                         </div>
                     </div>
                 }

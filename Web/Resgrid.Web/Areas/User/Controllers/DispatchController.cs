@@ -1371,12 +1371,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var model = new CallExportView();
 				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
-				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
-				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
-				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
-				model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
+				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
+				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(call.DepartmentId);
+				model.Units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
+				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
 				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
 				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 
@@ -1400,11 +1400,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var model = new CallExportView();
 				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
-				model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
-				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
-				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Call.DepartmentId);
-				model.Units = await _unitsService.GetUnitsForDepartmentAsync(model.Call.DepartmentId);
+				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
+				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
+				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(call.DepartmentId);
+				model.Units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
+				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
+				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
+				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 
 				if (!String.IsNullOrWhiteSpace(items[2]) && items[2] != "0")
 				{

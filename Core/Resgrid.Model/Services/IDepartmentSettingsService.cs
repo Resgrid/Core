@@ -272,6 +272,8 @@ namespace Resgrid.Model.Services
 
 		Task<bool> GetUnitDispatchAlsoDispatchToGroupAsync(int departmentId);
 
+		Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false);
+
 		Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

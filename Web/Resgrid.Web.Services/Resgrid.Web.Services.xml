@@ -3975,7 +3975,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStatus(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStatus(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput,System.Threading.CancellationToken)">
             <summary>
             Sets the status/action for the current user.
             </summary>
@@ -5450,6 +5450,11 @@
             The key for What3Words
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.EventingUrl">
+            <summary>
+            Url for the event hub
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.GoogleMapsKey">
             <summary>
             The key for Google Maps
@@ -5525,14 +5530,14 @@
             Novu Environment Id
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PostHogApiKey">
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.AnalyticsApiKey">
             <summary>
-            PostHog Api Key
+            Analytics Api Key
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PostHogHost">
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.AnalyticsHost">
             <summary>
-            PostHog Host
+            Analytics Host
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactNotesResult">

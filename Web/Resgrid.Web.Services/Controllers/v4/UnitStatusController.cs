@@ -3,22 +3,24 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Services;
+using Resgrid.Web.Helpers;
+using Resgrid.Web.Services.Controllers.Version3.Models.BigBoard.BigBoardX;
+using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Calls;
+using Resgrid.Web.Services.Models.v4.UnitStatus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Resgrid.Model.Helpers;
-using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
-using Resgrid.Web.Services.Helpers;
-using Resgrid.Web.Helpers;
-using Resgrid.Web.Services.Controllers.Version3.Models.BigBoard.BigBoardX;
-using Resgrid.Web.Services.Models.v4.UnitStatus;
 using System.Net.Mime;
-using Resgrid.Model.Events;
+using System.Threading;
+using System.Threading.Tasks;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -35,6 +37,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IActionLogsService _actionLogsService;
 		private readonly IEventAggregator _eventAggregator;
 
 		public UnitStatusController(
@@ -42,6 +45,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUnitsService unitsService,
 			IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService,
+			IActionLogsService actionLogsService,
 			IEventAggregator eventAggregator
 			)
 		{
@@ -49,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_unitsService = unitsService;
 			_departmentGroupsService = departmentGroupsService;
 			_departmentSettingsService = departmentSettingsService;
+			_actionLogsService = actionLogsService;
 			_eventAggregator = eventAggregator;
 		}
 		#endregion Members and Constructors
@@ -183,15 +188,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public async Task<ActionResult<SaveUnitStatusResult>> SaveUnitStatus(UnitStatusInput statusInput)
+		public async Task<ActionResult<SaveUnitStatusResult>> SaveUnitStatus(UnitStatusInput statusInput, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			return await ProcessSetUnitState(statusInput);
+			return await ProcessSetUnitState(statusInput, cancellationToken);
 		}
 
-		private async Task<ActionResult<SaveUnitStatusResult>> ProcessSetUnitState(UnitStatusInput stateInput)
+		private async Task<ActionResult<SaveUnitStatusResult>> ProcessSetUnitState(UnitStatusInput stateInput, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var result = new SaveUnitStatusResult();
 			var unit = await _unitsService.GetUnitByIdAsync(int.Parse(stateInput.Id));
@@ -265,7 +270,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 							{
 								var unitRole = new UnitStateRole();
 								unitRole.UnitStateId = savedState.UnitStateId;
-								unitRole.UserId = role.UserId; ;
+								unitRole.UserId = role.UserId;
 								unitRole.UnitStateRoleId = int.Parse(role.RoleId);
 
 								if (String.IsNullOrWhiteSpace(role.Name))
@@ -289,6 +294,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 						}
 
 						await _unitsService.AddAllUnitStateRolesAsync(roles);
+
+						if (setPersonnelStatus)
+						{
+							if (roles.Count > 0)
+							{
+								foreach (var role in roles)
+								{
+									await _actionLogsService.CreateUnitLinkedStatus(role.UserId, DepartmentId, savedState.UnitStateId, unit.Name, cancellationToken);
+								}
+							}
+						}
 					}
 
 					//OutboundEventProvider.UnitStatusTopicHandler handler = new OutboundEventProvider.UnitStatusTopicHandler();

@@ -146,6 +146,10 @@
                         <span class='label label-success'>@commonLocalizer["RespondToCall"]</span>
                     }
                 }
+                else if (al.ActionTypeId == 7)
+                {
+                    <span class='label @al.GetActionCss()'>@al.GetActionText()</span>
+                }
             }
             else
             {

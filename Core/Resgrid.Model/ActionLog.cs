@@ -109,6 +109,11 @@ namespace Resgrid.Model
 					return "Responding to Station";
 				case ActionTypes.RespondingToScene:
 					return "Responding to Scene";
+				case ActionTypes.OnUnit:
+					if (!String.IsNullOrWhiteSpace(UnitName))
+						return $"On Unit ({UnitName})";
+					else
+						return "On Unit";
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -131,6 +136,8 @@ namespace Resgrid.Model
 				case ActionTypes.RespondingToStation:
 					return "label-success";
 				case ActionTypes.RespondingToScene:
+					return "label-success";
+				case ActionTypes.OnUnit:
 					return "label-success";
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -183,6 +190,8 @@ namespace Resgrid.Model
 				return 1;
 			else if (actionLog.ActionTypeId == (int)ActionTypes.RespondingToScene)
 				return 1;
+			else if (actionLog.ActionTypeId == (int)ActionTypes.OnUnit)
+				return 2;
 			else if (actionLog.ActionTypeId == (int)ActionTypes.OnScene)
 				return 2;
 			else if (actionLog.ActionTypeId == (int)ActionTypes.NotResponding)

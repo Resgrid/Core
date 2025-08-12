@@ -246,6 +246,11 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.BigBoard
 									status = string.Format("Responding to Call {0}", actionLog.DestinationId);
 							}
 						}
+						else if (actionLog.ActionTypeId == 7)
+						{
+							statusCss = "label-success";
+							status = actionLog.GetActionText();
+						}
 					}
 					else
 					{

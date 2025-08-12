@@ -627,22 +627,25 @@ namespace Resgrid.Web.Services.Controllers
 					{
 						StringBuilder sb = new StringBuilder();
 						sb.Append($@"Hello {profile.FirstName}, this is the Resgrid Automated Voice System for {department.Name}. Please select from the following options.
-											To list current active calls press 1,
-											To list current user statuses press 2,
-											To list current unit statuses press 3,
-											To list upcoming Calendar events press 4,
-											To list upcoming Shifts press 5,
-											To Set your current status press 6,
-											To set your current staffing level press 7");
+								To list current active calls press 1,
+								To list current user statuses press 2,
+								To list current unit statuses press 3,
+								To list upcoming Calendar events press 4,
+								To list upcoming Shifts press 5,
+								To Set your current status press 6,
+								To set your current staffing level press 7");
 
-						response.Say(sb.ToString());
+						for (int repeat = 0; repeat < 2; repeat++)
+						{
+							var gatherResponse = new Gather(numDigits: 1, action: new Uri(string.Format("{0}/api/Twilio/InboundVoiceAction?userId={1}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, profile.UserId)), method: "GET")
+							{
+								BargeIn = true
+							};
+							gatherResponse.Append(new Say(sb.ToString()));
+							response.Append(gatherResponse);
+						}
 
-						Gather gatherResponse = new Gather();
-						gatherResponse.NumDigits = 1;
-						gatherResponse.Method = "GET";
-						gatherResponse.Action = new Uri(string.Format("{0}/api/Twilio/InboundVoiceAction?userId={1}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, profile.UserId));
-
-						response.Say(sb.ToString()).Append(gatherResponse).Hangup();
+						response.Hangup();
 
 						return new ContentResult
 						{
@@ -683,24 +686,19 @@ namespace Resgrid.Web.Services.Controllers
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
-			Gather gatherResponse = new Gather();
-			gatherResponse.NumDigits = 1;
-			gatherResponse.Method = "GET";
-			gatherResponse.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
+			StringBuilder sb = new StringBuilder();
+			Gather gatherResponse = null;
 
 			if (twilioRequest.Digits == "0")
 			{
-				StringBuilder sb = new StringBuilder();
 				sb.Append($@"Hello {profile.FirstName}, this is the Resgrid Automated Voice System for {department.Name}. Please select from the following options.
-											To list current active calls press 1,
-											To list current user statuses press 2,
-											To list current unit statuses press 3,
-											To list upcoming Calendar events press 4,
-											To list upcoming Shifts press 5,
-											To Set your current status press 6,
-											To set your current staffing level press 7");
-
-				response.Say(sb.ToString());
+						To list current active calls press 1,
+						To list current user statuses press 2,
+						To list current unit statuses press 3,
+						To list upcoming Calendar events press 4,
+						To list upcoming Shifts press 5,
+						To Set your current status press 6,
+						To set your current staffing level press 7");
 			}
 			else if (twilioRequest.Digits == "1")
 			{
@@ -708,19 +706,16 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (calls != null && calls.Any())
 				{
-					response.Say($"There are {calls.Count()} active calls for department {department.Name}.");
+					sb.Append($"There are {calls.Count()} active calls for department {department.Name}.");
 
-					StringBuilder sb = new StringBuilder();
 					foreach (var call in calls)
 					{
 						sb.Append($"{call.Name}, Priority {call.GetPriorityText()} Address {call.Address} Nature {call.NatureOfCall}.");
 					}
-
-					response.Say(sb.ToString());
 				}
 				else
 				{
-					response.Say($"There are no active calls for department {department.Name}.");
+					sb.Append($"There are no active calls for department {department.Name}.");
 				}
 			}
 			else if (twilioRequest.Digits == "2")
@@ -731,7 +726,6 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (allUsers != null && allUsers.Any())
 				{
-				 StringBuilder sb = new StringBuilder();
 					foreach (var user in allUsers)
 					{
 						var lastActionLog = lastUserActionlogs.FirstOrDefault(x => x.UserId == user.UserId);
@@ -741,7 +735,6 @@ namespace Resgrid.Web.Services.Controllers
 
 						sb.Append($"{user.LastName}, {user.FirstName}, Status {status.ButtonText} Staffing Level {staffingLevel.ButtonText}.");
 					}
-					response.Say(sb.ToString());
 				}
 			}
 			else if (twilioRequest.Digits == "3")
@@ -750,7 +743,6 @@ namespace Resgrid.Web.Services.Controllers
 				var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(department.DepartmentId);
 				var unitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(department.DepartmentId);
 
-				StringBuilder sb = new StringBuilder();
 				if (units != null && units.Any())
 				{
 					foreach (var unit in units)
@@ -760,38 +752,165 @@ namespace Resgrid.Web.Services.Controllers
 
 						sb.Append($"{unit.Name}, Status {unitStatus.ButtonText}.");
 					}
-					response.Say(sb.ToString());
 				}
 				else
 				{
-					response.Say($"There are no units for department {department.Name}.");
+					sb.Append($"There are no units for department {department.Name}.");
 				}
 			}
 			else if (twilioRequest.Digits == "4")
 			{
 				var upcomingItems = await _calendarService.GetUpcomingCalendarItemsAsync(department.DepartmentId, DateTime.UtcNow);
 
-				StringBuilder sb = new StringBuilder();
 				if (upcomingItems != null && upcomingItems.Any())
 				{
 					foreach (var item in upcomingItems)
 					{
 						sb.Append($"{item.Title}, {item.Start.TimeConverter(department).ToShortDateString()}, {item.Start.TimeConverter(department).ToShortTimeString()}, {item.Location}");
 					}
-					response.Say(sb.ToString());
 				}
 				else
 				{
-					response.Say($"There are no upcoming Calendar events for department {department.Name}.");
+					sb.Append($"There are no upcoming Calendar events for department {department.Name}.");
 				}
 			}
 			else if (twilioRequest.Digits == "5")
 			{
-				// This will be a little complicated. Gotta think on it. -SJ
-				response.Say($"There are no upcoming shifts for department {department.Name}.");
+				sb.Append($"There are no upcoming shifts for department {department.Name}.");
+			}
+			else if (twilioRequest.Digits == "6") // Set current status
+			{
+				var options = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(department.DepartmentId);
+				int index = 1;
+
+				sb.Append($"To set your Current Status please select from the following options.");
+
+				foreach (var option in options)
+				{
+					if (option.CustomStateDetailId == 0 || option.IsDeleted)
+						continue;
+
+					sb.Append($"Press {index} for {option.ButtonText}.");
+					index++;
+				}
+
+				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStatus?userId={userId}"), method: "GET")
+				{
+					BargeIn = true
+				};
+			}
+			else if (twilioRequest.Digits == "7") // Set current staffing
+			{
+				var options = await _customStateService.GetCustomPersonnelStaffingsOrDefaultsAsync(department.DepartmentId);
+				int index = 1;
+
+				sb.Append($"To set your Current Staffing please select from the following options.");
+
+				foreach (var option in options)
+				{
+					if (option.CustomStateDetailId == 0 || option.IsDeleted)
+						continue;
+
+					sb.Append($"Press {index} for {option.ButtonText}.");
+					index++;
+				}
+
+				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), method: "GET")
+				{
+					BargeIn = true
+				};
 			}
 
-			response.Say("Press 0 to go back to the main menu.").Append(gatherResponse).Pause(10).Hangup();
+			if (gatherResponse == null)
+			{
+				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), method: "GET")
+				{
+					BargeIn = true
+				};
+			}
+
+			for (int repeat = 0; repeat < 2; repeat++)
+			{
+				gatherResponse.Append(new Say(sb.ToString()));
+				response.Append(gatherResponse);
+			}
+
+			response.Say("Press 0 to go back to the main menu.");
+			response.Hangup();
+
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		[HttpGet("InboundVoiceActionStatus")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> InboundVoiceActionStatus(string userId, [FromQuery] VoiceRequest twilioRequest)
+		{
+			var response = new VoiceResponse();
+
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			Gather gatherResponse = new Gather();
+			gatherResponse.NumDigits = 1;
+			gatherResponse.Method = "GET";
+			gatherResponse.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
+
+			var options = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(department.DepartmentId);
+
+			if (!String.IsNullOrWhiteSpace(twilioRequest.Digits))
+			{
+				if (int.TryParse(twilioRequest.Digits, out int digit) && digit > 0 && digit <= options.Count)
+				{
+					var selectedOption = options.ToList()[digit - 1];
+					if (selectedOption != null && selectedOption.CustomStateDetailId > 0 && !selectedOption.IsDeleted)
+					{
+						await _actionLogsService.SetUserActionAsync(userId, department.DepartmentId, selectedOption.CustomStateDetailId);
+						response.Say($"You have been marked as {selectedOption.ButtonText}, goodbye.").Hangup();
+					}
+				}
+			}
+
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		[HttpGet("InboundVoiceActionStaffing")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> InboundVoiceActionStaffing(string userId, [FromQuery] VoiceRequest twilioRequest)
+		{
+			var response = new VoiceResponse();
+
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			Gather gatherResponse = new Gather();
+			gatherResponse.NumDigits = 1;
+			gatherResponse.Method = "GET";
+			gatherResponse.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
+
+			var options = await _customStateService.GetCustomPersonnelStaffingsOrDefaultsAsync(department.DepartmentId);
+
+			if (!String.IsNullOrWhiteSpace(twilioRequest.Digits))
+			{
+				if (int.TryParse(twilioRequest.Digits, out int digit) && digit > 0 && digit <= options.Count)
+				{
+					var selectedOption = options.ToList()[digit - 1];
+					if (selectedOption != null && selectedOption.CustomStateDetailId > 0 && !selectedOption.IsDeleted)
+					{
+						await _userStateService.CreateUserState(userId, department.DepartmentId, selectedOption.CustomStateDetailId);
+						response.Say($"You have been marked as {selectedOption.ButtonText}, goodbye.").Hangup();
+					}
+				}
+			}
 
 			return new ContentResult
 			{

@@ -17,6 +17,7 @@ namespace Resgrid.Services
 		private static string StripeCustomerCacheKey = "DSetStripeCus_{0}";
 		private static string BigBoardCenterGps = "DSetBBCenterGps_{0}";
 		private static string StaffingSupressInfo = "DSetStaffingSupress_{0}";
+		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
@@ -54,13 +55,16 @@ namespace Resgrid.Services
 				switch (type)
 				{
 					case DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates:
-						_cacheProvider.Remove(string.Format(BigBoardCenterGps, departmentId));
+						await _cacheProvider.RemoveAsync(string.Format(BigBoardCenterGps, departmentId));
 						break;
 					case DepartmentSettingTypes.DisabledAutoAvailable:
-						_cacheProvider.Remove(string.Format(DisableAutoAvailableCacheKey, departmentId));
+						await _cacheProvider.RemoveAsync(string.Format(DisableAutoAvailableCacheKey, departmentId));
 						break;
 					case DepartmentSettingTypes.StaffingSuppressStaffingLevels:
-						_cacheProvider.Remove(string.Format(StaffingSupressInfo, departmentId));
+						await _cacheProvider.RemoveAsync(string.Format(StaffingSupressInfo, departmentId));
+						break;
+					case DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus:
+						await _cacheProvider.RemoveAsync(string.Format(PersonnelOnUnitSetUnitStatusCacheKey, departmentId));
 						break;
 				}
 
@@ -715,14 +719,21 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public async Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId)
+		public async Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false)
 		{
-			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus);
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus);
+				return s?.Setting ?? "false";
+			}
 
-			if (settingValue != null)
-				return bool.Parse(settingValue.Setting);
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+			{
+				var cachedValue = await _cacheProvider.RetrieveAsync<string>(string.Format(PersonnelOnUnitSetUnitStatusCacheKey, departmentId), getSetting, LongCacheLength);
+				return bool.Parse(cachedValue);
+			}
 
-			return false;
+			return bool.Parse(await getSetting());
 		}
 
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))

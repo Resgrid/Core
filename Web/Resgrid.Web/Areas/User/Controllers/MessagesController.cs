@@ -133,7 +133,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Message.Type = (int)model.MessageType;
 				if (model.SendToAll)
 				{
-					var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+					var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, true, true);
 					foreach (var user in allUsers)
 					{
 						if (user.UserId != UserId && (!excludedUsers.Any() || !excludedUsers.Contains(user.UserId)))

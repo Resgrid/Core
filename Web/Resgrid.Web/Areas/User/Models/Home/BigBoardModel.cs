@@ -272,7 +272,7 @@ namespace Resgrid.Web.Areas.User.Models
 						}
 						else if (actionLog.ActionTypeId == 7)
 						{
-							statusCss = "label-success";
+							statusCss = actionLog.GetActionCss();
 							status = actionLog.GetActionText();
 						}
 					}

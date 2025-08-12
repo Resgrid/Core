@@ -162,6 +162,33 @@
   <data name="UnitTTLHelp" xml:space="preserve">
     <value>In Minutes, how long locations are valid for to be shown in the map. I.e. a value of 60 would mean a marker for a unit would show on the maps for up to 60 minutes, afterwards would not be shown. Setting 0 disables TTL and a location, no matter how old, will be shown on the map.</value>
   </data>
+  <data name="GroupDispatchSettingsHeader" xml:space="preserve">
+    <value>Group Dispatch Settings</value>
+  </data>
+  <data name="UnitDispatchSettingsHeader" xml:space="preserve">
+    <value>Unit Dispatch Settings</value>
+  </data>
+  <data name="UnitDispatchAlsoDispatchToAssignedPersonnelLabel" xml:space="preserve">
+    <value>Also Dispatch To Assigned  Personnel</value>
+  </data>
+  <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
+    <value>Also Dispatch To Entire Group</value>
+  </data>
+  <data name="ShiftSettingsHeader" xml:space="preserve">
+    <value>Shift Settings</value>
+  </data>
+  <data name="SaveShiftSettingsText" xml:space="preserve">
+    <value>Successfully saved Shift Settings.</value>
+  </data>
+  <data name="ShiftSignupSettingsHeader" xml:space="preserve">
+    <value>Shift Signup Settings</value>
+  </data>
+  <data name="ShiftSignupsMultipleGroupsHeader" xml:space="preserve">
+    <value>Allow Signups For Multiple Groups</value>
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusLabel" xml:space="preserve">
+    <value>Personnel on Unit Set Unit Status</value>
+  </data>
   <data name="AccountOwner" xml:space="preserve">
     <value>Account Owner</value>
   </data>
@@ -477,31 +504,7 @@
   <data name="SavedModuleSettings" xml:space="preserve">
     <value>Department Module Settings Have Been Saved</value>
   </data>
-  <data name="GroupDispatchSettingsHeader" xml:space="preserve">
-    <value>Group Dispatch Settings</value>
-  </data>
-  <data name="UnitDispatchSettingsHeader" xml:space="preserve">
-    <value>Unit Dispatch Settings</value>
-  </data>
-  <data name="UnitDispatchAlsoDispatchToAssignedPersonnelLabel" xml:space="preserve">
-    <value>Also Dispatch To Assigned  Personnel</value>
-  </data>
-  <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
-    <value>Also Dispatch To Entire Group</value>
-  </data>
-  <data name="ShiftSettingsHeader" xml:space="preserve">
-    <value>Shift Settings</value>
-  </data>
-  <data name="SaveShiftSettingsText" xml:space="preserve">
-    <value>Successfully saved Shift Settings.</value>
-  </data>
-  <data name="ShiftSignupSettingsHeader" xml:space="preserve">
-    <value>Shift Signup Settings</value>
-  </data>
-  <data name="ShiftSignupsMultipleGroupsHeader" xml:space="preserve">
-    <value>Allow Signups For Multiple Groups</value>
-  </data>
-  <data name="PersonnelOnUnitSetUnitStatusLabel" xml:space="preserve">
-    <value>Personnel on Unit Set Unit Status</value>
+  <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
+    <value>When a unit submits a status and users are setup on roles, the users status will be set to On Unit.</value>
   </data>
 </root>

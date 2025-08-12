@@ -1,7 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.DispatchSettingsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @{
-    ViewBag.Title = "Resgrid | " + @localizer["DispatchSettingsHeader"];
+    ViewBag.Title = "Resgrid | " + localizer["DispatchSettingsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -95,6 +95,7 @@
                                     <div class="row">
                                         <div class="col-sm-10">
                                             <input type="checkbox" asp-for="PersonnelOnUnitSetUnitStatus">
+                                            <span class="help-block m-b-none">@localizer["PersonnelOnUnitSetUnitStatusHelp"]</span>
                                         </div>
                                     </div>
                                 </div>

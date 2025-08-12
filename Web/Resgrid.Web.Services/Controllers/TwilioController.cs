@@ -815,7 +815,7 @@ namespace Resgrid.Web.Services.Controllers
 					index++;
 				}
 
-				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), method: "GET")
+				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStaffing?userId={userId}"), method: "GET")
 				{
 					BargeIn = true
 				};
@@ -855,11 +855,6 @@ namespace Resgrid.Web.Services.Controllers
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
-			Gather gatherResponse = new Gather();
-			gatherResponse.NumDigits = 1;
-			gatherResponse.Method = "GET";
-			gatherResponse.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
-
 			var options = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(department.DepartmentId);
 
 			if (!String.IsNullOrWhiteSpace(twilioRequest.Digits))
@@ -873,14 +868,22 @@ namespace Resgrid.Web.Services.Controllers
 						response.Say($"You have been marked as {selectedOption.ButtonText}, goodbye.").Hangup();
 					}
 				}
+				else
+				{
+					response.Say("Invalid status selection, goodbye.").Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoice"), "GET");
+				}
+			}
+			else
+			{
+				response.Say("No status selection made, goodbye.").Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoice"), "GET");
 			}
 
 			return new ContentResult
-			{
-				Content = response.ToString(),
-				ContentType = "application/xml",
-				StatusCode = 200
-			};
+				{
+					Content = response.ToString(),
+					ContentType = "application/xml",
+					StatusCode = 200
+				};
 		}
 
 		[HttpGet("InboundVoiceActionStaffing")]
@@ -891,11 +894,6 @@ namespace Resgrid.Web.Services.Controllers
 
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
-
-			Gather gatherResponse = new Gather();
-			gatherResponse.NumDigits = 1;
-			gatherResponse.Method = "GET";
-			gatherResponse.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
 
 			var options = await _customStateService.GetCustomPersonnelStaffingsOrDefaultsAsync(department.DepartmentId);
 
@@ -910,6 +908,14 @@ namespace Resgrid.Web.Services.Controllers
 						response.Say($"You have been marked as {selectedOption.ButtonText}, goodbye.").Hangup();
 					}
 				}
+				else
+				{
+					response.Say("Invalid staffing selection, goodbye.").Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoice"), "GET");
+				}
+			}
+			else
+			{
+				response.Say("No staffing selection made, goodbye.").Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoice"), "GET");
 			}
 
 			return new ContentResult

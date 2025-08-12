@@ -248,7 +248,7 @@ namespace Resgrid.Web.Services.Controllers.Version3.Models.BigBoard
 						}
 						else if (actionLog.ActionTypeId == 7)
 						{
-							statusCss = "label-success";
+							statusCss = actionLog.GetActionCss();
 							status = actionLog.GetActionText();
 						}
 					}

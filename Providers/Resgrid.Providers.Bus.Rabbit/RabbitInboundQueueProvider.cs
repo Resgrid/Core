@@ -593,7 +593,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 						props.Expiration = "36000000";
 
 						props.Headers = new Dictionary<string, object>();
-						props.Headers.Add("x-redelivered-count", currentDeliveryCount++);
+						props.Headers.Add("x-redelivered-count", currentDeliveryCount + 1);
 						props.Headers.Add("x-previous-error", mex.Message);
 
 						await channel.BasicPublishAsync(exchange: ea.Exchange,

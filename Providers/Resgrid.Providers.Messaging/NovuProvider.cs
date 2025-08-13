@@ -21,7 +21,7 @@ namespace Resgrid.Providers.Messaging
 				{
 					var requestUrl = $"{ChatConfig.NovuBackendUrl}/v2/subscribers";
 					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
-					httpClient.DefaultRequestHeaders.Add("Authorization", Config.ChatConfig.NovuSecretKey);
+					httpClient.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
 					var payload = new
 					{
@@ -45,7 +45,8 @@ namespace Resgrid.Providers.Messaging
 							payload.data.Add(item.Key, item.Value);
 						}
 					}
-					string jsonContent = JsonConvert.SerializeObject(payload);
+
+					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
 					var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
@@ -115,7 +116,7 @@ namespace Resgrid.Providers.Messaging
 						},
 						integrationIdentifier = fcmId
 					};
-					string jsonContent = JsonConvert.SerializeObject(payload);
+					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
 					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await client.SendAsync(request);
@@ -151,7 +152,7 @@ namespace Resgrid.Providers.Messaging
 						},
 						integrationIdentifier = apnsId
 					};
-					string jsonContent = JsonConvert.SerializeObject(payload);
+					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
 					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await client.SendAsync(request);
@@ -272,9 +273,11 @@ namespace Resgrid.Providers.Messaging
 					};
 
 					var content = new StringContent(
-						JsonConvert.SerializeObject(payload),
+						JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
 						Encoding.UTF8,
 						"application/json");
+
+
 
 					var result = await httpClient.PostAsync("v1/events/trigger", content);
 

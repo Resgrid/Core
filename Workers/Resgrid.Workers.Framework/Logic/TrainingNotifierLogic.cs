@@ -14,6 +14,7 @@ namespace Resgrid.Workers.Framework.Logic
 		private ICommunicationService _communicationService;
 		private IUserProfileService _userProfileService;
 		private IDepartmentSettingsService _departmentSettingsService;
+		private IDepartmentsService _departmentsService;
 
 		public TrainingNotifierLogic()
 		{
@@ -21,6 +22,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
 			_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 		}
 
 		public async Task<Tuple<bool, string>> Process(TrainingNotifierQueueItem item)
@@ -34,6 +36,7 @@ namespace Resgrid.Workers.Framework.Logic
 				var title = String.Empty;
 				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(item.Training.Users.Select(x => x.UserId).ToList());
 				var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
+				var department = await _departmentsService.GetDepartmentByIdAsync(item.Training.DepartmentId, false);
 
 				if (ConfigHelper.CanTransmit(item.Training.DepartmentId))
 				{
@@ -57,7 +60,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
 
 						if (!item.Training.Notified.HasValue || !person.Complete)
-							await _communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, title, profile);
+							await _communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, department, title, profile);
 
 						title = "Training Due Notice";
 					}

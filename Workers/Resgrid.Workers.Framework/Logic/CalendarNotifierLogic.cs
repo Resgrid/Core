@@ -57,7 +57,7 @@ namespace Resgrid.Workers.Framework.Logic
 						foreach (var person in item.CalendarItem.Attendees)
 						{
 							var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
-							await _communicationService.SendNotificationAsync(person.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile);
+							await _communicationService.SendNotificationAsync(person.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, department, title, profile);
 						}
 					}
 				}
@@ -96,7 +96,7 @@ namespace Resgrid.Workers.Framework.Logic
 						// Notify the entire department
 						foreach (var profile in profiles)
 						{
-							await _communicationService.SendNotificationAsync(profile.Key, item.CalendarItem.DepartmentId, message, departmentNumber, title, profile.Value);
+							await _communicationService.SendNotificationAsync(profile.Key, item.CalendarItem.DepartmentId, message, departmentNumber, department, title, profile.Value);
 						}
 					}
 					else
@@ -114,9 +114,9 @@ namespace Resgrid.Workers.Framework.Logic
 									foreach (var member in group.Members)
 									{
 										if (profiles.ContainsKey(member.UserId))
-											await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId]);
+											await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, department, title, profiles[member.UserId]);
 										else
-											await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, title, null);
+											await _communicationService.SendNotificationAsync(member.UserId, item.CalendarItem.DepartmentId, message, departmentNumber, department, title, null);
 									}
 								}
 							}

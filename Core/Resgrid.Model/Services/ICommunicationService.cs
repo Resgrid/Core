@@ -55,7 +55,7 @@ namespace Resgrid.Model.Services
 		/// <param name="title">The title.</param>
 		/// <param name="profile">The profile.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber,
+		Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, 
 			string title = "Notification", UserProfile profile = null);
 
 		/// <summary>

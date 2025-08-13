@@ -180,7 +180,9 @@ namespace Resgrid.Services
 				else
 					message = string.Format("Training ({0}) assigned to you", training.Name);
 
-				await _communicationService.SendNotificationAsync(user.UserId, training.DepartmentId, message, "New Training");
+				var department = await _departmentService.GetDepartmentByIdAsync(training.DepartmentId);
+
+				await _communicationService.SendNotificationAsync(user.UserId, training.DepartmentId, message, "New Training", department);
 			}
 
 			return true;

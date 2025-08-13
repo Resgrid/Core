@@ -72,27 +72,11 @@ namespace Resgrid.Services
 
 		public async Task<bool> RegisterUnit(PushUri pushUri)
 		{
-			//string deviceId = pushUri.DeviceId;
-			List<PushRegistrationDescription> usersDevices = null;
-
-			//try
-			//{
-			//	usersDevices = await _unitNotificationProvider.GetRegistrationsByUUID(pushUri.PushLocation);
-			//}
-			//catch (TimeoutException)
-			//{ }
-
-			if (pushUri.UnitId.HasValue && !string.IsNullOrWhiteSpace(pushUri.PushLocation))
+			if (pushUri.UnitId.HasValue && !string.IsNullOrWhiteSpace(pushUri.PushLocation) && pushUri.PlatformType == (int)Platforms.iPhone) // 1
+				await _novuProvider.UpdateUnitSubscriberAps(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
+			else // 2 (Android)
 				await _novuProvider.UpdateUnitSubscriberFcm(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
-
-
-			//if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(string.Format("unitId:{0}", pushUri.UnitId.ToString()))))
-			//	await _unitNotificationProvider.RegisterPush(pushUri);
-			//else
-			//{
-			//	await _unitNotificationProvider.UnRegisterPushByUUID(pushUri.PushLocation);
-			//	await _unitNotificationProvider.RegisterPush(pushUri);
-			//}
+			// Eventually 3 for Web Push
 
 			return true;
 		}

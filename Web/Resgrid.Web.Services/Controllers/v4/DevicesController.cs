@@ -25,12 +25,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IPushService _pushService;
+		private readonly IDepartmentsService _departmentsService;
 		private readonly ICqrsProvider _cqrsProvider;
 
-		public DevicesController(IPushService pushService, ICqrsProvider cqrsProvider)
+		public DevicesController(IPushService pushService, ICqrsProvider cqrsProvider, IDepartmentsService departmentsService)
 		{
 			_pushService = pushService;
 			_cqrsProvider = cqrsProvider;
+			_departmentsService = departmentsService;
 		}
 		#endregion Members and Constructors
 
@@ -148,15 +150,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (registrationInput == null)
 						return BadRequest();
 
-
 					var push = new PushUri();
 					push.UserId = UserId;
 					push.PlatformType = registrationInput.Platform;
 
-					if (registrationInput.Platform == (int)Platforms.Android)
-						push.PushLocation = "Android";
-					else if (registrationInput.Platform == (int)Platforms.iPhone || registrationInput.Platform == (int)Platforms.iPad)
-						push.PushLocation = "Apple";
+					var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+					push.PushLocation = department.Code;
 
 					push.DeviceId = registrationInput.Token;
 					push.Uuid = registrationInput.DeviceUuid;

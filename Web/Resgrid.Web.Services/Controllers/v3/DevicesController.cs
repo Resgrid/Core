@@ -78,7 +78,7 @@ namespace Resgrid.Web.Services.Controllers.Version3
 						push.PushLocation = HttpUtility.UrlDecode(registrationInput.Uri);
 					else if (registrationInput.Plt == (int)Platforms.Android)
 						push.PushLocation = "Android";
-					else if (registrationInput.Plt == (int)Platforms.iPhone || registrationInput.Plt == (int)Platforms.iPad)
+					else if (registrationInput.Plt == 1 || registrationInput.Plt == 2)//(int)Platforms.iPhone || registrationInput.Plt == (int)Platforms.iPad)
 						push.PushLocation = "Apple";
 
 					push.DeviceId = registrationInput.Did;

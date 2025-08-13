@@ -1,14 +1,16 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using DnsClient;
+using FirebaseAdmin.Messaging;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
-using DnsClient;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Resgrid.Services
 {
@@ -36,31 +38,18 @@ namespace Resgrid.Services
 			if (pushUri == null || String.IsNullOrWhiteSpace(pushUri.DeviceId))
 				return false;
 
-			string deviceId = pushUri.DeviceId.GetHashCode().ToString();
+			var code = pushUri.PushLocation;
 
-			// We just store the full Device Id in the PushUri object, the hashed version is for Azure
-			//var existingPushUri = _pushUriService.GetPushUriByPlatformDeviceId((Platforms)pushUri.PlatformType, pushUri.DeviceId);
-			List<PushRegistrationDescription> usersDevices = null;
+			// 1) iOS -> APNS
+			if (pushUri.PlatformType == (int)Platforms.iOS)
+				return await _novuProvider.UpdateUserSubscriberApns(pushUri.UserId, code, pushUri.DeviceId);
 
-			try
-			{
-				usersDevices = await _notificationProvider.GetRegistrationsByUserId(pushUri.UserId);
+			// 2) Android -> FCM
+			if (pushUri.PlatformType == (int)Platforms.Android)
+				return await _novuProvider.UpdateUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId);
 
-				if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(deviceId)))
-					await _notificationProvider.RegisterPush(pushUri);
-			}
-			catch (TimeoutException)
-			{ }
-			catch (TaskCanceledException)
-			{ }
-
-			//if (existingPushUri == null)
-			//	pushUri = _pushUriService.SavePushUri(pushUri);
-
-			//if (usersDevices == null || !usersDevices.Any(x => x.Tags.Contains(deviceId)))
-			//	await _notificationProvider.RegisterPush(pushUri);
-
-			return true;
+			// 3) TODO: Web Push (other platforms)
+			return false;
 		}
 
 		public async Task<bool> UnRegister(PushUri pushUri)
@@ -72,13 +61,22 @@ namespace Resgrid.Services
 
 		public async Task<bool> RegisterUnit(PushUri pushUri)
 		{
-			if (pushUri.UnitId.HasValue && !string.IsNullOrWhiteSpace(pushUri.PushLocation) && pushUri.PlatformType == (int)Platforms.iPhone) // 1
-				await _novuProvider.UpdateUnitSubscriberAps(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
-			else // 2 (Android)
-				await _novuProvider.UpdateUnitSubscriberFcm(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
-			// Eventually 3 for Web Push
+			if (pushUri == null || !pushUri.UnitId.HasValue || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+				return false;
 
-			return true;
+			var unitId = pushUri.UnitId.Value;
+			var code = pushUri.PushLocation;
+
+			// 1) iOS -> APNS
+			if (pushUri.PlatformType == (int)Platforms.iOS)
+				return await _novuProvider.UpdateUnitSubscriberApns(unitId, code, pushUri.DeviceId);
+
+			// 2) Android -> FCM
+			if (pushUri.PlatformType == (int)Platforms.Android)
+				return await _novuProvider.UpdateUnitSubscriberFcm(unitId, code, pushUri.DeviceId);
+
+			// 3) TODO: Web Push (other platforms)
+			return false;
 		}
 
 		public async Task<bool> UnRegisterUnit(PushUri pushUri)
@@ -102,7 +100,25 @@ namespace Resgrid.Services
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			if (profile != null && profile.SendMessagePush)
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("M{0}", message.MessageId), ((int)PushSoundTypes.Message).ToString(), true, 1, "#000000");
+			{
+				try
+				{
+					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("M{0}", message.MessageId), ((int)PushSoundTypes.Message).ToString(), true, 1, "#000000");
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+
+				try
+				{
+					await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("M{0}", message.MessageId), null);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+			}
 
 			return true;
 		}
@@ -116,8 +132,24 @@ namespace Resgrid.Services
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			if (profile != null && profile.SendNotificationPush)
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("N{0}", message.MessageId), ((int)PushSoundTypes.Notifiation).ToString(), true, 1, "#000000");
-
+			{
+				try
+				{
+					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("N{0}", message.MessageId), ((int)PushSoundTypes.Notifiation).ToString(), true, 1, "#000000");
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+				try
+				{
+					await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), null);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+			}
 			return true;
 		}
 
@@ -151,7 +183,26 @@ namespace Resgrid.Services
 				color = priority.Color;
 
 			if (profile != null && profile.SendPush)
-				await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+			{
+				// Legacy Push Notifications (Azure)
+				try
+				{
+					await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+
+				try
+				{
+					await _novuProvider.SendUserDispatch(call.Title, call.SubTitle, userId, call.DepartmentCode, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+			}
 
 			return true;
 		}
@@ -167,15 +218,6 @@ namespace Resgrid.Services
 			string color = null;
 			if (priority != null)
 				color = priority.Color;
-
-			try
-			{
-				await _unitNotificationProvider.SendAllNotifications(call.SubTitle, call.Title, unitId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
-			}
-			catch (Exception ex)
-			{
-				Framework.Logging.LogException(ex);
-			}
 
 			try
 			{

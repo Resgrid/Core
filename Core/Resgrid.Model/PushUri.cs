@@ -45,8 +45,8 @@ namespace Resgrid.Model
 				{
 					_pushLocation = value;
 
-					if (((Platforms)PlatformType) == Platforms.Windows8 || ((Platforms)PlatformType) == Platforms.WindowsPhone7 || ((Platforms)PlatformType) == Platforms.WindowsPhone8 || ((Platforms)PlatformType) == Platforms.UnitWin)
-						ChannelUri = new Uri(_pushLocation, UriKind.Absolute);
+					//if (((Platforms)PlatformType) == Platforms.Windows8 || ((Platforms)PlatformType) == Platforms.WindowsPhone7 || ((Platforms)PlatformType) == Platforms.WindowsPhone8 || ((Platforms)PlatformType) == Platforms.UnitWin)
+					//	ChannelUri = new Uri(_pushLocation, UriKind.Absolute);
 				}
 			}
 		}

@@ -57,47 +57,8 @@ namespace Resgrid.Providers.Bus
 				}
 			}
 
-			if (pushUri.PlatformType == (int)Platforms.WindowsPhone7 || pushUri.PlatformType == (int)Platforms.WindowsPhone8)
-			{
-				if (!String.IsNullOrWhiteSpace(pushUri.PushLocation))
-				{
-					try
-					{
-						var result = await hubClient.CreateMpnsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
-					}
-					catch (Exception ex)
-					{
-						//Framework.Logging.LogException(ex);
-					}
-					//catch (ArgumentException ex)
-					//{
-					//	Framework.Logging.LogException(ex,
-					//		string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-					//			tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
-					//}
-				}
-			}
-			else if (pushUri.PlatformType == (int)Platforms.Windows8)
-			{
-				if (!String.IsNullOrWhiteSpace(pushUri.PushLocation))
-				{
-					try
-					{
-						var result = await hubClient.CreateWindowsNativeRegistrationAsync(pushUri.PushLocation, tagsWithHashedDeviceId.ToArray());
-					}
-					catch (Exception ex)
-					{
-						//Framework.Logging.LogException(ex);
-					}
-					//catch (ArgumentException ex)
-					//{
-					//	Framework.Logging.LogException(ex,
-					//		string.Format("Device Information: {0} {1} {2} {3}", tagsWithHashedDeviceId[0], tagsWithHashedDeviceId[1],
-					//			tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
-					//}
-				}
-			}
-			else if (pushUri.PlatformType == (int)Platforms.Android)
+			
+			else if (pushUri.PlatformType == 3) //(int)Platforms.Android)
 			{
 				try
 				{
@@ -115,7 +76,7 @@ namespace Resgrid.Providers.Bus
 				//			tagsWithHashedDeviceId[2], tagsWithHashedDeviceId[3]));
 				//}
 			}
-			else if (pushUri.PlatformType == (int)Platforms.iPad || pushUri.PlatformType == (int)Platforms.iPhone)
+			else if (pushUri.PlatformType == 1 || pushUri.PlatformType == 2) //(int)Platforms.iPad || pushUri.PlatformType == (int)Platforms.iPhone)
 			{
 				try
 				{
@@ -143,21 +104,13 @@ namespace Resgrid.Providers.Bus
 
 			foreach (var registration in registrations)
 			{
-				if (pushUri.PlatformType == (int)Platforms.Windows8 ||
-					pushUri.PlatformType == (int)Platforms.WindowsPhone7 ||
-					pushUri.PlatformType == (int)Platforms.WindowsPhone8)
-				{
-					var winReg = registration as WindowsRegistrationDescription;
-					if (winReg != null && winReg.ChannelUri == pushUri.ChannelUri)
-						await hubClient.DeleteRegistrationAsync(registration);
-				}
-				else if (pushUri.PlatformType == (int)Platforms.Android)
+				if (pushUri.PlatformType == 3)// (int)Platforms.Android)
 				{
 					var androidReg = registration as GcmRegistrationDescription;
 					if (androidReg != null && androidReg.GcmRegistrationId == pushUri.DeviceId)
 						await hubClient.DeleteRegistrationAsync(registration);
 				}
-				else if (pushUri.PlatformType == (int)Platforms.iPad || pushUri.PlatformType == (int)Platforms.iPhone)
+				else if (pushUri.PlatformType == 1 || pushUri.PlatformType == 2) //(int)Platforms.iPad || pushUri.PlatformType == (int)Platforms.iPhone)
 				{
 					var iosReg = registration as AppleRegistrationDescription;
 					if (iosReg != null && iosReg.DeviceToken == pushUri.DeviceId)
@@ -363,7 +316,7 @@ namespace Resgrid.Providers.Bus
 						category = category,
 						sound = new ApnsSound
 						{
-							name = GetSoundFileNameFromType(Platforms.iPhone, type),
+							name = GetSoundFileNameFromType(Platforms.iOS, type),
 							critical = category == "calls" ? 1 : 0,
 							volume = 1.0f
 						}
@@ -419,7 +372,7 @@ namespace Resgrid.Providers.Bus
 		{
 			if (type == ((int)PushSoundTypes.CallEmergency).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "callemergency.caf";
 
 				return "callemergency.wav";
@@ -427,42 +380,42 @@ namespace Resgrid.Providers.Bus
 			else if (type == ((int)PushSoundTypes.CallHigh).ToString())
 
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "callhigh.caf";
 
 				return "callhigh.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.CallMedium).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "callmedium.caf";
 
 				return "callmedium.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.CallLow).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "calllow.caf";
 
 				return "calllow.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.Notifiation).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "notification.caf";
 
 				return "notification.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.Message).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "message.caf";
 
 				return "message.mp3";
 			}
 			else
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return $"{type}.caf";
 
 				return $"{type}.mp3";

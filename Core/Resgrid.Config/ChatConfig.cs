@@ -11,7 +11,11 @@
 		public static string NovuSecretKey = "";
 
 		public static string NovuUnitFcmProviderId = "";
+		public static string NovuUnitApnsProviderId = "";
 		public static string NovuResponderFcmProviderId = "";
 		public static string NovuDispatchUnitWorkflowId = "unit-dispatch";
+		public static string NovuDispatchUserWorkflowId = "user-dispatch";
+		public static string NovuMessageUserWorkflowId = "user-message";
+		public static string NovuNotificationUserWorkflowId = "user-notification";
 	}
 }

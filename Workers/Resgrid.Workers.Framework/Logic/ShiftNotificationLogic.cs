@@ -17,6 +17,9 @@ namespace Resgrid.Workers.Framework.Logic
 				var _shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
 				var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
 				var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+				var _departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+
+				var department = await _departmentService.GetDepartmentByIdAsync(sqi.DepartmentId, false);
 
 				if (sqi.Type == (int)ShiftQueueTypes.TradeRequested)
 				{
@@ -28,7 +31,7 @@ namespace Resgrid.Workers.Framework.Logic
 					foreach (var user in tradeRequest.Users)
 					{
 						UserProfile profile = userProfiles.FirstOrDefault(x => x.UserId == user.UserId);
-						await _communicationService.SendNotificationAsync(user.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+						await _communicationService.SendNotificationAsync(user.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber, department,
 							tradeRequest.SourceShiftSignup.Shift.Name, profile);
 					}
 				}
@@ -40,7 +43,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 					var text = _shiftsService.GenerateShiftTradeRejectionText(targetUserProfile, tradeRequest);
 
-					await _communicationService.SendNotificationAsync(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+					await _communicationService.SendNotificationAsync(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber, department,
 							tradeRequest.SourceShiftSignup.Shift.Name, sourceUserProfile);
 				}
 				else if (sqi.Type == (int)ShiftQueueTypes.TradeProposed && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
@@ -51,7 +54,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 					var text = _shiftsService.GenerateShiftTradeProposedText(proposedUserProfile, tradeRequest);
 
-					await _communicationService.SendNotificationAsync(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+					await _communicationService.SendNotificationAsync(sourceUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber, department,
 							tradeRequest.SourceShiftSignup.Shift.Name, sourceUserProfile);
 				}
 				else if (sqi.Type == (int)ShiftQueueTypes.TradeFilled && !String.IsNullOrWhiteSpace(sqi.SourceUserId))
@@ -62,7 +65,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 					var text = _shiftsService.GenerateShiftTradeFilledText(sourceUserProfile, tradeRequest);
 
-					await _communicationService.SendNotificationAsync(proposedUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber,
+					await _communicationService.SendNotificationAsync(proposedUserProfile.UserId, tradeRequest.SourceShiftSignup.Shift.DepartmentId, text, sqi.DepartmentNumber, department,
 							tradeRequest.SourceShiftSignup.Shift.Name, proposedUserProfile);
 				}
 				else if (sqi.Type == (int)ShiftQueueTypes.ShiftCreated)
@@ -74,7 +77,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 					foreach (var profile in profiles.Select(x => x.Value))
 					{
-						await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, "New Shift", profile);
+						await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, department, "New Shift", profile);
 					}
 				}
 				else if (sqi.Type == (int)ShiftQueueTypes.ShiftUpdated)
@@ -87,9 +90,9 @@ namespace Resgrid.Workers.Framework.Logic
 					foreach (var profile in shift.Personnel)
 					{
 						if (profiles.ContainsKey(profile.UserId))
-							await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
+							await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, department, shift.Name, profiles[profile.UserId]);
 						else
-							await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
+							await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, department, shift.Name);
 					}
 				}
 				else if (sqi.Type == (int)ShiftQueueTypes.ShiftDaysAdded)
@@ -104,9 +107,9 @@ namespace Resgrid.Workers.Framework.Logic
 						foreach (var profile in shift.Personnel)
 						{
 							if (profiles.ContainsKey(profile.UserId))
-								await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name, profiles[profile.UserId]);
+								await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, department, shift.Name, profiles[profile.UserId]);
 							else
-								await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, shift.Name);
+								await _communicationService.SendNotificationAsync(profile.UserId, sqi.DepartmentId, text, sqi.DepartmentNumber, department, shift.Name);
 						}
 					}
 				}

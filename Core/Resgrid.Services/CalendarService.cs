@@ -487,9 +487,9 @@ namespace Resgrid.Services
 									foreach (var member in group.Members)
 									{
 										if (profiles.ContainsKey(member.UserId))
-											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId]);
+											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, department, title, profiles[member.UserId]);
 										else
-											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, null);
+											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, department, title, null);
 									}
 								}
 							}

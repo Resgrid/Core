@@ -70,7 +70,7 @@ namespace Resgrid.Workers.Framework.Logic
 										if (!_notificationService.AllowToSendViaSms(notification.Type))
 											profile.SendNotificationSms = false;
 
-										await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, "Notification", profile);
+										await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, queueItem.Department, "Notification", profile);
 									}
 								}
 							}

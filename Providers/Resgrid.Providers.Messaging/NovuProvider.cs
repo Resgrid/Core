@@ -21,7 +21,7 @@ namespace Resgrid.Providers.Messaging
 				{
 					var requestUrl = $"{ChatConfig.NovuBackendUrl}/v2/subscribers";
 					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
-					httpClient.DefaultRequestHeaders.Add("Authorization", Config.ChatConfig.NovuSecretKey);
+					httpClient.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
 					var payload = new
 					{
@@ -45,7 +45,8 @@ namespace Resgrid.Providers.Messaging
 							payload.data.Add(item.Key, item.Value);
 						}
 					}
-					string jsonContent = JsonConvert.SerializeObject(payload);
+
+					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
 					var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
@@ -64,6 +65,17 @@ namespace Resgrid.Providers.Messaging
 		public async Task<bool> CreateUserSubscriber(string userId, string code, int departmentId, string email,
 			string firstName, string lastName)
 		{
+			//var data = new List<AdditionalData>();
+
+			//if (!String.IsNullOrWhiteSpace(deviceId))
+			//{
+			//	data.Add(new AdditionalData
+			//	{
+			//		Key = "DeviceId",
+			//		Value = deviceId
+			//	});
+			//}
+
 			return await CreateSubscriber($"{code}_User_{userId}", departmentId, email, firstName, lastName, null);
 		}
 
@@ -79,6 +91,7 @@ namespace Resgrid.Providers.Messaging
 					Value = deviceId
 				});
 			}
+
 			return await CreateSubscriber($"{code}_Unit_{unitId}", departmentId, $"{code}_Unit_{unitId}@units.resgrid.net", unitName, "", data);
 		}
 
@@ -96,14 +109,14 @@ namespace Resgrid.Providers.Messaging
 
 					var payload = new
 					{
-						providerId = "fcm",
+						providerId = "fcm", //https://github.com/novuhq/novu-ts/blob/main/docs/models/components/chatorpushproviderenum.md
 						credentials = new
 						{
 							deviceTokens = new string[] { token }
 						},
 						integrationIdentifier = fcmId
 					};
-					string jsonContent = JsonConvert.SerializeObject(payload);
+					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
 					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await client.SendAsync(request);
@@ -114,6 +127,42 @@ namespace Resgrid.Providers.Messaging
 			catch (Exception e)
 			{
 				Logging.LogException(e, "Failed to add fcm token to novu subscriber");
+				return false;
+			}
+		}
+
+		private async Task<bool> UpdateSubscriberApns(string id, string token, string apnsId)
+		{
+			try
+			{
+				using (HttpClient client = new HttpClient())
+				{
+					var url = $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{id}/credentials";
+					var request = new HttpRequestMessage(HttpMethod.Put, url);
+					request.Headers.Add("Accept", "application/json");
+					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
+					request.Headers.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+
+					var payload = new
+					{
+						providerId = "apns",
+						credentials = new
+						{
+							deviceTokens = new string[] { token }
+						},
+						integrationIdentifier = apnsId
+					};
+					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+					HttpResponseMessage response = await client.SendAsync(request);
+
+					return response.IsSuccessStatusCode;
+				}
+			}
+			catch (Exception e)
+			{
+				Logging.LogException(e, "Failed to add apns token to novu subscriber");
 				return false;
 			}
 		}
@@ -145,9 +194,19 @@ namespace Resgrid.Providers.Messaging
 			return await UpdateSubscriberFcm($"{code}_User_{userId}", token, ChatConfig.NovuResponderFcmProviderId);
 		}
 
+		public async Task<bool> UpdateUserSubscriberApns(string userId, string code, string token)
+		{
+			return await UpdateSubscriberApns($"{code}_User_{userId}", token, ChatConfig.NovuUnitApnsProviderId);
+		}
+
 		public async Task<bool> UpdateUnitSubscriberFcm(int unitId, string code, string token)
 		{
 			return await UpdateSubscriberFcm($"{code}_Unit_{unitId}", token, ChatConfig.NovuUnitFcmProviderId);
+		}
+
+		public async Task<bool> UpdateUnitSubscriberApns(int unitId, string code, string token)
+		{
+			return await UpdateSubscriberApns($"{code}_Unit_{unitId}", token, ChatConfig.NovuUnitApnsProviderId);
 		}
 
 		private async Task<bool> SendNotification(string title, string body, string recipientId, string eventCode,
@@ -198,13 +257,13 @@ namespace Resgrid.Providers.Messaging
 										type = type
 									}
 								}//,
-								//data = new
-								//{
-								//	title = title,
-								//	message = body,
-								//	eventCode = eventCode,
-								//	type = type
-								//}
+								 //data = new
+								 //{
+								 //	title = title,
+								 //	message = body,
+								 //	eventCode = eventCode,
+								 //	type = type
+								 //}
 							}
 						},
 						to = new[]{ new
@@ -214,9 +273,11 @@ namespace Resgrid.Providers.Messaging
 					};
 
 					var content = new StringContent(
-						JsonConvert.SerializeObject(payload),
+						JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
 						Encoding.UTF8,
 						"application/json");
+
+
 
 					var result = await httpClient.PostAsync("v1/events/trigger", content);
 
@@ -235,13 +296,28 @@ namespace Resgrid.Providers.Messaging
 			return await SendNotification(title, body, $"{depCode}_Unit_{unitId}", eventCode, type, enableCustomSounds, count, color, ChatConfig.NovuDispatchUnitWorkflowId);
 		}
 
+		public async Task<bool> SendUserDispatch(string title, string body, string userId, string depCode, string eventCode, string type, bool enableCustomSounds, int count, string color)
+		{
+			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, enableCustomSounds, count, color, ChatConfig.NovuDispatchUserWorkflowId);
+		}
+
+		public async Task<bool> SendUserMessage(string title, string body, string userId, string depCode, string eventCode, string type)
+		{
+			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuMessageUserWorkflowId);
+		}
+
+		public async Task<bool> SendUserNotification(string title, string body, string userId, string depCode, string eventCode, string type)
+		{
+			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuNotificationUserWorkflowId);
+		}
+
 		#region Private Push Helpers
 
 		private string GetSoundFileNameFromType(Platforms platform, string type)
 		{
 			if (type == ((int)PushSoundTypes.CallEmergency).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "callemergency.caf";
 
 				return "callemergency.wav";
@@ -249,42 +325,42 @@ namespace Resgrid.Providers.Messaging
 			else if (type == ((int)PushSoundTypes.CallHigh).ToString())
 
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "callhigh.caf";
 
 				return "callhigh.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.CallMedium).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "callmedium.caf";
 
 				return "callmedium.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.CallLow).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "calllow.caf";
 
 				return "calllow.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.Notifiation).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "notification.caf";
 
 				return "notification.mp3";
 			}
 			else if (type == ((int)PushSoundTypes.Message).ToString())
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return "message.caf";
 
 				return "message.mp3";
 			}
 			else
 			{
-				if (platform == Platforms.iPhone)
+				if (platform == Platforms.iOS)
 					return $"{type}.caf";
 
 				return $"{type}.mp3";
@@ -394,7 +470,7 @@ namespace Resgrid.Providers.Messaging
 					category = category,
 					sound = new ApnsSound
 					{
-						name = GetSoundFileNameFromType(Platforms.iPhone, type),
+						name = GetSoundFileNameFromType(Platforms.iOS, type),
 						critical = category == "calls" ? 1 : 0,
 						volume = 1.0f
 					}

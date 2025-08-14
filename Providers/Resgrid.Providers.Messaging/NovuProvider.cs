@@ -196,7 +196,7 @@ namespace Resgrid.Providers.Messaging
 
 		public async Task<bool> UpdateUserSubscriberApns(string userId, string code, string token)
 		{
-			return await UpdateSubscriberFcm($"{code}_User_{userId}", token, ChatConfig.NovuUnitApnsProviderId);
+			return await UpdateSubscriberApns($"{code}_User_{userId}", token, ChatConfig.NovuUnitApnsProviderId);
 		}
 
 		public async Task<bool> UpdateUnitSubscriberFcm(int unitId, string code, string token)

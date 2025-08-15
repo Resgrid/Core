@@ -53,6 +53,7 @@ using Resgrid.Web.ServicesCore.Middleware;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 using System.Net.Http;
 using Resgrid.Providers.Messaging;
+using Resgrid.Web.Services;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -562,7 +563,7 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
 
-			//services.AddHostedService<Worker>();
+			services.AddHostedService<Worker>();
 			this.Services = services;
 
 			//if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)

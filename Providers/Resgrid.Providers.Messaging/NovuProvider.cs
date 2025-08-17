@@ -245,7 +245,7 @@ namespace Resgrid.Providers.Messaging
 										defaultSound = true,
 										sticky = channelName == "calls" ? true : false,
 										//priority = androidChannelName == "calls" ? 5 : 3,
-										priority = channelName == "calls" ? "max" : "default",
+										notification_priority = channelName == "calls" ? "PRIORITY_MAX" : "PRIORITY_DEFAULT",
 									},
 									data = new
 									{

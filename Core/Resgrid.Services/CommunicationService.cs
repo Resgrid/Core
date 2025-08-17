@@ -208,7 +208,7 @@ namespace Resgrid.Services
 				{
 
 					if (!Config.SystemBehaviorConfig.DoNotBroadcast || Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
-						_outboundVoiceProvider.CommunicateCall(departmentNumber, profile, call);
+						await _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, call);
 				}
 				catch (Exception ex)
 				{

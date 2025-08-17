@@ -1,12 +1,13 @@
-﻿using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Novu.Domain.Models.Subscribers;
+using RabbitMQ.Client;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus.Models;
+using System.Text;
 
 
 namespace Resgrid.Providers.Messaging
@@ -196,7 +197,7 @@ namespace Resgrid.Providers.Messaging
 
 		public async Task<bool> UpdateUserSubscriberApns(string userId, string code, string token)
 		{
-			return await UpdateSubscriberApns($"{code}_User_{userId}", token, ChatConfig.NovuUnitApnsProviderId);
+			return await UpdateSubscriberApns($"{code}_User_{userId}", token, ChatConfig.NovuResponderApnsProviderId);
 		}
 
 		public async Task<bool> UpdateUnitSubscriberFcm(int unitId, string code, string token)
@@ -221,7 +222,7 @@ namespace Resgrid.Providers.Messaging
 					httpClient.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
 
-					string androidChannelName = GetAndroidChannelName(eventCode);
+					string channelName = GetAndroidChannelName(eventCode);
 					// Build request payload
 					var payload = new
 					{
@@ -230,9 +231,6 @@ namespace Resgrid.Providers.Messaging
 						{
 							subject = title,
 							body = body,
-							//inAppAvatar
-							//arrowImage
-
 						},
 						overrides = new
 						{
@@ -240,14 +238,14 @@ namespace Resgrid.Providers.Messaging
 							{
 								android = new
 								{
-									priority = androidChannelName == "calls" ? "high" : "normal",
+									priority = channelName == "calls" ? "high" : "normal",
 									notification = new
 									{
 										channelId = type,
 										defaultSound = true,
-										sticky = androidChannelName == "calls" ? true : false,
+										sticky = channelName == "calls" ? true : false,
 										//priority = androidChannelName == "calls" ? 5 : 3,
-										priority = androidChannelName == "calls" ? "max" : "default",
+										notification_priority = channelName == "calls" ? "PRIORITY_MAX" : "PRIORITY_DEFAULT",
 									},
 									data = new
 									{
@@ -256,15 +254,22 @@ namespace Resgrid.Providers.Messaging
 										eventCode = eventCode,
 										type = type
 									}
-								}//,
-								 //data = new
-								 //{
-								 //	title = title,
-								 //	message = body,
-								 //	eventCode = eventCode,
-								 //	type = type
-								 //}
-							}
+								},
+							},
+							apns = new
+							{
+								badge = count,
+								sound = new
+								{
+									name = GetSoundFileNameFromType(Platforms.iOS, type),
+									critical = channelName == "calls" ? 1 : 0,
+									volume = 1.0f
+								},
+								type = type,
+								category = channelName,
+								eventCode = eventCode,
+							},
+
 						},
 						to = new[]{ new
 					{
@@ -272,12 +277,11 @@ namespace Resgrid.Providers.Messaging
 					}},
 					};
 
+					var payloadString = JsonConvert.SerializeObject(payload);
 					var content = new StringContent(
-						JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+						payloadString,
 						Encoding.UTF8,
 						"application/json");
-
-
 
 					var result = await httpClient.PostAsync("v1/events/trigger", content);
 
@@ -317,53 +321,31 @@ namespace Resgrid.Providers.Messaging
 		{
 			if (type == ((int)PushSoundTypes.CallEmergency).ToString())
 			{
-				if (platform == Platforms.iOS)
-					return "callemergency.caf";
-
 				return "callemergency.wav";
 			}
 			else if (type == ((int)PushSoundTypes.CallHigh).ToString())
-
 			{
-				if (platform == Platforms.iOS)
-					return "callhigh.caf";
-
-				return "callhigh.mp3";
+				return "callhigh.wav";
 			}
 			else if (type == ((int)PushSoundTypes.CallMedium).ToString())
 			{
-				if (platform == Platforms.iOS)
-					return "callmedium.caf";
-
-				return "callmedium.mp3";
+				return "callmedium.wav";
 			}
 			else if (type == ((int)PushSoundTypes.CallLow).ToString())
 			{
-				if (platform == Platforms.iOS)
-					return "calllow.caf";
-
-				return "calllow.mp3";
+				return "calllow.wav";
 			}
 			else if (type == ((int)PushSoundTypes.Notifiation).ToString())
 			{
-				if (platform == Platforms.iOS)
-					return "notification.caf";
-
-				return "notification.mp3";
+				return "notification.wav";
 			}
 			else if (type == ((int)PushSoundTypes.Message).ToString())
 			{
-				if (platform == Platforms.iOS)
-					return "message.caf";
-
-				return "message.mp3";
+				return "message.wav";
 			}
 			else
 			{
-				if (platform == Platforms.iOS)
-					return $"{type}.caf";
-
-				return $"{type}.mp3";
+				return $"{type}.wav";
 			}
 		}
 

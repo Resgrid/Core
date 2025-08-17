@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Twilio;
@@ -11,15 +12,15 @@ namespace Resgrid.Providers.NumberProvider
 {
 	public class OutboundVoiceProvider : IOutboundVoiceProvider
 	{
-		public void CommunicateCall(string phoneNumber, UserProfile profile, Call call)
+		public async Task<bool> CommunicateCallAsync(string phoneNumber, UserProfile profile, Call call)
 		{
 			if (profile == null)
-				return;
+				return false;
 
 			TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
 
 			if (!profile.VoiceForCall)
-				return;
+				return false;
 
 			string number = phoneNumber;
 
@@ -38,7 +39,8 @@ namespace Resgrid.Providers.NumberProvider
 					options.Method = "GET";
 					//options.IfMachine = "Continue";
 
-					var phoneCall = CallResource.Create(options);
+					var phoneCall = await CallResource.CreateAsync(options);
+					return true;
 				}
 			}
 
@@ -51,9 +53,12 @@ namespace Resgrid.Providers.NumberProvider
 					options.Method = "GET";
 					//options.IfMachine = "Continue";
 
-					var phoneCall = CallResource.Create(options);
+					var phoneCall = await CallResource.CreateAsync(options);
+					return true;
 				}
 			}
+
+			return false;
 		}
 	}
 }

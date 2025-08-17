@@ -1,7 +1,9 @@
-﻿namespace Resgrid.Model.Providers
+﻿using System.Threading.Tasks;
+
+namespace Resgrid.Model.Providers
 {
 	public interface IOutboundVoiceProvider
 	{
-		void CommunicateCall(string phoneNumber, UserProfile profile, Call call);
+		Task<bool> CommunicateCallAsync(string phoneNumber, UserProfile profile, Call call);
 	}
 }

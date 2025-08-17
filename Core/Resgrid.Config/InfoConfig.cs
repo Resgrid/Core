@@ -29,7 +29,7 @@ namespace Resgrid.Config
 			new ResgridSystemLocation()
 			{
 				Name = "US-West",
-				DisplayName = "Resgrid North America",
+				DisplayName = "Resgrid North America (Global)",
 				LocationInfo =
 					"This is the Resgrid system hosted in the Western United States (private datacenter). This system services most Resgrid customers.",
 				IsDefault = true,

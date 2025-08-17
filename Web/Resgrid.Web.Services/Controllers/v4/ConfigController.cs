@@ -25,6 +25,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#endregion Members and Constructors
 
 		/// <summary>
+		/// Gets the system config
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("GetSystemConfig")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<GetSystemConfigResult>> GetSystemConfig()
+		{
+			var result = new GetSystemConfigResult();
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
+		/// <summary>
 		/// Gets the config values for a key
 		/// </summary>
 		/// <returns></returns>

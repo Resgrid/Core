@@ -3349,6 +3349,12 @@
             Generic configuration api endpoints
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetSystemConfig">
+            <summary>
+            Gets the system config
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetConfig(System.String)">
             <summary>
             Gets the config values for a key
@@ -5538,6 +5544,31 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.AnalyticsHost">
             <summary>
             Analytics Host
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetSystemConfigResult">
+            <summary>
+            Gets Configuration Information for the Resgrid System
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetSystemConfigResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Configs.GetSystemConfigResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetSystemConfigResultData">
+            <summary>
+            Information about the Resgrid System
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetSystemConfigResultData.Locations">
+            <summary>
+            Resgrid Datacenter Locations
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactNotesResult">

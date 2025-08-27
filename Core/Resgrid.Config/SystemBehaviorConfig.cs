@@ -185,6 +185,11 @@ namespace Resgrid.Config
 		/// </summary>
 		public static string BlogUrl = "https://blog.resgrid.com";
 
+		/// <summary>
+		/// Sets the name of the location this Resgrid system is running in
+		/// </summary>
+		public static string LocationName = "US-West";
+
 		public static string GetEnvPrefix()
 		{
 			switch (Environment)

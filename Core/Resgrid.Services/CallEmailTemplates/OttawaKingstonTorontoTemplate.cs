@@ -49,48 +49,84 @@ namespace Resgrid.Services.CallEmailTemplates
 			if (String.IsNullOrEmpty(email.Subject))
 				return null;
 
-			string[] sections = email.TextBody.Split(new[] {"  ALPHA   512  "}, StringSplitOptions.None);
-			string[] sectionOneParts = sections[0].Split(new[] {" "}, StringSplitOptions.None);
-
-			Call c = new Call();
-			c.Notes = email.TextBody;
-			c.Name = sections[1].Trim();
-			c.LoggedOn = DateTime.UtcNow;
-			c.Priority = priority;
-			c.ReportingUserId = managingUser;
-			c.Dispatches = new Collection<CallDispatch>();
-			c.CallSource = (int)CallSources.EmailImport;
-			c.SourceIdentifier = email.MessageId;
-			c.NatureOfCall = sections[1].Trim();
-			c.IncidentNumber = sectionOneParts[0].Trim();
-			c.ExternalIdentifier = sectionOneParts[0].Trim();
-
-			if (users != null && users.Any())
+			try
 			{
-				foreach (var u in users)
+				string[] sections = email.TextBody.Split(new[] { "  ALPHA   512  " }, StringSplitOptions.None);
+				string[] sectionOneParts = sections[0].Split(new[] { " " }, StringSplitOptions.None);
+
+				Call c = new Call();
+				c.Notes = email.TextBody;
+				c.Name = sections[1].Trim();
+				c.LoggedOn = DateTime.UtcNow;
+				c.Priority = priority;
+				c.ReportingUserId = managingUser;
+				c.Dispatches = new Collection<CallDispatch>();
+				c.CallSource = (int)CallSources.EmailImport;
+				c.SourceIdentifier = email.MessageId;
+				c.NatureOfCall = sections[1].Trim();
+				c.IncidentNumber = sectionOneParts[0].Trim();
+				c.ExternalIdentifier = sectionOneParts[0].Trim();
+
+				if (users != null && users.Any())
 				{
-					CallDispatch cd = new CallDispatch();
-					cd.UserId = u.UserId;
+					foreach (var u in users)
+					{
+						CallDispatch cd = new CallDispatch();
+						cd.UserId = u.UserId;
 
-					c.Dispatches.Add(cd);
+						c.Dispatches.Add(cd);
+					}
 				}
-			}
 
-			// Search for an active call
-			if (activeCalls != null && activeCalls.Any())
+				// Search for an active call
+				if (activeCalls != null && activeCalls.Any())
+				{
+					var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
+
+					if (activeCall != null)
+					{
+						activeCall.Notes = c.Notes;
+						activeCall.LastDispatchedOn = DateTime.UtcNow;
+
+						return activeCall;
+					}
+				}
+
+				return c;
+			}
+			catch (Exception ex)
 			{
-				var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
+				Call c = new Call();
+				c.Name = email.Subject;
+				c.NatureOfCall = $"ERROR PROCESSING DISPATCH EMAIL, Unprocessed email body: {email.TextBody}";
 
-				if (activeCall != null)
+				if (users != null && users.Any())
 				{
-					activeCall.Notes = c.Notes;
-					activeCall.LastDispatchedOn = DateTime.UtcNow;
+					foreach (var u in users)
+					{
+						CallDispatch cd = new CallDispatch();
+						cd.UserId = u.UserId;
 
-					return activeCall;
+						c.Dispatches.Add(cd);
+					}
 				}
-			}
 
-			return c;
+				// Search for an active call
+				if (activeCalls != null && activeCalls.Any())
+				{
+					var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
+
+					if (activeCall != null)
+					{
+						activeCall.Notes = c.Notes;
+						activeCall.LastDispatchedOn = DateTime.UtcNow;
+
+						return activeCall;
+					}
+				}
+
+				return c;
+			}
 		}
 	}
 }

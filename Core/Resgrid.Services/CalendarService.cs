@@ -469,7 +469,7 @@ namespace Resgrid.Services
 						// Notify the entire department
 						foreach (var profile in profiles)
 						{
-							await _communicationService.SendCalendarAsync(profile.Key, calendarItem.DepartmentId, message, departmentNumber, title, profile.Value);
+							await _communicationService.SendCalendarAsync(profile.Key, calendarItem.DepartmentId, message, departmentNumber, title, profile.Value, department);
 						}
 					}
 					else
@@ -487,9 +487,9 @@ namespace Resgrid.Services
 									foreach (var member in group.Members)
 									{
 										if (profiles.ContainsKey(member.UserId))
-											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, department, title, profiles[member.UserId]);
+											await _communicationService.SendCalendarAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId], department);
 										else
-											await _communicationService.SendNotificationAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, department, title, null);
+											await _communicationService.SendCalendarAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, null, department);
 									}
 								}
 							}

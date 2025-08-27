@@ -112,7 +112,8 @@ namespace Resgrid.Services
 
 				try
 				{
-					await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("M{0}", message.MessageId), null);
+					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
+						await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("M{0}", message.MessageId), null);
 				}
 				catch (Exception ex)
 				{
@@ -143,7 +144,8 @@ namespace Resgrid.Services
 				}
 				try
 				{
-					await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), null);
+					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
+						await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), null);
 				}
 				catch (Exception ex)
 				{

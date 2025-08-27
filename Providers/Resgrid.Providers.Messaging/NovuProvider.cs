@@ -231,6 +231,7 @@ namespace Resgrid.Providers.Messaging
 						{
 							subject = title,
 							body = body,
+							id = eventCode
 						},
 						overrides = new
 						{

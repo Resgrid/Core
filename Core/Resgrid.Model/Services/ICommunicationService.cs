@@ -19,7 +19,7 @@ namespace Resgrid.Model.Services
 		/// <param name="profile">The profile.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId,
-			UserProfile profile = null);
+			UserProfile profile = null, Department department = null);
 
 		/// <summary>
 		/// Sends the call asynchronous.
@@ -110,6 +110,6 @@ namespace Resgrid.Model.Services
 		/// <param name="profile">The profile.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendCalendarAsync(string userId, int departmentId, string message, string departmentNumber,
-			string title = "Notification", UserProfile profile = null);
+			string title = "Notification", UserProfile profile = null, Department department = null);
 	}
 }

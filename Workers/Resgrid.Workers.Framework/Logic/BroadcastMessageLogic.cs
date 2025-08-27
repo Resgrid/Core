@@ -60,10 +60,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (mqi.Profiles != null)
 					{
 						var sendingToProfile = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.ReceivingUserId);
+						var departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+						var department = await departmentService.GetDepartmentByIdAsync(mqi.DepartmentId);
 
 						if (sendingToProfile != null)
 						{
-							await _communicationService.SendMessageAsync(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
+							await _communicationService.SendMessageAsync(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile, department);
 						}
 						else
 						{
@@ -72,11 +74,16 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (sender != null)
 								name = sender.FullName.AsFirstNameLastName;
+
+							//TODO: What to do here, I don't know why this path is empty. -SJ
 						}
 					}
 				}
 				else if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
 				{
+					var departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+					var department = await departmentService.GetDepartmentByIdAsync(mqi.DepartmentId);
+
 					foreach (var recipient in mqi.Message.MessageRecipients)
 					{
 						var sendingToProfile = mqi.Profiles.FirstOrDefault(x => x.UserId == recipient.UserId);
@@ -84,7 +91,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 						if (sendingToProfile != null)
 						{
-							await _communicationService.SendMessageAsync(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile);
+							await _communicationService.SendMessageAsync(mqi.Message, name, mqi.DepartmentTextNumber, mqi.DepartmentId, sendingToProfile, department);
 						}
 					}
 				}

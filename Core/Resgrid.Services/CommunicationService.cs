@@ -39,7 +39,7 @@ namespace Resgrid.Services
 			_userStateService = userStateService;
 		}
 
-		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null)
+		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null, Department department = null)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
@@ -79,6 +79,7 @@ namespace Resgrid.Services
 			{
 				var spm = new StandardPushMessage();
 				spm.MessageId = message.MessageId;
+				spm.DepartmentCode = department?.Code;
 
 				if (message.SystemGenerated)
 					spm.SubTitle = "Msg from System";
@@ -124,6 +125,7 @@ namespace Resgrid.Services
 					spc.Priority = call.Priority;
 					spc.ActiveCallCount = 1;
 					spc.DepartmentId = departmentId;
+					spc.DepartmentCode = call.Department?.Code;
 
 					if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
 					{
@@ -335,7 +337,7 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendCalendarAsync(string userId, int departmentId, string message, string departmentNumber, string title = "Notification", UserProfile profile = null)
+		public async Task<bool> SendCalendarAsync(string userId, int departmentId, string message, string departmentNumber, string title = "Notification", UserProfile profile = null, Department department = null)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
@@ -364,6 +366,7 @@ namespace Resgrid.Services
 				var spm = new StandardPushMessage();
 				spm.Title = "Calendar";
 				spm.SubTitle = $"{title} {message}";
+				spm.DepartmentCode = null;
 
 				try
 				{
@@ -467,6 +470,7 @@ namespace Resgrid.Services
 					spc.Priority = (int)CallPriority.Emergency;
 					spc.ActiveCallCount = 1;
 					spc.DepartmentId = departmentId;
+					spc.DepartmentCode = call.Department?.Code;
 
 					string subTitle = String.Empty;
 					if (!String.IsNullOrWhiteSpace(unitAddress))

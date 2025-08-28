@@ -154,8 +154,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 					push.UserId = UserId;
 					push.PlatformType = registrationInput.Platform;
 
-					var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-					push.PushLocation = department.Code;
+					if (!string.IsNullOrWhiteSpace(registrationInput.Prefix))
+						push.PushLocation = registrationInput.Prefix;
+					else
+					{
+						var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+						push.PushLocation = department.Code;
+					}
 
 					push.DeviceId = registrationInput.Token;
 					push.Uuid = registrationInput.DeviceUuid;

@@ -12,8 +12,6 @@ namespace Resgrid.Model
 	[Table("PushUris")]
 	public class PushUri : IEntity
 	{
-		private string _pushLocation;
-
 		[Key]
 		[Required]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -36,20 +34,8 @@ namespace Resgrid.Model
 		public string DeviceId { get; set; }
 
 		[Required]
-		public string PushLocation
-		{
-			get { return _pushLocation; }
-			set
-			{
-				if (_pushLocation != value)
-				{
-					_pushLocation = value;
-
-					//if (((Platforms)PlatformType) == Platforms.Windows8 || ((Platforms)PlatformType) == Platforms.WindowsPhone7 || ((Platforms)PlatformType) == Platforms.WindowsPhone8 || ((Platforms)PlatformType) == Platforms.UnitWin)
-					//	ChannelUri = new Uri(_pushLocation, UriKind.Absolute);
-				}
-			}
-		}
+		[ProtoMember(9)]
+		public string PushLocation { get; set; }
 
 		[ProtoMember(5)]
 		public int? UnitId { get; set; }

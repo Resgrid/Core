@@ -35,7 +35,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> Register(PushUri pushUri)
 		{
-			if (pushUri == null || String.IsNullOrWhiteSpace(pushUri.DeviceId))
+			if (pushUri == null || String.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
 				return false;
 
 			var code = pushUri.PushLocation;

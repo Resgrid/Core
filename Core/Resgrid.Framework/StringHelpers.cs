@@ -12,6 +12,13 @@ using Vereyon.Web;
 
 namespace Resgrid.Framework
 {
+	/// <summary>
+	/// Result of password complexity verification
+	/// </summary>
+	public sealed record PasswordComplexityResult(
+		bool IsValid, 
+		List<string> Errors);
+
 	public static class StringHelpers
 	{
 		/// <summary>
@@ -245,6 +252,80 @@ namespace Resgrid.Framework
 			}
 
 			return resultStrBuilder.ToString();
+		}
+
+		/// <summary>
+		/// Verifies password complexity against security requirements
+		/// </summary>
+		/// <param name="password">The password to verify</param>
+		/// <param name="minLength">Minimum password length (default: 8)</param>
+		/// <param name="requireUppercase">Require at least one uppercase letter (default: true)</param>
+		/// <param name="requireLowercase">Require at least one lowercase letter (default: true)</param>
+		/// <param name="requireDigit">Require at least one digit (default: true)</param>
+		/// <param name="requireSpecialChar">Require at least one special character (default: false)</param>
+		/// <returns>PasswordComplexityResult indicating validity and any errors</returns>
+		public static PasswordComplexityResult VerifyPasswordComplexity(
+			string password, 
+			int minLength = 8,
+			bool requireUppercase = true,
+			bool requireLowercase = true,
+			bool requireDigit = true,
+			bool requireSpecialChar = false)
+		{
+			var errors = new List<string>();
+
+			if (string.IsNullOrWhiteSpace(password))
+			{
+				errors.Add("Password cannot be empty");
+				return new PasswordComplexityResult(false, errors);
+			}
+
+			// Check minimum length
+			if (password.Length < minLength)
+			{
+				errors.Add($"Password must be at least {minLength} characters long");
+			}
+
+			// Check for uppercase letter
+			if (requireUppercase && !password.Any(char.IsUpper))
+			{
+				errors.Add("Password must include an uppercase letter");
+			}
+
+			// Check for lowercase letter
+			if (requireLowercase && !password.Any(char.IsLower))
+			{
+				errors.Add("Password must include a lowercase letter");
+			}
+
+			// Check for digit
+			if (requireDigit && !password.Any(char.IsDigit))
+			{
+				errors.Add("Password must include a number (digit)");
+			}
+
+			// Check for special character
+			if (requireSpecialChar)
+			{
+				var specialChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+				if (!password.Any(c => specialChars.Contains(c)))
+				{
+					errors.Add("Password must include a special character");
+				}
+			}
+
+			return new PasswordComplexityResult(errors.Count == 0, errors);
+		}
+
+		/// <summary>
+		/// Validates password complexity using default Resgrid requirements
+		/// </summary>
+		/// <param name="password">The password to validate</param>
+		/// <returns>True if password meets complexity requirements</returns>
+		public static bool IsValidPassword(string password)
+		{
+			var result = VerifyPasswordComplexity(password);
+			return result.IsValid;
 		}
 
 	}

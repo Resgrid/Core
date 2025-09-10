@@ -58,6 +58,19 @@
                 })
         </script>
     }
+
+    @if (!String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.CountlyUrl) && !String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.CountlyWebKey))
+    {
+        <script type='text/javascript' src="~/lib/countly-sdk-web/lib/countly.min.js"></script>
+        <script type='text/javascript'>
+            if (Countly && window["Countly"]) {
+                Countly.init({
+                  app_key: "@Resgrid.Config.TelemetryConfig.CountlyWebKey",
+                  url: "@Resgrid.Config.TelemetryConfig.CountlyUrl"
+                });
+            }
+        </script>
+    }
 </head>
 <body>
     <!-- Wrapper-->

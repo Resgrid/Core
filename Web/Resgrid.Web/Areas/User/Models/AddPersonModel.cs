@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Resgrid.Framework;
+using Resgrid.Model;
+using Resgrid.Model.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Resgrid.Model.Identity;
-using Resgrid.Model;
 
 namespace Resgrid.Web.Areas.User.Models
 {
@@ -42,7 +43,13 @@ namespace Resgrid.Web.Areas.User.Models
 		[DataType(DataType.EmailAddress)]
 		public string Email { get; set; }
 
-		[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+		[StringLength(100, ErrorMessage = "The password must be at least 8 characters long", MinimumLength = 8)]
+		[PasswordComplexity(
+			MinLength = 8,
+			RequireUppercase = true,
+			RequireLowercase = true,
+			RequireDigit = true,
+			RequireSpecialChar = false)]
 		[DataType(DataType.Password)]
 		[Display(Name = "Password")]
 		[Required]

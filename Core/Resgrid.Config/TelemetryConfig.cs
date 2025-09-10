@@ -16,6 +16,9 @@
 		public static string AptabaseBigBoardApiKey = "";
 		public static string AptabaseDispatchApiKey = "";
 
+		public static string CountlyUrl = "";
+		public static string CountlyWebKey = "";
+
 		public static string GetAnalyticsKey()
 		{
 			if (ExporterType == TelemetryExporters.PostHog)

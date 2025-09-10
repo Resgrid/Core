@@ -35,7 +35,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> Register(PushUri pushUri)
 		{
-			if (pushUri == null || String.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+			if (pushUri == null || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
 				return false;
 
 			var code = pushUri.PushLocation;
@@ -61,7 +61,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> RegisterUnit(PushUri pushUri)
 		{
-			if (pushUri == null || !pushUri.UnitId.HasValue || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+			if (pushUri == null || !pushUri.UnitId.HasValue || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
 				return false;
 
 			var unitId = pushUri.UnitId.Value;

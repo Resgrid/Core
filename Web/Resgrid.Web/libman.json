@@ -284,6 +284,19 @@
     {
       "library": "printthis@0.1.5",
       "destination": "wwwroot/lib/printthis/"
+    },
+    {
+      "library": "@deltablot/dropzone@7.3.1",
+      "destination": "wwwroot/lib/deltablot/dropzone/"
+    },
+    {
+      "library": "countly-sdk-web@25.4.1",
+      "destination": "wwwroot/lib/countly-sdk-web/",
+      "files": [
+        "lib/countly.d.ts",
+        "lib/countly.js",
+        "lib/countly.min.js"
+      ]
     }
   ]
 }

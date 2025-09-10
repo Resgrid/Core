@@ -1,4 +1,5 @@
 ﻿using Resgrid.WebCore.Models;
+using Resgrid.Framework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -36,7 +37,13 @@ namespace Resgrid.Web.Models.AccountViewModels
 		public string Email { get; set; }
 
 		[Required]
-		[StringLength(100, ErrorMessage = "The passowrd must be at least 8 characters long, include a number (digit) and an uppercase letter", MinimumLength = 8)]
+		[StringLength(100, ErrorMessage = "The password must be at least 8 characters long", MinimumLength = 8)]
+		[PasswordComplexity(
+			MinLength = 8,
+			RequireUppercase = true,
+			RequireLowercase = true,
+			RequireDigit = true,
+			RequireSpecialChar = false)]
 		[DataType(DataType.Password)]
 		[Display(Name = "Password")]
 		public string Password { get; set; }

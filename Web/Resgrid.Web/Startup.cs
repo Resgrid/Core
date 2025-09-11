@@ -378,7 +378,8 @@ namespace Resgrid.Web
 					"lib/fullcalendar/dist/fullcalendar.min.js", "lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js",
 					"lib/selectize/selectize/dist/js/standalone/selectize.min.js", "lib/claviska/jquery-minicolors/jquery.minicolors.min.js", "lib/algolia/autocomplete-js/dist/umd/index.production.js",
 					"lib/bootstrap-select/dist/js/bootstrap-select.js", "clib/data-tables/datatables.js", "lib/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js",
-					"lib/deltablot/dropzone/dist/dropzone.js", "js/site.min.js");
+					/*"lib/deltablot/dropzone/dist/dropzone.js",*/
+					"js/site.min.js");
 			});
 
 

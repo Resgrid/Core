@@ -22,7 +22,8 @@ var resgrid;
                             "custom": {
                                 "createdOn": new Date(createdOn * 1000),
                                 "departmentId": departmentId
-                            }]);
+                            }
+                        }]);
                         Countly.q.push(['track_sessions']);
                         Countly.q.push(['track_pageview']);
                     }

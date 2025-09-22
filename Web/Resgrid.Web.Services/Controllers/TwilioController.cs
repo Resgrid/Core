@@ -317,7 +317,7 @@ namespace Resgrid.Web.Services.Controllers
 
 										foreach (var activeCall in activeCalls)
 										{
-											activeCallText.Append($"CallId: {activeCall.CallId} Name: {activeCall.Name} Nature:{activeCall.NatureOfCall}" + Environment.NewLine);
+											activeCallText.Append($"CallId: {activeCall.CallId} Name: {activeCall.Name} Nature:{StringHelpers.StripHtmlTagsCharArray(activeCall.NatureOfCall)}" + Environment.NewLine);
 										}
 
 										response.Message(activeCallText.ToString().Truncate(1200));
@@ -520,7 +520,7 @@ namespace Resgrid.Web.Services.Controllers
 			StringBuilder sb = new StringBuilder();
 
 			if (!String.IsNullOrWhiteSpace(address))
-				sb.Append(string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), call.Address, call.NatureOfCall));
+				sb.Append(string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), call.Address, StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall)));
 			else
 				sb.Append(string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), call.NatureOfCall));
 
@@ -710,7 +710,7 @@ namespace Resgrid.Web.Services.Controllers
 
 					foreach (var call in calls)
 					{
-						sb.Append($"{call.Name}, Priority {call.GetPriorityText()} Address {call.Address} Nature {call.NatureOfCall}.");
+						sb.Append($"{call.Name}, Priority {call.GetPriorityText()} Address {call.Address} Nature {StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall)}.");
 					}
 				}
 				else

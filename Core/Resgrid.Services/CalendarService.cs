@@ -70,7 +70,7 @@ namespace Resgrid.Services
 
 		public async Task<List<CalendarItem>> GetUpcomingCalendarItemsAsync(int departmentId, DateTime start)
 		{
-			return await GetAllCalendarItemsForDepartmentInRangeAsync(departmentId, start, start.AddDays(7));
+			return await GetAllCalendarItemsForDepartmentInRangeAsync(departmentId, start, start.AddDays(14));
 		}
 
 		public async Task<CalendarItem> SaveCalendarItemAsync(CalendarItem calendarItem, CancellationToken cancellationToken = default(CancellationToken))

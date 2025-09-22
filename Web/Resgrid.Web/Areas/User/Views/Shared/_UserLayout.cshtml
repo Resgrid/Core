@@ -65,8 +65,18 @@
         <script type='text/javascript'>
             if (Countly && window["Countly"]) {
                 Countly.init({
-                  app_key: "@Resgrid.Config.TelemetryConfig.CountlyWebKey",
-                  url: "@Resgrid.Config.TelemetryConfig.CountlyUrl"
+                    app_key: "@Resgrid.Config.TelemetryConfig.CountlyWebKey",
+                    url: "@Resgrid.Config.TelemetryConfig.CountlyUrl",
+                    debug: false,
+                    ignore_referrers: [],
+                    track_sessions: true,
+                    track_pageview: true,
+                    track_links: true,
+                    track_forms: true,
+                    track_errors: true,
+                    require_consent: false,
+                    force_post: true,
+                    ignore_bots: true
                 });
             }
         </script>

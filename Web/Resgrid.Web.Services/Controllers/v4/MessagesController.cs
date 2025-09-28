@@ -275,6 +275,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (newMessageInput.Recipients == null || newMessageInput.Recipients.Count <= 0)
 				return BadRequest();
 
+			if (String.IsNullOrWhiteSpace(newMessageInput.Title))
+				return BadRequest();
+
+			if (String.IsNullOrWhiteSpace(newMessageInput.Body))
+				return BadRequest();
+
 			var result = new SendMessageResult();
 			Message savedMessage = null;
 

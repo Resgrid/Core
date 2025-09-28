@@ -134,6 +134,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					{
 						foreach (var afilter in activeFilters)
 						{
+							if (String.IsNullOrWhiteSpace(afilter) || afilter.Length <= 2)
+								continue;
+
 							//var text = GetTextValue(afilter, filters);
 
 							if (afilter.Substring(0, 2) == "G:")

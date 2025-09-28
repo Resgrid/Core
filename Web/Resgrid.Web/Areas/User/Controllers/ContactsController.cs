@@ -495,7 +495,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var physicalAddress = new Address();
 
 					if (contact.PhysicalAddressId.HasValue)
-						physicalAddress = await _addressService.GetAddressByIdAsync(model.Contact.PhysicalAddressId.Value);
+						physicalAddress = await _addressService.GetAddressByIdAsync(contact.PhysicalAddressId.Value);
 
 					physicalAddress.Address1 = model.PhysicalAddress1;
 					physicalAddress.City = model.PhysicalCity;
@@ -515,7 +515,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var mailingAddress = new Address();
 
 					if (contact.MailingAddressId.HasValue)
-						mailingAddress = await _addressService.GetAddressByIdAsync(model.Contact.MailingAddressId.Value);
+						mailingAddress = await _addressService.GetAddressByIdAsync(contact.MailingAddressId.Value);
 
 					mailingAddress.Address1 = model.PhysicalAddress1;
 					mailingAddress.City = model.PhysicalCity;

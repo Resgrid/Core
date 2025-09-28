@@ -187,7 +187,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var unitRole in setRolesInput.Roles)
 				{
-					if (!string.IsNullOrWhiteSpace(unitRole.UserId))
+					if (!string.IsNullOrWhiteSpace(unitRole.UserId) && !string.IsNullOrWhiteSpace(unitRole.RoleId))
 					{
 						var role = await _unitsService.GetRoleByIdAsync(int.Parse(unitRole.RoleId));
 

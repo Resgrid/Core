@@ -21,7 +21,7 @@
 				<a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
 			</li>
 			<li class="active">
-				<strong>GeoFence Station</strong>
+				<strong>Geofence Station</strong>
 			</li>
 		</ol>
 	</div>
@@ -71,7 +71,7 @@
 @section Scripts
 {
 	<script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
-	@if (String.IsNullOrWhiteSpace(Model.Group.Geofence))
+	@if (Model.Group == null || String.IsNullOrWhiteSpace(Model.Group.Geofence))
 	{
 		<script type="text/javascript">
 			var polyCoordinates = [];

@@ -12,50 +12,36 @@
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns><br /></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.AuthController">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AutofillsController">
             <summary>
-            Service to generate an authentication token that is required to communicate with all other v3 services
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.AuthController.Validate(Resgrid.Web.Services.Controllers.Version3.Models.Auth.ValidateInput)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AutofillsController.GetAllAutofills">
             <summary>
-            Generates a token that is then used for subsquent requests to the API.
+            Gets all the autofills in a department
             </summary>
-            <param name="authInput">ValidateInput object with values populated</param>
-            <returns>ValidateResult object, with IsValid set if the settings are correct</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.AvatarsController">
-            <summary>
-            Used to interact with the user avatars (profile pictures) in the Resgrid system. The authentication header isn't required to access this method.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.AvatarsController.Get(System.String,System.Nullable{System.Int32})">
-            <summary>
-            Get a users avatar from the Resgrid system based on their ID
-            </summary>
-            <param name="id">ID of the user</param>
             <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.BigBoardController">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AutofillsController.GetAutofillsForType(System.Int32)">
             <summary>
-            Calls to get information specific for displaying data on a dashboard or big board application. Data returned
-            is formatted and optimized for these scenarios to be outputted directly into a web application.
+            Gets the autofills for a specific type
+            </summary>
+            <param name="type">Type to get</param>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CalendarController">
+            <summary>
+            Mobile or Tablet Device specific operations
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.CalendarController">
-            <summary>
-            Used to interact with the calendar system
-            Implements the <see cref="T:Resgrid.Web.Services.Controllers.Version3.V3AuthenticatedApiControllerbase" />
-            </summary>
-            <seealso cref="T:Resgrid.Web.Services.Controllers.Version3.V3AuthenticatedApiControllerbase" />
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetDepartmentCalendarItems">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItems">
             <summary>
             Gets the department calendar items.
             </summary>
             <returns>ActionResult&lt;List&lt;CalendarItem&gt;&gt;.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetDepartmentCalendarItemsInRange(System.DateTime,System.DateTime)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItemsInRange(System.DateTime,System.DateTime)">
             <summary>
             Gets the department calendar items in range.
             </summary>
@@ -63,132 +49,32 @@
             <param name="end">The end.</param>
             <returns>ActionResult&lt;List&lt;CalendarItem&gt;&gt;.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetAllDepartmentCalendarItemsInRange(System.String,System.String)">
-            <summary>
-            Gets the calendar items specified in the date range.
-            </summary>
-            <param name="startDate">Must be in MM/dd/yyyy HH:mm:ss zzz format</param>
-            <param name="endDate">Must be in MM/dd/yyyy HH:mm:ss zzz format</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetCalendarItem(System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetCalendarItem(System.Int32)">
             <summary>
             Gets the calendar item.
             </summary>
             <param name="id">The identifier.</param>
             <returns>ActionResult&lt;CalendarItem&gt;.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CalendarController.GetDepartmentCalendarItemTypes">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItemTypes">
             <summary>
             Gets the department calendar item types.
             </summary>
             <returns>ActionResult&lt;List&lt;CalendarItemType&gt;&gt;.</returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.SetCalendarAttendingStatus(Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput)">
+             <summary>
+            
+             </summary>
+             <param name="input"></param>
+             <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CallFilesController">
             <summary>
-            Operations to be performed against calls
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetAllCallPriorites">
-            <summary>
-            Returns all the call priorities (including deleted ones) for a department
-            </summary>
-            <returns>Array of CallPriorityResult objects for each call priority in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetAllCallPrioritesForDepartment(System.Int32)">
-            <summary>
-            Returns all the call priorities (including deleted ones) for a selected department
-            </summary>
-            <returns>Array of CallPriorityResult objects for each call priority in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetPushAudioForPriority(System.Int32)">
-            <summary>
-            Return the audio file for push notifications for a specific call priority
-            </summary>
-            <returns>File download result for push dispatch audio for a call priority</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallPrioritiesController.GetIOSPushAudioForPriority(System.Int32)">
-            <summary>
-            Return the ios audio file for push notifications for a specific call priority
-            </summary>
-            <returns>File download result for push dispatch audio for a call priority</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.CallsController">
-            <summary>
-            Operations to be performed against calls
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCalls">
-            <summary>
-            Returns all the active calls for the department
-            </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCallsEx">
-            <summary>
-            Returns all the active calls for the department
-            </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCallsForDepartment(System.Int32)">
-            <summary>
-            Returns all the active calls for the department (extended object result, more verbose then GetActiveCalls)
-            </summary>
-            <returns>Array of DepartmentCallResult objects for each active call in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCall(System.Int32)">
-            <summary>
-            Returns a specific call from the Resgrid System
-            </summary>
-            <returns>CallResult of the call in the Resgrid system</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallExtraData(System.Int32)">
-            <summary>
-            Gets all the meta-data around a call, dispatched personnel, units, groups and responses
-            </summary>
-            <param name="callId">CallId to get data for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.SaveCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.NewCallInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a call in the Resgrid system
-            </summary>
-            <param name="newCallInput"></param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.AddCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallInput,System.Threading.CancellationToken)">
-            <summary>
-            Adds a new call into Resgrid and Dispatches the call
-            </summary>
-            <param name="callInput">Call data to add into the system</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>AddCallInput.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.CloseCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.CloseCallInput,System.Threading.CancellationToken)">
-            <summary>
-            Closes a Resgrid call
-            </summary>
-            <param name="closeCallInput">Data to close a call</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>OK status code if successful</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.EditCall(Resgrid.Web.Services.Controllers.Version3.Models.Calls.EditCallInput,System.Threading.CancellationToken)">
-            <summary>
-            Updates an existing Active Call in the Resgrid system
-            </summary>
-            <param name="editCallInput">Data to updated the call</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>OK status code if successful</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallNotes(System.Int32)">
-            <summary>
-            Get notes for a call
-            </summary>
-            <param name="callId">CallId of the call you want to get notes for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetFilesForCall(System.Int32,System.Boolean,System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.GetFilesForCall(System.Int32,System.Boolean,System.Int32)">
             <summary>
             Get the files for a call in the Resgrid System
             </summary>
@@ -197,15 +83,21 @@
             <param name="type">Type of file to get (Any = 0, Audio = 1, Images = 2, Files = 3, Videos = 4)</param>
             <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetFile(System.Int32,System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.GetFile(System.String)">
             <summary>
             Get a users avatar from the Resgrid system based on their ID
             </summary>
-            <param name="id">ID of the user</param>
-            <param name="departmentId">The department id of the file your requesting</param>
+            <param name="query">ID of the file</param>
             <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.UploadFile(Resgrid.Web.Services.Controllers.Version3.Models.Calls.CallFileInput,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.GetFileHead(System.String)">
+            <summary>
+            Get a users avatar from the Resgrid system based on their ID
+            </summary>
+            <param name="query">ID of the file</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.SaveCallFile(Resgrid.Web.Services.Models.v4.CallFiles.SaveCallFileInput,System.Threading.CancellationToken)">
             <summary>
             Attaches a file to a call
             </summary>
@@ -213,645 +105,826 @@
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.AddCallNote(Resgrid.Web.Services.Controllers.Version3.Models.Calls.AddCallNoteInput,System.Threading.CancellationToken)">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CallNotesController">
+            <summary>
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallNotesController.GetCallNotes(System.String)">
             <summary>
             Get notes for a call
+            </summary>
+            <param name="callId">CallId of the call you want to get notes for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallNotesController.SaveCallNote(Resgrid.Web.Services.Models.v4.CallNotes.SaveCallNoteInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a call note
             </summary>
             <param name="input">CallId of the call you want to get notes for</param>
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns>ActionResult.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallAudio(System.String)">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CallPrioritiesController">
             <summary>
-            Returns the call audio for a specific call (Allow Anonymous)
-            </summary>
-            <param name="query">Encrypted query string for the call</param>
-            <returns>Http response type matching call audio format with data</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetActiveCallPrioritiesForDepartment(System.Int32)">
-            <summary>
-            Get notes for a call
-            </summary>
-            <param name="departmentId">CallId of the call you want to get notes for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetCallTypes">
-            <summary>
-            Get all the call types for a department
-            </summary>
-            <returns>An array of call types</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.GetAllPendingScheduledCalls">
-            <summary>
-            Returns all the non-dispatched (pending) scheduled calls for the department
-            </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.UpdateScheduledDispatchTime(System.Int32,System.DateTime)">
-            <summary>
-            Updates a call's scheduled dispatch time if it has not been dispatched
-            </summary>
-            <param name="callId">ID of the call</param>
-            <param name="date">UTC date to change the dispatch to</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CallsController.DeleteCall(System.Int32)">
-            <summary>
-            Deletes a call
-            </summary>
-            <param name="callId">ID of the call</param>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.ChatController">
-            <summary>
-            Operations to be performed against the chat system
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ChatController.GetResponderChatInfo">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallPrioritiesController.GetAllCallPriorites">
             <summary>
-            Gets the department and group information needed to seed the initial standard groups for chat
+            Gets all the call priorities in a department
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ChatController.GetPersonnelForChat">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CallProtocolsController">
             <summary>
-            Gets personnel information for the department to utilize within a chat system
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetAllCallProtocols">
+            <summary>
+            Gets all the call protocols in a department
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ChatController.NotifyNewChat(Resgrid.Web.Services.Controllers.Version3.Models.Chat.NotifyChatInput)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetProtocol(System.Int32)">
             <summary>
-            Send a Push Notification out to the personnel involved in a chat
-            </summary>
-            <param name="notifyChatInput"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CommandAppController.GetCommandAppCoreData">
-            <summary>
-            Gets the command application core data.
-            </summary>
-            <returns>ActionResult&lt;UnitAppPayloadResult&gt;.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.CommandsController">
-            <summary>
-            Operations to perform against the security sub-system
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CommandsController.#ctor(Resgrid.Model.Services.ICommandsService)">
-            <summary>
-            Operations to perform against the security sub-system
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CommandsController.GetAllCommands">
-            <summary>
-            Gets all the command definitions for the department
-            </summary>
-            <returns>AllCommandsResult object with a list of CommandResult's for each command</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.CoreDataController.GetCoreData">
-            <summary>
-            Gets the core data.
-            </summary>
-            <returns>CoreDataResult.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DepartmentController">
-            <summary>
-            General department level options
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DepartmentController.GetRespondingOptions">
-            <summary>
-            Returns all the available responding options (Calls/Stations) for the department
-            </summary>
-            <returns>Array of RespondingOptionResult objects for each responding option in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DepartmentController.Get(System.Int32)">
-            <summary>
-            Returns basic high level department information for the request department
-            </summary>
-            <param name="departmentId"></param>
-            <returns>Array of DepartmentResult objects with the department data populated</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DepartmentController.GetDepartmentOptions(System.Int32)">
-            <summary>
-            Returns basic high level department information for the request department
-            </summary>
-            <param name="departmentId"></param>
-            <returns>Array of DepartmentResult objects with the department data populated</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DevicesController">
-            <summary>
-            Operations to perform against devices for personnel
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.#ctor(Resgrid.Model.Services.IUsersService,Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IAuthorizationService,Resgrid.Model.Services.IPushService,Resgrid.Model.Providers.ICqrsProvider)">
-            <summary>
-            Default Constructor
-            </summary>
-            <param name="usersService"></param>
-            <param name="membershipProvider"></param>
-            <param name="departmentsService"></param>
-            <param name="authorizationService"></param>
-            <param name="pushUriService"></param>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.RegisterDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput,System.Threading.CancellationToken)">
-            <summary>
-            Register a device to receive push notification from the Resgrid system
-            </summary>
-            <param name="registrationInput">Input to create the registration for</param>
-            <returns>Result for the registration</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.UnRegisterDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceUnRegistrationInput)">
-            <summary>
-            Removed a Push Notification support by PushUriId.
-            </summary>
-            <param name="input">Input to de-register the device for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.RegisterUnitDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceRegistrationInput)">
-            <summary>
-            Register a unit device to receive push notification from the Resgrid system
-            </summary>
-            <param name="registrationInput">Input to create the registration for</param>
-            <returns>Result for the registration</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DevicesController.UnRegisterUnitDevice(Resgrid.Web.Services.Controllers.Version3.Models.Devices.DeviceUnRegistrationInput)">
-            <summary>
-            Removed a Unit Push Notification support by PushUriId.
-            </summary>
-            <param name="input">Input to deregister the device for</param>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchAppController">
-            <summary>
-            Operations to support Dispatch operations
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.DispatchController">
-            <summary>
-            Operations to support Dispatch operations
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetPersonnelForCallGrid">
-            <summary>
-            Returns all the personnel for display in the new call personnel table
-            </summary>
-            <returns>Array of PersonnelForCallResult objects for each person in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetGroupsForCallGrid">
-            <summary>
-            Returns all the groups for display in the new call groups table
-            </summary>
-            <returns>Array of GroupsForCallResult objects for each group in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetRolesForCallGrid">
-            <summary>
-            Returns all the roles for display in the new call groups table
-            </summary>
-            <returns>Array of RolesForCallResult objects for each role in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetCallTemplates">
-            <summary>
-            Returns all the call quick templates
-            </summary>
-            <returns>Array of CallTemplateResult objects for each role in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.DispatchController.GetNewCallForm">
-            <summary>
-            Returns the custom new call form if any exists and is active
-            </summary>
-            <returns>FormDataResult object with the new call form data</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.GeoController">
-            <summary>
-            Geolocation API methods for gps and other functions (like what3words)
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.GeoController.GetLocationForWhatThreeWords(System.String)">
-            <summary>
-            Gets coordinates (Latitude and Longitude) for a what3words address
-            </summary>
-            <param name="w3w">Full 3 part what 3 words string</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.GeoController.GetCoordinatesForAddress(System.String)">
-            <summary>
-            Gets coordinates (Latitude and Longitude) for an address
-            </summary>
-            <param name="address">URL Encoded address</param>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.LinksController">
-            <summary>
-            Operations to perform against the security sub-system
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentLinksService,Resgrid.Model.Services.ILimitsService,Resgrid.Model.Services.ICallsService,Resgrid.Model.Services.IUserProfileService,Resgrid.Model.Providers.IGeoLocationProvider,Resgrid.Model.Services.IUnitsService,Resgrid.Model.Services.IActionLogsService,Resgrid.Model.Services.IUserStateService)">
-            <summary>
-            Operations to perform against the department links system. Department Links allow departments to 
-            share data to other departments, for example calls or resource orders.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetActiveDepartmentLinks">
-            <summary>
-            Gets the current active department links for this department where data is bring shared to it
-            </summary>
-            <returns>List of DepartmentLinkResult objects with the information about the links</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetActiveCallsForLink(System.Int32)">
-            <summary>
-            Returns all the active calls for a specific department link
-            </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetUnitStatusesForLink(System.Int32)">
-            <summary>
-            Get's all the units for a department link and their current status information
-            </summary>
-            <returns>List of UnitStatusResult objects, with status information for each unit.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetPersonnelStatusesForLink(System.Int32)">
-            <summary>
-            Get's all the personnel in a department link and their current status and staffing information
-            </summary>
-            <returns>List of PersonnelStatusResult objects, with status and staffing information for each user.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetAllLinkedCallMapMarkers">
-            <summary>
-            Returns all the map markers for all active links
-            </summary>
-            <returns>Array of MapMakerInfo objects for each active call in all linked departments</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.LinksController.GetAllActiveCallsForLinks">
-            <summary>
-            Returns all the active calls for a specific department link
-            </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.MessagesController">
-            <summary>
-            Collection of methods to perform operations against messages
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetMessages">
-            <summary>
-            Returns all inbox messages for a user.
-            </summary>
-            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
-            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetMessagesPaged(System.Int32)">
-            <summary>
-            Returns all inbox messages for a user.
-            </summary>
-            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
-            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetOutboxMessages">
-            <summary>
-            Returns all the outbox messages for a user.
-            </summary>
-            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
-            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetOutboxMessagesPaged(System.Int32)">
-            <summary>
-            Returns all the outbox messages for a user.
-            </summary>
-            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
-            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.GetMessage(System.Int32,System.Threading.CancellationToken)">
-            <summary>
-            Gets a specific message by it's Id.
-            </summary>
-            <param name="messageId">Integer message Identifier</param>
-            <returns>MessageResult object populated with message information from the system.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.SendMessage(Resgrid.Web.Services.Controllers.Version3.Models.Messages.NewMessageInput,System.Threading.CancellationToken)">
-            <summary>
-            Sends a new message to users in the system
-            </summary>
-            <param name="newMessageInput">Input data to send a new message</param>
-            <returns>Created result if the message was sent</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.RespondToMessage(Resgrid.Web.Services.Controllers.Version3.Models.Messages.MessageResponseInput,System.Threading.CancellationToken)">
-            <summary>
-            Deletes a messsage from the system
-            </summary>
-            <returns>Returns OK status code if successful</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.MessagesController.DeleteMessage(System.Int32,System.Threading.CancellationToken)">
-            <summary>
-            Deletes a messsage from the system
-            </summary>
-            <param name="messageId">MessageId of the message to delete</param>
-            <returns>Returns OK status code if successful</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.NotesController">
-            <summary>
-            Operations to perform against a departments notes
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetAllNotes">
-            <summary>
-            Get's all the notes in a department
-            </summary>
-            <returns>List of NotesResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetAllUnexpiredNotesByCategory(System.String,System.Boolean)">
-            <summary>
-            Get's all the notes in a department
-            </summary>
-            <returns>List of NotesResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetNote(System.Int32)">
-            <summary>
-            Gets a specific note by it's Id.
-            </summary>
-            <param name="noteId">Integer note Identifier</param>
-            <returns>NotesResult object populated with note information from the system.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.SaveNote(Resgrid.Web.Services.Controllers.Version3.Models.Notes.NewNoteInput,System.Threading.CancellationToken)">
-            <summary>
-            Get's all the notes in a department
-            </summary>
-            <returns>List of NotesResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.NotesController.GetNoteCategories">
-            <summary>
-            Get's all the note Categories for a Department
-            </summary>
-            <returns>List of string of distinct note category.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.PersonnelController">
-            <summary>
-            Operations to perform against personnel in a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.PersonnelController.GetPersonnelStatuses(System.String)">
-            <summary>
-            Get's all the personnel in a department and their current status and staffing information with a filter
-            </summary>
-            <example>
-            $ curl https://api.resgrid.com/api/v2/Personnel/GetPersonnelStatuses -u VXNlck5hbWV8MXxBQkNE:
-            </example>
-            <returns>List of PersonnelStatusResult objects, with status and staffing information for each user.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.PersonnelController.GetPersonnelInfo(System.String)">
-            <summary>
-            Gets information about a specific person
-            </summary>
-            <param name="userId">UserId of the person to get info for</param>
-            <returns>PersonnelInfoResult with information pertaining to that user</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.ProfileController">
-            <summary>
-            Operations to perform against a logged in users (determined via the token) profile
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.GetMobileCarriers">
-            <summary>
-            Gets the mobile carriers in the Resgrid system. If you need a mobile carrier added contact team@resgrid.com.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.GetTimeZones">
-            <summary>
-            Gets the time zones in the Resgrid system. If you need a time zone added or corrected contact team@resgrid.com.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.GetProfile">
-            <summary>
-            Gets the Resgrid user profile for the user
-            </summary>
-            <returns>ProfileResult object with the users profile data</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.ToggleCustomPushSounds(System.Boolean,System.Threading.CancellationToken)">
-            <summary>
-            Toggles a users profile to enable/disable custom push sounds when the app is backgrounded.
-            </summary>
-            <returns>An HTTP Result</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProfileController.UpdateProfile(Resgrid.Web.Services.Controllers.Version3.Models.Profile.UpdateProfileInput,System.Threading.CancellationToken)">
-            <summary>
-            Updates a users profile
-            </summary>
-            <returns>An HTTP Result</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.ProtocolsController">
-            <summary>
-            Operations to perform against dispatch protocols that are established in a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProtocolsController.GetAllProtocols">
-            <summary>
-            Get's all the protocols for a department
+            Gets a single protocol by id
             </summary>
             <returns>List of ProtocolResult objects.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProtocolsController.GetProtocol(System.Int32)">
-            <summary>
-            Get's all the protocols for a department
-            </summary>
-            <returns>List of ProtocolResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ProtocolsController.GetFile(System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetFile(System.Int32)">
             <summary>
             Gets a protocol attachment by it's id
             </summary>
             <param name="protocolAttachmentId">ID of the protocol attachment</param>
             <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.SecurityController">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CallsController">
             <summary>
-            Operations to perform against the security sub-system
+            Calls, also referred to as Dispatches.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IFirebaseService)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetActiveCalls">
             <summary>
-            Operations to perform against the security sub-system
+            Returns all the active calls for the department
+            </summary>
+            <returns>Array of CallResult objects for each active call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCall(System.String)">
+            <summary>
+            Returns a specific call from the Resgrid System
+            </summary>
+            <param name="callId">Id of the call trying to be retrived</param>
+            <returns>CallResult of the call in the Resgrid system</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallExtraData(System.Int32)">
+            <summary>
+            Gets all the meta-data around a call, dispatched personnel, units, groups and responses
+            </summary>
+            <param name="callId">CallId to get data for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.SaveCall(Resgrid.Web.Services.Models.v4.Calls.NewCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a call in the Resgrid system
+            </summary>
+            <param name="newCallInput"></param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.EditCall(Resgrid.Web.Services.Models.v4.Calls.EditCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates an existing Active Call in the Resgrid system
+            </summary>
+            <param name="editCallInput">Data to updated the call</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>OK status code if successful</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.UpdateScheduledDispatchTime(Resgrid.Web.Services.Models.v4.Calls.UpdateDispatchTimeInput)">
+            <summary>
+            Updates a call's scheduled dispatch time if it has not been dispatched
+            </summary>
+            <param name="input">Data to update</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.DeleteCall(System.String)">
+            <summary>
+            Deletes a call
+            </summary>
+            <param name="callId">ID of the call</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.CloseCall(Resgrid.Web.Services.Models.v4.Calls.CloseCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Closes a Resgrid call
+            </summary>
+            <param name="closeCallInput">Data to close a call</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>OK status code if successful</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetAllPendingScheduledCalls">
+            <summary>
+            Returns all the non-dispatched (pending) scheduled calls for the department
+            </summary>
+            <returns>Array of CallResult objects for each active call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallHistory(System.Int32)">
+            <summary>
+            Gets all the meta-data around a call, dispatched personnel, units, groups and responses
+            </summary>
+            <param name="callId">CallId to get data for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCalls(System.DateTime,System.DateTime)">
+            <summary>
+            Returns all the calls for the department inclusive in the date range
+            </summary>
+            <param name="startDate">Start date as UTC to get calls for</param>
+            <param name="endDate">End date as UTC to get calls for</param>
+            <returns>Array of CallResult objects for each call in the department within the range</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
+            <summary>
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.SecurityController.GetCurrentUsersRights">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallTypesController.GetAllCallTypes">
+            <summary>
+            Gets all the call priorities in a department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ConfigController">
+            <summary>
+            Generic configuration api endpoints
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetSystemConfig">
+            <summary>
+            Gets the system config
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetConfig(System.String)">
+            <summary>
+            Gets the config values for a key
+            </summary>
+            <returns></returns>
+            <param name="key">The key to get config data for</param>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ConnectController">
+            <summary>
+            Service to generate an authentication token that is required to communicate with all other v4 services
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.Token">
+            <summary>
+            Generates a token that is then used for subsquent requests to the API.
+            </summary>
+            <returns>ValidateResult object, with IsValid set if the settings are correct</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ContactsController">
+            <summary>
+            Contacts, which are people, entities, and things that can be contacted (i.e. people, departments, groups, etc.) to dispatch a call to.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetAllContactCategories">
+            <summary>
+            Gets all the contact categories for the department.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetAllContacts">
+            <summary>
+            Gets all the contacts for the department.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactById(System.String)">
+            <summary>
+            Gets the contact by id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactNotesByContactId(System.String)">
+            <summary>
+            Gets all the Notes for a Contact by the contact id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CustomStatusesController">
+            <summary>
+            Custom statuses
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetAllCustomStatuses">
+            <summary>
+            All custom statuses for a department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActivePersonnelStatuses">
+            <summary>
+            Gets the active statuses that personnel can currently set for the department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActivePersonnelStaffingLevels">
+            <summary>
+            Gets the active staffing levels that personnel can currently set for the department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActiveUnitStatesLevels">
+            <summary>
+            Gets the active states that units can currently set for the department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.DevicesController">
+            <summary>
+            Mobile or Tablet Device specific operations
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.RegisterUnitDevice(Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput)">
+            <summary>
+            Register a unit device to receive push notification from the Resgrid system
+            </summary>
+            <param name="registrationInput">Input to create the registration for</param>
+            <returns>Result for the registration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterUnitDevice(System.String)">
+            <summary>
+            Removed a Unit Push Notification support by PushUriId.
+            </summary>
+            <param name="deviceUuid">Input to deregister the device for</param>
+            <returns>Result for the unregistration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.RegisterDevice(Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput)">
+            <summary>
+            Register a device to receive push notification from the Resgrid system
+            </summary>
+            <param name="registrationInput">Input to create the registration for</param>
+            <returns>Result for the registration</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterDevice(System.String)">
+            <summary>
+            Removed a Push Notification support by PushUriId.
+            </summary>
+            <param name="deviceUuid">Input to deregister the device for</param>
+            <returns>Result for the unregistration</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.DispatchController">
+            <summary>
+            API Calls that are used for the Dispatch App
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetNewCallData">
+            <summary>
+            Gets all the information required to populate the New Call form
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetSetUnitStatusData(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="unitId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetPersonnelForCallGrid">
+            <summary>
+            Returns all the personnel for display in the new call personnel table
+            </summary>
+            <returns>Array of PersonnelForCallResult objects for each person in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetGroupsForCallGrid">
+            <summary>
+            Returns all the groups for display in the new call groups table
+            </summary>
+            <returns>Array of GroupsForCallResult objects for each group in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetRolesForCallGrid">
+            <summary>
+            Returns all the roles for display in the new call groups table
+            </summary>
+            <returns>Array of RolesForCallResult objects for each role in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetCallTemplates">
+            <summary>
+            Returns all the call quick templates
+            </summary>
+            <returns>Array of CallTemplateResult objects for each role in the department</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.FeedsController">
+            <summary>
+            Gets calls and other data formatted for different feed formats, like RSS.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.FormsController">
+            <summary>
+            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetNewCallForm">
+            <summary>
+            Gets the Department Form that can be used for the new call process (i.e. call intake/triage form)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.GroupsController">
+            <summary>
+            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GroupsController.GetGroup(System.String)">
+            <summary>
+            Gets the Department Group by it's id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GroupsController.GetAllGroups">
+            <summary>
+            Gets all deparment groups for a department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.HealthController">
+            <summary>
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.HealthController.GetCurrent">
             <summary>
             Gets the current users department rights
             </summary>
             <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.ShiftsController">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.InboxController">
             <summary>
-            Operations to perform against shifts in a department
+            For interacting with the Inbox
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetShifts">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InboxController.DeleteMessage(System.String)">
             <summary>
-            Get's all the shifts in a department
+            Deletes a message from the inbox by its ID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
+            <summary>
+            Mapping operations
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapDataAndMarkers">
+            <summary>
+            Data to center the map and it's default location plus marker information for displaying makers on the map.
+            </summary>
+            <returns>GetMapDataResult object</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMayLayers(System.Int32)">
+            <summary>
+            Gets the user created map layers in the system.
+            </summary>
+            <returns>GetMapLayersResult object</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.MessagesController">
+            <summary>
+            Messaging system interaction
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetInboxMessages(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Returns all inbox messages for a user.
+            </summary>
+            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetOutboxMessages(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Returns all the outbox messages for a user.
+            </summary>
+            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
+            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetMessage(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Gets a specific message by it's Id.
+            </summary>
+            <param name="messageId">Integer message Identifier</param>
+            <returns>MessageResult object populated with message information from the system.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetRecipients(System.Boolean,System.Boolean)">
+            <summary>
+            Gets all the recipients in the department plus default values the system accepts
+            </summary>
+            <param name="disallowNoone">Disallow adding a noone option</param>
+            <param name="includeUnits">Include units in the response list</param>
+            <returns>MessageResult object populated with message information from the system.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.SendMessage(Resgrid.Web.Services.Models.v4.Messages.NewMessageInput,System.Threading.CancellationToken)">
+            <summary>
+            Sends a new message to users in the system
+            </summary>
+            <param name="newMessageInput">Input data to send a new message</param>
+            <returns>Created result if the message was sent</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.RespondToMessage(Resgrid.Web.Services.Models.v4.Messages.RespondToMessageInput,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a message from the system
+            </summary>
+            <returns>Returns OK status code if successful</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.DeleteMessage(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a messsage from the system
+            </summary>
+            <param name="messageId">MessageId of the message to delete</param>
+            <returns>Returns OK status code if successful</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.NotesController">
+            <summary>
+            The options for Notes in the Resgrid system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetAllNotes">
+            <summary>
+            Gets all notes for a department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetDispatchNote">
+            <summary>
+            Gets the dispatch note (if any). A dispatch note is a Department note with the
+            title of "Dispatch" or a note in a Category of "Dispatch".
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetAllUnexpiredNotesByCategory(System.String,System.Boolean)">
+            <summary>
+            Get's all the notes in a department that are not expired by a category
+            </summary>
+            <param name="category">Category name to get notes for</param>
+            <param name="includeUnCategorized">Also include notes that do not have a </param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetNote(System.Int32)">
+            <summary>
+            Gets the dispatch note (if any). A dispatch note is a Department note with the
+            title of "Dispatch" or a note in a Category of "Dispatch".
+            </summary>
+            <param name="noteId">Id of the note to get</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.SaveNote(Resgrid.Web.Services.Models.v4.Notes.NewNoteInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a new note in the system
+            </summary>
+            <param name="newNoteInput">Input data to send a new note</param>
+            <returns>Created result if the note was saved</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetNoteCategories">
+            <summary>
+            Get's all the note Categories for a Department
+            </summary>
+            <returns>List of string of distinct note category.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelController">
+            <summary>
+            Operations to perform against personnel in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.GetPersonnelInfo(System.String)">
+            <summary>
+            Gets information about a specific person
+            </summary>
+            <param name="userId">UserId of the person to get info for</param>
+            <returns>PersonnelInfoResult with information pertaining to that user</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.GetAllPersonnelInfos(System.String)">
+            <summary>
+            Gets information about all users in a department
+            </summary>
+            <param name="activeFilter">The active filter to reduce personnel returned</param>
+            <returns>PersonnelInfoResult with information pertaining to that user</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.GetPersonnelFilterOptions">
+            <summary>
+            Gets all the options available to filter personnel against compatible Resgrid APIs
+            </summary>
+            <returns>GetPersonnelFilterOptionsResult with information pertaining to each filter option</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController">
+            <summary>
+            Operations involving the location of a person setting the real-time location or getting the latest location for people.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController.SetPersonLocation(Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput)">
+            <summary>
+            Sets the location of a person
+            </summary>
+            <param name="locationInput">PersonnelLocationInput object with the gps information.</param>
+            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController.GetLatestPersonLocation(System.String)">
+            <summary>
+            Gets the latest location for a specified unit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController">
+            <summary>
+            Operations to perform against personnel staffing, i.e. Available, Delayed, in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.GetCurrentStatffing(System.String)">
+            <summary>
+            Gets the current staffing for a user
+            </summary>
+            <param name="userId">UserId to get the status for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.SavePersonStaffing(Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a staffing for a person
+            </summary>
+            <param name="input">Staffing and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.SavePersonsStaffings(Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a staffing for multiple personnel
+            </summary>
+            <param name="input">Staffing and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController">
+            <summary>
+            Operations to perform against personnel in a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.GetCurrentStatus(System.String)">
+            <summary>
+            Gets the current status for a user
+            </summary>
+            <param name="userId">UserId to get the status for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.SavePersonStatus(Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a status for a person
+            </summary>
+            <param name="input">Status and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.SavePersonsStatuses(Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a status for multiple personnel
+            </summary>
+            <param name="input">Status and related data</param>
+            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolsController">
+            <summary>
+            The options for Protocols in the Resgrid system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetAllProtocols">
+            <summary>
+            Gets all protocols for a department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetProtocol(System.Int32)">
+            <summary>
+            Gets a single protocol by id
+            </summary>
+            <returns>List of ProtocolResult objects.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)">
+            <summary>
+            Gets a protocol attachment by it's id
+            </summary>
+            <param name="protocolAttachmentId">ID of the protocol attachment</param>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RolesController">
+            <summary>
+            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RolesController.GetAllRoles">
+            <summary>
+            Gets the Department Form that can be used for the new call process (i.e. call intake/triage form)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SecurityController">
+            <summary>
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IUserProfileService,Resgrid.Model.Providers.INovuProvider)">
+            <summary>
+            Operations to perform against the security sub-system
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.GetCurrentUsersRights">
+            <summary>
+            Gets the current users department rights
+            </summary>
+            <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ShiftsController">
+            <summary>
+            Unit roles
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetShifts">
+            <summary>
+            Gets all the shifts in a department
             </summary>
             <returns>List of ShiftResult objects.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetShift(System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetShift(System.Int32)">
             <summary>
-            Get's all the shifts in a department
+            Gets all the shifts in a department
             </summary>
-            <returns>List of ShiftResult objects.</returns>
+            <returns>ShiftResult</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetTodaysShifts">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetTodaysShifts">
             <summary>
-            Get's all the shift days for today
+            Gets all the shift days for today
             </summary>
             <returns>List of ShiftDayResult objects.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.ShiftsController.GetShiftDay(System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetShiftDay(System.Int32)">
             <summary>
-            Get's all the shifts in a department
+            Gets all the shifts in a department
             </summary>
             <returns>List of ShiftResult objects.</returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.StaffingController">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.StatusesController">
             <summary>
-            Operations to perform against user statuses and their actions
+            The options for Personnel Statuses, Staffing and Unit Statuses that can be used to submit their status to Resgrid.
+            Do not use Deleted versions for submittion, they should only be used for display of previous used values.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingController.GetCurrentStaffing">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.StatusesController.GetAllStatusesForPersonnel">
             <summary>
-            Gets the current staffing level (state) for the user
+            Gets all available statuses for Personnel for the department
             </summary>
-            <returns>StateResult object with the users current staffing level</returns>
+            <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingController.SetStaffing(Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.StatusesController.GetAllStaffingsForPersonnel">
             <summary>
-            Sets the staffing level (state) for the current user.
+            Gets all available staffing levels for Personnel for the department
             </summary>
-            <param name="staffingInput">StateInput object with the State to set.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+            <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingController.SetStaffingForUser(Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.StatusesController.GetAllUnitStatuses">
             <summary>
-            Sets the staffing level (state) for the UserId specificed in the input data.
+            Gets all active unit statuses for each unit type
             </summary>
-            <param name="staffingInput">StateInput object with the State to set.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+            <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.TemplatesController">
             <summary>
-            Operations to perform against user statuses and their actions
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController.GetStaffingSchedules">
-            <summary>
-            Gets the current staffing level (state) for the user
-            </summary>
-            <returns>StateResult object with the users current staffing level</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController.ToggleStaffingSchedule(Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.ToggleStaffingScheduleInput,System.Threading.CancellationToken)">
-            <summary>
-            Toggles and Scheduled Staffing Level Change (Enabling or Disabling It)
-            </summary>
-            <param name="toggleInput">StateInput object with the Staffing to toggle and it's value.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StaffingSchedulesController.CreateStaffingSchedule(Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput,System.Threading.CancellationToken)">
-            <summary>
-            Toggles and Scheduled Staffing Level Change (Enabling or Disabling It)
-            </summary>
-            <param name="toggleInput">StateInput object with the Staffing to toggle and it's value.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.StationsController">
-            <summary>
-            Operations that can be performed against resgrid recipients, usually for sending messages
+            Templates in the system. Templates can be call Templates, Autofills (i.e. Call Notes)
+            and a few other template types.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StationsController.GetStationResources">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TemplatesController.GetAllCallNoteTemplates">
             <summary>
-            Returns all the available responding options (Calls/Stations) for the department
+            Gets all call note Templates for the department
             </summary>
-            <returns>Array of RecipientResult objects for each responding option in the department</returns>
+            <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.StatusController">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
-            Operations to perform against user statuses and their actions
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StatusController.GetCurrentUserStatus">
-            <summary>
-            Gets the status/action for the current user. User credentials are supplied via the Auth header.
-            </summary>
-            <returns>StatusResult object with the users current status</returns>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Resgrid.Web.Services.Controllers.Version3.StatusController.SetCurrentStatus(Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput,System.Threading.CancellationToken)" -->
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StatusController.SetStatusForUser(Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput,System.Threading.CancellationToken)">
-            <summary>
-            Sets the status/action for the UserId passed into the data posted
-            </summary>
-            <param name="statusInput">StatusInput object with the Status/Action to set.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.StatusController.PostStatusForUser(Resgrid.Web.Services.Controllers.Version3.Models.Status.StatusInput)">
-            <summary>
-            Sets the status/action for the UserId passed into the data posted
-            </summary>
-            <param name="statusInput">StatusInput object with the Status/Action to set.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.UnitLocationController">
-            <summary>
-            Operations to perform against units in a department
+            Operations involving the location of a unit setting the real-time location or getting the latest location for a unit.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitLocationController.SetUnitLocation(Resgrid.Web.Services.Controllers.Version3.Models.UnitLocation.UnitLocationInput,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitLocationController.SetUnitLocation(Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput)">
             <summary>
             Sets the location of a unit
             </summary>
             <param name="locationInput">UnitLocationInput object with the gps information.</param>
             <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.UnitsController">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitLocationController.GetLatestUnitLocation(System.String)">
             <summary>
-            Operations to perform against units in a department
+            Gets the latest location for a specified unit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitRolesController">
+            <summary>
+            Unit roles
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitsController.GetUnitStatuses(System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetRolesForUnit(System.String)">
             <summary>
-            Get's all the units in a department and their current status information
+            Gets the accountability roles for a unit
             </summary>
-            <returns>List of UnitStatusResult objects, with status information for each unit.</returns>
+            <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitsController.GetUnitsForDepartment(System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetRoleAssignmentsForUnit(System.String)">
             <summary>
-            Get's all the units in a department and their basic info
+            Gets the accountability roles and the current assignments for a unit
             </summary>
-            <returns>List of UnitResult objects, with basic information for each unit.</returns>
+            <returns></returns>
         </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.UnitStateController">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.SetRoleAssignmentsForUnit(Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesInput,System.Threading.CancellationToken)">
             <summary>
-            Operations to perform against unit statuses
+            Sets the accountability roles and the current assignments for a unit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetAllUnitRolesAndAssignmentsForDepartment">
+            <summary>
+            Gets all the roles for every unit in a department plus who is currently assigned to that unit role (accountability)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitsController">
+            <summary>
+            Information regarding Units
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitStateController.SetUnitState(Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.GetAllUnits">
+            <summary>
+            Gets all the Units for a Department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.GetAllUnitsInfos(System.String)">
+            <summary>
+            Gets all the Units for a Department
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.GetUnitsFilterOptions">
+            <summary>
+            Gets all the options available to filter units against compatible Resgrid APIs
+            </summary>
+            <returns>GetUnitsFilterOptionsResult with information pertaining to each filter option</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitStatusController">
+            <summary>
+            Units Status (State) information. For example is the unit Responding to a Call, or Available.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.GetAllUnitStatuses">
+            <summary>
+            Gets all the units in a departments current (latest) status (state) or a default
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.GetUnitStatus(System.String)">
+            <summary>
+            Gets the unit status for a specific unit id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStatus(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput,System.Threading.CancellationToken)">
             <summary>
             Sets the status/action for the current user.
             </summary>
-            <param name="stateInput">StatusInput object with the Status/Action to set.</param>
+            <param name="statusInput">StatusInput object with the Status/Action to set.</param>
             <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.UnitStateController.CommitUnitStates(System.Collections.Generic.List{Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStateInput})">
+        <member name="T:Resgrid.Web.Services.Controllers.v4.VoiceController">
             <summary>
-            Sets the status/action for the current user.
-            </summary>
-            <param name="stateInputs">StatusInput object with the Status/Action to set.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.VoiceController">
-            <summary>
-            Operations that can be performed against resgrid voice (voip) services
+            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.Version3.VoiceController.GetDepartmentVoiceSettings">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.GetDepartmentVoiceSettings">
             <summary>
             Returns all the available responding options (Calls/Stations) for the department
+            </summary>
+            <returns>Array of RecipientResult objects for each responding option in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.ConnectToSession(System.String)">
+            <summary>
+            Connects to an voip session, limited to only OpenVidu.
+            </summary>
+            <returns>Voice connection result containing the data needed to connect to a voip session</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.CanConnectToVoiceSession(System.String)">
+            <summary>
+            Determines if a user can connect to an voice session, limited to only LiveKit.
+            </summary>
+            <returns>Voice connection result containing the data needed to determine if a user can connect to a voice session</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.GetDepartmentAudioStreams">
+            <summary>
+            Returns all the department audio streams
             </summary>
             <returns>Array of RecipientResult objects for each responding option in the department</returns>
         </member>
@@ -3078,944 +3151,6 @@
             <summary>
             The Timestamp of the status
             </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v3.DepartmentStatusController">
-            <summary>
-            General department level options
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v3.DepartmentStatusController.GetDepartmentStatus">
-            <summary>
-            Gets the department status.
-            </summary>
-            <returns>DepartmentStatusResult.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v3.HealthController">
-            <summary>
-            Health Check system to get information and health status of the services
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v3.HealthController.GetCurrent">
-            <summary>
-            Returns all the call priorities (including deleted ones) for a department
-            </summary>
-            <returns>Array of CallPriorityResult objects for each call priority in the department</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.AutofillsController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.AutofillsController.GetAllAutofills">
-            <summary>
-            Gets all the autofills in a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.AutofillsController.GetAutofillsForType(System.Int32)">
-            <summary>
-            Gets the autofills for a specific type
-            </summary>
-            <param name="type">Type to get</param>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CalendarController">
-            <summary>
-            Mobile or Tablet Device specific operations
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItems">
-            <summary>
-            Gets the department calendar items.
-            </summary>
-            <returns>ActionResult&lt;List&lt;CalendarItem&gt;&gt;.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItemsInRange(System.DateTime,System.DateTime)">
-            <summary>
-            Gets the department calendar items in range.
-            </summary>
-            <param name="start">The start.</param>
-            <param name="end">The end.</param>
-            <returns>ActionResult&lt;List&lt;CalendarItem&gt;&gt;.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetCalendarItem(System.Int32)">
-            <summary>
-            Gets the calendar item.
-            </summary>
-            <param name="id">The identifier.</param>
-            <returns>ActionResult&lt;CalendarItem&gt;.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItemTypes">
-            <summary>
-            Gets the department calendar item types.
-            </summary>
-            <returns>ActionResult&lt;List&lt;CalendarItemType&gt;&gt;.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.SetCalendarAttendingStatus(Resgrid.Web.Services.Controllers.Version3.Models.Calendar.CalendarItemAttendInput)">
-             <summary>
-            
-             </summary>
-             <param name="input"></param>
-             <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CallFilesController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.GetFilesForCall(System.Int32,System.Boolean,System.Int32)">
-            <summary>
-            Get the files for a call in the Resgrid System
-            </summary>
-            <param name="callId">CallId to get the files for</param>
-            <param name="includeData">Include the data in the result</param>
-            <param name="type">Type of file to get (Any = 0, Audio = 1, Images = 2, Files = 3, Videos = 4)</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.GetFile(System.String)">
-            <summary>
-            Get a users avatar from the Resgrid system based on their ID
-            </summary>
-            <param name="query">ID of the file</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.GetFileHead(System.String)">
-            <summary>
-            Get a users avatar from the Resgrid system based on their ID
-            </summary>
-            <param name="query">ID of the file</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.SaveCallFile(Resgrid.Web.Services.Models.v4.CallFiles.SaveCallFileInput,System.Threading.CancellationToken)">
-            <summary>
-            Attaches a file to a call
-            </summary>
-            <param name="input">ID of the user</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CallNotesController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallNotesController.GetCallNotes(System.String)">
-            <summary>
-            Get notes for a call
-            </summary>
-            <param name="callId">CallId of the call you want to get notes for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallNotesController.SaveCallNote(Resgrid.Web.Services.Models.v4.CallNotes.SaveCallNoteInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a call note
-            </summary>
-            <param name="input">CallId of the call you want to get notes for</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>ActionResult.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CallPrioritiesController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallPrioritiesController.GetAllCallPriorites">
-            <summary>
-            Gets all the call priorities in a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CallProtocolsController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetAllCallProtocols">
-            <summary>
-            Gets all the call protocols in a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetProtocol(System.Int32)">
-            <summary>
-            Gets a single protocol by id
-            </summary>
-            <returns>List of ProtocolResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.GetFile(System.Int32)">
-            <summary>
-            Gets a protocol attachment by it's id
-            </summary>
-            <param name="protocolAttachmentId">ID of the protocol attachment</param>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CallsController">
-            <summary>
-            Calls, also referred to as Dispatches.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetActiveCalls">
-            <summary>
-            Returns all the active calls for the department
-            </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCall(System.String)">
-            <summary>
-            Returns a specific call from the Resgrid System
-            </summary>
-            <param name="callId">Id of the call trying to be retrived</param>
-            <returns>CallResult of the call in the Resgrid system</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallExtraData(System.Int32)">
-            <summary>
-            Gets all the meta-data around a call, dispatched personnel, units, groups and responses
-            </summary>
-            <param name="callId">CallId to get data for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.SaveCall(Resgrid.Web.Services.Models.v4.Calls.NewCallInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a call in the Resgrid system
-            </summary>
-            <param name="newCallInput"></param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.EditCall(Resgrid.Web.Services.Models.v4.Calls.EditCallInput,System.Threading.CancellationToken)">
-            <summary>
-            Updates an existing Active Call in the Resgrid system
-            </summary>
-            <param name="editCallInput">Data to updated the call</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>OK status code if successful</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.UpdateScheduledDispatchTime(Resgrid.Web.Services.Models.v4.Calls.UpdateDispatchTimeInput)">
-            <summary>
-            Updates a call's scheduled dispatch time if it has not been dispatched
-            </summary>
-            <param name="input">Data to update</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.DeleteCall(System.String)">
-            <summary>
-            Deletes a call
-            </summary>
-            <param name="callId">ID of the call</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.CloseCall(Resgrid.Web.Services.Models.v4.Calls.CloseCallInput,System.Threading.CancellationToken)">
-            <summary>
-            Closes a Resgrid call
-            </summary>
-            <param name="closeCallInput">Data to close a call</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>OK status code if successful</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetAllPendingScheduledCalls">
-            <summary>
-            Returns all the non-dispatched (pending) scheduled calls for the department
-            </summary>
-            <returns>Array of CallResult objects for each active call in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallHistory(System.Int32)">
-            <summary>
-            Gets all the meta-data around a call, dispatched personnel, units, groups and responses
-            </summary>
-            <param name="callId">CallId to get data for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCalls(System.DateTime,System.DateTime)">
-            <summary>
-            Returns all the calls for the department inclusive in the date range
-            </summary>
-            <param name="startDate">Start date as UTC to get calls for</param>
-            <param name="endDate">End date as UTC to get calls for</param>
-            <returns>Array of CallResult objects for each call in the department within the range</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallTypesController.GetAllCallTypes">
-            <summary>
-            Gets all the call priorities in a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.ConfigController">
-            <summary>
-            Generic configuration api endpoints
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetSystemConfig">
-            <summary>
-            Gets the system config
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetConfig(System.String)">
-            <summary>
-            Gets the config values for a key
-            </summary>
-            <returns></returns>
-            <param name="key">The key to get config data for</param>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.ConnectController">
-            <summary>
-            Service to generate an authentication token that is required to communicate with all other v4 services
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.Token">
-            <summary>
-            Generates a token that is then used for subsquent requests to the API.
-            </summary>
-            <returns>ValidateResult object, with IsValid set if the settings are correct</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.ContactsController">
-            <summary>
-            Contacts, which are people, entities, and things that can be contacted (i.e. people, departments, groups, etc.) to dispatch a call to.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetAllContactCategories">
-            <summary>
-            Gets all the contact categories for the department.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetAllContacts">
-            <summary>
-            Gets all the contacts for the department.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactById(System.String)">
-            <summary>
-            Gets the contact by id
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactNotesByContactId(System.String)">
-            <summary>
-            Gets all the Notes for a Contact by the contact id
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.CustomStatusesController">
-            <summary>
-            Custom statuses
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetAllCustomStatuses">
-            <summary>
-            All custom statuses for a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActivePersonnelStatuses">
-            <summary>
-            Gets the active statuses that personnel can currently set for the department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActivePersonnelStaffingLevels">
-            <summary>
-            Gets the active staffing levels that personnel can currently set for the department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomStatusesController.GetActiveUnitStatesLevels">
-            <summary>
-            Gets the active states that units can currently set for the department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.DevicesController">
-            <summary>
-            Mobile or Tablet Device specific operations
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.RegisterUnitDevice(Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput)">
-            <summary>
-            Register a unit device to receive push notification from the Resgrid system
-            </summary>
-            <param name="registrationInput">Input to create the registration for</param>
-            <returns>Result for the registration</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterUnitDevice(System.String)">
-            <summary>
-            Removed a Unit Push Notification support by PushUriId.
-            </summary>
-            <param name="deviceUuid">Input to deregister the device for</param>
-            <returns>Result for the unregistration</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.RegisterDevice(Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput)">
-            <summary>
-            Register a device to receive push notification from the Resgrid system
-            </summary>
-            <param name="registrationInput">Input to create the registration for</param>
-            <returns>Result for the registration</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterDevice(System.String)">
-            <summary>
-            Removed a Push Notification support by PushUriId.
-            </summary>
-            <param name="deviceUuid">Input to deregister the device for</param>
-            <returns>Result for the unregistration</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.DispatchController">
-            <summary>
-            API Calls that are used for the Dispatch App
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetNewCallData">
-            <summary>
-            Gets all the information required to populate the New Call form
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetSetUnitStatusData(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="unitId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetPersonnelForCallGrid">
-            <summary>
-            Returns all the personnel for display in the new call personnel table
-            </summary>
-            <returns>Array of PersonnelForCallResult objects for each person in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetGroupsForCallGrid">
-            <summary>
-            Returns all the groups for display in the new call groups table
-            </summary>
-            <returns>Array of GroupsForCallResult objects for each group in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetRolesForCallGrid">
-            <summary>
-            Returns all the roles for display in the new call groups table
-            </summary>
-            <returns>Array of RolesForCallResult objects for each role in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatchController.GetCallTemplates">
-            <summary>
-            Returns all the call quick templates
-            </summary>
-            <returns>Array of CallTemplateResult objects for each role in the department</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.FeedsController">
-            <summary>
-            Gets calls and other data formatted for different feed formats, like RSS.
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.FormsController">
-            <summary>
-            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetNewCallForm">
-            <summary>
-            Gets the Department Form that can be used for the new call process (i.e. call intake/triage form)
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.GroupsController">
-            <summary>
-            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.GroupsController.GetGroup(System.String)">
-            <summary>
-            Gets the Department Group by it's id
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.GroupsController.GetAllGroups">
-            <summary>
-            Gets all deparment groups for a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.HealthController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.HealthController.GetCurrent">
-            <summary>
-            Gets the current users department rights
-            </summary>
-            <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.InboxController">
-            <summary>
-            For interacting with the Inbox
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.InboxController.DeleteMessage(System.String)">
-            <summary>
-            Deletes a message from the inbox by its ID
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
-            <summary>
-            Mapping operations
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapDataAndMarkers">
-            <summary>
-            Data to center the map and it's default location plus marker information for displaying makers on the map.
-            </summary>
-            <returns>GetMapDataResult object</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMayLayers(System.Int32)">
-            <summary>
-            Gets the user created map layers in the system.
-            </summary>
-            <returns>GetMapLayersResult object</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.MessagesController">
-            <summary>
-            Messaging system interaction
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetInboxMessages(System.Nullable{System.Int32},System.Nullable{System.Int32})">
-            <summary>
-            Returns all inbox messages for a user.
-            </summary>
-            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
-            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetOutboxMessages(System.Nullable{System.Int32},System.Nullable{System.Int32})">
-            <summary>
-            Returns all the outbox messages for a user.
-            </summary>
-            <remarks>Note that the body of these messages is truncated to 100 characters.</remarks>
-            <returns>Array of MessageResult objects for all the messages in the users Inbox</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetMessage(System.Int32,System.Threading.CancellationToken)">
-            <summary>
-            Gets a specific message by it's Id.
-            </summary>
-            <param name="messageId">Integer message Identifier</param>
-            <returns>MessageResult object populated with message information from the system.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetRecipients(System.Boolean,System.Boolean)">
-            <summary>
-            Gets all the recipients in the department plus default values the system accepts
-            </summary>
-            <param name="disallowNoone">Disallow adding a noone option</param>
-            <param name="includeUnits">Include units in the response list</param>
-            <returns>MessageResult object populated with message information from the system.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.SendMessage(Resgrid.Web.Services.Models.v4.Messages.NewMessageInput,System.Threading.CancellationToken)">
-            <summary>
-            Sends a new message to users in the system
-            </summary>
-            <param name="newMessageInput">Input data to send a new message</param>
-            <returns>Created result if the message was sent</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.RespondToMessage(Resgrid.Web.Services.Models.v4.Messages.RespondToMessageInput,System.Threading.CancellationToken)">
-            <summary>
-            Deletes a message from the system
-            </summary>
-            <returns>Returns OK status code if successful</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.DeleteMessage(System.Int32,System.Threading.CancellationToken)">
-            <summary>
-            Deletes a messsage from the system
-            </summary>
-            <param name="messageId">MessageId of the message to delete</param>
-            <returns>Returns OK status code if successful</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.NotesController">
-            <summary>
-            The options for Notes in the Resgrid system
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetAllNotes">
-            <summary>
-            Gets all notes for a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetDispatchNote">
-            <summary>
-            Gets the dispatch note (if any). A dispatch note is a Department note with the
-            title of "Dispatch" or a note in a Category of "Dispatch".
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetAllUnexpiredNotesByCategory(System.String,System.Boolean)">
-            <summary>
-            Get's all the notes in a department that are not expired by a category
-            </summary>
-            <param name="category">Category name to get notes for</param>
-            <param name="includeUnCategorized">Also include notes that do not have a </param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetNote(System.Int32)">
-            <summary>
-            Gets the dispatch note (if any). A dispatch note is a Department note with the
-            title of "Dispatch" or a note in a Category of "Dispatch".
-            </summary>
-            <param name="noteId">Id of the note to get</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.SaveNote(Resgrid.Web.Services.Models.v4.Notes.NewNoteInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a new note in the system
-            </summary>
-            <param name="newNoteInput">Input data to send a new note</param>
-            <returns>Created result if the note was saved</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.NotesController.GetNoteCategories">
-            <summary>
-            Get's all the note Categories for a Department
-            </summary>
-            <returns>List of string of distinct note category.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelController">
-            <summary>
-            Operations to perform against personnel in a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.GetPersonnelInfo(System.String)">
-            <summary>
-            Gets information about a specific person
-            </summary>
-            <param name="userId">UserId of the person to get info for</param>
-            <returns>PersonnelInfoResult with information pertaining to that user</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.GetAllPersonnelInfos(System.String)">
-            <summary>
-            Gets information about all users in a department
-            </summary>
-            <param name="activeFilter">The active filter to reduce personnel returned</param>
-            <returns>PersonnelInfoResult with information pertaining to that user</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.GetPersonnelFilterOptions">
-            <summary>
-            Gets all the options available to filter personnel against compatible Resgrid APIs
-            </summary>
-            <returns>GetPersonnelFilterOptionsResult with information pertaining to each filter option</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController">
-            <summary>
-            Operations involving the location of a person setting the real-time location or getting the latest location for people.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController.SetPersonLocation(Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput)">
-            <summary>
-            Sets the location of a person
-            </summary>
-            <param name="locationInput">PersonnelLocationInput object with the gps information.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController.GetLatestPersonLocation(System.String)">
-            <summary>
-            Gets the latest location for a specified unit
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController">
-            <summary>
-            Operations to perform against personnel staffing, i.e. Available, Delayed, in a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.GetCurrentStatffing(System.String)">
-            <summary>
-            Gets the current staffing for a user
-            </summary>
-            <param name="userId">UserId to get the status for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.SavePersonStaffing(Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a staffing for a person
-            </summary>
-            <param name="input">Staffing and related data</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>ActionResult.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.SavePersonsStaffings(Resgrid.Web.Services.Models.v4.PersonnelStaffing.SavePersonnelStaffingsInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a staffing for multiple personnel
-            </summary>
-            <param name="input">Staffing and related data</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>ActionResult.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController">
-            <summary>
-            Operations to perform against personnel in a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.GetCurrentStatus(System.String)">
-            <summary>
-            Gets the current status for a user
-            </summary>
-            <param name="userId">UserId to get the status for</param>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.SavePersonStatus(Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a status for a person
-            </summary>
-            <param name="input">Status and related data</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>ActionResult.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.SavePersonsStatuses(Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput,System.Threading.CancellationToken)">
-            <summary>
-            Saves a status for multiple personnel
-            </summary>
-            <param name="input">Status and related data</param>
-            <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns>ActionResult.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolsController">
-            <summary>
-            The options for Protocols in the Resgrid system
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetAllProtocols">
-            <summary>
-            Gets all protocols for a department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetProtocol(System.Int32)">
-            <summary>
-            Gets a single protocol by id
-            </summary>
-            <returns>List of ProtocolResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)">
-            <summary>
-            Gets a protocol attachment by it's id
-            </summary>
-            <param name="protocolAttachmentId">ID of the protocol attachment</param>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.RolesController">
-            <summary>
-            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RolesController.GetAllRoles">
-            <summary>
-            Gets the Department Form that can be used for the new call process (i.e. call intake/triage form)
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.SecurityController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IUserProfileService,Resgrid.Model.Providers.INovuProvider)">
-            <summary>
-            Operations to perform against the security sub-system
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.GetCurrentUsersRights">
-            <summary>
-            Gets the current users department rights
-            </summary>
-            <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.ShiftsController">
-            <summary>
-            Unit roles
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetShifts">
-            <summary>
-            Gets all the shifts in a department
-            </summary>
-            <returns>List of ShiftResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetShift(System.Int32)">
-            <summary>
-            Gets all the shifts in a department
-            </summary>
-            <returns>ShiftResult</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetTodaysShifts">
-            <summary>
-            Gets all the shift days for today
-            </summary>
-            <returns>List of ShiftDayResult objects.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetShiftDay(System.Int32)">
-            <summary>
-            Gets all the shifts in a department
-            </summary>
-            <returns>List of ShiftResult objects.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.StatusesController">
-            <summary>
-            The options for Personnel Statuses, Staffing and Unit Statuses that can be used to submit their status to Resgrid.
-            Do not use Deleted versions for submittion, they should only be used for display of previous used values.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.StatusesController.GetAllStatusesForPersonnel">
-            <summary>
-            Gets all available statuses for Personnel for the department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.StatusesController.GetAllStaffingsForPersonnel">
-            <summary>
-            Gets all available staffing levels for Personnel for the department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.StatusesController.GetAllUnitStatuses">
-            <summary>
-            Gets all active unit statuses for each unit type
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.TemplatesController">
-            <summary>
-            Templates in the system. Templates can be call Templates, Autofills (i.e. Call Notes)
-            and a few other template types.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.TemplatesController.GetAllCallNoteTemplates">
-            <summary>
-            Gets all call note Templates for the department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
-            <summary>
-            Operations involving the location of a unit setting the real-time location or getting the latest location for a unit.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitLocationController.SetUnitLocation(Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput)">
-            <summary>
-            Sets the location of a unit
-            </summary>
-            <param name="locationInput">UnitLocationInput object with the gps information.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitLocationController.GetLatestUnitLocation(System.String)">
-            <summary>
-            Gets the latest location for a specified unit
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitRolesController">
-            <summary>
-            Unit roles
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetRolesForUnit(System.String)">
-            <summary>
-            Gets the accountability roles for a unit
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetRoleAssignmentsForUnit(System.String)">
-            <summary>
-            Gets the accountability roles and the current assignments for a unit
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.SetRoleAssignmentsForUnit(Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesInput,System.Threading.CancellationToken)">
-            <summary>
-            Sets the accountability roles and the current assignments for a unit
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitRolesController.GetAllUnitRolesAndAssignmentsForDepartment">
-            <summary>
-            Gets all the roles for every unit in a department plus who is currently assigned to that unit role (accountability)
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitsController">
-            <summary>
-            Information regarding Units
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.GetAllUnits">
-            <summary>
-            Gets all the Units for a Department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.GetAllUnitsInfos(System.String)">
-            <summary>
-            Gets all the Units for a Department
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.GetUnitsFilterOptions">
-            <summary>
-            Gets all the options available to filter units against compatible Resgrid APIs
-            </summary>
-            <returns>GetUnitsFilterOptionsResult with information pertaining to each filter option</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitStatusController">
-            <summary>
-            Units Status (State) information. For example is the unit Responding to a Call, or Available.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.GetAllUnitStatuses">
-            <summary>
-            Gets all the units in a departments current (latest) status (state) or a default
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.GetUnitStatus(System.String)">
-            <summary>
-            Gets the unit status for a specific unit id
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStatus(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput,System.Threading.CancellationToken)">
-            <summary>
-            Sets the status/action for the current user.
-            </summary>
-            <param name="statusInput">StatusInput object with the Status/Action to set.</param>
-            <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.v4.VoiceController">
-            <summary>
-            Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.GetDepartmentVoiceSettings">
-            <summary>
-            Returns all the available responding options (Calls/Stations) for the department
-            </summary>
-            <returns>Array of RecipientResult objects for each responding option in the department</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.ConnectToSession(System.String)">
-            <summary>
-            Connects to an voip session, limited to only OpenVidu.
-            </summary>
-            <returns>Voice connection result containing the data needed to connect to a voip session</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.CanConnectToVoiceSession(System.String)">
-            <summary>
-            Determines if a user can connect to an voice session, limited to only LiveKit.
-            </summary>
-            <returns>Voice connection result containing the data needed to determine if a user can connect to a voice session</returns>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.VoiceController.GetDepartmentAudioStreams">
-            <summary>
-            Returns all the department audio streams
-            </summary>
-            <returns>Array of RecipientResult objects for each responding option in the department</returns>
         </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>

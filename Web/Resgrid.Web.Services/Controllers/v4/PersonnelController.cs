@@ -16,6 +16,7 @@ using Resgrid.Model.Helpers;
 using System.Web;
 using Resgrid.Framework;
 using Resgrid.Web.Helpers;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -188,6 +189,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					foreach (var afilter in activeFilters)
 					{
+						if (String.IsNullOrWhiteSpace(afilter) || afilter.Length <= 2)
+							continue;
+
 						var text = GetTextValue(afilter, filters);
 
 						if (afilter.Substring(0, 2) == "G:")
@@ -304,7 +308,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (groups != null && groups.Any())
 			{
-				foreach(var group in groups)
+				foreach (var group in groups)
 				{
 					result.Data.Add(new FilterResult()
 					{
@@ -317,7 +321,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (roles != null && roles.Any())
 			{
-				foreach(var role in roles)
+				foreach (var role in roles)
 				{
 					result.Data.Add(new FilterResult()
 					{
@@ -330,7 +334,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (staffing != null && staffing.Any())
 			{
-				foreach(var staff in staffing)
+				foreach (var staff in staffing)
 				{
 					result.Data.Add(new FilterResult()
 					{
@@ -493,7 +497,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (groups != null && groups.Any())
 			{
-				foreach(var group in groups)
+				foreach (var group in groups)
 				{
 					result.Add(new FilterResult()
 					{
@@ -506,7 +510,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (roles != null && roles.Any())
 			{
-				foreach(var role in roles)
+				foreach (var role in roles)
 				{
 					result.Add(new FilterResult()
 					{
@@ -519,7 +523,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (staffing != null && staffing.Any())
 			{
-				foreach(var staff in staffing)
+				foreach (var staff in staffing)
 				{
 					result.Add(new FilterResult()
 					{

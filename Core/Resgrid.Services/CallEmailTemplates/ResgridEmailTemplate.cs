@@ -73,7 +73,8 @@ namespace Resgrid.Services.CallEmailTemplates
 					}
 					catch (Exception ex)
 					{
-						Resgrid.Framework.Logging.LogException(ex, email.Body);
+						Resgrid.Framework.Logging.LogException( ex,
+						$"Failed to geocode address '{c.Address}' for email {email.MessageId}");
 					}
 				}
 				StringBuilder title = new StringBuilder();

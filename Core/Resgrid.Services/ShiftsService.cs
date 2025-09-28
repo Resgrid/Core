@@ -488,7 +488,9 @@ namespace Resgrid.Services
 						}
 					}
 
-					if (!shiftGroups.ContainsKey(group.DepartmentGroupId))
+					if (shiftGroups.ContainsKey(group.DepartmentGroupId))
+						shiftGroups[group.DepartmentGroupId] = roleRequirements;
+					else
 						shiftGroups.Add(group.DepartmentGroupId, roleRequirements);
 				}
 			}

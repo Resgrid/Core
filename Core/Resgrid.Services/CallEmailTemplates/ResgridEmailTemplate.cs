@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,8 +58,24 @@ namespace Resgrid.Services.CallEmailTemplates
 					c.MapPage = data[4];
 
 				c.NatureOfCall = data[5];
-				c.Address = data[3];
 
+				if (!string.IsNullOrEmpty(data[3]))
+				{
+					c.Address = data[3];
+
+					try
+					{
+						var address = await geolocationProvider.GetLatLonFromAddress(c.Address);
+
+
+						if (address != null)
+							c.GeoLocationData = address;
+					}
+					catch (Exception ex)
+					{
+						Resgrid.Framework.Logging.LogException(ex, email.Body);
+					}
+				}
 				StringBuilder title = new StringBuilder();
 
 				title.Append("Email Call ");

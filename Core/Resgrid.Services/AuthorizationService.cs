@@ -335,6 +335,9 @@ namespace Resgrid.Services
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(viewerUserId);
 			var department1 = await _departmentsService.GetDepartmentByUserIdAsync(targetUserId);
 
+			if (department == null || department1 == null)
+				return false;
+
 			if (department.DepartmentId != department1.DepartmentId)
 				return false;
 

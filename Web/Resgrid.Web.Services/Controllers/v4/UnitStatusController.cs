@@ -266,7 +266,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						var roles = new List<UnitStateRole>();
 						foreach (var role in stateInput.Roles)
 						{
-							if (!string.IsNullOrWhiteSpace(role.UserId))
+							if (!string.IsNullOrWhiteSpace(role.UserId) && !string.IsNullOrWhiteSpace(role.RoleId))
 							{
 								var unitRole = new UnitStateRole();
 								unitRole.UnitStateId = savedState.UnitStateId;

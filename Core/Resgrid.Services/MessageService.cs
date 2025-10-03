@@ -50,7 +50,7 @@ namespace Resgrid.Services
 		public async Task<List<Message>> GetInboxMessagesByUserIdAsync(string userId)
 		{
 			var list = await _messageRepository.GetInboxMessagesByUserIdAsync(userId);
-			return list.ToList();
+			return list.OrderByDescending(x => x.SentOn).ToList();
 		}
 
 		public async Task<List<Message>> GetUnreadInboxMessagesByUserIdAsync(string userId)
@@ -65,7 +65,7 @@ namespace Resgrid.Services
 			var items = await _messageRepository.GetSentMessagesByUserIdAsync(userId);
 
 			if (items != null && items.Any())
-				return items.ToList();
+				return items.OrderByDescending(x => x.SentOn).ToList();
 
 			return new List<Message>();
 		}

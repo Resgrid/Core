@@ -43,7 +43,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new IndexView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Profile = _departmentProfileService.GetOrInitializeDepartmentProfile(DepartmentId);
-			model.ImageUrl = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v3/Avatars/Get?id={model.Profile.DepartmentId}&type=1";
+			model.ImageUrl = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Avatars/Get?id={model.Profile.DepartmentId}&type=1";
 
 			var posts = _departmentProfileService.GetArticlesForDepartment(model.Profile.DepartmentProfileId);
 			var visiblePosts = _departmentProfileService.GetVisibleArticlesForDepartment(model.Profile.DepartmentProfileId);
@@ -67,7 +67,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.ApiUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
-			model.ImageUrl = $"{model.ApiUrl}/api/v3/Avatars/Get?id={model.Department.DepartmentId}&type=1";
+			model.ImageUrl = $"{model.ApiUrl}/api/v4/Avatars/Get?id={model.Department.DepartmentId}&type=1";
 
 
 			var profile = _departmentProfileService.GetOrInitializeDepartmentProfile(DepartmentId);
@@ -98,7 +98,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			model.ApiUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
-			model.ImageUrl = $"{model.ApiUrl}/api/v3/Avatars/Get?id={model.Department.DepartmentId}&type=1";
+			model.ImageUrl = $"{model.ApiUrl}/api/v4/Avatars/Get?id={model.Department.DepartmentId}&type=1";
 
 			if (ModelState.IsValid)
 			{

@@ -302,7 +302,8 @@ namespace Resgrid.Model
 			MobileCarriers.Vodacom,
 			MobileCarriers.MTN,
 			MobileCarriers.TelkomMobile,
-			MobileCarriers.CellC
+			MobileCarriers.CellC,
+			MobileCarriers.TMobile
 		};
 
 		public static HashSet<MobileCarriers> OnPremSmsGatewayCarriers = new HashSet<MobileCarriers>()

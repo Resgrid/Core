@@ -312,13 +312,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 					// Add all the explict people
 					foreach (var person in newMessageInput.Recipients.Where(x => x.Type == 1))
 					{
-						if (usersToSendTo.All(x => x != person.Id) && person.Id != UserId)
+						if (!String.IsNullOrWhiteSpace(person.Id))
 						{
-							// Ensure the user is in the same department
-							if (departmentUsers.Any(x => x.UserId == person.Id))
+							// New RN Apps add a prefix to ID's from the Recipients list, guard against the prefix here.
+							var userIdToSendTo = person.Id.Replace("P:", "").Trim();
+
+							if (usersToSendTo.All(x => x != userIdToSendTo) && userIdToSendTo != UserId)
 							{
-								usersToSendTo.Add(person.Id);
-								message.AddRecipient(person.Id);
+								// Ensure the user is in the same department
+								if (departmentUsers.Any(x => x.UserId == userIdToSendTo))
+								{
+									usersToSendTo.Add(userIdToSendTo);
+									message.AddRecipient(userIdToSendTo);
+								}
 							}
 						}
 					}
@@ -328,8 +334,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					{
 						if (!String.IsNullOrWhiteSpace(group.Id))
 						{
+							// New RN Apps add a prefix to ID's from the Recipients list, guard against the prefix here.
+							var groupIdToSendTo = group.Id.Replace("G:", "").Trim();
+
 							int groupId = 0;
-							if (int.TryParse(group.Id.Trim(), out groupId))
+							if (int.TryParse(groupIdToSendTo, out groupId))
 							{
 								if (departmentGroups.Any(x => x.DepartmentGroupId == groupId))
 								{
@@ -356,8 +365,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					{
 						if (!String.IsNullOrWhiteSpace(role.Id))
 						{
+							// New RN Apps add a prefix to ID's from the Recipients list, guard against the prefix here.
+							var roleIdToSendTo = role.Id.Replace("R:", "").Trim();
+
 							int roleId = 0;
-							if (int.TryParse(role.Id.Trim(), out roleId))
+							if (int.TryParse(roleIdToSendTo, out roleId))
 							{
 								if (departmentRoles.Any(x => x.PersonnelRoleId == roleId))
 								{

@@ -7,7 +7,7 @@
     <li>
       <div class="dropdown-messages-box">
         <a class="pull-left" asp-controller="Personnel" asp-action="ViewPerson" asp-route-area="User" asp-route-userId="@message.SendingUserId" style="padding: 4px;">
-                    <img alt="image" class="img-circle" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v3/Avatars/Get?id=@message.SendingUserId" onerror="this.src = '@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png'">
+                    <img alt="image" class="img-circle" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v4/Avatars/Get?id=@message.SendingUserId" onerror="this.src = '@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png'">
         </a>
         <div class="media-body">
           <a asp-controller="Messages" asp-action="ViewMessage" asp-route-area="User" asp-route-messageId="@message.MessageId">

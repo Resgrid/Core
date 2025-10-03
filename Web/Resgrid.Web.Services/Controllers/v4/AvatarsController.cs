@@ -107,7 +107,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (type == null)
 				url = baseUrl + "/api/v4/Avatars/Get?id=" + id;
 			else
-				url = baseUrl + "/api/v4/Avatars/Get?id=" + id + "?type=" + type.Value;
+				url = baseUrl + "/api/v4/Avatars/Get?id=" + id + "&type=" + type.Value;
 
 			var obj = new
 			{
@@ -124,40 +124,38 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> Crop([FromBody] CropRequest model)
 		{
 			// extract original image ID and generate a new filename for the cropped result
 			var originalUri = new Uri(model.imgUrl);
-			var originalId = originalUri.Query.Replace("?id=", "");//.Last();
-																   //var extension = Path.GetExtension(originalId);
-																   //var croppedId = GenerateIdFor(model.CroppedWidth, model.CroppedHeight, extension);
+			var originalId = originalUri.Query.Replace("?id=", "");
 
 			try
 			{
-				var ms = new MemoryStream(await _imageService.GetImageAsync(ImageTypes.Avatar, originalId));
-				//var img = Image.FromStream(ms);
-
 				byte[] imgArray;
 
-				Image image = Image.Load(ms);
+				using (var ms = new MemoryStream(await _imageService.GetImageAsync(ImageTypes.Avatar, originalId)))
+				using (var image = Image.Load(ms))
+				{
+					// load the original picture and resample it to the scaled values
+					var bitmap = ImageUtils.Resize(image, (int)model.imgW, (int)model.imgH);
 
-				// load the original picture and resample it to the scaled values
-				var bitmap = ImageUtils.Resize(image, (int)model.imgW, (int)model.imgH);
+					var croppedBitmap = ImageUtils.Crop(bitmap, model.imgX1, model.imgY1, model.cropW, model.cropH);
 
-				var croppedBitmap = ImageUtils.Crop(bitmap, model.imgX1, model.imgY1, model.cropW, model.cropH);
-
-				MemoryStream ms2 = new MemoryStream();
-				await croppedBitmap.SaveAsPngAsync(ms2);
-				imgArray = ms.ToArray();
-
-				//ImageConverter converter = new ImageConverter();
-				//byte[] imgArray = (byte[])converter.ConvertTo(croppedBitmap, typeof(byte[]));
+					using (var ms2 = new MemoryStream())
+					{
+						await croppedBitmap.SaveAsPngAsync(ms2);
+						imgArray = ms2.ToArray();
+					}
+				}
 
 				await _imageService.SaveImageAsync(ImageTypes.Avatar, originalId, imgArray);
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				return BadRequest();
+				Logging.LogException(ex, $"Error cropping avatar image for ID: {originalId}");
+				return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while cropping the image");
 			}
 
 			var obj = new

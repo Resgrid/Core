@@ -1101,16 +1101,18 @@ namespace Resgrid.Providers.Claims
 				}
 				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
 				{
-					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-					var role = from r in roles
-							   where roleIds.Contains(r.PersonnelRoleId)
-							   select r;
-
-					if (role.Any())
+					if (!String.IsNullOrWhiteSpace(permission.Data))
 					{
-						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
-					}
+						var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+						var role = from r in roles
+								   where roleIds.Contains(r.PersonnelRoleId)
+								   select r;
 
+						if (role.Any())
+						{
+							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View));
+						}
+					}
 				}
 				else if (permission.Action == (int)PermissionActions.Everyone)
 				{
@@ -1143,17 +1145,19 @@ namespace Resgrid.Providers.Claims
 				}
 				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
 				{
-					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-					var role = from r in roles
-							   where roleIds.Contains(r.PersonnelRoleId)
-							   select r;
-
-					if (role.Any())
+					if (!String.IsNullOrWhiteSpace(permission.Data))
 					{
-						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
-						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
-					}
+						var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+						var role = from r in roles
+								   where roleIds.Contains(r.PersonnelRoleId)
+								   select r;
 
+						if (role.Any())
+						{
+							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
+							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
+						}
+					}
 				}
 				else if (permission.Action == (int)PermissionActions.Everyone)
 				{
@@ -1186,16 +1190,18 @@ namespace Resgrid.Providers.Claims
 				}
 				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
 				{
-					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-					var role = from r in roles
-							   where roleIds.Contains(r.PersonnelRoleId)
-							   select r;
-
-					if (role.Any())
+					if (!String.IsNullOrWhiteSpace(permission.Data))
 					{
-						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
-					}
+						var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+						var role = from r in roles
+								   where roleIds.Contains(r.PersonnelRoleId)
+								   select r;
 
+						if (role.Any())
+						{
+							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
+						}
+					}
 				}
 				else if (permission.Action == (int)PermissionActions.Everyone)
 				{

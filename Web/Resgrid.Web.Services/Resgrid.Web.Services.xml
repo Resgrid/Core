@@ -30,6 +30,18 @@
             <param name="type">Type to get</param>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AvatarsController">
+            <summary>
+            Used to interact with the user avatars (profile pictures) in the Resgrid system. The authentication header isn't required to access this method.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AvatarsController.Get(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Get a users avatar from the Resgrid system based on their ID
+            </summary>
+            <param name="id">ID of the user</param>
+            <returns></returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CalendarController">
             <summary>
             Mobile or Tablet Device specific operations

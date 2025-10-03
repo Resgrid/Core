@@ -292,7 +292,7 @@
                             <div id="avatar" class="center" style="text-align: center;">
                                 @if (Model.HasCustomIamge)
                                 {
-                                    <img style="width: 100px; height: 100px; text-align: center;" src="@Model.ApiUrl/api/v3/Avatars/Get?id=@Model.UserId" onerror="this.src = '@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png'" />
+                                    <img style="width: 100px; height: 100px; text-align: center;" src="@Model.ApiUrl/api/v4/Avatars/Get?id=@Model.UserId" onerror="this.src = '@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png'" />
                                 }
                                 else
                                 {

@@ -99,10 +99,10 @@ namespace Resgrid.Services
 				var response = await client.ExecuteAsync<GetPlanCountsForDepartmentResult>(request);
 
 				if (response.StatusCode == HttpStatusCode.NotFound)
-					return null;
+					return new DepartmentPlanCount();
 
 				if (response.Data == null)
-					return null;
+					return new DepartmentPlanCount();
 
 				return response.Data.Data;
 			}

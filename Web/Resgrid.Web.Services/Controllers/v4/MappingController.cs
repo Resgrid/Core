@@ -102,7 +102,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			var personnelStates = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
-			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var people = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 			var personnelLocations = await _usersService.GetLatestLocationsForDepartmentPersonnelAsync(DepartmentId);
 
 			var personnelLocationTTL = await _departmentSettingsService.GetMappingPersonnelLocationTTLAsync(DepartmentId);
@@ -373,9 +374,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			if (personnelNames != null && personnelNames.Any())
+			if (people != null && people.Any())
 			{
-				foreach (var person in personnelNames)
+				foreach (var person in people)
 				{
 					if (!await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(person.UserId, UserId, DepartmentId))
 						continue;

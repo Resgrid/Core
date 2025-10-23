@@ -37,7 +37,7 @@ jobs:
               pr_title: prTitle,
               pr_url: prUrl,
               merged_at: context.payload.pull_request.merged_at,
-              merged_by: context.payload.pull_request.merged_by.login
+              merged_by: context.payload.pull_request.merged_by?.login || 'unknown'
             }
           };
           

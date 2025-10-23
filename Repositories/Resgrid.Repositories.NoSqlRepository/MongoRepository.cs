@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Config;
-using System.Runtime.CompilerServices;
 using MongoDB.Driver.Linq;
 
 namespace Resgrid.Repositories.NoSqlRepository

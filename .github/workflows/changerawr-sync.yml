@@ -1,0 +1,73 @@
+﻿name: Sync PR to Changerawr
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
+jobs:
+  post-to-changerawr:
+    # Only run if the PR was merged (not just closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Post to Changerawr API
+      uses: actions/github-script@v7
+      env:
+        CHANGERAWR_API_KEY: ${{ secrets.CHANGERAWR_API_KEY }}
+        CHANGERAWR_PROJECT_ID: ${{ secrets.CHANGERAWR_PROJECT_ID }}
+      with:
+        script: |
+          const prBody = context.payload.pull_request.body || '';
+          const prNumber = context.payload.pull_request.number;
+          const prTitle = context.payload.pull_request.title;
+          const prUrl = context.payload.pull_request.html_url;
+          
+          // Prepare the payload for Changerawr API
+          const payload = {
+            notes: prBody,
+            metadata: {
+              pr_number: prNumber,
+              pr_title: prTitle,
+              pr_url: prUrl,
+              merged_at: context.payload.pull_request.merged_at,
+              merged_by: context.payload.pull_request.merged_by.login
+            }
+          };
+          
+          try {
+            const response = await fetch(
+              `https://clog.resgrid.com/api/projects/${process.env.CHANGERAWR_PROJECT_ID}/changelog`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${process.env.CHANGERAWR_API_KEY}`
+                },
+                body: JSON.stringify(payload)
+              }
+            );
+            
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`Changerawr API request failed: ${response.status} - ${errorText}`);
+            }
+            
+            const result = await response.json();
+            console.log('Successfully posted to Changerawr:', result);
+            
+            // Optionally, comment on the PR with confirmation
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: '✅ Change notes have been posted to Changerawr.'
+            });
+            
+          } catch (error) {
+            console.error('Error posting to Changerawr:', error);
+            core.setFailed(`Failed to post to Changerawr: ${error.message}`);
+          }

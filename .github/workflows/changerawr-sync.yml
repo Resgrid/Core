@@ -1,4 +1,7 @@
 ﻿name: Sync PR to Changerawr
+permissions:
+  contents: read
+  issues: write
 
 on:
   pull_request:

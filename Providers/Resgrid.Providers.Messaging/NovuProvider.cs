@@ -260,20 +260,20 @@ namespace Resgrid.Providers.Messaging
 									}
 								},
 							},
-							apns = new
+						apns = new Dictionary<string, object>
+						{
+							["badge"] = count,
+							["sound"] = new
 							{
-								badge = count,
-								sound = new
-								{
-									name = sound,
-									critical = channelName == "calls" ? 1 : 0,
-									volume = 1.0f
-								},
-								type = type,
-								category = channelName,
-								eventCode = eventCode,
+								name = sound,
+								critical = channelName == "calls" ? 1 : 0,
+								volume = 1.0f
 							},
-
+							["type"] = type,
+							["category"] = channelName,
+							["eventCode"] = eventCode,
+							["gcm.message_id"] = "123"
+						},
 						},
 						to = new[]{ new
 					{

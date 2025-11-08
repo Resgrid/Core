@@ -15,14 +15,9 @@ using Resgrid.Model.Events;
 using Resgrid.Framework;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Helpers;
-using Resgrid.Web.Areas.User.Models.Departments;
 using Microsoft.AspNetCore.Authorization;
 using CallType = Resgrid.Model.CallType;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
-using SharpKml.Dom;
-using FirebaseAdmin.Messaging;
-using Resgrid.Web.Areas.User.Models.Departments.UnitSettings;
-using Resgrid.Services;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {

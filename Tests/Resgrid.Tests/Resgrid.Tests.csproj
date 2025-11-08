@@ -44,7 +44,6 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
-    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Marketing\Resgrid.Providers.Marketing.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />

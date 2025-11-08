@@ -42,6 +42,5 @@
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
     <ProjectReference Include="..\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
-    <ProjectReference Include="..\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj" />
   </ItemGroup>
 </Project>

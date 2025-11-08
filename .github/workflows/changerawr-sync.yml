@@ -2,6 +2,7 @@
 permissions:
   contents: read
   issues: write
+  pull-requests: read
 
 on:
   pull_request:
@@ -17,29 +18,110 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 10
+    
+    - name: Extract and prepare release notes
+      id: prepare_notes
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -eo pipefail
+        
+        # Function to extract release notes from PR body
+        extract_release_notes() {
+          local body="$1"
+          
+          # Remove "Summary by CodeRabbit" section and auto-generated comment line
+          local cleaned_body="$(printf '%s\n' "$body" \
+            | grep -v '<!-- end of auto-generated comment: release notes by coderabbit.ai -->' \
+            | awk '
+              BEGIN { skip=0 }
+              /^## Summary by CodeRabbit/ { skip=1; next }
+              /^## / && skip==1 { skip=0 }
+              skip==0 { print }
+            ')"
+          
+          # Try to extract content under "## Release Notes" heading
+          local notes="$(printf '%s\n' "$cleaned_body" \
+            | awk 'f && /^## /{exit} /^## Release Notes/{f=1; next} f')"
+          
+          # If no specific section found, use the entire cleaned body
+          if [ -z "$notes" ]; then
+            notes="$cleaned_body"
+          fi
+          
+          printf '%s\n' "$notes"
+        }
+        
+        echo "Fetching PR #${{ github.event.pull_request.number }} details..."
+        
+        # Fetch the PR body using GitHub CLI
+        PR_BODY=$(gh pr view "${{ github.event.pull_request.number }}" --json body --jq '.body' 2>/dev/null || echo "")
+        
+        NOTES=""
+        if [ -n "$PR_BODY" ]; then
+          echo "PR body found, extracting release notes..."
+          NOTES="$(extract_release_notes "$PR_BODY")"
+        fi
+        
+        # Fallback to PR title and recent commits if no body found
+        if [ -z "$NOTES" ] || [ "$NOTES" = "" ]; then
+          echo "No PR body found, using PR title and commits..."
+          NOTES="## ${{ github.event.pull_request.title }}"
+          NOTES="$NOTES"$'\n\n'"$(git log -n 5 --pretty=format:'- %s')"
+        fi
+        
+        # Save to file and environment
+        echo "$NOTES" > release_notes.txt
+        
+        # For multiline output, use delimiter
+        {
+          echo 'RELEASE_NOTES<<EOF'
+          echo "$NOTES"
+          echo 'EOF'
+        } >> "$GITHUB_OUTPUT"
+        
+        echo "Release notes prepared:"
+        cat release_notes.txt
+    
     - name: Post to Changerawr API
       uses: actions/github-script@v7
       env:
         CHANGERAWR_API_KEY: ${{ secrets.CHANGERAWR_API_KEY }}
         CHANGERAWR_PROJECT_ID: ${{ secrets.CHANGERAWR_PROJECT_ID }}
+        RELEASE_NOTES: ${{ steps.prepare_notes.outputs.RELEASE_NOTES }}
       with:
         script: |
-          const prBody = context.payload.pull_request.body || '';
           const prNumber = context.payload.pull_request.number;
           const prTitle = context.payload.pull_request.title;
           const prUrl = context.payload.pull_request.html_url;
+          const releaseNotes = process.env.RELEASE_NOTES || '';
+          
+          // Check if required secrets are set
+          if (!process.env.CHANGERAWR_API_KEY || !process.env.CHANGERAWR_PROJECT_ID) {
+            console.log('⚠️  Changerawr API credentials not configured, skipping release notes submission');
+            return;
+          }
           
           // Prepare the payload for Changerawr API
           const payload = {
-            notes: prBody,
+            title: prTitle,
+            content: releaseNotes,
             metadata: {
               pr_number: prNumber,
               pr_title: prTitle,
               pr_url: prUrl,
               merged_at: context.payload.pull_request.merged_at,
-              merged_by: context.payload.pull_request.merged_by?.login || 'unknown'
+              merged_by: context.payload.pull_request.merged_by?.login || 'unknown',
+              commit_sha: context.payload.pull_request.merge_commit_sha
             }
           };
+          
+          console.log('Sending release notes to Changerawr...');
+          console.log('Payload:', JSON.stringify(payload, null, 2));
           
           try {
             const response = await fetch(
@@ -54,23 +136,36 @@ jobs:
               }
             );
             
+            const responseText = await response.text();
+            
             if (!response.ok) {
-              const errorText = await response.text();
-              throw new Error(`Changerawr API request failed: ${response.status} - ${errorText}`);
+              console.warn(`⚠️  Changerawr API request failed: ${response.status} - ${responseText}`);
+              // Don't fail the workflow, just log the error
+              return;
             }
             
-            const result = await response.json();
-            console.log('Successfully posted to Changerawr:', result);
+            let result;
+            try {
+              result = JSON.parse(responseText);
+            } catch (e) {
+              result = responseText;
+            }
+            
+            console.log('✅ Successfully posted to Changerawr:', result);
             
             // Optionally, comment on the PR with confirmation
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              body: '✅ Change notes have been posted to Changerawr.'
-            });
+            try {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: '✅ Change notes have been posted to Changerawr.'
+              });
+            } catch (commentError) {
+              console.log('Could not post comment to PR:', commentError.message);
+            }
             
           } catch (error) {
-            console.error('Error posting to Changerawr:', error);
-            core.setFailed(`Failed to post to Changerawr: ${error.message}`);
+            console.error('⚠️  Error posting to Changerawr:', error);
+            // Don't fail the workflow
           }

@@ -1,14 +1,9 @@
-﻿using DnsClient;
-using FirebaseAdmin.Messaging;
-using Resgrid.Model;
+﻿using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -113,7 +108,7 @@ namespace Resgrid.Services
 				try
 				{
 					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
-						await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("M{0}", message.MessageId), null);
+						await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("M{0}", message.MessageId), ((int)PushSoundTypes.Message).ToString());
 				}
 				catch (Exception ex)
 				{
@@ -145,7 +140,7 @@ namespace Resgrid.Services
 				try
 				{
 					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
-						await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), null);
+						await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), ((int)PushSoundTypes.Notifiation).ToString());
 				}
 				catch (Exception ex)
 				{

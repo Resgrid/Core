@@ -211,7 +211,7 @@ namespace Resgrid.Providers.Messaging
 		}
 
 		private async Task<bool> SendNotification(string title, string body, string recipientId, string eventCode,
-			string type, bool enableCustomSounds, int count, string color, string workflowIdentifier)
+			string type, bool enableCustomSounds, int count, string color, string workflowIdentifier, string sound)
 		{
 			try
 			{
@@ -231,7 +231,10 @@ namespace Resgrid.Providers.Messaging
 						{
 							subject = title,
 							body = body,
-							id = eventCode
+							eventId = eventCode,
+							eventCode = eventCode,
+							type = type,
+							sound = sound,
 						},
 						overrides = new
 						{
@@ -253,24 +256,24 @@ namespace Resgrid.Providers.Messaging
 										title = title,
 										message = body,
 										eventCode = eventCode,
-										type = type
+										type = type,
 									}
 								},
 							},
-							apns = new
+						apns = new Dictionary<string, object>
+						{
+							["badge"] = count,
+							["sound"] = new
 							{
-								badge = count,
-								sound = new
-								{
-									name = GetSoundFileNameFromType(Platforms.iOS, type),
-									critical = channelName == "calls" ? 1 : 0,
-									volume = 1.0f
-								},
-								type = type,
-								category = channelName,
-								eventCode = eventCode,
+								name = sound,
+								critical = channelName == "calls" ? 1 : 0,
+								volume = 1.0f
 							},
-
+							["type"] = type,
+							["category"] = channelName,
+							["eventCode"] = eventCode,
+							["gcm.message_id"] = "123"
+						},
 						},
 						to = new[]{ new
 					{
@@ -298,27 +301,27 @@ namespace Resgrid.Providers.Messaging
 
 		public async Task<bool> SendUnitDispatch(string title, string body, int unitId, string depCode, string eventCode, string type, bool enableCustomSounds, int count, string color)
 		{
-			return await SendNotification(title, body, $"{depCode}_Unit_{unitId}", eventCode, type, enableCustomSounds, count, color, ChatConfig.NovuDispatchUnitWorkflowId);
+			return await SendNotification(title, body, $"{depCode}_Unit_{unitId}", eventCode, type, enableCustomSounds, count, color, ChatConfig.NovuDispatchUnitWorkflowId, GetSoundFileNameFromType(type));
 		}
 
 		public async Task<bool> SendUserDispatch(string title, string body, string userId, string depCode, string eventCode, string type, bool enableCustomSounds, int count, string color)
 		{
-			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, enableCustomSounds, count, color, ChatConfig.NovuDispatchUserWorkflowId);
+			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, enableCustomSounds, count, color, ChatConfig.NovuDispatchUserWorkflowId, GetSoundFileNameFromType(type));
 		}
 
 		public async Task<bool> SendUserMessage(string title, string body, string userId, string depCode, string eventCode, string type)
 		{
-			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuMessageUserWorkflowId);
+			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuMessageUserWorkflowId, GetSoundFileNameFromType(type));
 		}
 
 		public async Task<bool> SendUserNotification(string title, string body, string userId, string depCode, string eventCode, string type)
 		{
-			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuNotificationUserWorkflowId);
+			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuNotificationUserWorkflowId, GetSoundFileNameFromType(type));
 		}
 
 		#region Private Push Helpers
 
-		private string GetSoundFileNameFromType(Platforms platform, string type)
+		private string GetSoundFileNameFromType(string type)
 		{
 			if (type == ((int)PushSoundTypes.CallEmergency).ToString())
 			{
@@ -384,7 +387,7 @@ namespace Resgrid.Providers.Messaging
 			if (count == 0)
 				count = 1;
 
-			string soundFilename = FormatForAndroidNativePush(GetSoundFileNameFromType(Platforms.Android, type));
+			string soundFilename = FormatForAndroidNativePush(GetSoundFileNameFromType(type));
 
 			dynamic pushNotification = new JObject();
 
@@ -453,7 +456,7 @@ namespace Resgrid.Providers.Messaging
 					category = category,
 					sound = new ApnsSound
 					{
-						name = GetSoundFileNameFromType(Platforms.iOS, type),
+						name = GetSoundFileNameFromType(type),
 						critical = category == "calls" ? 1 : 0,
 						volume = 1.0f
 					}

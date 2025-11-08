@@ -3,7 +3,6 @@ using Resgrid.Providers.AddressVerification;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Cache;
 using Resgrid.Providers.EmailProvider;
-using Resgrid.Providers.Firebase;
 using Resgrid.Providers.GeoLocationProvider;
 using Resgrid.Providers.Marketing;
 using Resgrid.Providers.NumberProvider;
@@ -32,8 +31,6 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new NumbersProviderModule());
 				builder.RegisterModule(new CacheProviderModule());
 				builder.RegisterModule(new MarketingModule());
-				builder.RegisterModule(new FirebaseProviderModule());
-
 
 				_container = builder.Build();
 			}

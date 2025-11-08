@@ -1,46 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
-using Resgrid.Web.Areas.User.Models;
-using Resgrid.Web.Areas.User.Models.Home;
 using Resgrid.Web.Helpers;
-using RestSharp;
 using Resgrid.Framework;
 using Resgrid.Model.Events;
-using Resgrid.Providers.Bus;
-using Resgrid.Web.Options;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Resgrid.Model.Helpers;
-using Resgrid.Web.Areas.User.Models.BigBoardX;
-using Resgrid.Model.Identity;
-using IdentityUser = Resgrid.Model.Identity.IdentityUser;
-using Microsoft.Extensions.Localization;
-using System.Reflection;
 using Resgrid.Localization;
-using Microsoft.AspNetCore.Localization;
-using System.Web;
-using Google.Api.Gax.Rest;
 using Resgrid.Web.Areas.User.Models.Contacts;
 using Resgrid.WebCore.Areas.User.Models;
 using Resgrid.WebCore.Areas.User.Models.Contacts;
-using SharpKml.Dom.Atom;
-using SharpKml.Dom;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
-using Resgrid.WebCore.Areas.User.Models.Voice;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {

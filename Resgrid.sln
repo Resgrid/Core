@@ -50,8 +50,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Cache", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Claims", "Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj", "{69FC3B6C-801F-4D98-BE3E-9BC47C42F874}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Firebase", "Providers\Resgrid.Providers.Firebase\Resgrid.Providers.Firebase.csproj", "{90F3A016-478E-49C7-AF5A-79777B89C92A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Geo", "Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj", "{C81FD7A4-B8CD-4D6A-88D7-DABC4D092043}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Email", "Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj", "{6016D92A-C9E2-4501-A526-611D47790B6D}"
@@ -374,30 +372,6 @@ Global
 		{69FC3B6C-801F-4D98-BE3E-9BC47C42F874}.Staging|Any CPU.Build.0 = Debug|Any CPU
 		{69FC3B6C-801F-4D98-BE3E-9BC47C42F874}.Staging|x86.ActiveCfg = Debug|Any CPU
 		{69FC3B6C-801F-4D98-BE3E-9BC47C42F874}.Staging|x86.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Azure|Any CPU.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Azure|Any CPU.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Azure|x86.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Azure|x86.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Cloud|Any CPU.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Cloud|Any CPU.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Cloud|x86.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Cloud|x86.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Debug|x86.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Docker|Any CPU.ActiveCfg = Docker|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Docker|Any CPU.Build.0 = Docker|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Docker|x86.ActiveCfg = Docker|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Docker|x86.Build.0 = Docker|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Release|x86.ActiveCfg = Release|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Release|x86.Build.0 = Release|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Staging|Any CPU.Build.0 = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Staging|x86.ActiveCfg = Debug|Any CPU
-		{90F3A016-478E-49C7-AF5A-79777B89C92A}.Staging|x86.Build.0 = Debug|Any CPU
 		{C81FD7A4-B8CD-4D6A-88D7-DABC4D092043}.Azure|Any CPU.ActiveCfg = Debug|Any CPU
 		{C81FD7A4-B8CD-4D6A-88D7-DABC4D092043}.Azure|Any CPU.Build.0 = Debug|Any CPU
 		{C81FD7A4-B8CD-4D6A-88D7-DABC4D092043}.Azure|x86.ActiveCfg = Debug|Any CPU
@@ -894,7 +868,6 @@ Global
 		{506F9CFB-7C67-4036-920D-A85639B02544} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{5565BF04-1056-4B2B-AB1A-E3AD9C433283} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{69FC3B6C-801F-4D98-BE3E-9BC47C42F874} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
-		{90F3A016-478E-49C7-AF5A-79777B89C92A} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{C81FD7A4-B8CD-4D6A-88D7-DABC4D092043} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{6016D92A-C9E2-4501-A526-611D47790B6D} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{34AC4E74-A259-4FBC-8E3C-BCFD85346693} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
@@ -918,9 +891,9 @@ Global
 		{744B3BB7-B5F6-4002-93E2-FC0821D41963} = {89331D76-C527-479D-8F30-8033A04C625F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {156116FF-243E-45E8-8717-DB72E95F56AF}
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35;packages\Unity.Interception.2.1.505.2\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\DesignTime
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45
+		SolutionGuid = {156116FF-243E-45E8-8717-DB72E95F56AF}
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 73e3ec62-fcea-43a4-b9ac-380e73a81ae7

@@ -32,7 +32,6 @@ using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
 using Resgrid.Providers.EmailProvider;
-using Resgrid.Providers.Firebase;
 using Resgrid.Providers.GeoLocationProvider;
 using Resgrid.Providers.Marketing;
 using Resgrid.Providers.NumberProvider;
@@ -594,7 +593,6 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new CacheProviderModule());
 			builder.RegisterModule(new MarketingModule());
 			builder.RegisterModule(new PdfProviderModule());
-			builder.RegisterModule(new FirebaseProviderModule());
 			builder.RegisterModule(new VoipProviderModule());
 			builder.RegisterModule(new MessagingProviderModule());
 

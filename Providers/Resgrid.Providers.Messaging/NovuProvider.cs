@@ -287,16 +287,6 @@ namespace Resgrid.Providers.Messaging
 								},
 								apns = new
 								{
-									badge = count,
-									sound = new
-									{
-										name = sound,
-										critical = channelName == "calls" ? 1 : 0,
-										volume = 1.0f
-									},
-									type = type,
-									category = channelName,
-									eventCode = eventCode,
 									payload = new
 									{
 										aps = new

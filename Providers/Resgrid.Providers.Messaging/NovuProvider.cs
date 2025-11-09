@@ -174,6 +174,10 @@ namespace Resgrid.Providers.Messaging
 						jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 					}
 
+					if (string.IsNullOrWhiteSpace(jsonContent))
+					{
+						return false;
+					}
 
 					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await client.SendAsync(request);

@@ -7,6 +7,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus.Models;
+using SharpCompress.Common;
 using System.Text;
 
 
@@ -132,7 +133,7 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
-		private async Task<bool> UpdateSubscriberApns(string id, string token, string apnsId)
+		private async Task<bool> UpdateSubscriberApns(string id, string token, string apnsId, string fcmId)
 		{
 			try
 			{
@@ -144,16 +145,40 @@ namespace Resgrid.Providers.Messaging
 					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
 					request.Headers.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
-					var payload = new
+					string jsonContent = string.Empty;
+					if (!string.IsNullOrWhiteSpace(apnsId))
 					{
-						providerId = "apns",
-						credentials = new
+						var payload = new
 						{
-							deviceTokens = new string[] { token }
-						},
-						integrationIdentifier = apnsId
-					};
-					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+							providerId = "apns",
+							credentials = new
+							{
+								deviceTokens = new string[] { token }
+							},
+							integrationIdentifier = apnsId
+						};
+
+						jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+					}
+					else if (!string.IsNullOrWhiteSpace(fcmId))
+					{
+						var payload = new
+						{
+							providerId = "fcm",
+							credentials = new
+							{
+								deviceTokens = new string[] { token }
+							},
+							integrationIdentifier = fcmId
+						};
+
+						jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+					}
+
+					if (string.IsNullOrWhiteSpace(jsonContent))
+					{
+						return false;
+					}
 
 					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await client.SendAsync(request);
@@ -197,7 +222,7 @@ namespace Resgrid.Providers.Messaging
 
 		public async Task<bool> UpdateUserSubscriberApns(string userId, string code, string token)
 		{
-			return await UpdateSubscriberApns($"{code}_User_{userId}", token, ChatConfig.NovuResponderApnsProviderId);
+			return await UpdateSubscriberApns($"{code}_User_{userId}", token, ChatConfig.NovuResponderApnsProviderId, null);
 		}
 
 		public async Task<bool> UpdateUnitSubscriberFcm(int unitId, string code, string token)
@@ -207,7 +232,8 @@ namespace Resgrid.Providers.Messaging
 
 		public async Task<bool> UpdateUnitSubscriberApns(int unitId, string code, string token)
 		{
-			return await UpdateSubscriberApns($"{code}_Unit_{unitId}", token, ChatConfig.NovuUnitApnsProviderId);
+			//return await UpdateSubscriberApns($"{code}_Unit_{unitId}", token, ChatConfig.NovuUnitApnsProviderId);
+			return await UpdateSubscriberApns($"{code}_Unit_{unitId}", token, null, ChatConfig.NovuUnitFcmProviderId);
 		}
 
 		private async Task<bool> SendNotification(string title, string body, string recipientId, string eventCode,
@@ -259,21 +285,50 @@ namespace Resgrid.Providers.Messaging
 										type = type,
 									}
 								},
+								apns = new
+								{
+									badge = count,
+									sound = new
+									{
+										name = sound,
+										critical = channelName == "calls" ? 1 : 0,
+										volume = 1.0f
+									},
+									type = type,
+									category = channelName,
+									eventCode = eventCode,
+									payload = new
+									{
+										aps = new
+										{
+											badge = count,
+											sound = new
+											{
+												name = sound,
+												critical = channelName == "calls" ? 1 : 0,
+												volume = 1.0f
+											},
+											category = channelName,
+											eventCode = eventCode,
+											customType = type
+										},
+									},
+								},
 							},
-						apns = new Dictionary<string, object>
-						{
-							["badge"] = count,
-							["sound"] = new
+							apns = new Dictionary<string, object>
 							{
-								name = sound,
-								critical = channelName == "calls" ? 1 : 0,
-								volume = 1.0f
+								["badge"] = count,
+								["sound"] = new
+								{
+									name = sound,
+									critical = channelName == "calls" ? 1 : 0,
+									volume = 1.0f
+								},
+								["type"] = type,
+								["category"] = channelName,
+								["eventCode"] = eventCode,
+								["gcm.message_id"] = "123"
 							},
-							["type"] = type,
-							["category"] = channelName,
-							["eventCode"] = eventCode,
-							["gcm.message_id"] = "123"
-						},
 						},
 						to = new[]{ new
 					{

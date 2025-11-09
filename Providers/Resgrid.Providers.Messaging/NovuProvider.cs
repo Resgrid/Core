@@ -7,6 +7,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus.Models;
+using SharpCompress.Common;
 using System.Text;
 
 
@@ -296,22 +297,38 @@ namespace Resgrid.Providers.Messaging
 									type = type,
 									category = channelName,
 									eventCode = eventCode,
+									payload = new
+									{
+										aps = new
+										{
+											badge = count,
+											sound = new
+											{
+												name = sound,
+												critical = channelName == "calls" ? 1 : 0,
+												volume = 1.0f
+											},
+											category = channelName,
+											eventCode = eventCode,
+											customType = type
+										},
+									},
 								},
 							},
-						apns = new Dictionary<string, object>
-						{
-							["badge"] = count,
-							["sound"] = new
+							apns = new Dictionary<string, object>
 							{
-								name = sound,
-								critical = channelName == "calls" ? 1 : 0,
-								volume = 1.0f
+								["badge"] = count,
+								["sound"] = new
+								{
+									name = sound,
+									critical = channelName == "calls" ? 1 : 0,
+									volume = 1.0f
+								},
+								["type"] = type,
+								["category"] = channelName,
+								["eventCode"] = eventCode,
+								["gcm.message_id"] = "123"
 							},
-							["type"] = type,
-							["category"] = channelName,
-							["eventCode"] = eventCode,
-							["gcm.message_id"] = "123"
-						},
 						},
 						to = new[]{ new
 					{

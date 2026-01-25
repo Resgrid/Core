@@ -405,13 +405,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 			}
 
-			model.SuppressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(DepartmentId, false);
-
-			if (model.SuppressStaffingInfo != null)
-			{
-				model.EnableStaffingSupress = model.SuppressStaffingInfo.EnableSupressStaffing;
-			}
-
 			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 			if (actionLogs == null)
 			{
@@ -629,6 +622,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
 
 				return RedirectToAction("Settings", "Department", new { Area = "User" });
+			}
+
+			model.SuppressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(DepartmentId, false);
+			if (model.SuppressStaffingInfo != null)
+			{
+				model.EnableStaffingSupress = model.SuppressStaffingInfo.EnableSupressStaffing;
 			}
 
 			return View(model);

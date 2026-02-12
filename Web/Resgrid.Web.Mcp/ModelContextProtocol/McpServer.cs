@@ -1,7 +1,8 @@
-﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -46,7 +47,10 @@ namespace ModelContextProtocol.Server
 				while (!cancellationToken.IsCancellationRequested)
 				{
 					var line = await Console.In.ReadLineAsync();
-					if (string.IsNullOrEmpty(line))
+					if (line == null)
+						break;
+
+					if (string.IsNullOrWhiteSpace(line))
 						continue;
 
 					try
@@ -187,30 +191,52 @@ namespace ModelContextProtocol.Server
 
 		private sealed class JsonRpcRequest
 		{
+			[JsonPropertyName("jsonrpc")]
 			public string Jsonrpc { get; set; }
+
+			[JsonPropertyName("id")]
 			public object Id { get; set; }
+
+			[JsonPropertyName("method")]
 			public string Method { get; set; }
+
+			[JsonPropertyName("params")]
 			public object Params { get; set; }
 		}
 
 		private sealed class JsonRpcResponse
 		{
+			[JsonPropertyName("jsonrpc")]
 			public string Jsonrpc { get; set; }
+
+			[JsonPropertyName("id")]
 			public object Id { get; set; }
+
+			[JsonPropertyName("result")]
 			public object Result { get; set; }
+
+			[JsonPropertyName("error")]
 			public JsonRpcError Error { get; set; }
 		}
 
 		private sealed class JsonRpcError
 		{
+			[JsonPropertyName("code")]
 			public int Code { get; set; }
+
+			[JsonPropertyName("message")]
 			public string Message { get; set; }
+
+			[JsonPropertyName("data")]
 			public object Data { get; set; }
 		}
 
 		private sealed class ToolCallParams
 		{
+			[JsonPropertyName("name")]
 			public string Name { get; set; }
+
+			[JsonPropertyName("arguments")]
 			public object Arguments { get; set; }
 		}
 	}

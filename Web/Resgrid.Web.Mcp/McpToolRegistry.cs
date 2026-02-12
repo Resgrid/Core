@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
 using Resgrid.Web.Mcp.Tools;
@@ -93,17 +93,13 @@ namespace Resgrid.Web.Mcp
 			_inventoryTools.RegisterTools(server);
 			_registeredTools.AddRange(_inventoryTools.GetToolNames());
 
-		// Register Inventory tools
-		_inventoryTools.RegisterTools(server);
-		_registeredTools.AddRange(_inventoryTools.GetToolNames());
+			// Register Reports tools
+			_reportsTools.RegisterTools(server);
+			_registeredTools.AddRange(_reportsTools.GetToolNames());
 
-		// Register Reports tools
-		_reportsTools.RegisterTools(server);
-		_registeredTools.AddRange(_reportsTools.GetToolNames());
-
-		_logger.LogInformation("Registered {Count} MCP tools across {ProviderCount} providers",
-			_registeredTools.Count, 10);
-	}
+			_logger.LogInformation("Registered {Count} MCP tools across {ProviderCount} providers",
+				_registeredTools.Count, 10);
+		}
 
 		/// <summary>
 		/// Gets the count of registered tools

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,8 +52,23 @@ namespace Resgrid.Web.Mcp.Infrastructure
 
 		public void Reset(string clientId)
 		{
-			_counters.TryRemove(clientId, out _);
-			_logger.LogDebug("Reset rate limit for client: {ClientId}", clientId);
+			var prefix = clientId + ":";
+			var keysToRemove = new System.Collections.Generic.List<string>();
+
+			foreach (var key in _counters.Keys)
+			{
+				if (key.StartsWith(prefix))
+				{
+					keysToRemove.Add(key);
+				}
+			}
+
+			foreach (var key in keysToRemove)
+			{
+				_counters.TryRemove(key, out _);
+			}
+
+			_logger.LogDebug("Reset rate limit for client: {ClientId}, removed {Count} operation(s)", clientId, keysToRemove.Count);
 		}
 
 		private void CleanupExpired(object state)

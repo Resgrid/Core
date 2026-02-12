@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -180,9 +180,18 @@ namespace Resgrid.Web.Mcp.Tools
 
 						_logger.LogInformation("Updating calendar item {ItemId}", args.ItemId);
 
+						var itemData = new
+						{
+							itemId = args.ItemId,
+							title = args.Title,
+							description = args.Description,
+							startDate = args.StartDate,
+							endDate = args.EndDate
+						};
+
 						var result = await _apiClient.PutAsync<object, object>(
 							"/api/v4/Calendar/UpdateItem",
-							args,
+							itemData,
 							args.AccessToken
 						);
 

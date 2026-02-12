@@ -94,7 +94,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error dispatching call");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to dispatch call. Please try again later.");
 					}
 				}
 			);
@@ -144,7 +144,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving dispatch status");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve dispatch status. Please try again later.");
 					}
 				}
 			);
@@ -178,6 +178,8 @@ namespace Resgrid.Web.Mcp.Tools
 		}
 	}
 }
+
+
 
 
 

@@ -77,7 +77,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving personnel");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve personnel. Please try again later.");
 					}
 				}
 			);
@@ -127,7 +127,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving personnel statuses");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve personnel statuses. Please try again later.");
 					}
 				}
 			);
@@ -169,6 +169,11 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("User ID is required");
 						}
 
+						if (args.StatusType < 0 || args.StatusType > 6)
+						{
+							return CreateErrorResponse("StatusType must be between 0 and 6 (0=Unavailable, 1=Available, 2=Committed, 3=OnScene, 4=Responding, 5=Standing By, 6=Not Responding)");
+						}
+
 						_logger.LogInformation("Setting status for personnel {UserId}", args.UserId);
 
 						var statusData = new
@@ -194,7 +199,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error setting personnel status");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to set personnel status. Please try again later.");
 					}
 				}
 			);
@@ -241,11 +246,11 @@ namespace Resgrid.Web.Mcp.Tools
 							data = result
 						};
 					}
-					catch (Exception ex)
-					{
-						_logger.LogError(ex, "Error retrieving personnel locations");
-						return CreateErrorResponse(ex.Message);
-					}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error retrieving personnel locations");
+					return CreateErrorResponse("Failed to retrieve personnel locations. Please try again later.");
+				}
 				}
 			);
 		}
@@ -275,6 +280,8 @@ namespace Resgrid.Web.Mcp.Tools
 		}
 	}
 }
+
+
 
 
 

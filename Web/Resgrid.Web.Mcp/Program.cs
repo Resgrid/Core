@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
@@ -50,7 +50,18 @@ namespace Resgrid.Web.Mcp
 
 					// Load Resgrid configuration
 					bool configResult = ConfigProcessor.LoadAndProcessConfig(configuration["AppOptions:ConfigPath"]);
+					if (!configResult)
+					{
+						throw new InvalidOperationException(
+							$"Failed to load configuration from path: {configuration["AppOptions:ConfigPath"] ?? "default path"}. " +
+							"Ensure the configuration file exists and is valid.");
+					}
+
 					bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(configuration.AsEnumerable());
+					if (!envConfigResult)
+					{
+						Console.WriteLine("Warning: No environment variables were loaded. This may be expected if not using environment-based configuration.");
+					}
 
 					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForApi))
 					{
@@ -67,14 +78,19 @@ namespace Resgrid.Web.Mcp
 					services.AddSingleton<Infrastructure.ITokenRefreshService, Infrastructure.TokenRefreshService>();
 					services.AddSingleton<Infrastructure.IAuditLogger, Infrastructure.AuditLogger>();
 
+					// Validate required API configuration
+					var apiBaseUrl = configuration["McpServer:ApiBaseUrl"];
+					if (string.IsNullOrWhiteSpace(apiBaseUrl))
+					{
+						throw new InvalidOperationException(
+							"McpServer:ApiBaseUrl is required but not configured. " +
+							"Configure this setting in appsettings.json or via environment variables.");
+					}
+
 					// Register HTTP client for API calls with connection pooling
 					services.AddHttpClient("ResgridApi", client =>
 					{
-						var apiBaseUrl = configuration["McpServer:ApiBaseUrl"];
-						if (!string.IsNullOrWhiteSpace(apiBaseUrl))
-						{
-							client.BaseAddress = new Uri(apiBaseUrl);
-						}
+						client.BaseAddress = new Uri(apiBaseUrl);
 						client.DefaultRequestHeaders.Add("Accept", "application/json");
 						client.Timeout = TimeSpan.FromSeconds(30);
 					})

@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿﻿﻿﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,11 +15,12 @@ namespace Resgrid.Web.Mcp.Infrastructure
 		void Reset(string clientId);
 	}
 
-	public sealed class RateLimiter : IRateLimiter
+	public sealed class RateLimiter : IRateLimiter, IDisposable
 	{
 		private readonly ILogger<RateLimiter> _logger;
 		private readonly ConcurrentDictionary<string, RequestCounter> _counters;
 		private readonly Timer _cleanupTimer;
+		private bool _disposed;
 
 		// Rate limits: 100 requests per minute per client
 		private const int MaxRequestsPerMinute = 100;
@@ -73,12 +74,16 @@ namespace Resgrid.Web.Mcp.Infrastructure
 
 		private void CleanupExpired(object state)
 		{
-			var cutoff = DateTime.UtcNow.Subtract(Window);
+			var now = DateTime.UtcNow;
 			var keysToRemove = new System.Collections.Generic.List<string>();
 
 			foreach (var kvp in _counters)
 			{
-				if (kvp.Value.LastRequest < cutoff)
+				// First clean up old requests within the counter
+				kvp.Value.CleanupOldRequests(now, Window);
+
+				// Then check if the counter is empty (no recent requests)
+				if (kvp.Value.Count == 0)
 				{
 					keysToRemove.Add(kvp.Key);
 				}
@@ -93,6 +98,17 @@ namespace Resgrid.Web.Mcp.Infrastructure
 			{
 				_logger.LogDebug("Cleaned up {Count} expired rate limit entries", keysToRemove.Count);
 			}
+		}
+
+		public void Dispose()
+		{
+			if (_disposed)
+			{
+				return;
+			}
+
+			_cleanupTimer?.Dispose();
+			_disposed = true;
 		}
 
 		private sealed class RequestCounter
@@ -111,16 +127,6 @@ namespace Resgrid.Web.Mcp.Infrastructure
 				}
 			}
 
-			public DateTime LastRequest
-			{
-				get
-				{
-					lock (_lock)
-					{
-						return _requests.Count > 0 ? _requests.Peek() : DateTime.MinValue;
-					}
-				}
-			}
 
 			public void AddRequest(DateTime timestamp)
 			{

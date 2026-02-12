@@ -81,7 +81,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving active calls");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve active calls. Please try again later.");
 					}
 				}
 			);
@@ -137,7 +137,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving call details");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve call details. Please try again later.");
 					}
 				}
 			);
@@ -213,7 +213,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error creating call");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to create call. Please try again later.");
 					}
 				}
 			);
@@ -275,11 +275,11 @@ namespace Resgrid.Web.Mcp.Tools
 							message = "Call closed successfully"
 						};
 					}
-					catch (Exception ex)
-					{
-						_logger.LogError(ex, "Error closing call");
-						return CreateErrorResponse(ex.Message);
-					}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error closing call");
+					return CreateErrorResponse("Failed to close call. Please try again later.");
+				}
 				}
 			);
 		}
@@ -336,6 +336,8 @@ namespace Resgrid.Web.Mcp.Tools
 		}
 	}
 }
+
+
 
 
 

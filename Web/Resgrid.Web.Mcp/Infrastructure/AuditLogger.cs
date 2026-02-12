@@ -1,7 +1,10 @@
-﻿using System;
+﻿﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Resgrid.Web.Mcp.Infrastructure
 {
@@ -19,6 +22,20 @@ namespace Resgrid.Web.Mcp.Infrastructure
 	{
 		private readonly ILogger<AuditLogger> _logger;
 		private readonly IApiClient _apiClient;
+
+		// Sensitive field names that should be redacted from audit logs
+		private static readonly HashSet<string> SensitiveFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"password",
+			"accessToken",
+			"token",
+			"secret",
+			"apiKey",
+			"authorization",
+			"bearer",
+			"credential",
+			"privateKey"
+		};
 
 		public AuditLogger(ILogger<AuditLogger> logger, IApiClient apiClient)
 		{
@@ -74,12 +91,78 @@ namespace Resgrid.Web.Mcp.Infrastructure
 				Details = new
 				{
 					toolName,
-					arguments,
+					arguments = SanitizeSensitiveData(arguments),
 					error
 				}
 			};
 
 			await LogOperationAsync(entry);
+		}
+
+		/// <summary>
+		/// Sanitizes sensitive data from objects before logging
+		/// </summary>
+		/// <param name="data">The data to sanitize</param>
+		/// <returns>A sanitized copy of the data with sensitive fields redacted</returns>
+		private static object SanitizeSensitiveData(object data)
+		{
+			if (data == null)
+				return null;
+
+			try
+			{
+				// Convert to JToken for easier manipulation
+				var json = JsonConvert.SerializeObject(data);
+				var jToken = JToken.Parse(json);
+
+				SanitizeJToken(jToken);
+
+				// Convert back to object
+				return JsonConvert.DeserializeObject(jToken.ToString());
+			}
+			catch
+			{
+				// If sanitization fails, return a safe placeholder
+				return new { sanitized = true, error = "Unable to sanitize data" };
+			}
+		}
+
+		/// <summary>
+		/// Recursively sanitizes sensitive fields in a JToken
+		/// </summary>
+		private static void SanitizeJToken(JToken token)
+		{
+			if (token == null)
+				return;
+
+			switch (token.Type)
+			{
+				case JTokenType.Object:
+					var obj = (JObject)token;
+					var properties = obj.Properties().ToList();
+
+					foreach (var prop in properties)
+					{
+						if (SensitiveFields.Contains(prop.Name))
+						{
+							// Redact sensitive fields
+							prop.Value = JValue.CreateString("***REDACTED***");
+						}
+						else
+						{
+							// Recursively sanitize nested objects
+							SanitizeJToken(prop.Value);
+						}
+					}
+					break;
+
+				case JTokenType.Array:
+					foreach (var item in (JArray)token)
+					{
+						SanitizeJToken(item);
+					}
+					break;
+			}
 		}
 	}
 
@@ -92,11 +175,28 @@ namespace Resgrid.Web.Mcp.Infrastructure
 		public string IpAddress { get; set; }
 		public object Details { get; set; }
 		public long DurationMs { get; set; }
+
+		/// <summary>
+		/// Access token for API calls - excluded from serialization for security
+		/// </summary>
+		[JsonIgnore]
 		public string AccessToken { get; set; }
 
 		public override string ToString()
 		{
-			return JsonConvert.SerializeObject(this, Formatting.None);
+			// Explicitly create object without AccessToken to prevent token leakage in logs
+			var safeObject = new
+			{
+				UserId,
+				Operation,
+				Success,
+				Timestamp,
+				IpAddress,
+				Details,
+				DurationMs
+			};
+
+			return JsonConvert.SerializeObject(safeObject, Formatting.None);
 		}
 	}
 }

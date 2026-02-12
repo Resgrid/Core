@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +11,7 @@ namespace Resgrid.Web.Mcp
 	/// <summary>
 	/// Hosted service that runs the MCP server
 	/// </summary>
-	public sealed class McpServerHost : IHostedService
+	public sealed class McpServerHost : IHostedService, IDisposable
 	{
 		private readonly ILogger<McpServerHost> _logger;
 		private readonly IConfiguration _configuration;
@@ -20,6 +20,7 @@ namespace Resgrid.Web.Mcp
 		private McpServer _mcpServer;
 		private Task _executingTask;
 		private CancellationTokenSource _stoppingCts;
+		private bool _disposed;
 
 		public McpServerHost(
 			ILogger<McpServerHost> logger,
@@ -87,6 +88,9 @@ namespace Resgrid.Web.Mcp
 			finally
 			{
 				await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
+
+				_stoppingCts?.Dispose();
+				_stoppingCts = null;
 			}
 
 			_logger.LogInformation("Resgrid MCP Server stopped");
@@ -110,6 +114,17 @@ namespace Resgrid.Web.Mcp
 				_logger.LogError(ex, "Unexpected error in MCP Server execution");
 				_applicationLifetime.StopApplication();
 			}
+		}
+
+		public void Dispose()
+		{
+			if (_disposed)
+			{
+				return;
+			}
+
+			_stoppingCts?.Dispose();
+			_disposed = true;
 		}
 	}
 }

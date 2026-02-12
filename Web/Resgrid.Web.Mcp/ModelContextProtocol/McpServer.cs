@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -73,7 +73,7 @@ namespace ModelContextProtocol.Server
 							{
 								Code = -32603,
 								Message = "Internal error",
-								Data = ex.Message
+								Data = null
 							}
 						};
 						var errorJson = JsonSerializer.Serialize(errorResponse);
@@ -174,7 +174,7 @@ namespace ModelContextProtocol.Server
 				{
 					Code = -32603,
 					Message = "Internal error",
-					Data = ex.Message
+					Data = null
 				};
 			}
 

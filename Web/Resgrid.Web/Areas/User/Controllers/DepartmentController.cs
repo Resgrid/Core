@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -624,11 +624,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Settings", "Department", new { Area = "User" });
 			}
 
+			// Load staffing suppression info for view rendering, but preserve the user's submitted EnableStaffingSupress value
 			model.SuppressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(DepartmentId, false);
-			if (model.SuppressStaffingInfo != null)
-			{
-				model.EnableStaffingSupress = model.SuppressStaffingInfo.EnableSupressStaffing;
-			}
 
 			return View(model);
 		}

@@ -68,7 +68,7 @@ namespace Resgrid.Web.Mcp.Tools
 						var endpoint = "/api/v4/Calendar/GetItems";
 						if (!string.IsNullOrWhiteSpace(args.StartDate) && !string.IsNullOrWhiteSpace(args.EndDate))
 						{
-							endpoint += $"?startDate={args.StartDate}&endDate={args.EndDate}";
+							endpoint += $"?startDate={Uri.EscapeDataString(args.StartDate)}&endDate={Uri.EscapeDataString(args.EndDate)}";
 						}
 
 						var result = await _apiClient.GetAsync<object>(endpoint, args.AccessToken);
@@ -78,7 +78,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving calendar items");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve calendar items. Please try again later.");
 					}
 				}
 			);
@@ -139,7 +139,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error creating calendar item");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to create calendar item. Please try again later.");
 					}
 				}
 			);
@@ -178,6 +178,11 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
+						if (args.ItemId <= 0)
+						{
+							return CreateErrorResponse("Valid calendar item ID is required");
+						}
+
 						_logger.LogInformation("Updating calendar item {ItemId}", args.ItemId);
 
 						var itemData = new
@@ -200,7 +205,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error updating calendar item");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to update calendar item. Please try again later.");
 					}
 				}
 			);
@@ -235,6 +240,11 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
+						if (args.ItemId <= 0)
+						{
+							return CreateErrorResponse("Valid calendar item ID is required");
+						}
+
 						_logger.LogInformation("Deleting calendar item {ItemId}", args.ItemId);
 
 						var success = await _apiClient.DeleteAsync(
@@ -244,11 +254,11 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success, message = success ? "Calendar item deleted successfully" : "Failed to delete calendar item" };
 					}
-					catch (Exception ex)
-					{
-						_logger.LogError(ex, "Error deleting calendar item");
-						return CreateErrorResponse(ex.Message);
-					}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error deleting calendar item");
+					return CreateErrorResponse("Failed to delete calendar item. Please try again later.");
+				}
 				}
 			);
 		}

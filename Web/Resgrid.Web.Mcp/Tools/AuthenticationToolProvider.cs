@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -93,7 +93,7 @@ namespace Resgrid.Web.Mcp.Tools
 						return new
 						{
 							success = false,
-							error = $"Authentication error: {ex.Message}"
+							error = "Authentication failed. Please check your credentials and try again."
 						};
 					}
 				}

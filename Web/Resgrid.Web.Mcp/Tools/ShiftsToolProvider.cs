@@ -73,7 +73,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving shifts");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve shifts. Please try again later.");
 					}
 				}
 			);
@@ -120,7 +120,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving shift details");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve shift details. Please try again later.");
 					}
 				}
 			);
@@ -166,7 +166,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving current shift");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve current shift. Please try again later.");
 					}
 				}
 			);
@@ -218,11 +218,11 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result, message = "Successfully signed up for shift" };
 					}
-					catch (Exception ex)
-					{
-						_logger.LogError(ex, "Error signing up for shift");
-						return CreateErrorResponse(ex.Message);
-					}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error signing up for shift");
+					return CreateErrorResponse("Failed to sign up for shift. Please try again later.");
+				}
 				}
 			);
 		}

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -65,6 +65,16 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
+						if (string.IsNullOrWhiteSpace(args.StartDate))
+						{
+							return CreateErrorResponse("Start date is required");
+						}
+
+						if (string.IsNullOrWhiteSpace(args.EndDate))
+						{
+							return CreateErrorResponse("End date is required");
+						}
+
 						_logger.LogInformation("Generating calls report from {StartDate} to {EndDate}", args.StartDate, args.EndDate);
 
 						var reportData = new
@@ -85,7 +95,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error generating calls report");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to generate calls report. Please try again later.");
 					}
 				}
 			);
@@ -122,6 +132,16 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
+						if (string.IsNullOrWhiteSpace(args.StartDate))
+						{
+							return CreateErrorResponse("Start date is required");
+						}
+
+						if (string.IsNullOrWhiteSpace(args.EndDate))
+						{
+							return CreateErrorResponse("End date is required");
+						}
+
 						_logger.LogInformation("Generating personnel report from {StartDate} to {EndDate}", args.StartDate, args.EndDate);
 
 						var reportData = new
@@ -142,7 +162,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error generating personnel report");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to generate personnel report. Please try again later.");
 					}
 				}
 			);
@@ -179,6 +199,16 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
+						if (string.IsNullOrWhiteSpace(args.StartDate))
+						{
+							return CreateErrorResponse("Start date is required");
+						}
+
+						if (string.IsNullOrWhiteSpace(args.EndDate))
+						{
+							return CreateErrorResponse("End date is required");
+						}
+
 						_logger.LogInformation("Generating units report from {StartDate} to {EndDate}", args.StartDate, args.EndDate);
 
 						var reportData = new
@@ -199,7 +229,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error generating units report");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to generate units report. Please try again later.");
 					}
 				}
 			);
@@ -236,6 +266,16 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
+						if (string.IsNullOrWhiteSpace(args.StartDate))
+						{
+							return CreateErrorResponse("Start date is required");
+						}
+
+						if (string.IsNullOrWhiteSpace(args.EndDate))
+						{
+							return CreateErrorResponse("End date is required");
+						}
+
 						_logger.LogInformation("Generating activity report from {StartDate} to {EndDate}", args.StartDate, args.EndDate);
 
 						var reportData = new
@@ -256,7 +296,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error generating activity report");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to generate activity report. Please try again later.");
 					}
 				}
 			);
@@ -299,11 +339,11 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
-					{
-						_logger.LogError(ex, "Error retrieving available reports");
-						return CreateErrorResponse(ex.Message);
-					}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error retrieving available reports");
+					return CreateErrorResponse("Failed to retrieve available reports. Please try again later.");
+				}
 				}
 			);
 		}

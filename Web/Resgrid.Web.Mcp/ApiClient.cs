@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -47,6 +47,16 @@ namespace Resgrid.Web.Mcp
 					var content = await response.Content.ReadAsStringAsync(cancellationToken);
 					var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content);
 
+					if (tokenResponse is null)
+					{
+						_logger.LogError("Failed to deserialize token response. Content: {Content}", content);
+						return new AuthenticationResult
+						{
+							IsSuccess = false,
+							ErrorMessage = "Invalid response format from authentication server"
+						};
+					}
+
 					return new AuthenticationResult
 					{
 						IsSuccess = true,
@@ -91,7 +101,15 @@ namespace Resgrid.Web.Mcp
 				response.EnsureSuccessStatusCode();
 
 				var content = await response.Content.ReadAsStringAsync(cancellationToken);
-				return JsonConvert.DeserializeObject<TResponse>(content);
+				var result = JsonConvert.DeserializeObject<TResponse>(content);
+
+				if (result is null)
+				{
+					_logger.LogError("Failed to deserialize response from {Endpoint}. Content: {Content}", endpoint, content);
+					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}");
+				}
+
+				return result;
 			}
 			catch (Exception ex)
 			{
@@ -110,11 +128,22 @@ namespace Resgrid.Web.Mcp
 
 			try
 			{
-				var response = await client.PostAsJsonAsync(endpoint, request, cancellationToken);
+				var json = JsonConvert.SerializeObject(request);
+				var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+				var response = await client.PostAsync(endpoint, content, cancellationToken);
 				response.EnsureSuccessStatusCode();
 
-				var content = await response.Content.ReadAsStringAsync(cancellationToken);
-				return JsonConvert.DeserializeObject<TResponse>(content);
+				var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+				var result = JsonConvert.DeserializeObject<TResponse>(responseContent);
+
+				if (result is null)
+				{
+					_logger.LogError("Failed to deserialize response from {Endpoint}. Content: {Content}", endpoint, responseContent);
+					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}");
+				}
+
+				return result;
 			}
 			catch (Exception ex)
 			{
@@ -133,11 +162,22 @@ namespace Resgrid.Web.Mcp
 
 			try
 			{
-				var response = await client.PutAsJsonAsync(endpoint, request, cancellationToken);
+				var json = JsonConvert.SerializeObject(request);
+				var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+				var response = await client.PutAsync(endpoint, content, cancellationToken);
 				response.EnsureSuccessStatusCode();
 
-				var content = await response.Content.ReadAsStringAsync(cancellationToken);
-				return JsonConvert.DeserializeObject<TResponse>(content);
+				var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+				var result = JsonConvert.DeserializeObject<TResponse>(responseContent);
+
+				if (result is null)
+				{
+					_logger.LogError("Failed to deserialize response from {Endpoint}. Content: {Content}", endpoint, responseContent);
+					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}");
+				}
+
+				return result;
 			}
 			catch (Exception ex)
 			{
@@ -186,4 +226,3 @@ namespace Resgrid.Web.Mcp
 		}
 	}
 }
-

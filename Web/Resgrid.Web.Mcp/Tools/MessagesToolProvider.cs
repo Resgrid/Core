@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -74,7 +74,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving inbox");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve inbox. Please try again later.");
 					}
 				}
 			);
@@ -120,7 +120,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving outbox");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve outbox. Please try again later.");
 					}
 				}
 			);
@@ -157,6 +157,21 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
+						if (string.IsNullOrWhiteSpace(args.Subject))
+						{
+							return CreateErrorResponse("Subject is required");
+						}
+
+						if (string.IsNullOrWhiteSpace(args.Body))
+						{
+							return CreateErrorResponse("Message body is required");
+						}
+
+						if (args.Recipients == null || args.Recipients.Length == 0)
+						{
+							return CreateErrorResponse("At least one recipient is required");
+						}
+
 						_logger.LogInformation("Sending message: {Subject}", args.Subject);
 
 						var messageData = new
@@ -177,7 +192,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error sending message");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to send message. Please try again later.");
 					}
 				}
 			);
@@ -224,7 +239,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving message");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve message. Please try again later.");
 					}
 				}
 			);
@@ -271,7 +286,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error deleting message");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to delete message. Please try again later.");
 					}
 				}
 			);

@@ -73,7 +73,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving inventory");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve inventory. Please try again later.");
 					}
 				}
 			);
@@ -120,7 +120,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving inventory item");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve inventory item. Please try again later.");
 					}
 				}
 			);
@@ -177,7 +177,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error updating inventory");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to update inventory. Please try again later.");
 					}
 				}
 			);
@@ -220,11 +220,11 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
-					{
-						_logger.LogError(ex, "Error retrieving low stock items");
-						return CreateErrorResponse(ex.Message);
-					}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error retrieving low stock items");
+					return CreateErrorResponse("Failed to retrieve low stock items. Please try again later.");
+				}
 				}
 			);
 		}

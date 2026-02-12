@@ -77,7 +77,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving units");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve units. Please try again later.");
 					}
 				}
 			);
@@ -127,7 +127,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving unit statuses");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to retrieve unit statuses. Please try again later.");
 					}
 				}
 			);
@@ -169,6 +169,11 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Valid unit ID is required");
 						}
 
+						if (args.StatusType < 1 || args.StatusType > 13)
+						{
+							return CreateErrorResponse("StatusType must be between 1 and 13 (1=Available, 2=Delayed, 3=Unavailable, 4=Committed, 5=Out Of Service, 6=Responding, 7=On Scene, 8=Staging, 9=Returning, 10=Cancelled, 11=Released, 12=Manual, 13=Enroute)");
+						}
+
 						_logger.LogInformation("Setting status for unit {UnitId}", args.UnitId);
 
 						var statusData = new
@@ -194,7 +199,7 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error setting unit status");
-						return CreateErrorResponse(ex.Message);
+						return CreateErrorResponse("Failed to set unit status. Please try again later.");
 					}
 				}
 			);
@@ -241,11 +246,11 @@ namespace Resgrid.Web.Mcp.Tools
 							data = result
 						};
 					}
-					catch (Exception ex)
-					{
-						_logger.LogError(ex, "Error retrieving unit locations");
-						return CreateErrorResponse(ex.Message);
-					}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error retrieving unit locations");
+					return CreateErrorResponse("Failed to retrieve unit locations. Please try again later.");
+				}
 				}
 			);
 		}
@@ -275,6 +280,8 @@ namespace Resgrid.Web.Mcp.Tools
 		}
 	}
 }
+
+
 
 
 

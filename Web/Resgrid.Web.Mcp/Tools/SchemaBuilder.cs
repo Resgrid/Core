@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 
 namespace Resgrid.Web.Mcp.Tools
 {
@@ -30,7 +30,7 @@ namespace Resgrid.Web.Mcp.Tools
 			var props = new Dictionary<string, object>();
 			foreach (var kvp in properties)
 			{
-				props[kvp.Key] = new Dictionary<string, object>
+				var propertyDict = new Dictionary<string, object>
 				{
 					["type"] = kvp.Value.Type,
 					["description"] = kvp.Value.Description
@@ -38,13 +38,10 @@ namespace Resgrid.Web.Mcp.Tools
 
 				if (kvp.Value.Items != null)
 				{
-					props[kvp.Key] = new Dictionary<string, object>
-					{
-						["type"] = kvp.Value.Type,
-						["items"] = new Dictionary<string, object> { ["type"] = kvp.Value.Items },
-						["description"] = kvp.Value.Description
-					};
+					propertyDict["items"] = new Dictionary<string, object> { ["type"] = kvp.Value.Items };
 				}
+
+				props[kvp.Key] = propertyDict;
 			}
 			return props;
 		}

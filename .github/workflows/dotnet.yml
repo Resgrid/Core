@@ -1,26 +1,150 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+# This workflow builds, tests, and releases the Resgrid solution.
+# - PRs on any branch: build + test
+# - Merged PRs into master: build + test + Docker Hub publish + GitHub Release
 
 name: .NET
 
 on:
   pull_request:
-    branches: [ "master", "develop" ]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [ "master" ]
+
+env:
+  DOTNET_VERSION: '9.0.x'
 
 jobs:
-  build:
-
+  # ───────────────────────────────────────────────
+  # Build & Test – runs on every PR and push to master
+  # ───────────────────────────────────────────────
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release
+
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --configuration Release --verbosity normal
+
+  # ───────────────────────────────────────────────
+  # Docker Build & Push – only on merged PRs to master
+  # Uses a matrix to build each project's Dockerfile
+  # ───────────────────────────────────────────────
+  docker-build-and-push:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: resgridllc/resgridwebcore
+            dockerfile: Web/Resgrid.Web/Dockerfile
+          - image: resgridllc/resgridwebservices
+            dockerfile: Web/Resgrid.Web.Services/Dockerfile
+          - image: resgridllc/resgridwebevents
+            dockerfile: Web/Resgrid.Web.Eventing/Dockerfile
+          - image: resgridllc/resgridwebmcp
+            dockerfile: Web/Resgrid.Web.Mcp/Dockerfile
+          - image: resgridllc/resgridworkersconsole
+            dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Extract version
+      id: version
+      run: |
+        VERSION="4.${{ github.run_number }}.0"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ matrix.image }}
+        tags: |
+          type=raw,value=${{ steps.version.outputs.version }}
+          type=raw,value=latest
+          type=sha,prefix=
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ${{ matrix.dockerfile }}
+        push: true
+        build-args: BUILD_VERSION=${{ steps.version.outputs.version }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # ───────────────────────────────────────────────
+  # GitHub Release – created after all Docker images are pushed
+  # Uses the body of the merged PR as release notes
+  # ───────────────────────────────────────────────
+  github-release:
+    needs: docker-build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Extract version
+      id: version
+      run: |
+        VERSION="4.${{ github.run_number }}.0"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Get merged PR info
+      id: pr-info
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            commit_sha: context.sha,
+          });
+          const pr = prs.data.find(p => p.merged_at);
+          const fs = require('fs');
+          if (pr) {
+            fs.writeFileSync('release_notes.md', pr.body || 'No release notes provided.');
+          } else {
+            fs.writeFileSync('release_notes.md', 'No release notes provided.');
+          }
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ steps.version.outputs.version }}
+        name: Release v${{ steps.version.outputs.version }}
+        body_path: release_notes.md
+        draft: false
+        prerelease: false

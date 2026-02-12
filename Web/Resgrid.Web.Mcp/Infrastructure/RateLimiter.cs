@@ -1,0 +1,132 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+
+namespace Resgrid.Web.Mcp.Infrastructure
+{
+	/// <summary>
+	/// Rate limiting service for MCP server
+	/// </summary>
+	public interface IRateLimiter
+	{
+		Task<bool> IsAllowedAsync(string clientId, string operation);
+		void Reset(string clientId);
+	}
+
+	public sealed class RateLimiter : IRateLimiter
+	{
+		private readonly ILogger<RateLimiter> _logger;
+		private readonly ConcurrentDictionary<string, RequestCounter> _counters;
+		private readonly Timer _cleanupTimer;
+
+		// Rate limits: 100 requests per minute per client
+		private const int MaxRequestsPerMinute = 100;
+		private static readonly TimeSpan Window = TimeSpan.FromMinutes(1);
+
+		public RateLimiter(ILogger<RateLimiter> logger)
+		{
+			_logger = logger;
+			_counters = new ConcurrentDictionary<string, RequestCounter>();
+			_cleanupTimer = new Timer(CleanupExpired, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+		}
+
+		public Task<bool> IsAllowedAsync(string clientId, string operation)
+		{
+			var key = $"{clientId}:{operation}";
+			var counter = _counters.GetOrAdd(key, _ => new RequestCounter());
+
+			var now = DateTime.UtcNow;
+			counter.CleanupOldRequests(now, Window);
+
+			if (counter.Count >= MaxRequestsPerMinute)
+			{
+				_logger.LogWarning("Rate limit exceeded for client {ClientId}, operation {Operation}", clientId, operation);
+				return Task.FromResult(false);
+			}
+
+			counter.AddRequest(now);
+			return Task.FromResult(true);
+		}
+
+		public void Reset(string clientId)
+		{
+			_counters.TryRemove(clientId, out _);
+			_logger.LogDebug("Reset rate limit for client: {ClientId}", clientId);
+		}
+
+		private void CleanupExpired(object state)
+		{
+			var cutoff = DateTime.UtcNow.Subtract(Window);
+			var keysToRemove = new System.Collections.Generic.List<string>();
+
+			foreach (var kvp in _counters)
+			{
+				if (kvp.Value.LastRequest < cutoff)
+				{
+					keysToRemove.Add(kvp.Key);
+				}
+			}
+
+			foreach (var key in keysToRemove)
+			{
+				_counters.TryRemove(key, out _);
+			}
+
+			if (keysToRemove.Count > 0)
+			{
+				_logger.LogDebug("Cleaned up {Count} expired rate limit entries", keysToRemove.Count);
+			}
+		}
+
+		private sealed class RequestCounter
+		{
+			private readonly object _lock = new object();
+			private System.Collections.Generic.Queue<DateTime> _requests = new System.Collections.Generic.Queue<DateTime>();
+
+			public int Count
+			{
+				get
+				{
+					lock (_lock)
+					{
+						return _requests.Count;
+					}
+				}
+			}
+
+			public DateTime LastRequest
+			{
+				get
+				{
+					lock (_lock)
+					{
+						return _requests.Count > 0 ? _requests.Peek() : DateTime.MinValue;
+					}
+				}
+			}
+
+			public void AddRequest(DateTime timestamp)
+			{
+				lock (_lock)
+				{
+					_requests.Enqueue(timestamp);
+				}
+			}
+
+			public void CleanupOldRequests(DateTime now, TimeSpan window)
+			{
+				lock (_lock)
+				{
+					var cutoff = now.Subtract(window);
+					while (_requests.Count > 0 && _requests.Peek() < cutoff)
+					{
+						_requests.Dequeue();
+					}
+				}
+			}
+		}
+	}
+}
+

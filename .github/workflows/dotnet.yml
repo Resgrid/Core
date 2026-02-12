@@ -48,6 +48,7 @@ jobs:
     needs: build-and-test
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    environment: BuildEnv
 
     strategy:
       fail-fast: false

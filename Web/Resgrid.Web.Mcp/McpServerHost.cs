@@ -1,10 +1,10 @@
-﻿﻿using System;
+﻿﻿﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
+using Resgrid.Config;
 
 namespace Resgrid.Web.Mcp
 {
@@ -14,7 +14,6 @@ namespace Resgrid.Web.Mcp
 	public sealed class McpServerHost : IHostedService, IDisposable
 	{
 		private readonly ILogger<McpServerHost> _logger;
-		private readonly IConfiguration _configuration;
 		private readonly McpToolRegistry _toolRegistry;
 		private readonly IHostApplicationLifetime _applicationLifetime;
 		private McpServer _mcpServer;
@@ -24,12 +23,10 @@ namespace Resgrid.Web.Mcp
 
 		public McpServerHost(
 			ILogger<McpServerHost> logger,
-			IConfiguration configuration,
 			McpToolRegistry toolRegistry,
 			IHostApplicationLifetime applicationLifetime)
 		{
 			_logger = logger;
-			_configuration = configuration;
 			_toolRegistry = toolRegistry;
 			_applicationLifetime = applicationLifetime;
 		}
@@ -42,8 +39,9 @@ namespace Resgrid.Web.Mcp
 
 			try
 			{
-				var serverName = _configuration["McpServer:ServerName"] ?? "Resgrid CAD System";
-				var serverVersion = _configuration["McpServer:ServerVersion"] ?? "1.0.0";
+				// Use McpConfig for server configuration
+				var serverName = McpConfig.ServerName;
+				var serverVersion = McpConfig.ServerVersion;
 
 				// Create MCP server with server information
 				_mcpServer = new McpServer(serverName, serverVersion, _logger);

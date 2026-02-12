@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿﻿﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
@@ -78,19 +78,18 @@ namespace Resgrid.Web.Mcp
 					services.AddSingleton<Infrastructure.ITokenRefreshService, Infrastructure.TokenRefreshService>();
 					services.AddSingleton<Infrastructure.IAuditLogger, Infrastructure.AuditLogger>();
 
-					// Validate required API configuration
-					var apiBaseUrl = configuration["McpServer:ApiBaseUrl"];
-					if (string.IsNullOrWhiteSpace(apiBaseUrl))
+					// Validate required API configuration from SystemBehaviorConfig
+					if (string.IsNullOrWhiteSpace(SystemBehaviorConfig.ResgridApiBaseUrl))
 					{
 						throw new InvalidOperationException(
-							"McpServer:ApiBaseUrl is required but not configured. " +
-							"Configure this setting in appsettings.json or via environment variables.");
+							"SystemBehaviorConfig.ResgridApiBaseUrl is required but not configured. " +
+							"Configure this setting via the Resgrid configuration file or environment variables (RESGRID:SystemBehaviorConfig:ResgridApiBaseUrl).");
 					}
 
 					// Register HTTP client for API calls with connection pooling
 					services.AddHttpClient("ResgridApi", client =>
 					{
-						client.BaseAddress = new Uri(apiBaseUrl);
+						client.BaseAddress = new Uri(SystemBehaviorConfig.ResgridApiBaseUrl);
 						client.DefaultRequestHeaders.Add("Accept", "application/json");
 						client.Timeout = TimeSpan.FromSeconds(30);
 					})

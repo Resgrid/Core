@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -46,7 +46,24 @@ namespace ModelContextProtocol.Server
 			{
 				while (!cancellationToken.IsCancellationRequested)
 				{
-					var line = await Console.In.ReadLineAsync();
+					// Start ReadLineAsync task
+					var readLineTask = Console.In.ReadLineAsync();
+
+					// Start cancellation task
+					var cancellationTask = Task.Delay(Timeout.Infinite, cancellationToken);
+
+					// Race the two tasks
+					var completedTask = await Task.WhenAny(readLineTask, cancellationTask);
+
+					// If cancellation won, exit the loop
+					if (completedTask == cancellationTask)
+					{
+						_logger?.LogInformation("MCP Server cancellation requested, exiting loop");
+						break;
+					}
+
+					// Otherwise, get the result from ReadLineAsync
+					var line = await readLineTask;
 					if (line == null)
 						break;
 
@@ -136,7 +153,13 @@ namespace ModelContextProtocol.Server
 
 						if (!_tools.TryGetValue(toolCallParams.Name, out var toolDef))
 						{
-							throw new Exception($"Tool not found: {toolCallParams.Name}");
+							response.Error = new JsonRpcError
+							{
+								Code = -32602,
+								Message = $"Tool not found: {toolCallParams.Name}",
+								Data = null
+							};
+							return response;
 						}
 
 						var result = await toolDef.Handler(toolCallParams.Arguments);
@@ -241,4 +264,3 @@ namespace ModelContextProtocol.Server
 		}
 	}
 }
-

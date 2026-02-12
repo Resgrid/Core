@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -49,7 +49,7 @@ namespace Resgrid.Web.Mcp
 
 					if (tokenResponse is null)
 					{
-						_logger.LogError("Failed to deserialize token response. Content: {Content}", content);
+						_logger.LogError("Failed to deserialize token response. Response contained {ContentLength} characters but could not be parsed.", content.Length);
 						return new AuthenticationResult
 						{
 							IsSuccess = false,
@@ -83,7 +83,7 @@ namespace Resgrid.Web.Mcp
 				return new AuthenticationResult
 				{
 					IsSuccess = false,
-					ErrorMessage = ex.Message
+					ErrorMessage = "An error occurred during authentication"
 				};
 			}
 		}
@@ -105,8 +105,8 @@ namespace Resgrid.Web.Mcp
 
 				if (result is null)
 				{
-					_logger.LogError("Failed to deserialize response from {Endpoint}. Content: {Content}", endpoint, content);
-					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}");
+					_logger.LogError("Failed to deserialize response from {Endpoint}. StatusCode: {StatusCode}", endpoint, response.StatusCode);
+					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}. StatusCode: {response.StatusCode}");
 				}
 
 				return result;
@@ -139,8 +139,8 @@ namespace Resgrid.Web.Mcp
 
 				if (result is null)
 				{
-					_logger.LogError("Failed to deserialize response from {Endpoint}. Content: {Content}", endpoint, responseContent);
-					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}");
+					_logger.LogError("Failed to deserialize response from {Endpoint}. StatusCode: {StatusCode}", endpoint, response.StatusCode);
+					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}. StatusCode: {response.StatusCode}");
 				}
 
 				return result;
@@ -173,8 +173,8 @@ namespace Resgrid.Web.Mcp
 
 				if (result is null)
 				{
-					_logger.LogError("Failed to deserialize response from {Endpoint}. Content: {Content}", endpoint, responseContent);
-					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}");
+					_logger.LogError("Failed to deserialize response from {Endpoint}. StatusCode: {StatusCode}", endpoint, response.StatusCode);
+					throw new InvalidOperationException($"Failed to deserialize response from {endpoint}. StatusCode: {response.StatusCode}");
 				}
 
 				return result;

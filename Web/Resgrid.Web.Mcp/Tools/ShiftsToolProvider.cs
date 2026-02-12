@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -197,9 +197,24 @@ namespace Resgrid.Web.Mcp.Tools
 					{
 						var args = JsonConvert.DeserializeObject<SignupShiftArgs>(arguments.ToString());
 
-						if (string.IsNullOrWhiteSpace(args?.AccessToken))
+						if (args == null)
+						{
+							return CreateErrorResponse("Invalid arguments provided");
+						}
+
+						if (string.IsNullOrWhiteSpace(args.AccessToken))
 						{
 							return CreateErrorResponse("Access token is required");
+						}
+
+						if (args.ShiftId <= 0)
+						{
+							return CreateErrorResponse("ShiftId must be greater than 0");
+						}
+
+						if (args.ShiftDayId <= 0)
+						{
+							return CreateErrorResponse("ShiftDayId must be greater than 0");
 						}
 
 						_logger.LogInformation("Signing up for shift {ShiftId}", args.ShiftId);
@@ -218,11 +233,11 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result, message = "Successfully signed up for shift" };
 					}
-				catch (Exception ex)
-				{
-					_logger.LogError(ex, "Error signing up for shift");
-					return CreateErrorResponse("Failed to sign up for shift. Please try again later.");
-				}
+					catch (Exception ex)
+					{
+						_logger.LogError(ex, "Error signing up for shift");
+						return CreateErrorResponse("Failed to sign up for shift. Please try again later.");
+					}
 				}
 			);
 		}

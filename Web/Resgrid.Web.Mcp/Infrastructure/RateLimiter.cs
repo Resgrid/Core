@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,16 +39,14 @@ namespace Resgrid.Web.Mcp.Infrastructure
 			var counter = _counters.GetOrAdd(key, _ => new RequestCounter());
 
 			var now = DateTime.UtcNow;
-			counter.CleanupOldRequests(now, Window);
+			var allowed = counter.TryAddIfUnderLimit(now, Window, MaxRequestsPerMinute);
 
-			if (counter.Count >= MaxRequestsPerMinute)
+			if (!allowed)
 			{
 				_logger.LogWarning("Rate limit exceeded for client {ClientId}, operation {Operation}", clientId, operation);
-				return Task.FromResult(false);
 			}
 
-			counter.AddRequest(now);
-			return Task.FromResult(true);
+			return Task.FromResult(allowed);
 		}
 
 		public void Reset(string clientId)
@@ -127,12 +125,34 @@ namespace Resgrid.Web.Mcp.Infrastructure
 				}
 			}
 
-
-			public void AddRequest(DateTime timestamp)
+			/// <summary>
+			/// Atomically cleans up old requests, checks if under the limit, and adds the request if allowed.
+			/// This method prevents TOCTOU race conditions by performing all operations under a single lock.
+			/// </summary>
+			/// <param name="timestamp">Current timestamp for the request</param>
+			/// <param name="window">Time window for rate limiting</param>
+			/// <param name="maxRequests">Maximum number of requests allowed within the window</param>
+			/// <returns>True if the request was added (under limit), false if rejected (over limit)</returns>
+			public bool TryAddIfUnderLimit(DateTime timestamp, TimeSpan window, int maxRequests)
 			{
 				lock (_lock)
 				{
+					// Clean up old requests outside the window
+					var cutoff = timestamp.Subtract(window);
+					while (_requests.Count > 0 && _requests.Peek() < cutoff)
+					{
+						_requests.Dequeue();
+					}
+
+					// Check if under the limit
+					if (_requests.Count >= maxRequests)
+					{
+						return false;
+					}
+
+					// Add the request
 					_requests.Enqueue(timestamp);
+					return true;
 				}
 			}
 

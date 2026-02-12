@@ -1,5 +1,7 @@
-﻿﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -61,13 +63,14 @@ namespace Resgrid.Web.Mcp.Tools
 							};
 						}
 
-						_logger.LogInformation("Authentication attempt for user: {Username}", args.Username);
+						var userIdentifier = ComputeUserIdentifier(args.Username);
+						_logger.LogInformation("Authentication attempt for user identifier: {UserIdentifier}", userIdentifier);
 
 						var result = await _apiClient.AuthenticateAsync(args.Username, args.Password);
 
 						if (result.IsSuccess)
 						{
-							_logger.LogInformation("Authentication successful for user: {Username}", args.Username);
+							_logger.LogInformation("Authentication successful for user identifier: {UserIdentifier}", userIdentifier);
 							return new
 							{
 								success = true,
@@ -79,7 +82,7 @@ namespace Resgrid.Web.Mcp.Tools
 						}
 						else
 						{
-							_logger.LogWarning("Authentication failed for user: {Username}", args.Username);
+							_logger.LogWarning("Authentication failed for user identifier: {UserIdentifier}", userIdentifier);
 							return new
 							{
 								success = false,
@@ -103,6 +106,33 @@ namespace Resgrid.Web.Mcp.Tools
 		public IEnumerable<string> GetToolNames()
 		{
 			yield return TOOL_NAME;
+		}
+
+		/// <summary>
+		/// Computes a deterministic, non-reversible hash of the username for logging without exposing PII.
+		/// Uses HMAC-SHA256 with a fixed key and truncates to 12 characters for readability.
+		/// </summary>
+		/// <param name="username">The username to hash</param>
+		/// <returns>A truncated hash that can be used for correlation in logs</returns>
+		private static string ComputeUserIdentifier(string username)
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				return "unknown";
+			}
+
+			// Fixed key for deterministic hashing - this allows correlation across logs
+			// while preventing reversibility
+			var key = Encoding.UTF8.GetBytes("Resgrid-MCP-Auth-Log-Salt-2026");
+			var data = Encoding.UTF8.GetBytes(username.ToLowerInvariant());
+
+			using (var hmac = new HMACSHA256(key))
+			{
+				var hash = hmac.ComputeHash(data);
+				var hashString = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+				// Truncate to 12 characters for readability while maintaining uniqueness
+				return hashString.Substring(0, 12);
+			}
 		}
 
 		private sealed class AuthenticateArgs

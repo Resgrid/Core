@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -104,7 +104,7 @@ namespace Resgrid.Web.Mcp.Infrastructure
 		/// </summary>
 		/// <param name="data">The data to sanitize</param>
 		/// <returns>A sanitized copy of the data with sensitive fields redacted</returns>
-		private static object SanitizeSensitiveData(object data)
+		internal static object SanitizeSensitiveData(object data)
 		{
 			if (data == null)
 				return null;
@@ -115,14 +115,15 @@ namespace Resgrid.Web.Mcp.Infrastructure
 				var json = JsonConvert.SerializeObject(data);
 				var jToken = JToken.Parse(json);
 
-				SanitizeJToken(jToken);
+				AuditLogger.SanitizeJToken(jToken);
 
 				// Convert back to object
 				return JsonConvert.DeserializeObject(jToken.ToString());
 			}
-			catch
+			catch (JsonException)
 			{
-				// If sanitization fails, return a safe placeholder
+				// If JSON serialization/deserialization fails, return a safe placeholder
+				// Note: Logger is not available in static context, but we return a safe error object
 				return new { sanitized = true, error = "Unable to sanitize data" };
 			}
 		}
@@ -185,6 +186,7 @@ namespace Resgrid.Web.Mcp.Infrastructure
 		public override string ToString()
 		{
 			// Explicitly create object without AccessToken to prevent token leakage in logs
+			// Sanitize Details to redact sensitive fields like passwords and tokens
 			var safeObject = new
 			{
 				UserId,
@@ -192,7 +194,7 @@ namespace Resgrid.Web.Mcp.Infrastructure
 				Success,
 				Timestamp,
 				IpAddress,
-				Details,
+				Details = AuditLogger.SanitizeSensitiveData(Details),
 				DurationMs
 			};
 

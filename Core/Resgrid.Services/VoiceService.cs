@@ -38,10 +38,14 @@ namespace Resgrid.Services
 		public async Task<bool> CanDepartmentUseVoiceAsync(int departmentId)
 		{
 			var addonPlans = await _subscriptionsService.GetAllAddonPlansByTypeAsync(PlanAddonTypes.PTT);
-			var addonPayment = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(departmentId, addonPlans.Select(x => x.PlanAddonId).ToList());
 
-			if (addonPayment != null && addonPayment.Count > 0)
-				return true;
+			if (addonPlans != null && addonPlans.Any())
+			{
+				var addonPayment = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(departmentId, addonPlans.Select(x => x.PlanAddonId).ToList());
+
+				if (addonPayment != null && addonPayment.Count > 0)
+					return true;
+			}
 
 			return false;
 		}
@@ -61,7 +65,7 @@ namespace Resgrid.Services
 				var voice = await GetOrCreateDepartmentVoiceRecordAsync(department);
 				var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId, true, true);
 				var userProfiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId, true);
-				
+
 				if (users != null && users.Any())
 				{
 					foreach (var user in users)
@@ -253,7 +257,7 @@ namespace Resgrid.Services
 					}
 				}
 			}
-			
+
 			return await _departmentVoiceChannelRepository.SaveOrUpdateAsync(voiceChannel, cancellationToken, true);
 		}
 

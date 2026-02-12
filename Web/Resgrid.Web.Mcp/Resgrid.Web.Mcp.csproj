@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Model Context Protocol (MCP) Server for Resgrid CAD System</Description>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <Authors>Resgrid, LLC.</Authors>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Resgrid.Web.Mcp</AssemblyName>
+    <RootNamespace>Resgrid.Web.Mcp</RootNamespace>
+    <StartupObject>Resgrid.Web.Mcp.Program</StartupObject>
+    <Configurations>Debug;Release;Docker</Configurations>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Docker|AnyCPU'">
+    <DefineConstants>DOCKER</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.3" />
+    <!-- MCP SDK from https://github.com/modelcontextprotocol/csharp-sdk -->
+    <!-- TODO: Add as project reference or wait for NuGet package -->
+    <!-- <PackageReference Include="ModelContextProtocol" Version="0.6.0" /> -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="Sentry" Version="5.4.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.3" />
+    <PackageReference Include="System.IO.Pipelines" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
+  </ItemGroup>
+</Project>
+
+
+
+
+
+

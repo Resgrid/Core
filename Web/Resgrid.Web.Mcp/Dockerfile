@@ -45,8 +45,4 @@ RUN chmod +x wait
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Health check configuration
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=10s \
-  CMD curl -f http://localhost:5050/health/current || exit 1
-
 ENTRYPOINT ["sh", "-c", "./wait && dotnet Resgrid.Web.Mcp.dll"]

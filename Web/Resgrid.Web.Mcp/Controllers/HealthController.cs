@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿﻿using System;
+using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +19,16 @@ namespace Resgrid.Web.Mcp.Controllers
 	{
 		private readonly McpToolRegistry _toolRegistry;
 		private readonly IResponseCache _responseCache;
+		private readonly IHttpClientFactory _httpClientFactory;
 
 		public HealthController(
 			McpToolRegistry toolRegistry,
-			IResponseCache responseCache)
+			IResponseCache responseCache,
+			IHttpClientFactory httpClientFactory)
 		{
 			_toolRegistry = toolRegistry;
 			_responseCache = responseCache;
+			_httpClientFactory = httpClientFactory;
 		}
 
 		/// <summary>
@@ -31,7 +36,7 @@ namespace Resgrid.Web.Mcp.Controllers
 		/// </summary>
 		/// <returns>HealthResult object with the server health status</returns>
 		[HttpGet("current")]
-		public IActionResult GetCurrent()
+		public async Task<IActionResult> GetCurrent()
 		{
 			var result = new HealthResult
 			{
@@ -42,29 +47,59 @@ namespace Resgrid.Web.Mcp.Controllers
 				ServerRunning = true
 			};
 
-			// Check cache connectivity
-			try
-			{
-				result.CacheOnline = _responseCache != null;
-			}
-			catch
-			{
-				result.CacheOnline = false;
-			}
+			// Check cache connectivity with real probe
+			result.CacheOnline = await ProbeCacheConnectivityAsync();
 
-			// Check API connectivity
-			try
-			{
-				// Simple ping to the API to check connectivity
-				var apiBaseUrl = SystemBehaviorConfig.ResgridApiBaseUrl;
-				result.ApiOnline = !string.IsNullOrWhiteSpace(apiBaseUrl);
-			}
-			catch
-			{
-				result.ApiOnline = false;
-			}
+			// Check API connectivity with real probe
+			result.ApiOnline = await ProbeApiConnectivityAsync();
 
 			return Json(result);
+		}
+
+		private async Task<bool> ProbeCacheConnectivityAsync()
+		{
+			try
+			{
+				const string sentinelKey = "_healthcheck_sentinel";
+				var sentinelValue = Guid.NewGuid().ToString();
+				var ttl = TimeSpan.FromSeconds(5);
+
+				// Attempt to set and retrieve a sentinel value
+				var retrieved = await _responseCache.GetOrCreateAsync(
+					sentinelKey,
+					() => Task.FromResult(sentinelValue),
+					ttl);
+
+				// Verify the value matches and clean up
+				var success = retrieved == sentinelValue;
+				_responseCache.Remove(sentinelKey);
+
+				return success;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private async Task<bool> ProbeApiConnectivityAsync()
+		{
+			try
+			{
+				var apiBaseUrl = SystemBehaviorConfig.ResgridApiBaseUrl;
+				if (string.IsNullOrWhiteSpace(apiBaseUrl))
+					return false;
+
+				using var httpClient = _httpClientFactory.CreateClient("ResgridApi");
+				using var request = new HttpRequestMessage(HttpMethod.Head, "/");
+				using var response = await httpClient.SendAsync(request);
+
+				return response.IsSuccessStatusCode;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 	}
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
 using Resgrid.Config;
+using Sentry;
 
 namespace Resgrid.Web.Mcp
 {
@@ -35,6 +36,9 @@ namespace Resgrid.Web.Mcp
 		{
 			_logger.LogInformation("Starting Resgrid MCP Server...");
 
+			// Add Sentry breadcrumb for startup
+			SentrySdk.AddBreadcrumb("MCP Server starting", "server.lifecycle", level: BreadcrumbLevel.Info);
+
 			_stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
 			try
@@ -49,7 +53,20 @@ namespace Resgrid.Web.Mcp
 				// Register all tools from the registry
 				_toolRegistry.RegisterTools(_mcpServer);
 
-				_logger.LogInformation("MCP Server initialized with {ToolCount} tools", _toolRegistry.GetToolCount());
+				var toolCount = _toolRegistry.GetToolCount();
+				_logger.LogInformation("MCP Server initialized with {ToolCount} tools", toolCount);
+
+				// Add Sentry breadcrumb for successful initialization
+				SentrySdk.AddBreadcrumb(
+					$"MCP Server initialized with {toolCount} tools",
+					"server.lifecycle",
+					data: new System.Collections.Generic.Dictionary<string, string>
+					{
+						{ "server_name", serverName },
+						{ "server_version", serverVersion },
+						{ "tool_count", toolCount.ToString() }
+					},
+					level: BreadcrumbLevel.Info);
 
 				// Start the server execution
 				_executingTask = ExecuteAsync(_stoppingCts.Token);
@@ -60,10 +77,20 @@ namespace Resgrid.Web.Mcp
 				}
 
 				_logger.LogInformation("Resgrid MCP Server started successfully");
+				SentrySdk.AddBreadcrumb("MCP Server started successfully", "server.lifecycle", level: BreadcrumbLevel.Info);
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Failed to start MCP Server");
+
+				// Capture exception in Sentry
+				SentrySdk.CaptureException(ex, scope =>
+				{
+					scope.SetTag("component", "McpServerHost");
+					scope.SetTag("operation", "StartAsync");
+					scope.Level = SentryLevel.Fatal;
+				});
+
 				throw;
 			}
 
@@ -73,6 +100,7 @@ namespace Resgrid.Web.Mcp
 		public async Task StopAsync(CancellationToken cancellationToken)
 		{
 			_logger.LogInformation("Stopping Resgrid MCP Server...");
+			SentrySdk.AddBreadcrumb("MCP Server stopping", "server.lifecycle", level: BreadcrumbLevel.Info);
 
 			if (_executingTask == null)
 			{
@@ -92,25 +120,52 @@ namespace Resgrid.Web.Mcp
 			}
 
 			_logger.LogInformation("Resgrid MCP Server stopped");
+			SentrySdk.AddBreadcrumb("MCP Server stopped", "server.lifecycle", level: BreadcrumbLevel.Info);
 		}
 
 		private async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+			// Start a Sentry transaction for the MCP server execution
+			var transaction = SentrySdk.StartTransaction("mcp.server.execution", "mcp.lifecycle");
+
 			try
 			{
 				_logger.LogInformation("MCP Server listening on stdio transport...");
+				SentrySdk.AddBreadcrumb("MCP Server started listening", "server.lifecycle", level: BreadcrumbLevel.Info);
 
 				// Run the server - this will handle stdio communication
 				await _mcpServer.RunAsync(stoppingToken);
+
+				transaction.Status = SpanStatus.Ok;
 			}
 			catch (OperationCanceledException)
 			{
 				_logger.LogInformation("MCP Server execution was cancelled");
+				SentrySdk.AddBreadcrumb("MCP Server execution cancelled", "server.lifecycle", level: BreadcrumbLevel.Info);
+				transaction.Status = SpanStatus.Cancelled;
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Unexpected error in MCP Server execution");
+
+				// Capture exception in Sentry with context
+				SentrySdk.CaptureException(ex, scope =>
+				{
+					scope.SetTag("component", "McpServerHost");
+					scope.SetTag("operation", "ExecuteAsync");
+					scope.Level = SentryLevel.Fatal;
+					scope.AddBreadcrumb("Server execution failed", "server.error", level: BreadcrumbLevel.Error);
+				});
+
+				transaction.Status = SpanStatus.InternalError;
+				transaction.Finish(ex);
+
 				_applicationLifetime.StopApplication();
+				return;
+			}
+			finally
+			{
+				transaction.Finish();
 			}
 		}
 

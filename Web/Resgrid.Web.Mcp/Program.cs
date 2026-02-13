@@ -1,12 +1,16 @@
-﻿﻿﻿﻿using System;
+﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Sentry.Profiling;
 
 namespace Resgrid.Web.Mcp
 {
@@ -33,12 +37,59 @@ namespace Resgrid.Web.Mcp
 				.UseContentRoot(Directory.GetCurrentDirectory())
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
+					// Load configuration first
+					var builder = new ConfigurationBuilder()
+						.SetBasePath(Directory.GetCurrentDirectory())
+						.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+						.AddEnvironmentVariables();
+					var config = builder.Build();
+
+					bool configResult = ConfigProcessor.LoadAndProcessConfig(config["AppOptions:ConfigPath"]);
+					bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(config.AsEnumerable());
+
+					// Configure Sentry if DSN is provided
+					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForMcp))
+					{
+						webBuilder.UseSentry(options =>
+						{
+							options.Dsn = ExternalErrorConfig.ExternalErrorServiceUrlForMcp;
+							options.AttachStacktrace = true;
+							options.SendDefaultPii = true;
+							options.AutoSessionTracking = true;
+							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
+							options.Environment = ExternalErrorConfig.Environment;
+							options.Release = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "unknown";
+							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+
+							// Add profiling integration
+							options.AddIntegration(new ProfilingIntegration());
+
+							// Custom trace sampling to exclude health check endpoints
+							options.TracesSampler = samplingContext =>
+							{
+								if (samplingContext?.CustomSamplingContext != null &&
+								    samplingContext.CustomSamplingContext.ContainsKey("__HttpPath"))
+								{
+									var path = samplingContext.CustomSamplingContext["__HttpPath"]?.ToString()?.ToLower();
+									if (path == "/health/getcurrent" ||
+									    path == "/health" ||
+									    path == "/api/health/getcurrent")
+									{
+										return 0; // Don't sample health checks
+									}
+								}
+
+								return ExternalErrorConfig.SentryPerfSampleRate;
+							};
+						});
+					}
+
 					webBuilder.UseKestrel(serverOptions =>
 					{
 						// Configure Kestrel to listen on a specific port for health checks
 						serverOptions.ListenAnyIP(5050); // Health check port
 					});
-					webBuilder.Configure((context, app) =>
+					webBuilder.Configure(app =>
 					{
 						app.UseRouting();
 						app.UseEndpoints(endpoints =>
@@ -64,24 +115,11 @@ namespace Resgrid.Web.Mcp
 				{
 					var configuration = hostContext.Configuration;
 
-					// Load Resgrid configuration
-					bool configResult = ConfigProcessor.LoadAndProcessConfig(configuration["AppOptions:ConfigPath"]);
-					if (!configResult)
+					// Configuration is already loaded in ConfigureWebHostDefaults
+					// Initialize Resgrid logging framework with Sentry if available
+					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForMcp))
 					{
-						throw new InvalidOperationException(
-							$"Failed to load configuration from path: {configuration["AppOptions:ConfigPath"] ?? "default path"}. " +
-							"Ensure the configuration file exists and is valid.");
-					}
-
-					bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(configuration.AsEnumerable());
-					if (!envConfigResult)
-					{
-						Console.WriteLine("Warning: No environment variables were loaded. This may be expected if not using environment-based configuration.");
-					}
-
-					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForApi))
-					{
-						Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForApi);
+						Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForMcp);
 					}
 
 					// Register MCP server

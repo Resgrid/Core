@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿﻿﻿using System;
 using System.IO;
 using System.Reflection;
 using Autofac.Extensions.DependencyInjection;
@@ -66,19 +66,22 @@ namespace Resgrid.Web.Mcp
 							//TimeSpan.FromMilliseconds(500)
 							));
 
-							options.TracesSampler = samplingContext =>
+						options.TracesSampler = samplingContext =>
+						{
+							if (samplingContext != null && samplingContext.CustomSamplingContext != null)
 							{
-								if (samplingContext != null && samplingContext.CustomSamplingContext != null)
+								if (samplingContext.CustomSamplingContext.TryGetValue("__HttpPath", out var httpPath))
 								{
-									if (samplingContext.CustomSamplingContext.ContainsKey("__HttpPath") &&
-									    samplingContext.CustomSamplingContext["__HttpPath"]?.ToString().ToLower() == "/health/getcurrent")
+									var pathValue = httpPath?.ToString();
+									if (string.Equals(pathValue, "/health/getcurrent", StringComparison.OrdinalIgnoreCase))
 									{
 										return 0;
 									}
 								}
+							}
 
-								return ExternalErrorConfig.SentryPerfSampleRate;
-							};
+							return ExternalErrorConfig.SentryPerfSampleRate;
+						};
 						});
 					}
 
@@ -90,6 +93,7 @@ namespace Resgrid.Web.Mcp
 					webBuilder.Configure(app =>
 					{
 						app.UseRouting();
+						app.UseSentryTracing();
 						app.UseEndpoints(endpoints =>
 						{
 							endpoints.MapControllers();

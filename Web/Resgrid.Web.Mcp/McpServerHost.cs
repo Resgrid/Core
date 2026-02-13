@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -127,6 +127,7 @@ namespace Resgrid.Web.Mcp
 		{
 			// Start a Sentry transaction for the MCP server execution
 			var transaction = SentrySdk.StartTransaction("mcp.server.execution", "mcp.lifecycle");
+			var transactionFinished = false;
 
 			try
 			{
@@ -159,13 +160,17 @@ namespace Resgrid.Web.Mcp
 
 				transaction.Status = SpanStatus.InternalError;
 				transaction.Finish(ex);
+				transactionFinished = true;
 
 				_applicationLifetime.StopApplication();
 				return;
 			}
 			finally
 			{
-				transaction.Finish();
+				if (!transactionFinished)
+				{
+					transaction.Finish();
+				}
 			}
 		}
 

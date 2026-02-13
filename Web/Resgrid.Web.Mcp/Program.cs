@@ -1,7 +1,6 @@
-﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,28 +15,22 @@ namespace Resgrid.Web.Mcp
 {
 	public static class Program
 	{
-		public static async Task<int> Main(string[] args)
+		public static void Main(string[] args)
 		{
-			try
-			{
-				var host = CreateHostBuilder(args).Build();
-				await host.RunAsync();
-				return 0;
-			}
-			catch (Exception ex)
-			{
-				Console.Error.WriteLine($"Fatal error: {ex}");
-				return 1;
-			}
+			CreateHostBuilder(args).Build().Run();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
 				.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 				.UseContentRoot(Directory.GetCurrentDirectory())
+				.ConfigureLogging(logging =>
+				{
+					logging.ClearProviders();
+					logging.AddConsole();
+				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
-					// Load configuration first
 					var builder = new ConfigurationBuilder()
 						.SetBasePath(Directory.GetCurrentDirectory())
 						.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
@@ -47,35 +40,40 @@ namespace Resgrid.Web.Mcp
 					bool configResult = ConfigProcessor.LoadAndProcessConfig(config["AppOptions:ConfigPath"]);
 					bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(config.AsEnumerable());
 
-					// Configure Sentry if DSN is provided
 					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForMcp))
 					{
 						webBuilder.UseSentry(options =>
 						{
+							//options.MinimumBreadcrumbLevel = LogEventLevel.Debug;
+							//options.MinimumEventLevel = LogEventLevel.Error;
 							options.Dsn = ExternalErrorConfig.ExternalErrorServiceUrlForMcp;
 							options.AttachStacktrace = true;
 							options.SendDefaultPii = true;
 							options.AutoSessionTracking = true;
+
+							//if (ExternalErrorConfig.SentryPerfSampleRate > 0)
+							//	options.EnableTracing = true;
+
 							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 							options.Environment = ExternalErrorConfig.Environment;
-							options.Release = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "unknown";
+							options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
 							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
 
-							// Add profiling integration
-							options.AddIntegration(new ProfilingIntegration());
+							// Requires NuGet package: Sentry.Profiling
+							// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.
+							options.AddIntegration(new ProfilingIntegration(
+							// During startup, wait up to 500ms to profile the app startup code. This could make launching the app a bit slower so comment it out if your prefer profiling to start asynchronously
+							//TimeSpan.FromMilliseconds(500)
+							));
 
-							// Custom trace sampling to exclude health check endpoints
 							options.TracesSampler = samplingContext =>
 							{
-								if (samplingContext?.CustomSamplingContext != null &&
-								    samplingContext.CustomSamplingContext.ContainsKey("__HttpPath"))
+								if (samplingContext != null && samplingContext.CustomSamplingContext != null)
 								{
-									var path = samplingContext.CustomSamplingContext["__HttpPath"]?.ToString()?.ToLower();
-									if (path == "/health/getcurrent" ||
-									    path == "/health" ||
-									    path == "/api/health/getcurrent")
+									if (samplingContext.CustomSamplingContext.ContainsKey("__HttpPath") &&
+									    samplingContext.CustomSamplingContext["__HttpPath"]?.ToString().ToLower() == "/health/getcurrent")
 									{
-										return 0; // Don't sample health checks
+										return 0;
 									}
 								}
 
@@ -104,12 +102,6 @@ namespace Resgrid.Web.Mcp
 						.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
 						.AddEnvironmentVariables()
 						.AddCommandLine(args);
-				})
-				.ConfigureLogging((_, logging) =>
-				{
-					logging.ClearProviders();
-					logging.AddConsole();
-					logging.SetMinimumLevel(LogLevel.Information);
 				})
 				.ConfigureServices((hostContext, services) =>
 				{

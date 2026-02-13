@@ -6,6 +6,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0.3-noble-amd64 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 EXPOSE 80
+EXPOSE 5050
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
 ARG BUILD_VERSION
@@ -43,4 +44,9 @@ RUN chmod +x wait
 
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Health check configuration
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=10s \
+  CMD curl -f http://localhost:5050/health/current || exit 1
+
 ENTRYPOINT ["sh", "-c", "./wait && dotnet Resgrid.Web.Mcp.dll"]

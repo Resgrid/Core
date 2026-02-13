@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿﻿﻿﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
@@ -31,14 +31,30 @@ namespace Resgrid.Web.Mcp
 			Host.CreateDefaultBuilder(args)
 				.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 				.UseContentRoot(Directory.GetCurrentDirectory())
-				.ConfigureAppConfiguration((hostingContext, config) =>
+				.ConfigureWebHostDefaults(webBuilder =>
+				{
+					webBuilder.UseKestrel(serverOptions =>
+					{
+						// Configure Kestrel to listen on a specific port for health checks
+						serverOptions.ListenAnyIP(5050); // Health check port
+					});
+					webBuilder.Configure((context, app) =>
+					{
+						app.UseRouting();
+						app.UseEndpoints(endpoints =>
+						{
+							endpoints.MapControllers();
+						});
+					});
+				})
+				.ConfigureAppConfiguration((_, config) =>
 				{
 					config.SetBasePath(Directory.GetCurrentDirectory())
 						.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
 						.AddEnvironmentVariables()
 						.AddCommandLine(args);
 				})
-				.ConfigureLogging((hostingContext, logging) =>
+				.ConfigureLogging((_, logging) =>
 				{
 					logging.ClearProviders();
 					logging.AddConsole();
@@ -70,6 +86,10 @@ namespace Resgrid.Web.Mcp
 
 					// Register MCP server
 					services.AddHostedService<McpServerHost>();
+
+					// Add MVC controllers for health check endpoint
+					services.AddControllers()
+						.AddNewtonsoftJson();
 
 					// Register infrastructure services
 					services.AddMemoryCache();

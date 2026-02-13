@@ -1,75 +1,129 @@
 ﻿﻿﻿using System;
 using System.IO;
-using System.Threading.Tasks;
+using System.Reflection;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Sentry.Profiling;
 
 namespace Resgrid.Web.Mcp
 {
 	public static class Program
 	{
-		public static async Task<int> Main(string[] args)
+		public static void Main(string[] args)
 		{
-			try
-			{
-				var host = CreateHostBuilder(args).Build();
-				await host.RunAsync();
-				return 0;
-			}
-			catch (Exception ex)
-			{
-				Console.Error.WriteLine($"Fatal error: {ex}");
-				return 1;
-			}
+			CreateHostBuilder(args).Build().Run();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
 				.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 				.UseContentRoot(Directory.GetCurrentDirectory())
-				.ConfigureAppConfiguration((hostingContext, config) =>
+				.ConfigureLogging(logging =>
+				{
+					logging.ClearProviders();
+					logging.AddConsole();
+				})
+				.ConfigureWebHostDefaults(webBuilder =>
+				{
+					var builder = new ConfigurationBuilder()
+						.SetBasePath(Directory.GetCurrentDirectory())
+						.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+						.AddEnvironmentVariables();
+					var config = builder.Build();
+
+					bool configResult = ConfigProcessor.LoadAndProcessConfig(config["AppOptions:ConfigPath"]);
+					bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(config.AsEnumerable());
+
+					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForMcp))
+					{
+						webBuilder.UseSentry(options =>
+						{
+							//options.MinimumBreadcrumbLevel = LogEventLevel.Debug;
+							//options.MinimumEventLevel = LogEventLevel.Error;
+							options.Dsn = ExternalErrorConfig.ExternalErrorServiceUrlForMcp;
+							options.AttachStacktrace = true;
+							options.SendDefaultPii = true;
+							options.AutoSessionTracking = true;
+
+							//if (ExternalErrorConfig.SentryPerfSampleRate > 0)
+							//	options.EnableTracing = true;
+
+							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
+							options.Environment = ExternalErrorConfig.Environment;
+							options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+
+							// Requires NuGet package: Sentry.Profiling
+							// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.
+							options.AddIntegration(new ProfilingIntegration(
+							// During startup, wait up to 500ms to profile the app startup code. This could make launching the app a bit slower so comment it out if your prefer profiling to start asynchronously
+							//TimeSpan.FromMilliseconds(500)
+							));
+
+						options.TracesSampler = samplingContext =>
+						{
+							if (samplingContext != null && samplingContext.CustomSamplingContext != null)
+							{
+								if (samplingContext.CustomSamplingContext.TryGetValue("__HttpPath", out var httpPath))
+								{
+									var pathValue = httpPath?.ToString();
+									if (string.Equals(pathValue, "/health/getcurrent", StringComparison.OrdinalIgnoreCase))
+									{
+										return 0;
+									}
+								}
+							}
+
+							return ExternalErrorConfig.SentryPerfSampleRate;
+						};
+						});
+					}
+
+					webBuilder.UseKestrel(serverOptions =>
+					{
+						// Configure Kestrel to listen on a specific port for health checks
+						serverOptions.ListenAnyIP(5050); // Health check port
+					});
+					webBuilder.Configure(app =>
+					{
+						app.UseRouting();
+						app.UseSentryTracing();
+						app.UseEndpoints(endpoints =>
+						{
+							endpoints.MapControllers();
+						});
+					});
+				})
+				.ConfigureAppConfiguration((_, config) =>
 				{
 					config.SetBasePath(Directory.GetCurrentDirectory())
 						.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
 						.AddEnvironmentVariables()
 						.AddCommandLine(args);
 				})
-				.ConfigureLogging((hostingContext, logging) =>
-				{
-					logging.ClearProviders();
-					logging.AddConsole();
-					logging.SetMinimumLevel(LogLevel.Information);
-				})
 				.ConfigureServices((hostContext, services) =>
 				{
 					var configuration = hostContext.Configuration;
 
-					// Load Resgrid configuration
-					bool configResult = ConfigProcessor.LoadAndProcessConfig(configuration["AppOptions:ConfigPath"]);
-					if (!configResult)
+					// Configuration is already loaded in ConfigureWebHostDefaults
+					// Initialize Resgrid logging framework with Sentry if available
+					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForMcp))
 					{
-						throw new InvalidOperationException(
-							$"Failed to load configuration from path: {configuration["AppOptions:ConfigPath"] ?? "default path"}. " +
-							"Ensure the configuration file exists and is valid.");
-					}
-
-					bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(configuration.AsEnumerable());
-					if (!envConfigResult)
-					{
-						Console.WriteLine("Warning: No environment variables were loaded. This may be expected if not using environment-based configuration.");
-					}
-
-					if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForApi))
-					{
-						Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForApi);
+						Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForMcp);
 					}
 
 					// Register MCP server
 					services.AddHostedService<McpServerHost>();
+
+					// Add MVC controllers for health check endpoint
+					services.AddControllers()
+						.AddNewtonsoftJson();
 
 					// Register infrastructure services
 					services.AddMemoryCache();

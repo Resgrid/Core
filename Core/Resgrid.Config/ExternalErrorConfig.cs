@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Config
+﻿﻿namespace Resgrid.Config
 {
 	/// <summary>
 	/// Configuration for working with external error tracking systems like Elk and Sentry
@@ -21,6 +21,7 @@
 		public static string ExternalErrorServiceUrlForEventing = "";
 		public static string ExternalErrorServiceUrlForInternalApi = "";
 		public static string ExternalErrorServiceUrlForInternalWorker = "";
+		public static string ExternalErrorServiceUrlForMcp = "";
 		public static double SentryPerfSampleRate = 0.4;
 		public static double SentryProfilingSampleRate = 0;
 		#endregion Sentry Settings

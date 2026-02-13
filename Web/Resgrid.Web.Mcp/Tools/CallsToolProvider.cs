@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
 using Newtonsoft.Json;
+using Sentry;
 
 namespace Resgrid.Web.Mcp.Tools
 {
@@ -56,21 +57,29 @@ namespace Resgrid.Web.Mcp.Tools
 				schema,
 				async (arguments) =>
 				{
+					var transaction = SentrySdk.StartTransaction("mcp.tool.get_active_calls", "mcp.tool");
+
 					try
 					{
 						var args = JsonConvert.DeserializeObject<TokenArgs>(arguments.ToString());
 
 						if (string.IsNullOrWhiteSpace(args?.AccessToken))
 						{
+							transaction.Status = SpanStatus.InvalidArgument;
+							transaction.Finish();
 							return CreateErrorResponse("Access token is required");
 						}
 
 						_logger.LogInformation("Retrieving active calls");
+						SentrySdk.AddBreadcrumb("Retrieving active calls", "mcp.tool", level: BreadcrumbLevel.Info);
 
 						var result = await _apiClient.GetAsync<object>(
 							"/api/v4/Calls/GetActiveCalls",
 							args.AccessToken
 						);
+
+						transaction.Status = SpanStatus.Ok;
+						SentrySdk.AddBreadcrumb("Active calls retrieved successfully", "mcp.tool", level: BreadcrumbLevel.Info);
 
 						return new
 						{
@@ -81,7 +90,18 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving active calls");
+						transaction.Status = SpanStatus.InternalError;
+						SentrySdk.CaptureException(ex, scope =>
+						{
+							scope.SetTag("tool", "get_active_calls");
+							scope.SetTag("operation", "retrieve_active_calls");
+						});
+
 						return CreateErrorResponse("Failed to retrieve active calls. Please try again later.");
+					}
+					finally
+					{
+						transaction.Finish();
 					}
 				}
 			);
@@ -107,26 +127,38 @@ namespace Resgrid.Web.Mcp.Tools
 				schema,
 				async (arguments) =>
 				{
+					var transaction = SentrySdk.StartTransaction("mcp.tool.get_call_details", "mcp.tool");
+
 					try
 					{
 						var args = JsonConvert.DeserializeObject<CallIdArgs>(arguments.ToString());
 
 						if (string.IsNullOrWhiteSpace(args?.AccessToken))
 						{
+							transaction.Status = SpanStatus.InvalidArgument;
+							transaction.Finish();
 							return CreateErrorResponse("Access token is required");
 						}
 
 						if (args.CallId <= 0)
 						{
+							transaction.Status = SpanStatus.InvalidArgument;
+							transaction.Finish();
 							return CreateErrorResponse("Valid call ID is required");
 						}
 
 						_logger.LogInformation("Retrieving call details for call {CallId}", args.CallId);
+						SentrySdk.AddBreadcrumb($"Retrieving call details for call {args.CallId}", "mcp.tool",
+							data: new Dictionary<string, string> { { "call_id", args.CallId.ToString() } },
+							level: BreadcrumbLevel.Info);
 
 						var result = await _apiClient.GetAsync<object>(
 							$"/api/v4/Calls/GetCall?callId={args.CallId}",
 							args.AccessToken
 						);
+
+						transaction.Status = SpanStatus.Ok;
+						SentrySdk.AddBreadcrumb("Call details retrieved successfully", "mcp.tool", level: BreadcrumbLevel.Info);
 
 						return new
 						{
@@ -137,7 +169,18 @@ namespace Resgrid.Web.Mcp.Tools
 					catch (Exception ex)
 					{
 						_logger.LogError(ex, "Error retrieving call details");
+						transaction.Status = SpanStatus.InternalError;
+						SentrySdk.CaptureException(ex, scope =>
+						{
+							scope.SetTag("tool", "get_call_details");
+							scope.SetTag("operation", "retrieve_call_details");
+						});
+
 						return CreateErrorResponse("Failed to retrieve call details. Please try again later.");
+					}
+					finally
+					{
+						transaction.Finish();
 					}
 				}
 			);

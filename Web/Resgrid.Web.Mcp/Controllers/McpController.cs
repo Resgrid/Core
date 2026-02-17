@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
+using Resgrid.Web.Mcp.Infrastructure;
 
 namespace Resgrid.Web.Mcp.Controllers
 {
@@ -55,16 +56,18 @@ namespace Resgrid.Web.Mcp.Controllers
 							message = "Invalid Request: Empty request body"
 						}
 					});
-				}
+			}
 
-				_logger.LogDebug("Received MCP request: {Request}", requestBody);
+			var redactedRequest = SensitiveDataRedactor.RedactSensitiveFields(requestBody);
+			_logger.LogDebug("Received MCP request: {Request}", redactedRequest);
 
-				// Process the request through the MCP handler
-				var response = await _mcpHandler.HandleRequestAsync(requestBody, cancellationToken);
+			// Process the request through the MCP handler
+			var response = await _mcpHandler.HandleRequestAsync(requestBody, cancellationToken);
 
-				_logger.LogDebug("Sending MCP response: {Response}", response);
+			var redactedResponse = SensitiveDataRedactor.RedactSensitiveFields(response);
+			_logger.LogDebug("Sending MCP response: {Response}", redactedResponse);
 
-				// Return the JSON-RPC response
+			// Return the JSON-RPC response
 				return Content(response, "application/json");
 			}
 			catch (JsonException ex)

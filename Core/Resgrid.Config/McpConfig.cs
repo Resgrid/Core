@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Config
+﻿﻿namespace Resgrid.Config
 {
 	/// <summary>
 	/// Configuration settings for the Model Context Protocol (MCP) server
@@ -17,9 +17,29 @@
 		public static string ServerVersion = "1.0.0";
 
 		/// <summary>
-		/// The transport mechanism for MCP (e.g., "stdio")
+		/// The transport mechanism for MCP (e.g., "stdio", "http")
 		/// </summary>
-		public static string Transport = "stdio";
+		public static string Transport = "http";
+
+		/// <summary>
+		/// Enable CORS for HTTP transport (allows cross-origin requests)
+		/// </summary>
+		public static bool EnableCors = true;
+
+		/// <summary>
+		/// Allowed CORS origins (comma-separated list). Empty or "*" allows all origins.
+		/// </summary>
+		public static string CorsAllowedOrigins = "*";
+
+		/// <summary>
+		/// Enable HTTP transport endpoint
+		/// </summary>
+		public static bool EnableHttpTransport = true;
+
+		/// <summary>
+		/// Enable stdio transport (for backwards compatibility)
+		/// </summary>
+		public static bool EnableStdioTransport = false;
 	}
 }
 

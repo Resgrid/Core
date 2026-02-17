@@ -5,8 +5,7 @@ ARG BUILD_VERSION=3.5.0
 FROM mcr.microsoft.com/dotnet/aspnet:9.0.3-noble-amd64 AS base
 ARG BUILD_VERSION
 WORKDIR /app
-EXPOSE 80
-EXPOSE 5050
+EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
 ARG BUILD_VERSION

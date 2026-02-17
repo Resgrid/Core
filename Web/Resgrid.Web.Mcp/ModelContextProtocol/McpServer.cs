@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -12,7 +12,7 @@ namespace ModelContextProtocol.Server
 	/// <summary>
 	/// Simple MCP Server implementation based on the Model Context Protocol specification
 	/// </summary>
-	public sealed class McpServer
+	public sealed class McpServer : IMcpRequestHandler
 	{
 		private readonly string _serverName;
 		private readonly string _serverVersion;
@@ -36,6 +36,35 @@ namespace ModelContextProtocol.Server
 				InputSchema = inputSchema,
 				Handler = handler
 			};
+		}
+
+		/// <summary>
+		/// Handles a JSON-RPC request string and returns a JSON-RPC response string
+		/// </summary>
+		public async Task<string> HandleRequestAsync(string requestJson, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var request = JsonSerializer.Deserialize<JsonRpcRequest>(requestJson);
+				var response = await HandleRequestAsync(request, cancellationToken);
+				return JsonSerializer.Serialize(response);
+			}
+			catch (Exception ex)
+			{
+				_logger?.LogError(ex, "Error processing request");
+				var errorResponse = new JsonRpcResponse
+				{
+					Jsonrpc = "2.0",
+					Id = null,
+					Error = new JsonRpcError
+					{
+						Code = -32603,
+						Message = "Internal error",
+						Data = null
+					}
+				};
+				return JsonSerializer.Serialize(errorResponse);
+			}
 		}
 
 		public async Task RunAsync(CancellationToken cancellationToken)
@@ -72,10 +101,7 @@ namespace ModelContextProtocol.Server
 
 					try
 					{
-						var request = JsonSerializer.Deserialize<JsonRpcRequest>(line);
-						var response = await HandleRequestAsync(request, cancellationToken);
-
-						var responseJson = JsonSerializer.Serialize(response);
+						var responseJson = await HandleRequestAsync(line, cancellationToken);
 						await Console.Out.WriteLineAsync(responseJson);
 						await Console.Out.FlushAsync();
 					}

@@ -36,6 +36,7 @@ namespace Resgrid.Web.Mcp.Controllers
 		/// </summary>
 		/// <returns>HealthResult object with the server health status</returns>
 		[HttpGet("current")]
+		[HttpGet("getcurrent")]
 		public async Task<IActionResult> GetCurrent()
 		{
 			var result = new HealthResult

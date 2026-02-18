@@ -1,6 +1,6 @@
-﻿﻿using System.Collections.Generic;
+﻿﻿﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using ModelContextProtocol.Server;
+using Resgrid.Web.Mcp.ModelContextProtocol;
 using Resgrid.Web.Mcp.Tools;
 
 namespace Resgrid.Web.Mcp

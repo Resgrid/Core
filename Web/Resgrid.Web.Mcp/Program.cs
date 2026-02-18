@@ -63,6 +63,11 @@ namespace Resgrid.Web.Mcp
 									if (samplingContext.CustomSamplingContext.TryGetValue("__HttpPath", out var httpPath))
 									{
 										var pathValue = httpPath?.ToString();
+										if (string.Equals(pathValue, "/health/current", StringComparison.OrdinalIgnoreCase))
+										{
+											return 0;
+										}
+
 										if (string.Equals(pathValue, "/health/getcurrent", StringComparison.OrdinalIgnoreCase))
 										{
 											return 0;
@@ -77,8 +82,8 @@ namespace Resgrid.Web.Mcp
 
 					webBuilder.UseKestrel(serverOptions =>
 					{
-						// Configure Kestrel to listen on a specific port for health checks
-						serverOptions.ListenAnyIP(5050);
+						// Configure Kestrel to listen on port 8080 for MCP HTTP requests and health checks
+						serverOptions.ListenAnyIP(8080);
 					});
 
 					webBuilder.UseStartup<Startup>();

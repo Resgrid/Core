@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using ModelContextProtocol.Server;
+using Resgrid.Web.Mcp.ModelContextProtocol;
 using Newtonsoft.Json;
 
 namespace Resgrid.Web.Mcp.Tools

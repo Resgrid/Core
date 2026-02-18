@@ -1,9 +1,9 @@
-﻿using System;
+﻿﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ModelContextProtocol.Server;
+using Resgrid.Web.Mcp.ModelContextProtocol;
 using Resgrid.Config;
 using Sentry;
 

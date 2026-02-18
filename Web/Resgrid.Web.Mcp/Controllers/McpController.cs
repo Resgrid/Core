@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ModelContextProtocol.Server;
+using Resgrid.Web.Mcp.ModelContextProtocol;
 using Resgrid.Web.Mcp.Infrastructure;
 
 namespace Resgrid.Web.Mcp.Controllers

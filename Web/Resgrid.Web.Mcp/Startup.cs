@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
 using Resgrid.Web.Mcp.Infrastructure;
+using Resgrid.Web.Mcp.ModelContextProtocol;
 using Resgrid.Web.Mcp.Tools;
 
 namespace Resgrid.Web.Mcp
@@ -28,12 +29,12 @@ namespace Resgrid.Web.Mcp
 			}
 
 			// Register MCP Server as a singleton for HTTP access
-			services.AddSingleton<ModelContextProtocol.Server.McpServer>(sp =>
+			services.AddSingleton<McpServer>(sp =>
 			{
-				var logger = sp.GetRequiredService<ILogger<ModelContextProtocol.Server.McpServer>>();
+				var logger = sp.GetRequiredService<ILogger<McpServer>>();
 				var serverName = McpConfig.ServerName;
 				var serverVersion = McpConfig.ServerVersion;
-				var mcpServer = new ModelContextProtocol.Server.McpServer(serverName, serverVersion, logger);
+				var mcpServer = new McpServer(serverName, serverVersion, logger);
 
 				// Register tools with the server
 				var toolRegistry = sp.GetRequiredService<McpToolRegistry>();
@@ -43,8 +44,8 @@ namespace Resgrid.Web.Mcp
 			});
 
 			// Register IMcpRequestHandler interface
-			services.AddSingleton<ModelContextProtocol.Server.IMcpRequestHandler>(sp =>
-				sp.GetRequiredService<ModelContextProtocol.Server.McpServer>());
+			services.AddSingleton<IMcpRequestHandler>(sp =>
+				sp.GetRequiredService<McpServer>());
 
 			// Register MCP server hosted service (for stdio transport)
 			// Only enable if configured

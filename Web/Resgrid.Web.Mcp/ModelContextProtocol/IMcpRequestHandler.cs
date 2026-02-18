@@ -1,7 +1,7 @@
-﻿using System.Threading;
+﻿﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace ModelContextProtocol.Server
+namespace Resgrid.Web.Mcp.ModelContextProtocol
 {
 	/// <summary>
 	/// Interface for handling MCP JSON-RPC requests

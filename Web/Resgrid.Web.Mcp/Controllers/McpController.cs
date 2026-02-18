@@ -21,6 +21,9 @@ namespace Resgrid.Web.Mcp.Controllers
 		private readonly IMcpRequestHandler _mcpHandler;
 		private readonly ILogger<McpController> _logger;
 
+		// Maximum request body size: 1MB
+		private const long MaxRequestBodySize = 1_048_576;
+
 		public McpController(IMcpRequestHandler mcpHandler, ILogger<McpController> logger)
 		{
 			_mcpHandler = mcpHandler;
@@ -39,6 +42,24 @@ namespace Resgrid.Web.Mcp.Controllers
 		{
 			try
 			{
+				// Validate request body size to prevent unbounded memory allocation
+				var contentLength = Request.ContentLength;
+				if (contentLength.HasValue && contentLength.Value > MaxRequestBodySize)
+				{
+					_logger.LogWarning("Request body size {Size} bytes exceeds maximum allowed size {MaxSize} bytes",
+						contentLength.Value, MaxRequestBodySize);
+					return StatusCode(StatusCodes.Status413PayloadTooLarge, new
+					{
+						jsonrpc = "2.0",
+						id = (object)null,
+						error = new
+						{
+							code = -32600,
+							message = $"Request body too large. Maximum size is {MaxRequestBodySize} bytes."
+						}
+					});
+				}
+
 				// Read the raw request body
 				using var reader = new StreamReader(Request.Body);
 				var requestBody = await reader.ReadToEndAsync();

@@ -61,9 +61,9 @@ namespace Resgrid.Web.Mcp.Controllers
 					});
 				}
 
-				// Read the raw request body
-				using var reader = new StreamReader(Request.Body);
-				var requestBody = await reader.ReadToEndAsync();
+			// Read the raw request body
+			using var reader = new StreamReader(Request.Body);
+			var requestBody = await reader.ReadToEndAsync(cancellationToken);
 
 				if (string.IsNullOrWhiteSpace(requestBody))
 				{

@@ -38,6 +38,7 @@ namespace Resgrid.Web.Mcp.Controllers
 		[HttpPost]
 		[Consumes("application/json")]
 		[Produces("application/json")]
+		[RequestSizeLimit(MaxRequestBodySize)]
 		public async Task<IActionResult> HandleRequest(CancellationToken cancellationToken)
 		{
 			try

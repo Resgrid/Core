@@ -78,5 +78,14 @@ namespace Resgrid.Web.Areas.User.Models.Security
 
 		public int DeleteContacts { get; set; }
 		public SelectList DeleteContactsPermissions { get; set; }
+
+		public int CreateWorkflow { get; set; }
+		public SelectList CreateWorkflowPermissions { get; set; }
+
+		public int ManageWorkflowCredentials { get; set; }
+		public SelectList ManageWorkflowCredentialsPermissions { get; set; }
+
+		public int ViewWorkflowRuns { get; set; }
+		public SelectList ViewWorkflowRunsPermissions { get; set; }
 	}
 }

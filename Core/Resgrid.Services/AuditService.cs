@@ -63,6 +63,24 @@ namespace Resgrid.Services
 					return "Profile Updated";
 				case AuditLogTypes.PermissionsChanged:
 					return "Permissions Changed";
+				case AuditLogTypes.WorkflowAdded:
+					return "Workflow Created";
+				case AuditLogTypes.WorkflowEdited:
+					return "Workflow Updated";
+				case AuditLogTypes.WorkflowDeleted:
+					return "Workflow Deleted";
+				case AuditLogTypes.WorkflowStepAdded:
+					return "Workflow Step Added";
+				case AuditLogTypes.WorkflowStepEdited:
+					return "Workflow Step Updated";
+				case AuditLogTypes.WorkflowStepDeleted:
+					return "Workflow Step Deleted";
+				case AuditLogTypes.WorkflowCredentialAdded:
+					return "Workflow Credential Added";
+				case AuditLogTypes.WorkflowCredentialEdited:
+					return "Workflow Credential Updated";
+				case AuditLogTypes.WorkflowCredentialDeleted:
+					return "Workflow Credential Deleted";
 			}
 
 			return "";

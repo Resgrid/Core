@@ -363,6 +363,8 @@ namespace Resgrid.Web.Eventing
 			this.Locator = new AutofacServiceLocator(this.AutofacContainer);
 			ServiceLocator.SetLocatorProvider(() => this.Locator);
 
+			var workflowProvider = this.AutofacContainer.Resolve<IWorkflowEventProvider>();
+
 			//app.UseHttpsRedirection();
 
 			app.UseCors(x => x

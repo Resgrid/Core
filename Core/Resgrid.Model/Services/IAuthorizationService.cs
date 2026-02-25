@@ -326,5 +326,11 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserDeleteContactAsync(string userId, int departmentId);
 
 		Task<bool> CanUserAddOrEditContactAsync(string userId, int departmentId);
+
+		Task<bool> CanUserCreateWorkflowAsync(string userId, int departmentId);
+
+		Task<bool> CanUserManageWorkflowCredentialAsync(string userId, int departmentId);
+
+		Task<bool> CanUserViewWorkflowRunsAsync(string userId, int departmentId);
 	}
 }

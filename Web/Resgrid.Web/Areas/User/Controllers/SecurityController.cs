@@ -318,6 +318,34 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.DeleteContacts = 3;
 
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateWorkflow))
+				model.CreateWorkflow = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateWorkflow).Action;
+
+			var createWorkflowPermissions = new List<dynamic>();
+			createWorkflowPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			createWorkflowPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			createWorkflowPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.CreateWorkflowPermissions = new SelectList(createWorkflowPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials))
+				model.ManageWorkflowCredentials = permissions.First(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials).Action;
+
+			var manageWorkflowCredentialsPermissions = new List<dynamic>();
+			manageWorkflowCredentialsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			manageWorkflowCredentialsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			manageWorkflowCredentialsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.ManageWorkflowCredentialsPermissions = new SelectList(manageWorkflowCredentialsPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns))
+				model.ViewWorkflowRuns = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns).Action;
+
+			var viewWorkflowRunsPermissions = new List<dynamic>();
+			viewWorkflowRunsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			viewWorkflowRunsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			viewWorkflowRunsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewWorkflowRunsPermissions.Add(new { Id = 3, Name = "Everyone" });
+			model.ViewWorkflowRunsPermissions = new SelectList(viewWorkflowRunsPermissions, "Id", "Name");
+
 			return View(model);
 		}
 

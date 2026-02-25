@@ -565,6 +565,124 @@ namespace Resgrid.Workers.Framework.Logic
 								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Note.";
 							}
 							break;
+
+						case AuditLogTypes.WorkflowAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var wfAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created Workflow {wfAdded?.Name}";
+								auditLog.Data = $"WorkflowId: {wfAdded?.WorkflowId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created a Workflow.";
+							}
+							break;
+
+						case AuditLogTypes.WorkflowEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var wfEdited = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated Workflow {wfEdited?.Name}";
+								auditLog.Data = $"WorkflowId: {wfEdited?.WorkflowId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Workflow.";
+							}
+							break;
+
+						case AuditLogTypes.WorkflowDeleted:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var wfDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted Workflow {wfDeleted?.Name}";
+								auditLog.Data = $"WorkflowId: {wfDeleted?.WorkflowId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a Workflow.";
+							}
+							break;
+
+						case AuditLogTypes.WorkflowStepAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var stepAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a step to Workflow {stepAdded?.WorkflowId}";
+								auditLog.Data = $"WorkflowStepId: {stepAdded?.WorkflowStepId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Workflow Step.";
+							}
+							break;
+
+						case AuditLogTypes.WorkflowStepEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var stepEdited = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a step in Workflow {stepEdited?.WorkflowId}";
+								auditLog.Data = $"WorkflowStepId: {stepEdited?.WorkflowStepId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Workflow Step.";
+							}
+							break;
+
+						case AuditLogTypes.WorkflowStepDeleted:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var stepDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted Workflow Step {stepDeleted?.WorkflowStepId}";
+								auditLog.Data = $"WorkflowStepId: {stepDeleted?.WorkflowStepId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a Workflow Step.";
+							}
+							break;
+
+						// NOTE: Credential audit cases intentionally do not log Before/After data to prevent sensitive info being stored.
+						case AuditLogTypes.WorkflowCredentialAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var credAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Workflow Credential {credAdded?.Name}";
+								auditLog.Data = $"WorkflowCredentialId: {credAdded?.WorkflowCredentialId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Workflow Credential.";
+							}
+							break;
+
+						case AuditLogTypes.WorkflowCredentialEdited:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var credEdited = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated Workflow Credential {credEdited?.Name}";
+								auditLog.Data = $"WorkflowCredentialId: {credEdited?.WorkflowCredentialId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Workflow Credential.";
+							}
+							break;
+
+						case AuditLogTypes.WorkflowCredentialDeleted:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var credDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted Workflow Credential {credDeleted?.Name}";
+								auditLog.Data = $"WorkflowCredentialId: {credDeleted?.WorkflowCredentialId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a Workflow Credential.";
+							}
+							break;
 					}
 
 					if (String.IsNullOrWhiteSpace(auditLog.Data))

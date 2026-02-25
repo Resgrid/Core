@@ -151,6 +151,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 									 autoDelete: false,
 									 arguments: null);
 
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.WorkflowQueueName),
+									 durable: true,
+									 exclusive: false,
+									 autoDelete: false,
+									 arguments: null);
+
 						return true;
 					}
 					catch (Exception ex)

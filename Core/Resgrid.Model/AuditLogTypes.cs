@@ -62,6 +62,16 @@
 		ContactCategoryRemoved,
 		ContactNoteTypeAdded,
 		ContactNoteTypeEdited,
-		ContactNoteTypeRemoved
+		ContactNoteTypeRemoved,
+		// Workflow operations
+		WorkflowAdded,
+		WorkflowEdited,
+		WorkflowDeleted,
+		WorkflowStepAdded,
+		WorkflowStepEdited,
+		WorkflowStepDeleted,
+		WorkflowCredentialAdded,
+		WorkflowCredentialEdited,
+		WorkflowCredentialDeleted
 	}
 }

@@ -1,0 +1,96 @@
+﻿@model Resgrid.Model.WorkflowHealthSummary
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["WorkflowHealthHeader"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    string workflowId = ViewBag.WorkflowId;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>@localizer["WorkflowHealthHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["WorkflowsHeader"]</a></li>
+            <li class="active"><strong>@localizer["Health"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            <a asp-action="Runs" asp-route-workflowId="@workflowId" class="btn btn-default"><i class="fa fa-list"></i> @localizer["ViewRuns"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    @if (Model == null)
+    {
+        <div class="alert alert-info">@localizer["NoHealthData"]</div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- 24h stats -->
+            <div class="col-lg-4">
+                <div class="ibox">
+                    <div class="ibox-title"><h5>@localizer["Last24Hours"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-xs-6"><h2 class="text-success">@Model.SuccessfulRuns24h</h2><p>@localizer["Successful"]</p></div>
+                            <div class="col-xs-6"><h2 class="text-danger">@Model.FailedRuns24h</h2><p>@localizer["Failed"]</p></div>
+                        </div>
+                        <p class="text-muted">@localizer["Total"]: @Model.TotalRuns24h</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 7d stats -->
+            <div class="col-lg-4">
+                <div class="ibox">
+                    <div class="ibox-title"><h5>@localizer["Last7Days"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-xs-6"><h2 class="text-success">@Model.SuccessfulRuns7d</h2><p>@localizer["Successful"]</p></div>
+                            <div class="col-xs-6"><h2 class="text-danger">@Model.FailedRuns7d</h2><p>@localizer["Failed"]</p></div>
+                        </div>
+                        <p class="text-muted">@localizer["Total"]: @Model.TotalRuns7d</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 30d stats -->
+            <div class="col-lg-4">
+                <div class="ibox">
+                    <div class="ibox-title"><h5>@localizer["Last30Days"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-xs-6"><h2 class="text-success">@Model.SuccessfulRuns30d</h2><p>@localizer["Successful"]</p></div>
+                            <div class="col-xs-6"><h2 class="text-danger">@Model.FailedRuns30d</h2><p>@localizer["Failed"]</p></div>
+                        </div>
+                        <p class="text-muted">
+                            @localizer["Total"]: @Model.TotalRuns30d &nbsp;|&nbsp;
+                            @localizer["SuccessRate"]: <strong>@Model.SuccessRatePercent30d.ToString("F1")%</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5>@localizer["Performance"]</h5></div>
+                    <div class="ibox-content">
+                        <dl class="dl-horizontal">
+                            <dt>@localizer["AvgDuration"]</dt>
+                            <dd>@(Model.AverageDurationMs30d.HasValue ? $"{Model.AverageDurationMs30d:F0} ms" : "N/A")</dd>
+                            <dt>@localizer["LastRun"]</dt>
+                            <dd>@(Model.LastRunOn?.ToString("yyyy-MM-dd HH:mm:ss") ?? localizer["Never"].Value)</dd>
+                            <dt>@localizer["LastError"]</dt>
+                            <dd class="text-danger">@(Model.LastErrorMessage ?? localizer["None"].Value)</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

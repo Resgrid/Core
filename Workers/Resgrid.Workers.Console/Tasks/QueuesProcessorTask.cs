@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿﻿using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Model;
@@ -50,6 +50,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.UnitLocationEventQueueReceived += OnUnitLocationEventQueueReceived;
 			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
 			queue.SecurityRefreshEventQueueReceived += OnSecurityRefreshEventQueueReceived;
+			queue.WorkflowQueueReceived += OnWorkflowQueueReceived;
 
 			await queue.Start("QueueProcessor-CQRS");
 
@@ -145,6 +146,13 @@ namespace Resgrid.Workers.Console.Tasks
 
 			await _securityLogic.Process(item);
 			_logger.LogInformation($"{Name}: Finished processing of Security Refresh queue item with an id of {securityRefreshEvent.EventId}.");
+		}
+
+		private async Task OnWorkflowQueueReceived(Resgrid.Model.Queue.WorkflowQueueItem item)
+		{
+			_logger.LogInformation($"{Name}: Workflow Queue Received for WorkflowId {item.WorkflowId} RunId {item.WorkflowRunId} Attempt {item.AttemptNumber}, starting processing...");
+			var success = await WorkflowQueueLogic.ProcessWorkflowQueueItem(item, _cancellationToken);
+			_logger.LogInformation($"{Name}: Finished processing WorkflowId {item.WorkflowId} RunId {item.WorkflowRunId}. Success={success}");
 		}
 	}
 }

@@ -320,6 +320,21 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.Contacts_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Contacts_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Contacts_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Workflow_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Workflow, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Workflow_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Workflow, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Workflow_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Workflow, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Workflow_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Workflow, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.WorkflowCredential_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowCredential, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.WorkflowCredential_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowCredential, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.WorkflowCredential_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowCredential, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.WorkflowCredential_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowCredential, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.WorkflowRun_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowRun, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.WorkflowRun_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowRun, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.WorkflowRun_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowRun, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.WorkflowRun_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowRun, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 
@@ -492,6 +507,7 @@ namespace Resgrid.Web
 			builder.RegisterModule(new PdfProviderModule());
 			builder.RegisterModule(new VoipProviderModule());
 			builder.RegisterModule(new MessagingProviderModule());
+			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
@@ -560,6 +576,8 @@ namespace Resgrid.Web
 
 			this.Locator = new AutofacServiceLocator(this.AutofacContainer);
 			ServiceLocator.SetLocatorProvider(() => this.Locator);
+
+			var workflowProvider = this.AutofacContainer.Resolve<IWorkflowEventProvider>();
 
 			var cookiePolicyOptions = new CookiePolicyOptions
 			{

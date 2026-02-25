@@ -503,6 +503,66 @@
                                             </div>
                                         </td>
                                     </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can Create/Edit Workflows
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can create, edit, and delete workflows and workflow steps. By default only Department Admins can manage workflows.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CreateWorkflow, Model.CreateWorkflowPermissions)
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <span id="workflowCreateNoRolesSpan">No Roles</span>
+                                            <div id="workflowCreateRolesDiv" style="display: none;">
+                                                <select id="workflowCreateRoles" name="workflowCreateRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can Manage Workflow Credentials
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can create, edit, and delete encrypted credentials used by workflow actions (e.g., SMTP passwords, API keys). By default only Department Admins can manage credentials.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ManageWorkflowCredentials, Model.ManageWorkflowCredentialsPermissions)
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <span id="workflowCredentialsNoRolesSpan">No Roles</span>
+                                            <div id="workflowCredentialsRolesDiv" style="display: none;">
+                                                <select id="workflowCredentialsRoles" name="workflowCredentialsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            Who can View Workflow Runs
+                                        </td>
+                                        <td style="max-width: 350px">
+                                            This option determines who can view workflow execution history, run logs, and health dashboards. By default only Department Admins can view workflow runs.
+                                        </td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.ViewWorkflowRuns, Model.ViewWorkflowRunsPermissions)
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <span id="workflowRunsNoRolesSpan">No Roles</span>
+                                            <div id="workflowRunsRolesDiv" style="display: none;">
+                                                <select id="workflowRunsRoles" name="workflowRunsRoles"></select>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
 

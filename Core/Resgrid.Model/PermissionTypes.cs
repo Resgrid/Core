@@ -23,7 +23,10 @@
 		ViewGroupUnits,
 		ContactEdit,
 		ContactView,
-		ContactDelete
+		ContactDelete,
+		CreateWorkflow = 22,
+		ManageWorkflowCredentials = 23,
+		ViewWorkflowRuns = 24
 	}
 
 }

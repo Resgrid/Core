@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿﻿using System.Text;
 using Resgrid.Config;
 using Resgrid.Model.Queue;
 using Resgrid.Framework;
@@ -98,6 +98,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			var serializedObject = ObjectSerialization.Serialize(securityRefreshEvent);
 
 			return await SendMessage(ServiceBusConfig.SecurityRefreshQueueName, serializedObject, false, "300000");
+		}
+
+		public async Task<bool> EnqueueWorkflowEvent(Resgrid.Model.Queue.WorkflowQueueItem item)
+		{
+			var serializedObject = ObjectSerialization.Serialize(item);
+
+			return await SendMessage(ServiceBusConfig.WorkflowQueueName, serializedObject);
 		}
 
 		private async Task<bool> SendMessage(string queueName, string message, bool durable = true, string expiration = "36000000")

@@ -1,0 +1,67 @@
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Resgrid.Model;
+using Resgrid.Model.Providers;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+
+namespace Resgrid.Providers.Workflow.Executors
+{
+	public class TwilioSmsExecutor : IWorkflowActionExecutor
+	{
+		public WorkflowActionType ActionType => WorkflowActionType.SendSms;
+
+		public async Task<WorkflowActionResult> ExecuteAsync(WorkflowActionContext context, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var config = JsonConvert.DeserializeObject<SmsActionConfig>(context.ActionConfigJson ?? "{}") ?? new SmsActionConfig();
+
+				if (string.IsNullOrWhiteSpace(context.DecryptedCredentialJson))
+					return WorkflowActionResult.Failed("Twilio SMS failed.", "No Twilio credential is attached to this workflow step. Please assign a Twilio credential.");
+
+				var cred = JsonConvert.DeserializeObject<TwilioCredential>(context.DecryptedCredentialJson) ?? new TwilioCredential();
+
+				if (string.IsNullOrWhiteSpace(cred.AccountSid))
+					return WorkflowActionResult.Failed("Twilio SMS failed.", "Twilio credential is missing 'AccountSid'. Please update the credential.");
+
+				if (string.IsNullOrWhiteSpace(cred.AuthToken))
+					return WorkflowActionResult.Failed("Twilio SMS failed.", "Twilio credential is missing 'AuthToken'. Please update the credential.");
+
+				if (string.IsNullOrWhiteSpace(cred.FromNumber))
+					return WorkflowActionResult.Failed("Twilio SMS failed.", "Twilio credential is missing 'FromNumber'. Please update the credential with a valid Twilio phone number.");
+
+				if (string.IsNullOrWhiteSpace(config.To))
+					return WorkflowActionResult.Failed("Twilio SMS failed.", "No recipient phone number configured in the workflow step action config. Please set the 'To' field.");
+
+				if (string.IsNullOrWhiteSpace(context.RenderedContent))
+					return WorkflowActionResult.Failed("Twilio SMS failed.", "The message body is empty. Please ensure the workflow step has a message template that produces content.");
+
+				TwilioClient.Init(cred.AccountSid, cred.AuthToken);
+
+				var message = await MessageResource.CreateAsync(
+					body: context.RenderedContent,
+					from: new Twilio.Types.PhoneNumber(cred.FromNumber),
+					to: new Twilio.Types.PhoneNumber(config.To));
+
+				return WorkflowActionResult.Succeeded($"SMS sent. SID: {message.Sid}");
+			}
+			catch (Exception ex)
+			{
+				return WorkflowActionResult.Failed("Twilio SMS failed.", ex.Message);
+			}
+		}
+	}
+
+	public class SmsActionConfig { public string To { get; set; } }
+
+	public class TwilioCredential
+	{
+		public string AccountSid { get; set; }
+		public string AuthToken { get; set; }
+		public string FromNumber { get; set; }
+	}
+}
+

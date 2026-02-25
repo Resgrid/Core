@@ -940,6 +940,86 @@
             </summary>
             <returns>Array of RecipientResult objects for each responding option in the department</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController">
+            <summary>
+            Manages encrypted credentials used by workflow action executors.
+            Secrets are write-only and are never returned in responses.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController.GetAll(System.Threading.CancellationToken)">
+            <summary>Lists all credentials for the current department (secrets masked).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController.GetById(System.String,System.Threading.CancellationToken)">
+            <summary>Gets a single credential by ID (secrets masked).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController.Create(Resgrid.Web.Services.Controllers.v4.WorkflowCredentialInput,System.Threading.CancellationToken)">
+            <summary>Creates a new credential. Plaintext secrets are encrypted before storage.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController.Update(System.String,Resgrid.Web.Services.Controllers.v4.WorkflowCredentialInput,System.Threading.CancellationToken)">
+            <summary>Updates an existing credential.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController.Delete(System.String,System.Threading.CancellationToken)">
+            <summary>Deletes a credential.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialInput.PlaintextData">
+            <summary>Plaintext JSON blob of credential fields. Never returned in any GET response.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.WorkflowsController">
+            <summary>
+            Workflow engine management — create, edit, monitor, and manage department workflows.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetAll(System.Threading.CancellationToken)">
+            <summary>Gets all workflows for the current department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetById(System.String,System.Threading.CancellationToken)">
+            <summary>Gets a single workflow by ID (with steps).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.Save(Resgrid.Web.Services.Models.v4.Workflows.SaveWorkflowInput,System.Threading.CancellationToken)">
+            <summary>Creates or updates a workflow.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.Delete(System.String,System.Threading.CancellationToken)">
+            <summary>Deletes a workflow.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.SaveStep(Resgrid.Web.Services.Models.v4.Workflows.SaveWorkflowStepInput,System.Threading.CancellationToken)">
+            <summary>Saves (creates or updates) a workflow step.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.DeleteStep(System.String,System.Threading.CancellationToken)">
+            <summary>Deletes a workflow step.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetCredentials(System.Threading.CancellationToken)">
+            <summary>Gets all credentials for the department (names/types only — no encrypted data exposed).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.SaveCredential(Resgrid.Web.Services.Models.v4.Workflows.SaveCredentialInput,System.Threading.CancellationToken)">
+            <summary>Saves a credential (plaintext JSON is encrypted server-side).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.DeleteCredential(System.String,System.Threading.CancellationToken)">
+            <summary>Deletes a credential.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetRuns(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>Gets paginated workflow runs for the department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetRunsByWorkflow(System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>Gets runs for a specific workflow (paginated).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetPendingRuns(System.Threading.CancellationToken)">
+            <summary>Gets all pending/running workflow runs for the department (live monitor view).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetRunLogs(System.String,System.Threading.CancellationToken)">
+            <summary>Gets the run logs for a specific workflow run.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetHealth(System.String,System.Threading.CancellationToken)">
+            <summary>Gets health summary for a specific workflow.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.CancelRun(System.String,System.Threading.CancellationToken)">
+            <summary>Cancels a specific workflow run.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.ClearPending(System.Threading.CancellationToken)">
+            <summary>Clears all pending/queued runs for the department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetTemplateVariables(System.Int32)">
+            <summary>Gets all template variables available for a given trigger event type.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult">
             <summary>
             Object that verifies that the user's credentials
@@ -6558,6 +6638,21 @@
             Can the user create messages
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.CanCreateWorkflow">
+            <summary>
+            Can the user create/edit workflows
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.CanManageWorkflowCredentials">
+            <summary>
+            Can the user manage workflow credentials
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.CanViewWorkflowRuns">
+            <summary>
+            Can the user view workflow runs
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.Groups">
             <summary>
             Groups in the department the user is a member of
@@ -7854,6 +7949,9 @@
             <summary>
             Id used to connect to the session
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Workflows.SaveCredentialInput.PlaintextCredentialJson">
+            <summary>Plaintext credential JSON — will be AES-encrypted server-side before storage.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Properties.Resources">
             <summary>

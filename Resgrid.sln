@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
@@ -43,6 +43,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.AddressVerification", "Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj", "{94165DE6-7224-4EF0-ADB0-889A5EF77519}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Bus", "Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj", "{B3F5D0C1-3697-4691-9999-F4321CD0B6F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Workflow", "Providers\Resgrid.Providers.Workflow\Resgrid.Providers.Workflow.csproj", "{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resgrid.Providers.Bus.Rabbit", "Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj", "{506F9CFB-7C67-4036-920D-A85639B02544}"
 EndProject
@@ -302,6 +304,30 @@ Global
 		{B3F5D0C1-3697-4691-9999-F4321CD0B6F9}.Staging|Any CPU.Build.0 = Debug|Any CPU
 		{B3F5D0C1-3697-4691-9999-F4321CD0B6F9}.Staging|x86.ActiveCfg = Debug|Any CPU
 		{B3F5D0C1-3697-4691-9999-F4321CD0B6F9}.Staging|x86.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Azure|Any CPU.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Azure|x86.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Azure|x86.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Cloud|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Cloud|Any CPU.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Cloud|x86.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Cloud|x86.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Debug|x86.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Docker|Any CPU.ActiveCfg = Docker|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Docker|Any CPU.Build.0 = Docker|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Docker|x86.ActiveCfg = Docker|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Docker|x86.Build.0 = Docker|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Release|x86.ActiveCfg = Release|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Release|x86.Build.0 = Release|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Staging|Any CPU.Build.0 = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Staging|x86.ActiveCfg = Debug|Any CPU
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5}.Staging|x86.Build.0 = Debug|Any CPU
 		{506F9CFB-7C67-4036-920D-A85639B02544}.Azure|Any CPU.ActiveCfg = Debug|Any CPU
 		{506F9CFB-7C67-4036-920D-A85639B02544}.Azure|Any CPU.Build.0 = Debug|Any CPU
 		{506F9CFB-7C67-4036-920D-A85639B02544}.Azure|x86.ActiveCfg = Debug|Any CPU
@@ -891,6 +917,7 @@ Global
 		{970C7F13-2384-4ED8-8C33-0414A49970E5} = {D43D1D6B-66A9-4A57-9EA3-8DECC92FA583}
 		{94165DE6-7224-4EF0-ADB0-889A5EF77519} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{B3F5D0C1-3697-4691-9999-F4321CD0B6F9} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
+		{A7C2E4F1-8B3D-4A56-9E7F-B8C1D2E3F4A5} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{506F9CFB-7C67-4036-920D-A85639B02544} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{5565BF04-1056-4B2B-AB1A-E3AD9C433283} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
 		{69FC3B6C-801F-4D98-BE3E-9BC47C42F874} = {F06D475C-635C-4DE4-82BA-C49A90BA8FCD}
@@ -918,9 +945,9 @@ Global
 		{744B3BB7-B5F6-4002-93E2-FC0821D41963} = {89331D76-C527-479D-8F30-8033A04C625F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35;packages\Unity.Interception.2.1.505.2\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\DesignTime
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45
 		SolutionGuid = {156116FF-243E-45E8-8717-DB72E95F56AF}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35;packages\Unity.Interception.2.1.505.2\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\lib\NET4;packages\EnterpriseLibrary.WindowsAzure.TransientFaultHandling.5.1.1212.0\DesignTime
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 73e3ec62-fcea-43a4-b9ac-380e73a81ae7

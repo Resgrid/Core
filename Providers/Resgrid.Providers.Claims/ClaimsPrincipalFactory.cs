@@ -27,7 +27,7 @@ namespace Resgrid.Providers.Claims
 		private IClaimsRepository _claimsRepository;
 
 		public ClaimsPrincipalFactory(UserManager<TUser> userManager, RoleManager<TRole> roleManager, IOptions<IdentityOptions> optionsAccessor,
-			IUsersService usersService, IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, 
+			IUsersService usersService, IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService,
 			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService, IClaimsRepository claimsRepository
 			) : base(userManager, roleManager, optionsAccessor)
 		{
@@ -198,6 +198,9 @@ namespace Resgrid.Providers.Claims
 					ClaimsLogic.AddVoiceClaims(id, departmentAdmin);
 					ClaimsLogic.AddCustomStateClaims(id, departmentAdmin);
 					ClaimsLogic.AddContactsClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+				ClaimsLogic.AddWorkflowClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+				ClaimsLogic.AddWorkflowCredentialClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+				ClaimsLogic.AddWorkflowRunClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 				}
 			}
 

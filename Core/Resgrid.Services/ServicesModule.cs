@@ -1,4 +1,4 @@
-﻿using Autofac;
+﻿﻿using Autofac;
 //using Resgrid.Model.Facades.Stripe;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
@@ -9,6 +9,9 @@ namespace Resgrid.Services
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowService>().As<IWorkflowService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowTemplateContextBuilder>().As<Resgrid.Model.Providers.IWorkflowTemplateContextBuilder>().InstancePerLifetimeScope();
 			builder.RegisterType<LogService>().As<ILogService>().InstancePerLifetimeScope();
 			builder.RegisterType<QueueService>().As<IQueueService>().InstancePerLifetimeScope();
 			builder.RegisterType<DeleteService>().As<IDeleteService>().InstancePerLifetimeScope();

@@ -52,26 +52,32 @@ namespace Resgrid.Services
 
 			if (profile == null || profile.SendMessageSms)
 			{
-				try
+				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
 				{
-					var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-					await _smsService.SendMessageAsync(message, departmentNumber, departmentId, profile, payment);
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
+					try
+					{
+						var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
+						await _smsService.SendMessageAsync(message, departmentNumber, departmentId, profile, payment);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
 			}
 
 			if (profile == null || profile.SendMessageEmail)
 			{
-				try
+				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
-					await _emailService.SendMessageAsync(message, sendersName, departmentId, profile, message.ReceivingUser);
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
+					try
+					{
+						await _emailService.SendMessageAsync(message, sendersName, departmentId, profile, message.ReceivingUser);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
 			}
 
@@ -193,28 +199,42 @@ namespace Resgrid.Services
 			// Send an SMS Message
 			if (profile == null || profile.SendSms)
 			{
-				var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-				await _smsService.SendCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
+				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
+				{
+					var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
+					await _smsService.SendCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
+				}
 			}
 
 			// Send an Email
 			if (profile == null || profile.SendEmail)
 			{
-				await _emailService.SendCallAsync(call, dispatch, profile);
+				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
+				{
+					await _emailService.SendCallAsync(call, dispatch, profile);
+				}
 			}
 
 			// Initiate a Telephone Call
 			if (profile == null || profile.VoiceForCall)
 			{
-				try
-				{
+				bool voiceAllowed = profile == null ||
+					(profile.VoiceCallMobile
+						? profile.MobileNumberVerified.IsContactMethodAllowedForSending()
+						: profile.HomeNumberVerified.IsContactMethodAllowedForSending());
 
-					if (!Config.SystemBehaviorConfig.DoNotBroadcast || Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
-						await _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, call);
-				}
-				catch (Exception ex)
+				if (voiceAllowed)
 				{
-					Logging.LogException(ex);
+					try
+					{
+
+						if (!Config.SystemBehaviorConfig.DoNotBroadcast || Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+							await _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, call);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
 			}
 
@@ -305,14 +325,17 @@ namespace Resgrid.Services
 
 			if (profile == null || profile.SendNotificationEmail)
 			{
-				try
+				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
-					await _emailService.SendNotificationAsync(userId, $"{title} {message}", departmentId, profile);
+					try
+					{
+						await _emailService.SendNotificationAsync(userId, $"{title} {message}", departmentId, profile);
 
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
 			}
 
@@ -350,14 +373,17 @@ namespace Resgrid.Services
 
 			if (profile == null || profile.SendNotificationEmail)
 			{
-				try
+				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
-					await _emailService.SendCalendarAsync(userId, $"{title} {message}", departmentId, profile);
+					try
+					{
+						await _emailService.SendCalendarAsync(userId, $"{title} {message}", departmentId, profile);
 
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
 			}
 
@@ -493,26 +519,32 @@ namespace Resgrid.Services
 				// Send an SMS Message
 				if (recipient.SendSms)
 				{
-					try
+					if (recipient.MobileNumberVerified.IsContactMethodAllowedForSending())
 					{
-						_smsService.SendTroubleAlert(unit, call, unitAddress, departmentNumber, departmentId, recipient);
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
+						try
+						{
+							_smsService.SendTroubleAlert(unit, call, unitAddress, departmentNumber, departmentId, recipient);
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+						}
 					}
 				}
 
 				// Send an Email
 				if (recipient.SendEmail)
 				{
-					try
+					if (recipient.EmailVerified.IsContactMethodAllowedForSending())
 					{
-						await _emailService.SendTroubleAlert(troubleAlertEvent, unit, call, callAddress, unitAddress, personnelNames, recipient);
-					}
-					catch (Exception ex)
-					{
-						Logging.LogException(ex);
+						try
+						{
+							await _emailService.SendTroubleAlert(troubleAlertEvent, unit, call, callAddress, unitAddress, personnelNames, recipient);
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+						}
 					}
 				}
 			}
@@ -523,6 +555,12 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendTextMessageAsync(string userId, string title, string message, int departmentId, string departmentNumber, UserProfile profile = null)
 		{
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			if (profile != null && !profile.MobileNumberVerified.IsContactMethodAllowedForSending())
+				return false;
+
 			return await _smsService.SendTextAsync(userId, title, message, departmentId, departmentNumber, profile);
 		}
 

@@ -11,7 +11,7 @@
 		/// <summary>Decrypted credential fields as a JSON string (deserialized by each executor).</summary>
 		public string DecryptedCredentialJson { get; init; }
 
-		/// <summary>Action-specific configuration as a JSON string (deserialized by each executor).</summary>
+		/// <summary>Action-specific configuration as a JSON string (deserialized by each executor). May have had Scriban expressions resolved.</summary>
 		public string ActionConfigJson { get; init; }
 
 		public string WorkflowId { get; init; }
@@ -21,5 +21,11 @@
 
 		/// <summary>Maps to <see cref="WorkflowActionType"/>.</summary>
 		public int ActionType { get; init; }
+
+		/// <summary>
+		/// True when the department is on the free plan. Executors use this to enforce stricter
+		/// recipient caps and per-action send limits.
+		/// </summary>
+		public bool IsFreePlanDepartment { get; init; }
 	}
 }

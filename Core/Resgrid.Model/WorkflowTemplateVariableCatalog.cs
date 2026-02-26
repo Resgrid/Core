@@ -96,6 +96,42 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.CallUpdated:
 				case WorkflowTriggerEventType.CallClosed:
 					list.AddRange(CallVariables);
+					list.AddRange(new[]
+					{
+						// Personnel dispatches
+						new TemplateVariableDescriptor("call.dispatches", "Array of dispatched personnel objects", "array", false),
+						new TemplateVariableDescriptor("call.dispatches[n].user_id", "Dispatched user ID", "string", false),
+						new TemplateVariableDescriptor("call.dispatches[n].dispatch_count", "Number of times this user was dispatched", "int", false),
+						new TemplateVariableDescriptor("call.dispatches[n].dispatched_on", "Time of dispatch", "datetime", false),
+						// Unit dispatches
+						new TemplateVariableDescriptor("call.unit_dispatches", "Array of dispatched unit objects", "array", false),
+						new TemplateVariableDescriptor("call.unit_dispatches[n].unit_id", "Dispatched unit ID", "int", false),
+						new TemplateVariableDescriptor("call.unit_dispatches[n].unit_name", "Dispatched unit name", "string", false),
+						new TemplateVariableDescriptor("call.unit_dispatches[n].dispatch_count", "Number of times this unit was dispatched", "int", false),
+						new TemplateVariableDescriptor("call.unit_dispatches[n].dispatched_on", "Time of unit dispatch", "datetime", false),
+						// Group dispatches
+						new TemplateVariableDescriptor("call.group_dispatches", "Array of dispatched group objects", "array", false),
+						new TemplateVariableDescriptor("call.group_dispatches[n].group_id", "Dispatched group ID", "int", false),
+						new TemplateVariableDescriptor("call.group_dispatches[n].group_name", "Dispatched group name", "string", false),
+						new TemplateVariableDescriptor("call.group_dispatches[n].dispatch_count", "Number of times this group was dispatched", "int", false),
+						new TemplateVariableDescriptor("call.group_dispatches[n].dispatched_on", "Time of group dispatch", "datetime", false),
+						// Role dispatches
+						new TemplateVariableDescriptor("call.role_dispatches", "Array of dispatched role objects", "array", false),
+						new TemplateVariableDescriptor("call.role_dispatches[n].role_id", "Dispatched role ID", "int", false),
+						new TemplateVariableDescriptor("call.role_dispatches[n].role_name", "Dispatched role name", "string", false),
+						new TemplateVariableDescriptor("call.role_dispatches[n].dispatch_count", "Number of times this role was dispatched", "int", false),
+						new TemplateVariableDescriptor("call.role_dispatches[n].dispatched_on", "Time of role dispatch", "datetime", false),
+						// Call notes list
+						new TemplateVariableDescriptor("call.notes_list", "Array of call note objects", "array", false),
+						new TemplateVariableDescriptor("call.notes_list[n].note", "Note text", "string", false),
+						new TemplateVariableDescriptor("call.notes_list[n].source", "Note source", "string", false),
+						new TemplateVariableDescriptor("call.notes_list[n].timestamp", "Note timestamp", "datetime", false),
+						new TemplateVariableDescriptor("call.notes_list[n].user_id", "User who added the note", "string", false),
+						// Contacts
+						new TemplateVariableDescriptor("call.contacts", "Array of call contact objects", "array", false),
+						new TemplateVariableDescriptor("call.contacts[n].contact_id", "Contact record ID", "string", false),
+						new TemplateVariableDescriptor("call.contacts[n].contact_type", "Contact type (Primary, Additional)", "string", false),
+					});
 					break;
 
 				case WorkflowTriggerEventType.UnitStatusChanged:

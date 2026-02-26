@@ -1,4 +1,4 @@
-﻿﻿using Autofac;
+﻿using Autofac;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
@@ -173,6 +173,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<WorkflowCredentialRepository>().As<IWorkflowCredentialRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowRunRepository>().As<IWorkflowRunRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowRunLogRepository>().As<IWorkflowRunLogRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowDailyUsageRepository>().As<IWorkflowDailyUsageRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

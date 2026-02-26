@@ -14,8 +14,7 @@ namespace Resgrid.Providers.Workflow.Executors
 	{
 		public WorkflowActionType ActionType => WorkflowActionType.UploadFileFtp;
 
-		public async Task<WorkflowActionResult> ExecuteAsync(WorkflowActionContext context, CancellationToken cancellationToken)
-		{
+		public async Task<WorkflowActionResult> ExecuteAsync(WorkflowActionContext context, CancellationToken cancellationToken)		{
 			try
 			{
 				var config = JsonConvert.DeserializeObject<FtpActionConfig>(context.ActionConfigJson ?? "{}") ?? new FtpActionConfig();
@@ -30,6 +29,12 @@ namespace Resgrid.Providers.Workflow.Executors
 
 				if (string.IsNullOrWhiteSpace(cred.Username))
 					return WorkflowActionResult.Failed("FTP upload failed.", "FTP credential is missing a 'Username'. Please update the credential.");
+
+				// ── SSRF protection ──────────────────────────────────────────────────
+				var (ftpAllowed, ftpReason) = await SsrfGuard.ValidateHostAsync(cred.Host);
+				if (!ftpAllowed)
+					return WorkflowActionResult.Failed("FTP upload blocked.", ftpReason);
+				// ── End SSRF protection ──────────────────────────────────────────────
 
 				var remotePath = $"{config.RemotePath?.TrimEnd('/')}/{config.Filename ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt"}";
 

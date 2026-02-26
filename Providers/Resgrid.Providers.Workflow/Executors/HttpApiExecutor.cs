@@ -28,6 +28,12 @@ namespace Resgrid.Providers.Workflow.Executors
 				if (!Uri.TryCreate(config.Url, UriKind.Absolute, out _))
 					return WorkflowActionResult.Failed("HTTP request failed.", $"The configured URL '{config.Url}' is not a valid absolute URI.");
 
+				// ── SSRF protection ──────────────────────────────────────────────────
+				var (ssrfAllowed, ssrfReason) = await SsrfGuard.ValidateUrlAsync(config.Url, requireHttps: true);
+				if (!ssrfAllowed)
+					return WorkflowActionResult.Failed("HTTP request blocked.", ssrfReason);
+				// ── End SSRF protection ──────────────────────────────────────────────
+
 				var cred = string.IsNullOrWhiteSpace(context.DecryptedCredentialJson)
 					? null
 					: JsonConvert.DeserializeObject<HttpCredential>(context.DecryptedCredentialJson);

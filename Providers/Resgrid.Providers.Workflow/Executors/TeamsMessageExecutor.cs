@@ -30,6 +30,12 @@ namespace Resgrid.Providers.Workflow.Executors
 				if (!Uri.TryCreate(cred.WebhookUrl, UriKind.Absolute, out _))
 					return WorkflowActionResult.Failed("Teams message failed.", $"The configured WebhookUrl '{cred.WebhookUrl}' is not a valid absolute URI.");
 
+				// ── Webhook domain validation ────────────────────────────────────────
+				var (webhookValid, webhookReason) = WebhookUrlValidator.Validate(cred.WebhookUrl, "teams");
+				if (!webhookValid)
+					return WorkflowActionResult.Failed("Teams message blocked.", webhookReason);
+				// ── End webhook domain validation ────────────────────────────────────
+
 				// Try to detect if rendered content is Adaptive Card JSON
 				object payload;
 				var trimmed = context.RenderedContent?.Trim();

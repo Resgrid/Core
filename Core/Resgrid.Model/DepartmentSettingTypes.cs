@@ -37,5 +37,6 @@
 		UnitDispatchAlsoDispatchToAssignedPersonnel = 33,
 		UnitDispatchAlsoDispatchToGroup = 34,
 		PersonnelOnUnitSetUnitStatus = 35,
+		Require2FAForAdmins = 36,
 	}
 }

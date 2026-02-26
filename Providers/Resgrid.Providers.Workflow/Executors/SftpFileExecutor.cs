@@ -31,6 +31,12 @@ namespace Resgrid.Providers.Workflow.Executors
 				if (string.IsNullOrWhiteSpace(cred.Username))
 					return WorkflowActionResult.Failed("SFTP upload failed.", "SFTP credential is missing a 'Username'. Please update the credential.");
 
+				// ── SSRF protection ──────────────────────────────────────────────────
+				var (sftpAllowed, sftpReason) = await SsrfGuard.ValidateHostAsync(cred.Host);
+				if (!sftpAllowed)
+					return WorkflowActionResult.Failed("SFTP upload blocked.", sftpReason);
+				// ── End SSRF protection ──────────────────────────────────────────────
+
 				var filename = config.Filename ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt";
 				var remotePath = $"{config.RemotePath?.TrimEnd('/')}/{filename}";
 

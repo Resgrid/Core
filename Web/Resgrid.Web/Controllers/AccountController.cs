@@ -114,6 +114,10 @@ namespace Resgrid.Web.Controllers
 					audit.Data = $"Web LogOn {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 					await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
 
+					if (result != null && result.RequiresTwoFactor)
+					{
+						return RedirectToAction(nameof(LoginWith2fa), new { returnUrl });
+					}
 					if (result != null && result.Succeeded)
 					{
 						if (await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
@@ -303,6 +307,118 @@ namespace Resgrid.Web.Controllers
 			}
 
 			// If we got this far, something failed, redisplay form
+			return View(model);
+		}
+
+		//
+		// GET: /Account/LoginWith2fa
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> LoginWith2fa(string returnUrl = null)
+		{
+			// Ensure the user has gone through the username & password screen first
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+			if (user == null)
+				return RedirectToAction(nameof(LogOn));
+
+			ViewData["ReturnUrl"] = returnUrl;
+			return View(new VerifyCodeViewModel { ReturnUrl = returnUrl });
+		}
+
+		//
+		// POST: /Account/LoginWith2fa
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginWith2fa(VerifyCodeViewModel model, CancellationToken cancellationToken, string returnUrl = null)
+		{
+			if (!ModelState.IsValid) return View(model);
+
+			var code = model.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+			var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, model.RememberMe, model.RememberBrowser);
+
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync()
+						?? await _userManager.FindByNameAsync(model.Provider ?? string.Empty);
+
+			var audit = new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.TwoFactorLoginVerified,
+				UserId = user?.Id,
+				Username = user?.UserName,
+				Successful = result.Succeeded,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"2FA login attempt. {Request.Headers["User-Agent"]}"
+			};
+			await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
+
+			if (result.Succeeded)
+			{
+				// Stamp the step-up session key immediately after login 2FA
+				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
+
+				if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+					return Redirect(returnUrl);
+
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+			}
+			if (result.IsLockedOut)
+				return View("Lockout");
+
+			ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
+			return View(model);
+		}
+
+		//
+		// GET: /Account/LoginWithRecoveryCode
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> LoginWithRecoveryCode(string returnUrl = null)
+		{
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+			if (user == null) return RedirectToAction(nameof(LogOn));
+
+			ViewData["ReturnUrl"] = returnUrl;
+			return View();
+		}
+
+		//
+		// POST: /Account/LoginWithRecoveryCode
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginWithRecoveryCode(VerifyCodeViewModel model, CancellationToken cancellationToken, string returnUrl = null)
+		{
+			if (!ModelState.IsValid) return View(model);
+
+			var recoveryCode = model.Code.Replace(" ", string.Empty);
+			var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
+
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+
+			var audit = new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.TwoFactorRecoveryCodeUsed,
+				UserId = user?.Id,
+				Username = user?.UserName,
+				Successful = result.Succeeded,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"Recovery code login attempt. {Request.Headers["User-Agent"]}"
+			};
+			await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
+
+			if (result.Succeeded)
+			{
+				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+			}
+			if (result.IsLockedOut)
+				return View("Lockout");
+
+			ModelState.AddModelError(string.Empty, "Invalid recovery code.");
 			return View(model);
 		}
 

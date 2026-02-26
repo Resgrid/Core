@@ -1,0 +1,121 @@
+﻿@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.VerifyCodeViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["LoginTwoFactorHeader"];
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @Html.Partial("_StylePartial")
+</head>
+<body class="gray-bg">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div style="text-align: center;">
+                    <img src="~/images/Resgrid_JustText.png" style="width: 200px;" />
+                </div>
+                <h3>@localizer["LoginTwoFactorHeader"]</h3>
+                <p>@localizer["LoginTwoFactorDescription"]</p>
+
+                <div class="ibox-content">
+                    <form asp-action="LoginWith2fa" asp-controller="Account" method="post" class="m-t">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Code">@localizer["AuthenticatorCodeInputLabel"]</label>
+                            <input asp-for="Code" class="form-control"
+                                   placeholder="@localizer["VerificationCodePlaceholder"]"
+                                   autocomplete="one-time-code"
+                                   inputmode="numeric"
+                                   maxlength="7"
+                                   autofocus />
+                            <span asp-validation-for="Code" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label><input asp-for="RememberBrowser" /> @localizer["RememberBrowserLabel"]</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary block full-width m-b">@localizer["VerifyCodeButton"]</button>
+
+                        <p class="m-t text-center">
+                            <a asp-action="LoginWithRecoveryCode" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                                @localizer["UseRecoveryCodeLink"]
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_ScriptPartial")
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>
+
+
+<div class="middle-box text-center loginscreen animated fadeInDown">
+    <div>
+        <h1 class="logo-name">RG</h1>
+    </div>
+    <h3>Two-Factor Authentication</h3>
+    <p>Your login is protected with an authenticator app. Enter the code from your authenticator app below.</p>
+
+    <form asp-action="LoginWith2fa" asp-controller="Account" method="post" class="m-t">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+        <div class="form-group">
+            <input asp-for="Code" class="form-control"
+                   placeholder="Authenticator code"
+                   autocomplete="one-time-code"
+                   inputmode="numeric"
+                   maxlength="7"
+                   autofocus />
+            <span asp-validation-for="Code" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input asp-for="RememberBrowser" /> Don't ask again on this device for 30 days
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input asp-for="RememberMe" /> Remember me
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary block full-width m-b">Verify</button>
+
+        <p class="m-t">
+            <a asp-action="LoginWithRecoveryCode" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                Use a recovery code instead
+            </a>
+        </p>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+

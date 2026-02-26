@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -25,11 +25,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IAuditService _auditService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ISubscriptionsService _subscriptionsService;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IAuditService auditService,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator, ISubscriptionsService subscriptionsService)
 		{
 			_workflowService         = workflowService;
 			_departmentsService      = departmentsService;
@@ -38,6 +39,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_personnelRolesService   = personnelRolesService;
 			_auditService            = auditService;
 			_eventAggregator         = eventAggregator;
+			_subscriptionsService    = subscriptionsService;
 		}
 
 		// ── Index ─────────────────────────────────────────────────────────────────
@@ -102,6 +104,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					"A workflow already exists for this trigger event type. Only one workflow per event type is allowed.");
 				var usedEventTypes = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
 				ViewBag.UsedEventTypes = usedEventTypes;
+				return View(model);
+			}
+
+			// Enforce plan-based workflow count cap
+			var plan      = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+			var isFreePlan = plan?.IsFree ?? false;
+			if (!await _workflowService.CanAddWorkflowAsync(DepartmentId, isFreePlan, ct))
+			{
+				ModelState.AddModelError(string.Empty, "Workflow limit reached for your plan. Please upgrade to add more workflows.");
+				var usedEventTypes2 = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
+				ViewBag.UsedEventTypes = usedEventTypes2;
 				return View(model);
 			}
 
@@ -240,6 +253,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound(new { error = "Workflow not found." });
 
 			bool isNew = string.IsNullOrWhiteSpace(request.WorkflowStepId);
+
+			// Enforce plan-based step count cap for new steps
+			if (isNew)
+			{
+				var plan       = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+				var isFreePlan = plan?.IsFree ?? false;
+				if (!await _workflowService.CanAddStepAsync(request.WorkflowId, isFreePlan, ct))
+					return BadRequest(new { error = "Step limit reached for your plan. Please upgrade to add more steps." });
+			}
 
 			var step = new WorkflowStep
 			{

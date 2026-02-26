@@ -1,4 +1,4 @@
-﻿﻿using Autofac;
+﻿using Autofac;
 //using Resgrid.Model.Facades.Stripe;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
@@ -72,6 +72,7 @@ namespace Resgrid.Services
 			builder.RegisterType<FormsService>().As<IFormsService>().InstancePerLifetimeScope();
 			builder.RegisterType<VoiceService>().As<IVoiceService>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemAuditsService>().As<ISystemAuditsService>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactVerificationService>().As<IContactVerificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<AutofillsService>().As<IAutofillsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatesService>().As<IUnitStatesService>().InstancePerLifetimeScope();
 

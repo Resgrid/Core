@@ -72,6 +72,16 @@
 		WorkflowStepDeleted,
 		WorkflowCredentialAdded,
 		WorkflowCredentialEdited,
-		WorkflowCredentialDeleted
+		WorkflowCredentialDeleted,
+		// Contact verification
+		ContactVerificationCodeSent,
+		ContactVerificationConfirmed,
+		ContactVerificationFailed,
+		// Two-factor authentication
+		TwoFactorEnabled,
+		TwoFactorDisabled,
+		TwoFactorLoginVerified,
+		TwoFactorRecoveryCodeUsed,
+		TwoFactorStepUpVerified
 	}
 }

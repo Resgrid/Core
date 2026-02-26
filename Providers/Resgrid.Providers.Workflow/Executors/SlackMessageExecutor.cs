@@ -30,6 +30,12 @@ namespace Resgrid.Providers.Workflow.Executors
 				if (!Uri.TryCreate(cred.WebhookUrl, UriKind.Absolute, out _))
 					return WorkflowActionResult.Failed("Slack message failed.", $"The configured WebhookUrl '{cred.WebhookUrl}' is not a valid absolute URI.");
 
+				// ── Webhook domain validation ────────────────────────────────────────
+				var (webhookValid, webhookReason) = WebhookUrlValidator.Validate(cred.WebhookUrl, "slack");
+				if (!webhookValid)
+					return WorkflowActionResult.Failed("Slack message blocked.", webhookReason);
+				// ── End webhook domain validation ────────────────────────────────────
+
 				var payload = new System.Collections.Generic.Dictionary<string, object>
 				{
 					["text"] = context.RenderedContent ?? string.Empty

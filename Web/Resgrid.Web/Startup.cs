@@ -597,6 +597,8 @@ namespace Resgrid.Web
 
 			app.UseSession();
 
+			app.UseMiddleware<Resgrid.Web.Middleware.Require2FAEnrollmentMiddleware>();
+
 			app.UseRequestLocalization();
 
 			// Sentry logging

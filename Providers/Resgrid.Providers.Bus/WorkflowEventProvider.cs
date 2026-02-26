@@ -15,6 +15,7 @@ namespace Resgrid.Providers.Bus
 	/// <summary>
 	/// Subscribes to all domain events and, for each active workflow whose trigger matches,
 	/// creates a WorkflowRun (Pending) and enqueues a WorkflowQueueItem to RabbitMQ.
+	/// Free-plan departments are subject to an aggressive, non-bypassable rate limit.
 	/// </summary>
 	public class WorkflowEventProvider : IWorkflowEventProvider
 	{
@@ -23,14 +24,19 @@ namespace Resgrid.Providers.Bus
 		private static IWorkflowRepository _workflowRepository;
 		private static IWorkflowRunRepository _runRepository;
 		private static IDepartmentsService _departmentsService;
+		private static ISubscriptionsService _subscriptionsService;
 
-		// Simple in-process rate limiter: track enqueue counts per department per minute
+		// Per-minute rate limit tracker: departmentId → (window start, count)
 		private static readonly System.Collections.Concurrent.ConcurrentDictionary<int, (DateTime Window, int Count)> _rateLimitTracker
 			= new System.Collections.Concurrent.ConcurrentDictionary<int, (DateTime, int)>();
 
+		// Daily run tracker for free-plan departments: departmentId → (UTC date, count)
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<int, (DateTime Date, int Count)> _dailyRunTracker
+			= new System.Collections.Concurrent.ConcurrentDictionary<int, (DateTime, int)>();
+
 		/// <summary>
-		/// Event types that are exempt from the per-department rate limit.
-		/// Add additional <see cref="WorkflowTriggerEventType"/> values here to bypass rate limiting for those triggers.
+		/// Event types exempt from the standard per-minute rate limit for PAID plans only.
+		/// Free-plan departments are NEVER exempt — all event types count against their limit.
 		/// </summary>
 		private static readonly System.Collections.Generic.HashSet<WorkflowTriggerEventType> _rateLimitExemptEventTypes
 			= new System.Collections.Generic.HashSet<WorkflowTriggerEventType>
@@ -45,13 +51,15 @@ namespace Resgrid.Providers.Bus
 			IOutboundQueueProvider outboundQueueProvider,
 			IWorkflowRepository workflowRepository,
 			IWorkflowRunRepository runRepository,
-			IDepartmentsService departmentsService)
+			IDepartmentsService departmentsService,
+			ISubscriptionsService subscriptionsService)
 		{
-			_eventAggregator = eventAggregator;
-			_outboundQueueProvider = outboundQueueProvider;
-			_workflowRepository = workflowRepository;
-			_runRepository = runRepository;
-			_departmentsService = departmentsService;
+			_eventAggregator        = eventAggregator;
+			_outboundQueueProvider  = outboundQueueProvider;
+			_workflowRepository     = workflowRepository;
+			_runRepository          = runRepository;
+			_departmentsService     = departmentsService;
+			_subscriptionsService   = subscriptionsService;
 
 			RegisterListeners();
 		}
@@ -92,9 +100,28 @@ namespace Resgrid.Providers.Bus
 		{
 			try
 			{
-				// Rate limit check — exempt event types (e.g. call events) always bypass the limit
-				if (!_rateLimitExemptEventTypes.Contains(eventType) && !IsWithinRateLimit(departmentId))
-					return;
+				// ── Plan-aware rate limiting ─────────────────────────────────────────
+				var plan     = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
+				var isFreePlan = plan?.IsFree ?? false;
+
+				if (isFreePlan)
+				{
+					// Free plan: aggressive per-minute limit with NO event-type exemptions
+					if (!IsWithinRateLimit(departmentId, WorkflowConfig.FreePlanRateLimitPerDepartmentPerMinute))
+						return;
+
+					// Free plan: daily run cap
+					if (!IsWithinDailyLimit(departmentId, WorkflowConfig.FreePlanDailyRunLimit))
+						return;
+				}
+				else
+				{
+					// Paid plan: standard limit; call/update/close events are exempt
+					if (!_rateLimitExemptEventTypes.Contains(eventType) &&
+					    !IsWithinRateLimit(departmentId, WorkflowConfig.RateLimitPerDepartmentPerMinute))
+						return;
+				}
+				// ── End rate limiting ────────────────────────────────────────────────
 
 				var workflows = await _workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(
 					departmentId, (int)eventType);
@@ -102,38 +129,42 @@ namespace Resgrid.Providers.Bus
 				if (workflows == null) return;
 
 				var payloadJson = JsonConvert.SerializeObject(eventObj);
-				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
-				var deptCode = department?.Code ?? string.Empty;
+				var department  = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+				var deptCode    = department?.Code ?? string.Empty;
 
 				foreach (var workflow in workflows)
 				{
 					var run = new WorkflowRun
 					{
-						WorkflowRunId = Guid.NewGuid().ToString(),
-						WorkflowId = workflow.WorkflowId,
-						DepartmentId = departmentId,
-						Status = (int)WorkflowRunStatus.Pending,
+						WorkflowRunId    = Guid.NewGuid().ToString(),
+						WorkflowId       = workflow.WorkflowId,
+						DepartmentId     = departmentId,
+						Status           = (int)WorkflowRunStatus.Pending,
 						TriggerEventType = (int)eventType,
-						InputPayload = payloadJson,
-						StartedOn = DateTime.UtcNow,
-						QueuedOn = DateTime.UtcNow,
-						AttemptNumber = 1
+						InputPayload     = payloadJson,
+						StartedOn        = DateTime.UtcNow,
+						QueuedOn         = DateTime.UtcNow,
+						AttemptNumber    = 1
 					};
 					run = await _runRepository.InsertAsync(run, CancellationToken.None);
 
 					var queueItem = new WorkflowQueueItem
 					{
-						WorkflowId = workflow.WorkflowId,
-						WorkflowRunId = run.WorkflowRunId,
-						DepartmentId = departmentId,
-						DepartmentCode = deptCode,
+						WorkflowId       = workflow.WorkflowId,
+						WorkflowRunId    = run.WorkflowRunId,
+						DepartmentId     = departmentId,
+						DepartmentCode   = deptCode,
 						TriggerEventType = (int)eventType,
 						EventPayloadJson = payloadJson,
-						AttemptNumber = 1,
-						EnqueuedOn = DateTime.UtcNow
+						AttemptNumber    = 1,
+						EnqueuedOn       = DateTime.UtcNow
 					};
 
 					await _outboundQueueProvider.EnqueueWorkflow(queueItem);
+
+					// Increment free-plan daily counter after each successful enqueue
+					if (isFreePlan)
+						IncrementDailyCount(departmentId);
 				}
 			}
 			catch (Exception ex)
@@ -142,9 +173,8 @@ namespace Resgrid.Providers.Bus
 			}
 		}
 
-		private static bool IsWithinRateLimit(int departmentId)
+		private static bool IsWithinRateLimit(int departmentId, int limit)
 		{
-			var limit = WorkflowConfig.RateLimitPerDepartmentPerMinute;
 			var now = DateTime.UtcNow;
 
 			_rateLimitTracker.AddOrUpdate(
@@ -159,6 +189,38 @@ namespace Resgrid.Providers.Bus
 
 			var (_, count) = _rateLimitTracker[departmentId];
 			return count <= limit;
+		}
+
+		private static bool IsWithinDailyLimit(int departmentId, int dailyLimit)
+		{
+			var today = DateTime.UtcNow.Date;
+
+			_dailyRunTracker.AddOrUpdate(
+				departmentId,
+				_ => (today, 0),  // 0 — will be incremented after successful enqueue
+				(_, existing) =>
+				{
+					// Reset counter when the UTC date rolls over
+					if (existing.Date != today)
+						return (today, 0);
+					return existing;
+				});
+
+			var (_, count) = _dailyRunTracker[departmentId];
+			return count < dailyLimit;
+		}
+
+		private static void IncrementDailyCount(int departmentId)
+		{
+			var today = DateTime.UtcNow.Date;
+			_dailyRunTracker.AddOrUpdate(
+				departmentId,
+				_ => (today, 1),
+				(_, existing) =>
+				{
+					if (existing.Date != today) return (today, 1);
+					return (existing.Date, existing.Count + 1);
+				});
 		}
 	}
 }

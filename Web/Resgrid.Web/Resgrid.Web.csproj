@@ -59,6 +59,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.1" />
     <PackageReference Include="PostHog.AspNetCore" Version="1.0.4" />
     <PackageReference Include="protobuf-net" Version="3.2.46" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="Sentry" Version="5.4.0" />
     <PackageReference Include="Sentry.AspNetCore" Version="5.4.0" />
     <PackageReference Include="Sentry.Profiling" Version="5.4.0" />

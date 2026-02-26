@@ -63,13 +63,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IOptions<AppOptions> _appOptionsAccessor;
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly ISubscriptionsService _subscriptionsService;
+		private readonly IContactVerificationService _contactVerificationService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, ICallsService callsService, IGeoLocationProvider geoLocationProvider, IDepartmentSettingsService departmentSettingsService,
 			IUnitsService unitsService, IAddressService addressService, IPersonnelRolesService personnelRolesService, IPushService pushService, ILimitsService limitsService,
 			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<IdentityUser> userManager,
-			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService)
+			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService, IContactVerificationService contactVerificationService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -91,6 +92,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_appOptionsAccessor = appOptionsAccessor;
 			_userManager = userManager;
 			_subscriptionsService = subscriptionsService;
+			_contactVerificationService = contactVerificationService;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
@@ -881,5 +883,63 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 		#endregion User Actions
+
+		#region Contact Verification (AJAX)
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SendContactVerificationCode([FromBody] SendContactVerificationCodeRequest request, CancellationToken cancellationToken)
+		{
+			if (request == null || !Enum.IsDefined(typeof(ContactVerificationType), request.Type))
+				return BadRequest();
+
+			bool sent;
+			string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+
+			switch (request.Type)
+			{
+				case ContactVerificationType.Email:
+					sent = await _contactVerificationService.SendEmailVerificationCodeAsync(UserId, DepartmentId, cancellationToken);
+					break;
+				case ContactVerificationType.MobileNumber:
+					sent = await _contactVerificationService.SendMobileVerificationCodeAsync(UserId, DepartmentId, departmentNumber, cancellationToken);
+					break;
+				case ContactVerificationType.HomeNumber:
+					sent = await _contactVerificationService.SendHomeVerificationCodeAsync(UserId, DepartmentId, departmentNumber, cancellationToken);
+					break;
+				default:
+					return BadRequest();
+			}
+
+			return Json(new { success = sent });
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ConfirmContactVerificationCode([FromBody] ConfirmContactVerificationCodeRequest request, CancellationToken cancellationToken)
+		{
+			if (request == null || string.IsNullOrWhiteSpace(request.Code))
+				return BadRequest();
+
+			string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+			bool confirmed = await _contactVerificationService.ConfirmVerificationCodeAsync(UserId, DepartmentId, request.Type, request.Code, ipAddress, cancellationToken);
+
+			return Json(new { success = confirmed });
+		}
+		#endregion Contact Verification (AJAX)
+	}
+
+	/// <summary>Request body for sending a contact verification code.</summary>
+	public sealed class SendContactVerificationCodeRequest
+	{
+		public ContactVerificationType Type { get; set; }
+	}
+
+	/// <summary>Request body for confirming a contact verification code.</summary>
+	public sealed class ConfirmContactVerificationCodeRequest
+	{
+		public ContactVerificationType Type { get; set; }
+		public string Code { get; set; }
 	}
 }

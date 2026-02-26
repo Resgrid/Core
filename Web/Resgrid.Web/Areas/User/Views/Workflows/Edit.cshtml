@@ -20,6 +20,8 @@
                     background: #eef2ff; border: 1px solid #c5cef5; border-radius: 3px; cursor: pointer; color: #3a4a9f;
                     white-space: nowrap; }
         .var-chip:hover { background: #c5cef5; }
+        .var-chip-array { background: #eefaf4; border-color: #7ec8a0; color: #1a6b3c; }
+        .var-chip-array:hover { background: #c8edda; }
         /* action-config panels */
         .action-config-panel { display: none; }
         .action-config-panel.active { display: block; }
@@ -560,7 +562,10 @@
                     <!-- ── RIGHT COLUMN — variable reference ── -->
                     <div class="col-md-4 step-modal-right">
                         <p class="config-section-label" style="margin-top:0;">@localizer["TemplateVariables"]</p>
-                        <p class="text-muted" style="font-size:11px;">Click a variable to insert it into the template editor.</p>
+                        <p class="text-muted" style="font-size:11px;">
+                            Click a <span class="var-chip" style="cursor:default; pointer-events:none;">scalar</span> variable to insert it.
+                            Click an <span class="var-chip var-chip-array" style="cursor:default; pointer-events:none;">array &#x21C4;</span> variable to insert a <code>for</code> loop snippet.
+                        </p>
 
                         <p class="text-muted" style="font-size:11px; margin-bottom:4px;"><strong>@localizer["CommonVariables"]</strong></p>
                         <div id="varChipsCommon">
@@ -583,6 +588,55 @@
                             {
                                 <span class="var-chip" data-var="{{ @v }}">{{ @v }}</span>
                             }
+                        </div>
+
+                        <p class="text-muted" style="font-size:11px; margin: 10px 0 4px;"><strong>Call Collections (arrays)</strong></p>
+                        <p class="text-muted" style="font-size:10px; margin-bottom:4px;">
+                            Click to insert a <code>for</code> loop. Available for CallAdded, CallUpdated, CallClosed triggers.
+                        </p>
+                        <div id="varChipsCallArrays">
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.dispatches"
+                                  data-alias="dispatch"
+                                  data-fields="dispatch.user_id, dispatch.dispatch_count, dispatch.dispatched_on"
+                                  title="Fields: user_id, dispatch_count, dispatched_on">
+                                call.dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.unit_dispatches"
+                                  data-alias="unit"
+                                  data-fields="unit.unit_id, unit.unit_name, unit.dispatch_count, unit.dispatched_on"
+                                  title="Fields: unit_id, unit_name, dispatch_count, dispatched_on">
+                                call.unit_dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.group_dispatches"
+                                  data-alias="group"
+                                  data-fields="group.group_id, group.group_name, group.dispatch_count, group.dispatched_on"
+                                  title="Fields: group_id, group_name, dispatch_count, dispatched_on">
+                                call.group_dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.role_dispatches"
+                                  data-alias="role"
+                                  data-fields="role.role_id, role.role_name, role.dispatch_count, role.dispatched_on"
+                                  title="Fields: role_id, role_name, dispatch_count, dispatched_on">
+                                call.role_dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.notes_list"
+                                  data-alias="note"
+                                  data-fields="note.note, note.source, note.timestamp, note.user_id"
+                                  title="Fields: note, source, timestamp, user_id">
+                                call.notes_list &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.contacts"
+                                  data-alias="contact"
+                                  data-fields="contact.contact_id, contact.contact_type"
+                                  title="Fields: contact_id, contact_type">
+                                call.contacts &#x21C4;
+                            </span>
                         </div>
 
                         <p class="text-muted" style="font-size:11px; margin: 10px 0 4px;"><strong>Unit / Personnel</strong></p>
@@ -780,10 +834,27 @@
         // ── Variable chips → insert into editor ───────────────────────────────
         document.querySelectorAll('.var-chip').forEach(function (chip) {
             chip.addEventListener('click', function () {
-                var snippet = this.dataset.var;
-                var doc = templateEditor.getDoc();
+                var doc    = templateEditor.getDoc();
                 var cursor = doc.getCursor();
-                doc.replaceRange(snippet, cursor);
+
+                if (this.classList.contains('var-chip-array')) {
+                    // Array chip — insert a for-loop snippet
+                    var arrayPath = this.dataset.array;
+                    var alias     = this.dataset.alias;
+                    var fields    = this.dataset.fields ? this.dataset.fields.split(',').map(function(f){ return f.trim(); }) : [];
+                    var indent    = '  ';
+                    var lines     = ['{{ for ' + alias + ' in ' + arrayPath + ' }}'];
+                    fields.forEach(function(f) {
+                        lines.push(indent + '{{ ' + f + ' }}');
+                    });
+                    lines.push('{{ end }}');
+                    doc.replaceRange(lines.join('\n'), cursor);
+                } else {
+                    // Scalar chip — insert simple expression
+                    var snippet = this.dataset.var;
+                    doc.replaceRange(snippet, cursor);
+                }
+
                 templateEditor.focus();
             });
         });

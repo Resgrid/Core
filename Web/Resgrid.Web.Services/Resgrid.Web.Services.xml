@@ -325,6 +325,26 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ContactVerificationController">
+            <summary>
+            Endpoints for sending and confirming contact-method verification codes.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactVerificationController.#ctor(Resgrid.Model.Services.IContactVerificationService,Resgrid.Model.Services.IDepartmentSettingsService)">
+            <summary>
+            Initializes a new instance of <see cref="T:Resgrid.Web.Services.Controllers.v4.ContactVerificationController"/>.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactVerificationController.SendVerificationCode(Resgrid.Web.Services.Models.v4.ContactVerification.SendVerificationCodeInput,System.Threading.CancellationToken)">
+            <summary>
+            Generates and sends a verification code to the specified contact method.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactVerificationController.ConfirmVerificationCode(Resgrid.Web.Services.Models.v4.ContactVerification.ConfirmVerificationCodeInput,System.Threading.CancellationToken)">
+            <summary>
+            Confirms a verification code previously sent to the specified contact method.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CustomStatusesController">
             <summary>
             Custom statuses
@@ -4847,6 +4867,21 @@
             <summary>
             Default constructor
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactVerification.SendVerificationCodeInput.Type">
+            <summary>Which contact method to send a verification code to.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactVerification.SendVerificationCodeInput.DepartmentNumber">
+            <summary>
+            Department number used as the outbound number for SMS sends.
+            Required when Type is MobileNumber or HomeNumber.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactVerification.ConfirmVerificationCodeInput.Type">
+            <summary>Which contact method is being confirmed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactVerification.ConfirmVerificationCodeInput.Code">
+            <summary>The numeric code the user received.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CustomStatuses.CustomStatusesResult">
             <summary>

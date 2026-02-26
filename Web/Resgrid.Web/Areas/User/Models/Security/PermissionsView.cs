@@ -87,5 +87,15 @@ namespace Resgrid.Web.Areas.User.Models.Security
 
 		public int ViewWorkflowRuns { get; set; }
 		public SelectList ViewWorkflowRunsPermissions { get; set; }
+
+		// Two-Factor Authentication enforcement
+		public int Require2FAForAdmins { get; set; }
+		public SelectList Require2FAForAdminsOptions { get; set; }
+		public bool IsManagingUser { get; set; }
+
+		// Guard: 2FA must be enabled on both the managing user and the current admin before enforcement can be turned on
+		public bool ManagingUserHas2FAEnabled { get; set; }
+		public bool CurrentUserHas2FAEnabled { get; set; }
+		public bool Can2FAEnforcementBeChanged => ManagingUserHas2FAEnabled && CurrentUserHas2FAEnabled;
 	}
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Twilio;
@@ -39,14 +41,31 @@ namespace Resgrid.Providers.Workflow.Executors
 				if (string.IsNullOrWhiteSpace(context.RenderedContent))
 					return WorkflowActionResult.Failed("Twilio SMS failed.", "The message body is empty. Please ensure the workflow step has a message template that produces content.");
 
+				// ── Recipient cap enforcement ────────────────────────────────────────
+				var recipients = config.To
+					.Split(',', StringSplitOptions.RemoveEmptyEntries)
+					.Select(n => n.Trim())
+					.Where(n => !string.IsNullOrWhiteSpace(n))
+					.ToList();
+
+				int maxRecipients = context.IsFreePlanDepartment ? 1 : WorkflowConfig.MaxSmsRecipients;
+				if (recipients.Count > maxRecipients)
+					recipients = recipients.Take(maxRecipients).ToList();
+				// ── End recipient cap ────────────────────────────────────────────────
+
 				TwilioClient.Init(cred.AccountSid, cred.AuthToken);
 
-				var message = await MessageResource.CreateAsync(
-					body: context.RenderedContent,
-					from: new Twilio.Types.PhoneNumber(cred.FromNumber),
-					to: new Twilio.Types.PhoneNumber(config.To));
+				string lastSid = null;
+				foreach (var recipient in recipients)
+				{
+					var message = await MessageResource.CreateAsync(
+						body: context.RenderedContent,
+						from: new Twilio.Types.PhoneNumber(cred.FromNumber),
+						to: new Twilio.Types.PhoneNumber(recipient));
+					lastSid = message.Sid;
+				}
 
-				return WorkflowActionResult.Succeeded($"SMS sent. SID: {message.Sid}");
+				return WorkflowActionResult.Succeeded($"SMS sent to {recipients.Count} recipient(s). Last SID: {lastSid}");
 			}
 			catch (Exception ex)
 			{
@@ -64,4 +83,3 @@ namespace Resgrid.Providers.Workflow.Executors
 		public string FromNumber { get; set; }
 	}
 }
-

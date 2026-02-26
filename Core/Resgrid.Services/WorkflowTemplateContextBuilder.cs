@@ -433,6 +433,104 @@ namespace Resgrid.Services
 			c["form_data"] = call.CallFormData ?? string.Empty;
 			c["is_deleted"] = call.IsDeleted;
 			c["deleted_reason"] = call.DeletedReason ?? string.Empty;
+
+			// ── Enumerable collections ───────────────────────────────────────────────
+
+			// Personnel dispatches: call.dispatches[n].{ user_id, dispatch_count, dispatched_on }
+			var dispatches = new Scriban.Runtime.ScriptArray();
+			if (call.Dispatches != null)
+			{
+				foreach (var d in call.Dispatches)
+				{
+					var item = new ScriptObject();
+					item["user_id"]        = d.UserId ?? string.Empty;
+					item["dispatch_count"] = d.DispatchCount;
+					item["dispatched_on"]  = d.DispatchedOn;
+					dispatches.Add(item);
+				}
+			}
+			c["dispatches"] = dispatches;
+
+			// Unit dispatches: call.unit_dispatches[n].{ unit_id, unit_name, dispatch_count, dispatched_on }
+			var unitDispatches = new Scriban.Runtime.ScriptArray();
+			if (call.UnitDispatches != null)
+			{
+				foreach (var d in call.UnitDispatches)
+				{
+					var item = new ScriptObject();
+					item["unit_id"]        = d.UnitId;
+					item["unit_name"]      = d.Unit?.Name ?? string.Empty;
+					item["dispatch_count"] = d.DispatchCount;
+					item["dispatched_on"]  = d.DispatchedOn;
+					unitDispatches.Add(item);
+				}
+			}
+			c["unit_dispatches"] = unitDispatches;
+
+			// Group dispatches: call.group_dispatches[n].{ group_id, group_name, dispatch_count, dispatched_on }
+			var groupDispatches = new Scriban.Runtime.ScriptArray();
+			if (call.GroupDispatches != null)
+			{
+				foreach (var d in call.GroupDispatches)
+				{
+					var item = new ScriptObject();
+					item["group_id"]       = d.DepartmentGroupId;
+					item["group_name"]     = d.Group?.Name ?? string.Empty;
+					item["dispatch_count"] = d.DispatchCount;
+					item["dispatched_on"]  = d.DispatchedOn;
+					groupDispatches.Add(item);
+				}
+			}
+			c["group_dispatches"] = groupDispatches;
+
+			// Role dispatches: call.role_dispatches[n].{ role_id, role_name, dispatch_count, dispatched_on }
+			var roleDispatches = new Scriban.Runtime.ScriptArray();
+			if (call.RoleDispatches != null)
+			{
+				foreach (var d in call.RoleDispatches)
+				{
+					var item = new ScriptObject();
+					item["role_id"]        = d.RoleId;
+					item["role_name"]      = d.Role?.Name ?? string.Empty;
+					item["dispatch_count"] = d.DispatchCount;
+					item["dispatched_on"]  = d.DispatchedOn;
+					roleDispatches.Add(item);
+				}
+			}
+			c["role_dispatches"] = roleDispatches;
+
+			// Call notes: call.notes_list[n].{ note, source, timestamp, user_id }
+			var notesList = new Scriban.Runtime.ScriptArray();
+			if (call.CallNotes != null)
+			{
+				foreach (var n in call.CallNotes)
+				{
+					var item = new ScriptObject();
+					item["note"]      = n.Note ?? string.Empty;
+					item["source"]    = n.Source.ToString();
+					item["timestamp"] = n.Timestamp;
+					item["user_id"]   = n.UserId ?? string.Empty;
+					notesList.Add(item);
+				}
+			}
+			c["notes_list"] = notesList;
+
+			// Contacts: call.contacts[n].{ contact_id, contact_type }
+			var contacts = new Scriban.Runtime.ScriptArray();
+			if (call.Contacts != null)
+			{
+				foreach (var ct in call.Contacts)
+				{
+					var item = new ScriptObject();
+					item["contact_id"]   = ct.ContactId ?? string.Empty;
+					item["contact_type"] = ct.GetContactTypeName();
+					contacts.Add(item);
+				}
+			}
+			c["contacts"] = contacts;
+
+			// ── End enumerable collections ───────────────────────────────────────────
+
 			obj["call"] = c;
 		}
 

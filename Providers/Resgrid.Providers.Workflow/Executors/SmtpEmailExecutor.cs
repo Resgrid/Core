@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Ganss.Xss;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 using Newtonsoft.Json;
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 
@@ -35,16 +38,54 @@ namespace Resgrid.Providers.Workflow.Executors
 				if (string.IsNullOrWhiteSpace(config.To))
 					return WorkflowActionResult.Failed("SMTP send failed.", "No recipient address configured in the workflow step action config. Please set the 'To' field.");
 
+				// ── Recipient cap enforcement ────────────────────────────────────────
+				var toAddresses = config.To
+					.Split(',', StringSplitOptions.RemoveEmptyEntries)
+					.Select(a => a.Trim())
+					.Where(a => !string.IsNullOrWhiteSpace(a))
+					.ToList();
+
+				var ccAddresses = (config.Cc ?? string.Empty)
+					.Split(',', StringSplitOptions.RemoveEmptyEntries)
+					.Select(a => a.Trim())
+					.Where(a => !string.IsNullOrWhiteSpace(a))
+					.ToList();
+
+				if (context.IsFreePlanDepartment)
+				{
+					// Free plan: exactly 1 To recipient, no Cc allowed
+					if (toAddresses.Count > 1)
+						toAddresses = toAddresses.Take(1).ToList();
+					ccAddresses.Clear();
+				}
+				else
+				{
+					// Paid plan: cap total recipients at configured maximum
+					var maxRecipients = WorkflowConfig.MaxEmailRecipients;
+					if (toAddresses.Count + ccAddresses.Count > maxRecipients)
+					{
+						// Trim to fit within cap, prioritising To over Cc
+						var remainingForCc = Math.Max(0, maxRecipients - toAddresses.Count);
+						toAddresses = toAddresses.Take(maxRecipients).ToList();
+						ccAddresses = ccAddresses.Take(remainingForCc).ToList();
+					}
+				}
+				// ── End recipient cap ────────────────────────────────────────────────
+
 				var message = new MimeMessage();
 				message.From.Add(MailboxAddress.Parse(cred.FromAddress));
-				foreach (var to in config.To.Split(',', StringSplitOptions.RemoveEmptyEntries))
-					message.To.Add(MailboxAddress.Parse(to.Trim()));
-				if (!string.IsNullOrWhiteSpace(config.Cc))
-					foreach (var cc in config.Cc.Split(',', StringSplitOptions.RemoveEmptyEntries))
-						message.Cc.Add(MailboxAddress.Parse(cc.Trim()));
+				foreach (var to in toAddresses)
+					message.To.Add(MailboxAddress.Parse(to));
+				foreach (var cc in ccAddresses)
+					message.Cc.Add(MailboxAddress.Parse(cc));
 				message.Subject = config.Subject ?? string.Empty;
 
-				var bodyBuilder = new BodyBuilder { HtmlBody = context.RenderedContent ?? string.Empty };
+				// ── HTML sanitization ────────────────────────────────────────────────
+				var sanitizer = new HtmlSanitizer();
+				var sanitizedHtml = sanitizer.Sanitize(context.RenderedContent ?? string.Empty);
+				// ── End HTML sanitization ────────────────────────────────────────────
+
+				var bodyBuilder = new BodyBuilder { HtmlBody = sanitizedHtml };
 				message.Body = bodyBuilder.ToMessageBody();
 
 				using var smtp = new SmtpClient();
@@ -55,7 +96,7 @@ namespace Resgrid.Providers.Workflow.Executors
 				await smtp.SendAsync(message, cancellationToken);
 				await smtp.DisconnectAsync(true, cancellationToken);
 
-				return WorkflowActionResult.Succeeded($"Email sent to {config.To}");
+				return WorkflowActionResult.Succeeded($"Email sent to {string.Join(", ", toAddresses)}");
 			}
 			catch (Exception ex)
 			{

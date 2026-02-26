@@ -22,9 +22,11 @@ namespace Resgrid.Services
 		private readonly IWorkflowCredentialRepository _credentialRepository;
 		private readonly IWorkflowRunRepository _runRepository;
 		private readonly IWorkflowRunLogRepository _runLogRepository;
+		private readonly IWorkflowDailyUsageRepository _dailyUsageRepository;
 		private readonly IEncryptionService _encryptionService;
 		private readonly IWorkflowActionExecutorFactory _executorFactory;
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
+		private readonly ISubscriptionsService _subscriptionsService;
 
 		public WorkflowService(
 			IWorkflowRepository workflowRepository,
@@ -32,18 +34,22 @@ namespace Resgrid.Services
 			IWorkflowCredentialRepository credentialRepository,
 			IWorkflowRunRepository runRepository,
 			IWorkflowRunLogRepository runLogRepository,
+			IWorkflowDailyUsageRepository dailyUsageRepository,
 			IEncryptionService encryptionService,
 			IWorkflowActionExecutorFactory executorFactory,
-			IWorkflowTemplateContextBuilder contextBuilder)
+			IWorkflowTemplateContextBuilder contextBuilder,
+			ISubscriptionsService subscriptionsService)
 		{
 			_workflowRepository = workflowRepository;
 			_stepRepository = stepRepository;
 			_credentialRepository = credentialRepository;
 			_runRepository = runRepository;
 			_runLogRepository = runLogRepository;
+			_dailyUsageRepository = dailyUsageRepository;
 			_encryptionService = encryptionService;
 			_executorFactory = executorFactory;
 			_contextBuilder = contextBuilder;
+			_subscriptionsService = subscriptionsService;
 		}
 
 		// ── Workflow CRUD ─────────────────────────────────────────────────────────────
@@ -59,6 +65,10 @@ namespace Resgrid.Services
 
 		public async Task<Workflow> SaveWorkflowAsync(Workflow workflow, CancellationToken cancellationToken = default)
 		{
+			// Enforce MaxRetryCount ceiling regardless of plan
+			if (workflow.MaxRetryCount > WorkflowConfig.MaxAllowedRetryCount)
+				workflow.MaxRetryCount = WorkflowConfig.MaxAllowedRetryCount;
+
 			if (string.IsNullOrEmpty(workflow.WorkflowId))
 			{
 				workflow.WorkflowId = Guid.NewGuid().ToString();
@@ -99,10 +109,28 @@ namespace Resgrid.Services
 			return workflows?.Select(w => w.TriggerEventType).ToHashSet() ?? (IReadOnlyCollection<int>)Array.Empty<int>();
 		}
 
+		public async Task<bool> CanAddWorkflowAsync(int departmentId, bool isFreePlan, CancellationToken cancellationToken = default)
+		{
+			var max = isFreePlan ? WorkflowConfig.FreeMaxWorkflowsPerDepartment : WorkflowConfig.MaxWorkflowsPerDepartment;
+			var existing = await _workflowRepository.GetAllByDepartmentIdAsync(departmentId);
+			return (existing?.Count() ?? 0) < max;
+		}
+
+		public async Task<bool> CanAddStepAsync(string workflowId, bool isFreePlan, CancellationToken cancellationToken = default)
+		{
+			var max = isFreePlan ? WorkflowConfig.FreeMaxStepsPerWorkflow : WorkflowConfig.MaxStepsPerWorkflow;
+			var existing = await _stepRepository.GetAllByWorkflowIdAsync(workflowId);
+			return (existing?.Count() ?? 0) < max;
+		}
+
 		// ── Step CRUD ─────────────────────────────────────────────────────────────────
 
 		public async Task<WorkflowStep> SaveWorkflowStepAsync(WorkflowStep step, CancellationToken cancellationToken = default)
 		{
+			// Enforce OutputTemplate size cap
+			if (!string.IsNullOrEmpty(step.OutputTemplate) && step.OutputTemplate.Length > WorkflowConfig.MaxOutputTemplateLength)
+				step.OutputTemplate = step.OutputTemplate.Substring(0, WorkflowConfig.MaxOutputTemplateLength);
+
 			if (string.IsNullOrEmpty(step.WorkflowStepId))
 			{
 				step.WorkflowStepId = Guid.NewGuid().ToString();
@@ -141,7 +169,6 @@ namespace Resgrid.Services
 
 		public async Task<WorkflowCredential> SaveCredentialAsync(WorkflowCredential credential, string departmentCode, CancellationToken cancellationToken = default)
 		{
-			// EncryptedData on the incoming object is the raw plaintext JSON — encrypt it before storage
 			credential.EncryptedData = _encryptionService.EncryptForDepartment(
 				credential.EncryptedData, credential.DepartmentId, departmentCode);
 
@@ -154,7 +181,6 @@ namespace Resgrid.Services
 			else
 			{
 				credential.UpdatedOn = DateTime.UtcNow;
-				// UpdatedByUserId should already be set by caller before invoking this method
 				await _credentialRepository.UpdateAsync(credential, cancellationToken);
 				return credential;
 			}
@@ -182,6 +208,10 @@ namespace Resgrid.Services
 			var workflow = await _workflowRepository.GetByIdAsync(workflowId);
 			if (workflow == null) return null;
 
+			// Resolve whether this is a free-plan department once per execution
+			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
+			var isFreePlan = plan?.IsFree ?? false;
+
 			// Create or update the WorkflowRun record
 			WorkflowRun run;
 			if (!string.IsNullOrEmpty(existingRunId))
@@ -189,26 +219,24 @@ namespace Resgrid.Services
 				run = await _runRepository.GetByIdAsync(existingRunId);
 				if (run == null)
 				{
-					// Run record was not found (e.g. DB inconsistency, retry after cleanup).
-					// Recreate it so execution can continue and the result is persisted.
 					Logging.LogError($"WorkflowService.ExecuteWorkflowAsync: WorkflowRun '{existingRunId}' not found for workflowId '{workflowId}'. Recreating run record.");
 					run = new WorkflowRun
 					{
-						WorkflowRunId = existingRunId,
-						WorkflowId = workflowId,
-						DepartmentId = departmentId,
-						Status = (int)WorkflowRunStatus.Running,
+						WorkflowRunId  = existingRunId,
+						WorkflowId     = workflowId,
+						DepartmentId   = departmentId,
+						Status         = (int)WorkflowRunStatus.Running,
 						TriggerEventType = workflow.TriggerEventType,
-						InputPayload = eventPayloadJson,
-						StartedOn = DateTime.UtcNow,
-						QueuedOn = DateTime.UtcNow,
-						AttemptNumber = attemptNumber
+						InputPayload   = eventPayloadJson,
+						StartedOn      = DateTime.UtcNow,
+						QueuedOn       = DateTime.UtcNow,
+						AttemptNumber  = attemptNumber
 					};
 					run = await _runRepository.InsertAsync(run, cancellationToken);
 				}
 				else
 				{
-					run.Status = (int)WorkflowRunStatus.Running;
+					run.Status        = (int)WorkflowRunStatus.Running;
 					run.AttemptNumber = attemptNumber;
 					await _runRepository.UpdateAsync(run, cancellationToken);
 				}
@@ -217,15 +245,15 @@ namespace Resgrid.Services
 			{
 				run = new WorkflowRun
 				{
-					WorkflowRunId = Guid.NewGuid().ToString(),
-					WorkflowId = workflowId,
-					DepartmentId = departmentId,
-					Status = (int)WorkflowRunStatus.Running,
+					WorkflowRunId  = Guid.NewGuid().ToString(),
+					WorkflowId     = workflowId,
+					DepartmentId   = departmentId,
+					Status         = (int)WorkflowRunStatus.Running,
 					TriggerEventType = workflow.TriggerEventType,
-					InputPayload = eventPayloadJson,
-					StartedOn = DateTime.UtcNow,
-					QueuedOn = DateTime.UtcNow,
-					AttemptNumber = attemptNumber
+					InputPayload   = eventPayloadJson,
+					StartedOn      = DateTime.UtcNow,
+					QueuedOn       = DateTime.UtcNow,
+					AttemptNumber  = attemptNumber
 				};
 				run = await _runRepository.InsertAsync(run, cancellationToken);
 			}
@@ -240,9 +268,9 @@ namespace Resgrid.Services
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				run.Status = (int)WorkflowRunStatus.Failed;
+				run.Status       = (int)WorkflowRunStatus.Failed;
 				run.ErrorMessage = $"Failed to build template context: {ex.Message}";
-				run.CompletedOn = DateTime.UtcNow;
+				run.CompletedOn  = DateTime.UtcNow;
 				await _runRepository.UpdateAsync(run, cancellationToken);
 				return run;
 			}
@@ -250,59 +278,117 @@ namespace Resgrid.Services
 			if (scriptObject == null)
 			{
 				Logging.LogError($"WorkflowService.ExecuteWorkflowAsync: BuildContextAsync returned null for workflowId '{workflowId}', departmentId {departmentId}, eventType {triggerEventType}.");
-				run.Status = (int)WorkflowRunStatus.Failed;
+				run.Status       = (int)WorkflowRunStatus.Failed;
 				run.ErrorMessage = "Template context builder returned a null context object.";
-				run.CompletedOn = DateTime.UtcNow;
+				run.CompletedOn  = DateTime.UtcNow;
 				await _runRepository.UpdateAsync(run, cancellationToken);
 				return run;
 			}
 
 			var steps = await GetStepsByWorkflowIdAsync(workflowId, cancellationToken);
 			var anyFailure = false;
+			var utcToday = DateTime.UtcNow.Date;
 
 			foreach (var step in steps.Where(s => s.IsEnabled))
 			{
 				var logEntry = new WorkflowRunLog
 				{
 					WorkflowRunLogId = Guid.NewGuid().ToString(),
-					WorkflowRunId = run.WorkflowRunId,
-					WorkflowStepId = step.WorkflowStepId,
-					Status = (int)WorkflowRunStatus.Running,
-					StartedOn = DateTime.UtcNow
+					WorkflowRunId    = run.WorkflowRunId,
+					WorkflowStepId   = step.WorkflowStepId,
+					Status           = (int)WorkflowRunStatus.Running,
+					StartedOn        = DateTime.UtcNow
 				};
 
 				var sw = Stopwatch.StartNew();
 				try
 				{
-					// Render the Scriban template
+					// ── Daily send limit check (Email and SMS only) ──────────────────
+					var actionType = (WorkflowActionType)step.ActionType;
+					if (actionType == WorkflowActionType.SendEmail || actionType == WorkflowActionType.SendSms)
+					{
+						int dailyLimit = actionType == WorkflowActionType.SendEmail
+							? (isFreePlan ? WorkflowConfig.FreeMaxDailyEmailSendsPerDepartment : WorkflowConfig.MaxDailyEmailSendsPerDepartment)
+							: (isFreePlan ? WorkflowConfig.FreeMaxDailySmsPerDepartment : WorkflowConfig.MaxDailySmsPerDepartment);
+
+						var dailyCount = await _dailyUsageRepository.GetDailySendCountAsync(departmentId, step.ActionType, utcToday);
+						if (dailyCount >= dailyLimit)
+						{
+							sw.Stop();
+							logEntry.Status       = (int)WorkflowRunStatus.Failed;
+							logEntry.ErrorMessage = $"Daily {actionType} send limit of {dailyLimit} reached for this department. Step skipped.";
+							logEntry.DurationMs   = sw.ElapsedMilliseconds;
+							logEntry.CompletedOn  = DateTime.UtcNow;
+							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							anyFailure = true;
+							continue;
+						}
+					}
+					// ── End daily send limit check ───────────────────────────────────
+
+					// ── Build sandboxed Scriban context ──────────────────────────────
+					var scribanContext = new Scriban.TemplateContext
+					{
+						LoopLimit       = WorkflowConfig.ScribanLoopLimit,
+						StrictVariables = false
+					};
+					scribanContext.PushGlobal((Scriban.Runtime.ScriptObject)scriptObject);
+					// ── End sandboxed Scriban context ────────────────────────────────
+
+					// ── Render OutputTemplate ────────────────────────────────────────
 					string renderedContent;
 					try
 					{
 						var template = Template.Parse(step.OutputTemplate ?? string.Empty);
 						if (template.HasErrors)
-						{
-							throw new InvalidOperationException(
-								$"Template parse errors: {string.Join("; ", template.Messages)}");
-						}
-						var scribanContext = new Scriban.TemplateContext();
-						scribanContext.PushGlobal((Scriban.Runtime.ScriptObject)scriptObject);
+							throw new InvalidOperationException($"Template parse errors: {string.Join("; ", template.Messages)}");
+
 						renderedContent = await template.RenderAsync(scribanContext);
 					}
 					catch (Exception tex)
 					{
-						logEntry.Status = (int)WorkflowRunStatus.Failed;
+						logEntry.Status       = (int)WorkflowRunStatus.Failed;
 						logEntry.ErrorMessage = $"Template render error: {tex.Message}";
 						sw.Stop();
-						logEntry.DurationMs = sw.ElapsedMilliseconds;
+						logEntry.DurationMs  = sw.ElapsedMilliseconds;
 						logEntry.CompletedOn = DateTime.UtcNow;
 						await _runLogRepository.InsertAsync(logEntry, cancellationToken);
 						anyFailure = true;
 						continue;
 					}
 
+					// Enforce rendered content size cap
+					if (renderedContent?.Length > WorkflowConfig.MaxRenderedContentLength)
+						renderedContent = renderedContent.Substring(0, WorkflowConfig.MaxRenderedContentLength);
+
 					logEntry.RenderedOutput = renderedContent?.Length > 4000
 						? renderedContent.Substring(0, 4000)
 						: renderedContent;
+					// ── End render OutputTemplate ────────────────────────────────────
+
+					// ── Render ActionConfig through Scriban (step 9) ─────────────────
+					string renderedActionConfig = step.ActionConfig;
+					if (!string.IsNullOrWhiteSpace(step.ActionConfig))
+					{
+						try
+						{
+							var configTemplate = Template.Parse(step.ActionConfig);
+							if (!configTemplate.HasErrors)
+							{
+								// Use a fresh context push so the render doesn't mutate state
+								var configRendered = await configTemplate.RenderAsync(scribanContext);
+								if (configRendered?.Length > WorkflowConfig.MaxRenderedContentLength)
+									configRendered = configRendered.Substring(0, WorkflowConfig.MaxRenderedContentLength);
+								renderedActionConfig = configRendered;
+							}
+						}
+						catch
+						{
+							// If ActionConfig render fails, fall back to raw config — don't fail the whole step
+							renderedActionConfig = step.ActionConfig;
+						}
+					}
+					// ── End ActionConfig render ──────────────────────────────────────
 
 					// Decrypt credential if one is attached
 					string decryptedCredJson = null;
@@ -316,33 +402,38 @@ namespace Resgrid.Services
 
 					var context = new WorkflowActionContext
 					{
-						RenderedContent = renderedContent,
+						RenderedContent        = renderedContent,
 						DecryptedCredentialJson = decryptedCredJson,
-						ActionConfigJson = step.ActionConfig,
-						WorkflowId = workflowId,
-						WorkflowStepId = step.WorkflowStepId,
-						WorkflowRunId = run.WorkflowRunId,
-						DepartmentId = departmentId,
-						ActionType = step.ActionType
+						ActionConfigJson       = renderedActionConfig,
+						WorkflowId             = workflowId,
+						WorkflowStepId         = step.WorkflowStepId,
+						WorkflowRunId          = run.WorkflowRunId,
+						DepartmentId           = departmentId,
+						ActionType             = step.ActionType,
+						IsFreePlanDepartment   = isFreePlan
 					};
 
 					var executor = _executorFactory.GetExecutor((WorkflowActionType)step.ActionType);
-					var result = await executor.ExecuteAsync(context, cancellationToken);
+					var result   = await executor.ExecuteAsync(context, cancellationToken);
 
 					sw.Stop();
-					logEntry.DurationMs = sw.ElapsedMilliseconds;
+					logEntry.DurationMs  = sw.ElapsedMilliseconds;
 					logEntry.CompletedOn = DateTime.UtcNow;
 
 					if (result.Success)
 					{
-						logEntry.Status = (int)WorkflowRunStatus.Completed;
+						logEntry.Status       = (int)WorkflowRunStatus.Completed;
 						logEntry.ActionResult = result.ResultMessage?.Length > 4000
 							? result.ResultMessage.Substring(0, 4000)
 							: result.ResultMessage;
+
+						// Record daily usage for outbound messaging actions
+						if (actionType == WorkflowActionType.SendEmail || actionType == WorkflowActionType.SendSms)
+							await _dailyUsageRepository.IncrementAsync(departmentId, step.ActionType, utcToday, cancellationToken);
 					}
 					else
 					{
-						logEntry.Status = (int)WorkflowRunStatus.Failed;
+						logEntry.Status       = (int)WorkflowRunStatus.Failed;
 						logEntry.ActionResult = result.ResultMessage;
 						logEntry.ErrorMessage = result.ErrorDetail?.Length > 4000
 							? result.ErrorDetail.Substring(0, 4000)
@@ -353,10 +444,10 @@ namespace Resgrid.Services
 				catch (Exception ex)
 				{
 					sw.Stop();
-					logEntry.Status = (int)WorkflowRunStatus.Failed;
+					logEntry.Status       = (int)WorkflowRunStatus.Failed;
 					logEntry.ErrorMessage = ex.Message.Length > 4000 ? ex.Message.Substring(0, 4000) : ex.Message;
-					logEntry.DurationMs = sw.ElapsedMilliseconds;
-					logEntry.CompletedOn = DateTime.UtcNow;
+					logEntry.DurationMs   = sw.ElapsedMilliseconds;
+					logEntry.CompletedOn  = DateTime.UtcNow;
 					anyFailure = true;
 					Logging.LogException(ex);
 				}
@@ -372,13 +463,10 @@ namespace Resgrid.Services
 					: WorkflowConfig.DefaultMaxRetryCount;
 
 				if (attemptNumber < maxRetries)
-				{
 					run.Status = (int)WorkflowRunStatus.Retrying;
-					// Re-enqueue is handled by the caller (WorkflowQueueLogic) based on this status
-				}
 				else
 				{
-					run.Status = (int)WorkflowRunStatus.Failed;
+					run.Status       = (int)WorkflowRunStatus.Failed;
 					run.ErrorMessage = "Maximum retry attempts exceeded.";
 				}
 			}
@@ -401,7 +489,7 @@ namespace Resgrid.Services
 			if (status == WorkflowRunStatus.Completed || status == WorkflowRunStatus.Failed)
 				return false;
 
-			run.Status = (int)WorkflowRunStatus.Cancelled;
+			run.Status      = (int)WorkflowRunStatus.Cancelled;
 			run.CompletedOn = DateTime.UtcNow;
 			await _runRepository.UpdateAsync(run, cancellationToken);
 			return true;
@@ -444,9 +532,9 @@ namespace Resgrid.Services
 			var allRuns = (await _runRepository.GetRunsByWorkflowIdAsync(workflowId, 1, 10000))?.ToList()
 			              ?? new List<WorkflowRun>();
 
-			var now = DateTime.UtcNow;
+			var now     = DateTime.UtcNow;
 			var runs24h = allRuns.Where(r => r.StartedOn >= now.AddHours(-24)).ToList();
-			var runs7d = allRuns.Where(r => r.StartedOn >= now.AddDays(-7)).ToList();
+			var runs7d  = allRuns.Where(r => r.StartedOn >= now.AddDays(-7)).ToList();
 			var runs30d = allRuns.Where(r => r.StartedOn >= now.AddDays(-30)).ToList();
 
 			var completedRuns30d = runs30d.Where(r => r.CompletedOn.HasValue && r.Status == (int)WorkflowRunStatus.Completed).ToList();
@@ -462,22 +550,22 @@ namespace Resgrid.Services
 
 			return new WorkflowHealthSummary
 			{
-				WorkflowId = workflowId,
-				WorkflowName = workflow.Name,
-				TotalRuns24h = runs24h.Count,
-				SuccessfulRuns24h = runs24h.Count(r => r.Status == (int)WorkflowRunStatus.Completed),
-				FailedRuns24h = runs24h.Count(r => r.Status == (int)WorkflowRunStatus.Failed),
-				RetryingRuns24h = runs24h.Count(r => r.Status == (int)WorkflowRunStatus.Retrying),
-				TotalRuns7d = runs7d.Count,
-				SuccessfulRuns7d = runs7d.Count(r => r.Status == (int)WorkflowRunStatus.Completed),
-				FailedRuns7d = runs7d.Count(r => r.Status == (int)WorkflowRunStatus.Failed),
-				TotalRuns30d = runs30d.Count,
-				SuccessfulRuns30d = runs30d.Count(r => r.Status == (int)WorkflowRunStatus.Completed),
-				FailedRuns30d = runs30d.Count(r => r.Status == (int)WorkflowRunStatus.Failed),
+				WorkflowId         = workflowId,
+				WorkflowName       = workflow.Name,
+				TotalRuns24h       = runs24h.Count,
+				SuccessfulRuns24h  = runs24h.Count(r => r.Status == (int)WorkflowRunStatus.Completed),
+				FailedRuns24h      = runs24h.Count(r => r.Status == (int)WorkflowRunStatus.Failed),
+				RetryingRuns24h    = runs24h.Count(r => r.Status == (int)WorkflowRunStatus.Retrying),
+				TotalRuns7d        = runs7d.Count,
+				SuccessfulRuns7d   = runs7d.Count(r => r.Status == (int)WorkflowRunStatus.Completed),
+				FailedRuns7d       = runs7d.Count(r => r.Status == (int)WorkflowRunStatus.Failed),
+				TotalRuns30d       = runs30d.Count,
+				SuccessfulRuns30d  = runs30d.Count(r => r.Status == (int)WorkflowRunStatus.Completed),
+				FailedRuns30d      = runs30d.Count(r => r.Status == (int)WorkflowRunStatus.Failed),
 				AverageDurationMs30d = avgDurationMs,
-				LastRunOn = lastRun?.StartedOn,
-				LastRunStatus = lastRun != null ? (WorkflowRunStatus?)lastRun.Status : null,
-				LastErrorMessage = lastRun?.ErrorMessage
+				LastRunOn          = lastRun?.StartedOn,
+				LastRunStatus      = lastRun != null ? (WorkflowRunStatus?)lastRun.Status : null,
+				LastErrorMessage   = lastRun?.ErrorMessage
 			};
 		}
 
@@ -488,7 +576,7 @@ namespace Resgrid.Services
 
 			foreach (var run in pending.Where(r => r.Status == (int)WorkflowRunStatus.Pending))
 			{
-				run.Status = (int)WorkflowRunStatus.Cancelled;
+				run.Status      = (int)WorkflowRunStatus.Cancelled;
 				run.CompletedOn = DateTime.UtcNow;
 				await _runRepository.UpdateAsync(run, cancellationToken);
 			}
@@ -496,12 +584,6 @@ namespace Resgrid.Services
 		}
 	}
 }
-
-
-
-
-
-
 
 
 

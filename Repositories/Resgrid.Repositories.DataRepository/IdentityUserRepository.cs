@@ -27,7 +27,7 @@ namespace Resgrid.Repositories.DataRepository
 		private readonly IIdentityRoleRepository _roleRepository;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IQueryFactory _queryFactory;
-		
+
 		public IdentityUserRepository(IConnectionProvider connProv,
 							  SqlConfiguration sqlConf,
 							  IIdentityRoleRepository roleRepo,
@@ -1046,6 +1046,125 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				Logging.LogException(ex);
 
+				throw;
+			}
+		}
+
+		public async Task<string> GetTokenAsync(string userId, string loginProvider, string name)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<string>>(async x =>
+				{
+					var result = await x.QueryFirstOrDefaultAsync<string>(
+						"SELECT Value FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
+						new { UserId = userId, LoginProvider = loginProvider, Name = name },
+						_unitOfWork.Transaction);
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return null;
+			}
+		}
+
+		public async Task SetTokenAsync(string userId, string loginProvider, string name, string value, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var upsertFunction = new Func<DbConnection, Task>(async x =>
+				{
+					// Use MERGE/ON CONFLICT upsert pattern — SQL Server uses MERGE, PostgreSQL uses INSERT ... ON CONFLICT
+					var existing = await x.QueryFirstOrDefaultAsync<string>(
+						"SELECT Value FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
+						new { UserId = userId, LoginProvider = loginProvider, Name = name },
+						_unitOfWork.Transaction);
+
+					if (existing == null)
+					{
+						await x.ExecuteAsync(
+							"INSERT INTO AspNetUserTokens (UserId, LoginProvider, Name, Value) VALUES (@UserId, @LoginProvider, @Name, @Value)",
+							new { UserId = userId, LoginProvider = loginProvider, Name = name, Value = value },
+							_unitOfWork.Transaction);
+					}
+					else
+					{
+						await x.ExecuteAsync(
+							"UPDATE AspNetUserTokens SET Value = @Value WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
+							new { UserId = userId, LoginProvider = loginProvider, Name = name, Value = value },
+							_unitOfWork.Transaction);
+					}
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+						await upsertFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					await upsertFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task RemoveTokenAsync(string userId, string loginProvider, string name, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var deleteFunction = new Func<DbConnection, Task>(async x =>
+				{
+					await x.ExecuteAsync(
+						"DELETE FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
+						new { UserId = userId, LoginProvider = loginProvider, Name = name },
+						_unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+						await deleteFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					await deleteFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 				throw;
 			}
 		}

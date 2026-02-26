@@ -93,10 +93,65 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["EmailAddressLabel"]</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Email" required="">
+                                <div class="input-group">
+                                    <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Email" required="">
+                                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                                    {
+                                        @if (Model.EmailVerified == true)
+                                        {
+                                            <span class="input-group-addon" title="@localizer["VerificationSuccessful"]">
+                                                <i class="fa fa-check-circle text-success"></i>
+                                            </span>
+                                        }
+                                        else if (Model.EmailVerified == false)
+                                        {
+                                            <span class="input-group-addon text-danger" title="@localizer["EmailNotVerifiedWarning"]">
+                                                <i class="fa fa-exclamation-circle"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="input-group-addon text-muted" title="@localizer["GrandfatheredEmailWarning"]">
+                                                <i class="fa fa-info-circle"></i>
+                                            </span>
+                                        }
+                                    }
+                                </div>
                                 <span class="help-block m-b-none">@localizer["EmailAddressHelper"]</span>
+                                @if (!string.IsNullOrWhiteSpace(Model.Email) && Model.CanSelfVerify)
+                                {
+                                    @if (Model.EmailVerified == false)
+                                    {
+                                        <div class="alert alert-warning m-t-xs" id="emailVerifyAlert">
+                                            <strong><i class="fa fa-exclamation-triangle"></i> @localizer["EmailNotVerifiedWarning"]</strong>
+                                            <div class="m-t-xs" id="emailVerifyWidget">
+                                                <button type="button" class="btn btn-xs btn-warning rg-send-code" data-contact-type="0" id="btnSendEmailCode">@localizer["VerifyButtonLabel"]</button>
+                                                <span id="emailCodeEntry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm" id="emailVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="0" id="btnConfirmEmailCode">@commonLocalizer["Save"]</button>
+                                                </span>
+                                                <span id="emailVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.EmailVerified == null)
+                                    {
+                                        <div class="alert alert-info m-t-xs" id="emailVerifyAlert">
+                                            <i class="fa fa-info-circle"></i> @localizer["GrandfatheredEmailWarning"]
+                                            <div class="m-t-xs" id="emailVerifyWidget">
+                                                <button type="button" class="btn btn-xs btn-info rg-send-code" data-contact-type="0" id="btnSendEmailCode">@localizer["VerifyButtonLabel"]</button>
+                                                <span id="emailCodeEntry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm" id="emailVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="0" id="btnConfirmEmailCode">@commonLocalizer["Save"]</button>
+                                                </span>
+                                                <span id="emailVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                            </div>
+                                        </div>
+                                    }
+                                }
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@commonLocalizer["Language"]</label>
                             <div class="col-sm-10">
@@ -113,11 +168,123 @@
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["HomeNumberLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["HomeNumberPlaceholder"]" asp-for="Profile.HomeNumber"></div>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="@localizer["HomeNumberPlaceholder"]" asp-for="Profile.HomeNumber">
+                                    @if (!string.IsNullOrWhiteSpace(Model.Profile?.HomeNumber))
+                                    {
+                                        @if (Model.HomeNumberVerified == true)
+                                        {
+                                            <span class="input-group-addon" title="@localizer["VerificationSuccessful"]">
+                                                <i class="fa fa-check-circle text-success"></i>
+                                            </span>
+                                        }
+                                        else if (Model.HomeNumberVerified == false)
+                                        {
+                                            <span class="input-group-addon text-danger" title="@localizer["HomeNotVerifiedWarning"]">
+                                                <i class="fa fa-exclamation-circle"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="input-group-addon text-muted" title="@localizer["GrandfatheredHomeWarning"]">
+                                                <i class="fa fa-info-circle"></i>
+                                            </span>
+                                        }
+                                    }
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(Model.Profile?.HomeNumber) && Model.CanSelfVerify)
+                                {
+                                    @if (Model.HomeNumberVerified == false)
+                                    {
+                                        <div class="alert alert-warning m-t-xs" id="homeVerifyAlert">
+                                            <strong><i class="fa fa-exclamation-triangle"></i> @localizer["HomeNotVerifiedWarning"]</strong>
+                                            <div class="m-t-xs" id="homeVerifyWidget">
+                                                <button type="button" class="btn btn-xs btn-warning rg-send-code" data-contact-type="2" id="btnSendHomeCode">@localizer["VerifyButtonLabel"]</button>
+                                                <span id="homeCodeEntry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm" id="homeVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="2" id="btnConfirmHomeCode">@commonLocalizer["Save"]</button>
+                                                </span>
+                                                <span id="homeVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.HomeNumberVerified == null)
+                                    {
+                                        <div class="alert alert-info m-t-xs" id="homeVerifyAlert">
+                                            <i class="fa fa-info-circle"></i> @localizer["GrandfatheredHomeWarning"]
+                                            <div class="m-t-xs" id="homeVerifyWidget">
+                                                <button type="button" class="btn btn-xs btn-info rg-send-code" data-contact-type="2" id="btnSendHomeCode">@localizer["VerifyButtonLabel"]</button>
+                                                <span id="homeCodeEntry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm" id="homeVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="2" id="btnConfirmHomeCode">@commonLocalizer["Save"]</button>
+                                                </span>
+                                                <span id="homeVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MobileNumberLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MobileNumberPlaceholder"]" asp-for="Profile.MobileNumber"></div>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="@localizer["MobileNumberPlaceholder"]" asp-for="Profile.MobileNumber">
+                                    @if (!string.IsNullOrWhiteSpace(Model.Profile?.MobileNumber))
+                                    {
+                                        @if (Model.MobileNumberVerified == true)
+                                        {
+                                            <span class="input-group-addon" title="@localizer["VerificationSuccessful"]">
+                                                <i class="fa fa-check-circle text-success"></i>
+                                            </span>
+                                        }
+                                        else if (Model.MobileNumberVerified == false)
+                                        {
+                                            <span class="input-group-addon text-danger" title="@localizer["MobileNotVerifiedWarning"]">
+                                                <i class="fa fa-exclamation-circle"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="input-group-addon text-muted" title="@localizer["GrandfatheredMobileWarning"]">
+                                                <i class="fa fa-info-circle"></i>
+                                            </span>
+                                        }
+                                    }
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(Model.Profile?.MobileNumber) && Model.CanSelfVerify)
+                                {
+                                    @if (Model.MobileNumberVerified == false)
+                                    {
+                                        <div class="alert alert-warning m-t-xs" id="mobileVerifyAlert">
+                                            <strong><i class="fa fa-exclamation-triangle"></i> @localizer["MobileNotVerifiedWarning"]</strong>
+                                            <div class="m-t-xs" id="mobileVerifyWidget">
+                                                <button type="button" class="btn btn-xs btn-warning rg-send-code" data-contact-type="1" id="btnSendMobileCode">@localizer["VerifyButtonLabel"]</button>
+                                                <span id="mobileCodeEntry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm" id="mobileVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="1" id="btnConfirmMobileCode">@commonLocalizer["Save"]</button>
+                                                </span>
+                                                <span id="mobileVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.MobileNumberVerified == null)
+                                    {
+                                        <div class="alert alert-info m-t-xs" id="mobileVerifyAlert">
+                                            <i class="fa fa-info-circle"></i> @localizer["GrandfatheredMobileWarning"]
+                                            <div class="m-t-xs" id="mobileVerifyWidget">
+                                                <button type="button" class="btn btn-xs btn-info rg-send-code" data-contact-type="1" id="btnSendMobileCode">@localizer["VerifyButtonLabel"]</button>
+                                                <span id="mobileCodeEntry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm" id="mobileVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="1" id="btnConfirmMobileCode">@commonLocalizer["Save"]</button>
+                                                </span>
+                                                <span id="mobileVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MobileCarrierLabel"]</label>
@@ -564,6 +731,14 @@
 {
     <script>
         var sameAddress = '@Model.MailingAddressSameAsPhysical';
+        var rgVerifySendUrl = resgrid.absoluteBaseUrl + '/User/Home/SendContactVerificationCode';
+        var rgVerifyConfirmUrl = resgrid.absoluteBaseUrl + '/User/Home/ConfirmContactVerificationCode';
+        var rgVerifyLabels = {
+            sent: '@Html.Raw(localizer["VerificationCodeSent"].Value)',
+            success: '@Html.Raw(localizer["VerificationSuccessful"].Value)',
+            failed: '@Html.Raw(localizer["VerificationFailed"].Value)',
+            rateLimited: '@Html.Raw(localizer["VerificationRateLimited"].Value)'
+        };
     </script>
     <script src="~/clib/croppic/js/croppic.js" type="text/javascript"></script>
     <script>

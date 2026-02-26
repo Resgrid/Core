@@ -1,0 +1,46 @@
+﻿@model Resgrid.Web.Areas.User.Models.TwoFactor.ShowRecoveryCodesViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RecoveryCodesPageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["RecoveryCodesPageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["BreadcrumbTwoFactor"]</a></li>
+            <li class="active"><strong>@localizer["BreadcrumbRecoveryCodes"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-key"></i> @localizer["SaveRecoveryCodesHeader"]</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="alert alert-danger">
+                        <strong>@localizer["SaveRecoveryCodesWarning"]</strong>
+                    </div>
+
+                    <div class="well">
+                        <div class="row">
+                            @foreach (var code in Model.RecoveryCodes)
+                            {
+                                <div class="col-xs-6 col-sm-4">
+                                    <code>@code</code>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <a asp-action="Index" class="btn btn-primary">@localizer["DoneButton"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

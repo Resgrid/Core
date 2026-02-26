@@ -72,6 +72,48 @@ namespace Resgrid.Services
 
 		public async Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Load existing profile directly from repository (bypass cache) to detect contact changes
+			var existing = await _userProfileRepository.GetProfileByUserIdAsync(profile.UserId);
+
+			if (existing == null)
+			{
+				// Brand-new profile (admin-created user) — mark all contact methods as pending
+				if (!string.IsNullOrWhiteSpace(profile.MobileNumber))
+					profile.MobileNumberVerified = false;
+				if (!string.IsNullOrWhiteSpace(profile.HomeNumber))
+					profile.HomeNumberVerified = false;
+				if (!string.IsNullOrWhiteSpace(profile.MembershipEmail))
+					profile.EmailVerified = false;
+			}
+			else
+			{
+				// Reset verification if any contact field value changed
+				if (!string.Equals(existing.MobileNumber ?? string.Empty, profile.MobileNumber ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+				{
+					profile.MobileNumberVerified = false;
+					profile.MobileVerificationCode = null;
+					profile.MobileVerificationCodeExpiry = null;
+					profile.MobileVerificationAttempts = 0;
+					profile.MobileVerificationAttemptsResetDate = null;
+				}
+				if (!string.Equals(existing.HomeNumber ?? string.Empty, profile.HomeNumber ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+				{
+					profile.HomeNumberVerified = false;
+					profile.HomeVerificationCode = null;
+					profile.HomeVerificationCodeExpiry = null;
+					profile.HomeVerificationAttempts = 0;
+					profile.HomeVerificationAttemptsResetDate = null;
+				}
+				if (!string.Equals(existing.MembershipEmail ?? string.Empty, profile.MembershipEmail ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+				{
+					profile.EmailVerified = false;
+					profile.EmailVerificationCode = null;
+					profile.EmailVerificationCodeExpiry = null;
+					profile.EmailVerificationAttempts = 0;
+					profile.EmailVerificationAttemptsResetDate = null;
+				}
+			}
+
 			profile.LastUpdated = DateTime.UtcNow;
 			var savedProfile = await _userProfileRepository.SaveOrUpdateAsync(profile, cancellationToken);
 

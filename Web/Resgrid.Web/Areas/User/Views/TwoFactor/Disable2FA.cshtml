@@ -1,0 +1,58 @@
+﻿@model Resgrid.Web.Areas.User.Models.TwoFactor.Disable2FAViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["DisablePageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["DisablePageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["BreadcrumbTwoFactor"]</a></li>
+            <li class="active"><strong>@localizer["BreadcrumbDisable"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-6">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="alert alert-warning">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        @localizer["DisableWarning"]
+                    </div>
+
+                    <p>@localizer["DisableConfirmationText"]</p>
+
+                    <form asp-action="Disable2FA" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Code" class="col-sm-3 control-label">@localizer["AuthenticatorCodeLabel"]</label>
+                            <div class="col-sm-4">
+                                <input asp-for="Code" class="form-control" autocomplete="one-time-code"
+                                       inputmode="numeric" maxlength="7" placeholder="@localizer["VerificationCodePlaceholder"]" />
+                                <span asp-validation-for="Code" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-danger">@localizer["Disable2FAConfirmButton"]</button>
+                                <a asp-action="Index" class="btn btn-default">@commonLocalizer["Cancel"]</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

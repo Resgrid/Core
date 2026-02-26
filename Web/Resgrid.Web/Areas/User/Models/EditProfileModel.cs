@@ -26,7 +26,7 @@ namespace Resgrid.Web.Areas.User.Models
 		public List<PersonnelRole> UsersRoles { get; set; }
 		public bool IsOwnProfile { get; set; }
 		public bool IsFreePlan { get; set; }
-			
+
 		[Required]
 		[MaxLength(50)]
 		[Display(Name = "First name")]
@@ -106,5 +106,13 @@ namespace Resgrid.Web.Areas.User.Models
 		public string MailingCountry { get; set; }
 
 		public bool EnableSms { get; set; }
+
+		// ── Contact verification status (tri-state: null = grandfathered, false = pending, true = verified) ──
+		public bool? EmailVerified => Profile?.EmailVerified;
+		public bool? MobileNumberVerified => Profile?.MobileNumberVerified;
+		public bool? HomeNumberVerified => Profile?.HomeNumberVerified;
+
+		/// <summary>True when the profile belongs to the currently authenticated user (only own profile can self-verify).</summary>
+		public bool CanSelfVerify => IsOwnProfile;
 	}
 }

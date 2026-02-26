@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -25,6 +25,7 @@ using Resgrid.Web.Models.AccountViewModels;
 using Resgrid.Model.Providers;
 using AuditEvent = Resgrid.Model.Events.AuditEvent;
 using Microsoft.AspNetCore.Http;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -119,6 +120,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> Invites(InvitesView model, CancellationToken cancellationToken)
 		{
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -361,6 +363,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> Settings(DepartmentSettingsModel model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			var auditEvent = new AuditEvent();

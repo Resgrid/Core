@@ -81,6 +81,12 @@ namespace Resgrid.Services
 					return "Workflow Credential Updated";
 				case AuditLogTypes.WorkflowCredentialDeleted:
 					return "Workflow Credential Deleted";
+				case AuditLogTypes.ContactVerificationCodeSent:
+					return "Contact Verification Code Sent";
+				case AuditLogTypes.ContactVerificationConfirmed:
+					return "Contact Verification Confirmed";
+				case AuditLogTypes.ContactVerificationFailed:
+					return "Contact Verification Failed";
 			}
 
 			return "";

@@ -30,6 +30,12 @@ namespace Resgrid.Providers.Workflow.Executors
 				if (!Uri.TryCreate(cred.WebhookUrl, UriKind.Absolute, out _))
 					return WorkflowActionResult.Failed("Discord message failed.", $"The configured WebhookUrl '{cred.WebhookUrl}' is not a valid absolute URI.");
 
+				// ── Webhook domain validation ────────────────────────────────────────
+				var (webhookValid, webhookReason) = WebhookUrlValidator.Validate(cred.WebhookUrl, "discord");
+				if (!webhookValid)
+					return WorkflowActionResult.Failed("Discord message blocked.", webhookReason);
+				// ── End webhook domain validation ────────────────────────────────────
+
 				var payload = new System.Collections.Generic.Dictionary<string, object>();
 				var trimmed = context.RenderedContent?.Trim();
 

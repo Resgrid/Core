@@ -25,16 +25,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPermissionsService _permissionsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly ISubscriptionsService _subscriptionsService;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService)
+			IPersonnelRolesService personnelRolesService, ISubscriptionsService subscriptionsService)
 		{
 			_workflowService    = workflowService;
 			_departmentsService = departmentsService;
 			_permissionsService = permissionsService;
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
+			_subscriptionsService = subscriptionsService;
 		}
 
 		// ── Workflows ─────────────────────────────────────────────────────────────────
@@ -77,6 +79,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 
 			if (!await CanUserManageWorkflowsAsync()) return Forbid();
+
+			// Enforce per-plan workflow count cap for new workflows
+			bool isNewWorkflow = string.IsNullOrWhiteSpace(input.WorkflowId);
+			if (isNewWorkflow)
+			{
+				var plan      = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+				var isFreePlan = plan?.IsFree ?? false;
+				if (!await _workflowService.CanAddWorkflowAsync(DepartmentId, isFreePlan, ct))
+					return UnprocessableEntity(new { error = "Workflow limit reached for your plan. Please upgrade to add more workflows." });
+			}
 
 			var workflow = new Workflow
 			{
@@ -127,6 +139,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (workflow == null || workflow.DepartmentId != DepartmentId) return Forbid();
 
 			if (!await CanUserManageWorkflowsAsync()) return Forbid();
+
+			// Enforce per-plan step count cap for new steps
+			bool isNewStep = string.IsNullOrWhiteSpace(input.WorkflowStepId);
+			if (isNewStep)
+			{
+				var plan       = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+				var isFreePlan = plan?.IsFree ?? false;
+				if (!await _workflowService.CanAddStepAsync(input.WorkflowId, isFreePlan, ct))
+					return UnprocessableEntity(new { error = "Step limit reached for your plan. Please upgrade to add more steps." });
+			}
 
 			var step = new WorkflowStep
 			{

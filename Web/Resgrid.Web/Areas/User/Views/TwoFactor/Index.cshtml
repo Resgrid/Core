@@ -38,7 +38,10 @@
                             <div class="alert alert-warning">
                                 <i class="fa fa-exclamation-triangle"></i>
                                 @string.Format(localizer["RecoveryCodesWarningText"].Value, Model.RecoveryCodesLeft)
-                                <a asp-action="RegenerateRecoveryCodes">@localizer["RegenerateRecoveryCodesButton"]</a>
+                                <form asp-action="RegenerateRecoveryCodes" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link p-0 align-baseline">@localizer["RegenerateRecoveryCodesButton"]</button>
+                                </form>
                             </div>
                         }
                         else
@@ -46,7 +49,10 @@
                             <p>@string.Format(localizer["RecoveryCodesRemainingText"].Value, Model.RecoveryCodesLeft)</p>
                         }
 
-                        <a asp-action="RegenerateRecoveryCodes" class="btn btn-warning">@localizer["RegenerateRecoveryCodesButton"]</a>
+                        <form asp-action="RegenerateRecoveryCodes" method="post" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning">@localizer["RegenerateRecoveryCodesButton"]</button>
+                        </form>
                         <a asp-action="Disable2FA" class="btn btn-danger">@localizer["Disable2FAButton"]</a>
                     }
                     else

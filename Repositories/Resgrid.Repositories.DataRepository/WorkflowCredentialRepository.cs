@@ -38,7 +38,8 @@ namespace Resgrid.Repositories.DataRepository
 					var dp = new DynamicParametersExtension();
 					dp.Add("DepartmentId", departmentId);
 					var query = _queryFactory.GetQuery<SelectWorkflowCredentialsByDepartmentIdQuery>();
-					return await x.QueryAsync<WorkflowCredential>(sql: query, param: dp, transaction: _unitOfWork.Transaction);
+					var tx = _unitOfWork?.Transaction;
+					return await x.QueryAsync<WorkflowCredential>(sql: query, param: dp, transaction: tx);
 				});
 
 				DbConnection conn = null;

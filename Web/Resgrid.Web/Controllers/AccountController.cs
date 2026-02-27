@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Localization;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using PostHog;
 using Microsoft.Extensions.DependencyInjection;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Controllers
 {
@@ -442,6 +443,9 @@ namespace Resgrid.Web.Controllers
 		[HttpGet]
 		public async Task<IActionResult> LogOff()
 		{
+			// Explicitly clear the step-up 2FA proof so it cannot be inherited by any subsequent session.
+			HttpContext.Session.Remove(RequiresRecentTwoFactorAttribute.StepUpSessionKey);
+
 			await _signInManager.SignOutAsync();
 			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			RemoveCookies();

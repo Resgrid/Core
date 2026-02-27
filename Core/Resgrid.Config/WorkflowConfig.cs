@@ -2,11 +2,6 @@
 {
 	public static class WorkflowConfig
 	{
-		/// <summary>AES-256 master key used by IEncryptionService for system-wide encryption.</summary>
-		public static string EncryptionKey = "CHANGEME_32CHAR_MASTER_KEY_HERE!";
-
-		/// <summary>Salt value used with PBKDF2 key derivation.</summary>
-		public static string EncryptionSaltValue = "CHANGEME_SALT_VALUE_HERE";
 
 		/// <summary>Default maximum number of retry attempts for a failed workflow action execution.</summary>
 		public static int DefaultMaxRetryCount = 3;

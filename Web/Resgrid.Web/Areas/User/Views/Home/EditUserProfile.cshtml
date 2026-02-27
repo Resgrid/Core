@@ -122,29 +122,29 @@
                                 {
                                     @if (Model.EmailVerified == false)
                                     {
-                                        <div class="alert alert-warning m-t-xs" id="emailVerifyAlert">
+                                        <div class="alert alert-warning m-t-xs rg-verify-alert" id="emailVerifyAlert">
                                             <strong><i class="fa fa-exclamation-triangle"></i> @localizer["EmailNotVerifiedWarning"]</strong>
-                                            <div class="m-t-xs" id="emailVerifyWidget">
-                                                <button type="button" class="btn btn-xs btn-warning rg-send-code" data-contact-type="0" id="btnSendEmailCode">@localizer["VerifyButtonLabel"]</button>
-                                                <span id="emailCodeEntry" style="display:none;">
-                                                    <input type="text" class="form-control input-sm" id="emailVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
-                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="0" id="btnConfirmEmailCode">@commonLocalizer["Save"]</button>
+                                            <div class="m-t-xs rg-verify-widget">
+                                                <button type="button" class="btn btn-xs btn-warning rg-send-code rg-email-send-code" data-contact-type="0">@localizer["VerifyButtonLabel"]</button>
+                                                <span class="rg-email-code-entry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm rg-email-verify-code" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:160px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code rg-email-confirm-code" data-contact-type="0">@commonLocalizer["Save"]</button>
                                                 </span>
-                                                <span id="emailVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                                <span class="rg-email-verify-msg m-l-xs" style="display:none;"></span>
                                             </div>
                                         </div>
                                     }
                                     else if (Model.EmailVerified == null)
                                     {
-                                        <div class="alert alert-info m-t-xs" id="emailVerifyAlert">
+                                        <div class="alert alert-info m-t-xs rg-verify-alert" id="emailVerifyAlert">
                                             <i class="fa fa-info-circle"></i> @localizer["GrandfatheredEmailWarning"]
-                                            <div class="m-t-xs" id="emailVerifyWidget">
-                                                <button type="button" class="btn btn-xs btn-info rg-send-code" data-contact-type="0" id="btnSendEmailCode">@localizer["VerifyButtonLabel"]</button>
-                                                <span id="emailCodeEntry" style="display:none;">
-                                                    <input type="text" class="form-control input-sm" id="emailVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
-                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="0" id="btnConfirmEmailCode">@commonLocalizer["Save"]</button>
+                                            <div class="m-t-xs rg-verify-widget">
+                                                <button type="button" class="btn btn-xs btn-info rg-send-code rg-email-send-code" data-contact-type="0">@localizer["VerifyButtonLabel"]</button>
+                                                <span class="rg-email-code-entry" style="display:none;">
+                                                    <input type="text" class="form-control input-sm rg-email-verify-code" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:160px;">
+                                                    <button type="button" class="btn btn-xs btn-primary rg-confirm-code rg-email-confirm-code" data-contact-type="0">@commonLocalizer["Save"]</button>
                                                 </span>
-                                                <span id="emailVerifyMsg" class="m-l-xs" style="display:none;"></span>
+                                                <span class="rg-email-verify-msg m-l-xs" style="display:none;"></span>
                                             </div>
                                         </div>
                                     }
@@ -202,7 +202,7 @@
                                             <div class="m-t-xs" id="homeVerifyWidget">
                                                 <button type="button" class="btn btn-xs btn-warning rg-send-code" data-contact-type="2" id="btnSendHomeCode">@localizer["VerifyButtonLabel"]</button>
                                                 <span id="homeCodeEntry" style="display:none;">
-                                                    <input type="text" class="form-control input-sm" id="homeVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <input type="text" class="form-control input-sm" id="homeVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:160px;">
                                                     <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="2" id="btnConfirmHomeCode">@commonLocalizer["Save"]</button>
                                                 </span>
                                                 <span id="homeVerifyMsg" class="m-l-xs" style="display:none;"></span>
@@ -216,7 +216,7 @@
                                             <div class="m-t-xs" id="homeVerifyWidget">
                                                 <button type="button" class="btn btn-xs btn-info rg-send-code" data-contact-type="2" id="btnSendHomeCode">@localizer["VerifyButtonLabel"]</button>
                                                 <span id="homeCodeEntry" style="display:none;">
-                                                    <input type="text" class="form-control input-sm" id="homeVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <input type="text" class="form-control input-sm" id="homeVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:160px;">
                                                     <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="2" id="btnConfirmHomeCode">@commonLocalizer["Save"]</button>
                                                 </span>
                                                 <span id="homeVerifyMsg" class="m-l-xs" style="display:none;"></span>
@@ -262,7 +262,7 @@
                                             <div class="m-t-xs" id="mobileVerifyWidget">
                                                 <button type="button" class="btn btn-xs btn-warning rg-send-code" data-contact-type="1" id="btnSendMobileCode">@localizer["VerifyButtonLabel"]</button>
                                                 <span id="mobileCodeEntry" style="display:none;">
-                                                    <input type="text" class="form-control input-sm" id="mobileVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <input type="text" class="form-control input-sm" id="mobileVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:160px;">
                                                     <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="1" id="btnConfirmMobileCode">@commonLocalizer["Save"]</button>
                                                 </span>
                                                 <span id="mobileVerifyMsg" class="m-l-xs" style="display:none;"></span>
@@ -276,7 +276,7 @@
                                             <div class="m-t-xs" id="mobileVerifyWidget">
                                                 <button type="button" class="btn btn-xs btn-info rg-send-code" data-contact-type="1" id="btnSendMobileCode">@localizer["VerifyButtonLabel"]</button>
                                                 <span id="mobileCodeEntry" style="display:none;">
-                                                    <input type="text" class="form-control input-sm" id="mobileVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:140px;">
+                                                    <input type="text" class="form-control input-sm" id="mobileVerifyCode" placeholder="@localizer["VerificationCodePlaceholder"]" maxlength="6" style="display:inline-block;width:160px;">
                                                     <button type="button" class="btn btn-xs btn-primary rg-confirm-code" data-contact-type="1" id="btnConfirmMobileCode">@commonLocalizer["Save"]</button>
                                                 </span>
                                                 <span id="mobileVerifyMsg" class="m-l-xs" style="display:none;"></span>

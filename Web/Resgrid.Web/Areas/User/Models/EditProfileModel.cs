@@ -112,7 +112,8 @@ namespace Resgrid.Web.Areas.User.Models
 		public bool? MobileNumberVerified => Profile?.MobileNumberVerified;
 		public bool? HomeNumberVerified => Profile?.HomeNumberVerified;
 
-		/// <summary>True when the profile belongs to the currently authenticated user (only own profile can self-verify).</summary>
-		public bool CanSelfVerify => IsOwnProfile;
+		/// <summary>True when the profile belongs to the currently authenticated user (only own profile can self-verify).
+		/// Checks both <see cref="IsOwnProfile"/> and <see cref="Self"/> because different controller paths set one or the other.</summary>
+		public bool CanSelfVerify => Self || IsOwnProfile;
 	}
 }

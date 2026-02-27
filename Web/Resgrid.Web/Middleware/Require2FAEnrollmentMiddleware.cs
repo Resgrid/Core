@@ -76,7 +76,7 @@ namespace Resgrid.Web.Middleware
 
 			try
 			{
-				var department = await departmentsService.GetDepartmentByUserIdAsync(user.UserName);
+				var department = await departmentsService.GetDepartmentByUserIdAsync(user.Id);
 				if (department == null)
 				{
 					await _next(context);

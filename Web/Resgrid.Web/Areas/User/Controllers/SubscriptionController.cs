@@ -369,6 +369,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> Cancel(CancelView model, CancellationToken cancellationToken)

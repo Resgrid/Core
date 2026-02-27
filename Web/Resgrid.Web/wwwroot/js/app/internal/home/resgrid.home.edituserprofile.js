@@ -65,7 +65,7 @@ var resgrid;
                 // ── Contact Verification ──────────────────────────────────────────────
                 // Map contact type int → widget element IDs
                 var verifyMap = {
-                    0: { sendBtn: '#btnSendEmailCode',   codeEntry: '#emailCodeEntry',   codeInput: '#emailVerifyCode',   confirmBtn: '#btnConfirmEmailCode',   msgSpan: '#emailVerifyMsg',   alert: '#emailVerifyAlert'   },
+                    0: { sendBtn: '.rg-email-send-code', codeEntry: '.rg-email-code-entry', codeInput: '.rg-email-verify-code', confirmBtn: '.rg-email-confirm-code', msgSpan: '.rg-email-verify-msg', alert: '#emailVerifyAlert' },
                     1: { sendBtn: '#btnSendMobileCode',  codeEntry: '#mobileCodeEntry',  codeInput: '#mobileVerifyCode',  confirmBtn: '#btnConfirmMobileCode',  msgSpan: '#mobileVerifyMsg',  alert: '#mobileVerifyAlert'  },
                     2: { sendBtn: '#btnSendHomeCode',    codeEntry: '#homeCodeEntry',    codeInput: '#homeVerifyCode',    confirmBtn: '#btnConfirmHomeCode',    msgSpan: '#homeVerifyMsg',    alert: '#homeVerifyAlert'    }
                 };

@@ -19,19 +19,22 @@ namespace Resgrid.Services
 		private readonly IEmailService _emailService;
 		private readonly ISmsService _smsService;
 		private readonly ISystemAuditsService _systemAuditsService;
+		private readonly IEncryptionService _encryptionService;
 
 		public ContactVerificationService(
 			IUserProfileService userProfileService,
 			IUsersService usersService,
 			IEmailService emailService,
 			ISmsService smsService,
-			ISystemAuditsService systemAuditsService)
+			ISystemAuditsService systemAuditsService,
+			IEncryptionService encryptionService)
 		{
 			_userProfileService = userProfileService;
 			_usersService = usersService;
 			_emailService = emailService;
 			_smsService = smsService;
 			_systemAuditsService = systemAuditsService;
+			_encryptionService = encryptionService;
 		}
 
 		public async Task<bool> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
@@ -55,7 +58,7 @@ namespace Resgrid.Services
 				return false;
 
 			string code = GenerateCode();
-			profile.EmailVerificationCode = code;
+			profile.EmailVerificationCode = _encryptionService.Encrypt(code);
 			profile.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(Config.VerificationConfig.VerificationCodeExpiryMinutes);
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
@@ -77,7 +80,7 @@ namespace Resgrid.Services
 				return false;
 
 			string code = GenerateCode();
-			profile.MobileVerificationCode = code;
+			profile.MobileVerificationCode = _encryptionService.Encrypt(code);
 			profile.MobileVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(Config.VerificationConfig.VerificationCodeExpiryMinutes);
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
@@ -99,7 +102,7 @@ namespace Resgrid.Services
 				return false;
 
 			string code = GenerateCode();
-			profile.HomeVerificationCode = code;
+			profile.HomeVerificationCode = _encryptionService.Encrypt(code);
 			profile.HomeVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(Config.VerificationConfig.VerificationCodeExpiryMinutes);
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
@@ -178,9 +181,20 @@ namespace Resgrid.Services
 				// Code expired — clear it
 				storedCode = null;
 			}
-			else if (string.Equals(storedCode.Trim(), code.Trim(), StringComparison.Ordinal))
+			else
 			{
-				success = true;
+				// Decrypt the stored ciphertext and compare against the user-supplied code.
+				// CryptographicException means tampered or wrong key — treat as mismatch.
+				try
+				{
+					string decryptedCode = _encryptionService.Decrypt(storedCode);
+					if (string.Equals(decryptedCode.Trim(), code.Trim(), StringComparison.Ordinal))
+						success = true;
+				}
+				catch (CryptographicException)
+				{
+					// Tampered ciphertext or wrong key — treat as failed attempt
+				}
 			}
 
 			// Persist updated state

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
-using Twilio;
+using Twilio.Clients;
 using Twilio.Rest.Api.V2010.Account;
 
 namespace Resgrid.Providers.Workflow.Executors
@@ -53,7 +53,7 @@ namespace Resgrid.Providers.Workflow.Executors
 					recipients = recipients.Take(maxRecipients).ToList();
 				// ── End recipient cap ────────────────────────────────────────────────
 
-				TwilioClient.Init(cred.AccountSid, cred.AuthToken);
+				var twilioClient = new TwilioRestClient(cred.AccountSid, cred.AuthToken);
 
 				string lastSid = null;
 				foreach (var recipient in recipients)
@@ -61,7 +61,8 @@ namespace Resgrid.Providers.Workflow.Executors
 					var message = await MessageResource.CreateAsync(
 						body: context.RenderedContent,
 						from: new Twilio.Types.PhoneNumber(cred.FromNumber),
-						to: new Twilio.Types.PhoneNumber(recipient));
+						to: new Twilio.Types.PhoneNumber(recipient),
+						client: twilioClient);
 					lastSid = message.Sid;
 				}
 

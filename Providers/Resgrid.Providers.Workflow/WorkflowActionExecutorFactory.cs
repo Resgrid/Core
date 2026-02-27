@@ -10,9 +10,32 @@ namespace Resgrid.Providers.Workflow
 	{
 		private readonly Dictionary<WorkflowActionType, IWorkflowActionExecutor> _executors;
 
+		// All HTTP verb action types that are handled by a single HttpApiExecutor instance.
+		private static readonly WorkflowActionType[] HttpActionTypes =
+		[
+			WorkflowActionType.CallApiGet,
+			WorkflowActionType.CallApiPost,
+			WorkflowActionType.CallApiPut,
+			WorkflowActionType.CallApiDelete,
+		];
+
 		public WorkflowActionExecutorFactory(IEnumerable<IWorkflowActionExecutor> executors)
 		{
-			_executors = executors.ToDictionary(e => e.ActionType);
+			_executors = new Dictionary<WorkflowActionType, IWorkflowActionExecutor>();
+
+			foreach (var executor in executors)
+			{
+				// Register the executor under its primary ActionType.
+				_executors[executor.ActionType] = executor;
+
+				// If this executor handles HTTP API calls, also register it under
+				// all other HTTP verb action types so the factory can resolve any of them.
+				if (HttpActionTypes.Contains(executor.ActionType))
+				{
+					foreach (var httpType in HttpActionTypes)
+						_executors[httpType] = executor;
+				}
+			}
 		}
 
 		public IWorkflowActionExecutor GetExecutor(WorkflowActionType actionType)

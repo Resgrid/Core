@@ -16,9 +16,12 @@ namespace Resgrid.Tests.Services
 
 			protected with_the_encryption_service()
 			{
-				// Set known test key/salt so tests are deterministic
-				WorkflowConfig.EncryptionKey      = "TestMasterKey1234567890_32Chars!";
-				WorkflowConfig.EncryptionSaltValue = "TestSaltValue_1234567890";
+				// Set known test key/salt so tests are deterministic.
+				// Use a low iteration count in tests to keep the suite fast;
+				// the production value (600,000) is set via SecurityConfig.Pbkdf2Iterations.
+				SecurityConfig.EncryptionKey       = "TestMasterKey1234567890_32Chars!";
+				SecurityConfig.EncryptionSaltValue = "TestSaltValue_1234567890";
+				SecurityConfig.Pbkdf2Iterations    = 1000;
 				Sut = Resolve<IEncryptionService>();
 			}
 		}

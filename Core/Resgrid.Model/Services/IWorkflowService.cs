@@ -20,6 +20,7 @@ Task<bool> CanAddWorkflowAsync(int departmentId, bool isFreePlan, CancellationTo
 /// <summary>Returns true when the workflow is allowed to have an additional step added (enforces plan-based caps).</summary>
 Task<bool> CanAddStepAsync(string workflowId, bool isFreePlan, CancellationToken cancellationToken = default);
 // ── Step CRUD ──────────────────────────────────────────────────────────────────
+Task<WorkflowStep> GetStepByIdAsync(string stepId, CancellationToken cancellationToken = default);
 Task<WorkflowStep> SaveWorkflowStepAsync(WorkflowStep step, CancellationToken cancellationToken = default);
 Task<bool> DeleteWorkflowStepAsync(string stepId, CancellationToken cancellationToken = default);
 Task<List<WorkflowStep>> GetStepsByWorkflowIdAsync(string workflowId, CancellationToken cancellationToken = default);

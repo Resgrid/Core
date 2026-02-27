@@ -176,7 +176,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction(nameof(RegenerateRecoveryCodes));
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> RegenerateRecoveryCodes()
 		{
@@ -265,8 +266,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			// Stamp session with verified-at time
-			HttpContext.Session.SetString(StepUpSessionKey, DateTime.UtcNow.ToString("O"));
+			// Stamp session with the verified user id and time so the step-up proof
+			// is bound to this specific user and cannot be inherited by another user.
+			HttpContext.Session.SetString(StepUpSessionKey, $"{user.Id}|{DateTime.UtcNow:O}");
 
 			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
 			{

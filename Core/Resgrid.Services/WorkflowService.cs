@@ -125,6 +125,9 @@ namespace Resgrid.Services
 
 		// ── Step CRUD ─────────────────────────────────────────────────────────────────
 
+		public async Task<WorkflowStep> GetStepByIdAsync(string stepId, CancellationToken cancellationToken = default)
+			=> await _stepRepository.GetByIdAsync(stepId);
+
 		public async Task<WorkflowStep> SaveWorkflowStepAsync(WorkflowStep step, CancellationToken cancellationToken = default)
 		{
 			// Enforce OutputTemplate size cap

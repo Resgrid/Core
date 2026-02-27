@@ -84,8 +84,9 @@
                                             <a asp-action="Edit" asp-route-workflowId="@wf.WorkflowId" class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
                                             <a asp-action="Runs" asp-route-workflowId="@wf.WorkflowId" class="btn btn-xs btn-default"><i class="fa fa-list"></i> @localizer["Runs"]</a>
                                             <a asp-action="Health" asp-route-workflowId="@wf.WorkflowId" class="btn btn-xs btn-info"><i class="fa fa-heartbeat"></i> @localizer["Health"]</a>
+                                            @{ var deleteConfirmMsg = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(string.Format(localizer["DeleteWorkflowConfirm"].Value, wf.Name)); }
                                             <form asp-action="Delete" method="post" style="display:inline;"
-                                                  onsubmit="return confirm('@Html.Raw(string.Format(localizer["DeleteWorkflowConfirm"].Value, wf.Name))');">
+                                                  onsubmit="return confirm('@Html.Raw(deleteConfirmMsg)');">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="workflowId" value="@wf.WorkflowId" />
                                                 <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button>

@@ -169,9 +169,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Deletes a workflow step.</summary>
 		[HttpDelete("DeleteStep/{stepId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Policy = ResgridResources.Workflow_Delete)]
 		public async Task<ActionResult<DeleteWorkflowResult>> DeleteStep(string stepId, CancellationToken ct)
 		{
+			var step = await _workflowService.GetStepByIdAsync(stepId, ct);
+			if (step == null) return NotFound();
+
+			var workflow = await _workflowService.GetWorkflowByIdAsync(step.WorkflowId, ct);
+			if (workflow == null || workflow.DepartmentId != DepartmentId) return NotFound();
+
 			if (!await CanUserManageWorkflowsAsync()) return Forbid();
 
 			await _workflowService.DeleteWorkflowStepAsync(stepId, ct);

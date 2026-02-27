@@ -20,6 +20,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IEmailService> _emailServiceMock;
 			protected Mock<ISmsService> _smsServiceMock;
 			protected Mock<ISystemAuditsService> _systemAuditsServiceMock;
+			protected Mock<IEncryptionService> _encryptionServiceMock;
 			protected IContactVerificationService _contactVerificationService;
 
 			protected with_the_contact_verification_service()
@@ -30,6 +31,16 @@ namespace Resgrid.Tests.Services
 				_smsServiceMock = new Mock<ISmsService>();
 				_systemAuditsServiceMock = new Mock<ISystemAuditsService>();
 
+				// Passthrough encryption mock: Encrypt wraps with "ENC:" prefix so tests can
+				// verify the persisted value is transformed, and Decrypt strips it back.
+				_encryptionServiceMock = new Mock<IEncryptionService>();
+				_encryptionServiceMock
+					.Setup(e => e.Encrypt(It.IsAny<string>()))
+					.Returns<string>(plain => "ENC:" + plain);
+				_encryptionServiceMock
+					.Setup(e => e.Decrypt(It.IsAny<string>()))
+					.Returns<string>(cipher => cipher.StartsWith("ENC:") ? cipher.Substring(4) : cipher);
+
 				_systemAuditsServiceMock
 					.Setup(s => s.SaveSystemAuditAsync(It.IsAny<SystemAudit>(), It.IsAny<CancellationToken>()))
 					.ReturnsAsync(new SystemAudit());
@@ -39,7 +50,8 @@ namespace Resgrid.Tests.Services
 					_usersServiceMock.Object,
 					_emailServiceMock.Object,
 					_smsServiceMock.Object,
-					_systemAuditsServiceMock.Object);
+					_systemAuditsServiceMock.Object,
+					_encryptionServiceMock.Object);
 			}
 
 			protected static UserProfile BuildProfile(string userId = "user1",
@@ -85,7 +97,8 @@ namespace Resgrid.Tests.Services
 
 				result.Should().BeTrue();
 				savedProfile.Should().NotBeNull();
-				savedProfile.EmailVerificationCode.Should().NotBeNullOrWhiteSpace();
+				// The service encrypts the code before persisting; verify the stored value is ciphertext.
+				savedProfile.EmailVerificationCode.Should().StartWith("ENC:");
 				savedProfile.EmailVerificationCodeExpiry.Should().NotBeNull();
 				savedProfile.EmailVerificationCodeExpiry!.Value.Should().BeAfter(DateTime.UtcNow);
 			}
@@ -98,7 +111,8 @@ namespace Resgrid.Tests.Services
 			public async Task should_mark_verified_on_correct_code_within_expiry()
 			{
 				var profile = BuildProfile();
-				profile.EmailVerificationCode = "123456";
+				// Store the encrypted form (mock passthrough: "ENC:" + plaintext)
+				profile.EmailVerificationCode = "ENC:123456";
 				profile.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(25);
 				profile.EmailVerificationAttempts = 0;
 
@@ -122,7 +136,7 @@ namespace Resgrid.Tests.Services
 			public async Task should_fail_on_expired_code()
 			{
 				var profile = BuildProfile();
-				profile.EmailVerificationCode = "123456";
+				profile.EmailVerificationCode = "ENC:123456";
 				profile.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(-5); // expired
 				profile.EmailVerificationAttempts = 0;
 
@@ -139,7 +153,7 @@ namespace Resgrid.Tests.Services
 			public async Task should_fail_and_increment_attempts_on_wrong_code()
 			{
 				var profile = BuildProfile();
-				profile.EmailVerificationCode = "123456";
+				profile.EmailVerificationCode = "ENC:123456";
 				profile.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(25);
 				profile.EmailVerificationAttempts = 0;
 
@@ -161,7 +175,7 @@ namespace Resgrid.Tests.Services
 			public async Task should_fail_when_daily_attempt_cap_exceeded()
 			{
 				var profile = BuildProfile();
-				profile.EmailVerificationCode = "123456";
+				profile.EmailVerificationCode = "ENC:123456";
 				profile.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(25);
 				profile.EmailVerificationAttempts = Resgrid.Config.VerificationConfig.MaxVerificationAttemptsPerDay; // at cap
 				profile.EmailVerificationAttemptsResetDate = DateTime.UtcNow; // same day — no reset
@@ -178,7 +192,7 @@ namespace Resgrid.Tests.Services
 			public async Task should_reset_daily_attempts_after_reset_date_passes()
 			{
 				var profile = BuildProfile();
-				profile.EmailVerificationCode = "123456";
+				profile.EmailVerificationCode = "ENC:123456";
 				profile.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(25);
 				profile.EmailVerificationAttempts = Resgrid.Config.VerificationConfig.MaxVerificationAttemptsPerDay;
 				profile.EmailVerificationAttemptsResetDate = DateTime.UtcNow.AddDays(-1); // yesterday — triggers reset

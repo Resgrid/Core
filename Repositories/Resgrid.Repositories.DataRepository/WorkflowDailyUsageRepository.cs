@@ -67,31 +67,39 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			try
 			{
-				// Use an upsert pattern: update if exists, otherwise insert.
-				// SQL Server: MERGE or UPDATE + INSERT fallback.
-				// PostgreSQL: INSERT ... ON CONFLICT DO UPDATE.
-				// We detect dialect by ParameterNotation and SchemaName pattern.
 				var upsertFunc = new Func<DbConnection, Task>(async x =>
 				{
 					var usageDate = utcDate.Date;
-					// Try update first
-					var updateSql = $"UPDATE {_sqlConfiguration.SchemaName}.[WorkflowDailyUsages] SET [SendCount] = [SendCount] + 1 WHERE [DepartmentId] = {_sqlConfiguration.ParameterNotation}DepartmentId AND [ActionType] = {_sqlConfiguration.ParameterNotation}ActionType AND [UsageDate] = {_sqlConfiguration.ParameterNotation}UsageDate";
+					var newId = Guid.NewGuid().ToString();
+
+					string upsertSql;
+					if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
+					{
+						// Atomic upsert using the unique constraint added by M0042 on (departmentid, actiontype, usagedate).
+						// On conflict, increment the existing row's sendcount.
+						upsertSql = $@"INSERT INTO {_sqlConfiguration.SchemaName}.workflowdailyusages (workflowdailyusageid, departmentid, actiontype, usagedate, sendcount)
+							VALUES ({_sqlConfiguration.ParameterNotation}Id, {_sqlConfiguration.ParameterNotation}DepartmentId, {_sqlConfiguration.ParameterNotation}ActionType, {_sqlConfiguration.ParameterNotation}UsageDate, 1)
+							ON CONFLICT (departmentid, actiontype, usagedate)
+							DO UPDATE SET sendcount = workflowdailyusages.sendcount + 1";
+					}
+					else
+					{
+						upsertSql = $@"MERGE {_sqlConfiguration.SchemaName}.[WorkflowDailyUsages] WITH (HOLDLOCK) AS target
+							USING (SELECT {_sqlConfiguration.ParameterNotation}DepartmentId AS DepartmentId, {_sqlConfiguration.ParameterNotation}ActionType AS ActionType, {_sqlConfiguration.ParameterNotation}UsageDate AS UsageDate) AS source
+							ON target.[DepartmentId] = source.DepartmentId AND target.[ActionType] = source.ActionType AND target.[UsageDate] = source.UsageDate
+							WHEN MATCHED THEN
+								UPDATE SET [SendCount] = target.[SendCount] + 1
+							WHEN NOT MATCHED THEN
+								INSERT ([WorkflowDailyUsageId], [DepartmentId], [ActionType], [UsageDate], [SendCount])
+								VALUES ({_sqlConfiguration.ParameterNotation}Id, {_sqlConfiguration.ParameterNotation}DepartmentId, {_sqlConfiguration.ParameterNotation}ActionType, {_sqlConfiguration.ParameterNotation}UsageDate, 1);";
+					}
+
 					var dp = new DynamicParametersExtension();
+					dp.Add("Id", newId);
 					dp.Add("DepartmentId", departmentId);
 					dp.Add("ActionType", actionType);
 					dp.Add("UsageDate", usageDate);
-					var affected = await x.ExecuteAsync(sql: updateSql, param: dp, transaction: _unitOfWork.Transaction);
-					if (affected == 0)
-					{
-						// Insert new record
-						var insertSql = $"INSERT INTO {_sqlConfiguration.SchemaName}.[WorkflowDailyUsages] ([WorkflowDailyUsageId],[DepartmentId],[ActionType],[UsageDate],[SendCount]) VALUES ({_sqlConfiguration.ParameterNotation}Id,{_sqlConfiguration.ParameterNotation}DepartmentId,{_sqlConfiguration.ParameterNotation}ActionType,{_sqlConfiguration.ParameterNotation}UsageDate,1)";
-						var dp2 = new DynamicParametersExtension();
-						dp2.Add("Id", Guid.NewGuid().ToString());
-						dp2.Add("DepartmentId", departmentId);
-						dp2.Add("ActionType", actionType);
-						dp2.Add("UsageDate", usageDate);
-						await x.ExecuteAsync(sql: insertSql, param: dp2, transaction: _unitOfWork.Transaction);
-					}
+					await x.ExecuteAsync(sql: upsertSql, param: dp, transaction: _unitOfWork.Transaction);
 				});
 
 				DbConnection conn = null;
@@ -99,7 +107,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					using (conn = _connectionProvider.Create())
 					{
-						await conn.OpenAsync();
+						await conn.OpenAsync(cancellationToken);
 						await upsertFunc(conn);
 					}
 				}

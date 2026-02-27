@@ -10,11 +10,8 @@ namespace Resgrid.Model
 	/// Tracks how many times an outbound-messaging action (Email, SMS) has been sent
 	/// by a department on a given UTC calendar day. Used to enforce per-day send limits.
 	/// </summary>
-	[Table("WorkflowDailyUsages")]
 	public class WorkflowDailyUsage : IEntity
 	{
-		[Key]
-		[Required]
 		public string WorkflowDailyUsageId { get; set; }
 
 		[Required]
@@ -49,4 +46,3 @@ namespace Resgrid.Model
 			new[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 }
-

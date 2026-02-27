@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,11 +6,8 @@ using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
-	[Table("WorkflowSteps")]
 	public class WorkflowStep : IEntity
 	{
-		[Key]
-		[Required]
 		public string WorkflowStepId { get; set; }
 
 		[Required]

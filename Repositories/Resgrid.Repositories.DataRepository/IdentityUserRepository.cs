@@ -1056,8 +1056,12 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var selectFunction = new Func<DbConnection, Task<string>>(async x =>
 				{
+					string sql = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres
+						? "SELECT value FROM aspnetusertokens WHERE userid = @UserId AND loginprovider = @LoginProvider AND name = @Name"
+						: "SELECT Value FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name";
+
 					var result = await x.QueryFirstOrDefaultAsync<string>(
-						"SELECT Value FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
+						sql,
 						new { UserId = userId, LoginProvider = loginProvider, Name = name },
 						_unitOfWork.Transaction);
 					return result;
@@ -1089,43 +1093,47 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			try
 			{
-				var upsertFunction = new Func<DbConnection, Task>(async x =>
-				{
-					// Use MERGE/ON CONFLICT upsert pattern — SQL Server uses MERGE, PostgreSQL uses INSERT ... ON CONFLICT
-					var existing = await x.QueryFirstOrDefaultAsync<string>(
-						"SELECT Value FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
-						new { UserId = userId, LoginProvider = loginProvider, Name = name },
-						_unitOfWork.Transaction);
+				var parameters = new { UserId = userId, LoginProvider = loginProvider, Name = name, Value = value };
 
-					if (existing == null)
-					{
-						await x.ExecuteAsync(
-							"INSERT INTO AspNetUserTokens (UserId, LoginProvider, Name, Value) VALUES (@UserId, @LoginProvider, @Name, @Value)",
-							new { UserId = userId, LoginProvider = loginProvider, Name = name, Value = value },
-							_unitOfWork.Transaction);
-					}
-					else
-					{
-						await x.ExecuteAsync(
-							"UPDATE AspNetUserTokens SET Value = @Value WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
-							new { UserId = userId, LoginProvider = loginProvider, Name = name, Value = value },
-							_unitOfWork.Transaction);
-					}
-				});
+				// Always use a dedicated connection + transaction for token upserts.
+				// The ambient UnitOfWork connection/transaction may have already been committed
+				// earlier in the same request scope, which would cause the DELETE to silently
+				// no-op on a stale transaction and then the INSERT to fail with a PK violation.
+				using var conn = _connectionProvider.Create();
+				await conn.OpenAsync(cancellationToken);
 
-				DbConnection conn = null;
-				if (_unitOfWork?.Connection == null)
+				if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
 				{
-					using (conn = _connectionProvider.Create())
-					{
-						await conn.OpenAsync(cancellationToken);
-						await upsertFunction(conn);
-					}
+					const string upsertSql = @"INSERT INTO aspnetusertokens (userid, loginprovider, name, value)
+						VALUES (@UserId, @LoginProvider, @Name, @Value)
+						ON CONFLICT (userid, loginprovider, name)
+						DO UPDATE SET value = EXCLUDED.value";
+
+					await conn.ExecuteAsync(upsertSql, parameters);
 				}
 				else
 				{
-					conn = _unitOfWork.CreateOrGetConnection();
-					await upsertFunction(conn);
+					// DELETE + INSERT within a serializable transaction is the only fully
+					// race-safe upsert pattern on SQL Server — avoids the MERGE race-condition
+					// bug and the UPDATE/IF-NOT-EXISTS TOCTOU race.
+					const string deleteSql = @"DELETE FROM AspNetUserTokens
+						WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name";
+
+					const string insertSql = @"INSERT INTO AspNetUserTokens (UserId, LoginProvider, Name, Value)
+						VALUES (@UserId, @LoginProvider, @Name, @Value)";
+
+					using var tx = conn.BeginTransaction(System.Data.IsolationLevel.Serializable);
+					try
+					{
+						await conn.ExecuteAsync(deleteSql, parameters, tx);
+						await conn.ExecuteAsync(insertSql, parameters, tx);
+						tx.Commit();
+					}
+					catch
+					{
+						tx.Rollback();
+						throw;
+					}
 				}
 			}
 			catch (Exception ex)
@@ -1141,8 +1149,12 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var deleteFunction = new Func<DbConnection, Task>(async x =>
 				{
+					string deleteSql = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres
+						? "DELETE FROM aspnetusertokens WHERE userid = @UserId AND loginprovider = @LoginProvider AND name = @Name"
+						: "DELETE FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name";
+
 					await x.ExecuteAsync(
-						"DELETE FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name",
+						deleteSql,
 						new { UserId = userId, LoginProvider = loginProvider, Name = name },
 						_unitOfWork.Transaction);
 				});

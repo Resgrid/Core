@@ -29,7 +29,10 @@
                     <form asp-action="LoginWithRecoveryCode" asp-controller="Account" method="post" class="m-t">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="ReturnUrl" />
-                        <div asp-validation-summary="All" class="alert alert-danger"></div>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div asp-validation-summary="All" class="alert alert-danger"></div>
+                        }
 
                         <div class="form-group">
                             <label asp-for="Code">@localizer["RecoveryCodeInputLabel"]</label>
@@ -53,49 +56,7 @@
         </div>
     </div>
 
-    @Html.Partial("_ScriptPartial")
+    @Html.Partial("_ScriptsPartial")
     <partial name="_ValidationScriptsPartial" />
 </body>
 </html>
-
-
-<div class="middle-box text-center loginscreen animated fadeInDown">
-    <div>
-        <h1 class="logo-name">RG</h1>
-    </div>
-    <h3>Recovery Code Login</h3>
-    <p>
-        You have lost access to your authenticator app. Enter one of your recovery codes below.
-        <strong>Each recovery code can only be used once.</strong>
-    </p>
-
-    <form asp-action="LoginWithRecoveryCode" asp-controller="Account" method="post" class="m-t">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="ReturnUrl" />
-        <div asp-validation-summary="All" class="alert alert-danger"></div>
-
-        <div class="form-group">
-            <input asp-for="Code" class="form-control"
-                   placeholder="xxxx-xxxx-xxxx"
-                   autocomplete="off"
-                   autofocus />
-            <span asp-validation-for="Code" class="text-danger"></span>
-        </div>
-
-        <button type="submit" class="btn btn-primary block full-width m-b">Log In</button>
-
-        <p class="m-t">
-            <a asp-action="LoginWith2fa" asp-route-returnUrl="@ViewData["ReturnUrl"]">
-                Use authenticator app instead
-            </a>
-        </p>
-    </form>
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
-
-
-
-

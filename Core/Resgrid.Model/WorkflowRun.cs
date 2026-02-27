@@ -6,11 +6,8 @@ using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
-	[Table("WorkflowRuns")]
 	public class WorkflowRun : IEntity
 	{
-		[Key]
-		[Required]
 		public string WorkflowRunId { get; set; }
 
 		[Required]

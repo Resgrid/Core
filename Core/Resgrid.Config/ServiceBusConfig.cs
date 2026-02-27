@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Config
+﻿﻿namespace Resgrid.Config
 {
 	/// <summary>
 	/// Service Bus specific values for both Azure and NATS
@@ -17,6 +17,7 @@
 		public static string UnitLoactionQueueName = "unitlocationtest";
 		public static string PersonnelLoactionQueueName = "personnellocationtest";
 		public static string SecurityRefreshQueueName = "securityrefreshtest";
+		public static string WorkflowQueueName = "workflowqueuetest";
 #else
 		public static string CallBroadcastQueueName = "callbroadcast";
 		public static string MessageBroadcastQueueName = "messagebroadcast";
@@ -29,6 +30,7 @@
 		public static string UnitLoactionQueueName = "unitlocation";
 		public static string PersonnelLoactionQueueName = "personnellocation";
 		public static string SecurityRefreshQueueName = "securityrefresh";
+		public static string WorkflowQueueName = "workflowqueue";
 #endif
 
 		#region Azure Service Bus Values

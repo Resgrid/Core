@@ -114,27 +114,61 @@ namespace Resgrid.Model
 		[ProtoMember(32)]
 		public string Language { get; set; }
 
-		public string GetPhoneNumber()
-		{
-			if (!String.IsNullOrEmpty(MobileNumber))
-			{
-				return
-					MobileNumber.Trim().Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("+", "").Replace(".", "");
-			}
+		// ── Contact Verification ──────────────────────────────────────────────────────
 
-			return string.Empty;
-		}
+		/// <summary>
+		/// NULL = grandfathered/pre-existing (allowed to send), true = verified, false = pending verification.
+		/// </summary>
+		[ProtoMember(33)]
+		public bool? EmailVerified { get; set; }
 
-		public string GetHomePhoneNumber()
-		{
-			if (!String.IsNullOrEmpty(HomeNumber))
-			{
-				return
-					HomeNumber.Trim().Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("+", "").Replace(".", "");
-			}
+		/// <summary>
+		/// NULL = grandfathered/pre-existing (allowed to send), true = verified, false = pending verification.
+		/// </summary>
+		[ProtoMember(34)]
+		public bool? MobileNumberVerified { get; set; }
 
-			return string.Empty;
-		}
+		/// <summary>
+		/// NULL = grandfathered/pre-existing (allowed to send), true = verified, false = pending verification.
+		/// </summary>
+		[ProtoMember(35)]
+		public bool? HomeNumberVerified { get; set; }
+
+		[ProtoMember(36)]
+		public string EmailVerificationCode { get; set; }
+
+		[ProtoMember(37)]
+		public string MobileVerificationCode { get; set; }
+
+		[ProtoMember(38)]
+		public string HomeVerificationCode { get; set; }
+
+		[ProtoMember(39)]
+		public DateTime? EmailVerificationCodeExpiry { get; set; }
+
+		[ProtoMember(40)]
+		public DateTime? MobileVerificationCodeExpiry { get; set; }
+
+		[ProtoMember(41)]
+		public DateTime? HomeVerificationCodeExpiry { get; set; }
+
+		[ProtoMember(42)]
+		public int EmailVerificationAttempts { get; set; }
+
+		[ProtoMember(43)]
+		public int MobileVerificationAttempts { get; set; }
+
+		[ProtoMember(44)]
+		public int HomeVerificationAttempts { get; set; }
+
+		[ProtoMember(45)]
+		public DateTime? EmailVerificationAttemptsResetDate { get; set; }
+
+		[ProtoMember(46)]
+		public DateTime? MobileVerificationAttemptsResetDate { get; set; }
+
+		[ProtoMember(47)]
+		public DateTime? HomeVerificationAttemptsResetDate { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]
@@ -159,10 +193,21 @@ namespace Resgrid.Model
 		[NotMapped]
 		public FullNameFormat FullName
 		{
-			get
-			{
-				return new FullNameFormat(FirstName, LastName);
-			}
+			get { return new FullNameFormat(FirstName, LastName); }
+		}
+
+		public string GetPhoneNumber()
+		{
+			if (!String.IsNullOrEmpty(MobileNumber))
+				return MobileNumber.Trim().Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("+", "").Replace(".", "");
+			return string.Empty;
+		}
+
+		public string GetHomePhoneNumber()
+		{
+			if (!String.IsNullOrEmpty(HomeNumber))
+				return HomeNumber.Trim().Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("+", "").Replace(".", "");
+			return string.Empty;
 		}
 	}
 

@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Page titles -->
+  <data name="PageTitle" xml:space="preserve"><value>Two-Factor Authentication</value></data>
+  <data name="SetupPageTitle" xml:space="preserve"><value>Enable Two-Factor Authentication</value></data>
+  <data name="DisablePageTitle" xml:space="preserve"><value>Disable Two-Factor Authentication</value></data>
+  <data name="RecoveryCodesPageTitle" xml:space="preserve"><value>Recovery Codes</value></data>
+  <data name="VerifyPageTitle" xml:space="preserve"><value>Verify Identity</value></data>
+
+  <!-- Breadcrumbs -->
+  <data name="BreadcrumbTwoFactor" xml:space="preserve"><value>Two-Factor Authentication</value></data>
+  <data name="BreadcrumbSetup" xml:space="preserve"><value>Setup</value></data>
+  <data name="BreadcrumbDisable" xml:space="preserve"><value>Disable</value></data>
+  <data name="BreadcrumbRecoveryCodes" xml:space="preserve"><value>Recovery Codes</value></data>
+
+  <!-- Index -->
+  <data name="AuthenticatorAppHeader" xml:space="preserve"><value>Authenticator App (TOTP)</value></data>
+  <data name="TwoFactorEnabledAlert" xml:space="preserve"><value>Two-factor authentication is &lt;strong&gt;enabled&lt;/strong&gt; on your account.</value></data>
+  <data name="TwoFactorDisabledAlert" xml:space="preserve"><value>Two-factor authentication is &lt;strong&gt;not enabled&lt;/strong&gt;. Enable it now to secure your account with an authenticator app such as Google Authenticator, Microsoft Authenticator, or Authy.</value></data>
+  <data name="RecoveryCodesRemainingText" xml:space="preserve"><value>You have {0} recovery code(s) remaining.</value></data>
+  <data name="RecoveryCodesWarningText" xml:space="preserve"><value>You only have {0} recovery code(s) remaining. Generate new recovery codes before you run out.</value></data>
+  <data name="RegenerateRecoveryCodesButton" xml:space="preserve"><value>Regenerate Recovery Codes</value></data>
+  <data name="Disable2FAButton" xml:space="preserve"><value>Disable 2FA</value></data>
+  <data name="EnableAuthenticatorButton" xml:space="preserve"><value>Enable Authenticator App</value></data>
+
+  <!-- Enable 2FA -->
+  <data name="SetupHeader" xml:space="preserve"><value>Set Up Authenticator App</value></data>
+  <data name="EnforcedWarning" xml:space="preserve"><value>Your department requires two-factor authentication for administrators. Please complete setup before continuing.</value></data>
+  <data name="SetupInstructions" xml:space="preserve"><value>To use an authenticator app, follow these steps:</value></data>
+  <data name="SetupStep1" xml:space="preserve"><value>Download an authenticator app such as {0}, {1}, or {2}.</value></data>
+  <data name="SetupStep2QR" xml:space="preserve"><value>Scan the QR code below with your app, or enter the key manually:</value></data>
+  <data name="SetupStep3" xml:space="preserve"><value>Once scanned, enter the 6-digit code shown in your authenticator app:</value></data>
+  <data name="VerificationCodeLabel" xml:space="preserve"><value>Verification Code</value></data>
+  <data name="VerificationCodePlaceholder" xml:space="preserve"><value>000000</value></data>
+  <data name="VerifyAndEnableButton" xml:space="preserve"><value>Verify &amp; Enable</value></data>
+  <data name="InvalidCodeError" xml:space="preserve"><value>Verification code is invalid. Please check your authenticator app and try again.</value></data>
+
+  <!-- Recovery Codes -->
+  <data name="SaveRecoveryCodesHeader" xml:space="preserve"><value>Save Your Recovery Codes</value></data>
+  <data name="SaveRecoveryCodesWarning" xml:space="preserve"><value>Important: Store these recovery codes in a secure place. Each code can only be used once. If you lose access to your authenticator app, you can use a recovery code to sign in.</value></data>
+  <data name="DoneButton" xml:space="preserve"><value>Done</value></data>
+
+  <!-- Disable 2FA -->
+  <data name="DisableWarning" xml:space="preserve"><value>Disabling 2FA will reduce the security of your account. Your authenticator key will be reset.</value></data>
+  <data name="DisableConfirmationText" xml:space="preserve"><value>Enter your current authenticator code to confirm you wish to disable 2FA:</value></data>
+  <data name="AuthenticatorCodeLabel" xml:space="preserve"><value>Authenticator Code</value></data>
+  <data name="Disable2FAConfirmButton" xml:space="preserve"><value>Disable 2FA</value></data>
+
+  <!-- Step-Up Verify -->
+  <data name="VerifyIdentityHeader" xml:space="preserve"><value>Confirm Your Identity</value></data>
+  <data name="VerifyIdentityDescription" xml:space="preserve"><value>This operation requires recent two-factor authentication verification. Please enter the current code from your authenticator app.</value></data>
+  <data name="VerifyButton" xml:space="preserve"><value>Verify</value></data>
+
+  <!-- Login 2FA -->
+  <data name="LoginTwoFactorHeader" xml:space="preserve"><value>Two-Factor Authentication</value></data>
+  <data name="LoginTwoFactorDescription" xml:space="preserve"><value>Your login is protected with an authenticator app. Enter the 6-digit code from your app below.</value></data>
+  <data name="AuthenticatorCodeInputLabel" xml:space="preserve"><value>Authenticator Code</value></data>
+  <data name="RememberBrowserLabel" xml:space="preserve"><value>Don't ask again on this device for 30 days</value></data>
+  <data name="VerifyCodeButton" xml:space="preserve"><value>Verify Code</value></data>
+  <data name="UseRecoveryCodeLink" xml:space="preserve"><value>Lost access to your app? Use a recovery code</value></data>
+
+  <!-- Recovery Code Login -->
+  <data name="RecoveryCodeLoginHeader" xml:space="preserve"><value>Recovery Code Login</value></data>
+  <data name="RecoveryCodeLoginDescription" xml:space="preserve"><value>You have lost access to your authenticator app. Enter one of your recovery codes below. Each recovery code can only be used once.</value></data>
+  <data name="RecoveryCodeInputLabel" xml:space="preserve"><value>Recovery Code</value></data>
+  <data name="RecoveryCodePlaceholder" xml:space="preserve"><value>xxxx-xxxx-xxxx</value></data>
+  <data name="LoginWithRecoveryCodeButton" xml:space="preserve"><value>Log In with Recovery Code</value></data>
+  <data name="UseAuthenticatorAppLink" xml:space="preserve"><value>Use authenticator app instead</value></data>
+  <data name="InvalidCodeLogin" xml:space="preserve"><value>Invalid authenticator code.</value></data>
+  <data name="InvalidRecoveryCode" xml:space="preserve"><value>Invalid recovery code.</value></data>
+</root>
+

@@ -68,5 +68,13 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber,
 			UserProfile profile = null);
+
+		/// <summary>
+		/// Sends a contact-method verification code to the specified phone number via SMS.
+		/// </summary>
+		/// <param name="toPhoneNumber">The E.164-formatted destination phone number.</param>
+		/// <param name="verificationCode">The numeric verification code.</param>
+		/// <param name="departmentNumber">The outbound department phone number.</param>
+		Task<bool> SendSmsVerificationCodeAsync(string toPhoneNumber, string verificationCode, string departmentNumber);
 	}
 }

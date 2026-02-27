@@ -74,6 +74,21 @@ namespace Resgrid.Web.Services.Models.v4.Security
 		public bool CanCreateMessage { get; set; }
 
 		/// <summary>
+		/// Can the user create/edit workflows
+		/// </summary>
+		public bool CanCreateWorkflow { get; set; }
+
+		/// <summary>
+		/// Can the user manage workflow credentials
+		/// </summary>
+		public bool CanManageWorkflowCredentials { get; set; }
+
+		/// <summary>
+		/// Can the user view workflow runs
+		/// </summary>
+		public bool CanViewWorkflowRuns { get; set; }
+
+		/// <summary>
 		/// Groups in the department the user is a member of
 		/// </summary>
 		public List<GroupRightData> Groups { get; set; }

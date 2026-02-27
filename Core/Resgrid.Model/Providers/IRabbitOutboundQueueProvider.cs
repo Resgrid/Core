@@ -1,4 +1,4 @@
-﻿using Resgrid.Model.Events;
+﻿﻿using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
 using System.Threading.Tasks;
 
@@ -15,6 +15,7 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueueAuditEvent(AuditEvent auditEvent);
 		Task<bool> EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent);
 		Task<bool> EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent);
+		Task<bool> EnqueueWorkflowEvent(WorkflowQueueItem item);
 		Task<bool> VerifyAndCreateClients();
 	}
 }

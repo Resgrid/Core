@@ -741,5 +741,15 @@ namespace Resgrid.Services
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),
 				DepartmentSettingTypes.ModuleSettings, cancellationToken);
 		}
+
+		public async Task<int> GetRequire2FAForAdminsAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.Require2FAForAdmins);
+
+			if (settingValue != null && int.TryParse(settingValue.Setting, out var scope))
+				return scope;
+
+			return 0; // Disabled by default
+		}
 	}
 }

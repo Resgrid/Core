@@ -1,0 +1,90 @@
+﻿@model List<Resgrid.Model.WorkflowRun>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["WorkflowRunsHeader"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    string workflowId = ViewBag.WorkflowId;
+    int page = ViewBag.Page ?? 1;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>@localizer["WorkflowRunsHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["WorkflowsHeader"]</a></li>
+            <li class="active"><strong>@localizer["Runs"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            <a asp-action="Health" asp-route-workflowId="@workflowId" class="btn btn-info"><i class="fa fa-heartbeat"></i> @localizer["Health"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["RunHistory"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="alert alert-info">@localizer["NoRunsFound"]</div>
+                    }
+                    else
+                    {
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["RunId"]</th>
+                                    <th>@localizer["Status"]</th>
+                                    <th>@localizer["Started"]</th>
+                                    <th>@localizer["Completed"]</th>
+                                    <th>@localizer["Attempt"]</th>
+                                    <th>@localizer["Error"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var run in Model)
+                                {
+                                    var statusClass = run.Status switch {
+                                        2 => "badge-success",
+                                        3 => "badge-danger",
+                                        5 => "badge-warning",
+                                        _ => "badge-default"
+                                    };
+                                    <tr>
+                                        <td><small>@run.WorkflowRunId</small></td>
+                                        <td><span class="badge @statusClass">@((Resgrid.Model.WorkflowRunStatus)run.Status)</span></td>
+                                        <td>@run.StartedOn.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        <td>@(run.CompletedOn?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>
+                                        <td>@run.AttemptNumber</td>
+                                        <td class="text-danger small">@(run.ErrorMessage?.Length > 80 ? run.ErrorMessage.Substring(0,80)+"..." : run.ErrorMessage)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @if (page > 1)
+                                {
+                                    <a asp-action="Runs" asp-route-workflowId="@workflowId" asp-route-page="@(page-1)"
+                                       class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                                }
+                                @if (Model.Count >= 50)
+                                {
+                                    <a asp-action="Runs" asp-route-workflowId="@workflowId" asp-route-page="@(page+1)"
+                                       class="btn btn-default btn-sm">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -9,6 +9,9 @@ namespace Resgrid.Services
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowService>().As<IWorkflowService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowTemplateContextBuilder>().As<Resgrid.Model.Providers.IWorkflowTemplateContextBuilder>().InstancePerLifetimeScope();
 			builder.RegisterType<LogService>().As<ILogService>().InstancePerLifetimeScope();
 			builder.RegisterType<QueueService>().As<IQueueService>().InstancePerLifetimeScope();
 			builder.RegisterType<DeleteService>().As<IDeleteService>().InstancePerLifetimeScope();
@@ -69,6 +72,7 @@ namespace Resgrid.Services
 			builder.RegisterType<FormsService>().As<IFormsService>().InstancePerLifetimeScope();
 			builder.RegisterType<VoiceService>().As<IVoiceService>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemAuditsService>().As<ISystemAuditsService>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactVerificationService>().As<IContactVerificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<AutofillsService>().As<IAutofillsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatesService>().As<IUnitStatesService>().InstancePerLifetimeScope();
 

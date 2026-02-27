@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PageTitle" xml:space="preserve"><value>Autenticación de Dos Factores</value></data>
+  <data name="SetupPageTitle" xml:space="preserve"><value>Habilitar Autenticación de Dos Factores</value></data>
+  <data name="DisablePageTitle" xml:space="preserve"><value>Deshabilitar Autenticación de Dos Factores</value></data>
+  <data name="RecoveryCodesPageTitle" xml:space="preserve"><value>Códigos de Recuperación</value></data>
+  <data name="VerifyPageTitle" xml:space="preserve"><value>Verificar Identidad</value></data>
+  <data name="BreadcrumbTwoFactor" xml:space="preserve"><value>Autenticación de Dos Factores</value></data>
+  <data name="BreadcrumbSetup" xml:space="preserve"><value>Configuración</value></data>
+  <data name="BreadcrumbDisable" xml:space="preserve"><value>Deshabilitar</value></data>
+  <data name="BreadcrumbRecoveryCodes" xml:space="preserve"><value>Códigos de Recuperación</value></data>
+  <data name="AuthenticatorAppHeader" xml:space="preserve"><value>Aplicación Autenticadora (TOTP)</value></data>
+  <data name="TwoFactorEnabledAlert" xml:space="preserve"><value>La autenticación de dos factores está &lt;strong&gt;habilitada&lt;/strong&gt; en su cuenta.</value></data>
+  <data name="TwoFactorDisabledAlert" xml:space="preserve"><value>La autenticación de dos factores &lt;strong&gt;no está habilitada&lt;/strong&gt;. Habilítela ahora para proteger su cuenta.</value></data>
+  <data name="RecoveryCodesRemainingText" xml:space="preserve"><value>Le quedan {0} código(s) de recuperación.</value></data>
+  <data name="RecoveryCodesWarningText" xml:space="preserve"><value>Solo le quedan {0} código(s) de recuperación. Genere nuevos códigos antes de que se agoten.</value></data>
+  <data name="RegenerateRecoveryCodesButton" xml:space="preserve"><value>Regenerar Códigos de Recuperación</value></data>
+  <data name="Disable2FAButton" xml:space="preserve"><value>Deshabilitar 2FA</value></data>
+  <data name="EnableAuthenticatorButton" xml:space="preserve"><value>Habilitar Aplicación Autenticadora</value></data>
+  <data name="SetupHeader" xml:space="preserve"><value>Configurar Aplicación Autenticadora</value></data>
+  <data name="EnforcedWarning" xml:space="preserve"><value>Su departamento requiere autenticación de dos factores para administradores. Complete la configuración antes de continuar.</value></data>
+  <data name="SetupInstructions" xml:space="preserve"><value>Para usar una aplicación autenticadora, siga estos pasos:</value></data>
+  <data name="SetupStep1" xml:space="preserve"><value>Descargue una aplicación autenticadora como {0}, {1} o {2}.</value></data>
+  <data name="SetupStep2QR" xml:space="preserve"><value>Escanee el código QR a continuación con su aplicación, o ingrese la clave manualmente:</value></data>
+  <data name="SetupStep3" xml:space="preserve"><value>Una vez escaneado, ingrese el código de 6 dígitos que se muestra en su aplicación:</value></data>
+  <data name="VerificationCodeLabel" xml:space="preserve"><value>Código de Verificación</value></data>
+  <data name="VerificationCodePlaceholder" xml:space="preserve"><value>000000</value></data>
+  <data name="VerifyAndEnableButton" xml:space="preserve"><value>Verificar y Habilitar</value></data>
+  <data name="InvalidCodeError" xml:space="preserve"><value>El código de verificación no es válido. Compruebe su aplicación autenticadora e inténtelo de nuevo.</value></data>
+  <data name="SaveRecoveryCodesHeader" xml:space="preserve"><value>Guarde Sus Códigos de Recuperación</value></data>
+  <data name="SaveRecoveryCodesWarning" xml:space="preserve"><value>Importante: Guarde estos códigos de recuperación en un lugar seguro. Cada código solo se puede usar una vez.</value></data>
+  <data name="DoneButton" xml:space="preserve"><value>Listo</value></data>
+  <data name="DisableWarning" xml:space="preserve"><value>Deshabilitar 2FA reducirá la seguridad de su cuenta. Se restablecerá su clave autenticadora.</value></data>
+  <data name="DisableConfirmationText" xml:space="preserve"><value>Ingrese su código autenticador actual para confirmar que desea deshabilitar 2FA:</value></data>
+  <data name="AuthenticatorCodeLabel" xml:space="preserve"><value>Código Autenticador</value></data>
+  <data name="Disable2FAConfirmButton" xml:space="preserve"><value>Deshabilitar 2FA</value></data>
+  <data name="VerifyIdentityHeader" xml:space="preserve"><value>Confirme Su Identidad</value></data>
+  <data name="VerifyIdentityDescription" xml:space="preserve"><value>Esta operación requiere una verificación de dos factores reciente. Ingrese el código actual de su aplicación autenticadora.</value></data>
+  <data name="VerifyButton" xml:space="preserve"><value>Verificar</value></data>
+  <data name="LoginTwoFactorHeader" xml:space="preserve"><value>Autenticación de Dos Factores</value></data>
+  <data name="LoginTwoFactorDescription" xml:space="preserve"><value>Su inicio de sesión está protegido con una aplicación autenticadora. Ingrese el código de 6 dígitos de su aplicación.</value></data>
+  <data name="RememberBrowserLabel" xml:space="preserve"><value>No volver a preguntar en este dispositivo por 30 días</value></data>
+  <data name="VerifyCodeButton" xml:space="preserve"><value>Verificar Código</value></data>
+  <data name="UseRecoveryCodeLink" xml:space="preserve"><value>¿Perdió acceso a su aplicación? Use un código de recuperación</value></data>
+  <data name="RecoveryCodeLoginHeader" xml:space="preserve"><value>Inicio de Sesión con Código de Recuperación</value></data>
+  <data name="RecoveryCodeLoginDescription" xml:space="preserve"><value>Ha perdido acceso a su aplicación autenticadora. Ingrese uno de sus códigos de recuperación. Cada código de recuperación solo se puede usar una vez.</value></data>
+  <data name="RecoveryCodeInputLabel" xml:space="preserve"><value>Código de Recuperación</value></data>
+  <data name="LoginWithRecoveryCodeButton" xml:space="preserve"><value>Iniciar Sesión con Código de Recuperación</value></data>
+  <data name="UseAuthenticatorAppLink" xml:space="preserve"><value>Usar aplicación autenticadora en su lugar</value></data>
+  <data name="InvalidCodeLogin" xml:space="preserve"><value>Código autenticador no válido.</value></data>
+  <data name="InvalidRecoveryCode" xml:space="preserve"><value>Código de recuperación no válido.</value></data>
+</root>
+

@@ -166,6 +166,14 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ContactNotesRepository>().As<IContactNotesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactsRepository>().As<IContactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactCategoryRepository>().As<IContactCategoryRepository>().InstancePerLifetimeScope();
+
+			// Workflow Repositories
+			builder.RegisterType<WorkflowRepository>().As<IWorkflowRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowStepRepository>().As<IWorkflowStepRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowCredentialRepository>().As<IWorkflowCredentialRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowRunRepository>().As<IWorkflowRunRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowRunLogRepository>().As<IWorkflowRunLogRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkflowDailyUsageRepository>().As<IWorkflowDailyUsageRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

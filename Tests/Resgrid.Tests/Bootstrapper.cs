@@ -31,6 +31,7 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new NumbersProviderModule());
 				builder.RegisterModule(new CacheProviderModule());
 				builder.RegisterModule(new MarketingModule());
+				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 
 				_container = builder.Build();
 			}

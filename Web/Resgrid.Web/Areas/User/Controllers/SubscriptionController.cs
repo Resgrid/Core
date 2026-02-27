@@ -21,6 +21,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus;
 using Resgrid.Services;
 using Resgrid.Web.Helpers;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -245,6 +246,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> UpdateBillingInfo(IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
@@ -368,6 +370,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> Cancel(CancelView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))

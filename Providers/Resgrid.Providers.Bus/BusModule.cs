@@ -20,6 +20,7 @@ namespace Resgrid.Providers.Bus
 			builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
 			builder.RegisterType<OutboundEventProvider>().As<IOutboundEventProvider>().SingleInstance();
 			builder.RegisterType<SignalrProvider>().As<ISignalrProvider>().SingleInstance();
+			builder.RegisterType<WorkflowEventProvider>().As<IWorkflowEventProvider>().SingleInstance();
 		}
 	}
 }

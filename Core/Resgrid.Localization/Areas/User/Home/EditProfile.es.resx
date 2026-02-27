@@ -369,4 +369,40 @@
   <data name="UserTypeLabel" xml:space="preserve">
     <value>Tipo de usuario</value>
   </data>
+  <data name="EmailNotVerifiedWarning" xml:space="preserve">
+    <value>Su dirección de correo electrónico no ha sido verificada. Verifíquela para asegurarse de recibir despachos y notificaciones.</value>
+  </data>
+  <data name="MobileNotVerifiedWarning" xml:space="preserve">
+    <value>Su número de móvil no ha sido verificado. Verifíquelo para asegurarse de recibir despachos y notificaciones por SMS.</value>
+  </data>
+  <data name="HomeNotVerifiedWarning" xml:space="preserve">
+    <value>Su número de teléfono fijo no ha sido verificado. Verifíquelo para asegurarse de recibir despachos por llamada de voz.</value>
+  </data>
+  <data name="GrandfatheredEmailWarning" xml:space="preserve">
+    <value>Recomendamos verificar su dirección de correo electrónico para garantizar la entrega ininterrumpida de despachos y notificaciones.</value>
+  </data>
+  <data name="GrandfatheredMobileWarning" xml:space="preserve">
+    <value>Recomendamos verificar su número de móvil para garantizar la entrega ininterrumpida de despachos y notificaciones por SMS.</value>
+  </data>
+  <data name="GrandfatheredHomeWarning" xml:space="preserve">
+    <value>Recomendamos verificar su número de teléfono fijo para garantizar la entrega ininterrumpida de despachos por llamada de voz.</value>
+  </data>
+  <data name="VerifyButtonLabel" xml:space="preserve">
+    <value>Verificar</value>
+  </data>
+  <data name="VerificationCodePlaceholder" xml:space="preserve">
+    <value>Ingrese el código de verificación</value>
+  </data>
+  <data name="VerificationCodeSent" xml:space="preserve">
+    <value>Se ha enviado un código de verificación.</value>
+  </data>
+  <data name="VerificationSuccessful" xml:space="preserve">
+    <value>Verificación exitosa.</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>Error de verificación. Por favor verifique el código e inténtelo de nuevo.</value>
+  </data>
+  <data name="VerificationRateLimited" xml:space="preserve">
+    <value>Demasiados intentos de verificación. Por favor inténtelo más tarde.</value>
+  </data>
 </root>

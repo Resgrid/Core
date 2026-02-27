@@ -1,0 +1,1202 @@
+﻿@model Resgrid.Model.Workflow
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["EditWorkflowHeader"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var credentialsJson = (string)(ViewBag.CredentialsJson ?? "[]");
+    var triggerEventTypeName = (string)(ViewBag.TriggerEventTypeName ?? Model.TriggerEventType.ToString());
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/codemirror/theme/monokai.min.css" asp-append-version="true" />
+    <style>
+        .CodeMirror { height: 220px; font-size: 12px; }
+        .step-card { border: 1px solid #e7eaec; padding: 15px; margin-bottom: 10px; border-radius: 4px; background: #f9f9f9; }
+        /* extra-large modal */
+        .modal-xl { width: 96%; max-width: 1200px; }
+        /* variable chip buttons */
+        .var-chip { display: inline-block; margin: 2px 2px 2px 0; padding: 2px 7px; font-size: 11px; font-family: monospace;
+                    background: #eef2ff; border: 1px solid #c5cef5; border-radius: 3px; cursor: pointer; color: #3a4a9f;
+                    white-space: nowrap; }
+        .var-chip:hover { background: #c5cef5; }
+        .var-chip-array { background: #eefaf4; border-color: #7ec8a0; color: #1a6b3c; }
+        .var-chip-array:hover { background: #c8edda; }
+        /* action-config panels */
+        .action-config-panel { display: none; }
+        .action-config-panel.active { display: block; }
+        /* modal left/right columns */
+        .step-modal-left  { padding-right: 20px; border-right: 1px solid #e7eaec; }
+        .step-modal-right { padding-left: 16px; }
+        /* small section label */
+        .config-section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; margin: 12px 0 6px; letter-spacing: .04em; }
+    </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>@localizer["EditWorkflowHeader"]: @Model.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["WorkflowsHeader"]</a></li>
+            <li class="active"><strong>@localizer["Edit"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Workflow settings -->
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["WorkflowSettings"]</h5></div>
+                <div class="ibox-content">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="WorkflowId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Name">@localizer["Name"]</label>
+                            <input asp-for="Name" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description">@localizer["Description"]</label>
+                            <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="TriggerEventType">@localizer["TriggerEvent"]</label>
+                                    <input type="hidden" asp-for="TriggerEventType" />
+                                    <p class="form-control-static">
+                                        <strong>@triggerEventTypeName</strong>
+                                        <br /><small class="text-muted">The trigger event type cannot be changed after creation.</small>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label asp-for="MaxRetryCount">@localizer["MaxRetries"]</label>
+                                    <input asp-for="MaxRetryCount" type="number" class="form-control" min="0" max="10" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label asp-for="RetryBackoffBaseSeconds">@localizer["BackoffSeconds"]</label>
+                                    <input asp-for="RetryBackoffBaseSeconds" type="number" class="form-control" min="1" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox"><label><input asp-for="IsEnabled" type="checkbox" /> @localizer["Enabled"]</label></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">@localizer["SaveChanges"]</button>
+                        <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>@localizer["Steps"]</h5>
+                    <div class="ibox-tools">
+                        <button class="btn btn-xs btn-primary" id="addStepBtn" type="button">
+                            <i class="fa fa-plus"></i> @localizer["AddStep"]
+                        </button>
+                    </div>
+                </div>
+                <div class="ibox-content" id="stepsContainer">
+                    @if (Model.Steps != null)
+                    {
+                        foreach (var step in Model.Steps.OrderBy(s => s.StepOrder))
+                        {
+                            <div class="step-card" data-step-id="@step.WorkflowStepId">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>@localizer["ActionType"]</label>
+                                        <p><strong>@((Resgrid.Model.WorkflowActionType)step.ActionType)</strong></p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label>@localizer["Order"]</label>
+                                        <p>@step.StepOrder</p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label>@localizer["Enabled"]</label>
+                                        <p>@(step.IsEnabled ? localizer["Yes"].Value : localizer["No"].Value)</p>
+                                    </div>
+                                    <div class="col-sm-5 text-right">
+                                        <button type="button" class="btn btn-xs btn-default edit-step-btn"
+                                                data-step='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(step))'>
+                                            <i class="fa fa-pencil"></i> @localizer["Edit"]
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-danger delete-step-btn"
+                                                data-step-id="@step.WorkflowStepId"
+                                                data-workflow-id="@Model.WorkflowId">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>@localizer["TemplatePeek"]</label>
+                                    <pre class="small">@(step.OutputTemplate?.Length > 120 ? step.OutputTemplate.Substring(0, 120) + "..." : step.OutputTemplate)</pre>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Variable reference panel (right sidebar on main page) -->
+        <div class="col-lg-4">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-info-circle"></i> @localizer["TemplateVariables"]</h5></div>
+                <div class="ibox-content small">
+                    <p class="text-muted">@localizer["CommonVariables"]</p>
+                    <ul class="list-unstyled">
+                        <li><code>{{ department.name }}</code></li>
+                        <li><code>{{ department.code }}</code></li>
+                        <li><code>{{ department.address.full }}</code></li>
+                        <li><code>{{ timestamp.utc_now }}</code></li>
+                        <li><code>{{ timestamp.department_now }}</code></li>
+                        <li><code>{{ user.full_name }}</code></li>
+                        <li><code>{{ user.email }}</code></li>
+                    </ul>
+                    <hr />
+                    <p class="text-muted">@localizer["CallEventVariables"]</p>
+                    <ul class="list-unstyled">
+                        <li><code>{{ call.name }}</code></li>
+                        <li><code>{{ call.nature }}</code></li>
+                        <li><code>{{ call.address }}</code></li>
+                        <li><code>{{ call.priority_text }}</code></li>
+                        <li><code>{{ call.state_text }}</code></li>
+                        <li><code>{{ call.logged_on }}</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     Add / Edit Step Modal  (extra-large, two-column layout)
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="stepModal" tabindex="-1" role="dialog" aria-labelledby="stepModalLabel">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="stepModalLabel">@localizer["AddStep"]</h4>
+            </div>
+            <div class="modal-body" style="padding: 20px 24px;">
+
+                <!-- hidden state -->
+                <input type="hidden" id="stepId" />
+                <input type="hidden" id="stepWorkflowId" value="@Model.WorkflowId" />
+
+                <div class="row">
+                    <!-- ── LEFT COLUMN ── -->
+                    <div class="col-md-8 step-modal-left">
+
+                        <!-- Row 1 : ActionType / Order / Enabled -->
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>@localizer["ActionType"] <span class="text-danger">*</span></label>
+                                    <select id="stepActionType" class="form-control"></select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>@localizer["Order"]</label>
+                                    <input type="number" id="stepOrder" class="form-control" min="0" value="0" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>&nbsp;</label><br />
+                                    <div class="checkbox" style="margin-top:4px;">
+                                        <label><input type="checkbox" id="stepIsEnabled" checked /> @localizer["Enabled"]</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── Action Config Panels ── -->
+                        <div class="config-section-label">@localizer["ActionConfig"]</div>
+
+                        <!-- 0 · SendEmail -->
+                        <div class="action-config-panel" data-action="0">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>To <span class="text-danger">*</span></label>
+                                        <input type="text" id="cfg_email_to" class="form-control" placeholder="user@example.com, user2@example.com" />
+                                        <span class="help-block">Comma-separated email addresses.</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Cc</label>
+                                        <input type="text" id="cfg_email_cc" class="form-control" placeholder="optional" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject <span class="text-danger">*</span></label>
+                                <input type="text" id="cfg_email_subject" class="form-control" placeholder="e.g. New Call: {{ call.name }}" />
+                            </div>
+                        </div>
+
+                        <!-- 1 · SendSms -->
+                        <div class="action-config-panel" data-action="1">
+                            <div class="form-group">
+                                <label>To (phone) <span class="text-danger">*</span></label>
+                                <input type="text" id="cfg_sms_to" class="form-control" placeholder="+15551234567" />
+                                <span class="help-block">E.164 format. Requires a Twilio credential.</span>
+                            </div>
+                        </div>
+
+                        <!-- 2 · CallApiGet -->
+                        <div class="action-config-panel" data-action="2">
+                            <div class="form-group">
+                                <label>URL <span class="text-danger">*</span></label>
+                                <input type="url" id="cfg_apiget_url" class="form-control" placeholder="https://api.example.com/notify" />
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Content-Type</label>
+                                        <input type="text" id="cfg_apiget_ct" class="form-control" value="application/json" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Timeout (seconds)</label>
+                                        <input type="number" id="cfg_apiget_timeout" class="form-control" value="30" min="1" max="300" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3 · CallApiPost -->
+                        <div class="action-config-panel" data-action="3">
+                            <div class="form-group">
+                                <label>URL <span class="text-danger">*</span></label>
+                                <input type="url" id="cfg_apipost_url" class="form-control" placeholder="https://api.example.com/webhook" />
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Content-Type</label>
+                                        <input type="text" id="cfg_apipost_ct" class="form-control" value="application/json" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Timeout (seconds)</label>
+                                        <input type="number" id="cfg_apipost_timeout" class="form-control" value="30" min="1" max="300" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4 · CallApiPut -->
+                        <div class="action-config-panel" data-action="4">
+                            <div class="form-group">
+                                <label>URL <span class="text-danger">*</span></label>
+                                <input type="url" id="cfg_apiput_url" class="form-control" placeholder="https://api.example.com/resource/1" />
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Content-Type</label>
+                                        <input type="text" id="cfg_apiput_ct" class="form-control" value="application/json" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Timeout (seconds)</label>
+                                        <input type="number" id="cfg_apiput_timeout" class="form-control" value="30" min="1" max="300" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5 · CallApiDelete -->
+                        <div class="action-config-panel" data-action="5">
+                            <div class="form-group">
+                                <label>URL <span class="text-danger">*</span></label>
+                                <input type="url" id="cfg_apidel_url" class="form-control" placeholder="https://api.example.com/resource/1" />
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Content-Type</label>
+                                        <input type="text" id="cfg_apidel_ct" class="form-control" value="application/json" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Timeout (seconds)</label>
+                                        <input type="number" id="cfg_apidel_timeout" class="form-control" value="30" min="1" max="300" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6 · UploadFileFtp -->
+                        <div class="action-config-panel" data-action="6">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Remote Path</label>
+                                        <input type="text" id="cfg_ftp_path" class="form-control" value="/" placeholder="/uploads" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Filename</label>
+                                        <input type="text" id="cfg_ftp_filename" class="form-control" placeholder="report.txt" />
+                                        <span class="help-block">Leave blank for auto-generated name.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7 · UploadFileSftp -->
+                        <div class="action-config-panel" data-action="7">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Remote Path</label>
+                                        <input type="text" id="cfg_sftp_path" class="form-control" value="/" placeholder="/uploads" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Filename</label>
+                                        <input type="text" id="cfg_sftp_filename" class="form-control" placeholder="report.txt" />
+                                        <span class="help-block">Leave blank for auto-generated name.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 8 · UploadFileS3 -->
+                        <div class="action-config-panel" data-action="8">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>S3 Key (path)</label>
+                                        <input type="text" id="cfg_s3_key" class="form-control" placeholder="reports/workflow_output.txt" />
+                                        <span class="help-block">Full key / path within the bucket.</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Content-Type</label>
+                                        <input type="text" id="cfg_s3_ct" class="form-control" value="text/plain" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 9 · SendTeamsMessage -->
+                        <div class="action-config-panel" data-action="9">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Card Title</label>
+                                        <input type="text" id="cfg_teams_title" class="form-control" placeholder="Resgrid Notification" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Theme Color</label>
+                                        <input type="text" id="cfg_teams_color" class="form-control" value="0076D7" placeholder="0076D7" />
+                                        <span class="help-block">Hex without #</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 10 · SendSlackMessage -->
+                        <div class="action-config-panel" data-action="10">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="form-group">
+                                        <label>Channel</label>
+                                        <input type="text" id="cfg_slack_channel" class="form-control" placeholder="#general" />
+                                        <span class="help-block">Leave blank to use webhook default.</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Bot Username</label>
+                                        <input type="text" id="cfg_slack_username" class="form-control" placeholder="Resgrid Bot" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>Icon Emoji</label>
+                                        <input type="text" id="cfg_slack_emoji" class="form-control" placeholder=":fire:" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 11 · SendDiscordMessage -->
+                        <div class="action-config-panel" data-action="11">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Bot Username</label>
+                                        <input type="text" id="cfg_discord_username" class="form-control" placeholder="Resgrid Bot" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Avatar URL</label>
+                                        <input type="url" id="cfg_discord_avatar" class="form-control" placeholder="https://…/avatar.png" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 12 · UploadFileAzureBlob -->
+                        <div class="action-config-panel" data-action="12">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Blob Name / Path</label>
+                                        <input type="text" id="cfg_azure_blob" class="form-control" placeholder="reports/output.txt" />
+                                        <span class="help-block">Leave blank for auto-generated path.</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Content-Type</label>
+                                        <input type="text" id="cfg_azure_ct" class="form-control" value="text/plain" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 13 · UploadFileBox -->
+                        <div class="action-config-panel" data-action="13">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Folder ID</label>
+                                        <input type="text" id="cfg_box_folder" class="form-control" value="0" placeholder="0" />
+                                        <span class="help-block">"0" = root folder.</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Filename</label>
+                                        <input type="text" id="cfg_box_filename" class="form-control" placeholder="report.txt" />
+                                        <span class="help-block">Leave blank for auto-generated name.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 14 · UploadFileDropbox -->
+                        <div class="action-config-panel" data-action="14">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Target Path</label>
+                                        <input type="text" id="cfg_dropbox_path" class="form-control" value="/" placeholder="/reports" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Filename</label>
+                                        <input type="text" id="cfg_dropbox_filename" class="form-control" placeholder="report.txt" />
+                                        <span class="help-block">Leave blank for auto-generated name.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Write Mode</label>
+                                <select id="cfg_dropbox_mode" class="form-control">
+                                    <option value="overwrite">Overwrite</option>
+                                    <option value="add">Add (rename on conflict)</option>
+                                    <option value="update">Update (fail if not exists)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- ── Credential Selector ── -->
+                        <div id="credentialRow" class="form-group" style="display:none; margin-top:4px;">
+                            <label for="stepCredentialId">
+                                <i class="fa fa-key"></i> Credential
+                                <span id="credentialRequired" class="text-danger" style="display:none;"> *</span>
+                            </label>
+                            <select id="stepCredentialId" class="form-control">
+                                <option value="">(none)</option>
+                            </select>
+                            <span id="credentialHelp" class="help-block"></span>
+                            <div id="credentialWarning" class="alert alert-warning" style="display:none; margin-top:6px; padding:6px 10px; font-size:12px;">
+                                <i class="fa fa-exclamation-triangle"></i>
+                                No matching credentials found for this action type.
+                                <a asp-action="CredentialNew" asp-route-area="User" target="_blank">Add one now →</a>
+                            </div>
+                        </div>
+
+                        <!-- ── Output Template ── -->
+                        <div class="config-section-label" style="margin-top:14px;">@localizer["OutputTemplate"] <span class="text-danger">*</span></div>
+                        <p class="text-muted" style="font-size:11px; margin-bottom:6px;">
+                            Use Scriban template syntax. Click variables in the panel on the right to insert them.
+                        </p>
+                        <textarea id="stepOutputTemplate" class="form-control"></textarea>
+
+                        <div id="stepSaveError" class="alert alert-danger" style="display:none; margin-top:12px;"></div>
+                    </div>
+
+                    <!-- ── RIGHT COLUMN — variable reference ── -->
+                    <div class="col-md-4 step-modal-right">
+                        <p class="config-section-label" style="margin-top:0;">@localizer["TemplateVariables"]</p>
+                        <p class="text-muted" style="font-size:11px;">
+                            Click a <span class="var-chip" style="cursor:default; pointer-events:none;">scalar</span> variable to insert it.
+                            Click an <span class="var-chip var-chip-array" style="cursor:default; pointer-events:none;">array &#x21C4;</span> variable to insert a <code>for</code> loop snippet.
+                        </p>
+
+                        <p class="text-muted" style="font-size:11px; margin-bottom:4px;"><strong>@localizer["CommonVariables"]</strong></p>
+                        <div id="varChipsCommon">
+                            @foreach (var v in new[] {
+                                "department.name","department.code","department.address.full",
+                                "timestamp.utc_now","timestamp.department_now",
+                                "user.full_name","user.email" })
+                            {
+                                <span class="var-chip" data-var="{{ @v }}">{{ @v }}</span>
+                            }
+                        </div>
+
+                        <p class="text-muted" style="font-size:11px; margin: 10px 0 4px;"><strong>@localizer["CallEventVariables"]</strong></p>
+                        <div id="varChipsCall">
+                            @foreach (var v in new[] {
+                                "call.name","call.nature","call.address",
+                                "call.priority_text","call.state_text","call.logged_on",
+                                "call.call_id","call.type","call.contact_name","call.contact_info",
+                                "call.geo_location_data","call.incident_number" })
+                            {
+                                <span class="var-chip" data-var="{{ @v }}">{{ @v }}</span>
+                            }
+                        </div>
+
+                        <p class="text-muted" style="font-size:11px; margin: 10px 0 4px;"><strong>Call Collections (arrays)</strong></p>
+                        <p class="text-muted" style="font-size:10px; margin-bottom:4px;">
+                            Click to insert a <code>for</code> loop. Available for CallAdded, CallUpdated, CallClosed triggers.
+                        </p>
+                        <div id="varChipsCallArrays">
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.dispatches"
+                                  data-alias="dispatch"
+                                  data-fields="dispatch.user_id, dispatch.dispatch_count, dispatch.dispatched_on"
+                                  title="Fields: user_id, dispatch_count, dispatched_on">
+                                call.dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.unit_dispatches"
+                                  data-alias="unit"
+                                  data-fields="unit.unit_id, unit.unit_name, unit.dispatch_count, unit.dispatched_on"
+                                  title="Fields: unit_id, unit_name, dispatch_count, dispatched_on">
+                                call.unit_dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.group_dispatches"
+                                  data-alias="group"
+                                  data-fields="group.group_id, group.group_name, group.dispatch_count, group.dispatched_on"
+                                  title="Fields: group_id, group_name, dispatch_count, dispatched_on">
+                                call.group_dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.role_dispatches"
+                                  data-alias="role"
+                                  data-fields="role.role_id, role.role_name, role.dispatch_count, role.dispatched_on"
+                                  title="Fields: role_id, role_name, dispatch_count, dispatched_on">
+                                call.role_dispatches &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.notes_list"
+                                  data-alias="note"
+                                  data-fields="note.note, note.source, note.timestamp, note.user_id"
+                                  title="Fields: note, source, timestamp, user_id">
+                                call.notes_list &#x21C4;
+                            </span>
+                            <span class="var-chip var-chip-array"
+                                  data-array="call.contacts"
+                                  data-alias="contact"
+                                  data-fields="contact.contact_id, contact.contact_type"
+                                  title="Fields: contact_id, contact_type">
+                                call.contacts &#x21C4;
+                            </span>
+                        </div>
+
+                        <p class="text-muted" style="font-size:11px; margin: 10px 0 4px;"><strong>Unit / Personnel</strong></p>
+                        <div id="varChipsUnit">
+                            @foreach (var v in new[] {
+                                "unit.name","unit.type","unit.group_name",
+                                "personnel.full_name","personnel.email","personnel.role" })
+                            {
+                                <span class="var-chip" data-var="{{ @v }}">{{ @v }}</span>
+                            }
+                        </div>
+                    </div>
+                </div><!-- /.row -->
+            </div><!-- /.modal-body -->
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="saveStepBtn">
+                    <i class="fa fa-save"></i> @localizer["SaveChanges"]
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Delete Step Confirmation Modal -->
+<div class="modal fade" id="deleteStepModal" tabindex="-1" role="dialog" aria-labelledby="deleteStepModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="deleteStepModalLabel"><i class="fa fa-trash text-danger"></i> @localizer["DeleteStep"]</h4>
+            </div>
+            <div class="modal-body">
+                <p>@localizer["DeleteStepConfirm"]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteStepBtn">
+                    <i class="fa fa-trash"></i> @localizer["Delete"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/codemirror/lib/codemirror.min.js" asp-append-version="true"></script>
+    <script src="~/lib/codemirror/mode/xml/xml.min.js" asp-append-version="true"></script>
+    <script src="~/lib/codemirror/mode/javascript/javascript.min.js" asp-append-version="true"></script>
+    <script src="~/lib/codemirror/mode/css/css.min.js" asp-append-version="true"></script>
+    <script src="~/lib/codemirror/mode/htmlmixed/htmlmixed.min.js" asp-append-version="true"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        // ── Credentials data (injected from server) ───────────────────────────
+        // credentialType values match WorkflowCredentialType enum:
+        //   0=Smtp, 1=Twilio, 2=Ftp, 3=Sftp, 4=AwsS3, 5=HttpBearer, 6=HttpBasic,
+        //   7=HttpApiKey, 8=MicrosoftTeams, 9=Slack, 10=Discord, 11=AzureBlobStorage,
+        //   12=Box, 13=Dropbox
+        var ALL_CREDENTIALS = @Html.Raw(credentialsJson);
+
+        // Maps WorkflowActionType → accepted WorkflowCredentialType values
+        // Actions that need no credential (e.g. HTTP calls can be unauthenticated) are
+        // listed with their optional types; actions where a credential is mandatory are
+        // marked accordingly in CREDENTIAL_REQUIRED.
+        var ACTION_CREDENTIAL_TYPES = {
+            0:  [0],           // SendEmail        → Smtp
+            1:  [1],           // SendSms          → Twilio
+            2:  [5, 6, 7],     // CallApiGet       → HttpBearer, HttpBasic, HttpApiKey
+            3:  [5, 6, 7],     // CallApiPost      → HttpBearer, HttpBasic, HttpApiKey
+            4:  [5, 6, 7],     // CallApiPut       → HttpBearer, HttpBasic, HttpApiKey
+            5:  [5, 6, 7],     // CallApiDelete    → HttpBearer, HttpBasic, HttpApiKey
+            6:  [2],           // UploadFileFtp    → Ftp
+            7:  [3],           // UploadFileSftp   → Sftp
+            8:  [4],           // UploadFileS3     → AwsS3
+            9:  [8],           // SendTeamsMessage → MicrosoftTeams
+            10: [9],           // SendSlackMessage → Slack
+            11: [10],          // SendDiscordMessage → Discord
+            12: [11],          // UploadFileAzureBlob → AzureBlobStorage
+            13: [12],          // UploadFileBox    → Box
+            14: [13]           // UploadFileDropbox → Dropbox
+        };
+
+        // Action types where a credential is mandatory (not optional)
+        var CREDENTIAL_REQUIRED = { 0:1, 1:1, 6:1, 7:1, 8:1, 9:1, 10:1, 11:1, 12:1, 13:1, 14:1 };
+
+        var CREDENTIAL_HELP = {
+            0:  'SMTP credentials to send email from.',
+            1:  'Twilio credentials for SMS delivery.',
+            2:  'Optional HTTP auth credential.',
+            3:  'Optional HTTP auth credential.',
+            4:  'Optional HTTP auth credential.',
+            5:  'Optional HTTP auth credential.',
+            6:  'FTP server credentials.',
+            7:  'SFTP server credentials.',
+            8:  'AWS S3 credentials (access key + bucket).',
+            9:  'Microsoft Teams incoming webhook credential.',
+            10: 'Slack webhook or bot token credential.',
+            11: 'Discord webhook or bot token credential.',
+            12: 'Azure Blob Storage connection string credential.',
+            13: 'Box application credential (JWT).',
+            14: 'Dropbox access token credential.'
+        };
+
+        // ── Filter the credential <select> for the chosen action type ─────────
+        function filterCredentials(actionType, selectedCredId) {
+            var t = parseInt(actionType, 10);
+            var acceptedTypes = ACTION_CREDENTIAL_TYPES[t] || [];
+            var isRequired    = !!CREDENTIAL_REQUIRED[t];
+            var helpText      = CREDENTIAL_HELP[t] || '';
+            var matched       = ALL_CREDENTIALS.filter(function (c) {
+                return acceptedTypes.indexOf(c.credentialType) !== -1;
+            });
+
+            var row     = document.getElementById('credentialRow');
+            var sel     = document.getElementById('stepCredentialId');
+            var reqMark = document.getElementById('credentialRequired');
+            var help    = document.getElementById('credentialHelp');
+            var warning = document.getElementById('credentialWarning');
+
+            // Hide the whole row if this action type uses no credentials at all
+            if (acceptedTypes.length === 0) {
+                row.style.display = 'none';
+                sel.value = '';
+                return;
+            }
+
+            row.style.display = '';
+            reqMark.style.display = isRequired ? '' : 'none';
+            help.textContent = helpText;
+
+            // Rebuild options
+            sel.innerHTML = '<option value="">' + (isRequired ? '— select credential —' : '(none / unauthenticated)') + '</option>';
+            matched.forEach(function (c) {
+                var o = document.createElement('option');
+                o.value = c.id;
+                o.textContent = c.name;
+                sel.appendChild(o);
+            });
+
+            // Restore previously selected value
+            if (selectedCredId) sel.value = selectedCredId;
+
+            // Show warning if no matching credentials exist
+            warning.style.display = matched.length === 0 ? '' : 'none';
+        }
+
+        // ── CodeMirror ────────────────────────────────────────────────────────
+        var templateEditor = CodeMirror.fromTextArea(
+            document.getElementById('stepOutputTemplate'), {
+                mode: 'htmlmixed',
+                theme: 'monokai',
+                lineNumbers: true,
+                lineWrapping: true
+            });
+
+        // Refresh when modal opens so dimensions are correct
+        $('#stepModal').on('shown.bs.modal', function () { templateEditor.refresh(); });
+
+        // ── Populate ActionType <select> ──────────────────────────────────────
+        var ACTION_LABELS = {
+            0: 'Send Email',        1: 'Send SMS',
+            2: 'HTTP GET',          3: 'HTTP POST',
+            4: 'HTTP PUT',          5: 'HTTP DELETE',
+            6: 'Upload FTP',        7: 'Upload SFTP',
+            8: 'Upload S3',         9: 'Teams Message',
+            10: 'Slack Message',   11: 'Discord Message',
+            12: 'Azure Blob',      13: 'Box Upload',
+            14: 'Dropbox Upload'
+        };
+        var sel = document.getElementById('stepActionType');
+        Object.keys(ACTION_LABELS).forEach(function (k) {
+            var o = document.createElement('option');
+            o.value = k;
+            o.textContent = ACTION_LABELS[k];
+            sel.appendChild(o);
+        });
+
+        // ── Show / hide config panel on action-type change ────────────────────
+        function showConfigPanel(actionType) {
+            document.querySelectorAll('.action-config-panel').forEach(function (p) {
+                p.classList.remove('active');
+            });
+            var panel = document.querySelector('.action-config-panel[data-action="' + actionType + '"]');
+            if (panel) panel.classList.add('active');
+        }
+
+        sel.addEventListener('change', function () {
+            showConfigPanel(this.value);
+            filterCredentials(this.value, null);
+        });
+
+        // ── Variable chips → insert into editor ───────────────────────────────
+        document.querySelectorAll('.var-chip').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                var doc    = templateEditor.getDoc();
+                var cursor = doc.getCursor();
+
+                if (this.classList.contains('var-chip-array')) {
+                    // Array chip — insert a for-loop snippet
+                    var arrayPath = this.dataset.array;
+                    var alias     = this.dataset.alias;
+                    var fields    = this.dataset.fields ? this.dataset.fields.split(',').map(function(f){ return f.trim(); }) : [];
+                    var indent    = '  ';
+                    var lines     = ['{{ for ' + alias + ' in ' + arrayPath + ' }}'];
+                    fields.forEach(function(f) {
+                        lines.push(indent + '{{ ' + f + ' }}');
+                    });
+                    lines.push('{{ end }}');
+                    doc.replaceRange(lines.join('\n'), cursor);
+                } else {
+                    // Scalar chip — insert simple expression
+                    var snippet = this.dataset.var;
+                    doc.replaceRange(snippet, cursor);
+                }
+
+                templateEditor.focus();
+            });
+        });
+
+        // ── Build ActionConfig JSON from structured fields ─────────────────────
+        function buildActionConfig(actionType) {
+            var t = parseInt(actionType, 10);
+            switch (t) {
+                case 0:  // SendEmail
+                    return JSON.stringify({
+                        to:      document.getElementById('cfg_email_to').value.trim(),
+                        cc:      document.getElementById('cfg_email_cc').value.trim() || null,
+                        subject: document.getElementById('cfg_email_subject').value.trim()
+                    });
+                case 1:  // SendSms
+                    return JSON.stringify({
+                        to: document.getElementById('cfg_sms_to').value.trim()
+                    });
+                case 2:  // CallApiGet
+                    return JSON.stringify({
+                        url:            document.getElementById('cfg_apiget_url').value.trim(),
+                        contentType:    document.getElementById('cfg_apiget_ct').value.trim() || null,
+                        timeoutSeconds: parseInt(document.getElementById('cfg_apiget_timeout').value, 10) || 30
+                    });
+                case 3:  // CallApiPost
+                    return JSON.stringify({
+                        url:            document.getElementById('cfg_apipost_url').value.trim(),
+                        contentType:    document.getElementById('cfg_apipost_ct').value.trim() || null,
+                        timeoutSeconds: parseInt(document.getElementById('cfg_apipost_timeout').value, 10) || 30
+                    });
+                case 4:  // CallApiPut
+                    return JSON.stringify({
+                        url:            document.getElementById('cfg_apiput_url').value.trim(),
+                        contentType:    document.getElementById('cfg_apiput_ct').value.trim() || null,
+                        timeoutSeconds: parseInt(document.getElementById('cfg_apiput_timeout').value, 10) || 30
+                    });
+                case 5:  // CallApiDelete
+                    return JSON.stringify({
+                        url:            document.getElementById('cfg_apidel_url').value.trim(),
+                        contentType:    document.getElementById('cfg_apidel_ct').value.trim() || null,
+                        timeoutSeconds: parseInt(document.getElementById('cfg_apidel_timeout').value, 10) || 30
+                    });
+                case 6:  // UploadFileFtp
+                    return JSON.stringify({
+                        remotePath: document.getElementById('cfg_ftp_path').value.trim() || '/',
+                        filename:   document.getElementById('cfg_ftp_filename').value.trim() || null
+                    });
+                case 7:  // UploadFileSftp
+                    return JSON.stringify({
+                        remotePath: document.getElementById('cfg_sftp_path').value.trim() || '/',
+                        filename:   document.getElementById('cfg_sftp_filename').value.trim() || null
+                    });
+                case 8:  // UploadFileS3
+                    return JSON.stringify({
+                        s3Key:       document.getElementById('cfg_s3_key').value.trim() || null,
+                        contentType: document.getElementById('cfg_s3_ct').value.trim() || 'text/plain'
+                    });
+                case 9:  // SendTeamsMessage
+                    return JSON.stringify({
+                        title:      document.getElementById('cfg_teams_title').value.trim() || null,
+                        themeColor: document.getElementById('cfg_teams_color').value.trim() || '0076D7'
+                    });
+                case 10: // SendSlackMessage
+                    return JSON.stringify({
+                        channel:   document.getElementById('cfg_slack_channel').value.trim() || null,
+                        username:  document.getElementById('cfg_slack_username').value.trim() || null,
+                        iconEmoji: document.getElementById('cfg_slack_emoji').value.trim() || null
+                    });
+                case 11: // SendDiscordMessage
+                    return JSON.stringify({
+                        username:  document.getElementById('cfg_discord_username').value.trim() || null,
+                        avatarUrl: document.getElementById('cfg_discord_avatar').value.trim() || null
+                    });
+                case 12: // UploadFileAzureBlob
+                    return JSON.stringify({
+                        blobName:    document.getElementById('cfg_azure_blob').value.trim() || null,
+                        contentType: document.getElementById('cfg_azure_ct').value.trim() || 'text/plain'
+                    });
+                case 13: // UploadFileBox
+                    return JSON.stringify({
+                        folderId: document.getElementById('cfg_box_folder').value.trim() || '0',
+                        filename: document.getElementById('cfg_box_filename').value.trim() || null
+                    });
+                case 14: // UploadFileDropbox
+                    return JSON.stringify({
+                        targetPath: document.getElementById('cfg_dropbox_path').value.trim() || '/',
+                        filename:   document.getElementById('cfg_dropbox_filename').value.trim() || null,
+                        writeMode:  document.getElementById('cfg_dropbox_mode').value
+                    });
+                default:
+                    return null;
+            }
+        }
+
+        // ── Populate structured fields from a saved ActionConfig JSON ──────────
+        function populateActionConfig(actionType, jsonStr) {
+            var cfg = {};
+            try { if (jsonStr) cfg = JSON.parse(jsonStr); } catch (_) {}
+            var t = parseInt(actionType, 10);
+            function val(id, v) {
+                var el = document.getElementById(id);
+                if (el) el.value = v != null ? v : '';
+            }
+            switch (t) {
+                case 0:
+                    val('cfg_email_to',      cfg.to || cfg.To || '');
+                    val('cfg_email_cc',      cfg.cc || cfg.Cc || '');
+                    val('cfg_email_subject', cfg.subject || cfg.Subject || '');
+                    break;
+                case 1:
+                    val('cfg_sms_to', cfg.to || cfg.To || '');
+                    break;
+                case 2:
+                    val('cfg_apiget_url',     cfg.url || cfg.Url || '');
+                    val('cfg_apiget_ct',      cfg.contentType || cfg.ContentType || 'application/json');
+                    val('cfg_apiget_timeout', cfg.timeoutSeconds || cfg.TimeoutSeconds || 30);
+                    break;
+                case 3:
+                    val('cfg_apipost_url',     cfg.url || cfg.Url || '');
+                    val('cfg_apipost_ct',      cfg.contentType || cfg.ContentType || 'application/json');
+                    val('cfg_apipost_timeout', cfg.timeoutSeconds || cfg.TimeoutSeconds || 30);
+                    break;
+                case 4:
+                    val('cfg_apiput_url',     cfg.url || cfg.Url || '');
+                    val('cfg_apiput_ct',      cfg.contentType || cfg.ContentType || 'application/json');
+                    val('cfg_apiput_timeout', cfg.timeoutSeconds || cfg.TimeoutSeconds || 30);
+                    break;
+                case 5:
+                    val('cfg_apidel_url',     cfg.url || cfg.Url || '');
+                    val('cfg_apidel_ct',      cfg.contentType || cfg.ContentType || 'application/json');
+                    val('cfg_apidel_timeout', cfg.timeoutSeconds || cfg.TimeoutSeconds || 30);
+                    break;
+                case 6:
+                    val('cfg_ftp_path',     cfg.remotePath || cfg.RemotePath || '/');
+                    val('cfg_ftp_filename', cfg.filename   || cfg.Filename   || '');
+                    break;
+                case 7:
+                    val('cfg_sftp_path',     cfg.remotePath || cfg.RemotePath || '/');
+                    val('cfg_sftp_filename', cfg.filename   || cfg.Filename   || '');
+                    break;
+                case 8:
+                    val('cfg_s3_key', cfg.s3Key || cfg.S3Key || '');
+                    val('cfg_s3_ct',  cfg.contentType || cfg.ContentType || 'text/plain');
+                    break;
+                case 9:
+                    val('cfg_teams_title', cfg.title || cfg.Title || '');
+                    val('cfg_teams_color', cfg.themeColor || cfg.ThemeColor || '0076D7');
+                    break;
+                case 10:
+                    val('cfg_slack_channel',  cfg.channel   || cfg.Channel   || '');
+                    val('cfg_slack_username', cfg.username  || cfg.Username  || '');
+                    val('cfg_slack_emoji',    cfg.iconEmoji || cfg.IconEmoji || '');
+                    break;
+                case 11:
+                    val('cfg_discord_username', cfg.username  || cfg.Username  || '');
+                    val('cfg_discord_avatar',   cfg.avatarUrl || cfg.AvatarUrl || '');
+                    break;
+                case 12:
+                    val('cfg_azure_blob', cfg.blobName    || cfg.BlobName    || '');
+                    val('cfg_azure_ct',   cfg.contentType || cfg.ContentType || 'text/plain');
+                    break;
+                case 13:
+                    val('cfg_box_folder',   cfg.folderId || cfg.FolderId || '0');
+                    val('cfg_box_filename', cfg.filename || cfg.Filename || '');
+                    break;
+                case 14:
+                    val('cfg_dropbox_path',     cfg.targetPath || cfg.TargetPath || '/');
+                    val('cfg_dropbox_filename', cfg.filename   || cfg.Filename   || '');
+                    var modeEl = document.getElementById('cfg_dropbox_mode');
+                    if (modeEl) modeEl.value = cfg.writeMode || cfg.WriteMode || 'overwrite';
+                    break;
+            }
+        }
+
+        // ── Validate required fields per action type ───────────────────────────
+        function validateConfig(actionType) {
+            var t = parseInt(actionType, 10);
+            var errors = [];
+            function req(id, label) {
+                var el = document.getElementById(id);
+                if (!el || !el.value.trim()) errors.push(label + ' is required.');
+            }
+            switch (t) {
+                case 0: req('cfg_email_to', 'To'); req('cfg_email_subject', 'Subject'); break;
+                case 1: req('cfg_sms_to', 'To (phone)'); break;
+                case 2: req('cfg_apiget_url',  'URL'); break;
+                case 3: req('cfg_apipost_url', 'URL'); break;
+                case 4: req('cfg_apiput_url',  'URL'); break;
+                case 5: req('cfg_apidel_url',  'URL'); break;
+            }
+            return errors;
+        }
+
+        // ── Reset all config fields ────────────────────────────────────────────
+        function resetAllConfigFields() {
+            ['cfg_email_to','cfg_email_cc','cfg_email_subject',
+             'cfg_sms_to',
+             'cfg_apiget_url','cfg_apipost_url','cfg_apiput_url','cfg_apidel_url'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            ['cfg_apiget_ct','cfg_apipost_ct','cfg_apiput_ct','cfg_apidel_ct'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.value = 'application/json';
+            });
+            ['cfg_apiget_timeout','cfg_apipost_timeout','cfg_apiput_timeout','cfg_apidel_timeout'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '30';
+            });
+            var defaults = {
+                cfg_ftp_path:'/', cfg_ftp_filename:'',
+                cfg_sftp_path:'/', cfg_sftp_filename:'',
+                cfg_s3_key:'', cfg_s3_ct:'text/plain',
+                cfg_teams_title:'', cfg_teams_color:'0076D7',
+                cfg_slack_channel:'', cfg_slack_username:'', cfg_slack_emoji:'',
+                cfg_discord_username:'', cfg_discord_avatar:'',
+                cfg_azure_blob:'', cfg_azure_ct:'text/plain',
+                cfg_box_folder:'0', cfg_box_filename:'',
+                cfg_dropbox_path:'/', cfg_dropbox_filename:''
+            };
+            Object.keys(defaults).forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.value = defaults[id];
+            });
+            var modeEl = document.getElementById('cfg_dropbox_mode');
+            if (modeEl) modeEl.value = 'overwrite';
+        }
+
+        // ── Open modal for ADD ────────────────────────────────────────────────
+        document.getElementById('addStepBtn').addEventListener('click', function () {
+            document.getElementById('stepModalLabel').textContent = '@localizer["AddStep"]';
+            document.getElementById('stepId').value = '';
+            document.getElementById('stepWorkflowId').value = '@Model.WorkflowId';
+            document.getElementById('stepActionType').value = '0';
+            document.getElementById('stepOrder').value = '0';
+            document.getElementById('stepIsEnabled').checked = true;
+            resetAllConfigFields();
+            templateEditor.setValue('');
+            document.getElementById('stepSaveError').style.display = 'none';
+            showConfigPanel(0);
+            filterCredentials(0, null);
+            $('#stepModal').modal('show');
+        });
+
+        // ── Open modal for EDIT ───────────────────────────────────────────────
+        document.querySelectorAll('.edit-step-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var step = JSON.parse(this.dataset.step);
+                var actionType = step.ActionType !== undefined ? step.ActionType : step.actionType;
+                var credId     = step.WorkflowCredentialId || step.workflowCredentialId || null;
+                document.getElementById('stepModalLabel').textContent = '@localizer["Edit"]';
+                document.getElementById('stepId').value           = step.WorkflowStepId || step.workflowStepId || '';
+                document.getElementById('stepWorkflowId').value   = step.WorkflowId    || step.workflowId    || '@Model.WorkflowId';
+                document.getElementById('stepActionType').value   = actionType;
+                document.getElementById('stepOrder').value        = step.StepOrder !== undefined ? step.StepOrder : step.stepOrder;
+                document.getElementById('stepIsEnabled').checked  = step.IsEnabled !== undefined ? step.IsEnabled : step.isEnabled;
+                resetAllConfigFields();
+                populateActionConfig(actionType, step.ActionConfig || step.actionConfig || '');
+                templateEditor.setValue(step.OutputTemplate || step.outputTemplate || '');
+                document.getElementById('stepSaveError').style.display = 'none';
+                showConfigPanel(actionType);
+                filterCredentials(actionType, credId);
+                $('#stepModal').modal('show');
+            });
+        });
+
+        // ── Save step ─────────────────────────────────────────────────────────
+        document.getElementById('saveStepBtn').addEventListener('click', function () {
+            var actionType   = document.getElementById('stepActionType').value;
+            var credentialId = document.getElementById('stepCredentialId').value || null;
+            var errorBox     = document.getElementById('stepSaveError');
+
+            // Client-side validation
+            var errors = validateConfig(actionType);
+            if (!templateEditor.getValue().trim()) errors.push('@localizer["OutputTemplate"] is required.');
+            if (CREDENTIAL_REQUIRED[parseInt(actionType, 10)] && !credentialId) {
+                errors.push('A credential is required for this action type.');
+            }
+            if (errors.length) {
+                errorBox.textContent = errors.join(' ');
+                errorBox.style.display = 'block';
+                return;
+            }
+            errorBox.style.display = 'none';
+
+            var payload = {
+                workflowStepId:       document.getElementById('stepId').value || null,
+                workflowId:           document.getElementById('stepWorkflowId').value,
+                actionType:           parseInt(actionType, 10),
+                stepOrder:            parseInt(document.getElementById('stepOrder').value, 10),
+                isEnabled:            document.getElementById('stepIsEnabled').checked,
+                actionConfig:         buildActionConfig(actionType),
+                outputTemplate:       templateEditor.getValue(),
+                workflowCredentialId: credentialId
+            };
+
+            fetch('/User/Workflows/SaveStep', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value },
+                body: JSON.stringify(payload)
+            })
+            .then(function (r) {
+                if (!r.ok) return r.text().then(function (t) { throw new Error(t || r.statusText); });
+                return r.json();
+            })
+            .then(function () {
+                $('#stepModal').modal('hide');
+                location.reload();
+            })
+            .catch(function (err) {
+                errorBox.textContent = err.message || 'Failed to save step.';
+                errorBox.style.display = 'block';
+            });
+        });
+
+        // ── Delete step ───────────────────────────────────────────────────────
+        var pendingDeleteStepId = null;
+
+        document.querySelectorAll('.delete-step-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                pendingDeleteStepId = this.dataset.stepId;
+                $('#deleteStepModal').modal('show');
+            });
+        });
+
+        document.getElementById('confirmDeleteStepBtn').addEventListener('click', function () {
+            if (!pendingDeleteStepId) return;
+            var stepId = pendingDeleteStepId;
+            pendingDeleteStepId = null;
+            $('#deleteStepModal').modal('hide');
+
+            fetch('/User/Workflows/DeleteStep/' + encodeURIComponent(stepId), {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value }
+            })
+            .then(function (r) {
+                if (!r.ok) throw new Error(r.statusText);
+                location.reload();
+            })
+            .catch(function (err) { alert('Delete failed: ' + err.message); });
+        });
+
+    }());
+    </script>
+}

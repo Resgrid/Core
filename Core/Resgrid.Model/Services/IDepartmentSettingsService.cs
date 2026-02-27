@@ -275,5 +275,11 @@ namespace Resgrid.Model.Services
 		Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false);
 
 		Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Gets the 2FA enforcement scope for department admins.
+		/// Returns 0 = disabled, 1 = dept admins + managing user, 2 = dept admins + managing user + group admins.
+		/// </summary>
+		Task<int> GetRequire2FAForAdminsAsync(int departmentId);
 	}
 }

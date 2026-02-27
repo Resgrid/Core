@@ -1435,5 +1435,50 @@ namespace Resgrid.Services
 			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
+		public async Task<bool> CanUserCreateWorkflowAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateWorkflow);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserManageWorkflowCredentialAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ManageWorkflowCredentials);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserViewWorkflowRunsAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewWorkflowRuns);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
 	}
 }

@@ -347,6 +347,35 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendSmsVerificationCodeAsync(string toPhoneNumber, string verificationCode, string departmentNumber)
+		{
+			if (string.IsNullOrWhiteSpace(toPhoneNumber))
+				return false;
+
+			try
+			{
+				string messageBody = $"Your Resgrid verification code is: {verificationCode}. It expires in {Config.VerificationConfig.VerificationCodeExpiryMinutes} minutes.";
+
+				// Always use direct provider send for verification — never email-to-SMS gateway,
+				// since we need deterministic delivery for security-critical codes.
+				await _textMessageProvider.SendTextMessage(
+					toPhoneNumber,
+					messageBody,
+					departmentNumber,
+					MobileCarriers.None,
+					0,
+					false,
+					false);
+
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
 		private string FormatCallSubject(Call call)
 		{
 			if (call.IsCritical)

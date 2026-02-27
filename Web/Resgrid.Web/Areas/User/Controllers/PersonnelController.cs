@@ -25,6 +25,7 @@ using Resgrid.WebCore.Areas.User.Models.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 using Resgrid.WebCore.Areas.User.Models;
 using System.Web;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -395,6 +396,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_Create)]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> AddPerson(AddPersonModel model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
@@ -571,6 +573,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_Delete)]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> DeletePerson(DeletePersonModel model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, model.UserId))

@@ -57,6 +57,9 @@
 			public const string Voice = "Voice";
 			public const string CustomStates = "CustomStates";
 			public const string Contacts = "Contacts";
+			public const string Workflow = "Workflow";
+			public const string WorkflowCredential = "WorkflowCredential";
+			public const string WorkflowRun = "WorkflowRun";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

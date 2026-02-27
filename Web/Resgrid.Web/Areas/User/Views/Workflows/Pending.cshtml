@@ -1,0 +1,82 @@
+﻿@model List<Resgrid.Model.WorkflowRun>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["PendingRunningWorkflows"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>@localizer["PendingRunningWorkflows"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["WorkflowsHeader"]</a></li>
+            <li class="active"><strong>@localizer["Pending"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            @if (Model != null && Model.Any())
+            {
+                <form asp-action="ClearPending" method="post" style="display:inline;"
+                      onsubmit="return confirm('@localizer["ClearAllPendingConfirm"]');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> @localizer["ClearAllPending"]</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["ActiveRuns"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="alert alert-success">@localizer["NoPendingRuns"]</div>
+                    }
+                    else
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["RunId"]</th>
+                                    <th>@localizer["Workflow"]</th>
+                                    <th>@localizer["Status"]</th>
+                                    <th>@localizer["Queued"]</th>
+                                    <th>@localizer["Attempt"]</th>
+                                    <th>@localizer["Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var run in Model)
+                                {
+                                    var statusClass = run.Status == 1 ? "badge-warning" : "badge-default";
+                                    <tr>
+                                        <td><small>@run.WorkflowRunId</small></td>
+                                        <td>@run.WorkflowId</td>
+                                        <td><span class="badge @statusClass">@((Resgrid.Model.WorkflowRunStatus)run.Status)</span></td>
+                                        <td>@run.QueuedOn.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        <td>@run.AttemptNumber</td>
+                                        <td>
+                                            <form asp-action="CancelRun" method="post" style="display:inline;"
+                                                  onsubmit="return confirm('@localizer["CancelRunConfirm"]');">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="workflowRunId" value="@run.WorkflowRunId" />
+                                                <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-times"></i> @localizer["CancelRun"]</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

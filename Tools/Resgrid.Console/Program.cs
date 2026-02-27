@@ -194,6 +194,7 @@ namespace Resgrid.Console
 			Bootstrapper.Initialize();
 
 			var eventAggragator = Bootstrapper.GetKernel().Resolve<IEventAggregator>();
+			var workflowProvider = Bootstrapper.GetKernel().Resolve<IWorkflowEventProvider>();
 			var outbound = Bootstrapper.GetKernel().Resolve<IOutboundEventProvider>();
 			var coreEventService = Bootstrapper.GetKernel().Resolve<ICoreEventService>();
 

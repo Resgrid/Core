@@ -203,5 +203,13 @@ namespace Resgrid.Model.Services
 		Task<bool> SendDeleteDepartmentEmail(string sendingToEmail, string sendingToName, QueueItem queueItem);
 
 		Task<bool> SendReportDeliveryAsync(EmailNotification email, int departmentId, string reportUrl, string reportName);
+
+		/// <summary>
+		/// Sends a contact-method verification code to the user's email address.
+		/// </summary>
+		/// <param name="toEmailAddress">The recipient email address.</param>
+		/// <param name="firstName">User's first name for personalisation.</param>
+		/// <param name="verificationCode">The numeric verification code to include in the email.</param>
+		Task<bool> SendEmailVerificationCodeAsync(string toEmailAddress, string firstName, string verificationCode);
 	}
 }

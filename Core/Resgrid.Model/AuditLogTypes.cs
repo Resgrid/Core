@@ -62,6 +62,26 @@
 		ContactCategoryRemoved,
 		ContactNoteTypeAdded,
 		ContactNoteTypeEdited,
-		ContactNoteTypeRemoved
+		ContactNoteTypeRemoved,
+		// Workflow operations
+		WorkflowAdded,
+		WorkflowEdited,
+		WorkflowDeleted,
+		WorkflowStepAdded,
+		WorkflowStepEdited,
+		WorkflowStepDeleted,
+		WorkflowCredentialAdded,
+		WorkflowCredentialEdited,
+		WorkflowCredentialDeleted,
+		// Contact verification
+		ContactVerificationCodeSent,
+		ContactVerificationConfirmed,
+		ContactVerificationFailed,
+		// Two-factor authentication
+		TwoFactorEnabled,
+		TwoFactorDisabled,
+		TwoFactorLoginVerified,
+		TwoFactorRecoveryCodeUsed,
+		TwoFactorStepUpVerified
 	}
 }

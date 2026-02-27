@@ -41,7 +41,7 @@ namespace Resgrid.Repositories.DataRepository.Extensions
 				var defaultIdTypeValue = idProperty.PropertyType == typeof(string) ? string.Empty : Activator.CreateInstance(idProperty.PropertyType);
 				var idPropertyValue = idProperty.GetValue(entity, null);
 
-				roleProperties = !idPropertyValue.Equals(defaultIdTypeValue)
+				roleProperties = !Equals(idPropertyValue, defaultIdTypeValue)
 									? entity.GetType()
 											.GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y))
 									: forInsert

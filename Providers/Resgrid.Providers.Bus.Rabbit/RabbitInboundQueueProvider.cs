@@ -27,6 +27,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<UnitLocationEvent, Task> UnitLocationEventQueueReceived;
 		public Func<PersonnelLocationEvent, Task> PersonnelLocationEventQueueReceived;
 		public Func<SecurityRefreshEvent, Task> SecurityRefreshEventQueueReceived;
+		public Func<Resgrid.Model.Queue.WorkflowQueueItem, Task> WorkflowQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -558,6 +559,51 @@ namespace Resgrid.Providers.Bus.Rabbit
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.SecurityRefreshQueueName),
 						autoAck: true,
 						consumer: securityRefreshEventQueueReceivedConsumer);
+				}
+
+				if (WorkflowQueueReceived != null)
+				{
+					var workflowQueueConsumer = new AsyncEventingBasicConsumer(_channel);
+					workflowQueueConsumer.ReceivedAsync += async (model, ea) =>
+					{
+						if (ea != null && ea.Body.Length > 0)
+						{
+							Resgrid.Model.Queue.WorkflowQueueItem workflowItem = null;
+							try
+							{
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								workflowItem = ObjectSerialization.Deserialize<Resgrid.Model.Queue.WorkflowQueueItem>(message);
+							}
+							catch (Exception ex)
+							{
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (workflowItem != null && WorkflowQueueReceived != null)
+								{
+									await WorkflowQueueReceived.Invoke(workflowItem);
+									await _channel.BasicAckAsync(ea.DeliveryTag, false);
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+								else
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
+							}
+						}
+					};
+
+					await _channel.BasicConsumeAsync(
+						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.WorkflowQueueName),
+						autoAck: false,
+						consumer: workflowQueueConsumer);
 				}
 			}
 		}

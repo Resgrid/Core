@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Localization;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using PostHog;
 using Microsoft.Extensions.DependencyInjection;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Controllers
 {
@@ -114,6 +115,13 @@ namespace Resgrid.Web.Controllers
 					audit.Data = $"Web LogOn {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 					await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
 
+					if (result != null && result.RequiresTwoFactor)
+					{
+						// Persist credentials in session so the 2FA completion step can finish setting up the session
+						HttpContext.Session.SetString("Resgrid2FAPendingUsername", model.Username);
+						HttpContext.Session.SetString("Resgrid2FAPendingPassword", model.Password);
+						return RedirectToAction(nameof(LoginWith2fa), new { returnUrl });
+					}
 					if (result != null && result.Succeeded)
 					{
 						if (await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
@@ -126,56 +134,7 @@ namespace Resgrid.Web.Controllers
 									AllowRefresh = false
 								});
 
-							try
-							{
-								var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimarySid)?.Value;
-
-								if (!string.IsNullOrWhiteSpace(userId))
-								{
-									var token = await ApiAuthHelper.GetBearerApiTokenAsync(model.Username, model.Password);
-									await _cacheProvider.SetStringAsync(CacheConfig.ApiBearerTokenKeyName + $"_${userId}", token, new TimeSpan(48, 0, 0));
-
-									if (!String.IsNullOrWhiteSpace(TelemetryConfig.PostHogApiKey))
-									{
-										var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-										var departmentId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimaryGroupSid)?.Value;
-										var departmentName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Actor)?.Value;
-										var name = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-										var createdOn = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.OtherPhone)?.Value;
-
-										if (!string.IsNullOrWhiteSpace(Config.TelemetryConfig.PostHogApiKey))
-										{
-											var posthog = _serviceProvider.GetService<IPostHogClient>();
-
-											if (posthog != null)
-											{
-												await posthog.IdentifyAsync(
-													userId,
-													email,
-													name,
-													personPropertiesToSet: new()
-													{
-														["departmentId"] = departmentId,
-														["departmentName"] = departmentName,
-													},
-													personPropertiesToSetOnce: new()
-													{
-														["createdOn"] = createdOn
-													});
-											}
-										}
-									}
-								}
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex);
-							}
-
-							Response.Cookies.Delete(".AspNetCore.Identity.Application");
-							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC1");
-							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC2");
-							Response.Cookies.Delete(".AspNetCore.Identity.ApplicationC3");
+							await SetupUserSessionAsync(model.Username, model.Password);
 
 							if (!String.IsNullOrWhiteSpace(returnUrl))
 								return RedirectToLocal(returnUrl);
@@ -307,10 +266,186 @@ namespace Resgrid.Web.Controllers
 		}
 
 		//
+		// GET: /Account/LoginWith2fa
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> LoginWith2fa(string returnUrl = null)
+		{
+			// Ensure the user has gone through the username & password screen first
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+			if (user == null)
+				return RedirectToAction(nameof(LogOn));
+
+			ViewData["ReturnUrl"] = returnUrl;
+			return View(new VerifyCodeViewModel { ReturnUrl = returnUrl });
+		}
+
+		//
+		// POST: /Account/LoginWith2fa
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginWith2fa(VerifyCodeViewModel model, CancellationToken cancellationToken, string returnUrl = null)
+		{
+			if (!ModelState.IsValid) return View(model);
+
+			// Fetch the user before sign-in while the partial 2FA cookie is still present
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync()
+						?? await _userManager.FindByNameAsync(model.Provider ?? string.Empty);
+
+			var code = model.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+			var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, model.RememberMe, model.RememberBrowser);
+
+			var audit = new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.TwoFactorLoginVerified,
+				UserId = user?.Id,
+				Username = user?.UserName,
+				Successful = result.Succeeded,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"2FA login attempt. {Request.Headers["User-Agent"]}"
+			};
+			await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
+
+			if (result.Succeeded)
+			{
+				if (user == null || !await _usersService.DoesUserHaveAnyActiveDepartments(user.UserName))
+				{
+					ModelState.AddModelError(string.Empty, "You do not have any active departments for this user. To log into Resgrid you need at least one active department.");
+					return View(model);
+				}
+
+				// Build the full claims principal and sign into the app's cookie scheme
+				var principal = await _signInManager.CreateUserPrincipalAsync(user);
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
+					new AuthenticationProperties
+					{
+						ExpiresUtc = DateTime.UtcNow.AddHours(8),
+						IsPersistent = false,
+						AllowRefresh = false
+					});
+
+				// Stamp the step-up session key immediately after login 2FA
+				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
+
+				var pendingUsername = HttpContext.Session.GetString("Resgrid2FAPendingUsername");
+				var pendingPassword = HttpContext.Session.GetString("Resgrid2FAPendingPassword");
+
+				if (!string.IsNullOrWhiteSpace(pendingUsername) && !string.IsNullOrWhiteSpace(pendingPassword))
+				{
+					await SetupUserSessionAsync(pendingUsername, pendingPassword);
+					HttpContext.Session.Remove("Resgrid2FAPendingUsername");
+					HttpContext.Session.Remove("Resgrid2FAPendingPassword");
+				}
+
+				// Prefer the query-string returnUrl, fall back to the hidden-field value in the model
+				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
+				if (!string.IsNullOrWhiteSpace(redirect) && Url.IsLocalUrl(redirect))
+					return Redirect(redirect);
+
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+			}
+			if (result.IsLockedOut)
+				return View("Lockout");
+
+			ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
+			return View(model);
+		}
+
+		//
+		// GET: /Account/LoginWithRecoveryCode
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> LoginWithRecoveryCode(string returnUrl = null)
+		{
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+			if (user == null) return RedirectToAction(nameof(LogOn));
+
+			ViewData["ReturnUrl"] = returnUrl;
+			return View();
+		}
+
+		//
+		// POST: /Account/LoginWithRecoveryCode
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginWithRecoveryCode(VerifyCodeViewModel model, CancellationToken cancellationToken, string returnUrl = null)
+		{
+			if (!ModelState.IsValid) return View(model);
+
+			// Fetch the user before sign-in while the partial 2FA cookie is still present
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+
+			var recoveryCode = model.Code.Replace(" ", string.Empty);
+			var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
+
+			var audit = new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.TwoFactorRecoveryCodeUsed,
+				UserId = user?.Id,
+				Username = user?.UserName,
+				Successful = result.Succeeded,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"Recovery code login attempt. {Request.Headers["User-Agent"]}"
+			};
+			await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
+
+			if (result.Succeeded)
+			{
+				if (user == null || !await _usersService.DoesUserHaveAnyActiveDepartments(user.UserName))
+				{
+					ModelState.AddModelError(string.Empty, "You do not have any active departments for this user. To log into Resgrid you need at least one active department.");
+					return View(model);
+				}
+
+				// Build the full claims principal and sign into the app's cookie scheme
+				var principal = await _signInManager.CreateUserPrincipalAsync(user);
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
+					new AuthenticationProperties
+					{
+						ExpiresUtc = DateTime.UtcNow.AddHours(8),
+						IsPersistent = false,
+						AllowRefresh = false
+					});
+
+				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
+
+				var pendingUsername = HttpContext.Session.GetString("Resgrid2FAPendingUsername");
+				var pendingPassword = HttpContext.Session.GetString("Resgrid2FAPendingPassword");
+
+				if (!string.IsNullOrWhiteSpace(pendingUsername) && !string.IsNullOrWhiteSpace(pendingPassword))
+				{
+					await SetupUserSessionAsync(pendingUsername, pendingPassword);
+					HttpContext.Session.Remove("Resgrid2FAPendingUsername");
+					HttpContext.Session.Remove("Resgrid2FAPendingPassword");
+				}
+
+				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
+				if (!string.IsNullOrWhiteSpace(redirect) && Url.IsLocalUrl(redirect))
+					return Redirect(redirect);
+
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+			}
+			if (result.IsLockedOut)
+				return View("Lockout");
+
+			ModelState.AddModelError(string.Empty, "Invalid recovery code.");
+			return View(model);
+		}
+
+		//
 		// POST: /Account/LogOff
 		[HttpGet]
 		public async Task<IActionResult> LogOff()
 		{
+			// Explicitly clear the step-up 2FA proof so it cannot be inherited by any subsequent session.
+			HttpContext.Session.Remove(RequiresRecentTwoFactorAttribute.StepUpSessionKey);
+
 			await _signInManager.SignOutAsync();
 			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			RemoveCookies();
@@ -528,9 +663,57 @@ namespace Resgrid.Web.Controllers
 			var myCookies = Request.Cookies.Select(x => x.Key).ToList();
 			foreach (string cookie in myCookies)
 			{
-				var requestCookie = Request.Cookies[cookie];//..Expires = DateTime.Now.AddDays(-1);
-
+				var requestCookie = Request.Cookies[cookie];
 				Response.Cookies.Append(cookie, requestCookie, new Microsoft.AspNetCore.Http.CookieOptions { Expires = DateTime.Now.AddDays(-1) });
+			}
+		}
+
+		private async Task SetupUserSessionAsync(string username, string password)
+		{
+			try
+			{
+				var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimarySid)?.Value;
+
+				if (!string.IsNullOrWhiteSpace(userId))
+				{
+					var token = await ApiAuthHelper.GetBearerApiTokenAsync(username, password);
+					await _cacheProvider.SetStringAsync(CacheConfig.ApiBearerTokenKeyName + $"_${userId}", token, new TimeSpan(48, 0, 0));
+
+					if (!string.IsNullOrWhiteSpace(TelemetryConfig.PostHogApiKey))
+					{
+						var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+						var departmentId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimaryGroupSid)?.Value;
+						var departmentName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Actor)?.Value;
+						var name = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
+						var createdOn = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.OtherPhone)?.Value;
+
+						if (!string.IsNullOrWhiteSpace(Config.TelemetryConfig.PostHogApiKey))
+						{
+							var posthog = _serviceProvider.GetService<IPostHogClient>();
+
+							if (posthog != null)
+							{
+								await posthog.IdentifyAsync(
+									userId,
+									email,
+									name,
+									personPropertiesToSet: new()
+									{
+										["departmentId"] = departmentId,
+										["departmentName"] = departmentName,
+									},
+									personPropertiesToSetOnce: new()
+									{
+										["createdOn"] = createdOn
+									});
+							}
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 			}
 		}
 

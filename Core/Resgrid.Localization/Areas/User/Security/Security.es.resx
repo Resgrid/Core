@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="SecurityPermissionsHeader" xml:space="preserve"><value>Seguridad y Permisos</value></data>
+  <data name="SecurityPermissionsDescription" xml:space="preserve"><value>Aquí puede establecer los permisos para su departamento.</value></data>
+  <data name="AuditLogsButton" xml:space="preserve"><value>Registros de Auditoría</value></data>
+  <data name="PermissionColumn" xml:space="preserve"><value>Permiso</value></data>
+  <data name="NoteColumn" xml:space="preserve"><value>Nota</value></data>
+  <data name="ValueColumn" xml:space="preserve"><value>Valor</value></data>
+  <data name="RolesColumn" xml:space="preserve"><value>Roles</value></data>
+  <data name="TwoFactorEnforcementHeader" xml:space="preserve"><value>Aplicación de Autenticación de Dos Factores (2FA)</value></data>
+  <data name="TwoFactorEnforcementDescription" xml:space="preserve"><value>Requiere 2FA con aplicación autenticadora para usuarios administradores.</value></data>
+  <data name="Require2FAForAdminsLabel" xml:space="preserve"><value>Requerir 2FA para Administradores</value></data>
+  <data name="Require2FAForAdminsDescription" xml:space="preserve"><value>Controla qué usuarios de nivel de administrador deben inscribirse en 2FA con aplicación autenticadora.</value></data>
+  <data name="Require2FADisabled" xml:space="preserve"><value>Desactivado (sin requisito)</value></data>
+  <data name="Require2FADeptAdmins" xml:space="preserve"><value>Administradores del Departamento + Usuario Gestor</value></data>
+  <data name="Require2FAAllAdmins" xml:space="preserve"><value>Administradores del Departamento + Usuario Gestor + Administradores de Grupo</value></data>
+  <data name="Require2FASettingSaved" xml:space="preserve"><value>Configuración de 2FA guardada.</value></data>
+  <data name="Require2FASettingFailed" xml:space="preserve"><value>Error al guardar la configuración de 2FA.</value></data>
+  <data name="Require2FACannotEnableNoManagingUser2FA" xml:space="preserve"><value>No se puede habilitar la aplicación de 2FA: el usuario gestor del departamento no tiene la autenticación de dos factores habilitada.</value></data>
+  <data name="Require2FACannotEnableNoCurrentUser2FA" xml:space="preserve"><value>No se puede habilitar la aplicación de 2FA: usted no tiene la autenticación de dos factores habilitada en su cuenta.</value></data>
+  <data name="Require2FABothMustEnable" xml:space="preserve"><value>No se puede habilitar la aplicación de 2FA: ni usted ni el usuario gestor tienen la autenticación de dos factores habilitada.</value></data>
+  <data name="Require2FASettingLocked" xml:space="preserve"><value>Esta configuración está bloqueada hasta que se cumplan las condiciones anteriores.</value></data>
+
+  <data name="PermissionNameColumn" xml:space="preserve"><value>Permiso</value></data>
+  <data name="PermissionNoteColumn" xml:space="preserve"><value>Nota</value></data>
+  <data name="PermissionSelectionColumn" xml:space="preserve"><value>Selección</value></data>
+  <data name="PermissionGroupOnlyColumn" xml:space="preserve"><value>Solo Grupo</value></data>
+  <data name="PermissionRolesColumn" xml:space="preserve"><value>Roles</value></data>
+  <data name="PermissionNoRoles" xml:space="preserve"><value>Sin Roles</value></data>
+  <data name="PermissionNA" xml:space="preserve"><value>N/A</value></data>
+  <data name="BreadcrumbSecurity" xml:space="preserve"><value>Seguridad y Permisos</value></data>
+  <data name="SecurityDescription" xml:space="preserve"><value>Aquí puede establecer los permisos para su departamento.</value></data>
+  <data name="PermAddUsersLabel" xml:space="preserve"><value>Quién puede Agregar Usuarios</value></data>
+  <data name="PermAddUsersNote" xml:space="preserve"><value>Esta opción determina quién puede agregar usuarios al departamento.</value></data>
+  <data name="PermRemoveUsersLabel" xml:space="preserve"><value>Quién puede Eliminar Usuarios</value></data>
+  <data name="PermRemoveUsersNote" xml:space="preserve"><value>Esta opción determina quién puede eliminar usuarios del departamento.</value></data>
+  <data name="PermCreateCallLabel" xml:space="preserve"><value>Quién puede Crear Llamadas</value></data>
+  <data name="PermCreateCallNote" xml:space="preserve"><value>Esta opción determina quién puede crear llamadas manualmente. Por defecto, todos pueden crear llamadas.</value></data>
+  <data name="PermDeleteCallLabel" xml:space="preserve"><value>Quién puede Eliminar Llamadas</value></data>
+  <data name="PermDeleteCallNote" xml:space="preserve"><value>Esta opción determina quién puede eliminar llamadas. Por defecto, todos pueden eliminar llamadas.</value></data>
+  <data name="PermCloseCallLabel" xml:space="preserve"><value>Quién puede Cerrar Llamadas</value></data>
+  <data name="PermCloseCallNote" xml:space="preserve"><value>Esta opción determina quién puede cerrar llamadas. Por defecto, todos pueden cerrar llamadas.</value></data>
+  <data name="PermAddCallDataLabel" xml:space="preserve"><value>Quién puede Agregar Datos a las Llamadas</value></data>
+  <data name="PermAddCallDataNote" xml:space="preserve"><value>Esta opción determina quién puede agregar datos a las llamadas. Por defecto, todos pueden agregar datos.</value></data>
+  <data name="PermCreateTrainingLabel" xml:space="preserve"><value>Quién puede Crear Entrenamientos</value></data>
+  <data name="PermCreateTrainingNote" xml:space="preserve"><value>Esta opción determina quién puede crear entrenamientos. Por defecto, solo los administradores del departamento.</value></data>
+  <data name="PermCreateDocumentLabel" xml:space="preserve"><value>Quién puede Agregar Documentos</value></data>
+  <data name="PermCreateDocumentNote" xml:space="preserve"><value>Esta opción determina quién puede agregar documentos. Por defecto, todos pueden agregar documentos.</value></data>
+  <data name="PermCreateCalendarEntryLabel" xml:space="preserve"><value>Quién puede Crear Entradas de Calendario</value></data>
+  <data name="PermCreateCalendarEntryNote" xml:space="preserve"><value>Esta opción determina quién puede crear entradas de calendario. Por defecto, todos pueden hacerlo.</value></data>
+  <data name="PermCreateNoteLabel" xml:space="preserve"><value>Quién puede Crear Notas</value></data>
+  <data name="PermCreateNoteNote" xml:space="preserve"><value>Esta opción determina quién puede crear notas. Por defecto, todos pueden crear notas.</value></data>
+  <data name="PermCreateLogLabel" xml:space="preserve"><value>Quién puede Agregar Entradas de Registro</value></data>
+  <data name="PermCreateLogNote" xml:space="preserve"><value>Esta opción determina quién puede agregar entradas de registro. Por defecto, todos pueden hacerlo.</value></data>
+  <data name="PermCreateShiftLabel" xml:space="preserve"><value>Quién puede Crear Turnos</value></data>
+  <data name="PermCreateShiftNote" xml:space="preserve"><value>Esta opción determina quién puede crear y editar turnos. Por defecto, solo los administradores del departamento.</value></data>
+  <data name="PermViewPersonalInfoLabel" xml:space="preserve"><value>Quién puede Ver Información Personal</value></data>
+  <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>Esta opción determina quién puede ver información personal (PII) del personal. Por defecto, todos pueden verla.</value></data>
+  <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>Quién puede Ajustar el Inventario</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>Esta opción determina quién puede ajustar los niveles de inventario. Por defecto, todos pueden ajustarlo.</value></data>
+  <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>Quién puede ver la Ubicación del Personal</value></data>
+  <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>Esta opción determina quién puede ver la ubicación del personal en los mapas.</value></data>
+  <data name="PermViewUnitLocationLabel" xml:space="preserve"><value>Quién puede ver la Ubicación de las Unidades</value></data>
+  <data name="PermViewUnitLocationNote" xml:space="preserve"><value>Esta opción determina quién puede ver la ubicación de las unidades en los mapas.</value></data>
+  <data name="PermCreateMessageLabel" xml:space="preserve"><value>Quién puede enviar mensajes</value></data>
+  <data name="PermCreateMessageNote" xml:space="preserve"><value>Esta opción determina quién puede crear y enviar mensajes. Por defecto, todos pueden enviar mensajes.</value></data>
+  <data name="PermViewGroupsUsersLabel" xml:space="preserve"><value>Quién puede ver usuarios</value></data>
+  <data name="PermViewGroupsUsersNote" xml:space="preserve"><value>Por defecto, todos los usuarios pueden ver a todos los demás en el sistema.</value></data>
+  <data name="PermViewGroupsUnitsLabel" xml:space="preserve"><value>Quién puede ver unidades</value></data>
+  <data name="PermViewGroupsUnitsNote" xml:space="preserve"><value>Por defecto, todos los usuarios pueden ver todas las unidades del sistema.</value></data>
+  <data name="PermViewContactsLabel" xml:space="preserve"><value>Quién puede ver Contactos</value></data>
+  <data name="PermViewContactsNote" xml:space="preserve"><value>Por defecto, todos los usuarios pueden ver todos los contactos del sistema.</value></data>
+  <data name="PermEditContactsLabel" xml:space="preserve"><value>Quién puede editar o crear Contactos</value></data>
+  <data name="PermEditContactsNote" xml:space="preserve"><value>Por defecto, todos los usuarios pueden crear y editar contactos del sistema.</value></data>
+  <data name="PermDeleteContactsLabel" xml:space="preserve"><value>Quién puede eliminar Contactos</value></data>
+  <data name="PermDeleteContactsNote" xml:space="preserve"><value>Por defecto, todos los usuarios pueden eliminar contactos del sistema.</value></data>
+  <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>Quién puede Crear/Editar Flujos de Trabajo</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>Esta opción determina quién puede crear, editar y eliminar flujos de trabajo. Por defecto, solo los administradores del departamento.</value></data>
+  <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>Quién puede Gestionar Credenciales de Flujo de Trabajo</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>Esta opción determina quién puede gestionar las credenciales cifradas usadas por las acciones del flujo de trabajo.</value></data>
+  <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Quién puede Ver Ejecuciones de Flujo de Trabajo</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>Esta opción determina quién puede ver el historial de ejecución de flujos de trabajo.</value></data>
+</root>
+
+

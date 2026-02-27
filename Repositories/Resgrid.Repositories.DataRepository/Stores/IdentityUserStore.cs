@@ -29,7 +29,9 @@ namespace Resgrid.Repositories.DataRepository.Stores
 	   IUserPhoneNumberStore<IdentityUser>,
 	   IQueryableUserStore<IdentityUser>,
 	   IUserTwoFactorStore<IdentityUser>,
-	   IUserAuthenticationTokenStore<IdentityUser>
+	   IUserAuthenticationTokenStore<IdentityUser>,
+	   IUserAuthenticatorKeyStore<IdentityUser>,
+	   IUserTwoFactorRecoveryCodeStore<IdentityUser>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IConnectionProvider _connectionProvider;
@@ -455,9 +457,75 @@ namespace Resgrid.Repositories.DataRepository.Stores
 			return Task.FromResult(user.SecurityStamp);
 		}
 
-		public Task<string> GetTokenAsync(IdentityUser user, string loginProvider, string name, CancellationToken cancellationToken)
+		public async Task<string> GetTokenAsync(IdentityUser user, string loginProvider, string name, CancellationToken cancellationToken)
 		{
-			return Task.FromResult(string.Empty);
+			cancellationToken.ThrowIfCancellationRequested();
+			if (user == null) throw new ArgumentNullException(nameof(user));
+			return await _userRepository.GetTokenAsync(user.Id, loginProvider, name);
+		}
+
+		public async Task SetTokenAsync(IdentityUser user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			if (user == null) throw new ArgumentNullException(nameof(user));
+			await _userRepository.SetTokenAsync(user.Id, loginProvider, name, value, cancellationToken);
+		}
+
+		public async Task RemoveTokenAsync(IdentityUser user, string loginProvider, string name, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			if (user == null) throw new ArgumentNullException(nameof(user));
+			await _userRepository.RemoveTokenAsync(user.Id, loginProvider, name, cancellationToken);
+		}
+
+		// ── IUserAuthenticatorKeyStore ─────────────────────────────────────────────
+
+		private const string AuthenticatorKeyLoginProvider = "[AspNetUserStore]";
+		private const string AuthenticatorKeyTokenName = "AuthenticatorKey";
+		private const string RecoveryCodeTokenName = "RecoveryCodes";
+
+		public Task SetAuthenticatorKeyAsync(IdentityUser user, string key, CancellationToken cancellationToken)
+			=> SetTokenAsync(user, AuthenticatorKeyLoginProvider, AuthenticatorKeyTokenName, key, cancellationToken);
+
+		public Task<string> GetAuthenticatorKeyAsync(IdentityUser user, CancellationToken cancellationToken)
+			=> GetTokenAsync(user, AuthenticatorKeyLoginProvider, AuthenticatorKeyTokenName, cancellationToken);
+
+		// ── IUserTwoFactorRecoveryCodeStore ────────────────────────────────────────
+
+		public async Task ReplaceCodesAsync(IdentityUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
+		{
+			var mergedCodes = string.Join(";", recoveryCodes);
+			await SetTokenAsync(user, AuthenticatorKeyLoginProvider, RecoveryCodeTokenName, mergedCodes, cancellationToken);
+		}
+
+		public async Task<bool> RedeemCodeAsync(IdentityUser user, string code, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			if (user == null) throw new ArgumentNullException(nameof(user));
+
+			var mergedCodes = await GetTokenAsync(user, AuthenticatorKeyLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? string.Empty;
+			var splitCodes = mergedCodes.Split(';');
+
+			if (splitCodes.Contains(code))
+			{
+				var updatedCodes = splitCodes.Where(s => s != code);
+				await ReplaceCodesAsync(user, updatedCodes, cancellationToken);
+				return true;
+			}
+
+			return false;
+		}
+
+		public async Task<int> CountCodesAsync(IdentityUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			if (user == null) throw new ArgumentNullException(nameof(user));
+
+			var mergedCodes = await GetTokenAsync(user, AuthenticatorKeyLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? string.Empty;
+			if (string.IsNullOrEmpty(mergedCodes))
+				return 0;
+
+			return mergedCodes.Split(';').Length;
 		}
 
 		public Task<bool> GetTwoFactorEnabledAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -637,11 +705,6 @@ namespace Resgrid.Repositories.DataRepository.Stores
 			}
 		}
 
-		public Task RemoveTokenAsync(IdentityUser user, string loginProvider, string name, CancellationToken cancellationToken)
-		{
-			return Task.FromResult(0);
-		}
-
 		public async Task ReplaceClaimAsync(IdentityUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
@@ -791,11 +854,6 @@ namespace Resgrid.Repositories.DataRepository.Stores
 
 			user.SecurityStamp = stamp;
 
-			return Task.FromResult(0);
-		}
-
-		public Task SetTokenAsync(IdentityUser user, string loginProvider, string name, string value, CancellationToken cancellationToken)
-		{
 			return Task.FromResult(0);
 		}
 

@@ -104,8 +104,17 @@
       "destination": "wwwroot/lib/jQuery.dotdotdot/"
     },
     {
-      "library": "codemirror@5.43.0",
-      "destination": "wwwroot/lib/codemirror/"
+      "library": "codemirror@5.65.16",
+      "destination": "wwwroot/lib/codemirror/",
+      "files": [
+        "lib/codemirror.min.css",
+        "lib/codemirror.min.js",
+        "theme/monokai.min.css",
+        "mode/xml/xml.min.js",
+        "mode/javascript/javascript.min.js",
+        "mode/css/css.min.js",
+        "mode/htmlmixed/htmlmixed.min.js"
+      ]
     },
     {
       "library": "jstree@3.3.7",

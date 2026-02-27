@@ -1,0 +1,95 @@
+﻿@model Resgrid.Model.Workflow
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["NewWorkflowHeader"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var usedEventTypes = (IReadOnlyCollection<int>)(ViewBag.UsedEventTypes ?? new HashSet<int>());
+    var eventTypes = Enum.GetValues(typeof(Resgrid.Model.WorkflowTriggerEventType))
+                        .Cast<Resgrid.Model.WorkflowTriggerEventType>()
+                        .Where(e => !usedEventTypes.Contains((int)e))
+                        .Select(e => new SelectListItem { Value = ((int)e).ToString(), Text = e.ToString() })
+                        .ToList();
+    var noEventTypesAvailable = !eventTypes.Any();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["NewWorkflowHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["WorkflowsHeader"]</a></li>
+            <li class="active"><strong>@localizer["New"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["CreateWorkflow"]</h5></div>
+                <div class="ibox-content">
+                    <form id="newWorkflowForm" role="form" asp-controller="Workflows" asp-action="New" asp-route-area="User" method="post">
+
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        @if (noEventTypesAvailable)
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fa fa-info-circle"></i> All available trigger event types already have a workflow configured. Delete an existing workflow to free up its event type.
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label asp-for="Name">@localizer["Name"] <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" placeholder="@localizer["NamePlaceholder"]" required/>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description">@localizer["Description"]</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="@localizer["DescriptionPlaceholder"]"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TriggerEventType">@localizer["TriggerEvent"] <span class="text-danger">*</span></label>
+                            @if (noEventTypesAvailable)
+                            {
+                                <select asp-for="TriggerEventType" asp-items="@eventTypes" class="form-control" disabled="disabled"></select>
+                            }
+                            else
+                            {
+                                <select asp-for="TriggerEventType" asp-items="@eventTypes" class="form-control"></select>
+                            }
+                            <span class="help-block text-muted">Each event type can only have one workflow. Only unused event types are shown.</span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="MaxRetryCount">@localizer["MaxRetryCount"]</label>
+                            <input asp-for="MaxRetryCount" type="number" class="form-control" min="0" max="10"/>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RetryBackoffBaseSeconds">@localizer["RetryBackoffBaseSeconds"]</label>
+                            <input asp-for="RetryBackoffBaseSeconds" type="number" class="form-control" min="1"/>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="IsEnabled" type="checkbox"/> @localizer["Enabled"]
+                                </label>
+                            </div>
+                        </div>
+
+                        @if (noEventTypesAvailable)
+                        {
+                            <button type="submit" class="btn btn-primary" disabled="disabled">@localizer["CreateWorkflow"]</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-primary">@localizer["CreateWorkflow"]</button>
+                        }
+                        <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

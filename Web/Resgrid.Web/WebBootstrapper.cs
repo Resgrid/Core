@@ -46,6 +46,7 @@ namespace Resgrid.Web
 				builder.RegisterModule(new PdfProviderModule());
 				builder.RegisterModule(new VoipProviderModule());
 				builder.RegisterModule(new MessagingProviderModule());
+				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 
 				if (services != null)
 					builder.Populate(services);
@@ -59,6 +60,8 @@ namespace Resgrid.Web
 
 				_locator = new AutofacServiceLocator(_container);
 				ServiceLocator.SetLocatorProvider(() => _locator);
+
+				var workflowProvider = _container.Resolve<IWorkflowEventProvider>();
 			}
 		}
 

@@ -169,7 +169,7 @@ namespace Resgrid.Services
 
 			var logDepartment = await _departmentsService.GetDepartmentByIdAsync(log.DepartmentId);
 
-			if (department.DepartmentId != logDepartment.DepartmentId)
+			if (logDepartment == null || department.DepartmentId != logDepartment.DepartmentId)
 				return false;
 
 			if (logDepartment.IsUserAnAdmin(userId))
@@ -194,7 +194,7 @@ namespace Resgrid.Services
 
 			var logDepartment = await _departmentsService.GetDepartmentByIdAsync(log.DepartmentId);
 
-			if (department.DepartmentId != logDepartment.DepartmentId)
+			if (logDepartment == null || department.DepartmentId != logDepartment.DepartmentId)
 				return false;
 
 			if (logDepartment.IsUserAnAdmin(userId))
@@ -373,7 +373,7 @@ namespace Resgrid.Services
 			if (permission != null && permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isGroupAdmin)
 				return true;
 
-			if (department.IsUserAnAdmin(userId))
+			if (department != null && department.IsUserAnAdmin(userId))
 				return true;
 
 			return false;
@@ -385,6 +385,9 @@ namespace Resgrid.Services
 			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
 			var destGroup = await _departmentGroupsService.GetGroupForUserAsync(userIdToDelete, departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return false;
 
 			if (department.IsUserAnAdmin(userId))
 				return true;
@@ -407,7 +410,7 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
 		public async Task<bool> CanUserViewPIIAsync(string userId, int departmentId)
@@ -422,7 +425,7 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
 		public async Task<bool> CanUserCreateNoteAsync(string userId, int departmentId)
@@ -437,7 +440,7 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
 		public async Task<bool> CanUserModifyCalendarEntryAsync(string userId, int calendarItemId)
@@ -479,7 +482,7 @@ namespace Resgrid.Services
 				return false;
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
-			if (department.IsUserAnAdmin(userId))
+			if (department != null && department.IsUserAnAdmin(userId))
 				return true;
 
 			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
@@ -554,7 +557,7 @@ namespace Resgrid.Services
 				return false;
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
-			if (department.IsUserAnAdmin(userId))
+			if (department != null && department.IsUserAnAdmin(userId))
 				return true;
 
 			if (signup.DepartmentGroupId.HasValue)
@@ -585,6 +588,9 @@ namespace Resgrid.Services
 			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
 			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return false;
 
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
@@ -657,6 +663,9 @@ namespace Resgrid.Services
 			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
+			if (department == null)
+				return false;
+
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
@@ -724,6 +733,9 @@ namespace Resgrid.Services
 			var targetUserGroup = await _departmentGroupsService.GetGroupForUserAsync(targetUserId, departmentId);
 			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return false;
 
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
@@ -799,6 +811,9 @@ namespace Resgrid.Services
 			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
+			if (department == null)
+				return false;
+
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
@@ -850,7 +865,7 @@ namespace Resgrid.Services
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.DeleteCall);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
-			if (!department.IsUserInDepartment(userId))
+			if (department == null || !department.IsUserInDepartment(userId))
 				return false;
 
 			bool isGroupAdmin = false;
@@ -889,7 +904,7 @@ namespace Resgrid.Services
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CloseCall);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
-			if (!department.IsUserInDepartment(userId))
+			if (department == null || !department.IsUserInDepartment(userId))
 				return false;
 
 			bool isGroupAdmin = false;
@@ -928,7 +943,7 @@ namespace Resgrid.Services
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AddCallData);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
-			if (!department.IsUserInDepartment(userId))
+			if (department == null || !department.IsUserInDepartment(userId))
 				return false;
 
 			bool isGroupAdmin = false;
@@ -1417,7 +1432,7 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
 		public async Task<bool> CanUserAddOrEditContactAsync(string userId, int departmentId)
@@ -1432,7 +1447,52 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserCreateWorkflowAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateWorkflow);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserManageWorkflowCredentialAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ManageWorkflowCredentials);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
+		}
+
+		public async Task<bool> CanUserViewWorkflowRunsAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewWorkflowRuns);
+
+			bool isGroupAdmin = false;
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (group != null)
+				isGroupAdmin = group.IsUserGroupAdmin(userId);
+
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
 	}

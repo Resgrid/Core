@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="Scriban" Version="5.12.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
@@ -52,6 +53,7 @@
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Mcp\Resgrid.Web.Mcp.csproj" />
     <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Workflow\Resgrid.Providers.Workflow.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Data\TestCall.json">

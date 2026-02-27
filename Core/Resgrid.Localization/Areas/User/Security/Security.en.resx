@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Security / Permissions page -->
+  <data name="SecurityPermissionsHeader" xml:space="preserve"><value>Security and Permissions</value></data>
+  <data name="SecurityPermissionsDescription" xml:space="preserve"><value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value></data>
+  <data name="AuditLogsButton" xml:space="preserve"><value>Audit Logs</value></data>
+  <data name="PermissionColumn" xml:space="preserve"><value>Permission</value></data>
+  <data name="NoteColumn" xml:space="preserve"><value>Note</value></data>
+  <data name="ValueColumn" xml:space="preserve"><value>Value</value></data>
+  <data name="RolesColumn" xml:space="preserve"><value>Roles</value></data>
+
+  <!-- 2FA enforcement section on Security page -->
+  <data name="TwoFactorEnforcementHeader" xml:space="preserve"><value>Two-Factor Authentication (2FA) Enforcement</value></data>
+  <data name="TwoFactorEnforcementDescription" xml:space="preserve"><value>Require authenticator-app 2FA for admin users. When enabled, admins who have not set up 2FA will be redirected to enroll before accessing administrative features.</value></data>
+  <data name="Require2FAForAdminsLabel" xml:space="preserve"><value>Require 2FA for Admins</value></data>
+  <data name="Require2FAForAdminsDescription" xml:space="preserve"><value>Controls which admin-level users must enroll in authenticator-app 2FA (Google Authenticator, Microsoft Authenticator, Authy, etc.).</value></data>
+  <data name="Require2FADisabled" xml:space="preserve"><value>Disabled (no requirement)</value></data>
+  <data name="Require2FADeptAdmins" xml:space="preserve"><value>Department Admins + Managing User</value></data>
+  <data name="Require2FAAllAdmins" xml:space="preserve"><value>Department Admins + Managing User + Group Admins</value></data>
+  <data name="Require2FASettingSaved" xml:space="preserve"><value>2FA enforcement setting saved.</value></data>
+  <data name="Require2FASettingFailed" xml:space="preserve"><value>Failed to save 2FA enforcement setting.</value></data>
+  <data name="Require2FACannotEnableNoManagingUser2FA" xml:space="preserve"><value>Cannot enable 2FA enforcement: the managing user of this department does not have two-factor authentication enabled on their account. The managing user must enable 2FA before this setting can be turned on.</value></data>
+  <data name="Require2FACannotEnableNoCurrentUser2FA" xml:space="preserve"><value>Cannot enable 2FA enforcement: you do not have two-factor authentication enabled on your own account. You must enable 2FA before you can require it for others.</value></data>
+  <data name="Require2FABothMustEnable" xml:space="preserve"><value>Cannot enable 2FA enforcement: neither you nor the managing user have two-factor authentication enabled. Both must enable 2FA before this setting can be turned on.</value></data>
+  <data name="Require2FASettingLocked" xml:space="preserve"><value>This setting is locked until the above conditions are met.</value></data>
+
+  <!-- Permissions page table columns -->
+  <data name="PermissionNameColumn" xml:space="preserve"><value>Permission</value></data>
+  <data name="PermissionNoteColumn" xml:space="preserve"><value>Note</value></data>
+  <data name="PermissionSelectionColumn" xml:space="preserve"><value>Selection</value></data>
+  <data name="PermissionGroupOnlyColumn" xml:space="preserve"><value>Group Only</value></data>
+  <data name="PermissionRolesColumn" xml:space="preserve"><value>Roles</value></data>
+  <data name="PermissionNoRoles" xml:space="preserve"><value>No Roles</value></data>
+  <data name="PermissionNA" xml:space="preserve"><value>N/A</value></data>
+
+  <!-- Permissions page header -->
+  <data name="BreadcrumbSecurity" xml:space="preserve"><value>Security and Permissions</value></data>
+  <data name="SecurityDescription" xml:space="preserve"><value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value></data>
+
+  <!-- Individual permission labels and notes -->
+  <data name="PermAddUsersLabel" xml:space="preserve"><value>Who can Add Users</value></data>
+  <data name="PermAddUsersNote" xml:space="preserve"><value>This option determines who can add users/personnel to the department. By default only Department Administrators (and the managing member) can add users. But Group Admins can also be allowed to add users (limited only to the group they are an admin of).</value></data>
+
+  <data name="PermRemoveUsersLabel" xml:space="preserve"><value>Who can Remove Users</value></data>
+  <data name="PermRemoveUsersNote" xml:space="preserve"><value>This option determines who can remove users/personnel from the department. By default only Department Administrators (and the managing member) can remove users. But Group Admins can also be allowed to remove users (limited only to the users in the group they are an admin of).</value></data>
+
+  <data name="PermCreateCallLabel" xml:space="preserve"><value>Who can Create Calls</value></data>
+  <data name="PermCreateCallNote" xml:space="preserve"><value>This option determines who can manually create calls from the Resgrid system. By default Everyone can create calls.</value></data>
+
+  <data name="PermDeleteCallLabel" xml:space="preserve"><value>Who can Delete Calls</value></data>
+  <data name="PermDeleteCallNote" xml:space="preserve"><value>This option determines who can delete calls from the Resgrid system. By default Everyone can delete calls.</value></data>
+
+  <data name="PermCloseCallLabel" xml:space="preserve"><value>Who can Close Calls</value></data>
+  <data name="PermCloseCallNote" xml:space="preserve"><value>This option determines who can close calls from the Resgrid system. By default Everyone can close calls.</value></data>
+
+  <data name="PermAddCallDataLabel" xml:space="preserve"><value>Who can Add Data To Calls</value></data>
+  <data name="PermAddCallDataNote" xml:space="preserve"><value>This option determines who can add data; like images, notes and files, to calls from the Resgrid system. By default Everyone can add data to calls.</value></data>
+
+  <data name="PermCreateTrainingLabel" xml:space="preserve"><value>Who can Create Trainings</value></data>
+  <data name="PermCreateTrainingNote" xml:space="preserve"><value>This option determines who can create trainings. By default only Department Admins can create trainings.</value></data>
+
+  <data name="PermCreateDocumentLabel" xml:space="preserve"><value>Who can Add Documents</value></data>
+  <data name="PermCreateDocumentNote" xml:space="preserve"><value>This option determines who can add documents. By default Everyone can add documents.</value></data>
+
+  <data name="PermCreateCalendarEntryLabel" xml:space="preserve"><value>Who can Create Calendar Entries</value></data>
+  <data name="PermCreateCalendarEntryNote" xml:space="preserve"><value>This option determines who can create calendar entries. By default Everyone can create calendar entries.</value></data>
+
+  <data name="PermCreateNoteLabel" xml:space="preserve"><value>Who can Create Notes</value></data>
+  <data name="PermCreateNoteNote" xml:space="preserve"><value>This option determines who can create notes. By default Everyone can create notes.</value></data>
+
+  <data name="PermCreateLogLabel" xml:space="preserve"><value>Who can Add Log Entries</value></data>
+  <data name="PermCreateLogNote" xml:space="preserve"><value>This option determines who can add log entries. By default Everyone can add log entries.</value></data>
+
+  <data name="PermCreateShiftLabel" xml:space="preserve"><value>Who can Create Shifts</value></data>
+  <data name="PermCreateShiftNote" xml:space="preserve"><value>This option determines who can create and edit shifts. By default only Department Admins can create and edit shifts.</value></data>
+
+  <data name="PermViewPersonalInfoLabel" xml:space="preserve"><value>Who can View Personal Info</value></data>
+  <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.</value></data>
+
+  <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>Who can Adjust Inventory</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.</value></data>
+
+  <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>Who can see the Location of Personnel</value></data>
+  <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value></data>
+
+  <data name="PermViewUnitLocationLabel" xml:space="preserve"><value>Who can see the Location of Units</value></data>
+  <data name="PermViewUnitLocationNote" xml:space="preserve"><value>This option determines who can see the location of units on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value></data>
+
+  <data name="PermCreateMessageLabel" xml:space="preserve"><value>Who can send messages</value></data>
+  <data name="PermCreateMessageNote" xml:space="preserve"><value>This option determines who can create and send messages (in-system mail). By default everyone can create and send messages.</value></data>
+
+  <data name="PermViewGroupsUsersLabel" xml:space="preserve"><value>Who can view users</value></data>
+  <data name="PermViewGroupsUsersNote" xml:space="preserve"><value>By default all users can see all other users in the system. This option allows you to limit who can see users in the system.</value></data>
+
+  <data name="PermViewGroupsUnitsLabel" xml:space="preserve"><value>Who can view units</value></data>
+  <data name="PermViewGroupsUnitsNote" xml:space="preserve"><value>By default all users can see all units in the system. This option allows you to limit who can view units in the system.</value></data>
+
+  <data name="PermViewContactsLabel" xml:space="preserve"><value>Who can view Contacts</value></data>
+  <data name="PermViewContactsNote" xml:space="preserve"><value>By default all users can see all contacts in the system. This option allows you to limit who can view contacts in the system. If a user cannot view Contacts they also won't be able to add them to a call.</value></data>
+
+  <data name="PermEditContactsLabel" xml:space="preserve"><value>Who can edit or create Contacts</value></data>
+  <data name="PermEditContactsNote" xml:space="preserve"><value>By default all users can create and edit contacts in the system. This option allows you to limit who can create or edit contacts in the system.</value></data>
+
+  <data name="PermDeleteContactsLabel" xml:space="preserve"><value>Who can delete Contacts</value></data>
+  <data name="PermDeleteContactsNote" xml:space="preserve"><value>By default all users can delete contacts in the system. This option allows you to limit who can delete contacts in the system.</value></data>
+
+  <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>Who can Create/Edit Workflows</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>This option determines who can create, edit, and delete workflows and workflow steps. By default only Department Admins can manage workflows.</value></data>
+
+  <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>Who can Manage Workflow Credentials</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>This option determines who can create, edit, and delete encrypted credentials used by workflow actions (e.g., SMTP passwords, API keys). By default only Department Admins can manage credentials.</value></data>
+
+  <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Who can View Workflow Runs</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>This option determines who can view workflow execution history, run logs, and health dashboards. By default only Department Admins can view workflow runs.</value></data>
+</root>
+
+

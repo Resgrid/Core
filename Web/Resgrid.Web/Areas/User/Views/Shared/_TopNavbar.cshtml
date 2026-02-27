@@ -1,4 +1,4 @@
-﻿@using Resgrid.Framework;
+﻿@using Resgrid.Framework
 
 <div class="row border-bottom" style="height: 50px;">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -26,6 +26,7 @@
                         <li class="@Html.IsSelected(controller: "Forms", action: "Index")"><a asp-controller="Forms" asp-action="Index" asp-route-area="User">@commonLocalizer["Forms"]</a></li>
                         <li class="@Html.IsSelected(controller: "Department", action: "Types")"><a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Types"]</a></li>
                         <li class="@Html.IsSelected(controller: "DistributionLists", action: "Index")"><a asp-controller="DistributionLists" asp-action="Index" asp-route-area="User">@commonLocalizer["DistributionLists"]</a></li>
+                        <li class="@Html.IsSelected(controller: "Workflows", action: "Index")"><a asp-controller="Workflows" asp-action="Index" asp-route-area="User">Workflows</a></li>
                         <li class="@Html.IsSelected(controller: "Security", action: "Index")"><a asp-controller="Security" asp-action="Index" asp-route-area="User">@commonLocalizer["SecurityAndPermissions"]</a></li>
                         <li class="@Html.IsSelected(controller: "Subscription", action: "Index")"><a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@commonLocalizer["SubAndBilling"]</a></li>
                         <li class="divider"></li>
@@ -37,6 +38,7 @@
                     <li class="@Html.IsSelected(controller: "Notifications", action: "Index")"><a asp-controller="Notifications" asp-action="Index" asp-route-area="User">@commonLocalizer["Notifications"]</a></li>
                     @*<li class="@Html.IsSelected(controller: "Command", action: "Index")"><a asp-controller="Command" asp-action="Index" asp-route-area="User">@commonLocalizer["Commands"]</a></li>*@
                     <li><a href="https://bigboard.resgrid.com" target="_blank">@commonLocalizer["BigBoard"]</a></li>
+                    <li><a href="https://dispatch.resgrid.com" target="_blank">@commonLocalizer["Dispatch"]</a></li>
                 </ul>
             </li>
             <li class="btn dropdown" id="menu-help">

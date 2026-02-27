@@ -1,0 +1,579 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Index -->
+  <data name="WorkflowsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DepartmentWorkflows" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NewWorkflow" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PendingRuns" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoWorkflowsCreated" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreateFirstWorkflow" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TriggerEvent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Runs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Health" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteWorkflowConfirm" xml:space="preserve">
+    <value />
+  </data>
+  <!-- New Workflow -->
+  <data name="NewWorkflowHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreateWorkflow" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MaxRetryCount" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RetryBackoffBaseSeconds" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Edit Workflow -->
+  <data name="EditWorkflowHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WorkflowSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MaxRetries" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BackoffSeconds" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Steps" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AddStep" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ActionType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TemplatePeek" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value />
+  </data>
+  <data name="No" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteStepConfirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteStep" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TemplateVariables" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CommonVariables" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CallEventVariables" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credentials -->
+  <data name="WorkflowCredentialsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StoredCredentials" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AddCredential" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoCredentialsConfigured" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SecretData" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteCredentialConfirm" xml:space="preserve">
+    <value />
+  </data>
+  <!-- New / Edit Credential -->
+  <data name="ValidationErrorHeader" xml:space="preserve">
+    <value>Please correct the following errors before saving.</value>
+  </data>
+  <data name="AddCredentialHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EditCredentialHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CredentialDetails" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CredentialType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SaveCredential" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ExistingSecretsInfo" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - SMTP -->
+  <data name="SmtpSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SmtpHost" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SmtpPort" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SmtpUsername" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SmtpPassword" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SmtpUseSsl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SmtpFromAddress" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SmtpFromAddressHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TwilioSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TwilioAccountSid" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TwilioAuthToken" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TwilioFromNumber" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TwilioFromNumberHelp" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - FTP -->
+  <data name="FtpSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FtpHost" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FtpPort" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FtpUsername" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FtpPassword" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FtpPassiveMode" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - SFTP -->
+  <data name="SftpSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SftpHost" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SftpPort" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SftpUsername" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SftpPassword" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SftpPrivateKey" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SftpPrivateKeyHelp" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - AWS S3 -->
+  <data name="AwsS3Settings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AwsAccessKeyId" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AwsSecretAccessKey" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AwsRegion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AwsBucketName" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - HTTP Bearer -->
+  <data name="HttpBearerSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HttpBearerToken" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HttpBearerHelp" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - HTTP Basic -->
+  <data name="HttpBasicSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HttpBasicUsername" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HttpBasicPassword" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - HTTP API Key -->
+  <data name="HttpApiKeySettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ApiKeyHeaderName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ApiKeyHeaderNameHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ApiKeyValue" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - Microsoft Teams -->
+  <data name="TeamsSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TeamsWebhookUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TeamsWebhookHelp" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - Slack -->
+  <data name="SlackSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SlackWebhookUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SlackBotToken" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SlackHelp" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - Discord -->
+  <data name="DiscordSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DiscordWebhookUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DiscordBotToken" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DiscordHelp" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - Azure Blob Storage -->
+  <data name="AzureBlobSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AzureConnectionString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AzureContainerName" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - Box -->
+  <data name="BoxSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxClientId" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxClientSecret" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxEnterpriseId" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxPublicKeyId" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxPrivateKey" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxPrivateKeyHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxPrivateKeyPassword" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoxPrivateKeyPasswordHelp" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Credential Fields - Dropbox -->
+  <data name="DropboxSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DropboxRefreshToken" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DropboxRefreshTokenHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DropboxAppKey" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DropboxAppSecret" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Pending Runs -->
+  <data name="PendingRunningWorkflows" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ActiveRuns" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ClearAllPending" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ClearAllPendingConfirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoPendingRuns" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunId" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Workflow" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Attempt" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CancelRun" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CancelRunConfirm" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Runs -->
+  <data name="WorkflowRunsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunHistory" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoRunsFound" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Health -->
+  <data name="WorkflowHealthHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoHealthData" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Last24Hours" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Last7Days" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Last30Days" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Successful" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SuccessRate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Performance" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AvgDuration" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LastRun" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LastError" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewRuns" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value />
+  </data>
+  <data name="None" xml:space="preserve">
+    <value />
+  </data>
+  <!-- Breadcrumb / shared -->
+  <data name="Home" xml:space="preserve">
+    <value />
+  </data>
+  <data name="New" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value />
+  </data>
+</root>
+

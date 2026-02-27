@@ -1,0 +1,62 @@
+﻿@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.VerifyCodeViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["RecoveryCodeLoginHeader"];
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @Html.Partial("_StylePartial")
+</head>
+<body class="gray-bg">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div style="text-align: center;">
+                    <img src="~/images/Resgrid_JustText.png" style="width: 200px;" />
+                </div>
+                <h3>@localizer["RecoveryCodeLoginHeader"]</h3>
+                <p>@localizer["RecoveryCodeLoginDescription"]</p>
+
+                <div class="ibox-content">
+                    <form asp-action="LoginWithRecoveryCode" asp-controller="Account" method="post" class="m-t">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div asp-validation-summary="All" class="alert alert-danger"></div>
+                        }
+
+                        <div class="form-group">
+                            <label asp-for="Code">@localizer["RecoveryCodeInputLabel"]</label>
+                            <input asp-for="Code" class="form-control"
+                                   placeholder="@localizer["RecoveryCodePlaceholder"]"
+                                   autocomplete="off"
+                                   autofocus />
+                            <span asp-validation-for="Code" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary block full-width m-b">@localizer["LoginWithRecoveryCodeButton"]</button>
+
+                        <p class="m-t text-center">
+                            <a asp-action="LoginWith2fa" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                                @localizer["UseAuthenticatorAppLink"]
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_ScriptsPartial")
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

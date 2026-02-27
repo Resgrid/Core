@@ -1,4 +1,4 @@
-﻿using Resgrid.Config;
+﻿﻿using Resgrid.Config;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
@@ -49,6 +49,11 @@ namespace Resgrid.Providers.Bus
 		public async Task<bool> EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent)
 		{
 			return await _rabbitOutboundQueueProvider.EnqueueSecurityRefreshEvent(securityRefreshEvent);
+		}
+
+		public async Task<bool> EnqueueWorkflow(Resgrid.Model.Queue.WorkflowQueueItem item)
+		{
+			return await _rabbitOutboundQueueProvider.EnqueueWorkflowEvent(item);
 		}
 	}
 }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Framework;
@@ -15,6 +17,9 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Web.Areas.User.Models.Security;
 using Resgrid.Web.Helpers;
+using Resgrid.Web.Attributes;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
+using Microsoft.Extensions.Localization;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -25,14 +30,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IAuditService _auditService;
 		private readonly IPermissionsService _permissionsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly ISystemAuditsService _systemAuditsService;
+		private readonly UserManager<IdentityUser> _userManager;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
 
 		public SecurityController(IDepartmentsService departmentsService, IAuditService auditService,
-			IPermissionsService permissionsService, IEventAggregator eventAggregator)
+			IPermissionsService permissionsService, IEventAggregator eventAggregator,
+			IDepartmentSettingsService departmentSettingsService, ISystemAuditsService systemAuditsService,
+			UserManager<IdentityUser> userManager,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_auditService = auditService;
 			_permissionsService = permissionsService;
 			_eventAggregator = eventAggregator;
+			_departmentSettingsService = departmentSettingsService;
+			_systemAuditsService = systemAuditsService;
+			_userManager = userManager;
+			_secLocalizer = secLocalizer;
 		}
 
 		public async Task<IActionResult> Index()
@@ -318,6 +334,51 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.DeleteContacts = 3;
 
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateWorkflow))
+				model.CreateWorkflow = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateWorkflow).Action;
+
+			var createWorkflowPermissions = new List<dynamic>();
+			createWorkflowPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			createWorkflowPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			createWorkflowPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.CreateWorkflowPermissions = new SelectList(createWorkflowPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials))
+				model.ManageWorkflowCredentials = permissions.First(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials).Action;
+
+			var manageWorkflowCredentialsPermissions = new List<dynamic>();
+			manageWorkflowCredentialsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			manageWorkflowCredentialsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			manageWorkflowCredentialsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.ManageWorkflowCredentialsPermissions = new SelectList(manageWorkflowCredentialsPermissions, "Id", "Name");
+
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns))
+				model.ViewWorkflowRuns = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns).Action;
+
+			var viewWorkflowRunsPermissions = new List<dynamic>();
+			viewWorkflowRunsPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			viewWorkflowRunsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			viewWorkflowRunsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewWorkflowRunsPermissions.Add(new { Id = 3, Name = "Everyone" });
+			model.ViewWorkflowRunsPermissions = new SelectList(viewWorkflowRunsPermissions, "Id", "Name");
+
+			// 2FA enforcement scope — only managingUser can change this
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.IsManagingUser = department.ManagingUserId == UserId;
+			model.Require2FAForAdmins = await _departmentSettingsService.GetRequire2FAForAdminsAsync(DepartmentId);
+
+			// Guard: check whether managing user and current user have 2FA enabled
+			var managingIdentityUser = await _userManager.FindByIdAsync(department.ManagingUserId);
+			var currentIdentityUser = await _userManager.FindByIdAsync(UserId);
+			model.ManagingUserHas2FAEnabled = managingIdentityUser != null && await _userManager.GetTwoFactorEnabledAsync(managingIdentityUser);
+			model.CurrentUserHas2FAEnabled = currentIdentityUser != null && await _userManager.GetTwoFactorEnabledAsync(currentIdentityUser);
+
+			var require2FAOptions = new List<dynamic>();
+			require2FAOptions.Add(new { Id = 0, Name = _secLocalizer["Require2FADisabled"].Value });
+			require2FAOptions.Add(new { Id = 1, Name = _secLocalizer["Require2FADeptAdmins"].Value });
+			require2FAOptions.Add(new { Id = 2, Name = _secLocalizer["Require2FAAllAdmins"].Value });
+			model.Require2FAForAdminsOptions = new SelectList(require2FAOptions, "Id", "Name");
+
 			return View(model);
 		}
 
@@ -374,7 +435,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region Async
 
+		/// <summary>
+		/// Sets the department-level 2FA enforcement scope. Only the managing user (owner) may change this.
+		/// scope: 0=disabled, 1=dept admins+managing user, 2=also group admins
+		/// </summary>
 		[HttpGet]
+		[RequiresRecentTwoFactor]
+		public async Task<IActionResult> Set2FARequirement(int scope, CancellationToken cancellationToken)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			if (department.ManagingUserId != UserId)
+				return new StatusCodeResult((int)HttpStatusCode.Forbidden);
+
+			if (scope < 0 || scope > 2)
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+
+			// Guard: if enabling enforcement (scope > 0), both managing user and current admin must have 2FA enabled
+			if (scope > 0)
+			{
+				var managingUser = await _userManager.FindByIdAsync(department.ManagingUserId);
+				var currentUser = await _userManager.FindByIdAsync(UserId);
+
+				bool managingHas2FA = managingUser != null && await _userManager.GetTwoFactorEnabledAsync(managingUser);
+				bool currentHas2FA = currentUser != null && await _userManager.GetTwoFactorEnabledAsync(currentUser);
+
+				if (!managingHas2FA || !currentHas2FA)
+					return new StatusCodeResult((int)HttpStatusCode.PreconditionFailed);
+			}
+
+			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, scope.ToString(), DepartmentSettingTypes.Require2FAForAdmins, cancellationToken);
+
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.PermissionsChanged;
+			auditEvent.Before = string.Empty;
+			auditEvent.After = $"Require2FAForAdmins={scope}";
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+			return new StatusCodeResult((int)HttpStatusCode.OK);
+		}
+
+		[HttpGet]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> SetPermission(int type, int perm, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -428,7 +535,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return new StatusCodeResult((int)HttpStatusCode.NotModified);
 		}
-
+		[HttpGet]
 		public async Task<IActionResult> SetPermissionData(int type, string data, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())

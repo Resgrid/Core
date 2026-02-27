@@ -642,5 +642,30 @@ namespace Resgrid.Services
 
 			return false;
 		}
+
+		public async Task<bool> SendEmailVerificationCodeAsync(string toEmailAddress, string firstName, string verificationCode)
+		{
+			if (string.IsNullOrWhiteSpace(toEmailAddress))
+				return false;
+
+			try
+			{
+				using var mail = new MailMessage();
+				mail.To.Add(toEmailAddress);
+				mail.Subject = "Resgrid Verification Code";
+				mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
+				mail.Body = $"Hi {firstName},\r\n\r\nYour Resgrid verification code is: {verificationCode}\r\n\r\nThis code expires in {Config.VerificationConfig.VerificationCodeExpiryMinutes} minutes. If you did not request this, please ignore this email.\r\n\r\nThe Resgrid Team";
+				mail.IsBodyHtml = false;
+
+				await _emailSender.SendEmail(mail);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return false;
+		}
 	}
 }

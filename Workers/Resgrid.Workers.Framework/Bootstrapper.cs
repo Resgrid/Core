@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
+using Resgrid.Model.Providers;
 using Resgrid.Providers.AddressVerification;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
@@ -46,11 +47,15 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new PdfProviderModule());
 				builder.RegisterModule(new VoipProviderModule());
 				builder.RegisterModule(new MessagingProviderModule());
+				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 
 				_container = builder.Build();
 
 				Locator = new AutofacServiceLocator(_container);
 				ServiceLocator.SetLocatorProvider(() => Locator);
+
+				// Prime the WorkflowEventProvider singleton so its event subscriptions are registered
+				var workflowEventProvider = _container.Resolve<IWorkflowEventProvider>();
 			}
 		}
 

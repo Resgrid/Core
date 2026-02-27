@@ -1,19 +1,21 @@
 ﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Security.PermissionsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> twoFactorLocalizer
 @{
-    ViewBag.Title = "Resgrid | Security";
+    ViewBag.Title = "Resgrid | " + localizer["SecurityPermissionsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Security and Permissions</h2>
+        <h2>@localizer["SecurityPermissionsHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>Security and Permissions</strong>
+                <strong>@localizer["BreadcrumbSecurity"]</strong>
             </li>
         </ol>
     </div>
@@ -21,7 +23,7 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a class="btn btn-primary top-button" title="Security Audits" asp-controller="Security" asp-action="Audits" asp-route-area="User">Audit Logs</a>
+                <a class="btn btn-primary top-button" title="@localizer["AuditLogsButton"]" asp-controller="Security" asp-action="Audits" asp-route-area="User">@localizer["AuditLogsButton"]</a>
             </div>
         </div>
     }
@@ -34,7 +36,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-md-8 col-md-offset-1 col-md-pull-1">
-                            <p>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</p>
+                            <p>@localizer["SecurityDescription"]</p>
                         </div>
                     </div>
                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -43,471 +45,334 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            Permission
-                                        </th>
-                                        <th>
-                                            Note
-                                        </th>
-                                        <th>
-                                            Selection
-                                        </th>
-                                        <th>
-                                            Group Only
-                                        </th>
-                                        <th>
-                                            Roles
-                                        </th>
+                                        <th>@localizer["PermissionNameColumn"]</th>
+                                        <th>@localizer["PermissionNoteColumn"]</th>
+                                        <th>@localizer["PermissionSelectionColumn"]</th>
+                                        <th>@localizer["PermissionGroupOnlyColumn"]</th>
+                                        <th>@localizer["PermissionRolesColumn"]</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td>@localizer["PermAddUsersLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAddUsersNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.AddUsers, Model.AddUserPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>@localizer["PermissionNoRoles"]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermRemoveUsersLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermRemoveUsersNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.RemoveUsers, Model.RemoveUserPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>@localizer["PermissionNoRoles"]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermCreateCallLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateCallNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateCall, Model.CreateCallPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Add Users
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can add users/personnel to the department. By default only Department Administrators (and the managing member) can add users.
-                                            But Group Admins can also be allowed to add users (limited only to the group they are an admin of).
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.AddUsers, Model.AddUserPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            No Roles
+                                            <span id="callCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="callCreateRolesDiv" style="display: none;"><select id="callCreateRoles" name="callCreateRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermDeleteCallLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermDeleteCallNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.DeleteCall, Model.DeleteCallPermissions)</td>
+                                        <td><input type="checkbox" asp-for="LockDeleteCallToGroup" /></td>
                                         <td>
-                                            Who can Remove Users
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can remove users/personnel from the department. By default only Department Administrators (and the managing member) can remove users.
-                                            But Group Admins can also be allowed to remove users (limited only to the users in the group they are an admin of).
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.RemoveUsers, Model.RemoveUserPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            No Roles
+                                            <span id="deleteCallsRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="deleteCallsRolesDiv" style="display: none;"><select id="deleteCallsRoles" name="deleteCallsRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermCloseCallLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCloseCallNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CloseCall, Model.CloseCallPermissions)</td>
+                                        <td><input type="checkbox" asp-for="LockCloseCallToGroup" /></td>
                                         <td>
-                                            Who can Create Calls
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can manually create calls from the Resgrid system. By default Everyone can create calls.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateCall, Model.CreateCallPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="callCreateNoRolesSpan">No Roles</span>
-                                            <div id="callCreateRolesDiv" style="display: none;">
-                                                <select id="callCreateRoles" name="callCreateRoles"></select>
-                                            </div>
+                                            <span id="closeCallsRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="closeCallsRolesDiv" style="display: none;"><select id="closeCallsRoles" name="closeCallsRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermAddCallDataLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAddCallDataNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.AddCallData, Model.AddCallDataPermissions)</td>
+                                        <td><input type="checkbox" asp-for="LockAddCallDataToGroup" /></td>
                                         <td>
-                                            Who can Delete Calls
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can delete calls from the Resgrid system. By default Everyone can delete calls.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.DeleteCall, Model.DeleteCallPermissions)
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" asp-for="LockDeleteCallToGroup" />
-                                        </td>
-                                        <td>
-                                            <span id="deleteCallsRolesSpan">No Roles</span>
-                                            <div id="deleteCallsRolesDiv" style="display: none;">
-                                                <select id="deleteCallsRoles" name="deleteCallsRoles"></select>
-                                            </div>
+                                            <span id="addCallDataRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="addCallDataRolesDiv" style="display: none;"><select id="addCallDataRoles" name="addCallDataRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermCreateTrainingLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateTrainingNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateTraining, Model.CreateTrainingPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Close Calls
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can close calls from the Resgrid system. By default Everyone can close calls.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CloseCall, Model.CloseCallPermissions)
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" asp-for="LockCloseCallToGroup" />
-                                        </td>
-                                        <td>
-                                            <span id="closeCallsRolesSpan">No Roles</span>
-                                            <div id="closeCallsRolesDiv" style="display: none;">
-                                                <select id="closeCallsRoles" name="closeCallsRoles"></select>
-                                            </div>
+                                            <span id="trainingCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="trainingCreateRolesDiv" style="display: none;"><select id="trainingCreateRoles" name="trainingCreateRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermCreateDocumentLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateDocumentNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateDocument, Model.CreateDocumentPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Add Data To Calls Calls
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can add data; like images, notes and files, to calls from the Resgrid system. By default Everyone can add data to  calls.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.AddCallData, Model.AddCallDataPermissions)
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" asp-for="LockAddCallDataToGroup" />
-                                        </td>
-                                        <td>
-                                            <span id="addCallDataRolesSpan">No Roles</span>
-                                            <div id="addCallDataRolesDiv" style="display: none;">
-                                                <select id="addCallDataRoles" name="addCallDataRoles"></select>
-                                            </div>
+                                            <span id="documentCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="documentCreateRolesDiv" style="display: none;"><select id="documentCreateRoles" name="documentCreateRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermCreateCalendarEntryLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateCalendarEntryNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateCalendarEntry, Model.CreateCalendarEntryPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Create Trainings
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can create trainings. By default only Department Admins can create trainings.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateTraining, Model.CreateTrainingPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="trainingCreateNoRolesSpan">No Roles</span>
-                                            <div id="trainingCreateRolesDiv" style="display: none;">
-                                                <select id="trainingCreateRoles" name="trainingCreateRoles"></select>
-                                            </div>
+                                            <span id="calendarEntriesCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="calendarEntriesCreateRolesDiv" style="display: none;"><select id="calendarEntiresCreateRoles" name="calendarEntiresCreateRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermCreateNoteLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateNoteNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateNote, Model.CreateNotePermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Add Documents
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can add documents. By default Everyone can add documents
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateDocument, Model.CreateDocumentPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="documentCreateNoRolesSpan">No Roles</span>
-                                            <div id="documentCreateRolesDiv" style="display: none;">
-                                                <select id="documentCreateRoles" name="documentCreateRoles"></select>
-                                            </div>
+                                            <span id="noteCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="noteCreateRolesDiv" style="display: none;"><select id="noteCreateRoles" name="noteCreateRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermCreateLogLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateLogNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateLog, Model.CreateLogPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Create Calendar Entries
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can create calendar entires. By default Everyone can create calendar entries.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateCalendarEntry, Model.CreateCalendarEntryPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="calendarEntriesCreateNoRolesSpan">No Roles</span>
-                                            <div id="calendarEntriesCreateRolesDiv" style="display: none;">
-                                                <select id="calendarEntiresCreateRoles" name="calendarEntiresCreateRoles"></select>
-                                            </div>
+                                            <span id="logCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="logCreateRolesDiv" style="display: none;"><select id="logCreateRoles" name="logCreateRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermCreateShiftLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateShiftNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateShift, Model.CreateShiftPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Create Notes
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can create calendar entires. By default Everyone can create calendar entries.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateNote, Model.CreateNotePermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="noteCreateNoRolesSpan">No Roles</span>
-                                            <div id="noteCreateRolesDiv" style="display: none;">
-                                                <select id="noteCreateRoles" name="noteCreateRoles"></select>
-                                            </div>
+                                            <span id="shiftCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="shiftCreateRolesDiv" style="display: none;"><select id="shiftCreateRoles" name="shiftCreateRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermViewPersonalInfoLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewPersonalInfoNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewPersonalInfo, Model.ViewPersonalInfoPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Add Log Entries
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can add log entries. By default Everyone can add log entries.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateLog, Model.CreateLogPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="logCreateNoRolesSpan">No Roles</span>
-                                            <div id="logCreateRolesDiv" style="display: none;">
-                                                <select id="logCreateRoles" name="logCreateRoles"></select>
-                                            </div>
+                                            <span id="personalInfooRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="personalInfoRolesDiv" style="display: none;"><select id="personalInfoRoles" name="personalInfoRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermAdjustInventoryLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdjustInventoryNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.AdjustInventory, Model.AdjustInventoryPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can Create Shifts
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can create and edit shifts. By default only Department Admins can create and edit shifts.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateShift, Model.CreateShiftPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="shiftCreateNoRolesSpan">No Roles</span>
-                                            <div id="shiftCreateRolesDiv" style="display: none;">
-                                                <select id="shiftCreateRoles" name="shiftCreateRoles"></select>
-                                            </div>
+                                            <span id="adjustInventoryRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adjustInventoryRolesDiv" style="display: none;"><select id="adjustInventoryRoles" name="adjustInventoryRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermViewPersonnelLocationLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewPersonnelLocationNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewPersonnelLocation, Model.ViewPersonnelLocationPermissions)</td>
+                                        <td><input type="checkbox" asp-for="LockViewPersonneLocationToGroup" /></td>
                                         <td>
-                                            Who can View Personal Info
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.ViewPersonalInfo, Model.ViewPersonalInfoPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="personalInfooRolesSpan">No Roles</span>
-                                            <div id="personalInfoRolesDiv" style="display: none;">
-                                                <select id="personalInfoRoles" name="personalInfoRoles"></select>
-                                            </div>
+                                            <span id="viewPersonnelLocationRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="viewPersonnelLocationRolesDiv" style="display: none;"><select id="viewPersonnelLocationRoles" name="viewPersonnelLocationRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermViewUnitLocationLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewUnitLocationNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewUnitLocation, Model.ViewUnitLocationPermissions)</td>
+                                        <td><input type="checkbox" asp-for="LockViewUnitLocationToGroup" /></td>
                                         <td>
-                                            Who can Adjust Inventory
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.AdjustInventory, Model.AdjustInventoryPermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="adjustInventoryRolesSpan">No Roles</span>
-                                            <div id="adjustInventoryRolesDiv" style="display: none;">
-                                                <select id="adjustInventoryRoles" name="adjustInventoryRoles"></select>
-                                            </div>
+                                            <span id="viewUnitLocationsRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="viewUnitLocationsRolesDiv" style="display: none;"><select id="viewUnitLocationsRoles" name="viewUnitLocationsRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermCreateMessageLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateMessageNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateMessage, Model.CreateMessagePermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
                                         <td>
-                                            Who can see the Location of Personnel
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.ViewPersonnelLocation, Model.ViewPersonnelLocationPermissions)
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" asp-for="LockViewPersonneLocationToGroup" />
-                                        </td>
-                                        <td>
-                                            <span id="viewPersonnelLocationRolesSpan">No Roles</span>
-                                            <div id="viewPersonnelLocationRolesDiv" style="display: none;">
-                                                <select id="viewPersonnelLocationRoles" name="viewPersonnelLocationRoles"></select>
-                                            </div>
+                                            <span id="createMessagesRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="createMessagesRolesDiv" style="display: none;"><select id="createMessagesRoles" name="createMessagesRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermViewGroupsUsersLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewGroupsUsersNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewGroupsUsers, Model.ViewGroupUsersPermissions)</td>
+                                        <td><input type="checkbox" asp-for="LockViewGroupsUsersToGroup" /></td>
                                         <td>
-                                            Who can see the Location of Units
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can see the location of units on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.ViewUnitLocation, Model.ViewUnitLocationPermissions)
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" asp-for="LockViewUnitLocationToGroup" />
-                                        </td>
-                                        <td>
-                                            <span id="viewUnitLocationsRolesSpan">No Roles</span>
-                                            <div id="viewUnitLocationsRolesDiv" style="display: none;">
-                                                <select id="viewUnitLocationsRoles" name="viewUnitLocationsRoles"></select>
-                                            </div>
+                                            <span id="viewUsersRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="viewUsersRolesDiv" style="display: none;"><select id="viewUsersRoles" name="viewUsersRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermViewGroupsUnitsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewGroupsUnitsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewGroupsUnits, Model.ViewGrouUnitsPermissions)</td>
+                                        <td><input type="checkbox" asp-for="LockViewGroupsUnitsToGroup" /></td>
                                         <td>
-                                            Who can send messages
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            This option determines who can create and send messages (in-system mail). By Default everyone can create and send messages.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.CreateMessage, Model.CreateMessagePermissions)
-                                        </td>
-                                        <td>
-                                            N/A
-                                        </td>
-                                        <td>
-                                            <span id="createMessagesRolesSpan">No Roles</span>
-                                            <div id="createMessagesRolesDiv" style="display: none;">
-                                                <select id="createMessagesRoles" name="createMessagesRoles"></select>
-                                            </div>
+                                            <span id="viewUnitsRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="viewUnitsRolesDiv" style="display: none;"><select id="viewUnitsRoles" name="viewUnitsRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermViewContactsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewContactsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewContacts, Model.ViewContactsPermissions)</td>
+                                        <td></td>
                                         <td>
-                                            Who can view users
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            By default all users can see all other users in the system. This option allows you to limit who can see users in the system.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.ViewGroupsUsers, Model.ViewGroupUsersPermissions)
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" asp-for="LockViewGroupsUsersToGroup" />
-                                        </td>
-                                        <td>
-                                            <span id="viewUsersRolesSpan">No Roles</span>
-                                            <div id="viewUsersRolesDiv" style="display: none;">
-                                                <select id="viewUsersRoles" name="viewUsersRoles"></select>
-                                            </div>
+                                            <span id="viewContactsRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="viewContactsRolesDiv" style="display: none;"><select id="viewContactsRoles" name="viewContactsRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermEditContactsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermEditContactsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.EditContacts, Model.EditContactsPermissions)</td>
+                                        <td></td>
                                         <td>
-                                            Who can view units
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            By default all users can see all units in the system. This option allows you to limit who can view units in the system.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.ViewGroupsUnits, Model.ViewGrouUnitsPermissions)
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" asp-for="LockViewGroupsUnitsToGroup" />
-                                        </td>
-                                        <td>
-                                            <span id="viewUnitsRolesSpan">No Roles</span>
-                                            <div id="viewUnitsRolesDiv" style="display: none;">
-                                                <select id="viewUnitsRoles" name="viewUnitsRoles"></select>
-                                            </div>
+                                            <span id="editContactsRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="editContactsRolesDiv" style="display: none;"><select id="editContactsRoles" name="editContactsRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermDeleteContactsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermDeleteContactsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.DeleteContacts, Model.DeleteContactsPermissions)</td>
+                                        <td></td>
                                         <td>
-                                            Who can view Contacts
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            By default all users can see all contacts in the system. This option allows you to limit who can view contacts in the system. If a user cannot view Contacts they also won't be able to add them to a call.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.ViewContacts, Model.ViewContactsPermissions)
-                                        </td>
-                                        <td>
-                                            
-                                        </td>
-                                        <td>
-                                            <span id="viewContactsRolesSpan">No Roles</span>
-                                            <div id="viewContactsRolesDiv" style="display: none;">
-                                                <select id="viewContactsRoles" name="viewContactsRoles"></select>
-                                            </div>
+                                            <span id="deleteContactsRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="deleteContactsRolesDiv" style="display: none;"><select id="deleteContactsRoles" name="deleteContactsRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermCreateWorkflowLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCreateWorkflowNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CreateWorkflow, Model.CreateWorkflowPermissions)</td>
+                                        <td></td>
                                         <td>
-                                            Who can edit or create Contacts
-                                        </td>
-                                        <td style="max-width: 350px">
-                                            By default all users can create and edit contacts in the system. This option allows you to limit who can create or edit contacts in the system.
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.EditContacts, Model.EditContactsPermissions)
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <span id="editContactsRolesSpan">No Roles</span>
-                                            <div id="editContactsRolesDiv" style="display: none;">
-                                                <select id="editContactsRoles" name="editContactsRoles"></select>
-                                            </div>
+                                            <span id="workflowCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="workflowCreateRolesDiv" style="display: none;"><select id="workflowCreateRoles" name="workflowCreateRoles"></select></div>
                                         </td>
                                     </tr>
-
                                     <tr>
+                                        <td>@localizer["PermManageWorkflowCredentialsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermManageWorkflowCredentialsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageWorkflowCredentials, Model.ManageWorkflowCredentialsPermissions)</td>
+                                        <td></td>
                                         <td>
-                                            Who can delete Contacts
+                                            <span id="workflowCredentialsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="workflowCredentialsRolesDiv" style="display: none;"><select id="workflowCredentialsRoles" name="workflowCredentialsRoles"></select></div>
                                         </td>
-                                        <td style="max-width: 350px">
-                                            By default all users can delete contacts in the system. This option allows you to limit who can delete contacts in the system.
-                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermViewWorkflowRunsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewWorkflowRunsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewWorkflowRuns, Model.ViewWorkflowRunsPermissions)</td>
+                                        <td></td>
                                         <td>
-                                            @Html.DropDownListFor(m => m.DeleteContacts, Model.DeleteContactsPermissions)
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <span id="deleteContactsRolesSpan">No Roles</span>
-                                            <div id="deleteContactsRolesDiv" style="display: none;">
-                                                <select id="deleteContactsRoles" name="deleteContactsRoles"></select>
-                                            </div>
+                                            <span id="workflowRunsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="workflowRunsRolesDiv" style="display: none;"><select id="workflowRunsRoles" name="workflowRunsRoles"></select></div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-
                         </div>
                     }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["TwoFactorEnforcementHeader"]</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-1 col-md-pull-1">
+                            <p>@localizer["TwoFactorEnforcementDescription"]</p>
+                        </div>
+                    </div>
+
+                    @* Guard warnings *@
+                    @if (!Model.Can2FAEnforcementBeChanged)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fa fa-lock"></i>
+                            @if (!Model.ManagingUserHas2FAEnabled && !Model.CurrentUserHas2FAEnabled)
+                            {
+                                @localizer["Require2FABothMustEnable"]
+                            }
+                            else if (!Model.ManagingUserHas2FAEnabled)
+                            {
+                                @localizer["Require2FACannotEnableNoManagingUser2FA"]
+                            }
+                            else
+                            {
+                                @localizer["Require2FACannotEnableNoCurrentUser2FA"]
+                            }
+                            <small>@localizer["Require2FASettingLocked"]
+                                <a asp-controller="TwoFactor" asp-action="Index" asp-route-area="User" class="alert-link">
+                                    @twoFactorLocalizer["EnableAuthenticatorButton"]
+                                </a>
+                            </small>
+                        </div>
+                    }
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["PermissionColumn"]</th>
+                                    <th>@localizer["NoteColumn"]</th>
+                                    <th>@localizer["ValueColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@localizer["Require2FAForAdminsLabel"]</td>
+                                    <td>@localizer["Require2FAForAdminsDescription"]</td>
+                                    <td>
+                                        @if (Model.Can2FAEnforcementBeChanged)
+                                        {
+                                            @Html.DropDownListFor(m => m.Require2FAForAdmins, Model.Require2FAForAdminsOptions, new { id = "require2FADropdown", @class = "form-control" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(m => m.Require2FAForAdmins, Model.Require2FAForAdminsOptions, new { id = "require2FADropdown", @class = "form-control", disabled = "disabled" })
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -517,4 +382,25 @@
 @section Scripts
 {
     <script src="~/js/app/internal/security/resgrid.security.permissions.js" type="text/javascript"></script>
+    @if (Model.IsManagingUser && Model.Can2FAEnforcementBeChanged)
+    {
+    <script>
+        $(function () {
+            $('#require2FADropdown').change(function () {
+                var scope = $(this).val();
+                $.get('@Url.Action("Set2FARequirement", "Security", new { area = "User" })?scope=' + scope, function (data) {
+                    toastr.success('@localizer["Require2FASettingSaved"]');
+                }).fail(function (xhr) {
+                    if (xhr.status === 412) {
+                        toastr.error('@localizer["Require2FACannotEnableNoCurrentUser2FA"]');
+                    } else {
+                        toastr.error('@localizer["Require2FASettingFailed"]');
+                    }
+                    // Reset the dropdown to its previous saved value
+                    $(this).val('@Model.Require2FAForAdmins');
+                }.bind(this));
+            });
+        });
+    </script>
+    }
 }

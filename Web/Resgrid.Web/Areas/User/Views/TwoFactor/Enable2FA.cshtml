@@ -1,0 +1,82 @@
+﻿@model Resgrid.Web.Areas.User.Models.TwoFactor.EnableAuthenticatorViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["SetupPageTitle"];
+    bool enforced = Context.Request.Query.ContainsKey("enforced");
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["SetupPageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["BreadcrumbTwoFactor"]</a></li>
+            <li class="active"><strong>@localizer["BreadcrumbSetup"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["SetupHeader"]</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (enforced)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            @localizer["EnforcedWarning"]
+                        </div>
+                    }
+
+                    <p>@localizer["SetupInstructions"]</p>
+                    <ol>
+                        <li>
+                            @string.Format(localizer["SetupStep1"].Value,
+                                Html.Raw("<a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\" rel=\"noopener\">Google Authenticator</a>"),
+                                Html.Raw("<a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\" rel=\"noopener\">Microsoft Authenticator</a>"),
+                                Html.Raw("<a href=\"https://authy.com/\" target=\"_blank\" rel=\"noopener\">Authy</a>"))
+                        </li>
+                        <li>
+                            @localizer["SetupStep2QR"]
+                            <br />
+                            <kbd>@Model.SharedKey</kbd>
+                            <div class="m-t-sm">
+                                <img src="@Model.QrCodeDataUrl" alt="QR Code" style="max-width:200px;" />
+                            </div>
+                        </li>
+                        <li>@localizer["SetupStep3"]</li>
+                    </ol>
+
+                    <form asp-action="Enable2FA" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Code" class="col-sm-3 control-label">@localizer["VerificationCodeLabel"]</label>
+                            <div class="col-sm-4">
+                                <input asp-for="Code" class="form-control" autocomplete="one-time-code"
+                                       inputmode="numeric" maxlength="7" placeholder="@localizer["VerificationCodePlaceholder"]" />
+                                <span asp-validation-for="Code" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-primary">@localizer["VerifyAndEnableButton"]</button>
+                                <a asp-action="Index" class="btn btn-default">@commonLocalizer["Cancel"]</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

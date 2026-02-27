@@ -142,5 +142,12 @@ namespace Resgrid.Model
 
 		[NotMapped]
 		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Role", "User" };
+
+		/// <summary>
+		/// Returns true when this plan is a free/no-cost plan.
+		/// Free plans are identified by PlanId 1 (FreePlanId) or 8 (UnlimitedFreePlanId).
+		/// </summary>
+		[NotMapped]
+		public bool IsFree => PlanId == (int)Plans.FreePlanId || PlanId == (int)Plans.UnlimitedFreePlanId;
 	}
 }

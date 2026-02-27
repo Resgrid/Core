@@ -32,5 +32,10 @@ namespace Resgrid.Model.Repositories
 		Task<bool> RemoveFromRoleAsync(string id, string roleName, CancellationToken cancellationToken);
 		Task<bool> RemoveLoginAsync(string id, string loginProvider, string providerKey, CancellationToken cancellationToken);
 		Task<bool> UpdateClaimAsync(string id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken);
+
+		// AspNetUserTokens — used for TOTP authenticator key and recovery codes
+		Task<string> GetTokenAsync(string userId, string loginProvider, string name);
+		Task SetTokenAsync(string userId, string loginProvider, string name, string value, CancellationToken cancellationToken);
+		Task RemoveTokenAsync(string userId, string loginProvider, string name, CancellationToken cancellationToken);
 	}
 }

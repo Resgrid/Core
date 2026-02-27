@@ -1,0 +1,71 @@
+﻿@model Resgrid.Web.Areas.User.Models.TwoFactor.TwoFactorIndexViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["PageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li class="active"><strong>@localizer["BreadcrumbTwoFactor"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["AuthenticatorAppHeader"]</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (TempData["StatusMessage"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["StatusMessage"]</div>
+                    }
+
+                    @if (Model.Is2FAEnabled)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fa fa-check-circle"></i> @Html.Raw(localizer["TwoFactorEnabledAlert"].Value)
+                        </div>
+
+                        @if (Model.RecoveryCodeWarning)
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fa fa-exclamation-triangle"></i>
+                                @string.Format(localizer["RecoveryCodesWarningText"].Value, Model.RecoveryCodesLeft)
+                                <form asp-action="RegenerateRecoveryCodes" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link p-0 align-baseline">@localizer["RegenerateRecoveryCodesButton"]</button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>@string.Format(localizer["RecoveryCodesRemainingText"].Value, Model.RecoveryCodesLeft)</p>
+                        }
+
+                        <form asp-action="RegenerateRecoveryCodes" method="post" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning">@localizer["RegenerateRecoveryCodesButton"]</button>
+                        </form>
+                        <a asp-action="Disable2FA" class="btn btn-danger">@localizer["Disable2FAButton"]</a>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            @Html.Raw(localizer["TwoFactorDisabledAlert"].Value)
+                        </div>
+                        <a asp-action="Enable2FA" class="btn btn-primary">@localizer["EnableAuthenticatorButton"]</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

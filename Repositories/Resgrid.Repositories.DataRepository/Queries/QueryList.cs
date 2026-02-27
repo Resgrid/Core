@@ -33,29 +33,38 @@ namespace Resgrid.Repositories.DataRepository.Queries
 
 				foreach (var type in exportedTypes)
 				{
-					var getConstructorParameters = new Func<Type, List<object>>(x =>
+					try
 					{
-						var constructorParameters = type.GetTypeInfo()
-														.DeclaredConstructors
-														.FirstOrDefault(y => y.IsPublic)
-														.GetParameters();
+						var getConstructorParameters = new Func<Type, List<object>>(x =>
+						{
+							var constructorParameters = type.GetTypeInfo()
+															.DeclaredConstructors
+															.FirstOrDefault(y => y.IsPublic)
+															?.GetParameters();
 
-						var parameterList = new List<object>();
-						foreach (var parameter in constructorParameters)
-							//parameterList.Add(_serviceProvider.GetService(parameter.ParameterType));
-							parameterList.Add(ServiceLocator.Current.GetInstance(parameter.ParameterType));
+							if (constructorParameters == null)
+								return new List<object>();
 
-						return parameterList;
-					});
+							var parameterList = new List<object>();
+							foreach (var parameter in constructorParameters)
+								parameterList.Add(ServiceLocator.Current.GetInstance(parameter.ParameterType));
 
-					if (typeof(IInsertQuery).IsAssignableFrom(type) && !type.IsAbstract)
-						_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IInsertQuery);
-					else if (typeof(IDeleteQuery).IsAssignableFrom(type) && !type.IsAbstract)
-						_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IDeleteQuery);
-					else if (typeof(ISelectQuery).IsAssignableFrom(type) && !type.IsAbstract)
-						_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as ISelectQuery);
-					else if (typeof(IUpdateQuery).IsAssignableFrom(type) && !type.IsAbstract)
-						_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IUpdateQuery);
+							return parameterList;
+						});
+
+						if (typeof(IInsertQuery).IsAssignableFrom(type) && !type.IsAbstract)
+							_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IInsertQuery);
+						else if (typeof(IDeleteQuery).IsAssignableFrom(type) && !type.IsAbstract)
+							_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IDeleteQuery);
+						else if (typeof(ISelectQuery).IsAssignableFrom(type) && !type.IsAbstract)
+							_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as ISelectQuery);
+						else if (typeof(IUpdateQuery).IsAssignableFrom(type) && !type.IsAbstract)
+							_dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IUpdateQuery);
+					}
+					catch (Exception ex)
+					{
+						System.Diagnostics.Debug.WriteLine($"[QueryList] Failed to register query type {type.FullName}: {ex.Message}");
+					}
 				}
 			}
 

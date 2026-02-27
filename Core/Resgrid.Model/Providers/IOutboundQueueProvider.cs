@@ -12,6 +12,7 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueueShiftNotification(ShiftQueueItem shiftQueueItem);
 		Task<bool> EnqueueDistributionList(DistributionListQueueItem distributionListQueue);
 		Task<bool> EnqueueAuditEvent(AuditEvent auditEvent);
-		Task<bool> EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent);
+        Task<bool> EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent);
+		Task<bool> EnqueueWorkflow(Resgrid.Model.Queue.WorkflowQueueItem item);
 	}
 }

@@ -1196,6 +1196,165 @@ var resgrid;
                 });
                 ////////////////////////////////////////////////////////
 
+                // Create/Edit Workflows
+                ////////////////////////////////////////////////////////
+                $('#CreateWorkflow').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=22&perm=' + val,
+                        type: 'GET'
+                    }).done(function (results) { });
+                    if (val === "2") {
+                        $('#workflowCreateNoRolesSpan').hide();
+                        $('#workflowCreateRolesDiv').show();
+                    } else {
+                        $('#workflowCreateNoRolesSpan').show();
+                        $('#workflowCreateRolesDiv').hide();
+                    }
+                });
+                if ($("#CreateWorkflow").val() === "2") {
+                    $('#workflowCreateNoRolesSpan').hide();
+                    $('#workflowCreateRolesDiv').show();
+                } else {
+                    $('#workflowCreateNoRolesSpan').show();
+                    $('#workflowCreateRolesDiv').hide();
+                }
+                $("#workflowCreateRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#workflowCreateRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=22&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) { });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=22',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#workflowCreateRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                ////////////////////////////////////////////////////////
+
+                // Manage Workflow Credentials
+                ////////////////////////////////////////////////////////
+                $('#ManageWorkflowCredentials').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=23&perm=' + val,
+                        type: 'GET'
+                    }).done(function (results) { });
+                    if (val === "2") {
+                        $('#workflowCredentialsNoRolesSpan').hide();
+                        $('#workflowCredentialsRolesDiv').show();
+                    } else {
+                        $('#workflowCredentialsNoRolesSpan').show();
+                        $('#workflowCredentialsRolesDiv').hide();
+                    }
+                });
+                if ($("#ManageWorkflowCredentials").val() === "2") {
+                    $('#workflowCredentialsNoRolesSpan').hide();
+                    $('#workflowCredentialsRolesDiv').show();
+                } else {
+                    $('#workflowCredentialsNoRolesSpan').show();
+                    $('#workflowCredentialsRolesDiv').hide();
+                }
+                $("#workflowCredentialsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#workflowCredentialsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=23&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) { });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=23',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#workflowCredentialsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                ////////////////////////////////////////////////////////
+
+                // View Workflow Runs
+                ////////////////////////////////////////////////////////
+                $('#ViewWorkflowRuns').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=24&perm=' + val,
+                        type: 'GET'
+                    }).done(function (results) { });
+                    if (val === "2") {
+                        $('#workflowRunsNoRolesSpan').hide();
+                        $('#workflowRunsRolesDiv').show();
+                    } else {
+                        $('#workflowRunsNoRolesSpan').show();
+                        $('#workflowRunsRolesDiv').hide();
+                    }
+                });
+                if ($("#ViewWorkflowRuns").val() === "2") {
+                    $('#workflowRunsNoRolesSpan').hide();
+                    $('#workflowRunsRolesDiv').show();
+                } else {
+                    $('#workflowRunsNoRolesSpan').show();
+                    $('#workflowRunsRolesDiv').hide();
+                }
+                $("#workflowRunsRoles").kendoMultiSelect({
+                    placeholder: "Select roles...",
+                    dataTextField: "Name",
+                    dataValueField: "RoleId",
+                    change: function () {
+                        var multiSelect = $("#workflowRunsRoles").data("kendoMultiSelect");
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=24&data=' + encodeURIComponent(multiSelect.value()),
+                            type: 'GET'
+                        }).done(function (results) { });
+                    },
+                    autoBind: false,
+                    dataSource: {
+                        transport: {
+                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                        }
+                    }
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=24',
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        var multiSelect = $("#workflowRunsRoles").data("kendoMultiSelect");
+                        multiSelect.value(data.split(","));
+                    }
+                });
+                ////////////////////////////////////////////////////////
+
             });
         })(permissions = security.permissions || (security.permissions = {}));
     })(security = resgrid.security || (resgrid.security = {}));

@@ -27,7 +27,7 @@ namespace Resgrid.Repositories.DataRepository
 		private readonly IIdentityRoleRepository _roleRepository;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IQueryFactory _queryFactory;
-		
+
 		public IdentityUserRepository(IConnectionProvider connProv,
 							  SqlConfiguration sqlConf,
 							  IIdentityRoleRepository roleRepo,
@@ -1046,6 +1046,137 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				Logging.LogException(ex);
 
+				throw;
+			}
+		}
+
+		public async Task<string> GetTokenAsync(string userId, string loginProvider, string name)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<string>>(async x =>
+				{
+					string sql = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres
+						? "SELECT value FROM aspnetusertokens WHERE userid = @UserId AND loginprovider = @LoginProvider AND name = @Name"
+						: "SELECT Value FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name";
+
+					var result = await x.QueryFirstOrDefaultAsync<string>(
+						sql,
+						new { UserId = userId, LoginProvider = loginProvider, Name = name },
+						_unitOfWork.Transaction);
+					return result;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return null;
+			}
+		}
+
+		public async Task SetTokenAsync(string userId, string loginProvider, string name, string value, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var parameters = new { UserId = userId, LoginProvider = loginProvider, Name = name, Value = value };
+
+				// Always use a dedicated connection + transaction for token upserts.
+				// The ambient UnitOfWork connection/transaction may have already been committed
+				// earlier in the same request scope, which would cause the DELETE to silently
+				// no-op on a stale transaction and then the INSERT to fail with a PK violation.
+				using var conn = _connectionProvider.Create();
+				await conn.OpenAsync(cancellationToken);
+
+				if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
+				{
+					const string upsertSql = @"INSERT INTO aspnetusertokens (userid, loginprovider, name, value)
+						VALUES (@UserId, @LoginProvider, @Name, @Value)
+						ON CONFLICT (userid, loginprovider, name)
+						DO UPDATE SET value = EXCLUDED.value";
+
+					await conn.ExecuteAsync(upsertSql, parameters);
+				}
+				else
+				{
+					// DELETE + INSERT within a serializable transaction is the only fully
+					// race-safe upsert pattern on SQL Server — avoids the MERGE race-condition
+					// bug and the UPDATE/IF-NOT-EXISTS TOCTOU race.
+					const string deleteSql = @"DELETE FROM AspNetUserTokens
+						WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name";
+
+					const string insertSql = @"INSERT INTO AspNetUserTokens (UserId, LoginProvider, Name, Value)
+						VALUES (@UserId, @LoginProvider, @Name, @Value)";
+
+					using var tx = conn.BeginTransaction(System.Data.IsolationLevel.Serializable);
+					try
+					{
+						await conn.ExecuteAsync(deleteSql, parameters, tx);
+						await conn.ExecuteAsync(insertSql, parameters, tx);
+						tx.Commit();
+					}
+					catch
+					{
+						tx.Rollback();
+						throw;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task RemoveTokenAsync(string userId, string loginProvider, string name, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var deleteFunction = new Func<DbConnection, Task>(async x =>
+				{
+					string deleteSql = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres
+						? "DELETE FROM aspnetusertokens WHERE userid = @UserId AND loginprovider = @LoginProvider AND name = @Name"
+						: "DELETE FROM AspNetUserTokens WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name";
+
+					await x.ExecuteAsync(
+						deleteSql,
+						new { UserId = userId, LoginProvider = loginProvider, Name = name },
+						_unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+						await deleteFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					await deleteFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 				throw;
 			}
 		}

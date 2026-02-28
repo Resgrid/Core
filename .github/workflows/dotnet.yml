@@ -139,7 +139,10 @@ jobs:
           const pr = prs.data.find(p => p.merged_at);
           const fs = require('fs');
           if (pr) {
-            fs.writeFileSync('release_notes.md', pr.body || 'No release notes provided.');
+            const body = (pr.body || '')
+              .replace(/##\s*Summary by CodeRabbit[\s\S]*/i, '')
+              .trim() || 'No release notes provided.';
+            fs.writeFileSync('release_notes.md', body);
           } else {
             fs.writeFileSync('release_notes.md', 'No release notes provided.');
           }
@@ -147,8 +150,8 @@ jobs:
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v${{ steps.version.outputs.version }}
-        name: Release v${{ steps.version.outputs.version }}
+        tag_name: ${{ steps.version.outputs.version }}
+        name: ${{ steps.version.outputs.version }}
         body_path: release_notes.md
         draft: false
         prerelease: false

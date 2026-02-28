@@ -116,7 +116,15 @@
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <label>@localizer["ActionType"]</label>
-                                        <p><strong>@((Resgrid.Model.WorkflowActionType)step.ActionType)</strong></p>
+                                        <p>
+                                            <strong>@((Resgrid.Model.WorkflowActionType)step.ActionType)</strong>
+                                            @if (!string.IsNullOrWhiteSpace(step.ConditionExpression))
+                                            {
+                                                <span class="badge badge-info" title="@step.ConditionExpression" style="margin-left:4px;">
+                                                    <i class="fa fa-filter"></i> Conditional
+                                                </span>
+                                            }
+                                        </p>
                                     </div>
                                     <div class="col-sm-2">
                                         <label>@localizer["Order"]</label>
@@ -548,6 +556,37 @@
                                 <a asp-action="CredentialNew" asp-route-area="User" target="_blank">Add one now →</a>
                             </div>
                         </div>
+
+                        <!-- ── Condition Expression ── -->
+                        <div class="config-section-label" style="margin-top:14px;">Condition Expression <small class="text-muted">(optional)</small></div>
+                        <p class="text-muted" style="font-size:11px; margin-bottom:6px;">
+                            Leave blank to always run this step. When set, the step only executes if the condition evaluates to <code>true</code>.
+                            Uses the same variables as the output template.
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-sm" id="conditionTabs" style="margin-bottom:8px;">
+                            <li class="active"><a href="#conditionVisual" data-toggle="tab"><i class="fa fa-th-list"></i> Visual Builder</a></li>
+                            <li><a href="#conditionRaw" data-toggle="tab"><i class="fa fa-code"></i> Raw Expression</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="conditionVisual">
+                                <div id="conditionRuleRows"></div>
+                                <button type="button" class="btn btn-xs btn-default" id="addConditionRuleBtn" style="margin-top:6px;">
+                                    <i class="fa fa-plus"></i> Add Rule
+                                </button>
+                                <p class="text-muted" style="font-size:10px; margin-top:4px;">Multiple rules are joined with AND — all must be true.</p>
+                            </div>
+                            <div class="tab-pane" id="conditionRaw">
+                                <textarea id="stepConditionExpression" class="form-control" rows="3"
+                                          placeholder="{{ call.name | string.contains &quot;Fire&quot; }}"></textarea>
+                            </div>
+                        </div>
+                        <div style="margin-top:6px;">
+                            <button type="button" class="btn btn-xs btn-info" id="testConditionBtn">
+                                <i class="fa fa-play"></i> Test Condition
+                            </button>
+                            <span id="conditionTestResult" style="margin-left:8px; font-size:12px;"></span>
+                        </div>
+                        <div id="conditionParseError" class="alert alert-warning" style="display:none; margin-top:6px; padding:6px 10px; font-size:12px;"></div>
 
                         <!-- ── Output Template ── -->
                         <div class="config-section-label" style="margin-top:14px;">@localizer["OutputTemplate"] <span class="text-danger">*</span></div>
@@ -1093,10 +1132,248 @@
             document.getElementById('stepIsEnabled').checked = true;
             resetAllConfigFields();
             templateEditor.setValue('');
+            document.getElementById('stepConditionExpression').value = '';
+            clearConditionRules();
+            document.getElementById('conditionTestResult').textContent = '';
+            document.getElementById('conditionParseError').style.display = 'none';
             document.getElementById('stepSaveError').style.display = 'none';
+            $('#conditionTabs a[href="#conditionVisual"]').tab('show');
             showConfigPanel(0);
             filterCredentials(0, null);
             $('#stepModal').modal('show');
+        });
+
+        // ── Condition Builder ─────────────────────────────────────────────────
+        var CONDITION_VARIABLES = [
+            'department.name','department.code','department.address.full',
+            'timestamp.utc_now','timestamp.department_now',
+            'user.full_name','user.email',
+            'call.name','call.nature','call.address','call.priority_text',
+            'call.state_text','call.logged_on','call.call_id','call.type',
+            'call.contact_name','call.contact_info','call.incident_number',
+            'unit.name','unit.type','unit.state_text',
+            'personnel.full_name','personnel.email','personnel.status_text','personnel.staffing_text'
+        ];
+
+        var CONDITION_OPERATORS = [
+            { value: 'contains',        label: 'contains',        needsValue: true  },
+            { value: 'not_contains',    label: 'does not contain', needsValue: true  },
+            { value: 'equals',          label: 'equals',           needsValue: true  },
+            { value: 'not_equals',      label: 'does not equal',   needsValue: true  },
+            { value: 'starts_with',     label: 'starts with',      needsValue: true  },
+            { value: 'ends_with',       label: 'ends with',        needsValue: true  },
+            { value: 'is_empty',        label: 'is empty',         needsValue: false },
+            { value: 'is_not_empty',    label: 'is not empty',     needsValue: false }
+        ];
+
+        function buildVarOptions() {
+            return CONDITION_VARIABLES.map(function (v) {
+                return '<option value="' + v + '">' + v + '</option>';
+            }).join('');
+        }
+
+        function buildOpOptions() {
+            return CONDITION_OPERATORS.map(function (o) {
+                return '<option value="' + o.value + '">' + o.label + '</option>';
+            }).join('');
+        }
+
+        function addConditionRule(variable, operator, value) {
+            var row = document.createElement('div');
+            row.className = 'condition-rule-row';
+            row.style.cssText = 'display:flex;align-items:center;gap:4px;margin-bottom:4px;';
+            row.innerHTML =
+                '<select class="form-control condition-var" style="width:40%;">' + buildVarOptions() + '</select>' +
+                '<select class="form-control condition-op"  style="width:30%;">' + buildOpOptions()  + '</select>' +
+                '<input  type="text" class="form-control condition-val" style="width:24%;" placeholder="value">' +
+                '<button type="button" class="btn btn-xs btn-danger condition-remove"><i class="fa fa-times"></i></button>';
+            document.getElementById('conditionRuleRows').appendChild(row);
+
+            // Set values if provided
+            if (variable) row.querySelector('.condition-var').value = variable;
+            if (operator)  row.querySelector('.condition-op').value  = operator;
+            if (value)     row.querySelector('.condition-val').value  = value;
+
+            // Toggle value input visibility based on operator
+            function toggleVal() {
+                var op = row.querySelector('.condition-op').value;
+                var needsVal = CONDITION_OPERATORS.find(function(o){return o.value===op;});
+                row.querySelector('.condition-val').style.display = (needsVal && needsVal.needsValue) ? '' : 'none';
+            }
+            row.querySelector('.condition-op').addEventListener('change', toggleVal);
+            toggleVal();
+
+            // Remove rule
+            row.querySelector('.condition-remove').addEventListener('click', function () {
+                row.remove();
+                syncConditionExpressionFromRules();
+            });
+
+            // Live sync
+            row.querySelector('.condition-var').addEventListener('change', syncConditionExpressionFromRules);
+            row.querySelector('.condition-op').addEventListener('change',  syncConditionExpressionFromRules);
+            row.querySelector('.condition-val').addEventListener('input',   syncConditionExpressionFromRules);
+        }
+
+        function clearConditionRules() {
+            document.getElementById('conditionRuleRows').innerHTML = '';
+        }
+
+        function buildScribanClause(variable, operator, value) {
+            var v = variable, val = value ? '"' + value.replace(/"/g, '\\"') + '"' : '""';
+            switch (operator) {
+                case 'contains':     return '(' + v + ' | string.contains ' + val + ')';
+                case 'not_contains': return '!(' + v + ' | string.contains ' + val + ')';
+                case 'equals':       return '(' + v + ' == ' + val + ')';
+                case 'not_equals':   return '(' + v + ' != ' + val + ')';
+                case 'starts_with':  return '(' + v + ' | string.starts_with ' + val + ')';
+                case 'ends_with':    return '(' + v + ' | string.ends_with ' + val + ')';
+                case 'is_empty':     return '((' + v + ') == null || (' + v + ') == "")';
+                case 'is_not_empty': return '((' + v + ') != null && (' + v + ') != "")';
+                default:             return 'true';
+            }
+        }
+
+        function syncConditionExpressionFromRules() {
+            var rows = document.querySelectorAll('#conditionRuleRows .condition-rule-row');
+            if (rows.length === 0) {
+                document.getElementById('stepConditionExpression').value = '';
+                return;
+            }
+            var clauses = [];
+            rows.forEach(function (row) {
+                var variable = row.querySelector('.condition-var').value;
+                var operator = row.querySelector('.condition-op').value;
+                var value    = row.querySelector('.condition-val').value;
+                clauses.push(buildScribanClause(variable, operator, value));
+            });
+            var expr = clauses.length === 1 ? '{{ ' + clauses[0] + ' }}' : '{{ ' + clauses.join(' && ') + ' }}';
+            document.getElementById('stepConditionExpression').value = expr;
+        }
+
+        function tryParseConditionToRules(expr) {
+            // Only handle the patterns we generate: {{ clause }} or {{ clause && clause ... }}
+            var match = expr.trim().match(/^\{\{\s*(.+?)\s*\}\}$/);
+            if (!match) return null;
+            var inner = match[1];
+            // Split on ' && ' to get individual clauses
+            var clauses = inner.split(/\s*&&\s*/);
+            var rules = [];
+            var opPatterns = [
+                { re: /^\((.+?)\s*\|\s*string\.contains\s+"(.*?)"\)$/,       op: 'contains',     neg: false },
+                { re: /^!\((.+?)\s*\|\s*string\.contains\s+"(.*?)"\)$/,      op: 'not_contains', neg: false },
+                { re: /^\((.+?)\s*\|\s*string\.starts_with\s+"(.*?)"\)$/,    op: 'starts_with',  neg: false },
+                { re: /^\((.+?)\s*\|\s*string\.ends_with\s+"(.*?)"\)$/,      op: 'ends_with',    neg: false },
+                { re: /^\((.+?)\s*==\s*"(.*?)"\)$/,                          op: 'equals',       neg: false },
+                { re: /^\((.+?)\s*!=\s*"(.*?)"\)$/,                          op: 'not_equals',   neg: false },
+                { re: /^\(\((.+?)\)\s*==\s*null\s*\|\|\s*\((.+?)\)\s*==\s*""\)$/, op: 'is_empty',     special: true },
+                { re: /^\(\((.+?)\)\s*!=\s*null\s*&&\s*\((.+?)\)\s*!=\s*""\)$/,   op: 'is_not_empty', special: true }
+            ];
+            for (var i = 0; i < clauses.length; i++) {
+                var c = clauses[i].trim();
+                var matched = false;
+                for (var p = 0; p < opPatterns.length; p++) {
+                    var m = c.match(opPatterns[p].re);
+                    if (m) {
+                        rules.push({
+                            variable: m[1].trim(),
+                            operator: opPatterns[p].op,
+                            value:    opPatterns[p].special ? '' : m[2]
+                        });
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) return null; // Can't parse — use raw tab
+            }
+            return rules;
+        }
+
+        function loadConditionRules(rules) {
+            clearConditionRules();
+            rules.forEach(function (r) {
+                addConditionRule(r.variable, r.operator, r.value);
+            });
+        }
+
+        document.getElementById('addConditionRuleBtn').addEventListener('click', function () {
+            addConditionRule(null, 'equals', null);
+            syncConditionExpressionFromRules();
+        });
+
+        // Sync raw expression back to hidden field when user types in raw tab
+        document.getElementById('stepConditionExpression').addEventListener('input', function () {});
+
+        // When switching to raw tab, pre-fill from rules; when switching to visual, try to parse
+        $('#conditionTabs a').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr('href');
+            if (target === '#conditionRaw') {
+                // Already synced — nothing extra needed; raw textarea has the current expression
+            } else if (target === '#conditionVisual') {
+                var raw = document.getElementById('stepConditionExpression').value.trim();
+                if (raw) {
+                    var parsed = tryParseConditionToRules(raw);
+                    if (parsed) {
+                        loadConditionRules(parsed);
+                    } else {
+                        // Can't parse — switch back to raw tab with a warning
+                        $('#conditionTabs a[href="#conditionRaw"]').tab('show');
+                        var warn = document.getElementById('conditionParseError');
+                        warn.textContent = 'The current expression is too complex for the visual builder. Edit it in the Raw Expression tab.';
+                        warn.style.display = 'block';
+                    }
+                } else {
+                    clearConditionRules();
+                }
+            }
+        });
+
+        // ── Test Condition button ─────────────────────────────────────────────
+        document.getElementById('testConditionBtn').addEventListener('click', function () {
+            if ($('#conditionTabs li.active a').attr('href') === '#conditionVisual') {
+                syncConditionExpressionFromRules();
+            }
+            var expr        = document.getElementById('stepConditionExpression').value.trim();
+            var resultSpan  = document.getElementById('conditionTestResult');
+            var parseErrDiv = document.getElementById('conditionParseError');
+            if (!expr) {
+                resultSpan.textContent = 'ℹ️ No condition — step will always run.';
+                parseErrDiv.style.display = 'none';
+                return;
+            }
+            resultSpan.textContent = '⏳ Testing…';
+            parseErrDiv.style.display = 'none';
+            fetch('/User/Workflows/ValidateCondition', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({
+                    conditionExpression: expr,
+                    triggerEventType: parseInt(document.getElementById('stepWorkflowId').dataset.triggerEventType || '0', 10),
+                    samplePayloadJson: null
+                })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.isValid) {
+                    resultSpan.textContent = '';
+                    parseErrDiv.textContent = '⚠️ ' + (data.parseErrors || []).join(' ');
+                    parseErrDiv.style.display = 'block';
+                } else if (data.evaluatedResult !== undefined && data.evaluatedResult !== null) {
+                    var isTruthy = data.evaluatedResult !== '' && data.evaluatedResult.toLowerCase() !== 'false';
+                    resultSpan.textContent = isTruthy
+                        ? '✅ Evaluated: "' + data.evaluatedResult + '" — step will run'
+                        : '❌ Evaluated: "' + data.evaluatedResult + '" — step will be skipped';
+                } else {
+                    resultSpan.textContent = '✅ Syntax valid (no sample payload to evaluate against)';
+                }
+            })
+            .catch(function () {
+                resultSpan.textContent = '⚠️ Test request failed.';
+            });
         });
 
         // ── Open modal for EDIT ───────────────────────────────────────────────
@@ -1113,7 +1390,30 @@
                 document.getElementById('stepIsEnabled').checked  = step.IsEnabled !== undefined ? step.IsEnabled : step.isEnabled;
                 resetAllConfigFields();
                 populateActionConfig(actionType, step.ActionConfig || step.actionConfig || '');
-                templateEditor.setValue(step.OutputTemplate || step.outputTemplate || '');
+                // Normalise line endings to \n so CodeMirror displays them correctly
+                // regardless of whether \r\n (Windows) was stored in the database.
+                var rawTemplate = (step.OutputTemplate || step.outputTemplate || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                templateEditor.setValue(rawTemplate);
+                // Populate condition expression — try visual builder first, fall back to raw tab
+                var rawCondition = (step.ConditionExpression || step.conditionExpression || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                document.getElementById('stepConditionExpression').value = rawCondition;
+                if (rawCondition) {
+                    var parsed = tryParseConditionToRules(rawCondition);
+                    if (parsed) {
+                        loadConditionRules(parsed);
+                        // Activate visual tab
+                        $('#conditionTabs a[href="#conditionVisual"]').tab('show');
+                    } else {
+                        // Too complex — stay on raw tab
+                        $('#conditionTabs a[href="#conditionRaw"]').tab('show');
+                    }
+                } else {
+                    clearConditionRules();
+                    syncConditionExpressionFromRules();
+                    $('#conditionTabs a[href="#conditionVisual"]').tab('show');
+                }
+                document.getElementById('conditionTestResult').textContent = '';
+                document.getElementById('conditionParseError').style.display = 'none';
                 document.getElementById('stepSaveError').style.display = 'none';
                 showConfigPanel(actionType);
                 filterCredentials(actionType, credId);
@@ -1126,6 +1426,11 @@
             var actionType   = document.getElementById('stepActionType').value;
             var credentialId = document.getElementById('stepCredentialId').value || null;
             var errorBox     = document.getElementById('stepSaveError');
+
+            // Sync raw condition textarea from active tab before saving
+            if ($('#conditionTabs li.active a').attr('href') === '#conditionVisual') {
+                syncConditionExpressionFromRules();
+            }
 
             // Client-side validation
             var errors = validateConfig(actionType);
@@ -1140,6 +1445,8 @@
             }
             errorBox.style.display = 'none';
 
+            var conditionVal = (document.getElementById('stepConditionExpression').value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+
             var payload = {
                 workflowStepId:       document.getElementById('stepId').value || null,
                 workflowId:           document.getElementById('stepWorkflowId').value,
@@ -1147,8 +1454,10 @@
                 stepOrder:            parseInt(document.getElementById('stepOrder').value, 10),
                 isEnabled:            document.getElementById('stepIsEnabled').checked,
                 actionConfig:         buildActionConfig(actionType),
-                outputTemplate:       templateEditor.getValue(),
-                workflowCredentialId: credentialId
+                // Normalise to \n so line endings are stored consistently in the DB.
+                outputTemplate:       templateEditor.getValue().replace(/\r\n/g, '\n').replace(/\r/g, '\n'),
+                workflowCredentialId: credentialId,
+                conditionExpression:  conditionVal || null
             };
 
             fetch('/User/Workflows/SaveStep', {

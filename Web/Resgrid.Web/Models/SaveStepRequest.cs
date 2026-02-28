@@ -22,6 +22,11 @@ namespace Resgrid.Web.Models
 		public string WorkflowCredentialId { get; set; }
 
 		public bool IsEnabled { get; set; } = true;
+
+		/// <summary>
+		/// Optional Scriban condition expression. When provided and evaluates to falsy, the step is skipped.
+		/// </summary>
+		public string ConditionExpression { get; set; }
 	}
 }
 

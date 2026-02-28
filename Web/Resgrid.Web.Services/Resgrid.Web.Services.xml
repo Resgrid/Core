@@ -1040,6 +1040,11 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetTemplateVariables(System.Int32)">
             <summary>Gets all template variables available for a given trigger event type.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.ValidateCondition(Resgrid.Web.Services.Models.v4.Workflows.ValidateConditionInput,System.Threading.CancellationToken)">
+            <summary>
+            Validates a condition expression syntax and optionally evaluates it against a sample payload.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Auth.ActiveCompanyResult">
             <summary>
             Object that verifies that the user's credentials

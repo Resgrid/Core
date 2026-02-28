@@ -37,7 +37,7 @@
     {
         <script src="https://browser.sentry-cdn.com/7.116.0/bundle.min.js"></script>
         <script>
-            if (Sentry && window["Sentry"]) {
+            if (window["Sentry"] && Sentry) {
                 Sentry.init({
                     dsn: '@Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite',
                     integrations: [new Sentry.Integrations.Breadcrumbs({ console: false })],

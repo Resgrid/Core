@@ -7,7 +7,8 @@
 		Completed = 2,
 		Failed = 3,
 		Cancelled = 4,
-		Retrying = 5
+		Retrying = 5,
+		Skipped = 6
 	}
 }
 

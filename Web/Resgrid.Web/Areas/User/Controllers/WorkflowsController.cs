@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -12,6 +12,7 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Helpers;
 using Resgrid.Web.Models;
+using Resgrid.WebCore.Models;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -26,11 +27,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IAuditService _auditService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ISubscriptionsService _subscriptionsService;
+		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IAuditService auditService,
-			IEventAggregator eventAggregator, ISubscriptionsService subscriptionsService)
+			IEventAggregator eventAggregator, ISubscriptionsService subscriptionsService,
+			IWorkflowTemplateContextBuilder contextBuilder)
 		{
 			_workflowService         = workflowService;
 			_departmentsService      = departmentsService;
@@ -40,6 +43,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_auditService            = auditService;
 			_eventAggregator         = eventAggregator;
 			_subscriptionsService    = subscriptionsService;
+			_contextBuilder          = contextBuilder;
 		}
 
 		// ── Index ─────────────────────────────────────────────────────────────────
@@ -273,6 +277,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ActionConfig         = request.ActionConfig,
 				WorkflowCredentialId = request.WorkflowCredentialId,
 				IsEnabled            = request.IsEnabled,
+				ConditionExpression  = request.ConditionExpression
 			};
 
 			if (isNew)
@@ -295,6 +300,60 @@ namespace Resgrid.Web.Areas.User.Controllers
 			});
 
 			return Ok(new { workflowStepId = step.WorkflowStepId });
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Workflow_Create)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ValidateCondition([FromBody] ValidateConditionWebRequest request, CancellationToken ct)
+		{
+			if (request == null || string.IsNullOrWhiteSpace(request.ConditionExpression))
+				return BadRequest(new { isValid = false, parseErrors = new[] { "ConditionExpression is required." } });
+
+			var parsed = Scriban.Template.Parse(request.ConditionExpression);
+			if (parsed.HasErrors)
+			{
+				return Ok(new
+				{
+					isValid     = false,
+					parseErrors = parsed.Messages.Select(m => m.ToString()).ToList()
+				});
+			}
+
+			if (!string.IsNullOrWhiteSpace(request.SamplePayloadJson))
+			{
+				try
+				{
+					var eventType    = (WorkflowTriggerEventType)request.TriggerEventType;
+					var scriptObject = await _contextBuilder.BuildContextAsync(DepartmentId, eventType, request.SamplePayloadJson, ct);
+					var context      = new Scriban.TemplateContext { StrictVariables = false };
+					context.PushGlobal((Scriban.Runtime.ScriptObject)scriptObject);
+					var evaluated = (await parsed.RenderAsync(context))?.Trim() ?? string.Empty;
+					return Ok(new { isValid = true, evaluatedResult = evaluated });
+				}
+				catch (Exception ex)
+				{
+					return Ok(new { isValid = false, parseErrors = new[] { $"Evaluation error: {ex.Message}" } });
+				}
+			}
+
+			return Ok(new { isValid = true });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.WorkflowRun_View)]
+		public async Task<IActionResult> RunDetail(string runId, CancellationToken ct)
+		{
+			if (!await CanUserViewWorkflowRunsAsync())
+				return RedirectToAction("Dashboard", "Home");
+
+			var run = await _workflowService.GetWorkflowRunByIdAsync(runId, ct);
+			if (run == null || run.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var logs  = await _workflowService.GetLogsForRunAsync(runId, ct);
+			ViewBag.Logs = logs;
+			return View(run);
 		}
 
 		[HttpPost]

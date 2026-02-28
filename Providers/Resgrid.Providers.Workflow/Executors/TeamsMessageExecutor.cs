@@ -50,7 +50,15 @@ namespace Resgrid.Providers.Workflow.Executors
 				}
 				else
 				{
-					// Simple MessageCard
+					// Simple MessageCard: Teams collapses single \n in the text field, so
+					// normalise line endings to \n\n paragraph breaks so that newlines
+					// entered in the template editor are visible in the delivered message.
+					var rawContent = context.RenderedContent ?? string.Empty;
+					var teamsText = rawContent
+						.Replace("\r\n", "\n")
+						.Replace("\r", "\n")
+						.Replace("\n", "\n\n");
+
 					payload = new
 					{
 						type = "MessageCard",
@@ -58,7 +66,7 @@ namespace Resgrid.Providers.Workflow.Executors
 						summary = config.Title ?? "Resgrid Workflow Notification",
 						themeColor = config.ThemeColor ?? "0076D7",
 						title = config.Title ?? string.Empty,
-						text = context.RenderedContent ?? string.Empty
+						text = teamsText
 					};
 				}
 

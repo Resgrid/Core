@@ -70,6 +70,9 @@
 		/// <summary>Maximum length in characters of rendered template content passed to an executor (256 KB).</summary>
 		public static int MaxRenderedContentLength = 262144;
 
+		/// <summary>Maximum length in characters for a ConditionExpression on a WorkflowStep (4 KB).</summary>
+		public static int MaxConditionExpressionLength = 4096;
+
 		// ── Scriban Sandbox Limits ───────────────────────────────────────────────────
 
 		/// <summary>Maximum number of loop iterations in a Scriban template.</summary>

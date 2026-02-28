@@ -130,9 +130,31 @@ namespace Resgrid.Services
 
 		public async Task<WorkflowStep> SaveWorkflowStepAsync(WorkflowStep step, CancellationToken cancellationToken = default)
 		{
+			// Normalise line endings to \n so templates are stored consistently
+			// regardless of client platform (avoids \r\n being round-tripped back
+			// as literal \r characters when the template is rendered or re-loaded).
+			if (!string.IsNullOrEmpty(step.OutputTemplate))
+				step.OutputTemplate = step.OutputTemplate.Replace("\r\n", "\n").Replace("\r", "\n");
+
 			// Enforce OutputTemplate size cap
 			if (!string.IsNullOrEmpty(step.OutputTemplate) && step.OutputTemplate.Length > WorkflowConfig.MaxOutputTemplateLength)
 				step.OutputTemplate = step.OutputTemplate.Substring(0, WorkflowConfig.MaxOutputTemplateLength);
+
+			// Normalise ConditionExpression line endings
+			if (!string.IsNullOrEmpty(step.ConditionExpression))
+				step.ConditionExpression = step.ConditionExpression.Replace("\r\n", "\n").Replace("\r", "\n");
+
+			// Enforce ConditionExpression size cap
+			if (!string.IsNullOrEmpty(step.ConditionExpression) && step.ConditionExpression.Length > WorkflowConfig.MaxConditionExpressionLength)
+				step.ConditionExpression = step.ConditionExpression.Substring(0, WorkflowConfig.MaxConditionExpressionLength);
+
+			// Validate Scriban syntax — clear to null rather than storing an unparseable expression
+			if (!string.IsNullOrWhiteSpace(step.ConditionExpression))
+			{
+				var parsedCondition = Template.Parse(step.ConditionExpression);
+				if (parsedCondition.HasErrors)
+					step.ConditionExpression = null;
+			}
 
 			if (string.IsNullOrEmpty(step.WorkflowStepId))
 			{
@@ -306,6 +328,64 @@ namespace Resgrid.Services
 				var sw = Stopwatch.StartNew();
 				try
 				{
+					// ── Condition expression evaluation ──────────────────────────────
+					if (!string.IsNullOrWhiteSpace(step.ConditionExpression))
+					{
+						var conditionContext = new Scriban.TemplateContext
+						{
+							LoopLimit       = WorkflowConfig.ScribanLoopLimit,
+							StrictVariables = false
+						};
+						conditionContext.PushGlobal((Scriban.Runtime.ScriptObject)scriptObject);
+
+						var conditionTemplate = Template.Parse(step.ConditionExpression);
+						if (conditionTemplate.HasErrors)
+						{
+							var parseErrors = string.Join("; ", conditionTemplate.Messages);
+							sw.Stop();
+							logEntry.Status        = (int)WorkflowRunStatus.Skipped;
+							logEntry.ErrorMessage  = $"Step skipped: condition expression has parse errors — {parseErrors}";
+							logEntry.RenderedOutput = step.ConditionExpression;
+							logEntry.DurationMs    = sw.ElapsedMilliseconds;
+							logEntry.CompletedOn   = DateTime.UtcNow;
+							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							continue;
+						}
+
+						string conditionResult;
+						try
+						{
+							conditionResult = (await conditionTemplate.RenderAsync(conditionContext))?.Trim() ?? string.Empty;
+						}
+						catch (Exception condEx)
+						{
+							sw.Stop();
+							logEntry.Status        = (int)WorkflowRunStatus.Skipped;
+							logEntry.ErrorMessage  = $"Step skipped: condition expression render error — {condEx.Message}";
+							logEntry.RenderedOutput = step.ConditionExpression;
+							logEntry.DurationMs    = sw.ElapsedMilliseconds;
+							logEntry.CompletedOn   = DateTime.UtcNow;
+							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							continue;
+						}
+
+						bool conditionIsFalsy = string.IsNullOrWhiteSpace(conditionResult)
+							|| string.Equals(conditionResult, "false", StringComparison.OrdinalIgnoreCase);
+
+						if (conditionIsFalsy)
+						{
+							sw.Stop();
+							logEntry.Status        = (int)WorkflowRunStatus.Skipped;
+							logEntry.ErrorMessage  = $"Step skipped: condition evaluated to '{conditionResult}'.";
+							logEntry.RenderedOutput = conditionResult;
+							logEntry.DurationMs    = sw.ElapsedMilliseconds;
+							logEntry.CompletedOn   = DateTime.UtcNow;
+							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							continue;
+						}
+					}
+					// ── End condition expression evaluation ──────────────────────────
+
 					// ── Daily send limit check (Email and SMS only) ──────────────────
 					var actionType = (WorkflowActionType)step.ActionType;
 					if (actionType == WorkflowActionType.SendEmail || actionType == WorkflowActionType.SendSms)

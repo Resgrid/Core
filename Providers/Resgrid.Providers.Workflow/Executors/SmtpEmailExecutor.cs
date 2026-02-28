@@ -81,11 +81,43 @@ namespace Resgrid.Providers.Workflow.Executors
 				message.Subject = config.Subject ?? string.Empty;
 
 				// ── HTML sanitization ────────────────────────────────────────────────
+				// If the rendered content contains block-level HTML, treat it as HTML and
+				// sanitise directly. Otherwise treat it as plain text and convert newlines
+				// to <br> tags so that line breaks entered in the template editor are
+				// preserved in the delivered email.
+				var rawContent    = context.RenderedContent ?? string.Empty;
+				var looksLikeHtml = System.Text.RegularExpressions.Regex.IsMatch(
+					rawContent, @"<(p|div|br|h[1-6]|ul|ol|table|html|body)\b",
+					System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+				string htmlContent;
+				if (looksLikeHtml)
+				{
+					htmlContent = rawContent;
+				}
+				else
+				{
+					// Plain-text: HTML-encode then replace newlines with <br> so that
+					// the formatting entered in the template editor is visible in email.
+					var encoded = System.Net.WebUtility.HtmlEncode(rawContent);
+					htmlContent = "<div style=\"white-space: pre-wrap; font-family: sans-serif;\">"
+					              + encoded.Replace("\r\n", "<br>").Replace("\n", "<br>").Replace("\r", "<br>")
+					              + "</div>";
+				}
+
 				var sanitizer = new HtmlSanitizer();
-				var sanitizedHtml = sanitizer.Sanitize(context.RenderedContent ?? string.Empty);
+				sanitizer.AllowedAttributes.Add("style");
+				var sanitizedHtml = sanitizer.Sanitize(htmlContent);
 				// ── End HTML sanitization ────────────────────────────────────────────
 
-				var bodyBuilder = new BodyBuilder { HtmlBody = sanitizedHtml };
+				var bodyBuilder = new BodyBuilder
+				{
+					HtmlBody = sanitizedHtml,
+					// Provide an explicit plain-text body so that MimeKit creates a proper
+					// text/plain MIME part with \n line endings, rather than auto-generating
+					// one by stripping HTML (which can lose <br> → newline conversions).
+					TextBody = rawContent
+				};
 				message.Body = bodyBuilder.ToMessageBody();
 
 				using var smtp = new SmtpClient();

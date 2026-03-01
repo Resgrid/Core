@@ -82,6 +82,17 @@
 		TwoFactorDisabled,
 		TwoFactorLoginVerified,
 		TwoFactorRecoveryCodeUsed,
-		TwoFactorStepUpVerified
+		TwoFactorStepUpVerified,
+		// SSO / SAML / OIDC
+		SsoConfigCreated,
+		SsoConfigUpdated,
+		SsoConfigDeleted,
+		SsoLoginSucceeded,
+		SsoLoginFailed,
+		SsoUserProvisioned,
+		// SCIM 2.0
+		ScimUserCreated,
+		ScimUserUpdated,
+		ScimUserDeactivated
 	}
 }

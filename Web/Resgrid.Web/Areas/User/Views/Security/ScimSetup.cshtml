@@ -1,0 +1,375 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Security.ScimSetupView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ScimSetupPageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2><i class="fa fa-users"></i> @localizer["ScimSetupPageHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Security" asp-action="Index" asp-route-area="User">Security</a></li>
+            <li><a asp-controller="Security" asp-action="Sso" asp-route-area="User">@localizer["SsoBreadcrumb"]</a></li>
+            <li class="active"><strong>@localizer["ScimSetupBreadcrumb"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            <a asp-action="Sso" class="btn btn-default"><i class="fa fa-arrow-left"></i> @localizer["ScimSetupBackButton"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    @if (!string.IsNullOrWhiteSpace(Model.NewScimBearerToken))
+    {
+        <!-- ── One-time token display ────────────────────────────────── -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="alert alert-warning">
+                    <h4><i class="fa fa-exclamation-triangle"></i> @localizer["ScimSetupTokenWarningTitle"]</h4>
+                    <p>@localizer["ScimSetupTokenWarningBody"]</p>
+                    <div class="input-group m-t-sm">
+                        <input type="text" class="form-control font-monospace" id="newTokenField"
+                               value="@Model.NewScimBearerToken" readonly />
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning" type="button" onclick="copyToClipboard('newTokenField')">
+                                <i class="fa fa-copy"></i> @localizer["ScimSetupCopyTokenButton"]
+                            </button>
+                        </span>
+                    </div>
+                    <p class="m-t-sm text-muted small">
+                        <i class="fa fa-lock"></i> @localizer["ScimSetupTokenEncryptedNote"]
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ── Status panel ──────────────────────────────────────────────── -->
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["ScimSetupStatusHeader"]</h5></div>
+                <div class="ibox-content">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between">
+                            @localizer["ScimSetupStatusProvider"]
+                            <span class="badge badge-primary">@Model.ProviderType.ToUpperInvariant()</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            @localizer["ScimSetupStatusEnabled"]
+                            @if (Model.ScimEnabled)
+                            {
+                                <span class="badge badge-success"><i class="fa fa-check"></i> @localizer["ScimSetupStatusEnabledYes"]</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">@localizer["ScimSetupStatusEnabledNo"]</span>
+                            }
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            @localizer["ScimSetupStatusBearerToken"]
+                            @if (Model.HasScimBearerToken)
+                            {
+                                <span class="badge badge-success"><i class="fa fa-check"></i> @localizer["ScimSetupStatusTokenConfigured"]</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">@localizer["ScimSetupStatusTokenNotSet"]</span>
+                            }
+                        </li>
+                    </ul>
+
+                    <form asp-action="RotateScimToken" asp-route-id="@Model.DepartmentSsoConfigId" method="post" class="m-t-md">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-block btn-@(Model.HasScimBearerToken ? "warning" : "primary")"
+                                onclick="return confirm('@localizer["ScimSetupRotateTokenConfirm"]')">
+                            <i class="fa fa-refresh"></i>
+                            @(Model.HasScimBearerToken ? localizer["ScimSetupRotateTokenButton"] : localizer["ScimSetupGenerateTokenButton"])
+                        </button>
+                    </form>
+                    <small class="text-muted text-center d-block m-t-xs">
+                        @localizer["ScimSetupRotateTokenNote"]
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Connection details ────────────────────────────────────── -->
+        <div class="col-lg-8">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-plug"></i> @localizer["ScimSetupConnectorHeader"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["ScimSetupConnectorDescription"]</p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width:38%">@localizer["ScimSetupSettingColumn"]</th>
+                            <th>@localizer["ScimSetupValueColumn"]</th>
+                        </tr>
+                        <tr>
+                            <td><strong>@localizer["ScimSetupBaseUrlLabel"]</strong></td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control font-monospace" id="scimBaseUrl"
+                                           value="@Model.ScimBaseUrl" readonly />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm" onclick="copyToClipboard('scimBaseUrl')"><i class="fa fa-copy"></i></button>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>@localizer["ScimSetupAuthMethodLabel"]</strong></td>
+                            <td><code>HTTP Header</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>@localizer["ScimSetupAuthHeaderLabel"]</strong></td>
+                            <td><code>Bearer &lt;token from Rotate step above&gt;</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>@localizer["ScimSetupCustomHeaderNameLabel"]</strong></td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control font-monospace" id="deptIdHeader"
+                                           value="@Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName" readonly />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm" onclick="copyToClipboard('deptIdHeader')"><i class="fa fa-copy"></i></button>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>@localizer["ScimSetupCustomHeaderValueLabel"]</strong></td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control font-monospace" id="deptIdValue"
+                                           value="@Model.DepartmentId" readonly />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm" onclick="copyToClipboard('deptIdValue')"><i class="fa fa-copy"></i></button>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>@localizer["ScimSetupSupportedResourcesLabel"]</strong></td>
+                            <td><code>Users</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>@localizer["ScimSetupSupportedUpdateMethodLabel"]</strong></td>
+                            <td><code>PUT</code> (full) and <code>PATCH</code> (partial)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Step-by-step guide ─────────────────────────────────────────── -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-book"></i> @localizer["ScimSetupGuideHeader"]</h5>
+                    <div class="ibox-tools"><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></div>
+                </div>
+                <div class="ibox-content">
+
+                    <!-- Tabs per IdP -->
+                    <ul class="nav nav-tabs m-b-md" role="tablist">
+                        <li class="active"><a href="#tab-okta" data-toggle="tab">@localizer["ScimSetupTabOkta"]</a></li>
+                        <li><a href="#tab-entra" data-toggle="tab">@localizer["ScimSetupTabEntra"]</a></li>
+                        <li><a href="#tab-google" data-toggle="tab">@localizer["ScimSetupTabGoogle"]</a></li>
+                        <li><a href="#tab-generic" data-toggle="tab">@localizer["ScimSetupTabGeneric"]</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <!-- ── Okta ──────────────────────────────────────── -->
+                        <div class="tab-pane active" id="tab-okta">
+                            <ol class="setup-steps">
+                                <li>
+                                    <strong>Open your Okta Admin Console</strong> and navigate to
+                                    <em>Applications → Applications</em>. Select the Resgrid application
+                                    (or create a new SAML/OIDC app first).
+                                </li>
+                                <li>
+                                    Click the <strong>Provisioning</strong> tab, then click
+                                    <strong>Configure API Integration</strong>.
+                                </li>
+                                <li>
+                                    Check <strong>Enable API integration</strong> and enter:
+                                    <ul>
+                                        <li><em>Base URL:</em> <code>@Model.ScimBaseUrl</code></li>
+                                        <li><em>API Token:</em> paste the SCIM bearer token generated above</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Click <strong>Test API Credentials</strong>. Okta will make a
+                                    <code>GET /scim/v2/Users</code> call. If it shows a green checkmark, the connection is working.
+                                </li>
+                                <li>
+                                    Under <em>To App</em>, enable:
+                                    <ul>
+                                        <li><strong>Create Users</strong> — maps to Resgrid auto-provisioning</li>
+                                        <li><strong>Update User Attributes</strong></li>
+                                        <li><strong>Deactivate Users</strong> — sets <code>IsDisabled=true</code> in Resgrid</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Map Okta profile attributes to SCIM attributes:
+                                    <ul>
+                                        <li><code>userName</code> → Okta <code>login</code></li>
+                                        <li><code>name.givenName</code> → Okta <code>firstName</code></li>
+                                        <li><code>name.familyName</code> → Okta <code>lastName</code></li>
+                                        <li><code>emails[primary].value</code> → Okta <code>email</code></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Assign users or groups to the application. Assigned users are automatically
+                                    provisioned into Resgrid.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- ── Microsoft Entra ID ─────────────────────── -->
+                        <div class="tab-pane" id="tab-entra">
+                            <ol class="setup-steps">
+                                <li>
+                                    In the <strong>Azure Portal</strong>, go to <em>Microsoft Entra ID →
+                                    Enterprise Applications</em> and select the Resgrid app
+                                    (create it as a <em>Non-gallery application</em> if it doesn't exist).
+                                </li>
+                                <li>
+                                    Click <strong>Provisioning</strong> in the left sidebar, then set
+                                    <em>Provisioning Mode</em> to <strong>Automatic</strong>.
+                                </li>
+                                <li>
+                                    Under <em>Admin Credentials</em> enter:
+                                    <ul>
+                                        <li><em>Tenant URL:</em> <code>@Model.ScimBaseUrl</code></li>
+                                        <li><em>Secret Token:</em> paste the SCIM bearer token generated above</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Click <strong>Test Connection</strong>. Entra will call
+                                    <code>GET /scim/v2/Users?count=1</code> — a <em>200 OK</em> confirms success.
+                                    <br /><strong>Note:</strong> Also add a custom HTTP header
+                                    <code>@Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName: @Model.DepartmentId</code> via the Entra provisioning
+                                    extension headers (if available), or contact Resgrid support to enable
+                                    department resolution by bearer-token alone.
+                                </li>
+                                <li>
+                                    Under <strong>Mappings</strong>, confirm the default attribute mappings are present.
+                                    Add any missing Resgrid-specific mappings if required.
+                                </li>
+                                <li>
+                                    Set the <em>Provisioning Status</em> to <strong>On</strong> and save.
+                                    Entra will sync on the first cycle (typically within 40 minutes).
+                                </li>
+                            </ol>
+                            <div class="alert alert-warning m-t-sm">
+                                <i class="fa fa-info-circle"></i>
+                                <strong>Entra SCIM limitation:</strong> Microsoft Entra's SCIM client does not
+                                support custom headers natively in all tiers. Ensure you pass the
+                                <code>@Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName</code> header, or use the encrypted <code>departmentToken</code>
+                                approach by embedding it as a query parameter in the tenant URL:
+                                <code>@Model.ScimBaseUrl?departmentToken=@Model.EncryptedDepartmentToken</code>
+                            </div>
+                        </div>
+
+                        <!-- ── Google Workspace ───────────────────────── -->
+                        <div class="tab-pane" id="tab-google">
+                            <ol class="setup-steps">
+                                <li>
+                                    In the <strong>Google Admin Console</strong>, go to
+                                    <em>Apps → Web and mobile apps</em>. Click
+                                    <strong>Add app → Add custom SAML app</strong> (Google's SCIM support
+                                    is within the SAML app provisioning settings).
+                                </li>
+                                <li>
+                                    After configuring SSO, click the <strong>Auto-provisioning</strong> tab
+                                    in the app settings.
+                                </li>
+                                <li>
+                                    Under <em>SCIM configuration</em> enter:
+                                    <ul>
+                                        <li><em>SCIM base URL:</em> <code>@Model.ScimBaseUrl</code></li>
+                                        <li><em>Authentication token:</em> paste the bearer token above</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Map Google Directory attributes to SCIM attributes as needed
+                                    (<code>primaryEmail</code> → <code>emails[primary].value</code>,
+                                    <code>firstName</code> → <code>name.givenName</code>, etc.).
+                                </li>
+                                <li>
+                                    Enable provisioning and assign the app to the relevant organisational
+                                    units or groups.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- ── Generic / Other ───────────────────────── -->
+                        <div class="tab-pane" id="tab-generic">
+                            <p>@localizer["ScimSetupGenericHeader"]</p>
+                            <table class="table table-bordered">
+                                <tr><th>@localizer["ScimSetupParamColumn"]</th><th>@localizer["ScimSetupValueColumn"]</th></tr>
+                                <tr><td>SCIM Version</td><td>2.0</td></tr>
+                                <tr><td>Base URL</td><td><code>@Model.ScimBaseUrl</code></td></tr>
+                                <tr><td>Authentication</td><td>HTTP Bearer Token</td></tr>
+                                <tr><td>Token</td><td><em>Generated above (one-time plaintext)</em></td></tr>
+                                <tr><td>Required header</td><td><code>@Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName: @Model.DepartmentId</code></td></tr>
+                                <tr><td>Supported endpoints</td><td><code>GET/POST /Users</code>, <code>GET/PUT/PATCH/DELETE /Users/{id}</code>, <code>GET /Groups</code></td></tr>
+                                <tr><td>Supported schemas</td><td><code>urn:ietf:params:scim:schemas:core:2.0:User</code></td></tr>
+                            </table>
+
+                            <h5>@localizer["ScimSetupFieldMappingHeader"]</h5>
+                            <table class="table table-bordered table-condensed small">
+                                <tr><th>@localizer["ScimSetupScimFieldColumn"]</th><th>@localizer["ScimSetupResgridEffectColumn"]</th></tr>
+                                <tr><td><code>userName</code></td><td>Sets the Resgrid login name</td></tr>
+                                <tr><td><code>emails[primary].value</code></td><td>Sets the member email address</td></tr>
+                                <tr><td><code>name.givenName</code></td><td>Sets first name on user profile</td></tr>
+                                <tr><td><code>name.familyName</code></td><td>Sets last name on user profile</td></tr>
+                                <tr><td><code>active: false</code></td><td>Disables the member (soft deactivation)</td></tr>
+                                <tr><td><code>DELETE /Users/{id}</code></td><td>Marks member as disabled &amp; deleted</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        function copyToClipboard(fieldId) {
+            var el = document.getElementById(fieldId);
+            el.select();
+            document.execCommand('copy');
+            toastr.success('@localizer["SsoCopiedToClipboard"]');
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.NewScimBearerToken))
+        {
+            <text>
+            // Auto-select the token field so it's ready to copy on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('newTokenField').select();
+            });
+            </text>
+        }
+    </script>
+}
+
+<style>
+    .setup-steps { padding-left: 1.4em; }
+    .setup-steps li { margin-bottom: 0.7em; line-height: 1.6; }
+    .font-monospace { font-family: SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; }
+</style>
+

@@ -1,0 +1,353 @@
+﻿@using Resgrid.Web.Helpers
+@using Resgrid.Config
+@model Resgrid.Web.Areas.User.Models.Security.SsoConfigEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@{
+    ViewBag.Title = "Resgrid | " + (Model.IsNew ? localizer["SsoEditPageTitleNew"].Value : localizer["SsoEditPageTitleEdit"].Value);
+    var isOidc = string.Equals(Model.ProviderType, "oidc", StringComparison.OrdinalIgnoreCase);
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2><i class="fa fa-key"></i> @(Model.IsNew ? localizer["SsoEditPageTitleNew"] : localizer["SsoEditPageTitleEdit"])</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Security" asp-action="Index" asp-route-area="User">Security</a></li>
+            <li><a asp-controller="Security" asp-action="Sso" asp-route-area="User">@localizer["SsoBreadcrumb"]</a></li>
+            <li class="active"><strong>@(Model.IsNew ? localizer["SsoEditBreadcrumbNew"] : localizer["SsoEditBreadcrumbEdit"])</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <form asp-action="@(Model.IsNew ? "SsoNew" : "SsoEdit")"
+          asp-route-id="@Model.DepartmentSsoConfigId"
+          method="post" id="ssoForm">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.DepartmentSsoConfigId)
+        @Html.HiddenFor(m => m.IsNew)
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <!-- ── Step 1: Provider & basic settings ──────────────────────── -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <span class="label label-primary pull-right">@localizer["SsoEditStep1Label"]</span>
+                        <h5>@localizer["SsoEditStep1Header"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label asp-for="ProviderType" class="control-label">@localizer["SsoEditProviderTypeLabel"]</label>
+                            @if (Model.IsNew)
+                            {
+                                @Html.DropDownListFor(m => m.ProviderType, Model.ProviderTypes,
+                                    new { @class = "form-control", id = "providerTypeSelect" })
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" value="@Model.ProviderType.ToUpperInvariant()" readonly />
+                                @Html.HiddenFor(m => m.ProviderType)
+                            }
+                            <span asp-validation-for="ProviderType" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.IsEnabled)
+                                    <strong>@localizer["SsoEditEnableLabel"]</strong>
+                                    <small class="text-muted d-block">@localizer["SsoEditEnableDescription"]</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.AllowLocalLogin)
+                                    <strong>@localizer["SsoEditAllowLocalLoginLabel"]</strong>
+                                    <small class="text-muted d-block">@localizer["SsoEditAllowLocalLoginDescription"]</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.AutoProvisionUsers)
+                                    <strong>@localizer["SsoEditAutoProvisionLabel"]</strong>
+                                    <small class="text-muted d-block">@localizer["SsoEditAutoProvisionDescription"]</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.ScimEnabled)
+                                    <strong>@localizer["SsoEditScimEnableLabel"]</strong>
+                                    <small class="text-muted d-block">@localizer["SsoEditScimEnableDescription"]</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DefaultRankId" class="control-label">@localizer["SsoEditDefaultRankLabel"]</label>
+                            @Html.DropDownListFor(m => m.DefaultRankId, Model.RankList, new { @class = "form-control" })
+                            <small class="text-muted">@localizer["SsoEditDefaultRankDescription"]</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Step 2: Provider-specific fields ──────────────────────── -->
+            <div class="col-lg-6">
+
+                <!-- OIDC panel -->
+                <div class="ibox" id="oidcPanel" style="@(isOidc ? "" : "display:none")">
+                    <div class="ibox-title">
+                        <span class="label label-primary pull-right">@localizer["SsoEditStep2OidcLabel"]</span>
+                        <h5><i class="fa fa-openid"></i> @localizer["SsoEditStep2OidcHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="alert alert-info">
+                            <strong>@localizer["SsoEditOidcInfoAlert"]</strong>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Authority" class="control-label">@localizer["SsoEditAuthorityLabel"] <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.Authority, new { @class = "form-control", placeholder = localizer["SsoEditAuthorityPlaceholder"].Value })
+                            <small class="text-muted">@localizer["SsoEditAuthorityDescription"]</small>
+                            <span asp-validation-for="Authority" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="ClientId" class="control-label">@localizer["SsoEditClientIdLabel"] <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.ClientId, new { @class = "form-control", placeholder = localizer["SsoEditClientIdPlaceholder"].Value })
+                            <small class="text-muted">@localizer["SsoEditClientIdDescription"]</small>
+                            <span asp-validation-for="ClientId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="ClientSecret" class="control-label">
+                                @localizer["SsoEditClientSecretLabel"]
+                                @if (!Model.IsNew && Model.HasClientSecret)
+                                {
+                                    <span class="label label-success">@localizer["SsoEditClientSecretStored"]</span>
+                                }
+                            </label>
+                            @Html.PasswordFor(m => m.ClientSecret, new { @class = "form-control", autocomplete = "new-password", placeholder = Model.HasClientSecret ? localizer["SsoEditClientSecretKeepExisting"].Value : localizer["SsoEditClientSecretLabel"].Value })
+                            <small class="text-muted">
+                                <i class="fa fa-lock"></i> @localizer["SsoEditClientSecretDescription"]
+                                @if (!Model.IsNew) { <text>@localizer["SsoEditClientSecretKeepExisting"]</text> }
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SAML 2.0 panel -->
+                <div class="ibox" id="samlPanel" style="@(isOidc ? "display:none" : "")">
+                    <div class="ibox-title">
+                        <span class="label label-info pull-right">@localizer["SsoEditStep2SamlLabel"]</span>
+                        <h5><i class="fa fa-exchange"></i> @localizer["SsoEditStep2SamlHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="alert alert-info">
+                            <strong>@localizer["SsoEditSamlInfoAlert"]</strong>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">@localizer["SsoEditSpEntityIdLabel"]</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control font-monospace" id="entityIdDisplay"
+                                       value="@(string.IsNullOrWhiteSpace(Model.EntityId) ? $"{Model.ApiBaseUrl}{SsoConfig.SamlEntityIdBasePath}{Model.DepartmentSsoConfigId ?? "NEW"}" : Model.EntityId)" readonly />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-sm" onclick="copyToClipboard('entityIdDisplay')"><i class="fa fa-copy"></i></button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">@localizer["SsoEditAcsUrlLabel"]</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control font-monospace" id="acsUrlDisplay"
+                                       value="@Model.AcsUrl" readonly />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-sm" onclick="copyToClipboard('acsUrlDisplay')"><i class="fa fa-copy"></i></button>
+                                </span>
+                            </div>
+                            <small class="text-muted">@localizer["SsoEditAcsUrlNote"]</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="EntityId" class="control-label">@localizer["SsoEditEntityIdEditableLabel"]</label>
+                            @Html.TextBoxFor(m => m.EntityId, new { @class = "form-control", placeholder = localizer["SsoEditEntityIdEditablePlaceholder"].Value })
+                            <small class="text-muted">@localizer["SsoEditEntityIdEditableNote"]</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MetadataUrl" class="control-label">@localizer["SsoEditMetadataUrlLabel"] <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.MetadataUrl, new { @class = "form-control", placeholder = localizer["SsoEditMetadataUrlPlaceholder"].Value })
+                            <small class="text-muted">@localizer["SsoEditMetadataUrlNote"]</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="AssertionConsumerServiceUrl" class="control-label">@localizer["SsoEditAcsUrlStoredLabel"]</label>
+                            @Html.TextBoxFor(m => m.AssertionConsumerServiceUrl, new { @class = "form-control", placeholder = Model.AcsUrl })
+                            <small class="text-muted">@localizer["SsoEditAcsUrlStoredNote"]</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="IdpCertificate" class="control-label">
+                                @localizer["SsoEditIdpCertLabel"]
+                                @if (!Model.IsNew && Model.HasIdpCertificate)
+                                {
+                                    <span class="label label-success">@localizer["SsoEditIdpCertStored"]</span>
+                                }
+                            </label>
+                            @Html.TextAreaFor(m => m.IdpCertificate, 6, 0, new { @class = "form-control font-monospace", placeholder = "-----BEGIN CERTIFICATE-----\nMIID...\n-----END CERTIFICATE-----" })
+                            <small class="text-muted">
+                                <i class="fa fa-lock"></i> @localizer["SsoEditIdpCertNote"]
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SigningCertificate" class="control-label">
+                                @localizer["SsoEditSigningKeyLabel"]
+                                @if (!Model.IsNew && Model.HasSigningCertificate)
+                                {
+                                    <span class="label label-success">@localizer["SsoEditSigningKeyStored"]</span>
+                                }
+                            </label>
+                            @Html.TextAreaFor(m => m.SigningCertificate, 6, 0, new { @class = "form-control font-monospace", placeholder = "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----" })
+                            <small class="text-muted"><i class="fa fa-lock"></i> @localizer["SsoEditSigningKeyNote"]</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Step 3: Attribute Mapping ─────────────────────────────── -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <span class="label label-primary pull-right">@localizer["SsoEditStep3Label"]</span>
+                        <h5><i class="fa fa-random"></i> @localizer["SsoEditStep3Header"]</h5>
+                        <div class="ibox-tools"><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>@localizer["SsoEditAttrMapDescription"]</p>
+                                <div class="form-group">
+                                    <label class="control-label">@localizer["SsoEditAttrMapJsonLabel"]</label>
+                                    @Html.TextAreaFor(m => m.AttributeMappingJson, 5, 0, new
+                                    {
+                                        @class = "form-control font-monospace",
+                                        id = "attrMapJson",
+                                        placeholder = "{ \"email\": \"email\", \"firstName\": \"given_name\", \"lastName\": \"family_name\" }"
+                                    })
+                                    <small class="text-muted">@localizer["SsoEditAttrMapJsonNote"]</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>@localizer["SsoEditQuickFillHeader"]</h5>
+                                <p class="text-muted small">@localizer["SsoEditQuickFillDescription"]</p>
+                                <button type="button" class="btn btn-xs btn-default m-r-xs m-b-xs" onclick="fillMapping('entra')">
+                                    <i class="fa fa-windows"></i> Microsoft Entra ID
+                                </button>
+                                <button type="button" class="btn btn-xs btn-default m-r-xs m-b-xs" onclick="fillMapping('okta_oidc')">
+                                    <i class="fa fa-lock"></i> Okta (OIDC)
+                                </button>
+                                <button type="button" class="btn btn-xs btn-default m-r-xs m-b-xs" onclick="fillMapping('okta_saml')">
+                                    <i class="fa fa-exchange"></i> Okta (SAML)
+                                </button>
+                                <button type="button" class="btn btn-xs btn-default m-r-xs m-b-xs" onclick="fillMapping('google')">
+                                    <i class="fa fa-google"></i> Google Workspace
+                                </button>
+                                <button type="button" class="btn btn-xs btn-default m-b-xs" onclick="fillMapping('adfs')">
+                                    <i class="fa fa-server"></i> AD FS / Generic SAML
+                                </button>
+
+                                <h5 class="m-t-md">@localizer["SsoEditFieldMappingHeader"]</h5>
+                                <table class="table table-condensed table-bordered small">
+                                    <tr><th>@localizer["SsoEditFieldKeyColumn"]</th><th>@localizer["SsoEditFieldDescColumn"]</th></tr>
+                                    <tr><td><code>email</code></td><td>@localizer["SsoEditFieldEmailDesc"]</td></tr>
+                                    <tr><td><code>firstName</code></td><td>@localizer["SsoEditFieldFirstNameDesc"]</td></tr>
+                                    <tr><td><code>lastName</code></td><td>@localizer["SsoEditFieldLastNameDesc"]</td></tr>
+                                    <tr><td><code>subject</code></td><td>@localizer["SsoEditFieldSubjectDesc"]</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Save ──────────────────────────────────────────────────── -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox-content">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> @(Model.IsNew ? localizer["SsoEditCreateButton"] : localizer["SsoEditSaveButton"])
+                    </button>
+                    <a asp-action="Sso" class="btn btn-default m-l-sm">@localizer["SsoEditCancelButton"]</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        var mappingPresets = {
+            entra: { email: "email", firstName: "given_name", lastName: "family_name", subject: "sub" },
+            okta_oidc: { email: "email", firstName: "given_name", lastName: "family_name", subject: "sub" },
+            okta_saml: {
+                email: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+                firstName: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
+                lastName: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
+                subject: "nameidentifier"
+            },
+            google: { email: "email", firstName: "given_name", lastName: "family_name", subject: "sub" },
+            adfs: {
+                email: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+                firstName: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
+                lastName: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
+                subject: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+            }
+        };
+
+        function fillMapping(preset) {
+            document.getElementById('attrMapJson').value =
+                JSON.stringify(mappingPresets[preset], null, 2);
+        }
+
+        function copyToClipboard(fieldId) {
+            var el = document.getElementById(fieldId);
+            el.select();
+            document.execCommand('copy');
+            toastr.success('@localizer["SsoCopiedToClipboard"]');
+        }
+
+        // Show/hide provider panels on provider-type change (new form only)
+        var providerSelect = document.getElementById('providerTypeSelect');
+        if (providerSelect) {
+            providerSelect.addEventListener('change', function () {
+                var isOidc = this.value === 'oidc';
+                document.getElementById('oidcPanel').style.display = isOidc ? '' : 'none';
+                document.getElementById('samlPanel').style.display = isOidc ? 'none' : '';
+            });
+        }
+
+        // Auto-fill ACS URL when EntityId changes
+        var entityField = document.getElementById('AssertionConsumerServiceUrl');
+        var acsDisplay = document.getElementById('acsUrlDisplay');
+        if (entityField && acsDisplay && !entityField.value) {
+            entityField.value = acsDisplay.value;
+        }
+    </script>
+}

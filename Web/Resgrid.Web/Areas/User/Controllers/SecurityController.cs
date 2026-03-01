@@ -34,12 +34,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
+		private readonly IDepartmentSsoService _ssoService;
+		private readonly IEncryptionService _encryptionService;
 
 		public SecurityController(IDepartmentsService departmentsService, IAuditService auditService,
 			IPermissionsService permissionsService, IEventAggregator eventAggregator,
 			IDepartmentSettingsService departmentSettingsService, ISystemAuditsService systemAuditsService,
 			UserManager<IdentityUser> userManager,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer,
+			IDepartmentSsoService ssoService,
+			IEncryptionService encryptionService)
 		{
 			_departmentsService = departmentsService;
 			_auditService = auditService;
@@ -49,6 +53,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_systemAuditsService = systemAuditsService;
 			_userManager = userManager;
 			_secLocalizer = secLocalizer;
+			_ssoService = ssoService;
+			_encryptionService = encryptionService;
 		}
 
 		public async Task<IActionResult> Index()
@@ -600,5 +606,438 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json("");
 		}
 		#endregion Async
+
+		#region SSO / SCIM Management
+
+		// ── SSO Index ────────────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> Sso(CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var configList = configs?.ToList() ?? new System.Collections.Generic.List<DepartmentSsoConfig>();
+
+			// Build an encrypted token carrying departmentId:departmentCode so it can
+			// be passed safely over the public internet without exposing either value.
+			var plainToken = $"{department.DepartmentId}:{department.Code}";
+			var encryptedToken = _encryptionService.EncryptForDepartment(plainToken, department.DepartmentId, department.Code);
+
+			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+
+			var model = new SsoIndexView
+			{
+				IsAdmin = true,
+				Configs = configList.Select(c => new SsoConfigRowView
+				{
+					DepartmentSsoConfigId = c.DepartmentSsoConfigId,
+					ProviderType = ((SsoProviderType)c.SsoProviderType).ToString().ToLowerInvariant(),
+					IsEnabled = c.IsEnabled,
+					Identifier = c.SsoProviderType == (int)SsoProviderType.Oidc ? c.ClientId : c.EntityId,
+					EndpointUrl = c.SsoProviderType == (int)SsoProviderType.Oidc ? c.Authority : c.MetadataUrl,
+					AllowLocalLogin = c.AllowLocalLogin,
+					AutoProvisionUsers = c.AutoProvisionUsers,
+					ScimEnabled = c.ScimEnabled,
+					HasScimBearerToken = !string.IsNullOrWhiteSpace(c.EncryptedScimBearerToken),
+					CreatedOn = c.CreatedOn
+				}).ToList(),
+				HasOidcConfig = configList.Any(c => c.SsoProviderType == (int)SsoProviderType.Oidc),
+				HasSamlConfig = configList.Any(c => c.SsoProviderType == (int)SsoProviderType.Saml2),
+				EncryptedDepartmentToken = Uri.EscapeDataString(encryptedToken),
+				ScimBaseUrl = $"{apiBase}{Config.SsoConfig.ScimBasePath}",
+				ApiBaseUrl = apiBase,
+				SsoDiscoveryUrl = $"{apiBase}{Config.SsoConfig.SsoDiscoveryPath}?departmentToken={Uri.EscapeDataString(encryptedToken)}"
+			};
+
+			return View(model);
+		}
+
+		// ── Create SSO config ────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> SsoNew(string providerType, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+
+			var model = new SsoConfigEditView
+			{
+				IsNew = true,
+				ProviderType = providerType ?? "oidc",
+				IsEnabled = true,
+				AllowLocalLogin = true,
+				ProviderTypes = BuildProviderTypeList(providerType ?? "oidc"),
+				RankList = await BuildRankListAsync(null),
+				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.EncryptForDepartment($"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code))}",
+				ApiBaseUrl = apiBase
+			};
+
+			return View("SsoEdit", model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SsoNew(SsoConfigEditView model, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			if (!ModelState.IsValid)
+			{
+				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
+				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				return View("SsoEdit", model);
+			}
+
+			if (!System.Enum.TryParse<SsoProviderType>(model.ProviderType, ignoreCase: true, out var providerType))
+			{
+				ModelState.AddModelError("ProviderType", "Invalid provider type.");
+				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
+				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				return View("SsoEdit", model);
+			}
+
+			var existing = await _ssoService.GetSsoConfigForDepartmentAsync(DepartmentId, providerType, cancellationToken);
+			if (existing != null)
+			{
+				ModelState.AddModelError("", $"An SSO configuration for {model.ProviderType.ToUpperInvariant()} already exists. Use Edit to modify it.");
+				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
+				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				return View("SsoEdit", model);
+			}
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var config = new DepartmentSsoConfig
+			{
+				DepartmentSsoConfigId = Guid.NewGuid().ToString(),
+				DepartmentId = DepartmentId,
+				SsoProviderType = (int)providerType,
+				IsEnabled = model.IsEnabled,
+				ClientId = model.ClientId,
+				EncryptedClientSecret = model.ClientSecret,
+				Authority = model.Authority,
+				MetadataUrl = model.MetadataUrl,
+				EntityId = model.EntityId,
+				AssertionConsumerServiceUrl = model.AssertionConsumerServiceUrl,
+				EncryptedIdpCertificate = model.IdpCertificate,
+				EncryptedSigningCertificate = model.SigningCertificate,
+				AttributeMappingJson = model.AttributeMappingJson,
+				AllowLocalLogin = model.AllowLocalLogin,
+				AutoProvisionUsers = model.AutoProvisionUsers,
+				DefaultRankId = model.DefaultRankId,
+				ScimEnabled = model.ScimEnabled,
+				CreatedByUserId = UserId,
+				CreatedOn = DateTime.UtcNow
+			};
+
+			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
+			TempData["SsoSuccess"] = $"{model.ProviderType.ToUpperInvariant()} SSO configuration created successfully.";
+			return RedirectToAction("Sso");
+		}
+
+		// ── Edit SSO config ──────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> SsoEdit(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var config = configs?.FirstOrDefault(c => c.DepartmentSsoConfigId == id);
+			if (config == null)
+				return NotFound();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+
+			var model = new SsoConfigEditView
+			{
+				IsNew = false,
+				DepartmentSsoConfigId = config.DepartmentSsoConfigId,
+				ProviderType = ((SsoProviderType)config.SsoProviderType).ToString().ToLowerInvariant(),
+				IsEnabled = config.IsEnabled,
+				ClientId = config.ClientId,
+				Authority = config.Authority,
+				MetadataUrl = config.MetadataUrl,
+				EntityId = config.EntityId,
+				AssertionConsumerServiceUrl = config.AssertionConsumerServiceUrl,
+				AttributeMappingJson = config.AttributeMappingJson,
+				AllowLocalLogin = config.AllowLocalLogin,
+				AutoProvisionUsers = config.AutoProvisionUsers,
+				DefaultRankId = config.DefaultRankId,
+				ScimEnabled = config.ScimEnabled,
+				HasClientSecret = !string.IsNullOrWhiteSpace(config.EncryptedClientSecret),
+				HasIdpCertificate = !string.IsNullOrWhiteSpace(config.EncryptedIdpCertificate),
+				HasSigningCertificate = !string.IsNullOrWhiteSpace(config.EncryptedSigningCertificate),
+				ProviderTypes = BuildProviderTypeList(((SsoProviderType)config.SsoProviderType).ToString().ToLowerInvariant()),
+				RankList = await BuildRankListAsync(config.DefaultRankId),
+				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.EncryptForDepartment($"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code))}",
+				ApiBaseUrl = apiBase
+			};
+
+			return View("SsoEdit", model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SsoEdit(SsoConfigEditView model, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			if (!ModelState.IsValid)
+			{
+				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
+				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				return View("SsoEdit", model);
+			}
+
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var config = configs?.FirstOrDefault(c => c.DepartmentSsoConfigId == model.DepartmentSsoConfigId);
+			if (config == null)
+				return NotFound();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			config.IsEnabled = model.IsEnabled;
+			config.ClientId = model.ClientId ?? config.ClientId;
+			config.Authority = model.Authority ?? config.Authority;
+			config.MetadataUrl = model.MetadataUrl ?? config.MetadataUrl;
+			config.EntityId = model.EntityId ?? config.EntityId;
+			config.AssertionConsumerServiceUrl = model.AssertionConsumerServiceUrl ?? config.AssertionConsumerServiceUrl;
+			config.AttributeMappingJson = model.AttributeMappingJson ?? config.AttributeMappingJson;
+			config.AllowLocalLogin = model.AllowLocalLogin;
+			config.AutoProvisionUsers = model.AutoProvisionUsers;
+			config.DefaultRankId = model.DefaultRankId ?? config.DefaultRankId;
+			config.ScimEnabled = model.ScimEnabled;
+			config.UpdatedByUserId = UserId;
+
+			// Only overwrite secrets when a new plaintext value is supplied
+			config.EncryptedClientSecret = !string.IsNullOrWhiteSpace(model.ClientSecret) ? model.ClientSecret : null;
+			config.EncryptedIdpCertificate = !string.IsNullOrWhiteSpace(model.IdpCertificate) ? model.IdpCertificate : null;
+			config.EncryptedSigningCertificate = !string.IsNullOrWhiteSpace(model.SigningCertificate) ? model.SigningCertificate : null;
+
+			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
+			TempData["SsoSuccess"] = "SSO configuration updated successfully.";
+			return RedirectToAction("Sso");
+		}
+
+		// ── Delete SSO config ────────────────────────────────────────────────
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SsoDelete(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var config = configs?.FirstOrDefault(c => c.DepartmentSsoConfigId == id);
+			if (config == null)
+				return NotFound();
+
+			var providerType = (SsoProviderType)config.SsoProviderType;
+			await _ssoService.DeleteSsoConfigAsync(DepartmentId, providerType, cancellationToken);
+
+			TempData["SsoSuccess"] = $"{providerType.ToString().ToUpperInvariant()} SSO configuration deleted.";
+			return RedirectToAction("Sso");
+		}
+
+		// ── SCIM setup ───────────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> ScimSetup(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var config = configs?.FirstOrDefault(c => c.DepartmentSsoConfigId == id);
+			if (config == null)
+				return NotFound();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var encryptedToken = _encryptionService.EncryptForDepartment(
+				$"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code);
+
+			var model = new ScimSetupView
+			{
+				DepartmentSsoConfigId = config.DepartmentSsoConfigId,
+				ProviderType = ((SsoProviderType)config.SsoProviderType).ToString().ToLowerInvariant(),
+				ScimEnabled = config.ScimEnabled,
+				HasScimBearerToken = !string.IsNullOrWhiteSpace(config.EncryptedScimBearerToken),
+				ScimBaseUrl = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}{Config.SsoConfig.ScimBasePath}",
+				EncryptedDepartmentToken = Uri.EscapeDataString(encryptedToken),
+				DepartmentId = department.DepartmentId
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RotateScimToken(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var config = configs?.FirstOrDefault(c => c.DepartmentSsoConfigId == id);
+			if (config == null)
+				return NotFound();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			// Generate a cryptographically random bearer token using the configured byte length
+			var tokenBytes = new byte[Config.SsoConfig.ScimBearerTokenByteLength];
+			System.Security.Cryptography.RandomNumberGenerator.Fill(tokenBytes);
+			var newToken = Convert.ToBase64String(tokenBytes);
+
+			config.EncryptedScimBearerToken = newToken; // SaveSsoConfigAsync encrypts it
+			config.ScimEnabled = true;
+			config.UpdatedByUserId = UserId;
+			// Null out other secrets so they are not overwritten
+			config.EncryptedClientSecret = null;
+			config.EncryptedIdpCertificate = null;
+			config.EncryptedSigningCertificate = null;
+
+			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
+
+			var encryptedToken = _encryptionService.EncryptForDepartment(
+				$"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code);
+
+			var model = new ScimSetupView
+			{
+				DepartmentSsoConfigId = config.DepartmentSsoConfigId,
+				ProviderType = ((SsoProviderType)config.SsoProviderType).ToString().ToLowerInvariant(),
+				ScimEnabled = true,
+				HasScimBearerToken = true,
+				NewScimBearerToken = newToken, // one-time plaintext exposure
+				ScimBaseUrl = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}{Config.SsoConfig.ScimBasePath}",
+				EncryptedDepartmentToken = Uri.EscapeDataString(encryptedToken),
+				DepartmentId = department.DepartmentId
+			};
+
+			return View("ScimSetup", model);
+		}
+
+		// ── Security policy ──────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> SecurityPolicy(CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var policy = await _ssoService.GetSecurityPolicyForDepartmentAsync(DepartmentId, cancellationToken);
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var hasActiveConfig = configs?.Any(c => c.IsEnabled) ?? false;
+
+			var model = new SecurityPolicyEditView
+			{
+				HasActiveSsoConfig = hasActiveConfig,
+				DataClassificationLevels = new SelectList(new[]
+				{
+					new { Id = 0, Name = "Unclassified" },
+					new { Id = 1, Name = "CUI — Controlled Unclassified Information" },
+					new { Id = 2, Name = "Confidential" }
+				}, "Id", "Name", policy?.DataClassificationLevel ?? 0)
+			};
+
+			if (policy != null)
+			{
+				model.DepartmentSecurityPolicyId = policy.DepartmentSecurityPolicyId;
+				model.RequireMfa = policy.RequireMfa;
+				model.RequireSso = policy.RequireSso;
+				model.SessionTimeoutMinutes = policy.SessionTimeoutMinutes;
+				model.MaxConcurrentSessions = policy.MaxConcurrentSessions;
+				model.AllowedIpRanges = policy.AllowedIpRanges;
+				model.PasswordExpirationDays = policy.PasswordExpirationDays;
+				model.MinPasswordLength = policy.MinPasswordLength > 0 ? policy.MinPasswordLength : 8;
+				model.RequirePasswordComplexity = policy.RequirePasswordComplexity;
+				model.DataClassificationLevel = policy.DataClassificationLevel;
+			}
+			else
+			{
+				model.MinPasswordLength = 8;
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SecurityPolicy(SecurityPolicyEditView model, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var hasActiveConfig = configs?.Any(c => c.IsEnabled) ?? false;
+			model.HasActiveSsoConfig = hasActiveConfig;
+			model.DataClassificationLevels = new SelectList(new[]
+			{
+				new { Id = 0, Name = "Unclassified" },
+				new { Id = 1, Name = "CUI — Controlled Unclassified Information" },
+				new { Id = 2, Name = "Confidential" }
+			}, "Id", "Name", model.DataClassificationLevel);
+
+			if (!ModelState.IsValid)
+				return View(model);
+
+			if (model.RequireSso && !hasActiveConfig)
+			{
+				ModelState.AddModelError("RequireSso", _secLocalizer["SecurityPolicyCannotEnableRequireSso"].Value);
+				return View(model);
+			}
+
+			var existing = await _ssoService.GetSecurityPolicyForDepartmentAsync(DepartmentId, cancellationToken);
+			var policy = existing ?? new DepartmentSecurityPolicy
+			{
+				DepartmentId = DepartmentId,
+				CreatedOn = DateTime.UtcNow
+			};
+
+			policy.RequireMfa = model.RequireMfa;
+			policy.RequireSso = model.RequireSso;
+			policy.SessionTimeoutMinutes = model.SessionTimeoutMinutes;
+			policy.MaxConcurrentSessions = model.MaxConcurrentSessions;
+			policy.AllowedIpRanges = model.AllowedIpRanges;
+			policy.PasswordExpirationDays = model.PasswordExpirationDays;
+			policy.MinPasswordLength = model.MinPasswordLength;
+			policy.RequirePasswordComplexity = model.RequirePasswordComplexity;
+			policy.DataClassificationLevel = model.DataClassificationLevel;
+
+			await _ssoService.SaveSecurityPolicyAsync(policy, cancellationToken);
+			TempData["PolicySuccess"] = _secLocalizer["SecurityPolicySaveSuccess"].Value;
+			return RedirectToAction("SecurityPolicy");
+		}
+
+		// ── Private helpers ──────────────────────────────────────────────────
+
+		private static SelectList BuildProviderTypeList(string selected) =>
+			new SelectList(new[]
+			{
+				new { Id = "oidc", Name = "OIDC (OpenID Connect) — Microsoft Entra, Okta, Google, Auth0" },
+				new { Id = "saml2", Name = "SAML 2.0 — Most enterprise / government IdPs" }
+			}, "Id", "Name", selected);
+
+		private async Task<SelectList> BuildRankListAsync(int? selectedRankId)
+		{
+			// Ranks are not currently implemented as a standalone service — return empty with placeholder
+			await Task.CompletedTask;
+			return new SelectList(
+				new[] { new { Id = (int?)null, Name = "(No default rank)" } },
+				"Id", "Name", selectedRankId);
+		}
+
+		#endregion SSO / SCIM Management
 	}
 }

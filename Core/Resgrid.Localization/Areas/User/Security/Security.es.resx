@@ -85,6 +85,210 @@
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>Esta opción determina quién puede gestionar las credenciales cifradas usadas por las acciones del flujo de trabajo.</value></data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Quién puede Ver Ejecuciones de Flujo de Trabajo</value></data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>Esta opción determina quién puede ver el historial de ejecución de flujos de trabajo.</value></data>
+
+  <!-- SSO / SCIM — Sso.cshtml page -->
+  <data name="SsoPageTitle" xml:space="preserve"><value>Inicio de Sesión Único (SSO) y SCIM</value></data>
+  <data name="SsoPageHeader" xml:space="preserve"><value>Inicio de Sesión Único y Aprovisionamiento de Identidad</value></data>
+  <data name="SsoBreadcrumb" xml:space="preserve"><value>SSO / SCIM</value></data>
+  <data name="SsoSecurityPolicyButton" xml:space="preserve"><value>Política de Seguridad</value></data>
+  <data name="SsoAddOidcButton" xml:space="preserve"><value>Agregar Configuración OIDC</value></data>
+  <data name="SsoAddSamlButton" xml:space="preserve"><value>Agregar Configuración SAML 2.0</value></data>
+  <data name="SsoWhatIsSsoHeader" xml:space="preserve"><value>¿Qué es SSO y SCIM?</value></data>
+  <data name="SsoSingleSignOnHeader" xml:space="preserve"><value>Inicio de Sesión Único (SSO)</value></data>
+  <data name="SsoSingleSignOnDescription" xml:space="preserve"><value>Permite a los miembros del departamento iniciar sesión con su identidad corporativa existente (Microsoft Entra ID, Okta, Google Workspace, etc.) en lugar de una contraseña de Resgrid separada.</value></data>
+  <data name="SsoOidcDescription" xml:space="preserve"><value>OIDC — Protocolo moderno, ideal para Entra, Okta, Auth0, Google</value></data>
+  <data name="SsoSamlDescription" xml:space="preserve"><value>SAML 2.0 — Ampliamente compatible con IdP gubernamentales y empresariales</value></data>
+  <data name="SsoScimHeader" xml:space="preserve"><value>Aprovisionamiento SCIM 2.0</value></data>
+  <data name="SsoScimDescription" xml:space="preserve"><value>Sincronice automáticamente los usuarios desde su proveedor de identidad. Cuando incorpore o dé de baja personal en su directorio corporativo, Resgrid refleja esos cambios automáticamente.</value></data>
+  <data name="SsoScimAutoCreate" xml:space="preserve"><value>Crear automáticamente nuevos miembros cuando se agreguen en su IdP</value></data>
+  <data name="SsoScimAutoDisable" xml:space="preserve"><value>Deshabilitar/eliminar miembros cuando se les quite el aprovisionamiento</value></data>
+  <data name="SsoScimSyncNames" xml:space="preserve"><value>Mantener nombres y direcciones de correo electrónico sincronizados</value></data>
+  <data name="SsoSecurityPolicyHeader" xml:space="preserve"><value>Política de Seguridad</value></data>
+  <data name="SsoSecurityPolicyDescription" xml:space="preserve"><value>Aplicar controles de cumplimiento en todo el departamento junto con SSO:</value></data>
+  <data name="SsoSecurityPolicyMandateMfa" xml:space="preserve"><value>Exigir MFA para todos los miembros</value></data>
+  <data name="SsoSecurityPolicyRestrictLogin" xml:space="preserve"><value>Restringir el inicio de sesión solo a SSO (deshabilitar contraseñas)</value></data>
+  <data name="SsoSecurityPolicyIpRestrict" xml:space="preserve"><value>Limitar inicios de sesión a rangos CIDR de IP específicos</value></data>
+  <data name="SsoSecurityPolicyPasswordRules" xml:space="preserve"><value>Establecer caducidad de contraseña y reglas de complejidad</value></data>
+  <data name="SsoSecurityPolicyDataClassification" xml:space="preserve"><value>Clasificar el nivel de datos (Sin clasificar / CUI / Confidencial)</value></data>
+  <data name="SsoDiscoveryUrlCalloutTitle" xml:space="preserve"><value>URL de Descubrimiento para Aplicación Móvil</value></data>
+  <data name="SsoDiscoveryUrlCalloutDescription" xml:space="preserve"><value>La aplicación móvil de Resgrid usa esta URL para descubrir su configuración SSO antes de mostrar la pantalla de inicio de sesión. Compártala con su equipo móvil si es necesario.</value></data>
+  <data name="SsoCopyButton" xml:space="preserve"><value>Copiar</value></data>
+  <data name="SsoCopiedToClipboard" xml:space="preserve"><value>¡Copiado al portapapeles!</value></data>
+  <data name="SsoConfigurationsHeader" xml:space="preserve"><value>Configuraciones SSO</value></data>
+  <data name="SsoNoConfigurationsWarning" xml:space="preserve"><value>Sin configuraciones SSO todavía. Use los botones de arriba para agregar OIDC o SAML 2.0.</value></data>
+  <data name="SsoTableColProvider" xml:space="preserve"><value>Proveedor</value></data>
+  <data name="SsoTableColIdentifier" xml:space="preserve"><value>Identificador / Punto final</value></data>
+  <data name="SsoTableColStatus" xml:space="preserve"><value>Estado</value></data>
+  <data name="SsoTableColLocalLogin" xml:space="preserve"><value>Inicio Local</value></data>
+  <data name="SsoTableColAutoProvision" xml:space="preserve"><value>Auto-Aprovisionamiento</value></data>
+  <data name="SsoTableColScim" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoTableColCreated" xml:space="preserve"><value>Creado</value></data>
+  <data name="SsoTableColActions" xml:space="preserve"><value>Acciones</value></data>
+  <data name="SsoStatusEnabled" xml:space="preserve"><value>Habilitado</value></data>
+  <data name="SsoStatusDisabled" xml:space="preserve"><value>Deshabilitado</value></data>
+  <data name="SsoLocalLoginYes" xml:space="preserve"><value>Sí</value></data>
+  <data name="SsoLocalLoginSsoOnly" xml:space="preserve"><value>Solo SSO</value></data>
+  <data name="SsoAutoProvisionOn" xml:space="preserve"><value>Activado</value></data>
+  <data name="SsoAutoProvisionOff" xml:space="preserve"><value>Desactivado</value></data>
+  <data name="SsoScimStatusActive" xml:space="preserve"><value>Activo</value></data>
+  <data name="SsoScimStatusNoToken" xml:space="preserve"><value>Sin Token</value></data>
+  <data name="SsoScimStatusOff" xml:space="preserve"><value>Desactivado</value></data>
+  <data name="SsoEditButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="SsoScimSetupButton" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoDeleteConfirmTitle" xml:space="preserve"><value>Confirmar Eliminación</value></data>
+  <data name="SsoDeleteConfirmMessage" xml:space="preserve"><value>¿Está seguro de que desea eliminar la configuración SSO de {0}? Esto no se puede deshacer.</value></data>
+  <data name="SsoDeleteCancelButton" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="SsoDeleteButton" xml:space="preserve"><value>Eliminar</value></data>
+
+  <!-- SSO / SCIM — SsoEdit.cshtml page -->
+  <data name="SsoEditPageTitleNew" xml:space="preserve"><value>Nueva Configuración SSO</value></data>
+  <data name="SsoEditPageTitleEdit" xml:space="preserve"><value>Editar Configuración SSO</value></data>
+  <data name="SsoEditBreadcrumbNew" xml:space="preserve"><value>Nueva</value></data>
+  <data name="SsoEditBreadcrumbEdit" xml:space="preserve"><value>Editar</value></data>
+  <data name="SsoEditStep1Label" xml:space="preserve"><value>Paso 1</value></data>
+  <data name="SsoEditStep1Header" xml:space="preserve"><value>Proveedor y Configuración Básica</value></data>
+  <data name="SsoEditProviderTypeLabel" xml:space="preserve"><value>Protocolo del Proveedor de Identidad</value></data>
+  <data name="SsoEditEnableLabel" xml:space="preserve"><value>Habilitar esta configuración SSO</value></data>
+  <data name="SsoEditEnableDescription" xml:space="preserve"><value>Solo una configuración por tipo de proveedor está activa a la vez.</value></data>
+  <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve"><value>Permitir inicio de sesión con contraseña local</value></data>
+  <data name="SsoEditAllowLocalLoginDescription" xml:space="preserve"><value>Cuando está marcado, los usuarios aún pueden iniciar sesión con nombre de usuario y contraseña además de SSO.</value></data>
+  <data name="SsoEditAutoProvisionLabel" xml:space="preserve"><value>Auto-aprovisionar nuevos usuarios</value></data>
+  <data name="SsoEditAutoProvisionDescription" xml:space="preserve"><value>Crear automáticamente una cuenta de Resgrid cuando un usuario se autentica vía SSO por primera vez y no se encuentra un correo coincidente.</value></data>
+  <data name="SsoEditScimEnableLabel" xml:space="preserve"><value>Habilitar aprovisionamiento SCIM 2.0</value></data>
+  <data name="SsoEditScimEnableDescription" xml:space="preserve"><value>Permite a su IdP crear/actualizar/desactivar miembros automáticamente. Después de guardar, vaya a la página de Configuración SCIM para generar un token portador.</value></data>
+  <data name="SsoEditDefaultRankLabel" xml:space="preserve"><value>Rango Predeterminado para Usuarios Auto-Aprovisionados</value></data>
+  <data name="SsoEditDefaultRankDescription" xml:space="preserve"><value>Opcional. Se aplica solo cuando Auto-Aprovisionamiento crea un nuevo miembro.</value></data>
+  <data name="SsoEditStep2OidcLabel" xml:space="preserve"><value>Paso 2 — OIDC</value></data>
+  <data name="SsoEditStep2OidcHeader" xml:space="preserve"><value>Configuración de OpenID Connect</value></data>
+  <data name="SsoEditOidcInfoAlert" xml:space="preserve"><value>Dónde encontrar estos valores: En su IdP, registre Resgrid como Cliente Público (PKCE) o Aplicación Web (con secreto para flujos del lado del servidor).</value></data>
+  <data name="SsoEditAuthorityLabel" xml:space="preserve"><value>Autoridad / URL del Emisor</value></data>
+  <data name="SsoEditAuthorityPlaceholder" xml:space="preserve"><value>https://login.microsoftonline.com/{tenant-id}/v2.0</value></data>
+  <data name="SsoEditAuthorityDescription" xml:space="preserve"><value>Ejemplos: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value></data>
+  <data name="SsoEditClientIdLabel" xml:space="preserve"><value>ID de Cliente</value></data>
+  <data name="SsoEditClientIdPlaceholder" xml:space="preserve"><value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value></data>
+  <data name="SsoEditClientIdDescription" xml:space="preserve"><value>El identificador de cliente público asignado por su IdP. Seguro para mostrar — no es un secreto.</value></data>
+  <data name="SsoEditClientSecretLabel" xml:space="preserve"><value>Secreto de Cliente</value></data>
+  <data name="SsoEditClientSecretStored" xml:space="preserve"><value>Secreto almacenado</value></data>
+  <data name="SsoEditClientSecretDescription" xml:space="preserve"><value>Cifrado en reposo usando su clave específica del departamento. Déjelo en blanco si usa PKCE.</value></data>
+  <data name="SsoEditClientSecretKeepExisting" xml:space="preserve"><value>Déjelo en blanco para mantener el secreto existente sin cambios.</value></data>
+  <data name="SsoEditStep2SamlLabel" xml:space="preserve"><value>Paso 2 — SAML 2.0</value></data>
+  <data name="SsoEditStep2SamlHeader" xml:space="preserve"><value>Configuración de SAML 2.0</value></data>
+  <data name="SsoEditSamlInfoAlert" xml:space="preserve"><value>Dónde encontrar estos valores: En su IdP, cree una nueva aplicación SAML. Ingrese el SP Entity ID y la ACS URL mostrados a continuación en su IdP.</value></data>
+  <data name="SsoEditSpEntityIdLabel" xml:space="preserve"><value>SP Entity ID (ingréselo en su IdP)</value></data>
+  <data name="SsoEditAcsUrlLabel" xml:space="preserve"><value>ACS URL (Servicio Consumidor de Aserciones — ingréselo en su IdP)</value></data>
+  <data name="SsoEditAcsUrlNote" xml:space="preserve"><value>Esta URL usa un token de departamento cifrado — nunca expone su código de departamento en texto plano.</value></data>
+  <data name="SsoEditEntityIdEditableLabel" xml:space="preserve"><value>SP Entity ID (editable)</value></data>
+  <data name="SsoEditEntityIdEditablePlaceholder" xml:space="preserve"><value>https://app.resgrid.com/saml/DEPT</value></data>
+  <data name="SsoEditEntityIdEditableNote" xml:space="preserve"><value>Debe coincidir exactamente con lo que ingresó en el IdP.</value></data>
+  <data name="SsoEditMetadataUrlLabel" xml:space="preserve"><value>URL de Metadatos del IdP</value></data>
+  <data name="SsoEditMetadataUrlPlaceholder" xml:space="preserve"><value>https://idp.example.com/metadata.xml</value></data>
+  <data name="SsoEditMetadataUrlNote" xml:space="preserve"><value>Resgrid obtendrá periódicamente esta URL para mantenerse actualizado con los certificados del IdP.</value></data>
+  <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve"><value>ACS URL (almacenada)</value></data>
+  <data name="SsoEditAcsUrlStoredNote" xml:space="preserve"><value>Completada automáticamente desde la URL generada arriba. Modifíquela solo si configuró una ACS URL diferente en su IdP.</value></data>
+  <data name="SsoEditIdpCertLabel" xml:space="preserve"><value>Certificado de Firma del IdP (PEM)</value></data>
+  <data name="SsoEditIdpCertStored" xml:space="preserve"><value>Certificado almacenado</value></data>
+  <data name="SsoEditIdpCertNote" xml:space="preserve"><value>Cifrado en reposo. Déjelo en blanco para mantener el certificado existente.</value></data>
+  <data name="SsoEditSigningKeyLabel" xml:space="preserve"><value>Clave de Firma del SP (PEM, opcional)</value></data>
+  <data name="SsoEditSigningKeyStored" xml:space="preserve"><value>Clave almacenada</value></data>
+  <data name="SsoEditSigningKeyNote" xml:space="preserve"><value>Cifrado en reposo. Déjelo en blanco si su IdP no requiere solicitudes firmadas.</value></data>
+  <data name="SsoEditStep3Label" xml:space="preserve"><value>Paso 3</value></data>
+  <data name="SsoEditStep3Header" xml:space="preserve"><value>Mapeo de Atributos</value></data>
+  <data name="SsoEditAttrMapDescription" xml:space="preserve"><value>Asigne nombres de reclamaciones que su IdP envía a los campos de usuario de Resgrid.</value></data>
+  <data name="SsoEditAttrMapJsonLabel" xml:space="preserve"><value>JSON de Mapeo de Atributos</value></data>
+  <data name="SsoEditAttrMapJsonNote" xml:space="preserve"><value>Debe ser JSON válido. Use los botones de relleno rápido a la derecha.</value></data>
+  <data name="SsoEditQuickFillHeader" xml:space="preserve"><value>Preajustes de relleno rápido</value></data>
+  <data name="SsoEditQuickFillDescription" xml:space="preserve"><value>Haga clic para rellenar automáticamente el JSON de mapeo con valores predeterminados conocidos para su IdP.</value></data>
+  <data name="SsoEditFieldMappingHeader" xml:space="preserve"><value>Claves de campo de Resgrid compatibles</value></data>
+  <data name="SsoEditFieldKeyColumn" xml:space="preserve"><value>Clave</value></data>
+  <data name="SsoEditFieldDescColumn" xml:space="preserve"><value>Descripción</value></data>
+  <data name="SsoEditFieldEmailDesc" xml:space="preserve"><value>Dirección de correo electrónico del usuario</value></data>
+  <data name="SsoEditFieldFirstNameDesc" xml:space="preserve"><value>Nombre / primer nombre</value></data>
+  <data name="SsoEditFieldLastNameDesc" xml:space="preserve"><value>Apellido / nombre de familia</value></data>
+  <data name="SsoEditFieldSubjectDesc" xml:space="preserve"><value>Sujeto único del IdP (para vinculación de cuentas)</value></data>
+  <data name="SsoEditCreateButton" xml:space="preserve"><value>Crear Configuración</value></data>
+  <data name="SsoEditSaveButton" xml:space="preserve"><value>Guardar Cambios</value></data>
+  <data name="SsoEditCancelButton" xml:space="preserve"><value>Cancelar</value></data>
+
+  <!-- SSO / SCIM — ScimSetup.cshtml page -->
+  <data name="ScimSetupPageTitle" xml:space="preserve"><value>Configuración de SCIM 2.0</value></data>
+  <data name="ScimSetupPageHeader" xml:space="preserve"><value>Configuración de Aprovisionamiento SCIM 2.0</value></data>
+  <data name="ScimSetupBreadcrumb" xml:space="preserve"><value>Configuración SCIM</value></data>
+  <data name="ScimSetupBackButton" xml:space="preserve"><value>Volver a SSO</value></data>
+  <data name="ScimSetupTokenWarningTitle" xml:space="preserve"><value>Importante — Copie su Token Portador SCIM Ahora</value></data>
+  <data name="ScimSetupTokenWarningBody" xml:space="preserve"><value>Este token se muestra solo una vez y no puede recuperarse nuevamente. Cópielo inmediatamente y péguelo en la configuración SCIM de su proveedor de identidad.</value></data>
+  <data name="ScimSetupCopyTokenButton" xml:space="preserve"><value>Copiar Token</value></data>
+  <data name="ScimSetupTokenEncryptedNote" xml:space="preserve"><value>Este token se almacena cifrado en la base de datos de Resgrid usando su clave de cifrado específica del departamento.</value></data>
+  <data name="ScimSetupStatusHeader" xml:space="preserve"><value>Estado de SCIM</value></data>
+  <data name="ScimSetupStatusProvider" xml:space="preserve"><value>Proveedor</value></data>
+  <data name="ScimSetupStatusEnabled" xml:space="preserve"><value>SCIM Habilitado</value></data>
+  <data name="ScimSetupStatusEnabledYes" xml:space="preserve"><value>Sí</value></data>
+  <data name="ScimSetupStatusEnabledNo" xml:space="preserve"><value>No</value></data>
+  <data name="ScimSetupStatusBearerToken" xml:space="preserve"><value>Token Portador</value></data>
+  <data name="ScimSetupStatusTokenConfigured" xml:space="preserve"><value>Configurado</value></data>
+  <data name="ScimSetupStatusTokenNotSet" xml:space="preserve"><value>No Establecido</value></data>
+  <data name="ScimSetupRotateTokenButton" xml:space="preserve"><value>Rotar Token SCIM</value></data>
+  <data name="ScimSetupGenerateTokenButton" xml:space="preserve"><value>Generar Token SCIM</value></data>
+  <data name="ScimSetupRotateTokenNote" xml:space="preserve"><value>Rotar genera un nuevo token e invalida el anterior.</value></data>
+  <data name="ScimSetupRotateTokenConfirm" xml:space="preserve"><value>¿Está seguro? Cualquier integración SCIM existente se interrumpirá hasta que actualice el token en su IdP.</value></data>
+  <data name="ScimSetupConnectorHeader" xml:space="preserve"><value>Configuración del Conector SCIM</value></data>
+  <data name="ScimSetupConnectorDescription" xml:space="preserve"><value>Ingrese estos valores en la configuración de aprovisionamiento SCIM de su proveedor de identidad.</value></data>
+  <data name="ScimSetupSettingColumn" xml:space="preserve"><value>Configuración</value></data>
+  <data name="ScimSetupValueColumn" xml:space="preserve"><value>Valor</value></data>
+  <data name="ScimSetupBaseUrlLabel" xml:space="preserve"><value>URL Base del Conector SCIM</value></data>
+  <data name="ScimSetupAuthMethodLabel" xml:space="preserve"><value>Método de Autenticación</value></data>
+  <data name="ScimSetupAuthHeaderLabel" xml:space="preserve"><value>Encabezado de Autorización</value></data>
+  <data name="ScimSetupCustomHeaderNameLabel" xml:space="preserve"><value>Nombre de Encabezado Personalizado</value></data>
+  <data name="ScimSetupCustomHeaderValueLabel" xml:space="preserve"><value>Valor de Encabezado Personalizado</value></data>
+  <data name="ScimSetupSupportedResourcesLabel" xml:space="preserve"><value>Recursos Admitidos</value></data>
+  <data name="ScimSetupSupportedUpdateMethodLabel" xml:space="preserve"><value>Método de Actualización Admitido</value></data>
+  <data name="ScimSetupGuideHeader" xml:space="preserve"><value>Guía de Configuración Paso a Paso</value></data>
+  <data name="ScimSetupTabOkta" xml:space="preserve"><value>Okta</value></data>
+  <data name="ScimSetupTabEntra" xml:space="preserve"><value>Microsoft Entra ID</value></data>
+  <data name="ScimSetupTabGoogle" xml:space="preserve"><value>Google Workspace</value></data>
+  <data name="ScimSetupTabGeneric" xml:space="preserve"><value>Otro / Genérico</value></data>
+  <data name="ScimSetupGenericHeader" xml:space="preserve"><value>Cualquier cliente compatible con SCIM 2.0 puede configurarse con lo siguiente:</value></data>
+  <data name="ScimSetupFieldMappingHeader" xml:space="preserve"><value>Mapeo de campos SCIM de Resgrid</value></data>
+  <data name="ScimSetupParamColumn" xml:space="preserve"><value>Parámetro</value></data>
+  <data name="ScimSetupScimFieldColumn" xml:space="preserve"><value>Campo SCIM</value></data>
+  <data name="ScimSetupResgridEffectColumn" xml:space="preserve"><value>Efecto en Resgrid</value></data>
+
+  <!-- SSO / SCIM — SecurityPolicy.cshtml page -->
+  <data name="SecurityPolicyPageTitle" xml:space="preserve"><value>Política de Seguridad del Departamento</value></data>
+  <data name="SecurityPolicyPageHeader" xml:space="preserve"><value>Política de Seguridad del Departamento</value></data>
+  <data name="SecurityPolicyBreadcrumb" xml:space="preserve"><value>Política de Seguridad</value></data>
+  <data name="SecurityPolicyBackButton" xml:space="preserve"><value>Volver a SSO</value></data>
+  <data name="SecurityPolicySaveSuccess" xml:space="preserve"><value>Política de seguridad guardada exitosamente.</value></data>
+  <data name="SecurityPolicyNoSsoWarning" xml:space="preserve"><value>Sin configuración SSO activa. Puede configurar políticas de contraseña a continuación, pero Requerir SSO no se puede habilitar hasta que tenga una configuración SSO activa.</value></data>
+  <data name="SecurityPolicyConfigureSsoLink" xml:space="preserve"><value>Configurar SSO →</value></data>
+  <data name="SecurityPolicyAuthControlsHeader" xml:space="preserve"><value>Controles de Autenticación</value></data>
+  <data name="SecurityPolicyRequireMfaLabel" xml:space="preserve"><value>Requerir MFA para todos los miembros</value></data>
+  <data name="SecurityPolicyRequireMfaNote" xml:space="preserve"><value>Los miembros que no se hayan inscrito en MFA serán redirigidos para hacerlo en el próximo inicio de sesión.</value></data>
+  <data name="SecurityPolicyRequireSsoLabel" xml:space="preserve"><value>Requerir SSO — deshabilitar inicio de sesión con contraseña</value></data>
+  <data name="SecurityPolicyRequiresSsoConfig" xml:space="preserve"><value>Requiere configuración SSO activa</value></data>
+  <data name="SecurityPolicyRequireSsoWarning" xml:space="preserve"><value>Advertencia: Habilitar esto bloquea todos los inicios de sesión con nombre de usuario/contraseña.</value></data>
+  <data name="SecurityPolicySessionTimeoutLabel" xml:space="preserve"><value>Tiempo de Espera de Sesión (minutos)</value></data>
+  <data name="SecurityPolicySessionTimeoutNote" xml:space="preserve"><value>0 = usar predeterminado del sistema. 480 = 8 horas.</value></data>
+  <data name="SecurityPolicyMaxSessionsLabel" xml:space="preserve"><value>Máximo de Sesiones Concurrentes por Usuario</value></data>
+  <data name="SecurityPolicyMaxSessionsNote" xml:space="preserve"><value>0 = ilimitado. Los entornos gubernamentales típicamente establecen 1.</value></data>
+  <data name="SecurityPolicyIpRangesLabel" xml:space="preserve"><value>Rangos de IP Permitidos (CIDR)</value></data>
+  <data name="SecurityPolicyIpRangesNote" xml:space="preserve"><value>Un bloque CIDR por línea, o separado por comas. Vacío = permitir todos.</value></data>
+  <data name="SecurityPolicyDataClassLabel" xml:space="preserve"><value>Nivel de Clasificación de Datos</value></data>
+  <data name="SecurityPolicyDataClassNote" xml:space="preserve"><value>Utilizado para informes de cumplimiento y registros de auditoría.</value></data>
+  <data name="SecurityPolicyPasswordHeader" xml:space="preserve"><value>Política de Contraseñas</value></data>
+  <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve"><value>Las políticas de contraseña se aplican solo a los inicios de sesión locales (no SSO).</value></data>
+  <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve"><value>Caducidad de Contraseña (días)</value></data>
+  <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve"><value>0 = las contraseñas nunca caducan. 90 es típico para entornos CUI.</value></data>
+  <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve"><value>Longitud Mínima de Contraseña</value></data>
+  <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve"><value>0 = predeterminado del sistema (8). NIST recomienda 12+; CUI requiere 14+.</value></data>
+  <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve"><value>Requerir complejidad de contraseña</value></data>
+  <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve"><value>Exige al menos una letra mayúscula, un dígito y un carácter especial.</value></data>
+  <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve"><value>Preajustes rápidos</value></data>
+  <data name="SecurityPolicyPresetGovernment" xml:space="preserve"><value>Gobierno / CUI</value></data>
+  <data name="SecurityPolicyPresetEnterprise" xml:space="preserve"><value>Empresa Estándar</value></data>
+  <data name="SecurityPolicyPresetMinimal" xml:space="preserve"><value>Mínimo</value></data>
+  <data name="SecurityPolicySaveButton" xml:space="preserve"><value>Guardar Política de Seguridad</value></data>
+  <data name="SecurityPolicyCancelButton" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve"><value>No se puede habilitar el inicio de sesión solo SSO: no existe una configuración SSO activa. Cree y habilite una configuración SSO primero.</value></data>
 </root>
 
 

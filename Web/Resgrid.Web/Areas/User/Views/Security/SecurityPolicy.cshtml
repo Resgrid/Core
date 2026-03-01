@@ -1,0 +1,239 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Security.SecurityPolicyEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["SecurityPolicyPageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2><i class="fa fa-lock"></i> @localizer["SecurityPolicyPageHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Security" asp-action="Index" asp-route-area="User">Security</a></li>
+            <li><a asp-controller="Security" asp-action="Sso" asp-route-area="User">@localizer["SsoBreadcrumb"]</a></li>
+            <li class="active"><strong>@localizer["SecurityPolicyBreadcrumb"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            <a asp-action="Sso" class="btn btn-default"><i class="fa fa-arrow-left"></i> @localizer["SecurityPolicyBackButton"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    @if (TempData["PolicySuccess"] != null)
+    {
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            <i class="fa fa-check-circle"></i> @TempData["PolicySuccess"]
+        </div>
+    }
+
+    @if (!Model.HasActiveSsoConfig)
+    {
+        <div class="alert alert-warning">
+            <i class="fa fa-exclamation-triangle"></i>
+            <strong>@localizer["SecurityPolicyNoSsoWarning"]</strong>
+            <a asp-action="Sso" class="alert-link">@localizer["SecurityPolicyConfigureSsoLink"]</a>
+        </div>
+    }
+
+    <form asp-action="SecurityPolicy" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="row">
+
+            <!-- ── Authentication controls ──────────────────────────── -->
+            <div class="col-lg-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-sign-in"></i> @localizer["SecurityPolicyAuthControlsHeader"]</h5></div>
+                    <div class="ibox-content">
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.RequireMfa)
+                                    <strong>@localizer["SecurityPolicyRequireMfaLabel"]</strong>
+                                </label>
+                                <small class="text-muted d-block m-l-lg">
+                                    @localizer["SecurityPolicyRequireMfaNote"]
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox @(!Model.HasActiveSsoConfig ? "text-muted" : "")">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.RequireSso, !Model.HasActiveSsoConfig
+                                        ? new { disabled = "disabled" }
+                                        : (object)new { })
+                                    <strong>@localizer["SecurityPolicyRequireSsoLabel"]</strong>
+                                    @if (!Model.HasActiveSsoConfig)
+                                    {
+                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyRequiresSsoConfig"]</span>
+                                    }
+                                </label>
+                                <small class="text-muted d-block m-l-lg">
+                                    <span class="text-danger"><i class="fa fa-exclamation-triangle"></i></span>
+                                    @localizer["SecurityPolicyRequireSsoWarning"]
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SessionTimeoutMinutes" class="control-label">
+                                @localizer["SecurityPolicySessionTimeoutLabel"]
+                            </label>
+                            @Html.TextBoxFor(m => m.SessionTimeoutMinutes,
+                                new { @class = "form-control", type = "number", min = "0", max = "10080" })
+                            <small class="text-muted">@localizer["SecurityPolicySessionTimeoutNote"]</small>
+                            <span asp-validation-for="SessionTimeoutMinutes" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MaxConcurrentSessions" class="control-label">
+                                @localizer["SecurityPolicyMaxSessionsLabel"]
+                            </label>
+                            @Html.TextBoxFor(m => m.MaxConcurrentSessions,
+                                new { @class = "form-control", type = "number", min = "0", max = "100" })
+                            <small class="text-muted">@localizer["SecurityPolicyMaxSessionsNote"]</small>
+                            <span asp-validation-for="MaxConcurrentSessions" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="AllowedIpRanges" class="control-label">@localizer["SecurityPolicyIpRangesLabel"]</label>
+                            @Html.TextAreaFor(m => m.AllowedIpRanges, 3, 0, new
+                            {
+                                @class = "form-control font-monospace",
+                                placeholder = "10.0.0.0/8\n192.168.1.0/24"
+                            })
+                            <small class="text-muted">@localizer["SecurityPolicyIpRangesNote"]</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DataClassificationLevel" class="control-label">
+                                @localizer["SecurityPolicyDataClassLabel"]
+                            </label>
+                            @Html.DropDownListFor(m => m.DataClassificationLevel, Model.DataClassificationLevels,
+                                new { @class = "form-control" })
+                            <small class="text-muted">@localizer["SecurityPolicyDataClassNote"]</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Password policy ──────────────────────────────────── -->
+            <div class="col-lg-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-asterisk"></i> @localizer["SecurityPolicyPasswordHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle"></i>
+                            @localizer["SecurityPolicyPasswordInfoAlert"]
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PasswordExpirationDays" class="control-label">
+                                @localizer["SecurityPolicyPasswordExpirationLabel"]
+                            </label>
+                            @Html.TextBoxFor(m => m.PasswordExpirationDays,
+                                new { @class = "form-control", type = "number", min = "0", max = "3650" })
+                            <small class="text-muted">@localizer["SecurityPolicyPasswordExpirationNote"]</small>
+                            <span asp-validation-for="PasswordExpirationDays" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MinPasswordLength" class="control-label">
+                                @localizer["SecurityPolicyMinPasswordLengthLabel"]
+                            </label>
+                            @Html.TextBoxFor(m => m.MinPasswordLength,
+                                new { @class = "form-control", type = "number", min = "0", max = "128" })
+                            <small class="text-muted">@localizer["SecurityPolicyMinPasswordLengthNote"]</small>
+                            <span asp-validation-for="MinPasswordLength" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.RequirePasswordComplexity)
+                                    <strong>@localizer["SecurityPolicyPasswordComplexityLabel"]</strong>
+                                </label>
+                                <small class="text-muted d-block m-l-lg">
+                                    @localizer["SecurityPolicyPasswordComplexityNote"]
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Preset buttons -->
+                        <hr />
+                        <h5 class="text-muted">@localizer["SecurityPolicyQuickPresetsHeader"]</h5>
+                        <button type="button" class="btn btn-xs btn-default m-b-xs" onclick="applyPreset('cui')">
+                            <i class="fa fa-shield"></i> @localizer["SecurityPolicyPresetGovernment"]
+                        </button>
+                        <button type="button" class="btn btn-xs btn-default m-b-xs" onclick="applyPreset('enterprise')">
+                            <i class="fa fa-building"></i> @localizer["SecurityPolicyPresetEnterprise"]
+                        </button>
+                        <button type="button" class="btn btn-xs btn-default m-b-xs" onclick="applyPreset('minimal')">
+                            <i class="fa fa-user"></i> @localizer["SecurityPolicyPresetMinimal"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox-content">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> @localizer["SecurityPolicySaveButton"]
+                    </button>
+                    <a asp-action="Sso" class="btn btn-default m-l-sm">@localizer["SecurityPolicyCancelButton"]</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        var presets = {
+            cui: {
+                requireMfa: true, requireSso: @(Model.HasActiveSsoConfig ? "true" : "false"),
+                sessionTimeout: 240, maxSessions: 1, passwordExpiry: 60,
+                minLength: 14, complexity: true, classification: 1
+            },
+            enterprise: {
+                requireMfa: true, requireSso: false,
+                sessionTimeout: 480, maxSessions: 5, passwordExpiry: 90,
+                minLength: 12, complexity: true, classification: 0
+            },
+            minimal: {
+                requireMfa: false, requireSso: false,
+                sessionTimeout: 0, maxSessions: 0, passwordExpiry: 0,
+                minLength: 8, complexity: false, classification: 0
+            }
+        };
+
+        function applyPreset(name) {
+            var p = presets[name];
+            document.getElementById('RequireMfa').checked = p.requireMfa;
+            var ssoBox = document.getElementById('RequireSso');
+            if (ssoBox && !ssoBox.disabled) ssoBox.checked = p.requireSso;
+            document.getElementById('SessionTimeoutMinutes').value = p.sessionTimeout;
+            document.getElementById('MaxConcurrentSessions').value = p.maxSessions;
+            document.getElementById('PasswordExpirationDays').value = p.passwordExpiry;
+            document.getElementById('MinPasswordLength').value = p.minLength;
+            document.getElementById('RequirePasswordComplexity').checked = p.complexity;
+            document.getElementById('DataClassificationLevel').value = p.classification;
+        }
+    </script>
+}
+
+<style>
+    .font-monospace { font-family: SFMono-Regular, Menlo, Consolas, monospace; }
+</style>
+

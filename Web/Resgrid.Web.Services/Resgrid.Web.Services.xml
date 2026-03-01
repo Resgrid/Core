@@ -296,6 +296,43 @@
             </summary>
             <returns>ValidateResult object, with IsValid set if the settings are correct</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.GetSsoConfig(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Returns the SSO configuration for a department so the mobile app can determine
+            whether to show the SSO login button, which flow to use (OIDC/SAML), and which
+            parameters to pass. Call this before showing the login screen.
+            </summary>
+            <param name="departmentCode">The department code shown on the department's settings page.</param>
+            <param name="cancellationToken"></param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.ExternalToken(System.String,System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Exchanges an external SSO token (OIDC id_token or base64-encoded SAMLResponse) for a
+            Resgrid access token. Supports grant_type=external_token with fields:
+              provider (saml2|oidc), external_token, department_code, scope (optional),
+              totp_code (required when the user has Resgrid 2FA enrolled).
+            SSO authentication does NOT bypass Resgrid's own Two-Factor Authentication.
+            When the user has 2FA enabled in Resgrid, a valid totp_code must be supplied
+            in addition to the IdP token.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlMobileCallback(System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            SAML 2.0 Assertion Consumer Service (ACS) relay for mobile apps.
+            Receives the SAMLResponse POST from the IdP, then redirects to the
+            resgrid:// deep-link scheme so the mobile app can complete authentication
+            via the external-token endpoint.
+            Configure your IdP's ACS URL to point here:
+              POST /api/v4/connect/saml-mobile-callback?departmentCode=DEPT
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.ResolveDepartmentAsync(System.String,System.String)">
+            <summary>
+            Decrypts a departmentToken (format: {departmentId}:{departmentCode}) produced by the
+            web UI and returns the resolved Department, or null if the token is invalid.
+            Falls back to a plain departmentCode name-lookup when departmentToken is absent.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ContactsController">
             <summary>
             Contacts, which are people, entities, and things that can be contacted (i.e. people, departments, groups, etc.) to dispatch a call to.
@@ -756,6 +793,37 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ScimController">
+            <summary>
+            SCIM 2.0 provisioning endpoint for automated user lifecycle management
+            from external identity providers. Authenticate requests with the per-department
+            SCIM bearer token configured in DepartmentSsoConfig.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.GetUsers(System.Int32,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>Lists users for the department associated with the SCIM bearer token.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.GetUser(System.String,System.Int32,System.Threading.CancellationToken)">
+            <summary>Returns a single SCIM User resource by Resgrid user ID.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.CreateUser(System.Int32,Resgrid.Web.Services.Controllers.v4.ScimUserResource,System.Threading.CancellationToken)">
+            <summary>Creates a new user via SCIM provisioning.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.ReplaceUser(System.String,System.Int32,Resgrid.Web.Services.Controllers.v4.ScimUserResource,System.Threading.CancellationToken)">
+            <summary>Replaces a user resource (full update).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.PatchUser(System.String,System.Int32,Resgrid.Web.Services.Controllers.v4.ScimPatchRequest,System.Threading.CancellationToken)">
+            <summary>Applies a partial update to a user (supports active/displayName operations).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.DeleteUser(System.String,System.Int32,System.Threading.CancellationToken)">
+            <summary>Deactivates (soft-deletes) a user via SCIM.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.GetGroups(System.Int32,System.Threading.CancellationToken)">
+            <summary>Returns department groups as SCIM Group resources.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ScimUserResource">
+            <summary>Minimal SCIM 2.0 User resource for inbound provisioning requests.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.SecurityController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -800,6 +868,80 @@
             Gets all the shifts in a department
             </summary>
             <returns>List of ShiftResult objects.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SsoAdminController">
+            <summary>
+            Allows department administrators to configure SSO (SAML 2.0 / OIDC),
+            SCIM 2.0 provisioning, and department-level security policies.
+            All write operations require department admin rights.
+            Secrets (client secrets, certificates, SCIM tokens) are accepted as plaintext
+            on input and encrypted before storage — they are NEVER returned in any response.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.#ctor(Resgrid.Model.Services.IDepartmentSsoService,Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPersonnelRolesService)">
+            <summary>Constructor.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.GetSsoConfigs(System.Threading.CancellationToken)">
+            <summary>
+            Returns all SSO configurations for the current department.
+            Secrets are never included in the response — use HasClientSecret /
+            HasIdpCertificate / HasSigningCertificate boolean flags to check presence.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.GetSsoConfig(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Returns a single SSO configuration by ID.
+            Secrets are never included in the response.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.CreateSsoConfig(Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates a new SSO configuration for the current department.
+            Only one configuration per provider type is permitted per department.
+            All secret fields (ClientSecret, IdpCertificate, SigningCertificate) are
+            encrypted using the department-specific key before storage.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.UpdateSsoConfig(System.String,Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates an existing SSO configuration.
+            Secret fields are only re-encrypted and overwritten when a non-null, non-empty
+            value is supplied. Omit secret fields (or send null) to leave them unchanged.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.DeleteSsoConfig(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes the SSO configuration for a given provider type.
+            This does not affect existing user accounts or memberships.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.RotateScimToken(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Rotates the SCIM 2.0 bearer token for the department's SSO configuration.
+            A new cryptographically random token is generated, encrypted, and stored.
+            The plaintext token is returned ONCE in this response — it cannot be
+            retrieved again. Store it immediately in your identity provider.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.GetSecurityPolicy(System.Threading.CancellationToken)">
+            <summary>
+            Returns the department's compliance security policy.
+            Returns an empty policy object (with all defaults) if none has been saved yet.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.SaveSecurityPolicy(Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates or updates the department's compliance security policy.
+            Warning: enabling RequireSso will prevent all users from logging in with
+            a password — ensure at least one working SSO configuration exists first.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.TestScimConnection(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Validates that the SCIM endpoint is reachable and the stored SCIM bearer token
+            is correctly configured by performing a test GET /scim/v2/Users request against
+            the local SCIM controller. Returns success/failure and the HTTP status received.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.StatusesController">
             <summary>
@@ -6942,6 +7084,305 @@
             <summary>
             Days for the shift (this may be null)
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResult">
+            <summary>
+            Response for the SSO configuration discovery endpoint consumed by mobile apps.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResult.Data">
+            <summary>Response data.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResult.#ctor">
+            <summary>Default constructor.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData">
+            <summary>
+            SSO configuration data returned to mobile clients.
+            Only non-secret fields are included — credentials are never exposed.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.SsoEnabled">
+            <summary>Whether SSO is enabled for this department.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.ProviderType">
+            <summary>The SSO provider protocol ("saml2" or "oidc").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.Authority">
+            <summary>OIDC authority/issuer URL (OIDC only).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.ClientId">
+            <summary>OIDC client ID (OIDC only — public client, safe to expose).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.MetadataUrl">
+            <summary>SAML metadata URL (SAML only).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.EntityId">
+            <summary>SAML entity ID / service-provider identifier (SAML only).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.AllowLocalLogin">
+            <summary>Whether local username/password login is permitted in addition to SSO.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.RequireSso">
+            <summary>Whether the department security policy requires SSO for all logins.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.RequireMfa">
+            <summary>Whether the department security policy requires MFA.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.OidcRedirectUri">
+            <summary>
+            The redirect URI the mobile app must use for the OIDC authorization-code flow.
+            Format: resgrid://auth/callback
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.OidcScopes">
+            <summary>
+            OIDC scopes the mobile app should request (space-separated).
+            e.g. "openid email profile offline_access"
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.GetSsoConfigsResult">
+            <summary>Response wrapper for a list of SSO configurations.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetSsoConfigsResult.Data">
+            <summary>List of SSO configurations for the department.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.GetSsoConfigResult">
+            <summary>Response wrapper for a single SSO configuration.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetSsoConfigResult.Data">
+            <summary>The SSO configuration.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigResult">
+            <summary>Response wrapper for a save (create/update) operation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigResult.DepartmentSsoConfigId">
+            <summary>The ID of the saved SSO configuration.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.GetSecurityPolicyResult">
+            <summary>Response wrapper for the department security policy.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetSecurityPolicyResult.Data">
+            <summary>The department security policy.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyResult">
+            <summary>Response wrapper for a save security policy operation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyResult.DepartmentSecurityPolicyId">
+            <summary>The ID of the saved security policy.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SsoOperationResult">
+            <summary>Generic success/failure result.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoOperationResult.Success">
+            <summary>Whether the operation succeeded.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.RotateScimTokenResult">
+            <summary>Response for SCIM token rotation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.RotateScimTokenResult.ScimBearerToken">
+            <summary>
+            The new plaintext SCIM bearer token. Store this immediately — it will
+            never be returned again after this response.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData">
+            <summary>Summary of an SSO configuration (no secrets).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.DepartmentSsoConfigId">
+            <summary>Unique identifier of this SSO configuration.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.ProviderType">
+            <summary>SSO provider protocol: "saml2" or "oidc".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.IsEnabled">
+            <summary>Whether this SSO configuration is currently active.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.Identifier">
+            <summary>The OIDC client ID or SAML entity ID (non-secret).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.EndpointUrl">
+            <summary>OIDC authority URL or SAML metadata URL.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.AllowLocalLogin">
+            <summary>Whether local (password) login is permitted alongside SSO.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.AutoProvisionUsers">
+            <summary>Whether auto-provisioning of new users from IdP claims is enabled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.ScimEnabled">
+            <summary>Whether SCIM 2.0 provisioning is enabled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.CreatedOn">
+            <summary>Date/time the configuration was created.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigSummaryData.UpdatedOn">
+            <summary>Date/time the configuration was last updated.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData">
+            <summary>Full SSO configuration detail (no secrets returned).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.Authority">
+            <summary>OIDC authority / issuer URL.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.ClientId">
+            <summary>OAuth 2.0 / OIDC client ID.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.MetadataUrl">
+            <summary>SAML metadata URL.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.EntityId">
+            <summary>SAML entity ID registered with the IdP.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.AssertionConsumerServiceUrl">
+            <summary>SAML Assertion Consumer Service URL.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.AttributeMappingJson">
+            <summary>
+            JSON attribute mapping from IdP claim names to Resgrid user fields.
+            Example: {"email":"http://schemas/.../emailaddress","firstName":"given_name","lastName":"family_name"}
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.DefaultRankId">
+            <summary>Default rank ID assigned to auto-provisioned users (null = no default rank).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.HasClientSecret">
+            <summary>Whether a client secret is currently stored (true = secret exists, never returned).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.HasIdpCertificate">
+            <summary>Whether an IdP certificate is currently stored.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.HasSigningCertificate">
+            <summary>Whether a signing certificate is currently stored.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.HasScimBearerToken">
+            <summary>Whether a SCIM bearer token is currently stored.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData">
+            <summary>Department security policy data.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.DepartmentSecurityPolicyId">
+            <summary>Database ID of the security policy (0 = not yet saved).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.RequireMfa">
+            <summary>Whether all department members must use MFA.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.RequireSso">
+            <summary>Whether password-based login is disabled (SSO-only mode).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.SessionTimeoutMinutes">
+            <summary>Idle session timeout in minutes (0 = system default).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.MaxConcurrentSessions">
+            <summary>Maximum concurrent sessions per user (0 = unlimited).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AllowedIpRanges">
+            <summary>Comma-separated CIDR blocks from which login is permitted. Empty = no restriction.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.PasswordExpirationDays">
+            <summary>Password expiration in days (0 = disabled).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.MinPasswordLength">
+            <summary>Minimum required password length.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.RequirePasswordComplexity">
+            <summary>Whether passwords must meet complexity requirements.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.DataClassificationLevel">
+            <summary>Data classification level: 0=Unclassified, 1=CUI, 2=Confidential.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.CreatedOn">
+            <summary>Date/time the policy was created.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.UpdatedOn">
+            <summary>Date/time the policy was last updated.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput">
+            <summary>Input for creating or updating an SSO configuration.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.ProviderType">
+            <summary>Provider type: "saml2" or "oidc".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.IsEnabled">
+            <summary>Whether this SSO configuration should be active.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.ClientId">
+            <summary>OIDC client identifier registered with the IdP.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.ClientSecret">
+            <summary>
+            OIDC client secret (plaintext). Encrypted before storage.
+            Omit or send null to leave an existing secret unchanged.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.Authority">
+            <summary>OIDC authority / issuer URL (e.g. https://login.microsoftonline.com/{tenant}/v2.0).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.MetadataUrl">
+            <summary>SAML IdP metadata URL.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.EntityId">
+            <summary>SAML SP entity ID.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.AssertionConsumerServiceUrl">
+            <summary>SAML Assertion Consumer Service URL.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.IdpCertificate">
+            <summary>
+            IdP public certificate in PEM format (plaintext). Encrypted before storage.
+            Omit or send null to leave an existing certificate unchanged.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.SigningCertificate">
+            <summary>
+            SP signing certificate private key in PEM format (plaintext). Encrypted before storage.
+            Omit or send null to leave an existing key unchanged.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.AttributeMappingJson">
+            <summary>JSON attribute mapping from IdP claims to Resgrid fields.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.AllowLocalLogin">
+            <summary>Whether local username/password login is permitted alongside SSO.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.AutoProvisionUsers">
+            <summary>Whether new users arriving via SSO should be auto-provisioned.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.DefaultRankId">
+            <summary>Default rank ID for auto-provisioned users.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.ScimEnabled">
+            <summary>Whether SCIM 2.0 provisioning is enabled.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput">
+            <summary>Input for updating the department security policy.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.RequireMfa">
+            <summary>Whether all department members must use MFA.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.RequireSso">
+            <summary>Whether password-based login is disabled (SSO-only mode).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.SessionTimeoutMinutes">
+            <summary>Idle session timeout in minutes (0 = system default).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.MaxConcurrentSessions">
+            <summary>Maximum concurrent sessions per user (0 = unlimited).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AllowedIpRanges">
+            <summary>Comma-separated CIDR blocks (e.g. "10.0.0.0/8,192.168.1.0/24"). Empty = no restriction.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.PasswordExpirationDays">
+            <summary>Password expiration in days (0 = disabled).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.MinPasswordLength">
+            <summary>Minimum required password length (0 = system default).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.RequirePasswordComplexity">
+            <summary>Whether passwords must meet complexity requirements.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.DataClassificationLevel">
+            <summary>Data classification level: 0=Unclassified, 1=CUI, 2=Confidential.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.StandardApiResponseV4Base">
             <summary>

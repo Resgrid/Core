@@ -60,6 +60,8 @@
 			public const string Workflow = "Workflow";
 			public const string WorkflowCredential = "WorkflowCredential";
 			public const string WorkflowRun = "WorkflowRun";
+			public const string Sso = "Sso";
+			public const string Scim = "Scim";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

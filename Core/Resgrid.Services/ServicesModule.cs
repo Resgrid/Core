@@ -76,6 +76,9 @@ namespace Resgrid.Services
 			builder.RegisterType<AutofillsService>().As<IAutofillsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatesService>().As<IUnitStatesService>().InstancePerLifetimeScope();
 
+			// SSO / Security Policy
+			builder.RegisterType<DepartmentSsoService>().As<IDepartmentSsoService>().InstancePerLifetimeScope();
+
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();
 			builder.RegisterType<WorkShiftsService>().As<IWorkShiftsService>().SingleInstance();

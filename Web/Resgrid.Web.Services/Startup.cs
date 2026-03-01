@@ -394,6 +394,16 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.WorkflowRun_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowRun, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.WorkflowRun_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowRun, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.WorkflowRun_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkflowRun, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Sso_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Sso, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Sso_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Sso, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Sso_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Sso, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Sso_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Sso, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.Scim_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Scim, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Scim_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Scim, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Scim_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Scim, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Scim_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Scim, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 

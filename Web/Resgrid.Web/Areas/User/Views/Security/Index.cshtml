@@ -23,6 +23,12 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a class="btn btn-default top-button" asp-controller="Security" asp-action="Sso" asp-route-area="User">
+                    <i class="fa fa-shield"></i> SSO &amp; SCIM
+                </a>
+                <a class="btn btn-default top-button" asp-controller="Security" asp-action="SecurityPolicy" asp-route-area="User">
+                    <i class="fa fa-lock"></i> Security Policy
+                </a>
                 <a class="btn btn-primary top-button" title="@localizer["AuditLogsButton"]" asp-controller="Security" asp-action="Audits" asp-route-area="User">@localizer["AuditLogsButton"]</a>
             </div>
         </div>
